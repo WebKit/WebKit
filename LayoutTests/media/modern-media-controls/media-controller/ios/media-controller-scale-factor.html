@@ -12,11 +12,20 @@ description("Testing that we apply a CSS zoom to ensure controls are always 50 d
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 
+let mediaBounds = null;
+let controlsBounds = null;
+
 window.requestAnimationFrame(() => {
     shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.width", "800px");
     shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.height", "600px");
     shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.transform", "scale(0.5)");
-    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.top", "auto");
+
+    mediaBounds = media.getBoundingClientRect();
+    controlsBounds = shadowRoot.querySelector(".media-controls").getBoundingClientRect();
+    shouldBe("mediaBounds.top", "controlsBounds.top");
+    shouldBe("mediaBounds.right", "controlsBounds.right");
+    shouldBe("mediaBounds.bottom", "controlsBounds.bottom");
+    shouldBe("mediaBounds.left", "controlsBounds.left");
 
     debug("");
     media.remove();

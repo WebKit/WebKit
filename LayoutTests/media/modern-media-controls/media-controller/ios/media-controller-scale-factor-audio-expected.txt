@@ -6,7 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS shadowRoot.querySelector('.media-controls').style.width is "800px"
 PASS shadowRoot.querySelector('.media-controls').style.height is "62px"
 PASS shadowRoot.querySelector('.media-controls').style.transform is "scale(0.5)"
-PASS shadowRoot.querySelector('.media-controls').style.top is "-15.5px"
+PASS mediaBounds.top is controlsBounds.top
+PASS mediaBounds.right is controlsBounds.right
+PASS mediaBounds.bottom is controlsBounds.bottom
+PASS mediaBounds.left is controlsBounds.left
 
 PASS successfullyParsed is true
 
