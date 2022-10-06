@@ -4825,7 +4825,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
     }
     if (match(CLOSEBRACKET)) {
         JSTokenLocation location(tokenLocation());
-        next(TreeBuilder::DontBuildStrings);
+        next();
         return context.createArray(location, elisions);
     }
     
@@ -4855,7 +4855,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
         
         if (match(CLOSEBRACKET)) {
             JSTokenLocation location(tokenLocation());
-            next(TreeBuilder::DontBuildStrings);
+            next();
             return context.createArray(location, elisions, elementList);
         }
         if (UNLIKELY(match(DOTDOTDOT))) {
