@@ -4700,7 +4700,9 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
     Build version 13A1030d''')
                 + 0,
             )
-            self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1')
+            self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1'),
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='16:35  up 22 days, 16:32, 2 users, load averages: 2.08 3.01 3.59'),
             return self.runStep()
 
         def test_success_ios_simulator(self):
