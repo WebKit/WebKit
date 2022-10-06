@@ -2093,8 +2093,7 @@ void FrameSelection::selectAll()
     }
 
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
-
-    if (shouldChangeSelection(newSelection)) {
+    if (!newSelection.isOrphan() && shouldChangeSelection(newSelection)) {
         AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionExtend, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityAll, false });
         setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, intent);
     }
