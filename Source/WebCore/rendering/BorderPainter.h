@@ -44,8 +44,9 @@ public:
         bool includeLogicalLeftEdge { true };
         bool includeLogicalRightEdge { true };
         bool appliedClipAlready { false };
+        bool isHorizontal { true };
     };
-    void paintSides(const Sides&, const RenderStyle&);
+    void paintSides(const Sides&);
 
     static void drawLineForBoxSide(GraphicsContext&, const Document&, const FloatRect&, BoxSide, Color, BorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false);
 
@@ -54,12 +55,12 @@ public:
     static Color calculateBorderStyleColor(const BorderStyle&, const BoxSide&, const Color&);
 
 private:
-    void paintTranslucentBorderSides(const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
-        const BorderEdges&, BoxSideSet edgesToDraw, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias);
-    void paintBorderSides(const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment, const BorderEdges&, BoxSideSet edgeSet, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = nullptr);
-    void paintOneBorderSide(const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-        const LayoutRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdges&, const Path*, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor);
-    void drawBoxSideFromPath(const LayoutRect& borderRect, const Path& borderPath, const BorderEdges&, float thickness, float drawThickness, BoxSide, const RenderStyle&, Color, BorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+    void paintTranslucentBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
+        const BorderEdges&, BoxSideSet edgesToDraw, std::optional<BorderData::Radii>, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal);
+    void paintBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment, const BorderEdges&, BoxSideSet edgeSet, std::optional<BorderData::Radii>, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal, const Color* overrideColor = nullptr);
+    void paintOneBorderSide(const RoundedRect& outerBorder, const RoundedRect& innerBorder,
+        const LayoutRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdges&, std::optional<BorderData::Radii>, const Path*, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal, const Color* overrideColor);
+    void drawBoxSideFromPath(const LayoutRect& borderRect, const Path& borderPath, const BorderEdges&, std::optional<BorderData::Radii>, float thickness, float drawThickness, BoxSide, Color, BorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool isHorizontal);
     void clipBorderSidePolygon(const RoundedRect& outerBorder, const RoundedRect& innerBorder, BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
 
     LayoutRect borderInnerRectAdjustedForBleedAvoidance(const LayoutRect&, BackgroundBleedAvoidance) const;
