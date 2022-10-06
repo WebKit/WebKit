@@ -30,55 +30,11 @@ namespace WebCore {
 struct SpeechRecognitionAlternativeData {
     String transcript;
     double confidence { 0.0 };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SpeechRecognitionAlternativeData> decode(Decoder&);
 };
-
-template<class Encoder>
-void SpeechRecognitionAlternativeData::encode(Encoder& encoder) const
-{
-    encoder << transcript << confidence;
-}
-
-template<class Decoder>
-std::optional<SpeechRecognitionAlternativeData> SpeechRecognitionAlternativeData::decode(Decoder& decoder)
-{
-    SpeechRecognitionAlternativeData result;
-    if (!decoder.decode(result.transcript))
-        return std::nullopt;
-
-    if (!decoder.decode(result.confidence))
-        return std::nullopt;
-
-    return result;
-}
 
 struct SpeechRecognitionResultData {
     Vector<SpeechRecognitionAlternativeData> alternatives;
     bool isFinal { false };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SpeechRecognitionResultData> decode(Decoder&);
 };
-
-template<class Encoder>
-void SpeechRecognitionResultData::encode(Encoder& encoder) const
-{
-    encoder << alternatives << isFinal;
-}
-
-template<class Decoder>
-std::optional<SpeechRecognitionResultData> SpeechRecognitionResultData::decode(Decoder& decoder)
-{
-    SpeechRecognitionResultData result;
-    if (!decoder.decode(result.alternatives))
-        return std::nullopt;
-
-    if (!decoder.decode(result.isFinal))
-        return std::nullopt;
-
-    return result;
-}
 
 } // namespace WebCore

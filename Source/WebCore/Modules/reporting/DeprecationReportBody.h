@@ -50,9 +50,6 @@ public:
 
     WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation() const;
 
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<RefPtr<WebCore::DeprecationReportBody>> decode(Decoder&);
-
 private:
     DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
@@ -63,48 +60,6 @@ private:
     const std::optional<unsigned> m_lineNumber;
     const std::optional<unsigned> m_columnNumber;
 };
-
-template<typename Encoder>
-void DeprecationReportBody::encode(Encoder& encoder) const
-{
-    encoder << m_id << m_anticipatedRemoval << m_message << m_sourceFile << m_lineNumber << m_columnNumber;
-}
-
-template<typename Decoder>
-std::optional<RefPtr<DeprecationReportBody>> DeprecationReportBody::decode(Decoder& decoder)
-{
-    std::optional<String> reportId;
-    decoder >> reportId;
-    if (!reportId)
-        return std::nullopt;
-
-    std::optional<WallTime> anticipatedRemoval;
-    decoder >> anticipatedRemoval;
-    if (!anticipatedRemoval)
-        return std::nullopt;
-
-    std::optional<String> message;
-    decoder >> message;
-    if (!message)
-        return std::nullopt;
-
-    std::optional<String> sourceFile;
-    decoder >> sourceFile;
-    if (!sourceFile)
-        return std::nullopt;
-
-    std::optional<std::optional<unsigned>> lineNumber;
-    decoder >> lineNumber;
-    if (!lineNumber)
-        return std::nullopt;
-
-    std::optional<std::optional<unsigned>> columnNumber;
-    decoder >> columnNumber;
-    if (!columnNumber)
-        return std::nullopt;
-
-    return DeprecationReportBody::create(WTFMove(*reportId), *anticipatedRemoval, WTFMove(*message), WTFMove(*sourceFile), WTFMove(*lineNumber), WTFMove(*columnNumber));
-}
 
 } // namespace WebCore
 

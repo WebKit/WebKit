@@ -50,9 +50,6 @@ void Coder<class>::encode(Encoder& encoder, const class& instance) { instance.en
 std::optional<class> Coder<class>::decode(Decoder& decoder) { return class::decode(decoder); }
 
 IMPLEMENT_CODER(WebCore::ExceptionData);
-#if ENABLE(SERVICE_WORKER)
-IMPLEMENT_CODER(WebCore::PushSubscriptionData);
-#endif
 IMPLEMENT_CODER(WebCore::PushSubscriptionIdentifier);
 IMPLEMENT_CODER(WebCore::RegistrableDomain);
 IMPLEMENT_CODER(WebCore::SecurityOriginData);
@@ -60,6 +57,60 @@ IMPLEMENT_CODER(WebKit::WebPushMessage);
 IMPLEMENT_CODER(WebPushD::WebPushDaemonConnectionConfiguration);
 
 #undef IMPLEMENT_CODER
+
+#if ENABLE(SERVICE_WORKER)
+void Coder<WebCore::PushSubscriptionData>::encode(Encoder& encoder, const WebCore::PushSubscriptionData& instance)
+{
+    encoder << instance.identifier;
+    encoder << instance.endpoint;
+    encoder << instance.expirationTime;
+    encoder << instance.serverVAPIDPublicKey;
+    encoder << instance.clientECDHPublicKey;
+    encoder << instance.sharedAuthenticationSecret;
+}
+
+std::optional<WebCore::PushSubscriptionData> Coder<WebCore::PushSubscriptionData>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::PushSubscriptionIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+
+    std::optional<String> endpoint;
+    decoder >> endpoint;
+    if (!endpoint)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::EpochTimeStamp>> expirationTime;
+    decoder >> expirationTime;
+    if (!expirationTime)
+        return std::nullopt;
+
+    std::optional<Vector<uint8_t>> serverVAPIDPublicKey;
+    decoder >> serverVAPIDPublicKey;
+    if (!serverVAPIDPublicKey)
+        return std::nullopt;
+
+    std::optional<Vector<uint8_t>> clientECDHPublicKey;
+    decoder >> clientECDHPublicKey;
+    if (!clientECDHPublicKey)
+        return std::nullopt;
+
+    std::optional<Vector<uint8_t>> sharedAuthenticationSecret;
+    decoder >> sharedAuthenticationSecret;
+    if (!sharedAuthenticationSecret)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*identifier),
+        WTFMove(*endpoint),
+        WTFMove(*expirationTime),
+        WTFMove(*serverVAPIDPublicKey),
+        WTFMove(*clientECDHPublicKey),
+        WTFMove(*sharedAuthenticationSecret),
+    } };
+}
+#endif
 
 void Coder<WTF::WallTime>::encode(Encoder& encoder, const WTF::WallTime& instance)
 {

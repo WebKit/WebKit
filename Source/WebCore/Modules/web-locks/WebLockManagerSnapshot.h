@@ -39,9 +39,6 @@ struct WebLockManagerSnapshot {
 
         Info isolatedCopy() const & { return { name.isolatedCopy(), mode, clientId.isolatedCopy() }; }
         Info isolatedCopy() && { return { WTFMove(name).isolatedCopy(), mode, WTFMove(clientId).isolatedCopy() }; }
-
-        template<class Encoder> void encode(Encoder& encoder) const { encoder << name << mode << clientId; }
-        template<class Decoder> static std::optional<Info> decode(Decoder&);
     };
 
     Vector<Info> held;
@@ -49,46 +46,6 @@ struct WebLockManagerSnapshot {
 
     WebLockManagerSnapshot isolatedCopy() const & { return { crossThreadCopy(held), crossThreadCopy(pending) }; }
     WebLockManagerSnapshot isolatedCopy() && { return { crossThreadCopy(WTFMove(held)), crossThreadCopy(WTFMove(pending)) }; }
-
-    template<class Encoder> void encode(Encoder& encoder) const { encoder << held << pending; }
-    template<class Decoder> static std::optional<WebLockManagerSnapshot> decode(Decoder&);
 };
-
-template<class Decoder>
-std::optional<WebLockManagerSnapshot::Info> WebLockManagerSnapshot::Info::decode(Decoder& decoder)
-{
-    std::optional<String> name;
-    decoder >> name;
-    if (!name)
-        return std::nullopt;
-
-    std::optional<WebLockMode> mode;
-    decoder >> mode;
-    if (!mode)
-        return std::nullopt;
-
-    std::optional<String> clientId;
-    decoder >> clientId;
-    if (!clientId)
-        return std::nullopt;
-
-    return { { WTFMove(*name), *mode, WTFMove(*clientId) } };
-}
-
-template<class Decoder>
-std::optional<WebLockManagerSnapshot> WebLockManagerSnapshot::decode(Decoder& decoder)
-{
-    std::optional<Vector<Info>> held;
-    decoder >> held;
-    if (!held)
-        return std::nullopt;
-
-    std::optional<Vector<Info>> pending;
-    decoder >> pending;
-    if (!pending)
-        return std::nullopt;
-
-    return { { WTFMove(*held), WTFMove(*pending) } };
-}
 
 } // namespace WebCore

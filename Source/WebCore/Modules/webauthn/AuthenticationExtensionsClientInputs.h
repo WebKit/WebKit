@@ -36,38 +36,9 @@ struct AuthenticationExtensionsClientInputs {
     bool googleLegacyAppidSupport;
     bool credProps;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<AuthenticationExtensionsClientInputs> decode(Decoder&);
-
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(Span<const uint8_t>);
 };
-
-template<class Encoder>
-void AuthenticationExtensionsClientInputs::encode(Encoder& encoder) const
-{
-    encoder << appid << googleLegacyAppidSupport;
-}
-
-template<class Decoder>
-std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInputs::decode(Decoder& decoder)
-{
-    AuthenticationExtensionsClientInputs result;
-
-    std::optional<String> appid;
-    decoder >> appid;
-    if (!appid)
-        return std::nullopt;
-    result.appid = WTFMove(*appid);
-
-    std::optional<bool> googleLegacyAppidSupport;
-    decoder >> googleLegacyAppidSupport;
-    if (!googleLegacyAppidSupport)
-        return std::nullopt;
-    result.googleLegacyAppidSupport = WTFMove(*googleLegacyAppidSupport);
-
-    return result;
-}
 
 } // namespace WebCore
 

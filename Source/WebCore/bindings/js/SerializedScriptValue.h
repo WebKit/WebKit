@@ -220,10 +220,11 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
 
     Vector<std::unique_ptr<DetachedRTCDataChannel>> detachedRTCDataChannels;
     while (detachedRTCDataChannelsSize--) {
-        auto detachedRTCDataChannel = DetachedRTCDataChannel::decode(decoder);
+        std::optional<DetachedRTCDataChannel> detachedRTCDataChannel;
+        decoder >> detachedRTCDataChannel;
         if (!detachedRTCDataChannel)
             return nullptr;
-        detachedRTCDataChannels.append(WTFMove(detachedRTCDataChannel));
+        detachedRTCDataChannels.append(makeUnique<DetachedRTCDataChannel>(WTFMove(*detachedRTCDataChannel)));
     }
 #endif
 

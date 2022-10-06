@@ -36,33 +36,8 @@ struct MediaPositionState {
 
     String toJSONString() const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<MediaPositionState> decode(Decoder&);
-
     bool operator==(const MediaPositionState& other) const { return duration == other.duration && playbackRate == other.playbackRate && position == other.position; }
 };
-
-template<class Encoder> inline void MediaPositionState::encode(Encoder& encoder) const
-{
-    encoder << duration << playbackRate << position;
-}
-
-template<class Decoder> inline std::optional<MediaPositionState> MediaPositionState::decode(Decoder& decoder)
-{
-    double duration;
-    if (!decoder.decode(duration))
-        return { };
-
-    double playbackRate;
-    if (!decoder.decode(playbackRate))
-        return { };
-
-    double position;
-    if (!decoder.decode(position))
-        return { };
-
-    return MediaPositionState { WTFMove(duration), WTFMove(playbackRate), WTFMove(position) };
-}
 
 }
 

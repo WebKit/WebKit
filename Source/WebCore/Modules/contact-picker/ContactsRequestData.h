@@ -36,38 +36,6 @@ struct ContactsRequestData {
     Vector<ContactProperty> properties;
     bool multiple { false };
     String url;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ContactsRequestData> decode(Decoder&);
 };
-
-template<class Encoder>
-void ContactsRequestData::encode(Encoder& encoder) const
-{
-    encoder << properties;
-    encoder << multiple;
-    encoder << url;
-}
-
-template<class Decoder>
-std::optional<ContactsRequestData> ContactsRequestData::decode(Decoder& decoder)
-{
-    std::optional<Vector<ContactProperty>> properties;
-    decoder >> properties;
-    if (!properties)
-        return std::nullopt;
-
-    std::optional<bool> multiple;
-    decoder >> multiple;
-    if (!multiple)
-        return std::nullopt;
-
-    std::optional<String> url;
-    decoder >> url;
-    if (!url)
-        return std::nullopt;
-
-    return {{ *properties, *multiple, *url }};
-}
 
 }

@@ -21,10 +21,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: <WebCore/DOMCacheEngine.h>
-[CustomHeader=True] struct WebCore::DOMCacheEngine::CacheInfo {
+[CustomHeader] struct WebCore::DOMCacheEngine::CacheInfo {
     WebCore::DOMCacheIdentifier identifier
     String name
 }
+
+[CustomHeader] struct WebCore::DOMCacheEngine::CacheInfos {
+    Vector<WebCore::DOMCacheEngine::CacheInfo> infos;
+    uint64_t updateCounter;
+};
+
+[CustomHeader] struct WebCore::DOMCacheEngine::CacheIdentifierOperationResult {
+    WebCore::DOMCacheIdentifier identifier;
+    bool hadStorageError;
+};
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::TransformationMatrix {
     double m11()
@@ -715,3 +725,232 @@ struct WebCore::ApplicationManifest {
     Vector<WebCore::ApplicationManifest::Icon> icons
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
+
+enum class WebCore::DOMCacheEngine::Error : uint8_t {
+    NotImplemented,
+    ReadDisk,
+    WriteDisk,
+    QuotaExceeded,
+    Internal,
+    Stopped,
+    CORP
+};
+
+struct WebCore::RetrieveRecordsOptions {
+    WebCore::ResourceRequest request;
+    WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
+    Ref<WebCore::SecurityOrigin> sourceOrigin;
+    bool ignoreSearch;
+    bool ignoreMethod;
+    bool ignoreVary;
+    bool shouldProvideResponse;
+};
+
+struct WebCore::ContactInfo {
+    Vector<String> name;
+    Vector<String> email;
+    Vector<String> tel;
+};
+
+struct WebCore::ContactsRequestData {
+    Vector<WebCore::ContactProperty> properties;
+    bool multiple;
+    String url;
+};
+
+#if ENABLE(MEDIA_SESSION)
+struct WebCore::MediaPositionState {
+    double duration;
+    double playbackRate;
+    double position;
+};
+#endif // ENABLE(MEDIA_SESSION)
+
+#if ENABLE(WEB_RTC)
+struct WebCore::DetachedRTCDataChannel {
+    WebCore::RTCDataChannelIdentifier identifier;
+    String label;
+    WebCore::RTCDataChannelInit options;
+    WebCore::RTCDataChannelState state;
+};
+#endif
+
+struct WebCore::HTMLModelElementCamera {
+    double pitch;
+    double yaw;
+    double scale;
+};
+
+struct WebCore::NotificationData {
+    String title;
+    String body;
+    String iconURL;
+    String tag;
+    String language;
+    WebCore::NotificationDirection direction;
+    String originString;
+    URL serviceWorkerRegistrationURL;
+    UUID notificationID;
+    WebCore::ScriptExecutionContextIdentifier contextIdentifier;
+    PAL::SessionID sourceSession;
+    MonotonicTime creationTime;
+    Vector<uint8_t> data;
+};
+
+struct WebCore::PermissionDescriptor {
+    WebCore::PermissionName name;
+}
+
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::PushSubscriptionData {
+    WebCore::PushSubscriptionIdentifier identifier;
+    String endpoint;
+    std::optional<WebCore::EpochTimeStamp> expirationTime;
+    Vector<uint8_t> serverVAPIDPublicKey;
+    Vector<uint8_t> clientECDHPublicKey;
+    Vector<uint8_t> sharedAuthenticationSecret;
+};
+#endif
+
+[Return=Ref] class WebCore::DeprecationReportBody {
+    String id()
+    WallTime anticipatedRemoval()
+    String message()
+    String sourceFile()
+    std::optional<unsigned> lineNumber()
+    std::optional<unsigned> columnNumber()
+};
+
+[Return=Ref] class WebCore::Report {
+    String type()
+    String url()
+    RefPtr<WebCore::ReportBody> body()
+};
+
+[Return=Ref] class WebCore::TestReportBody {
+    String message()
+}
+
+enum class WebCore::SpeechRecognitionErrorType : uint8_t {
+    NoSpeech,
+    Aborted,
+    AudioCapture,
+    Network,
+    NotAllowed,
+    ServiceNotAllowed,
+    BadGrammar,
+    LanguageNotSupported
+};
+
+struct WebCore::SpeechRecognitionError {
+    WebCore::SpeechRecognitionErrorType type;
+    String message;
+};
+
+struct WebCore::SpeechRecognitionRequestInfo {
+    WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier;
+    String lang;
+    bool continuous;
+    bool interimResults;
+    uint64_t maxAlternatives;
+    WebCore::ClientOrigin clientOrigin;
+    WebCore::FrameIdentifier frameIdentifier;
+};
+
+[CustomHeader] struct WebCore::SpeechRecognitionAlternativeData {
+    String transcript;
+    double confidence;
+};
+
+struct WebCore::SpeechRecognitionResultData {
+    Vector<WebCore::SpeechRecognitionAlternativeData> alternatives;
+    bool isFinal;
+};
+
+struct WebCore::WebLockManagerSnapshot {
+    Vector<WebCore::WebLockManagerSnapshot::Info> held;
+    Vector<WebCore::WebLockManagerSnapshot::Info> pending;
+};
+
+[Nested] struct WebCore::WebLockManagerSnapshot::Info {
+    String name;
+    WebCore::WebLockMode mode;
+    String clientId;
+};
+
+#if ENABLE(WEB_AUTHN)
+struct WebCore::AuthenticationExtensionsClientInputs {
+    String appid;
+    bool googleLegacyAppidSupport;
+    bool credProps;
+}
+
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
+    bool rk;
+};
+
+struct WebCore::AuthenticationExtensionsClientOutputs {
+    std::optional<bool> appid;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput> credProps;
+}
+
+[Nested] struct WebCore::PublicKeyCredentialCreationOptions::Parameters {
+    WebCore::PublicKeyCredentialType type;
+    int64_t alg;
+};
+
+[Nested] struct WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria {
+    std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
+    std::optional<WebCore::ResidentKeyRequirement> residentKey;
+    bool requireResidentKey;
+    WebCore::UserVerificationRequirement userVerification;
+};
+
+[Nested] struct WebCore::PublicKeyCredentialCreationOptions::Entity {
+    String name;
+    String icon;
+};
+
+[Nested] struct WebCore::PublicKeyCredentialCreationOptions::RpEntity : WebCore::PublicKeyCredentialCreationOptions::Entity {
+    std::optional<String> id;
+};
+
+[Nested] struct WebCore::PublicKeyCredentialCreationOptions::UserEntity : WebCore::PublicKeyCredentialCreationOptions::Entity {
+    WebCore::BufferSource id;
+    String displayName;
+};
+
+struct WebCore::PublicKeyCredentialDescriptor {
+    WebCore::PublicKeyCredentialType type;
+    WebCore::BufferSource id;
+    Vector<WebCore::AuthenticatorTransport> transports;
+};
+#endif // ENABLE(WEB_AUTHN)
+
+struct WebCore::PublicKeyCredentialCreationOptions {
+#if ENABLE(WEB_AUTHN)
+    WebCore::PublicKeyCredentialCreationOptions::RpEntity rp;
+    WebCore::PublicKeyCredentialCreationOptions::UserEntity user;
+
+    WebCore::BufferSource challenge;
+    Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters> pubKeyCredParams;
+
+    std::optional<unsigned> timeout;
+    Vector<WebCore::PublicKeyCredentialDescriptor> excludeCredentials;
+    std::optional<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection;
+    WebCore::AttestationConveyancePreference attestation;
+    std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
+#endif // ENABLE(WEB_AUTHN)
+};
+
+struct WebCore::PublicKeyCredentialRequestOptions {
+#if ENABLE(WEB_AUTHN)
+    WebCore::BufferSource challenge;
+    std::optional<unsigned> timeout;
+    String rpId;
+    Vector<WebCore::PublicKeyCredentialDescriptor> allowCredentials;
+    WebCore::UserVerificationRequirement userVerification;
+    std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
+    std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
+#endif // ENABLE(WEB_AUTHN)
+};

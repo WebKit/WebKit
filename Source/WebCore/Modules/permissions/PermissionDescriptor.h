@@ -34,22 +34,6 @@ struct PermissionDescriptor {
     PermissionName name;
 
     bool operator==(const PermissionDescriptor& descriptor) const { return name == descriptor.name; }
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PermissionDescriptor> decode(Decoder&);
 };
-
-template<class Encoder> inline void PermissionDescriptor::encode(Encoder& encoder) const
-{
-    encoder << name;
-}
-
-template<class Decoder> std::optional<PermissionDescriptor> PermissionDescriptor::decode(Decoder& decoder)
-{
-    PermissionDescriptor result;
-    if (!decoder.decode(result.name))
-        return std::nullopt;
-
-    return result;
-}
 
 } // namespace WebCore

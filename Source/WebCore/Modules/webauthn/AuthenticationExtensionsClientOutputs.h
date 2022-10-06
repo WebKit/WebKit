@@ -36,64 +36,13 @@ namespace WebCore {
 struct AuthenticationExtensionsClientOutputs {
     struct CredentialPropertiesOutput {
         bool rk;
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<CredentialPropertiesOutput> decode(Decoder&);
     };
     std::optional<bool> appid;
     std::optional<CredentialPropertiesOutput> credProps;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<AuthenticationExtensionsClientOutputs> decode(Decoder&);
-
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientOutputs> fromCBOR(const Vector<uint8_t>&);
 };
-
-template<class Encoder>
-void AuthenticationExtensionsClientOutputs::encode(Encoder& encoder) const
-{
-    encoder << appid << credProps;
-}
-
-template<class Decoder>
-std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsClientOutputs::decode(Decoder& decoder)
-{
-    AuthenticationExtensionsClientOutputs result;
-
-    std::optional<std::optional<bool>> appid;
-    decoder >> appid;
-    if (!appid)
-        return std::nullopt;
-    result.appid = WTFMove(*appid);
-
-    std::optional<std::optional<CredentialPropertiesOutput>> credProps;
-    decoder >> credProps;
-    if (!credProps)
-        return std::nullopt;
-    result.credProps = WTFMove(*credProps);
-
-    return result;
-}
-
-template<class Encoder>
-void AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput::encode(Encoder& encoder) const
-{
-    encoder << rk;
-}
-
-template<class Decoder>
-std::optional<AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput> AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput::decode(Decoder& decoder)
-{
-    CredentialPropertiesOutput result;
-
-    std::optional<bool> rk;
-    decoder >> rk;
-    if (!rk)
-        return std::nullopt;
-    result.rk = *rk;
-
-    return result;
-}
 
 } // namespace WebCore
 

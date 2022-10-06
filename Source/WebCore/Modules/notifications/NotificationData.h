@@ -40,9 +40,6 @@ namespace WebCore {
 enum class NotificationDirection : uint8_t;
 
 struct NotificationData {
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<NotificationData> decode(Decoder&);
-
     WEBCORE_EXPORT NotificationData isolatedCopy() const &;
     WEBCORE_EXPORT NotificationData isolatedCopy() &&;
 
@@ -67,96 +64,5 @@ struct NotificationData {
     MonotonicTime creationTime;
     Vector<uint8_t> data;
 };
-
-template<class Encoder>
-void NotificationData::encode(Encoder& encoder) const
-{
-    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << contextIdentifier << sourceSession << creationTime << data;
-}
-
-template<class Decoder>
-std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
-{
-    std::optional<String> title;
-    decoder >> title;
-    if (!title)
-        return std::nullopt;
-
-    std::optional<String> body;
-    decoder >> body;
-    if (!body)
-        return std::nullopt;
-
-    std::optional<String> iconURL;
-    decoder >> iconURL;
-    if (!iconURL)
-        return std::nullopt;
-
-    std::optional<String> tag;
-    decoder >> tag;
-    if (!tag)
-        return std::nullopt;
-
-    std::optional<String> language;
-    decoder >> language;
-    if (!language)
-        return std::nullopt;
-
-    std::optional<WebCore::NotificationDirection> direction;
-    decoder >> direction;
-    if (!direction)
-        return std::nullopt;
-
-    std::optional<String> originString;
-    decoder >> originString;
-    if (!originString)
-        return std::nullopt;
-
-    std::optional<URL> serviceWorkerRegistrationURL;
-    decoder >> serviceWorkerRegistrationURL;
-    if (!serviceWorkerRegistrationURL)
-        return std::nullopt;
-
-    std::optional<UUID> notificationID;
-    decoder >> notificationID;
-    if (!notificationID)
-        return std::nullopt;
-
-    std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier;
-    decoder >> scriptExecutionContextIdentifier;
-    if (!scriptExecutionContextIdentifier)
-        return std::nullopt;
-
-    std::optional<PAL::SessionID> sourceSession;
-    decoder >> sourceSession;
-    if (!sourceSession)
-        return std::nullopt;
-
-    std::optional<MonotonicTime> creationTime;
-    decoder >> creationTime;
-    if (!creationTime)
-        return std::nullopt;
-
-    std::optional<Vector<uint8_t>> data;
-    decoder >> data;
-    if (!data)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*title),
-        WTFMove(*body),
-        WTFMove(*iconURL),
-        WTFMove(*tag),
-        WTFMove(*language),
-        WTFMove(*direction),
-        WTFMove(*originString),
-        WTFMove(*serviceWorkerRegistrationURL),
-        WTFMove(*notificationID),
-        *scriptExecutionContextIdentifier,
-        WTFMove(*sourceSession),
-        WTFMove(*creationTime),
-        WTFMove(*data)
-    } };
-}
 
 } // namespace WebCore
