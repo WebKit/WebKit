@@ -41,8 +41,8 @@ public:
     ~XDGDBusProxy() = default;
 
     enum class AllowPortals : bool { No, Yes };
-    std::optional<std::pair<CString, CString>> dbusSessionProxy(AllowPortals);
-    std::optional<std::pair<CString, CString>> accessibilityProxy();
+    std::optional<CString> dbusSessionProxy(AllowPortals);
+    std::optional<CString> accessibilityProxy(const char* sandboxedAccessibilityBusPath);
 
     bool launch();
 
@@ -52,9 +52,7 @@ private:
 
     Vector<CString> m_args;
     CString m_dbusSessionProxyPath;
-    CString m_dbusSessionPath;
     CString m_accessibilityProxyPath;
-    CString m_accessibilityPath;
     UnixFileDescriptor m_syncFD;
 };
 
