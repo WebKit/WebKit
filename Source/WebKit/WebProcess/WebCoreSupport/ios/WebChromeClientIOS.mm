@@ -143,10 +143,12 @@ Seconds WebChromeClient::eventThrottlingDelay()
     return m_page.eventThrottlingDelay();
 }
 
+#if ENABLE(ORIENTATION_EVENTS)
 int WebChromeClient::deviceOrientation() const
 {
     return m_page.deviceOrientation();
 }
+#endif
 
 RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
 {
