@@ -555,19 +555,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this._contentPopulated)
             return;
 
-        if (this._supportsDebugging) {
-            this._removeBreakpointWidgets();
-
-            this._breakpointMap = {};
-
-            for (let breakpoint of WI.debuggerManager.breakpointsForSourceCode(this._sourceCode)) {
-                console.assert(this._matchesBreakpoint(breakpoint));
-                var lineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
-                this._addBreakpointWithEditorLineInfo(breakpoint, lineInfo);
-                this.setBreakpointInfoForLineAndColumn(lineInfo.lineNumber, lineInfo.columnNumber, this._breakpointInfoForBreakpoint(breakpoint));
-            }
-        }
-
         if (this._sourceCode instanceof WI.Resource)
             this.mimeType = this._sourceCode.syntheticMIMEType;
         else if (this._sourceCode instanceof WI.Script)
@@ -580,6 +567,19 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this.canBeFormatted() && isTextLikelyMinified(content)) {
             this._autoFormat = true;
             this._isProbablyMinified = true;
+        }
+
+        if (this._supportsDebugging) {
+            this._removeBreakpointWidgets();
+
+            this._breakpointMap = {};
+
+            for (let breakpoint of WI.debuggerManager.breakpointsForSourceCode(this._sourceCode)) {
+                console.assert(this._matchesBreakpoint(breakpoint));
+                var lineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
+                this._addBreakpointWithEditorLineInfo(breakpoint, lineInfo);
+                this.setBreakpointInfoForLineAndColumn(lineInfo.lineNumber, lineInfo.columnNumber, this._breakpointInfoForBreakpoint(breakpoint));
+            }
         }
     }
 
@@ -743,7 +743,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (!script)
             return;
 
-        let endPosition = this.currentPositionToOriginalPosition(new WI.SourceCodePosition(lineNumber + 1, 0));
+        // If the current content is minified code, only show pause locations within 100 characters.
+        let limitLocations = this._isProbablyMinified && !this.formatterSourceMap;
+        let endPosition = this.currentPositionToOriginalPosition(new WI.SourceCodePosition(limitLocations ? lineNumber : (lineNumber + 1), limitLocations ? 100 : 0));
         console.assert(script === this._getAssociatedScript(endPosition), script);
 
         let locations = await script.breakpointLocations(startPosition, endPosition);
