@@ -33,6 +33,19 @@ public:
 
     void paintBorder(const LayoutRect&, const RenderStyle&, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     bool paintNinePieceImage(const LayoutRect&, const RenderStyle&, const NinePieceImage&, CompositeOperator = CompositeOperator::SourceOver);
+    struct Sides {
+        RoundedRect outerBorder;
+        RoundedRect innerBorder;
+        RoundedRect unadjustedInnerBorder;
+        std::optional<BorderData::Radii> radii { };
+        const BorderEdges& edges;
+        bool haveAllSolidEdges { true };
+        BackgroundBleedAvoidance bleedAvoidance { BackgroundBleedNone };
+        bool includeLogicalLeftEdge { true };
+        bool includeLogicalRightEdge { true };
+        bool appliedClipAlready { false };
+    };
+    void paintSides(const Sides&, const RenderStyle&);
 
     static void drawLineForBoxSide(GraphicsContext&, const Document&, const FloatRect&, BoxSide, Color, BorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false);
 

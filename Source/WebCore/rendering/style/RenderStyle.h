@@ -307,6 +307,7 @@ public:
     const LengthSize& borderTopRightRadius() const { return m_surroundData->border.topRightRadius(); }
     const LengthSize& borderBottomLeftRadius() const { return m_surroundData->border.bottomLeftRadius(); }
     const LengthSize& borderBottomRightRadius() const { return m_surroundData->border.bottomRightRadius(); }
+    const BorderData::Radii& borderRadii() const { return m_surroundData->border.m_radii; }
     bool hasBorderRadius() const { return m_surroundData->border.hasBorderRadius(); }
     bool hasExplicitlySetBorderBottomLeftRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderBottomLeftRadius; }
     bool hasExplicitlySetBorderBottomRightRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderBottomRightRadius; }
