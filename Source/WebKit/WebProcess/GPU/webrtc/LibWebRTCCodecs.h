@@ -68,21 +68,28 @@ public:
 
     static void setCallbacks(bool useGPUProcess, bool useRemoteFrames);
 
+    std::optional<VideoCodecType> videoCodecTypeFromWebCodec(const String&);
+
+    using DecoderCallback = Function<void(Ref<WebCore::VideoFrame>&&, uint64_t timestamp)>;
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         VideoDecoderIdentifier identifier;
         VideoCodecType type;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
+        DecoderCallback decoderCallback;
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
     };
 
     Decoder* createDecoder(VideoCodecType);
+    void createDecoderAndWaitUntilReady(VideoCodecType, Function<void(Decoder&)>&&);
+
     int32_t releaseDecoder(Decoder&);
     int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t, uint16_t width, uint16_t height);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
+    void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
     struct EncoderInitializationData {
         uint16_t width;
@@ -144,6 +151,8 @@ private:
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
     WorkQueue& workQueue() const { return m_queue; }
+
+    Decoder* createDecoderInternal(VideoCodecType, Function<void(Decoder&)>&&);
 
 private:
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());

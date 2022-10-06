@@ -124,6 +124,10 @@ void decompressionOutputCallback(void *decoderRef,
     _error = noErr;
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
+  if (!data || !size) {
+    RTC_LOG(LS_WARNING) << "Empty frame.";
+    return WEBRTC_VIDEO_CODEC_ERROR;
+  }
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
       rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));

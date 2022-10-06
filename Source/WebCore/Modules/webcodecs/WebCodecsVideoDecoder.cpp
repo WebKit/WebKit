@@ -83,7 +83,18 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&&
                 });
             };
         }
-        VideoDecoder::create(config.codec, [this, weakedThis = WeakPtr { *this }](auto&& result) {
+        Span<const uint8_t> description;
+        if (config.description) {
+            BufferSource buffer { WTFMove(*config.description) };
+            if (buffer.length())
+                description = { buffer.data(), buffer.length() };
+        }
+        VideoDecoder::Config videoDecoderConfig {
+            description,
+            config.codedWidth.value_or(0),
+            config.codedHeight.value_or(0)
+        };
+        VideoDecoder::create(config.codec, videoDecoderConfig, [this, weakedThis = WeakPtr { *this }](auto&& result) {
             if (!weakedThis)
                 return;
 
@@ -167,7 +178,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::close()
 static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
 {
     // FIXME: Check codec more accurately.
-    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09.00"_s))
+    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09.00"_s) && !config.codec.startsWith("avc1."_s) && !config.codec.startsWith("hev1."_s))
         return false;
 
     if (!!config.codedWidth != !!config.codedHeight)

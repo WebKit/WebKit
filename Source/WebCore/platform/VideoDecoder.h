@@ -40,6 +40,12 @@ class VideoDecoder {
 public:
     virtual ~VideoDecoder() = default;
 
+    struct Config {
+        Span<const uint8_t> description;
+        uint64_t width { 0 };
+        uint64_t height { 0 };
+    };
+
     struct EncodedFrame {
         Span<const uint8_t> data;
         bool isKeyFrame { false };
@@ -51,12 +57,17 @@ public:
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
     };
-    using CreateResult = Expected<UniqueRef<VideoDecoder>, String>;
 
     using PostTaskCallback = Function<void(Function<void()>&&)>;
     using OutputCallback = Function<void(DecodedFrame&&)>;
+    using CreateResult = Expected<UniqueRef<VideoDecoder>, String>;
     using CreateCallback = CompletionHandler<void(CreateResult&&)>;
-    static void create(const String&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+
+    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
+
+    static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    WEBCORE_EXPORT static void createLocalDecoder(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
 
     using DecodeCallback = Function<void(String&&)>;
     virtual void decode(EncodedFrame&&, DecodeCallback&&) = 0;
@@ -64,6 +75,8 @@ public:
     virtual void flush(Function<void()>&&) = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
+
+    static CreatorFunction s_customCreator;
 };
 
 }
