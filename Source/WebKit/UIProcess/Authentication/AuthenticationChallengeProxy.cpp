@@ -31,7 +31,6 @@
 #include "AuthenticationManager.h"
 #include "AuthenticationManagerMessages.h"
 #include "AuxiliaryProcessProxy.h"
-#include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebCredential.h"
 #include "WebProcessProxy.h"

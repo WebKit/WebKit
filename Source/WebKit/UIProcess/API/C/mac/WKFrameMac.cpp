@@ -31,8 +31,5 @@
 
 SecTrustRef WKFrameGetServerTrust(WKFrameRef frame)
 {
-    auto* certificateInfo = WebKit::toImpl(frame)->certificateInfo();
-    if (!certificateInfo)
-        return nullptr;
-    return certificateInfo->certificateInfo().trust();
+    return WebKit::toImpl(frame)->certificateInfo().trust();
 }

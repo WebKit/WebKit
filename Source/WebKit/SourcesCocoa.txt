@@ -362,8 +362,6 @@ UIProcess/API/mac/WKWebViewTestingMac.mm
 UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm
 UIProcess/Authentication/cocoa/SecKeyProxyStore.mm
 
-UIProcess/Authentication/mac/WebCredentialMac.mm
-
 UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm
 
 UIProcess/Automation/ios/WebAutomationSessionIOS.mm

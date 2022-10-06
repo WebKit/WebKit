@@ -28,7 +28,6 @@
 
 #include "APINavigation.h"
 #include "ProvisionalPageProxy.h"
-#include "WebCertificateInfo.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPasteboardProxy.h"
@@ -184,13 +183,13 @@ void WebFrameProxy::didFailProvisionalLoad()
         m_navigateCallback({ });
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo& certificateInfo, bool containsPluginDocument)
+void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument)
 {
     m_frameLoadState.didCommitLoad();
 
     m_title = String();
     m_MIMEType = contentType;
-    m_certificateInfo = &certificateInfo;
+    m_certificateInfo = certificateInfo;
     m_containsPluginDocument = containsPluginDocument;
 }
 

@@ -51,7 +51,6 @@
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
 #import "WKViewInternal.h"
-#import "WebCertificateInfo.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
@@ -313,7 +312,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSArray *)certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
-        return mainFrame->certificateInfo() ? (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(mainFrame->certificateInfo()->certificateInfo().trust()).autorelease() : nil;
+        return (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(mainFrame->certificateInfo().trust()).autorelease();
 
     return nil;
 }

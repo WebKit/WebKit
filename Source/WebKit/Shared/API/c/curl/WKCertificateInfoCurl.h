@@ -26,17 +26,18 @@
 #pragma once
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef);
+WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef) WK_C_API_DEPRECATED;
 
-WK_EXPORT int WKCertificateInfoGetVerificationError(WKCertificateInfoRef);
-WK_EXPORT WKStringRef WKCertificateInfoCopyVerificationErrorDescription(WKCertificateInfoRef);
-WK_EXPORT size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef);
-WK_EXPORT WKDataRef WKCertificateInfoCopyCertificateAtIndex(WKCertificateInfoRef, size_t);
+WK_EXPORT int WKCertificateInfoGetVerificationError(WKCertificateInfoRef) WK_C_API_DEPRECATED;
+WK_EXPORT WKStringRef WKCertificateInfoCopyVerificationErrorDescription(WKCertificateInfoRef) WK_C_API_DEPRECATED;
+WK_EXPORT size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef) WK_C_API_DEPRECATED;
+WK_EXPORT WKDataRef WKCertificateInfoCopyCertificateAtIndex(WKCertificateInfoRef, size_t) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

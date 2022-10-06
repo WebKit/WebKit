@@ -27,7 +27,6 @@
 #include "WKProtectionSpaceCurl.h"
 
 #include "WKAPICast.h"
-#include "WebCertificateInfo.h"
 #include "WebCredential.h"
 #include "WebProtectionSpace.h"
 
@@ -35,6 +34,5 @@ using namespace WebKit;
 
 WKCertificateInfoRef WKProtectionSpaceCopyCertificateInfo(WKProtectionSpaceRef protectionSpaceRef)
 {
-    RefPtr<WebCertificateInfo> certificateInfo = WebCertificateInfo::create(toImpl(protectionSpaceRef)->protectionSpace().certificateInfo());
-    return toAPI(certificateInfo.leakRef());
+    return nullptr;
 }

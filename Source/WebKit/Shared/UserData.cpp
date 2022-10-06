@@ -43,7 +43,6 @@
 #include "ArgumentCoders.h"
 #include "Encoder.h"
 #include "ShareableBitmap.h"
-#include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebImage.h"
 #include <wtf/CheckedArithmetic.h>
@@ -173,12 +172,6 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     case API::Object::Type::Boolean:
         static_cast<const API::Boolean&>(object).encode(encoder);
         break;
-
-    case API::Object::Type::CertificateInfo: {
-        const auto& certificateInfo = static_cast<const WebCertificateInfo&>(object);
-        encoder << certificateInfo.certificateInfo();
-        break;
-    }
 
     case API::Object::Type::Data:
         static_cast<const API::Data&>(object).encode(encoder);
@@ -324,15 +317,6 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!API::Boolean::decode(decoder, result))
             return false;
         break;
-
-    case API::Object::Type::CertificateInfo: {
-        std::optional<WebCore::CertificateInfo> certificateInfo;
-        decoder >> certificateInfo;
-        if (!certificateInfo)
-            return false;
-        result = WebCertificateInfo::create(*certificateInfo);
-        break;
-    }
 
     case API::Object::Type::Data:
         if (!API::Data::decode(decoder, result))

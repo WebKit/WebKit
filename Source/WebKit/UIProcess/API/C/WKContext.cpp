@@ -43,7 +43,6 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKWebsiteDataStoreRef.h"
-#include "WebCertificateInfo.h"
 #include "WebContextInjectedBundleClient.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"

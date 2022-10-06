@@ -64,8 +64,6 @@ SOFT_LINK_FRAMEWORK(PhotosUI)
 SOFT_LINK_CLASS(PhotosUI, PUActivityProgressController)
 #endif
 
-using namespace WebKit;
-
 enum class WKFileUploadPanelImagePickerType : uint8_t {
     Image = 1 << 0,
     Video  = 1 << 1,
@@ -148,7 +146,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 - (RetainPtr<UIImage>)displayImage
 {
-    return iconForImageFile(self.fileURL);
+    return WebKit::iconForImageFile(self.fileURL);
 }
 
 @end
@@ -166,7 +164,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 - (RetainPtr<UIImage>)displayImage
 {
-    return iconForVideoFile(self.fileURL);
+    return WebKit::iconForVideoFile(self.fileURL);
 }
 
 @end
@@ -440,7 +438,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
         filenames.uncheckedAppend(String::fromUTF8(fileURL.fileSystemRepresentation));
 
     NSData *png = UIImagePNGRepresentation(iconImage);
-    RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([png bytes]), [png length])));
+    RefPtr<API::Data> iconImageDataRef = adoptRef(WebKit::toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([png bytes]), [png length])));
 
     _listener->chooseFiles(filenames, displayString, iconImageDataRef.get());
     [self _dispatchDidDismiss];
@@ -893,7 +891,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
         auto [maybeMovedURLs, temporaryURLs] = copyToNewTemporaryDirectory(urlsFromUIKit.get());
         [retainedSelf->_view _removeTemporaryDirectoriesWhenDeallocated:WTFMove(temporaryURLs)];
         RunLoop::main().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
-            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:iconForFile(maybeMovedURLs.get()[0]).get()];
+            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:WebKit::iconForFile(maybeMovedURLs.get()[0]).get()];
         });
     }).get());
 }

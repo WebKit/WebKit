@@ -32,8 +32,6 @@
 
 namespace WebKit {
 
-class WebCertificateInfo;
-
 class WebCredential : public API::ObjectImpl<API::Object::Type::Credential> {
 public:
     ~WebCredential();
@@ -42,17 +40,11 @@ public:
     {
         return adoptRef(*new WebCredential(credential));
     }
-    
-    static Ref<WebCredential> create(WebCertificateInfo* certificateInfo)
-    {
-        return adoptRef(*new WebCredential(certificateInfo));
-    }
 
     const WebCore::Credential& credential();
 
 private:
     explicit WebCredential(const WebCore::Credential&);
-    explicit WebCredential(WebCertificateInfo*);
 
     WebCore::Credential m_coreCredential;
 };

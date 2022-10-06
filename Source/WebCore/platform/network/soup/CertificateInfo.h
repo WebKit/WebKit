@@ -61,6 +61,13 @@ public:
 
     bool isEmpty() const { return !m_certificate; }
 
+    bool operator==(const CertificateInfo& other) const
+    {
+        return g_tls_certificate_is_same(certificate(), other.certificate())
+            && tlsErrors() == other.tlsErrors();
+    }
+    bool operator!=(const CertificateInfo& other) const { return !(*this == other); }
+
 private:
     GRefPtr<GTlsCertificate> m_certificate;
     GTlsCertificateFlags m_tlsErrors;

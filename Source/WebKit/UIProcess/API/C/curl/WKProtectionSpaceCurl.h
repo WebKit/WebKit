@@ -26,12 +26,13 @@
 #pragma once
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKCertificateInfoRef WKProtectionSpaceCopyCertificateInfo(WKProtectionSpaceRef);
+WK_EXPORT WKCertificateInfoRef WKProtectionSpaceCopyCertificateInfo(WKProtectionSpaceRef) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

@@ -26,10 +26,7 @@
 #include "config.h"
 #include "WKCertificateInfo.h"
 
-#include "WebCertificateInfo.h"
-#include "WKAPICast.h"
-
 WKTypeID WKCertificateInfoGetTypeID()
 {
-    return WebKit::toAPI(WebKit::WebCertificateInfo::APIType);
+    return 0;
 }

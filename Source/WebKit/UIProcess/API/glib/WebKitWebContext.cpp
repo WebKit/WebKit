@@ -31,7 +31,6 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WebAutomationSession.h"
-#include "WebCertificateInfo.h"
 #include "WebKitAutomationSessionPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
