@@ -663,6 +663,9 @@ public:
     bool isVisible() const { return m_activityState.contains(WebCore::ActivityState::IsVisible); }
     bool isVisibleOrOccluded() const { return m_activityState.contains(WebCore::ActivityState::IsVisibleOrOccluded); }
 
+    OptionSet<WebCore::ActivityState::Flag> activityState() const { return m_activityState; }
+    bool isThrottleable() const;
+
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
     void setLayerHostingMode(LayerHostingMode);
 
@@ -1416,7 +1419,6 @@ public:
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
 
     void scheduleFullEditorStateUpdate();
-    bool isThrottleable() const;
 
     bool userIsInteracting() const { return m_userIsInteracting; }
     void setUserIsInteracting(bool userIsInteracting) { m_userIsInteracting = userIsInteracting; }

@@ -50,7 +50,7 @@ using namespace WebCore;
 
 AuxiliaryProcess::AuxiliaryProcess()
     : m_terminationCounter(0)
-    , m_processSuppressionDisabled("Process Suppression Disabled by UIProcess")
+    , m_processSuppressionDisabled("Process Suppression Disabled by UIProcess"_s)
 {
 }
 

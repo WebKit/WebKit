@@ -44,7 +44,7 @@ class UserActivity : public PAL::HysteresisActivity {
 public:
     class Impl {
     public:
-        explicit Impl(const char* description);
+        explicit Impl(ASCIILiteral description);
 
         void beginActivity();
         void endActivity();
@@ -56,7 +56,7 @@ public:
 #endif
     };
 
-    WEBCORE_EXPORT explicit UserActivity(const char* description);
+    WEBCORE_EXPORT explicit UserActivity(ASCIILiteral);
 
 private:
     void hysteresisUpdated(PAL::HysteresisState);

@@ -30,7 +30,7 @@ namespace WebCore {
 
 #if !HAVE(NS_ACTIVITY)
 
-UserActivity::Impl::Impl(const char*)
+UserActivity::Impl::Impl(ASCIILiteral)
 {
 }
 
@@ -44,7 +44,7 @@ void UserActivity::Impl::endActivity()
 
 #endif
 
-UserActivity::UserActivity(const char* description)
+UserActivity::UserActivity(ASCIILiteral description)
     : PAL::HysteresisActivity([this](PAL::HysteresisState state) { hysteresisUpdated(state); })
     , m_impl(description)
 {

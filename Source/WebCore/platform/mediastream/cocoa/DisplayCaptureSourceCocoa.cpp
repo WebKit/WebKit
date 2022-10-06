@@ -109,7 +109,7 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& captu
     : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt), pageIdentifier)
     , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
-    , m_userActivity("App nap disabled for screen capture")
+    , m_userActivity("App nap disabled for screen capture"_s)
 {
     m_capturer->setObserver(this);
 }

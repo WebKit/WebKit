@@ -66,6 +66,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
 #import <objc/runtime.h>
+#import <pal/Logging.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -250,6 +251,17 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 }
 #endif
 
+static void logProcessPoolState(const WebProcessPool& pool)
+{
+    for (const auto& process : pool.processes()) {
+        WTF::TextStream stream;
+        stream << process;
+
+        String domain = process->optionalRegistrableDomain() ? process->optionalRegistrableDomain()->string() : "unknown"_s;
+        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING, process.ptr(), stream.release().utf8().data(), domain.utf8().data());
+    }
+}
+
 void WebProcessPool::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
@@ -274,6 +286,14 @@ void WebProcessPool::platformInitialize()
 #if PLATFORM(MAC)
     [WKWebInspectorPreferenceObserver sharedInstance];
 #endif
+
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, ^{
+            for (const auto& pool : WebProcessPool::allProcessPools())
+                logProcessPoolState(pool.get());
+        });
+    });
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()

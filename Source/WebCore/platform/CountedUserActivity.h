@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CountedUserActivity {
 public:
-    explicit CountedUserActivity(const char* description)
+    explicit CountedUserActivity(ASCIILiteral description)
         : m_activity(description)
     {
     }

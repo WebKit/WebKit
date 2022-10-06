@@ -54,6 +54,8 @@ enum class ProcessAssertionType {
     FinishTaskInterruptable,
 };
 
+ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);
+
 class ProcessAssertion : public ThreadSafeRefCounted<ProcessAssertion>, public CanMakeWeakPtr<ProcessAssertion, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
