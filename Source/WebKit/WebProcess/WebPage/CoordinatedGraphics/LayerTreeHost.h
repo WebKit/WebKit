@@ -60,7 +60,7 @@ class WebPage;
 
 class LayerTreeHost
 #if USE(COORDINATED_GRAPHICS)
-    final : public CompositingCoordinator::Client, public AcceleratedSurface::Client
+    final : public CompositingCoordinator::Client, public AcceleratedSurface::Client, public ThreadedCompositor::Client, public ThreadedDisplayRefreshMonitor::Client
 #endif
 {
     WTF_MAKE_FAST_ALLOCATED;
@@ -118,66 +118,22 @@ private:
     // AcceleratedSurface::Client
     void frameComplete() override;
 
-    uint64_t nativeSurfaceHandleForCompositing();
-    void didDestroyGLContext();
-    void willRenderFrame();
-    void didRenderFrame();
-    void requestDisplayRefreshMonitorUpdate();
-    void handleDisplayRefreshMonitorUpdate(bool);
+    // ThreadedCompositor::Client
+    uint64_t nativeSurfaceHandleForCompositing() override;
+    void didDestroyGLContext() override;
+    void resize(const WebCore::IntSize&) override;
+    void willRenderFrame() override;
+    void didRenderFrame() override;
+
+    // ThreadedDisplayRefreshMonitor::Client
+    void requestDisplayRefreshMonitorUpdate() override;
+    void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled) override;
 
 #if PLATFORM(GTK)
     WebCore::FloatPoint constrainTransientZoomOrigin(double, WebCore::FloatPoint) const;
     WebCore::CoordinatedGraphicsLayer* layerForTransientZoom() const;
     void applyTransientZoomToLayers(double, WebCore::FloatPoint);
 #endif
-
-    class CompositorClient final : public ThreadedCompositor::Client, public ThreadedDisplayRefreshMonitor::Client  {
-        WTF_MAKE_NONCOPYABLE(CompositorClient);
-    public:
-        CompositorClient(LayerTreeHost& layerTreeHost)
-            : m_layerTreeHost(layerTreeHost)
-        {
-        }
-
-    private:
-        uint64_t nativeSurfaceHandleForCompositing() override
-        {
-            return m_layerTreeHost.nativeSurfaceHandleForCompositing();
-        }
-
-        void didDestroyGLContext() override
-        {
-            m_layerTreeHost.didDestroyGLContext();
-        }
-
-        void resize(const WebCore::IntSize& size) override
-        {
-            if (m_layerTreeHost.m_surface)
-                m_layerTreeHost.m_surface->clientResize(size);
-        }
-
-        void willRenderFrame() override
-        {
-            m_layerTreeHost.willRenderFrame();
-        }
-
-        void didRenderFrame() override
-        {
-            m_layerTreeHost.didRenderFrame();
-        }
-
-        void requestDisplayRefreshMonitorUpdate() override
-        {
-            m_layerTreeHost.requestDisplayRefreshMonitorUpdate();
-        }
-
-        void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled) override
-        {
-            m_layerTreeHost.handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
-        }
-
-        LayerTreeHost& m_layerTreeHost;
-    };
 
     enum class DiscardableSyncActions {
         UpdateSize = 1 << 1,
@@ -199,7 +155,6 @@ private:
     bool m_isDiscardable { false };
     OptionSet<DiscardableSyncActions> m_discardableSyncActions;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
-    CompositorClient m_compositorClient;
     std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<ThreadedCompositor> m_compositor;
     SimpleViewportController m_viewportController;
