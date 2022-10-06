@@ -58,6 +58,10 @@ void FileChooser::chooseFile(const String& filename)
 
 void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<String>& replacementNames)
 {
+    // FIXME: This is inelegant. We should not be looking at settings here.
+    if (m_settings.selectedFiles == filenames)
+        return;
+
     if (!m_client)
         return;
 
@@ -74,6 +78,10 @@ void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<Stri
 // with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS_FAMILY)-guard.
 void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String& displayString, Icon* icon)
 {
+    // FIXME: This is inelegant. We should not be looking at settings here.
+    if (m_settings.selectedFiles == filenames)
+        return;
+
     if (!m_client)
         return;
 
@@ -90,6 +98,10 @@ void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
     auto paths = files.map([](auto& file) {
         return file.path;
     });
+
+    // FIXME: This is inelegant. We should not be looking at settings here.
+    if (m_settings.selectedFiles == paths)
+        return;
 
     if (m_client)
         m_client->filesChosen(files);
