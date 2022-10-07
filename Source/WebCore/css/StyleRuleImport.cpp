@@ -29,7 +29,7 @@
 #include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "MediaList.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "SecurityOrigin.h"
 #include "StyleSheetContents.h"
 #include <wtf/StdLibExtras.h>

@@ -25,9 +25,9 @@
 #include "CSSStyleSheet.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "LegacyMediaQueryParser.h"
 #include "MediaFeatureNames.h"
 #include "MediaQuery.h"
-#include "MediaQueryParser.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -67,7 +67,7 @@ Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString, MediaQueryPa
     if (mediaString.isEmpty())
         return MediaQuerySet::create();
 
-    auto parsedMediaQuerySet = MediaQueryParser::parseMediaQuerySet(mediaString, context);
+    auto parsedMediaQuerySet = LegacyMediaQueryParser::parseMediaQuerySet(mediaString, context);
     if (UNLIKELY(!parsedMediaQuerySet))
         return MediaQuerySet::create();
     

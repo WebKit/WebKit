@@ -31,7 +31,7 @@
 #include "EventSender.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include "StyleScope.h"

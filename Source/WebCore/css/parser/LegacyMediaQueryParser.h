@@ -42,8 +42,8 @@ namespace WebCore {
 class MediaQuerySet;
 struct CSSParserContext;
 
-class MediaQueryParser {
-    WTF_MAKE_NONCOPYABLE(MediaQueryParser);
+class LegacyMediaQueryParser {
+    WTF_MAKE_NONCOPYABLE(LegacyMediaQueryParser);
 public:
     static RefPtr<MediaQuerySet> parseMediaQuerySet(const String&, MediaQueryParserContext);
     static RefPtr<MediaQuerySet> parseMediaQuerySet(CSSParserTokenRange, MediaQueryParserContext);
@@ -55,8 +55,8 @@ private:
         MediaConditionParser,
     };
 
-    MediaQueryParser(ParserType, MediaQueryParserContext);
-    virtual ~MediaQueryParser();
+    LegacyMediaQueryParser(ParserType, MediaQueryParserContext);
+    virtual ~LegacyMediaQueryParser();
 
     RefPtr<MediaQuerySet> parseInternal(CSSParserTokenRange&);
 
@@ -75,7 +75,7 @@ private:
     void skipUntilBlockEnd(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
     void done(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
 
-    using State = void (MediaQueryParser::*)(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
+    using State = void (LegacyMediaQueryParser::*)(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
 
     void setStateAndRestrict(State, MediaQuery::Restrictor);
     void handleBlocks(const CSSParserToken&);

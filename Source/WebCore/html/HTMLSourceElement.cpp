@@ -34,7 +34,7 @@
 #include "HTMLPictureElement.h"
 #include "Logging.h"
 #include "MediaList.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(VIDEO)

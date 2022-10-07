@@ -51,7 +51,7 @@
 #include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "MouseEvent.h"
 #include "ParsedContentType.h"
 #include "RenderStyle.h"
