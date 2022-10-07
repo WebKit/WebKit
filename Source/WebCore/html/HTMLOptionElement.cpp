@@ -239,10 +239,8 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
 
     m_isSelected = selected;
 
-#if USE(ATSPI)
     if (auto* cache = document().existingAXObjectCache())
-        cache->postNotification(this, AXObjectCache::AXSelectedStateChanged);
-#endif
+        cache->onSelectedChanged(this);
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)
