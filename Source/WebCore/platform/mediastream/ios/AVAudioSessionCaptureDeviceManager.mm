@@ -306,7 +306,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
 void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&& newAudioDevices)
 {
     bool firstTime = !m_devices;
-    bool deviceListChanged = newAudioDevices.size() != m_devices->size();
+    bool deviceListChanged = !m_devices || newAudioDevices.size() != m_devices->size();
     bool defaultDeviceChanged = false;
     if (!deviceListChanged && !firstTime) {
         for (auto& newState : newAudioDevices) {
