@@ -85,7 +85,7 @@ ThreadedCompositor::~ThreadedCompositor()
 
 void ThreadedCompositor::createGLContext()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT(m_compositingRunLoop->isCurrent());
 
     // GLNativeWindowType depends on the EGL implementation: reinterpret_cast works
     // for pointers (only if they are 64-bit wide and not for other cases), and static_cast for
@@ -301,7 +301,7 @@ RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor
 
 void ThreadedCompositor::frameComplete()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT(m_compositingRunLoop->isCurrent());
     sceneUpdateFinished();
 }
 

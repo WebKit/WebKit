@@ -62,6 +62,11 @@ CompositingRunLoop::~CompositingRunLoop()
     });
 }
 
+bool CompositingRunLoop::isCurrent() const
+{
+    return m_runLoop.ptr() == &RunLoop::current();
+}
+
 void CompositingRunLoop::performTask(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
