@@ -24,12 +24,13 @@
 #pragma once
 
 #include "RenderBoxModelObject.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
 class BorderPainter {
 public:
-    BorderPainter(const RenderBoxModelObject&, const PaintInfo&);
+    BorderPainter(const RenderElement&, const PaintInfo&);
 
     void paintBorder(const LayoutRect&, const RenderStyle&, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     bool paintNinePieceImage(const LayoutRect&, const RenderStyle&, const NinePieceImage&, CompositeOperator = CompositeOperator::SourceOver);
@@ -67,7 +68,7 @@ private:
 
     const Document& document() const;
 
-    const RenderBoxModelObject& m_renderer;
+    const RenderElement& m_renderer;
     const PaintInfo& m_paintInfo;
 };
 

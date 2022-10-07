@@ -240,7 +240,7 @@ TEST(WebKit, PageLoadState)
     EXPECT_EQ(state.didChangeActiveURL, 1);
     EXPECT_EQ(state.didChangeCanGoBack, 0);
     EXPECT_EQ(state.didChangeCanGoForward, 0);
-    EXPECT_EQ(state.didChangeCertificateInfo, 1);
+    EXPECT_EQ(state.didChangeCertificateInfo, 0);
     EXPECT_GT(state.didChangeEstimatedProgress, 0);
     EXPECT_EQ(state.didChangeHasOnlySecureContent, 0);
     EXPECT_GT(state.didChangeIsLoading, 0);
@@ -251,7 +251,7 @@ TEST(WebKit, PageLoadState)
     EXPECT_EQ(state.willChangeActiveURL, 1);
     EXPECT_EQ(state.willChangeCanGoBack, 0);
     EXPECT_EQ(state.willChangeCanGoForward, 0);
-    EXPECT_EQ(state.willChangeCertificateInfo, 1);
+    EXPECT_EQ(state.willChangeCertificateInfo, 0);
     EXPECT_GT(state.willChangeEstimatedProgress, 0);
     EXPECT_EQ(state.willChangeHasOnlySecureContent, 0);
     EXPECT_GT(state.willChangeIsLoading, 0);

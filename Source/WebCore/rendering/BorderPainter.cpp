@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-BorderPainter::BorderPainter(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo)
+BorderPainter::BorderPainter(const RenderElement& renderer, const PaintInfo& paintInfo)
     : m_renderer(renderer)
     , m_paintInfo(paintInfo)
 {
@@ -131,7 +131,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     if (rect.isEmpty() && !paintsBorderImage(rect, style.borderImage()))
         return;
 
-    auto rectToClipOut = const_cast<RenderBoxModelObject&>(m_renderer).paintRectToClipOutFromBorder(rect);
+    auto rectToClipOut = const_cast<RenderElement&>(m_renderer).paintRectToClipOutFromBorder(rect);
     bool appliedClipAlready = !rectToClipOut.isEmpty();
     GraphicsContextStateSaver stateSave(graphicsContext, appliedClipAlready);
     if (!rectToClipOut.isEmpty())
@@ -343,6 +343,9 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     if (!styleImage->canRender(&m_renderer, style.effectiveZoom()))
         return false;
 
+    if (!is<RenderBoxModelObject>(m_renderer))
+        return false;
+
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
     float deviceScaleFactor = document().deviceScaleFactor();
@@ -351,7 +354,7 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
-    LayoutSize source = m_renderer.calculateImageIntrinsicDimensions(styleImage, destination.size(), RenderBoxModelObject::DoNotScaleByEffectiveZoom);
+    auto source = downcast<RenderBoxModelObject>(m_renderer).calculateImageIntrinsicDimensions(styleImage, destination.size(), RenderBoxModelObject::DoNotScaleByEffectiveZoom);
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
     styleImage->setContainerContextForRenderer(m_renderer, source, style.effectiveZoom());

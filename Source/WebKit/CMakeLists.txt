@@ -521,6 +521,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameTreeNodeData.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/ShareableBitmap.serialization.in
+    Shared/TextFlags.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
 

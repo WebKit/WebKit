@@ -149,9 +149,9 @@ class PullRequest(Command):
 
     @classmethod
     def title_for(cls, commits):
-        title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits])
+        title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits if commit.message])
         if not title:
-            title = commits[0].message.splitlines()[0]
+            title = commits[0].message.splitlines()[0] if commits[0].message else '???'
         title = title.rstrip().lstrip()
         return title[:-5].rstrip() if title.endswith('(Part') else title
 
@@ -199,6 +199,15 @@ class PullRequest(Command):
             source_remote = repository.default_remote
 
         if repository.branch is None or repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
+            if not args.issue:
+                head = repository.commit(include_log=True, include_identifier=False)
+                if run([
+                    repository.executable(), 'merge-base', '--is-ancestor',
+                    head.hash, 'remotes/{}/{}'.format(source_remote, branch_point.branch),
+                ], capture_output=True, cwd=repository.root_path).returncode:
+                    if head.issues:
+                        args.issue = head.issues[0].link
+
             if Branch.main(
                 args, repository,
                 why="'{}' is not a pull request branch".format(repository.branch),
@@ -268,6 +277,8 @@ class PullRequest(Command):
 
     @classmethod
     def is_revert_commit(cls, commit):
+        if not commit.message:
+            return False
         msg = commit.message.split()
         if not len(msg):
             return False
@@ -286,11 +297,8 @@ class PullRequest(Command):
             return 1
 
         log.info('Adding comment for reverted commits...')
-        for line in commit.message.split():
-            issue = Tracker.from_string(line)
-            if issue:
-                issue.open(why='Reverted by {}'.format(pr.url))
-                break
+        for issue in commit.issues:
+            issue.open(why='Reverted by {}'.format(pr.url))
         return 0
 
     @classmethod
@@ -319,17 +327,8 @@ class PullRequest(Command):
             sys.stderr.write('Checks have failed, aborting pull request.\n')
             return 1
 
-        issues = []
-        count = 0
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
-        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
-            issue = Tracker.from_string(line)
-            if issue:
-                issues.append(issue)
-            if not line and count:
-                break
-            if not line:
-                count += 1
+        issues = commits[0].issues
 
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)

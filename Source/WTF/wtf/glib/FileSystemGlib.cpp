@@ -134,9 +134,17 @@ std::optional<uint64_t> fileSize(PlatformFileHandle handle)
     return g_file_info_get_size(info.get());
 }
 
-std::optional<WallTime> fileCreationTime(const String&)
+std::optional<WallTime> fileCreationTime(const String& path)
 {
-    // FIXME: Is there a way to retrieve file creation time with Gtk on platforms that support it?
+    const auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
+        return std::nullopt;
+
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
+    GRefPtr<GFileInfo> info = adoptGRef(g_file_query_info(file.get(), G_FILE_ATTRIBUTE_TIME_CREATED, G_FILE_QUERY_INFO_NONE, nullptr, nullptr));
+    if (info && g_file_info_has_attribute(info.get(), G_FILE_ATTRIBUTE_TIME_CREATED))
+        return WallTime::fromRawSeconds(g_file_info_get_attribute_uint64(info.get(), G_FILE_ATTRIBUTE_TIME_CREATED));
+
     return std::nullopt;
 }
 
