@@ -84,6 +84,11 @@ void AXLogger::log(const char* message)
         LOG(Accessibility, "%s", message);
 }
 
+void AXLogger::log(const AXCoreObject& object)
+{
+    log(const_cast<AXCoreObject*>(&object));
+}
+
 void AXLogger::log(RefPtr<AXCoreObject> object)
 {
     if (shouldLog()) {

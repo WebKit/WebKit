@@ -1225,7 +1225,7 @@ void AXObjectCache::notificationPostTimerFired()
     notificationsToPost.reserveInitialCapacity(notifications.size());
     for (const auto& note : notifications) {
         ASSERT(note.first);
-        if (!note.first->objectID() || !note.first->axObjectCache())
+        if (note.first->isDetached() || !note.first->axObjectCache())
             continue;
 
 #ifndef NDEBUG
@@ -2498,7 +2498,7 @@ void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMar
         vpOffset = deepPos.deprecatedEditingOffset();
     }
     
-    textMarkerData.axID = obj.get()->objectID();
+    textMarkerData.axID = obj->objectID();
     textMarkerData.node = domNode;
     textMarkerData.characterOffset = characterOffset.offset;
     textMarkerData.characterStartIndex = characterOffset.startIndex;
@@ -2791,7 +2791,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     TextMarkerData textMarkerData;
     memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
     
-    textMarkerData.axID = obj.get()->objectID();
+    textMarkerData.axID = obj->objectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
     textMarkerData.anchorType = deepPos.anchorType();
@@ -2824,7 +2824,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTex
     TextMarkerData textMarkerData;
     memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
     
-    textMarkerData.axID = obj.get()->objectID();
+    textMarkerData.axID = obj->objectID();
     textMarkerData.node = &textControl;
 
     cache->setNodeInUse(&textControl);
@@ -3653,7 +3653,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
 
     for (const auto& notification : notifications) {
         AXLOG(notification);
-        if (!notification.first || !notification.first->objectID().isValid())
+        if (!notification.first || notification.first->isDetached())
             continue;
 
         switch (notification.second) {

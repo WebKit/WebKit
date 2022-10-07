@@ -329,14 +329,6 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
 {
-    ASSERT_WITH_MESSAGE_UNUSED(
-        detachmentType,
-        detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier.isValid() && m_axObject : true,
-        "isolated object was detached due to element change, but ID %s was invalid (%d) and/or m_axObject was nullptr (%d)",
-        _identifier.loggingString().utf8().data(),
-        !_identifier.isValid(),
-        !m_axObject
-    );
     m_isolatedObject = nullptr;
 }
 #endif

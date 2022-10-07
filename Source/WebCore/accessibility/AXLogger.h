@@ -54,6 +54,7 @@ public:
     ~AXLogger();
     static void log(const String&);
     static void log(const char*);
+    static void log(const AXCoreObject&);
     static void log(RefPtr<AXCoreObject>);
     static void log(const Vector<RefPtr<AXCoreObject>>&);
     static void log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>&);

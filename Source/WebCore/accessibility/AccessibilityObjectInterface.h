@@ -825,8 +825,8 @@ public:
     // After constructing an accessible object, it must be given a
     // unique ID, then added to AXObjectCache, and finally init() must
     // be called last.
-    virtual void setObjectID(AXID) = 0;
-    virtual AXID objectID() const = 0;
+    void setObjectID(AXID axID) { m_id = axID; }
+    AXID objectID() const { return m_id; }
     virtual void init() = 0;
 
     // When the corresponding WebCore object that this accessible object
@@ -1444,15 +1444,22 @@ public:
     virtual String innerHTML() const = 0;
     virtual String outerHTML() const = 0;
 
-    
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
     virtual Vector<RetainPtr<id>> modelElementChildren() = 0;
 #endif
-    
+
+protected:
+    AXCoreObject() = default;
+    explicit AXCoreObject(AXID axID)
+        : m_id(axID)
+    { }
+
 private:
     // Detaches this object from the objects it references and it is referenced by.
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;
+    virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 
+    AXID m_id;
 #if PLATFORM(COCOA)
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
@@ -1460,7 +1467,6 @@ private:
 #elif USE(ATSPI)
     RefPtr<AccessibilityObjectAtspi> m_wrapper;
 #endif
-    virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 };
 
 inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objects)
@@ -1507,7 +1513,6 @@ inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
     detachWrapper(detachmentType);
     if (detachmentType != AccessibilityDetachmentType::ElementChanged)
         detachRemoteParts(detachmentType);
-    setObjectID({ });
 }
 
 #if ENABLE(ACCESSIBILITY)
