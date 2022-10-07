@@ -131,6 +131,8 @@ private:
     Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->data()); }
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
 
+    static constexpr bool sharedMemorySizeIsValid(size_t size) { return headerSize() < size && size <= headerSize() + maximumSize(); }
+
     size_t m_dataSize { 0 };
     Ref<WebKit::SharedMemory> m_sharedMemory;
 };
