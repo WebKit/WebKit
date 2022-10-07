@@ -9,12 +9,12 @@ PASS document.defaultView.getComputedStyle(object1).width is "300px"
 PASS document.defaultView.getComputedStyle(object1).height is "150px"
 
 Check initial <object> size, after external resource loaded
-FAIL document.defaultView.getComputedStyle(object1).width should be 200px. Was 300px.
-FAIL document.defaultView.getComputedStyle(object1).height should be 200px. Was 150px.
+PASS document.defaultView.getComputedStyle(object1).width is "200px"
+PASS document.defaultView.getComputedStyle(object1).height is "200px"
 
 Check final <object> size, after resizing finished
-FAIL document.defaultView.getComputedStyle(object1).width should be 400px. Was 300px.
-FAIL document.defaultView.getComputedStyle(object1).height should be 200px. Was 150px.
+PASS document.defaultView.getComputedStyle(object1).width is "400px"
+PASS document.defaultView.getComputedStyle(object1).height is "200px"
 
 Test passed if you see two green rectangles
 PASS successfullyParsed is true

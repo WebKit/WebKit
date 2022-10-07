@@ -10,13 +10,13 @@ layer at (0,0) size 800x322
         RenderImage {IMG} at (0,0) size 230x230 [border: (2px dashed #800000)]
         RenderText {#text} at (230,216) size 4x18
           text run at (230,216) width 4: " "
-        RenderEmbeddedObject {OBJECT} at (234,72) size 308x158 [border: (1px dashed #008000)]
-          layer at (0,0) size 300x150
-            RenderView at (0,0) size 300x150
-          layer at (0,0) size 300x150
-            RenderSVGRoot {svg} at (0,0) size 300x150
-          layer at (0,0) size 300x150
-            RenderSVGViewportContainer at (0,0) size 300x150
-          layer at (0,0) size 220x220 backgroundClip at (0,0) size 300x150 clip at (0,0) size 300x150
+        RenderEmbeddedObject {OBJECT} at (234,2) size 228x228 [border: (1px dashed #008000)]
+          layer at (0,0) size 220x220
+            RenderView at (0,0) size 220x220
+          layer at (0,0) size 220x220
+            RenderSVGRoot {svg} at (0,0) size 220x220
+          layer at (0,0) size 220x220
+            RenderSVGViewportContainer at (0,0) size 220x220
+          layer at (0,0) size 220x220
             RenderSVGEllipse {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
         RenderText {#text} at (0,0) size 0x0

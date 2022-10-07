@@ -586,7 +586,6 @@ svg/foreignObject/text-tref-02-b.svg       [ ImageOnlyFailure ]
 svg/hittest/text-multiple-dx-values.svg    [ ImageOnlyFailure ]
 svg/hittest/text-with-multiple-tspans.svg  [ ImageOnlyFailure ]
 svg/hittest/text-with-text-path.svg        [ ImageOnlyFailure ]
-svg/hixie/text/003.html                    [ ImageOnlyFailure ]
 svg/text/font-size-below-point-five-2.svg  [ ImageOnlyFailure ]
 svg/text/monospace-text-size-in-img.html   [ ImageOnlyFailure ]
 svg/text/text-repaint-rects.xhtml          [ ImageOnlyFailure ]
@@ -602,29 +601,11 @@ svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
 # General transform issues
 svg/custom/small-rect-scale.svg [ Failure ]
 
-# SVG sizing/repainting broken for SVGs embedded via HTML <img>
-svg/as-image/img-preserveAspectRatio-support-2.html [ ImageOnlyFailure ]
-svg/as-image/svg-object-intrinsic-size.html         [ ImageOnlyFailure ]
-
 # SVG sizing/repainting broken for SVGs embedded via HTML <object>
-svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1.html [ ImageOnlyFailure ]
-svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html [ ImageOnlyFailure ]
-svg/as-object/embedded-svg-immediate-offsetWidth-query.html                   [ ImageOnlyFailure ]
-svg/as-object/embedded-svg-size-changes-no-layout-triggers.html               [ ImageOnlyFailure ]
-svg/as-object/embedded-svg-size-changes.html                                  [ ImageOnlyFailure ]
-svg/as-object/mutate-on-load.html                                             [ ImageOnlyFailure ]
-svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1.html      [ ImageOnlyFailure ]
-svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2.html      [ ImageOnlyFailure ]
-svg/as-object/nested-embedded-svg-size-changes.html                           [ ImageOnlyFailure ]
-svg/as-object/sizing/svg-in-object-placeholder-height-auto.html               [ Failure ]
-svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html              [ Failure ]
-svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html         [ Failure ]
 svg/custom/object-no-size-attributes.xhtml                                    [ Failure ]
 svg/custom/object-sizing-no-width-height.xhtml                                [ Failure ]
 svg/custom/object-sizing.xhtml                                                [ Failure ]
-svg/hixie/intrinsic/003.html                                                  [ ImageOnlyFailure ]
 svg/wicd/sizing-flakiness.html                                                [ ImageOnlyFailure ]
-svg/wicd/test-rightsizing-b.xhtml                                             [ ImageOnlyFailure ]
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html                     [ Failure ]
 
 # CSS 'mix-blend-mode' broken
