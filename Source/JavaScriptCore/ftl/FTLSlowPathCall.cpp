@@ -52,7 +52,7 @@ SlowPathCallContext::SlowPathCallContext(
         
     // The return register doesn't need to be saved.
     if (m_returnRegister != InvalidGPRReg)
-        usedRegisters.excludeRegister(m_returnRegister);
+        usedRegisters.remove(m_returnRegister);
         
     size_t stackBytesNeededForReturnAddress = wordSize;
         
@@ -61,12 +61,12 @@ SlowPathCallContext::SlowPathCallContext(
     
     RegisterSet callingConventionRegisters = m_callingConventionRegisters.set();
     for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
-        callingConventionRegisters.includeRegister(GPRInfo::toArgumentRegister(i), Width64);
+        callingConventionRegisters.add(GPRInfo::toArgumentRegister(i), Width64);
     callingConventionRegisters.merge(m_argumentRegisters.set());
     if (returnRegister != InvalidGPRReg)
-        callingConventionRegisters.includeRegister(GPRInfo::returnValueGPR, Width64);
+        callingConventionRegisters.add(GPRInfo::returnValueGPR, Width64);
     if (indirectCallTargetRegister != InvalidGPRReg)
-        callingConventionRegisters.includeRegister(indirectCallTargetRegister, Width64);
+        callingConventionRegisters.add(indirectCallTargetRegister, Width64);
     callingConventionRegisters.filter(usedRegisters);
     m_callingConventionRegisters = callingConventionRegisters.whole();
         
@@ -90,10 +90,10 @@ SlowPathCallContext::SlowPathCallContext(
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.includesRegister(reg, Width64))
+        if (!m_callingConventionRegisters.contains(reg, Width64))
             continue;
         m_jit.storePtr(reg, CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize));
-        usedRegisters.excludeRegister(reg);
+        usedRegisters.remove(reg);
     }
     
     m_thunkSaveSet = usedRegisters.whole();
@@ -108,7 +108,7 @@ SlowPathCallContext::~SlowPathCallContext()
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.includesRegister(reg, Width64))
+        if (!m_callingConventionRegisters.contains(reg, Width64))
             continue;
         m_jit.loadPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize), reg);
     }

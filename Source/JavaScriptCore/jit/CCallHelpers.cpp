@@ -48,7 +48,7 @@ void CCallHelpers::ensureShadowChickenPacket(VM& vm, GPRReg shadowPacket, GPRReg
 {
     ShadowChicken* shadowChicken = vm.shadowChicken();
     RELEASE_ASSERT(shadowChicken);
-    ASSERT(!RegisterSet::argumentGPRS().includesRegister(scratch1NonArgGPR, Width64));
+    ASSERT(!RegisterSet::argumentGPRS().contains(scratch1NonArgGPR, Width64));
     move(TrustedImmPtr(shadowChicken->addressOfLogCursor()), scratch1NonArgGPR);
     loadPtr(Address(scratch1NonArgGPR), shadowPacket);
     Jump ok = branchPtr(Below, shadowPacket, TrustedImmPtr(shadowChicken->logEnd()));

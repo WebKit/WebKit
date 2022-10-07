@@ -2139,9 +2139,9 @@ void testElideHandlesEarlyClobber()
         lastCalleeSave = reg;
     }
     ASSERT(firstCalleeSave != lastCalleeSave);
-    patch->earlyClobbered().excludeRegister(firstCalleeSave);
+    patch->earlyClobbered().remove(firstCalleeSave);
     patch->resultConstraints.append({ B3::ValueRep::reg(firstCalleeSave) });
-    patch->earlyClobbered().excludeRegister(lastCalleeSave);
+    patch->earlyClobbered().remove(lastCalleeSave);
     patch->clobber(RegisterSet(lastCalleeSave));
 
     patch->setGenerator([=] (CCallHelpers& jit, const JSC::B3::StackmapGenerationParams&) {
@@ -2429,7 +2429,7 @@ void testEarlyAndLateUseOfSameTmp()
             patchpoint->append(dummyValue, B3::ValueRep::SomeLateRegister);
             patchpoint->clobberLate(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                RELEASE_ASSERT(!WholeRegisterSet(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters())).includesRegister(params[1].gpr(), Width64));
+                RELEASE_ASSERT(!WholeRegisterSet(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters())).contains(params[1].gpr(), Width64));
 
                 auto good = jit.branch64(CCallHelpers::Equal, params[1].gpr(), CCallHelpers::TrustedImm32(rand));
                 jit.breakpoint();
@@ -2490,7 +2490,7 @@ void testEarlyClobberInterference()
             patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);
             patchpoint->clobberEarly(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                RELEASE_ASSERT(!WholeRegisterSet(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters())).includesRegister(params[0].gpr(), Width64));
+                RELEASE_ASSERT(!WholeRegisterSet(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters())).contains(params[0].gpr(), Width64));
 
                 auto good = jit.branch64(CCallHelpers::Equal, params[0].gpr(), CCallHelpers::TrustedImm32(rand));
                 jit.breakpoint();

@@ -70,7 +70,7 @@ public:
         
         bool isLive(Reg reg) const
         {
-            return m_workset.includesRegister(reg, Width64);
+            return m_workset.contains(reg, Width64);
         }
         
     protected:
@@ -91,7 +91,7 @@ public:
         void execute(unsigned instIndex)
         {
             m_actions[instIndex + 1].def.forEach([&] (Reg r) {
-                m_workset.excludeRegister(r);
+                m_workset.remove(r);
             });
             m_workset.merge(m_actions[instIndex].use);
         }

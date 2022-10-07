@@ -78,7 +78,7 @@ public:
 
         noException.link(&jit);
         WholeRegisterSet dontRestore;
-        dontRestore.includeRegister(m_result, Width64);
+        dontRestore.add(m_result, Width64);
         state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
         return exceptions;

@@ -58,7 +58,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
             if (!reg)
                 return;
 
-            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
+            ASSERT(!m_availableRegs[tmp.bank()].contains(reg, Width64));
             ASSERT(m_currentAllocation->at(reg) == tmp);
         });
 
@@ -68,11 +68,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
 
             Tmp tmp = m_currentAllocation->at(reg);
             if (!tmp) {
-                ASSERT(m_availableRegs[bankForReg(reg)].includesRegister(reg, Width64));
+                ASSERT(m_availableRegs[bankForReg(reg)].contains(reg, Width64));
                 continue;
             }
 
-            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
+            ASSERT(!m_availableRegs[tmp.bank()].contains(reg, Width64));
             ASSERT(m_map[tmp].reg == reg);
         }
     }
@@ -162,8 +162,8 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
     ASSERT(reg);
     ASSERT(m_currentAllocation->at(reg) == tmp);
     m_currentAllocation->at(reg) = Tmp();
-    ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
-    m_availableRegs[tmp.bank()].includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+    ASSERT(!m_availableRegs[tmp.bank()].contains(reg, Width64));
+    m_availableRegs[tmp.bank()].add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     ASSERT(m_map[tmp].reg == reg);
     m_map[tmp].reg = Reg();
 }
@@ -200,11 +200,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         spill(occupyingTmp, reg);
     else {
         ASSERT(!m_currentAllocation->at(reg));
-        ASSERT(m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
+        ASSERT(m_availableRegs[tmp.bank()].contains(reg, Width64));
     }
 
     m_map[tmp].reg = reg;
-    m_availableRegs[tmp.bank()].excludeRegister(reg);
+    m_availableRegs[tmp.bank()].remove(reg);
     m_currentAllocation->at(reg) = tmp;
 
     if (Arg::isAnyUse(role)) {
@@ -264,10 +264,10 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
     auto markRegisterAsUsed = [&] (Reg reg) {
         if (Arg::isAnyDef(role))
-            m_clobberedToClear.excludeRegister(reg);
+            m_clobberedToClear.remove(reg);
         // At this point, it doesn't matter if we add it to the m_namedUsedRegs or m_namedDefdRegs. 
         // We just need to mark that we can't use it again for another tmp.
-        m_namedUsedRegs.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+        m_namedUsedRegs.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     };
 
     bool mightInterfere = WholeRegisterSet(m_earlyClobber).numberOfSetRegisters() || (m_lateClobber).numberOfSetRegisters();
@@ -275,23 +275,23 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
     auto interferesWithClobber = [&] (Reg reg) {
         if (!mightInterfere)
             return false;
-        if (Arg::isAnyUse(role) && WholeRegisterSet(m_earlyClobber).includesRegister(reg, Width64))
+        if (Arg::isAnyUse(role) && WholeRegisterSet(m_earlyClobber).contains(reg, Width64))
             return true;
-        if (Arg::isAnyDef(role) && WholeRegisterSet(m_lateClobber).includesRegister(reg, Width64))
+        if (Arg::isAnyDef(role) && WholeRegisterSet(m_lateClobber).contains(reg, Width64))
             return true;
-        if (Arg::activeAt(role, Arg::Phase::Early) && WholeRegisterSet(m_earlyClobber).includesRegister(reg, Width64))
+        if (Arg::activeAt(role, Arg::Phase::Early) && WholeRegisterSet(m_earlyClobber).contains(reg, Width64))
             return true;
-        if (Arg::activeAt(role, Arg::Phase::Late) && WholeRegisterSet(m_lateClobber).includesRegister(reg, Width64))
+        if (Arg::activeAt(role, Arg::Phase::Late) && WholeRegisterSet(m_lateClobber).contains(reg, Width64))
             return true;
         return false;
     };
 
     if (Reg reg = m_map[tmp].reg) {
         if (!interferesWithClobber(reg)) {
-            ASSERT(!m_namedDefdRegs.includesRegister(reg, Width64));
+            ASSERT(!m_namedDefdRegs.contains(reg, Width64));
             tmp = Tmp(reg);
             markRegisterAsUsed(reg);
-            ASSERT(!m_availableRegs[bank].includesRegister(reg, Width64));
+            ASSERT(!m_availableRegs[bank].contains(reg, Width64));
             return true;
         }
         // This is a rare case when we've already allocated a Tmp in some way, but another 
@@ -306,9 +306,9 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
     if (m_availableRegs[bank].numberOfSetRegisters()) {
         // We first take an available register.
         for (Reg reg : m_registers[bank]) {
-            if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg, Width64) || m_namedDefdRegs.includesRegister(reg, Width64))
+            if (interferesWithClobber(reg) || m_namedUsedRegs.contains(reg, Width64) || m_namedDefdRegs.contains(reg, Width64))
                 continue;
-            if (!m_availableRegs[bank].includesRegister(reg, Width64))
+            if (!m_availableRegs[bank].contains(reg, Width64))
                 continue;
 
             markRegisterAsUsed(reg);
@@ -320,7 +320,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
     // Nothing was available, let's make some room.
     for (Reg reg : m_registers[bank]) {
-        if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg, Width64) || m_namedDefdRegs.includesRegister(reg, Width64))
+        if (interferesWithClobber(reg) || m_namedUsedRegs.contains(reg, Width64) || m_namedDefdRegs.contains(reg, Width64))
             continue;
 
         markRegisterAsUsed(reg);
@@ -335,7 +335,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
 ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 {
-    return !m_allowedRegisters.includesRegister(reg, Width64);
+    return !m_allowedRegisters.contains(reg, Width64);
 }
 
 void GenerateAndAllocateRegisters::prepareForGeneration()
@@ -425,7 +425,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         m_registers[bank] = m_code.regsInPriorityOrder(bank);
 
         for (Reg reg : m_registers[bank]) {
-            m_allowedRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+            m_allowedRegisters.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
             TmpData& data = m_map[Tmp(reg)];
             unsigned slotSize = conservativeRegisterBytes(bank);
             if (!Options::useWebAssemblySIMD())
@@ -584,7 +584,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
             WholeRegisterSet availableRegisters;
             for (Reg reg : m_registers[bank])
-                availableRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                availableRegisters.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
             m_availableRegs[bank] = WTFMove(availableRegisters);
         });
 
@@ -597,7 +597,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 continue;
             Reg reg = Reg::fromIndex(i);
             m_map[tmp].reg = reg;
-            m_availableRegs[tmp.bank()].excludeRegister(reg);
+            m_availableRegs[tmp.bank()].remove(reg);
         }
 
         ++m_globalInstIndex;
@@ -669,9 +669,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
                 if (tmp.isReg()) {
                     if (Arg::isAnyUse(role))
-                        m_namedUsedRegs.includeRegister(tmp.reg(), width);
+                        m_namedUsedRegs.add(tmp.reg(), width);
                     if (Arg::isAnyDef(role))
-                        m_namedDefdRegs.includeRegister(tmp.reg(), width);
+                        m_namedDefdRegs.add(tmp.reg(), width);
                 }
             });
 
@@ -805,7 +805,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 RegisterSet registerSet;
                 for (size_t i = 0; i < currentAllocation.size(); ++i) {
                     if (currentAllocation[i])
-                        registerSet.includeRegister(Reg::fromIndex(i), Options::useWebAssemblySIMD() ? Width128 : Width64);
+                        registerSet.add(Reg::fromIndex(i), Options::useWebAssemblySIMD() ? Width128 : Width64);
                 }
                 inst.reportUsedRegisters(registerSet);
             }

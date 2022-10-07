@@ -71,7 +71,7 @@ void testPinRegisters()
                 inst.forEachTmpFast(
                     [&] (Air::Tmp tmp) {
                         if (tmp.isReg())
-                            usesCSRs |= csrs.whole().includesRegister(tmp.reg(), Width64);
+                            usesCSRs |= csrs.whole().contains(tmp.reg(), Width64);
                     });
             }
         }
@@ -81,7 +81,7 @@ void testPinRegisters()
             usesCSRs = false;
         }
         for (const RegisterAtOffset& regAtOffset : proc.calleeSaveRegisterAtOffsetList())
-            usesCSRs |= csrs.whole().includesRegister(regAtOffset.reg(), Width64);
+            usesCSRs |= csrs.whole().contains(regAtOffset.reg(), Width64);
         CHECK_EQ(usesCSRs, !pin);
     };
 
@@ -1369,7 +1369,7 @@ void testShuffleDoesntTrashCalleeSaves()
     unsigned i = 0;
     Vector<Value*> patches;
     for (Reg reg : WholeRegisterSet(regs)) {
-        if (RegisterSet::argumentGPRS().includesRegister(reg, Width64) || !reg.isGPR())
+        if (RegisterSet::argumentGPRS().contains(reg, Width64) || !reg.isGPR())
             continue;
         ++i;
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
@@ -1504,7 +1504,7 @@ void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams& params) {
-            RELEASE_ASSERT(allRegs.whole().includesRegister(params[0].gpr(), Width64));
+            RELEASE_ASSERT(allRegs.whole().contains(params[0].gpr(), Width64));
         });
     }
 

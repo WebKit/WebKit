@@ -35,9 +35,9 @@ namespace JSC { namespace B3 { namespace Air {
 CCallSpecial::CCallSpecial()
 {
     m_clobberedRegs = RegisterSet::registersToSaveForCCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
-    m_clobberedRegs.excludeRegister(GPRInfo::returnValueGPR);
-    m_clobberedRegs.excludeRegister(GPRInfo::returnValueGPR2);
-    m_clobberedRegs.excludeRegister(FPRInfo::returnValueFPR);
+    m_clobberedRegs.remove(GPRInfo::returnValueGPR);
+    m_clobberedRegs.remove(GPRInfo::returnValueGPR2);
+    m_clobberedRegs.remove(FPRInfo::returnValueFPR);
 }
 
 CCallSpecial::~CCallSpecial()

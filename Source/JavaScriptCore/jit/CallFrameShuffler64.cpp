@@ -87,7 +87,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
             m_jit.zeroExtend32ToWord(
                 cachedRecovery.recovery().gpr(),
                 cachedRecovery.recovery().gpr());
-            m_lockedRegisters.includeRegister(cachedRecovery.recovery().gpr(), Width64);
+            m_lockedRegisters.add(cachedRecovery.recovery().gpr(), Width64);
             if (tryAcquireNumberTagRegister())
                 m_jit.or64(m_numberTagRegister, cachedRecovery.recovery().gpr());
             else {
@@ -95,7 +95,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
                 m_jit.or64(MacroAssembler::TrustedImm64(JSValue::NumberTag),
                     cachedRecovery.recovery().gpr());
             }
-            m_lockedRegisters.excludeRegister(cachedRecovery.recovery().gpr());
+            m_lockedRegisters.remove(cachedRecovery.recovery().gpr());
             cachedRecovery.setRecovery(
                 ValueRecovery::inGPR(cachedRecovery.recovery().gpr(), DataFormatJS));
             if (verbose)
@@ -148,12 +148,12 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
             ASSERT(Reg::fromIndex(resultGPR).isGPR());
             m_jit.purifyNaN(cachedRecovery.recovery().fpr());
             m_jit.moveDoubleTo64(cachedRecovery.recovery().fpr(), resultGPR);
-            m_lockedRegisters.includeRegister(resultGPR, Width64);
+            m_lockedRegisters.add(resultGPR, Width64);
             if (tryAcquireNumberTagRegister())
                 m_jit.sub64(m_numberTagRegister, resultGPR);
             else
                 m_jit.sub64(MacroAssembler::TrustedImm64(JSValue::NumberTag), resultGPR);
-            m_lockedRegisters.excludeRegister(resultGPR);
+            m_lockedRegisters.remove(resultGPR);
             updateRecovery(cachedRecovery, ValueRecovery::inGPR(resultGPR, DataFormatJS));
             if (verbose)
                 dataLog(" into ", cachedRecovery.recovery(), "\n");
@@ -182,13 +182,13 @@ void CallFrameShuffler::emitLoad(CachedRecovery& cachedRecovery)
     // If we want a GPR and it's available, that's better than loading
     // into an FPR.
     if (resultGPR != InvalidGPRReg && !m_registers[resultGPR]
-        && !m_lockedRegisters.includesRegister(resultGPR, Width64) && cachedRecovery.loadsIntoGPR())
+        && !m_lockedRegisters.contains(resultGPR, Width64) && cachedRecovery.loadsIntoGPR())
         tryFPR = false;
 
     // Otherwise, we prefer loading into FPRs if possible
     if (tryFPR && cachedRecovery.loadsIntoFPR()) {
         FPRReg resultFPR { cachedRecovery.wantedFPR() };
-        if (resultFPR == InvalidFPRReg || m_registers[resultFPR] || m_lockedRegisters.includesRegister(resultFPR, Width64))
+        if (resultFPR == InvalidFPRReg || m_registers[resultFPR] || m_lockedRegisters.contains(resultFPR, Width64))
             resultFPR = getFreeFPR();
         if (resultFPR != InvalidFPRReg) {
             m_jit.loadDouble(address, resultFPR);
@@ -208,7 +208,7 @@ void CallFrameShuffler::emitLoad(CachedRecovery& cachedRecovery)
     }
 
     ASSERT(cachedRecovery.loadsIntoGPR());
-    if (resultGPR == InvalidGPRReg || m_registers[resultGPR] || m_lockedRegisters.includesRegister(resultGPR, Width64))
+    if (resultGPR == InvalidGPRReg || m_registers[resultGPR] || m_lockedRegisters.contains(resultGPR, Width64))
         resultGPR = getFreeGPR();
     ASSERT(resultGPR != InvalidGPRReg);
     m_jit.loadPtr(address, resultGPR);
@@ -242,7 +242,7 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
     if (!(wantedReg = Reg { cachedRecovery.wantedJSValueRegs().gpr() }))
         wantedReg = Reg { cachedRecovery.wantedFPR() };
     ASSERT(wantedReg);
-    ASSERT(!m_lockedRegisters.includesRegister(wantedReg, Width64));
+    ASSERT(!m_lockedRegisters.contains(wantedReg, Width64));
 
     if (CachedRecovery* current = m_registers[wantedReg]) {
         if (current == &cachedRecovery) {
@@ -360,7 +360,7 @@ bool CallFrameShuffler::tryAcquireNumberTagRegister()
     if (m_numberTagRegister == InvalidGPRReg)
         return false;
 
-    m_lockedRegisters.includeRegister(m_numberTagRegister, Width64);
+    m_lockedRegisters.add(m_numberTagRegister, Width64);
     m_jit.move(MacroAssembler::TrustedImm64(JSValue::NumberTag), m_numberTagRegister);
     return true;
 }

@@ -53,11 +53,11 @@ public:
     {
         RegisterSet result;
         if (baseMemoryPointer != InvalidGPRReg)
-            result.includeRegister(baseMemoryPointer, Width64);
+            result.add(baseMemoryPointer, Width64);
         if (wasmContextInstancePointer != InvalidGPRReg)
-            result.includeRegister(wasmContextInstancePointer, Width64);
+            result.add(wasmContextInstancePointer, Width64);
         if (mode == MemoryMode::BoundsChecking && boundsCheckingSizeRegister != InvalidGPRReg)
-            result.includeRegister(boundsCheckingSizeRegister, Width64);
+            result.add(boundsCheckingSizeRegister, Width64);
         return result;
     }
 

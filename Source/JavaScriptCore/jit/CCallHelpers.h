@@ -97,7 +97,7 @@ private:
         if (ASSERT_ENABLED) {
             RegisterSet set;
             for (RegType dest : destinations)
-                set.includeRegister(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                set.add(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
             ASSERT_WITH_MESSAGE(set.numberOfSetRegisters() == NumberOfRegisters, "Destinations should not be aliased.");
         }
 
@@ -121,7 +121,7 @@ private:
             RegisterSet set;
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                set.includeRegister(source, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                set.add(source, Options::useWebAssemblySIMD() ? Width128 : Width64);
             }
             return set.numberOfSetRegisters();
         };
@@ -130,7 +130,7 @@ private:
             RegisterSet set;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                set.includeRegister(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                set.add(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
             }
             return set.numberOfSetRegisters();
         };
@@ -140,11 +140,11 @@ private:
             WholeRegisterSet freeDestinations;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                freeDestinations.includeRegister(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                freeDestinations.add(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
             }
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                freeDestinations.excludeRegister(source);
+                freeDestinations.remove(source);
             }
 
             if (freeDestinations.numberOfSetRegisters()) {
@@ -153,7 +153,7 @@ private:
                     auto& pair = pairs[i];
                     RegType source = pair.first;
                     RegType dest = pair.second;
-                    if (freeDestinations.includesRegister(dest, Width64)) {
+                    if (freeDestinations.contains(dest, Width64)) {
                         move(source, dest);
                         pairs.remove(i);
                         madeMove = true;
@@ -828,14 +828,14 @@ public:
     {
         WholeRegisterSet preserved;
         if (preservedGPR1 != InvalidGPRReg)
-            preserved.includeRegister(preservedGPR1, Width64);
+            preserved.add(preservedGPR1, Width64);
         if (preservedGPR2 != InvalidGPRReg)
-            preserved.includeRegister(preservedGPR2, Width64);
+            preserved.add(preservedGPR2, Width64);
 
         GPRReg temp1 = selectScratchGPR(preserved);
-        preserved.includeRegister(temp1, Width64);
+        preserved.add(temp1, Width64);
         GPRReg temp2 = selectScratchGPR(preserved);
-        preserved.includeRegister(temp2, Width64);
+        preserved.add(temp2, Width64);
         GPRReg temp3 = selectScratchGPR(preserved);
 
         GPRReg newFramePointer = temp1;

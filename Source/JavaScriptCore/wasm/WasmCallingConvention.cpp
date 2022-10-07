@@ -72,9 +72,9 @@ const WasmCallingConvention& wasmCallingConvention()
         scratch.exclude(RegisterSet::reservedHardwareRegisters());
         scratch.exclude(RegisterSet::stackRegisters());
         for (JSValueRegs jsr : jsrArgumentRegisters) {
-            scratch.excludeRegister(jsr.payloadGPR());
+            scratch.remove(jsr.payloadGPR());
 #if USE(JSVALUE32_64)
-            scratch.excludeRegister(jsr.tagGPR());
+            scratch.remove(jsr.tagGPR());
 #endif
         }
 

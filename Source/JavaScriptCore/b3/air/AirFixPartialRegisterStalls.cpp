@@ -213,9 +213,9 @@ void fixPartialRegisterStalls(Code& code)
                 inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width w) {
                     if (tmp.isFPR() && w <= Width64) {
                         if (Arg::isAnyDef(role))
-                            defs.includeRegister(tmp.fpr(), Width128);
+                            defs.add(tmp.fpr(), Width128);
                         if (Arg::isAnyUse(role))
-                            uses.includeRegister(tmp.fpr(), Width128);
+                            uses.add(tmp.fpr(), Width128);
                     }
                 });
                 // We only care about values we define but not use. Otherwise we have to wait

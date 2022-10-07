@@ -49,9 +49,9 @@ public:
     // Unless you know the register is not the target of a recovery.
     void lockGPR(GPRReg gpr)
     {
-        ASSERT(!m_lockedRegisters.includesRegister(gpr, Width64));
+        ASSERT(!m_lockedRegisters.contains(gpr, Width64));
         ASSERT(Reg(gpr).isGPR());
-        m_lockedRegisters.includeRegister(gpr, Width64);
+        m_lockedRegisters.add(gpr, Width64);
         if (verbose)
             dataLog("   * Locking ", gpr, "\n");
     }
@@ -69,12 +69,12 @@ public:
     {
         ASSERT(Reg::fromIndex(gpr).isGPR());
         if (verbose) {
-            if (m_lockedRegisters.includesRegister(gpr, Width64))
+            if (m_lockedRegisters.contains(gpr, Width64))
                 dataLog("   * Releasing ", gpr, "\n");
             else
                 dataLog("   * ", gpr, " was not locked\n");
         }
-        m_lockedRegisters.excludeRegister(gpr);
+        m_lockedRegisters.remove(gpr);
     }
 
     void restoreGPR(GPRReg gpr)
@@ -449,7 +449,7 @@ private:
     {
         Reg nonTemp { };
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-            if (m_lockedRegisters.includesRegister(reg, Width64))
+            if (m_lockedRegisters.contains(reg, Width64))
                 continue;
 
             if (!check(reg))
@@ -465,8 +465,8 @@ private:
 
 #if USE(JSVALUE64)
         if (!nonTemp && m_numberTagRegister != InvalidGPRReg && check(Reg { m_numberTagRegister })) {
-            ASSERT(m_lockedRegisters.includesRegister(m_numberTagRegister, Width64));
-            m_lockedRegisters.excludeRegister(m_numberTagRegister);
+            ASSERT(m_lockedRegisters.contains(m_numberTagRegister, Width64));
+            m_lockedRegisters.remove(m_numberTagRegister);
             nonTemp = Reg { m_numberTagRegister };
             m_numberTagRegister = InvalidGPRReg;
         }
@@ -521,7 +521,7 @@ private:
         // around twice the number of available registers on your
         // architecture), no spilling is going to take place anyways.
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-            if (m_lockedRegisters.includesRegister(reg, Width64))
+            if (m_lockedRegisters.contains(reg, Width64))
                 continue;
 
             CachedRecovery* cachedRecovery { m_newRegisters[reg] };
@@ -564,13 +564,13 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInGPR())
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().gpr(), Width64);
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().gpr(), Width64);
                 if (cachedRecovery.recovery().isInFPR())
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().fpr(), Width64);
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().fpr(), Width64);
 #if USE(JSVALUE32_64)
                 if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().tagGPR(), Width64)
-                        && !m_lockedRegisters.includesRegister(cachedRecovery.recovery().payloadGPR(), Width64);
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().tagGPR(), Width64)
+                        && !m_lockedRegisters.contains(cachedRecovery.recovery().payloadGPR(), Width64);
                 }
 #endif
                 return false;
@@ -587,13 +587,13 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInGPR()) {
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().gpr(), Width64) 
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().gpr(), Width64) 
                         && !m_newRegisters[cachedRecovery.recovery().gpr()];
                 }
 #if USE(JSVALUE32_64)
                 if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().tagGPR(), Width64)
-                        && !m_lockedRegisters.includesRegister(cachedRecovery.recovery().payloadGPR(), Width64)
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().tagGPR(), Width64)
+                        && !m_lockedRegisters.contains(cachedRecovery.recovery().payloadGPR(), Width64)
                         && !m_newRegisters[cachedRecovery.recovery().tagGPR()]
                         && !m_newRegisters[cachedRecovery.recovery().payloadGPR()];
                 }
@@ -612,11 +612,11 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInGPR())
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().gpr(), Width64);
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().gpr(), Width64);
 #if USE(JSVALUE32_64)
                 if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().tagGPR(), Width64)
-                        && !m_lockedRegisters.includesRegister(cachedRecovery.recovery().payloadGPR(), Width64);
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().tagGPR(), Width64)
+                        && !m_lockedRegisters.contains(cachedRecovery.recovery().payloadGPR(), Width64);
                 }
 #endif
                 return false;
@@ -633,7 +633,7 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInFPR())
-                    return !m_lockedRegisters.includesRegister(cachedRecovery.recovery().fpr(), Width64);
+                    return !m_lockedRegisters.contains(cachedRecovery.recovery().fpr(), Width64);
                 return false;
             });
     }

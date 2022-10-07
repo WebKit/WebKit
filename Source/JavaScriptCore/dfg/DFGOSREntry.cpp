@@ -303,8 +303,8 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     VMEntryRecord* record = vmEntryRecord(vm.topEntryFrame);
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset currentEntry = registerSaveLocations->at(i);
-        ASSERT(dontSaveRegisters.includesRegister(currentEntry.reg(), Width64) == dontSaveRegisters.includesRegister(currentEntry.reg(), Width128));
-        if (dontSaveRegisters.includesRegister(currentEntry.reg(), Width64))
+        ASSERT(dontSaveRegisters.contains(currentEntry.reg(), Width64) == dontSaveRegisters.contains(currentEntry.reg(), Width128));
+        if (dontSaveRegisters.contains(currentEntry.reg(), Width64))
             continue;
         RELEASE_ASSERT(currentEntry.reg().isGPR());
         RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());

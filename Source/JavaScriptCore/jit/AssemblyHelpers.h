@@ -1307,7 +1307,7 @@ public:
         };
 
         for (GPRReg reg : registers) {
-            if (!preserved.includesRegister(reg, Width64))
+            if (!preserved.contains(reg, Width64))
                 return reg;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1330,9 +1330,9 @@ public:
     static void constructRegisterSet(WholeRegisterSet& set, JSValueRegs regs, Regs... args)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            set.includeRegister(regs.tagGPR(), Width64);
+            set.add(regs.tagGPR(), Width64);
         if (regs.payloadGPR() != InvalidGPRReg)
-            set.includeRegister(regs.payloadGPR(), Width64);
+            set.add(regs.payloadGPR(), Width64);
         constructRegisterSet(set, args...);
     }
 
@@ -1340,7 +1340,7 @@ public:
     static void constructRegisterSet(WholeRegisterSet& set, GPRReg reg, Regs... args)
     {
         if (reg != InvalidGPRReg)
-            set.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+            set.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
         constructRegisterSet(set, args...);
     }
 

@@ -2561,7 +2561,7 @@ void testSimplePatchpointWithOuputClobbersGPArgs()
     RegisterSet clobberAll = RegisterSet::allGPRs();
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberAll.excludeRegister(GPRInfo::argumentGPR2);
+    clobberAll.remove(GPRInfo::argumentGPR2);
     patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
@@ -2600,8 +2600,8 @@ void testSimplePatchpointWithoutOuputClobbersFPArgs()
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
     RegisterSet fpClobbers;
-    fpClobbers.includeRegister(FPRInfo::argumentFPR0, Width64);
-    fpClobbers.includeRegister(FPRInfo::argumentFPR1, Width64);
+    fpClobbers.add(FPRInfo::argumentFPR0, Width64);
+    fpClobbers.add(FPRInfo::argumentFPR1, Width64);
     patchpoint->clobberLate(fpClobbers);
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
@@ -2644,7 +2644,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
     RegisterSet clobberAll = RegisterSet::allFPRs();
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberAll.excludeRegister(FPRInfo::argumentFPR2);
+    clobberAll.remove(FPRInfo::argumentFPR2);
     patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
@@ -2806,8 +2806,8 @@ void testPatchpointGPScratch()
             CHECK(params.gpScratch(1) != params[0].gpr());
             CHECK(params.gpScratch(1) != params[1].gpr());
             CHECK(params.gpScratch(1) != params[2].gpr());
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(0), Width64));
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(1), Width64));
+            CHECK(!params.unavailableRegisters().whole().contains(params.gpScratch(0), Width64));
+            CHECK(!params.unavailableRegisters().whole().contains(params.gpScratch(1), Width64));
             add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
@@ -2836,8 +2836,8 @@ void testPatchpointFPScratch()
             CHECK(params.fpScratch(0) != InvalidFPRReg);
             CHECK(params.fpScratch(1) != InvalidFPRReg);
             CHECK(params.fpScratch(1) != params.fpScratch(0));
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(0), Width64));
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(1), Width64));
+            CHECK(!params.unavailableRegisters().whole().contains(params.fpScratch(0), Width64));
+            CHECK(!params.unavailableRegisters().whole().contains(params.fpScratch(1), Width64));
             add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);

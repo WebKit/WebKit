@@ -153,7 +153,7 @@ private:
             [&] (Bank bank) {
                 m_registers[bank] = m_code.regsInPriorityOrder(bank);
                 for (Reg r : m_registers[bank])
-                    m_registerSet[bank].includeRegister(r, Width64);
+                    m_registerSet[bank].add(r, Width64);
                 m_unifiedRegisterSet.merge(m_registerSet[bank]);
             });
     }
@@ -276,7 +276,7 @@ private:
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                             ASSERT(width <= Width64);
                             if (Arg::isLateDef(role))
-                                prevRegs.includeRegister(reg, width);
+                                prevRegs.add(reg, width);
                         });
                     if (prev->kind.opcode == Patch)
                         prevRegs.merge(prev->extraClobberedRegs());
@@ -290,7 +290,7 @@ private:
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                             ASSERT(width <= Width64);
                             if (Arg::isEarlyDef(role))
-                                nextRegs.includeRegister(reg, width);
+                                nextRegs.add(reg, width);
                         });
                     if (next->kind.opcode == Patch)
                         nextRegs.merge(next->extraEarlyClobberedRegs());
@@ -443,7 +443,7 @@ private:
                     break;
                 
                 m_active.removeFirst();
-                m_activeRegs.excludeRegister(entry.assigned);
+                m_activeRegs.remove(entry.assigned);
             }
 
             // If necessary, compute the set of registers that this tmp could even use. This is not
@@ -479,7 +479,7 @@ private:
                 for (Reg reg : m_registers[bank]) {
                     // FIXME: Could do priority coloring here.
                     // https://bugs.webkit.org/show_bug.cgi?id=170304
-                    if (!m_activeRegs.includesRegister(reg, Width64) && entry.possibleRegs.includesRegister(reg, Width64)) {
+                    if (!m_activeRegs.contains(reg, Width64) && entry.possibleRegs.contains(reg, Width64)) {
                         assign(tmp, reg);
                         didAssign = true;
                         break;
@@ -492,7 +492,7 @@ private:
             // This is SpillAtInterval in Fig. 1, but modified to handle clobbers.
             Tmp spillTmp = m_active.takeLast(
                 [&] (Tmp spillCandidate) -> bool {
-                    return entry.possibleRegs.includesRegister(m_map[spillCandidate].assigned, Width64);
+                    return entry.possibleRegs.contains(m_map[spillCandidate].assigned, Width64);
                 });
             if (!spillTmp) {
                 spill(tmp);
@@ -534,7 +534,7 @@ private:
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.spilled);
         entry.assigned = reg;
-        m_activeRegs.includeRegister(reg, Width64);
+        m_activeRegs.add(reg, Width64);
         addToActive(tmp);
     }
     

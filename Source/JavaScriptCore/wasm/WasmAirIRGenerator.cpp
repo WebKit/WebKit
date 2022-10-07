@@ -740,7 +740,7 @@ private:
                 inst.args.append(tmp.tmp);
                 break;
             case B3::ValueRep::Register:
-                patch->earlyClobbered().excludeRegister(tmp.rep.reg());
+                patch->earlyClobbered().remove(tmp.rep.reg());
                 append(basicBlock, relaxedMoveForType(toB3Type(tmp.tmp.type())), tmp.tmp.tmp(), tmp.rep.reg());
                 inst.args.append(Tmp(tmp.rep.reg()));
                 break;
@@ -758,7 +758,7 @@ private:
 
         for (auto valueRep : patch->resultConstraints) {
             if (valueRep.isReg())
-                patch->lateClobbered().excludeRegister(valueRep.reg());
+                patch->lateClobbered().remove(valueRep.reg());
         }
         for (unsigned i = patch->numGPScratchRegisters; i--;)
             inst.args.append(g64().tmp());
@@ -1286,8 +1286,8 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
     if (!!memory) {
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         RegisterSet clobbers;
-        clobbers.includeRegister(pinnedRegs->baseMemoryPointer, Width64);
-        clobbers.includeRegister(pinnedRegs->boundsCheckingSizeRegister, Width64);
+        clobbers.add(pinnedRegs->baseMemoryPointer, Width64);
+        clobbers.add(pinnedRegs->boundsCheckingSizeRegister, Width64);
         clobbers.merge(RegisterSet::macroClobberedRegisters());
 
         auto* patchpoint = addPatchpoint(B3::Void);
@@ -3534,7 +3534,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
 
             const unsigned extraPaddingBytes = 0;
             WholeRegisterSet registersToSpill = { };
-            registersToSpill.includeRegister(GPRInfo::argumentGPR1, Width64);
+            registersToSpill.add(GPRInfo::argumentGPR1, Width64);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
             jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
@@ -3577,7 +3577,7 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedT
 
     patch->clobber(RegisterSet::macroClobberedRegisters());
     RegisterSet clobberLate;
-    clobberLate.includeRegister(GPRInfo::argumentGPR0, Width64);
+    clobberLate.add(GPRInfo::argumentGPR0, Width64);
     patch->clobberLate(clobberLate);
 
     Vector<ConstrainedTmp> patchArgs;
@@ -3799,7 +3799,7 @@ Tmp AirIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned ex
     patch->effects.exitsSideways = true;
     patch->clobber(RegisterSet::macroClobberedRegisters());
     auto clobberLate = RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
-    clobberLate.includeRegister(GPRInfo::argumentGPR0, Width64);
+    clobberLate.add(GPRInfo::argumentGPR0, Width64);
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));

@@ -74,12 +74,12 @@ Code::Code(Procedure& proc)
             auto calleeSave = RegisterSet::calleeSaveRegisters();
             all.whole().forEach(
                 [&] (Reg reg) {
-                    if (!calleeSave.includesRegister(reg, Width64))
+                    if (!calleeSave.contains(reg, Width64))
                         volatileRegs.append(reg);
                 });
             all.whole().forEach(
                 [&] (Reg reg) {
-                    if (calleeSave.includesRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64))
+                    if (calleeSave.contains(reg, Options::useWebAssemblySIMD() ? Width128 : Width64))
                         calleeSaveRegs.append(reg);
                 });
             if (Options::airRandomizeRegs()) {
@@ -93,7 +93,7 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
-    m_pinnedRegs.includeRegister(MacroAssembler::framePointerRegister, Width64);
+    m_pinnedRegs.add(MacroAssembler::framePointerRegister, Width64);
 }
 
 Code::~Code()
@@ -122,7 +122,7 @@ void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
     forEachBank(
         [&] (Bank bank) {
             for (Reg reg : regsInPriorityOrder(bank))
-                m_mutableRegs.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                m_mutableRegs.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
         });
 }
 
@@ -131,9 +131,9 @@ void Code::pinRegister(Reg reg)
     Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).bank());
     ASSERT(regs.contains(reg));
     regs.removeFirst(reg);
-    m_mutableRegs.excludeRegister(reg);
+    m_mutableRegs.remove(reg);
     ASSERT(!regs.contains(reg));
-    m_pinnedRegs.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+    m_pinnedRegs.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
 }
 
 WholeRegisterSet Code::mutableGPRs()
@@ -220,7 +220,7 @@ void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOf
     m_uncorrectedCalleeSaveRegisterAtOffsetList = WTFMove(registerAtOffsetList);
     for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList) {
         ASSERT(registerAtOffset.width() == Width64);
-        m_calleeSaveRegisters.includeRegister(registerAtOffset.reg(), registerAtOffset.width());
+        m_calleeSaveRegisters.add(registerAtOffset.reg(), registerAtOffset.width());
     }
     m_calleeSaveStackSlot = slot;
 }

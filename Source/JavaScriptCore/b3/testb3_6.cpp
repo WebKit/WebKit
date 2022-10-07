@@ -1454,7 +1454,7 @@ void testSpillDefSmallerThanUse()
     RegisterSet clobberSet = RegisterSet::allGPRs();
     clobberSet.exclude(RegisterSet::stackRegisters());
     clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberSet.excludeRegister(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
+    clobberSet.remove(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
     forceSpill->clobberLate(clobberSet);
     forceSpill->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1556,7 +1556,7 @@ void testLateRegister()
     Vector<Value*> lateUseArgs;
     unsigned result = 0;
     for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-        if (!regs.whole().includesRegister(reg, Width64))
+        if (!regs.whole().contains(reg, Width64))
             continue;
         result++;
         if (reg == GPRInfo::regT0)
@@ -1569,7 +1569,7 @@ void testLateRegister()
     {
         unsigned i = 0;
         for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-            if (!regs.whole().includesRegister(reg, Width64))
+            if (!regs.whole().contains(reg, Width64))
                 continue;
             if (reg == GPRInfo::regT0)
                 continue;

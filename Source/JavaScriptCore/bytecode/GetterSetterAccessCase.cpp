@@ -197,18 +197,18 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     for (auto& value : regs) {
         SnippetReg reg = value.reg();
         if (reg.isJSValueRegs())
-            usedRegisters.includeRegister(reg.jsValueRegs(), Width64);
+            usedRegisters.add(reg.jsValueRegs(), Width64);
         else if (reg.isGPR())
-            usedRegisters.includeRegister(reg.gpr(), Width64);
+            usedRegisters.add(reg.gpr(), Width64);
         else
-            usedRegisters.includeRegister(reg.fpr(), Width64);
+            usedRegisters.add(reg.fpr(), Width64);
     }
     for (GPRReg reg : gpScratch)
-        usedRegisters.includeRegister(reg, Width64);
+        usedRegisters.add(reg, Width64);
     for (FPRReg reg : fpScratch)
-        usedRegisters.includeRegister(reg, Width64);
+        usedRegisters.add(reg, Width64);
     if (jit.codeBlock()->useDataIC())
-        usedRegisters.includeRegister(stubInfo.m_stubInfoGPR, Width64);
+        usedRegisters.add(stubInfo.m_stubInfoGPR, Width64);
     auto registersToSpillForCCall = RegisterSet::registersToSaveForCCall(usedRegisters);
 
     AccessCaseSnippetParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));

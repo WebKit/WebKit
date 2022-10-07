@@ -53,9 +53,9 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
     result.merge(unsavedCalleeSaves);
 
     for (GPRReg gpr : m_gpScratch)
-        result.excludeRegister(gpr);
+        result.remove(gpr);
     for (FPRReg fpr : m_fpScratch)
-        result.excludeRegister(fpr);
+        result.remove(fpr);
     
     return result;
 }

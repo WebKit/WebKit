@@ -185,13 +185,13 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()
     static std::once_flag initializeFlag;
     std::call_once(initializeFlag, [] {
         WholeRegisterSet registers;
-        registers.includeRegister(GPRInfo::regCS0, Width64); // Wasm::Instance
+        registers.add(GPRInfo::regCS0, Width64); // Wasm::Instance
 #if CPU(X86_64)
-        registers.includeRegister(GPRInfo::regCS2, Width64); // PB
+        registers.add(GPRInfo::regCS2, Width64); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
-        registers.includeRegister(GPRInfo::regCS7, Width64); // PB
+        registers.add(GPRInfo::regCS7, Width64); // PB
 #elif CPU(ARM)
-        registers.includeRegister(GPRInfo::regCS1, Width64); // PB
+        registers.add(GPRInfo::regCS1, Width64); // PB
 #else
 #error Unsupported architecture.
 #endif

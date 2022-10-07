@@ -384,7 +384,7 @@ protected:
                 ASSERT(!isPrecolored(aliasTmpIndex) || (isPrecolored(aliasTmpIndex) && reg));
 
                 if (reg)
-                    coloredRegisters.includeRegister(reg, Width64);
+                    coloredRegisters.add(reg, Width64);
             }
 
             bool colorAssigned = false;
@@ -392,7 +392,7 @@ protected:
             if (iter != m_biases.end()) {
                 for (IndexType desiredBias : iter->value) {
                     if (Reg desiredColor = m_coloredTmp[getAlias(desiredBias)]) {
-                        if (!coloredRegisters.includesRegister(desiredColor, Width64)) {
+                        if (!coloredRegisters.contains(desiredColor, Width64)) {
                             m_coloredTmp[tmpIndex] = desiredColor;
                             colorAssigned = true;
                             break;
@@ -402,7 +402,7 @@ protected:
             }
             if (!colorAssigned) {
                 for (Reg reg : m_regsInPriorityOrder) {
-                    if (!coloredRegisters.includesRegister(reg, Width64)) {
+                    if (!coloredRegisters.contains(reg, Width64)) {
                         m_coloredTmp[tmpIndex] = reg;
                         colorAssigned = true;
                         break;

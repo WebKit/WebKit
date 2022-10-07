@@ -104,7 +104,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
 #if ASSERT_ENABLED
     wasmCC.calleeSaveRegisters.forEachWithWidth([&] (Reg reg, Width width) {
-        ASSERT(jsCC.calleeSaveRegisters.includesRegister(reg, width));
+        ASSERT(jsCC.calleeSaveRegisters.contains(reg, width));
     });
 #endif
 
@@ -311,7 +311,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // jsArg10 might overlap with regT0, so store 'this' argument first
     jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))), jsArg10);
     constexpr GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
-    ASSERT(!wasmCC.calleeSaveRegisters.includesRegister(importJSCellGPRReg, Width64));
+    ASSERT(!wasmCC.calleeSaveRegisters.contains(importJSCellGPRReg, Width64));
     materializeImportJSCell(jit, importIndex, importJSCellGPRReg);
     jit.storePtr(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 #if USE(JSVALUE32_64)

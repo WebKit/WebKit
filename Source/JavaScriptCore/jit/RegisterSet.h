@@ -59,7 +59,7 @@ public:
         setMany(regs...);
     }
 
-    inline constexpr RegisterSet& includeRegister(Reg reg, Width width)
+    inline constexpr RegisterSet& add(Reg reg, Width width)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
@@ -69,16 +69,16 @@ public:
         return *this;
     }
 
-    inline constexpr RegisterSet& includeRegister(JSValueRegs regs, Width width)
+    inline constexpr RegisterSet& add(JSValueRegs regs, Width width)
     {
         ASSERT_UNUSED(width, width == Width64);
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width64);
-        includeRegister(regs.payloadGPR(), Width64);
+            add(regs.tagGPR(), Width64);
+        add(regs.payloadGPR(), Width64);
         return *this;
     }
 
-    inline constexpr RegisterSet& excludeRegister(Reg reg)
+    inline constexpr RegisterSet& remove(Reg reg)
     {
         ASSERT(!!reg);
         m_bits.clear(reg.index());
@@ -86,11 +86,11 @@ public:
         return *this;
     }
 
-    inline constexpr RegisterSet& excludeRegister(JSValueRegs regs)
+    inline constexpr RegisterSet& remove(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            excludeRegister(regs.tagGPR());
-        excludeRegister(regs.payloadGPR());
+            remove(regs.tagGPR());
+        remove(regs.payloadGPR());
         return *this;
     }
 
@@ -146,8 +146,8 @@ public:
     inline constexpr bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
 
 protected:
-    inline constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); includeRegister(reg, Width128); }
-    inline constexpr void setAny(JSValueRegs regs) { includeRegister(regs, Width64); }
+    inline constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); add(reg, Width128); }
+    inline constexpr void setAny(JSValueRegs regs) { add(regs, Width64); }
     inline constexpr void setAny(const RegisterSet& set) { merge(set); }
     inline constexpr void setMany() { }
     template<typename RegType, typename... Regs>
@@ -199,7 +199,7 @@ public:
         m_bits.merge(m_upperBits);
     }
 
-    inline constexpr bool includesRegister(Reg reg, Width width) const
+    inline constexpr bool contains(Reg reg, Width width) const
     {
         ASSERT(m_bits.count() >= m_upperBits.count());
         if (LIKELY(width <= Width64) || conservativeWidth(reg) <= Width64)
@@ -311,7 +311,7 @@ public:
     inline constexpr iterator begin() const { return iterator(m_bits.begin()); }
     inline constexpr iterator end() const { return iterator(m_bits.end()); }
 
-    inline constexpr WholeRegisterSet& includeRegister(Reg reg, Width width)
+    inline constexpr WholeRegisterSet& add(Reg reg, Width width)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
@@ -323,16 +323,16 @@ public:
         return *this;
     }
 
-    inline constexpr WholeRegisterSet& includeRegister(JSValueRegs regs, Width width)
+    inline constexpr WholeRegisterSet& add(JSValueRegs regs, Width width)
     {
         ASSERT_UNUSED(width, width == Width64);
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width64);
-        includeRegister(regs.payloadGPR(), Width64);
+            add(regs.tagGPR(), Width64);
+        add(regs.payloadGPR(), Width64);
         return *this;
     }
 
-    inline constexpr WholeRegisterSet& excludeRegister(Reg reg)
+    inline constexpr WholeRegisterSet& remove(Reg reg)
     {
         ASSERT(!!reg);
         m_bits.clear(reg.index());
@@ -340,11 +340,11 @@ public:
         return *this;
     }
 
-    inline constexpr WholeRegisterSet& excludeRegister(JSValueRegs regs)
+    inline constexpr WholeRegisterSet& remove(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            excludeRegister(regs.tagGPR());
-        excludeRegister(regs.payloadGPR());
+            remove(regs.tagGPR());
+        remove(regs.payloadGPR());
         return *this;
     }
 
@@ -431,33 +431,33 @@ public:
         WholeRegisterSet result;
         m_bits.forEachSetBit(
             [&] (size_t index) {
-                result.includeRegister(Reg::fromIndex(index), Width64);
+                result.add(Reg::fromIndex(index), Width64);
             });
         return result;
     }
 
-    inline constexpr void includeRegister(Reg reg, Width width)
+    inline constexpr void add(Reg reg, Width width)
     {
         ASSERT(!!reg);
         ASSERT_UNUSED(width, width == Width64);
         m_bits.set(reg.index());
     }
 
-    inline constexpr void includeRegister(JSValueRegs regs, Width width)
+    inline constexpr void add(JSValueRegs regs, Width width)
     {
         ASSERT_UNUSED(width, width == Width64);
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width64);
-        includeRegister(regs.payloadGPR(), Width64);
+            add(regs.tagGPR(), Width64);
+        add(regs.payloadGPR(), Width64);
     }
 
-    inline constexpr void excludeRegister(Reg reg)
+    inline constexpr void remove(Reg reg)
     {
         ASSERT(!!reg);
         m_bits.clear(reg.index());
     }
 
-    inline constexpr bool includesRegister(Reg reg, Width width) const
+    inline constexpr bool contains(Reg reg, Width width) const
     {
         ASSERT_UNUSED(width, width == Width64);
         if (UNLIKELY(width > Width64))

@@ -60,7 +60,7 @@ void logRegisterPressure(Code& code)
                 prevInst, &inst,
                 [&] (Reg reg, Arg::Role, Bank, Width width) {
                     ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
-                    set.includeRegister(reg, width);
+                    set.add(reg, width);
                 });
 
             StringPrintStream instOut;

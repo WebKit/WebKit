@@ -10522,13 +10522,13 @@ IGNORE_CLANG_WARNINGS_END
                     
                     auto toSave = params.unavailableRegisters();
                     shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatCell);
-                    toSave.includeRegister(calleeGPR, Width64);
+                    toSave.add(calleeGPR, Width64);
                     for (unsigned i = 0; i < numPassedArgs; ++i) {
                         ValueRecovery recovery = params[1 + i].recoveryForJSValue();
                         shuffleData.args.append(recovery);
                         recovery.forEachReg(
                             [&] (Reg reg) {
-                                toSave.includeRegister(reg, Width64);
+                                toSave.add(reg, Width64);
                             });
                     }
                     for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
@@ -10908,7 +10908,7 @@ IGNORE_CLANG_WARNINGS_END
                     .exclude(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()))
                     .whole();
                 GPRReg calleeGPR = params[1].gpr();
-                usedRegisters.includeRegister(calleeGPR, Width64);
+                usedRegisters.add(calleeGPR, Width64);
 
                 ScratchRegisterAllocator allocator(usedRegisters);
                 GPRReg scratchGPR1 = allocator.allocateScratchGPR();
@@ -10918,7 +10918,7 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
                 auto getValueFromRep = [&] (B3::ValueRep rep, GPRReg result) {
-                    ASSERT(!usedRegisters.includesRegister(result, Width64));
+                    ASSERT(!usedRegisters.contains(result, Width64));
 
                     if (rep.isConstant()) {
                         jit.move(CCallHelpers::Imm64(rep.value()), result);
@@ -10934,7 +10934,7 @@ IGNORE_CLANG_WARNINGS_END
                     }
 
                     RELEASE_ASSERT(rep.isGPR());
-                    ASSERT(usedRegisters.includesRegister(rep.gpr(), Width64));
+                    ASSERT(usedRegisters.contains(rep.gpr(), Width64));
                     jit.move(rep.gpr(), result);
                 };
 
@@ -11039,7 +11039,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
 
-                ASSERT(!usedRegisters.includesRegister(GPRInfo::regT2, Width64)); // Used on the slow path.
+                ASSERT(!usedRegisters.contains(GPRInfo::regT2, Width64)); // Used on the slow path.
 
                 CCallHelpers::JumpList slowPath;
                 CCallHelpers::Jump done;
@@ -11243,16 +11243,16 @@ IGNORE_CLANG_WARNINGS_END
                 usedRegisters.merge(RegisterSet::stackRegisters());
                 usedRegisters.merge(RegisterSet::reservedHardwareRegisters());
                 usedRegisters.merge(RegisterSet::calleeSaveRegisters());
-                usedRegisters.includeRegister(calleeGPR, Width64);
+                usedRegisters.add(calleeGPR, Width64);
                 if (argumentsGPR != InvalidGPRReg)
-                    usedRegisters.includeRegister(argumentsGPR, Width64);
-                usedRegisters.includeRegister(thisGPR, Width64);
+                    usedRegisters.add(argumentsGPR, Width64);
+                usedRegisters.add(thisGPR, Width64);
                 if (calleeLateRep.isReg())
-                    usedRegisters.includeRegister(calleeLateRep.reg(), Width64);
+                    usedRegisters.add(calleeLateRep.reg(), Width64);
                 if (argumentsLateRep.isReg())
-                    usedRegisters.includeRegister(argumentsLateRep.reg(), Width64);
+                    usedRegisters.add(argumentsLateRep.reg(), Width64);
                 if (thisLateRep.isReg())
-                    usedRegisters.includeRegister(thisLateRep.reg(), Width64);
+                    usedRegisters.add(thisLateRep.reg(), Width64);
                 ScratchRegisterAllocator allocator(usedRegisters);
                 GPRReg scratchGPR1 = allocator.allocateScratchGPR();
                 GPRReg scratchGPR2 = allocator.allocateScratchGPR();

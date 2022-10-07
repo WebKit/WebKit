@@ -51,7 +51,7 @@ typedef union v128_u {
     uint64_t u64x2[2] = { 0, 0 };
 } v128_t;
 
-enum class SimdLane : uint8_t {
+enum class SIMDLane : uint8_t {
     v128,
     i8x16,
     i16x8,
@@ -61,113 +61,113 @@ enum class SimdLane : uint8_t {
     f64x2
 };
 
-enum class SimdSignMode : uint8_t {
+enum class SIMDSignMode : uint8_t {
     None, 
     Signed,
     Unsigned
 };
 
-struct SimdInfo {
-    SimdLane lane { SimdLane::v128 };
-    SimdSignMode signMode { SimdSignMode::None };
+struct SIMDInfo {
+    SIMDLane lane { SIMDLane::v128 };
+    SIMDSignMode signMode { SIMDSignMode::None };
 };
 
-constexpr Width elementSize(SimdLane simdLane)
+constexpr Width elementSize(SIMDLane simdLane)
 {
     switch (simdLane) {
-    case SimdLane::i8x16:
+    case SIMDLane::i8x16:
         return Width8;
-    case SimdLane::i16x8:
+    case SIMDLane::i16x8:
         return Width16;
-    case SimdLane::i32x4:
-    case SimdLane::f32x4:
+    case SIMDLane::i32x4:
+    case SIMDLane::f32x4:
         return Width32;
-    case SimdLane::i64x2:
-    case SimdLane::f64x2:
+    case SIMDLane::i64x2:
+    case SIMDLane::f64x2:
         return Width64;
-    case SimdLane::v128:
+    case SIMDLane::v128:
         return Width128;
     }
 }
 
-constexpr uint8_t elementCount(SimdLane lane)
+constexpr uint8_t elementCount(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::i8x16:
+    case SIMDLane::i8x16:
         return 16;
-    case SimdLane::i16x8:
+    case SIMDLane::i16x8:
         return 8;
-    case SimdLane::f32x4:
-    case SimdLane::i32x4:
+    case SIMDLane::f32x4:
+    case SIMDLane::i32x4:
         return 4;
-    case SimdLane::f64x2:
-    case SimdLane::i64x2:
+    case SIMDLane::f64x2:
+    case SIMDLane::i64x2:
         return 2;
-    case SimdLane::v128:
+    case SIMDLane::v128:
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }
 
-constexpr bool scalarTypeIsFloatingPoint(SimdLane lane)
+constexpr bool scalarTypeIsFloatingPoint(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::f32x4:
-    case SimdLane::f64x2:
+    case SIMDLane::f32x4:
+    case SIMDLane::f64x2:
         return true;
     default:
         return false;
     }
 }
 
-constexpr bool scalarTypeIsIntegral(SimdLane lane)
+constexpr bool scalarTypeIsIntegral(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::i8x16:
-    case SimdLane::i16x8:
-    case SimdLane::i32x4:
-    case SimdLane::i64x2:
+    case SIMDLane::i8x16:
+    case SIMDLane::i16x8:
+    case SIMDLane::i32x4:
+    case SIMDLane::i64x2:
         return true;
     default:
         return false;
     }
 }
 
-constexpr SimdLane narrowedLane(SimdLane lane)
+constexpr SIMDLane narrowedLane(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::v128:
-    case SimdLane::i8x16:
-    case SimdLane::f32x4:
+    case SIMDLane::v128:
+    case SIMDLane::i8x16:
+    case SIMDLane::f32x4:
         RELEASE_ASSERT_NOT_REACHED();
         return lane;
-    case SimdLane::i16x8:
-        return SimdLane::i8x16;
-    case SimdLane::i32x4:
-        return SimdLane::i16x8;
-    case SimdLane::i64x2:
-        return SimdLane::i32x4;
-    case SimdLane::f64x2:
-        return SimdLane::f32x4;
+    case SIMDLane::i16x8:
+        return SIMDLane::i8x16;
+    case SIMDLane::i32x4:
+        return SIMDLane::i16x8;
+    case SIMDLane::i64x2:
+        return SIMDLane::i32x4;
+    case SIMDLane::f64x2:
+        return SIMDLane::f32x4;
     }
 }
 
-constexpr SimdLane promotedLane(SimdLane lane)
+constexpr SIMDLane promotedLane(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::v128:
-    case SimdLane::i64x2:
-    case SimdLane::f64x2:
+    case SIMDLane::v128:
+    case SIMDLane::i64x2:
+    case SIMDLane::f64x2:
         RELEASE_ASSERT_NOT_REACHED();
         return lane;
-    case SimdLane::i8x16:
-        return SimdLane::i16x8;
-    case SimdLane::i16x8:
-        return SimdLane::i32x4;
-    case SimdLane::i32x4:
-        return SimdLane::i64x2;
-    case SimdLane::f32x4:
-        return SimdLane::f64x2;
+    case SIMDLane::i8x16:
+        return SIMDLane::i16x8;
+    case SIMDLane::i16x8:
+        return SIMDLane::i32x4;
+    case SIMDLane::i32x4:
+        return SIMDLane::i64x2;
+    case SIMDLane::f32x4:
+        return SIMDLane::f64x2;
     }
 }
 
@@ -210,7 +210,7 @@ ALWAYS_INLINE constexpr unsigned bytesForWidth(Width width)
     return 0;
 }
 
-inline constexpr unsigned elementByteSize(SimdLane lane)
+inline constexpr unsigned elementByteSize(SIMDLane lane)
 {
     return bytesForWidth(elementSize(lane));
 }
@@ -253,28 +253,28 @@ inline bool isCanonicalWidth(Width width)
 
 namespace WTF {
 
-inline void printInternal(PrintStream& out, JSC::SimdLane lane)
+inline void printInternal(PrintStream& out, JSC::SIMDLane lane)
 {
     switch (lane) {
-    case JSC::SimdLane::i8x16:
+    case JSC::SIMDLane::i8x16:
         out.print("i8x16");
         break;
-    case JSC::SimdLane::i16x8:
+    case JSC::SIMDLane::i16x8:
         out.print("i16x8");
         break;
-    case JSC::SimdLane::i32x4:
+    case JSC::SIMDLane::i32x4:
         out.print("i32x4");
         break;
-    case JSC::SimdLane::f32x4:
+    case JSC::SIMDLane::f32x4:
         out.print("f32x4");
         break;
-    case JSC::SimdLane::i64x2:
+    case JSC::SIMDLane::i64x2:
         out.print("i64x2");
         break;
-    case JSC::SimdLane::f64x2:
+    case JSC::SIMDLane::f64x2:
         out.print("f64x2");
         break;
-    case JSC::SimdLane::v128:
+    case JSC::SIMDLane::v128:
         out.print("v128");
         break;
     default:
@@ -282,16 +282,16 @@ inline void printInternal(PrintStream& out, JSC::SimdLane lane)
     }
 }
 
-inline void printInternal(PrintStream& out, JSC::SimdSignMode mode)
+inline void printInternal(PrintStream& out, JSC::SIMDSignMode mode)
 {
     switch (mode) {
-    case JSC::SimdSignMode::None:
+    case JSC::SIMDSignMode::None:
         out.print("SignMode::None");
         break;
-    case JSC::SimdSignMode::Signed:
+    case JSC::SIMDSignMode::Signed:
         out.print("SignMode::Signed");
         break;
-    case JSC::SimdSignMode::Unsigned:
+    case JSC::SIMDSignMode::Unsigned:
         out.print("SignMode::Unsigned");
         break;
     default:

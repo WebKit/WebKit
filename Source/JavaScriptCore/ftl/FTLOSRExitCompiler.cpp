@@ -479,7 +479,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
         auto iterateCalleeSavesImpl = [&](auto check, auto func) {
             for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-                if (!allFTLCalleeSaves.includesRegister(reg, Width64))
+                if (!allFTLCalleeSaves.contains(reg, Width64))
                     continue;
                 if (!check(reg))
                     continue;
@@ -502,11 +502,11 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             // This means that it also didn't use them. Their values at the beginning of OSR exit should
             // be the ones to retain. We saved all registers into the register scratch buffer at the beginning
             // of the thunk. So we can restore them from there.
-            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT3, Width64));
-            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT0, Width64));
-            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT1, Width64));
-            ASSERT(!allFTLCalleeSaves.includesRegister(FPRInfo::fpRegT0, Width64));
-            ASSERT(!allFTLCalleeSaves.includesRegister(FPRInfo::fpRegT1, Width64));
+            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT3, Width64));
+            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT0, Width64));
+            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT1, Width64));
+            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT0, Width64));
+            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT1, Width64));
             jit.move(CCallHelpers::TrustedImmPtr(registerScratch), GPRInfo::regT3);
             {
                 // Load from registerScratch buffer to callee-save registers.

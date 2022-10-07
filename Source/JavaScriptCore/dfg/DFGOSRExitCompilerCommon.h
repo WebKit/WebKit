@@ -48,7 +48,7 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM& vm, JITT
 
     bool isFTLOSRExit = jitType == JITType::FTLJIT;
     WholeRegisterSet registersToPreserve;
-    registersToPreserve.includeRegister(GPRInfo::regT0, Width64);
+    registersToPreserve.add(GPRInfo::regT0, Width64);
     if (isFTLOSRExit) {
         // FTL can use the scratch registers for values. The code below uses
         // the scratch registers. We need to preserve them before doing anything.

@@ -509,7 +509,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
     auto usedJSRs = RegisterSet::stubUnavailableRegisters();
     if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {
         // For iterator_next, we can't clobber the "dontClobberJSR" register either.
-        usedJSRs.includeRegister(BaselineJITRegisters::GetById::FastPath::dontClobberJSR, Width64);
+        usedJSRs.add(BaselineJITRegisters::GetById::FastPath::dontClobberJSR, Width64);
     }
     usedRegisters = usedJSRs;
 

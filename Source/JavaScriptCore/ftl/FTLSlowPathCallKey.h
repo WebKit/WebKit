@@ -87,7 +87,7 @@ public:
         RELEASE_ASSERT(Options::clobberAllRegsInFTLICSlowPath());
         WholeRegisterSet argumentRegisters;
         for (uint8_t i = 0; i < numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled(); ++i)
-            argumentRegisters.includeRegister(GPRInfo::toArgumentRegister(i), Width64);
+            argumentRegisters.add(GPRInfo::toArgumentRegister(i), Width64);
         return argumentRegisters;
     }
     int32_t indirectOffset() const

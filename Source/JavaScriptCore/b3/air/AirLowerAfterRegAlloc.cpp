@@ -125,9 +125,9 @@ void lowerAfterRegAlloc(Code& code)
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
             for (Reg reg : code.regsInPriorityOrder(bank)) {
-                if (!WholeRegisterSet(set).includesRegister(reg, Width64) && !disallowedCalleeSaves.includesRegister(reg, Width64)) {
+                if (!WholeRegisterSet(set).contains(reg, Width64) && !disallowedCalleeSaves.contains(reg, Width64)) {
                     result[i] = Tmp(reg);
-                    set.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+                    set.add(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
                     found = true;
                     break;
                 }
@@ -162,7 +162,7 @@ void lowerAfterRegAlloc(Code& code)
                     // interfere with either sources or destinations.
                     auto excludeRegisters = [&] (Tmp tmp) {
                         if (tmp.isReg())
-                            set.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
+                            set.add(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
                     };
                     src.forEachTmpFast(excludeRegisters);
                     dst.forEachTmpFast(excludeRegisters);
@@ -203,7 +203,7 @@ void lowerAfterRegAlloc(Code& code)
 
                     auto excludeRegisters = [&] (Tmp tmp) {
                         if (tmp.isReg())
-                            preUsed.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
+                            preUsed.add(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
                     };
                     src.forEachTmpFast(excludeRegisters);
                     dst.forEachTmpFast(excludeRegisters);
@@ -215,7 +215,7 @@ void lowerAfterRegAlloc(Code& code)
                 // Also need to save all live registers. Don't need to worry about the result
                 // register.
                 if (originalResult.isReg())
-                    regsToSave.excludeRegister(originalResult.reg());
+                    regsToSave.remove(originalResult.reg());
                 Vector<StackSlot*> stackSlots;
                 regsToSave.forEachWithWidth(
                     [&] (Reg reg, Width width) {
@@ -255,7 +255,7 @@ void lowerAfterRegAlloc(Code& code)
                 // For finding scratch registers, we need to account for the possibility that
                 // the result is dead.
                 if (originalResult.isReg())
-                    liveRegs.includeRegister(originalResult.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
+                    liveRegs.add(originalResult.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
 
                 gpScratch = getScratches(liveRegs, GP);
                 fpScratch = getScratches(liveRegs, FP);

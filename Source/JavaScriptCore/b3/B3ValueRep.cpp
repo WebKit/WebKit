@@ -47,12 +47,12 @@ void ValueRep::addUsedRegistersTo(RegisterSet& set) const
         return;
     case LateRegister:
     case Register:
-        set.includeRegister(reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
+        set.add(reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
         return;
     case Stack:
     case StackArgument:
-        set.includeRegister(MacroAssembler::stackPointerRegister, Width64);
-        set.includeRegister(GPRInfo::callFrameRegister, Width64);
+        set.add(MacroAssembler::stackPointerRegister, Width64);
+        set.add(GPRInfo::callFrameRegister, Width64);
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

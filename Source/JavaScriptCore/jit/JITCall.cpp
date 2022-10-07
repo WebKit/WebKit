@@ -550,7 +550,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         emitJumpSlowCaseIfNotJSCell(returnValueJSR);
 
         auto preservedRegs = RegisterSet::stubUnavailableRegisters();
-        preservedRegs.includeRegister(iterCallResultJSR, Width64);
+        preservedRegs.add(iterCallResultJSR, Width64);
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         JITGetByIdGenerator gen(
             nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,

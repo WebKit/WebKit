@@ -48,14 +48,14 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
 {
     // We are allowed all the usual registers...
     for (unsigned i = GPRInfo::numberOfRegisters; i--; )
-        m_lockedRegisters.excludeRegister(GPRInfo::toRegister(i));
+        m_lockedRegisters.remove(GPRInfo::toRegister(i));
     for (unsigned i = FPRInfo::numberOfRegisters; i--; )
-        m_lockedRegisters.excludeRegister(FPRInfo::toRegister(i));
+        m_lockedRegisters.remove(FPRInfo::toRegister(i));
 
     // ... as well as the callee saved registers
     for (Reg r : RegisterSet::vmCalleeSaveRegisters()) {
-        if (RegisterSet::vmCalleeSaveRegisters().includesRegister(r, conservativeWidthWithoutVectors(r)))
-            m_lockedRegisters.excludeRegister(r);
+        if (RegisterSet::vmCalleeSaveRegisters().contains(r, conservativeWidthWithoutVectors(r)))
+            m_lockedRegisters.remove(r);
     }
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
@@ -202,7 +202,7 @@ void CallFrameShuffler::dump(PrintStream& out) const
     out.print("  Locked registers: ");
     bool firstLocked { true };
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (m_lockedRegisters.includesRegister(reg, Width64)) {
+        if (m_lockedRegisters.contains(reg, Width64)) {
             out.print(firstLocked ? "" : ", ", reg);
             firstLocked = false;
         }

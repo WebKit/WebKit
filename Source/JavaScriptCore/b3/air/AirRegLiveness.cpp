@@ -48,13 +48,13 @@ RegLiveness::RegLiveness(Code& code)
             inst.forEach<Reg>(
                 [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                     if (Arg::isEarlyUse(role))
-                        actionsForBoundary[instIndex].use.includeRegister(reg, width);
+                        actionsForBoundary[instIndex].use.add(reg, width);
                     if (Arg::isEarlyDef(role))
-                        actionsForBoundary[instIndex].def.includeRegister(reg, width);
+                        actionsForBoundary[instIndex].def.add(reg, width);
                     if (Arg::isLateUse(role))
-                        actionsForBoundary[instIndex + 1].use.includeRegister(reg, width);
+                        actionsForBoundary[instIndex + 1].use.add(reg, width);
                     if (Arg::isLateDef(role))
-                        actionsForBoundary[instIndex + 1].def.includeRegister(reg, width);
+                        actionsForBoundary[instIndex + 1].def.add(reg, width);
                 });
         }
     }
@@ -67,7 +67,7 @@ RegLiveness::RegLiveness(Code& code)
             [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                 ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                 if (Arg::isLateUse(role))
-                    liveAtTail.includeRegister(reg, width);
+                    liveAtTail.add(reg, width);
             });
     }
         
@@ -95,7 +95,7 @@ RegLiveness::RegLiveness(Code& code)
             block->at(0).forEach<Reg>(
                 [&] (Reg& reg, Arg::Role role, Bank, Width) {
                     if (Arg::isEarlyDef(role))
-                        localCalc.m_workset.excludeRegister(reg);
+                        localCalc.m_workset.remove(reg);
                 });
                 
             auto& liveAtHead = m_liveAtHead[block];
@@ -128,7 +128,7 @@ RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness(Unif
 {
     for (Tmp tmp : liveness.liveAtTail(block)) {
         if (tmp.isReg())
-            m_workset.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
+            m_workset.add(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
     }
 }
 
@@ -137,12 +137,12 @@ void RegLiveness::LocalCalcForUnifiedTmpLiveness::execute(unsigned instIndex)
     for (unsigned index : m_actions[instIndex + 1].def) {
         Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
         if (tmp.isReg())
-            m_workset.excludeRegister(tmp.reg());
+            m_workset.remove(tmp.reg());
     }
     for (unsigned index : m_actions[instIndex].use) {
         Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
         if (tmp.isReg())
-            m_workset.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
+            m_workset.add(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
     }
 }
 

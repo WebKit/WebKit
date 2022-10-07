@@ -241,7 +241,7 @@ public:
     {
         JITByIdGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, baseRegs, valueRegs, stubInfoGPR);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>)
-            stubInfo.usedRegisters.excludeRegister(scratchGPR);
+            stubInfo.usedRegisters.remove(scratchGPR);
         else
             UNUSED_PARAM(scratchGPR);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>) {
@@ -525,7 +525,7 @@ public:
             stubInfo.m_valueTagGPR = InvalidGPRReg;
             stubInfo.m_extraTagGPR = InvalidGPRReg;
 #endif
-            stubInfo.usedRegisters.excludeRegister(resultGPR);
+            stubInfo.usedRegisters.remove(resultGPR);
             stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(valueGPR);
