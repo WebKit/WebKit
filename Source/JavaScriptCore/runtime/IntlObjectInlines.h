@@ -152,7 +152,7 @@ ResultType intlOption(JSGlobalObject* globalObject, JSObject* options, PropertyN
 }
 
 template<typename ResultType>
-ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, ResultType trueValue, ResultType falsyValue, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ResultType fallback)
+ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, ResultType trueValue, ResultType falsyValue, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
 {
     // https://tc39.es/proposal-intl-numberformat-v3/out/negotiation/diff.html#sec-getstringorbooleanoption
 
@@ -182,12 +182,18 @@ ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* opt
     String stringValue = value.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // FIXME: We need to know whether this fallback is actually correct.
+    // https://github.com/tc39/proposal-intl-numberformat-v3/issues/111
+    if (stringValue == "true"_s || stringValue == "false"_s)
+        return fallback;
+
     for (const auto& entry : values) {
         if (entry.first == stringValue)
             return entry.second;
     }
 
-    return fallback;
+    throwRangeError(globalObject, scope, notFoundMessage);
+    return { };
 }
 
 ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(UChar character)

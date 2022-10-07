@@ -1233,9 +1233,6 @@ test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-not-thro
 test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js:
   default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
   strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
-test/intl402/NumberFormat/test-option-useGrouping.js:
-  default: 'Test262Error: Throws RangeError when useGrouping value is not supported Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Throws RangeError when useGrouping value is not supported Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
   default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
   strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
