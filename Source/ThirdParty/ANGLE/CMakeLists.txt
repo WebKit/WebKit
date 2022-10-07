@@ -142,7 +142,7 @@ if (USE_ANGLE_EGL OR ENABLE_WEBGL)
         LIBANGLE_IMPLEMENTATION
     )
     target_compile_definitions(ANGLE PUBLIC ${ANGLE_DEFINITIONS})
-    target_link_libraries(ANGLE PRIVATE ZLIB::ZLIB)
+    target_link_libraries(ANGLE PRIVATE ZLIB::ZLIB ${CMAKE_DL_LIBS})
 
     target_compile_definitions(ANGLEFramework INTERFACE ${gl_prototypes})
 
