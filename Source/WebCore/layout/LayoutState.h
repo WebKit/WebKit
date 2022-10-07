@@ -54,6 +54,8 @@ public:
     LayoutState(const Document&, const ElementBox& rootContainer, std::optional<FormattingContextIntegrationType> = std::nullopt);
     ~LayoutState();
 
+    void updateQuirksMode(const Document&);
+
     InlineFormattingState& ensureInlineFormattingState(const ElementBox& formattingContextRoot);
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot);
     TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot);
@@ -65,6 +67,8 @@ public:
     FlexFormattingState& formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const;
 
     FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const;
+
+    void destroyInlineFormattingState(const ElementBox& formattingContextRoot);
 
     bool hasFormattingState(const ElementBox& formattingRoot) const;
     bool hasInlineFormattingState(const ElementBox& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
@@ -93,9 +97,6 @@ public:
 
     void setViewportSize(const LayoutSize&);
     LayoutSize viewportSize() const;
-    enum IsIntegratedRootBoxFirstChild { Yes, No, NotApplicable };
-    IsIntegratedRootBoxFirstChild isIntegratedRootBoxFirstChild() const { return m_isIntegratedRootBoxFirstChild; }
-    void setIsIntegratedRootBoxFirstChild(bool);
     bool shouldIgnoreTrailingLetterSpacing() const;
     bool shouldNotSynthesizeInlineBlockBaseline() const;
 
@@ -122,7 +123,6 @@ private:
     // LFC integration only.
     std::optional<FormattingContextIntegrationType> m_formattingContextIntegrationType;
     LayoutSize m_viewportSize;
-    IsIntegratedRootBoxFirstChild m_isIntegratedRootBoxFirstChild { IsIntegratedRootBoxFirstChild::NotApplicable };
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

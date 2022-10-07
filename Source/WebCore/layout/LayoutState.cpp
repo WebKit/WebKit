@@ -51,6 +51,13 @@ LayoutState::LayoutState(const Document& document, const ElementBox& rootContain
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
 
+    updateQuirksMode(document);
+}
+
+LayoutState::~LayoutState() = default;
+
+void LayoutState::updateQuirksMode(const Document& document)
+{
     auto quirksMode = [&] {
         if (document.inLimitedQuirksMode())
             return LayoutState::QuirksMode::Limited;
@@ -60,8 +67,6 @@ LayoutState::LayoutState(const Document& document, const ElementBox& rootContain
     };
     setQuirksMode(quirksMode());
 }
-
-LayoutState::~LayoutState() = default;
 
 BoxGeometry& LayoutState::geometryForRootBox()
 {
@@ -96,11 +101,6 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const ElementB
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
 
-    if (isInlineFormattingContextIntegration()) {
-        ASSERT(&formattingContextRoot == m_rootContainer.ptr());
-        return *m_rootInlineFormattingStateForIntegration;
-    }
-
     if (isFlexFormattingContextIntegration()) {
         ASSERT(&formattingContextRoot == m_rootContainer.ptr());
         return *m_rootFlexFormattingStateForIntegration;
@@ -124,11 +124,6 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const ElementB
 InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(const ElementBox& inlineFormattingContextRoot) const
 {
     ASSERT(inlineFormattingContextRoot.establishesInlineFormattingContext());
-
-    if (isInlineFormattingContextIntegration()) {
-        ASSERT(&inlineFormattingContextRoot == m_rootContainer.ptr());
-        return *m_rootInlineFormattingStateForIntegration;
-    }
 
     return *m_inlineFormattingStates.get(&inlineFormattingContextRoot);
 }
@@ -165,7 +160,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ElementBox
         // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
         // should not interfere with the content inside.
         // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
-        if (formattingContextRoot.establishesBlockFormattingContext())
+        if (formattingContextRoot.establishesBlockFormattingContext() || formattingContextRoot.isInlineIntegrationRoot())
             return makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
 
         // Otherwise, the formatting context inherits the floats from the parent formatting context.
@@ -180,14 +175,6 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ElementBox
         };
         return makeUnique<InlineFormattingState>(parentFormattingState().floatingState(), *this);
     };
-
-    if (isInlineFormattingContextIntegration()) {
-        if (!m_rootInlineFormattingStateForIntegration) {
-            ASSERT(&formattingContextRoot == m_rootContainer.ptr());
-            m_rootInlineFormattingStateForIntegration = makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
-        }
-        return *m_rootInlineFormattingStateForIntegration;
-    }
 
     return *m_inlineFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
@@ -235,6 +222,11 @@ FlexFormattingState& LayoutState::ensureFlexFormattingState(const ElementBox& fo
     return *m_flexFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
+void LayoutState::destroyInlineFormattingState(const ElementBox& formattingContextRoot)
+{
+    m_inlineFormattingStates.remove(&formattingContextRoot);
+}
+
 void LayoutState::setViewportSize(const LayoutSize& viewportSize)
 {
     ASSERT(isInlineFormattingContextIntegration());
@@ -245,12 +237,6 @@ LayoutSize LayoutState::viewportSize() const
 {
     ASSERT(isInlineFormattingContextIntegration());
     return m_viewportSize;
-}
-
-void LayoutState::setIsIntegratedRootBoxFirstChild(bool value)
-{
-    ASSERT(isInlineFormattingContextIntegration());
-    m_isIntegratedRootBoxFirstChild = value ? IsIntegratedRootBoxFirstChild::Yes : IsIntegratedRootBoxFirstChild::No;
 }
 
 bool LayoutState::shouldIgnoreTrailingLetterSpacing() const

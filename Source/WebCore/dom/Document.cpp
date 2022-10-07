@@ -910,6 +910,9 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
         extensionStyleSheets().clearPageUserSheet();
         extensionStyleSheets().invalidateInjectedStyleSheetCache();
     }
+
+    if (renderView())
+        renderView()->updateQuirksMode();
 }
 
 String Document::compatMode() const
