@@ -50,7 +50,6 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
-
     static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
     static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
 };

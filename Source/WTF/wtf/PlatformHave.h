@@ -27,6 +27,10 @@
 
 #pragma once
 
+#if ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500))
+#define HAVE_CRYPTOKIT 1
+#endif
+
 #ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif

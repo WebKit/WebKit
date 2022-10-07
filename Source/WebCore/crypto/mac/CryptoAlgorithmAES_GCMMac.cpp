@@ -35,9 +35,11 @@
 
 namespace WebCore {
 
+#if !HAVE(CRYPTO_KIT)
+
 static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
-    Vector<uint8_t> cipherText(plainText.size() + desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
+     Vector<uint8_t> cipherText(plainText.size() + desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
     // tagLength is actual an input <rdar://problem/30660074>
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -51,6 +53,7 @@ static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, co
     return WTFMove(cipherText);
 }
 
+#endif // !HAVE(CRYPTO_KIT)
 static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
     Vector<uint8_t> plainText(cipherText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
@@ -70,12 +73,12 @@ static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, con
     plainText.shrink(offset);
     return WTFMove(plainText);
 }
-
+#if !HAVE(CRYPTO_KIT)
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
     return encryptAES_GCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 }
-
+#endif // !HAVE(CRYPTO_KIT)
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
     return decyptAES_GCM(parameters.ivVector(), key.key(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
