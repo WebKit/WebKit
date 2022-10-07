@@ -2085,11 +2085,7 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
         return;
     }
 
-    auto id = element->getIdAttribute();
-    if (!id.isNull() && &rootNode() == &element->rootNode() && treeScope().getElementById(id) == element)
-        setAttribute(attributeName, id);
-    else
-        setAttribute(attributeName, emptyAtom());
+    setAttribute(attributeName, emptyAtom());
 
     explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> { element });
 }
@@ -2137,24 +2133,13 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
         return;
     }
 
+    setAttribute(attributeName, emptyAtom());
+
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> newElements;
     newElements.reserveInitialCapacity(elements->size());
-    StringBuilder value;
     for (auto element : elements.value()) {
         newElements.uncheckedAppend(element);
-        if (value.isEmpty() && newElements.size() > 1)
-            continue;
-
-        auto id = element->getIdAttribute();
-        if (!id.isNull() && &rootNode() == &element->rootNode() && treeScope().getElementById(id) == element) {
-            if (!value.isEmpty())
-                value.append(' ');
-            value.append(id);
-        } else
-            value.clear();
     }
-    setAttribute(attributeName, value.toAtomString());
-
     explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
 }
 
