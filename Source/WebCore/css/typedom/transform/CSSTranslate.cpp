@@ -151,14 +151,25 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
     if (!is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
         return Exception { TypeError };
 
-    auto x = downcast<CSSUnitValue>(m_x.get()).convertTo(CSSUnitType::CSS_PX);
-    auto y = downcast<CSSUnitValue>(m_y.get()).convertTo(CSSUnitType::CSS_PX);
-    auto z = downcast<CSSUnitValue>(m_z.get()).convertTo(CSSUnitType::CSS_PX);
+    auto xPx = downcast<CSSUnitValue>(m_x.get()).convertTo(CSSUnitType::CSS_PX);
+    auto yPx = downcast<CSSUnitValue>(m_y.get()).convertTo(CSSUnitType::CSS_PX);
+    auto zPx = downcast<CSSUnitValue>(m_z.get()).convertTo(CSSUnitType::CSS_PX);
 
-    if (!x || !y || !z)
+    if (!xPx || !yPx || !zPx)
         return Exception { TypeError };
 
-    return DOMMatrix::create({ }, is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No)->translateSelf(x->value(), y->value(), z->value());
+    auto x = xPx->value();
+    auto y = yPx->value();
+    auto z = zPx->value();
+
+    TransformationMatrix matrix { };
+
+    if (is2D())
+        matrix.translate(x, y);
+    else
+        matrix.translate3d(x, y, z);
+
+    return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
 
 } // namespace WebCore

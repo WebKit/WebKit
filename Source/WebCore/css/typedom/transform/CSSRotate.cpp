@@ -189,12 +189,17 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
     if (!angle)
         return Exception { TypeError };
 
-    auto x = downcast<CSSUnitValue>(m_x.get()).value();
-    auto y = downcast<CSSUnitValue>(m_y.get()).value();
-    auto z = downcast<CSSUnitValue>(m_z.get()).value();
-
     TransformationMatrix matrix { };
-    matrix.rotate3d(x, y, z, angle->value());
+
+    if (is2D())
+        matrix.rotate(angle->value());
+    else {
+        auto x = downcast<CSSUnitValue>(m_x.get()).value();
+        auto y = downcast<CSSUnitValue>(m_y.get()).value();
+        auto z = downcast<CSSUnitValue>(m_z.get()).value();
+
+        matrix.rotate3d(x, y, z, angle->value());
+    }
 
     return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
