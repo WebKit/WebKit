@@ -85,7 +85,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s))
         return kUTTypePNG;
-    if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"_s))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"_s) || equalLettersIgnoringASCIICase(mimeType, "image/jpg"_s))
         return jpegUTI();
     if (equalLettersIgnoringASCIICase(mimeType, "image/gif"_s))
         return kUTTypeGIF;
