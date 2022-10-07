@@ -86,21 +86,7 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 
 bool JSString::equalSlowCase(JSGlobalObject* globalObject, JSString* other) const
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    unsigned length = this->length();
-    if (length != other->length())
-        return false;
-
-    auto str1 = unsafeView(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-    auto str2 = other->unsafeView(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-
-    ensureStillAliveHere(this);
-    ensureStillAliveHere(other);
-    return WTF::equal(str1, str2, length);
+    return equalInline(globalObject, other);
 }
 
 size_t JSString::estimatedSize(JSCell* cell, VM& vm)

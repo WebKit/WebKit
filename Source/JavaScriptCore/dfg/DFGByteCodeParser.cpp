@@ -2604,8 +2604,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
+                return false;
+
+            // index parameter's BadType is critical. But the other ones can be relaxed, so not giving up optimization.
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType) && argumentCountIncludingThis > 2)
                 return false;
 
             ArrayMode arrayMode = getArrayMode(Array::Read);

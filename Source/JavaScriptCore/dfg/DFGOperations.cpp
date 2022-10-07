@@ -3122,11 +3122,9 @@ JSC_DEFINE_JIT_OPERATION(operationNumberIsInteger, size_t, (JSGlobalObject* glob
     return NumberConstructor::isIntegerImpl(JSValue::decode(value));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfString, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index))
+static ALWAYS_INLINE UCPUStrictInt32 arrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
 {
     VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     int32_t length = butterfly->publicLength();
@@ -3138,13 +3136,22 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfString, UCPUStrictInt32, (JSGlobal
         auto* string = asString(value);
         if (string == searchElement)
             return toUCPUStrictInt32(index);
-        if (string->equal(globalObject, searchElement)) {
+        if (string->equalInline(globalObject, searchElement)) {
             scope.assertNoExceptionExceptTermination();
             return toUCPUStrictInt32(index);
         }
         RETURN_IF_EXCEPTION(scope, { });
     }
     return toUCPUStrictInt32(-1);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfString, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return arrayIndexOfString(globalObject, butterfly, searchElement, index);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueInt32OrContiguous, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
@@ -3156,8 +3163,22 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueInt32OrContiguous, UCPUStrict
 
     JSValue searchElement = JSValue::decode(encodedValue);
 
+    if (searchElement.isString())
+        RELEASE_AND_RETURN(scope, arrayIndexOfString(globalObject, butterfly, asString(searchElement), index));
+
     int32_t length = butterfly->publicLength();
     auto data = butterfly->contiguous().data();
+
+    if (index >= length)
+        return toUCPUStrictInt32(-1);
+
+    if (searchElement.isObject()) {
+        auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), encodedValue, length - index));
+        if (result)
+            return toUCPUStrictInt32(result - data);
+        return toUCPUStrictInt32(-1);
+    }
+
     for (; index < length; ++index) {
         JSValue value = data[index].get();
         if (!value)
