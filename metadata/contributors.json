@@ -1245,6 +1245,7 @@
       "emails" : [
          "bweinstein@apple.com"
       ],
+      "expertise" : "Safari Extensions, Web Extensions",
       "github" : "b-weinstein",
       "name" : "Brian Weinstein",
       "nicks" : [
@@ -1910,6 +1911,14 @@
    },
    {
       "emails" : [
+         "davidjohnson@apple.com"
+      ],
+      "expertise" : "Safari Extensions, Web Extensions",
+      "github" : "davidjohnson91",
+      "name" : "David Johnson"
+   },
+   {
+      "emails" : [
          "david@djr.com"
       ],
       "name" : "David Jonathan Ross",
@@ -2326,6 +2335,14 @@
       "nicks" : [
          "efidler"
       ]
+   },
+   {
+      "emails" : [
+         "eepskamphunt@apple.com"
+      ],
+      "expertise" : "Safari Extensions, Web Extensions",
+      "github" : "eepskamp",
+      "name" : "Ellie Epskamp-Hunt"
    },
    {
       "emails" : [
@@ -4273,6 +4290,14 @@
       "nicks" : [
          "kollivier"
       ]
+   },
+   {
+      "emails" : [
+         "kiara_rose@apple.com"
+      ],
+      "expertise" : "Safari Extensions, Web Extensions",
+      "github" : "kiaraarose",
+      "name" : "Kiara Rose"
    },
    {
       "emails" : [
@@ -6752,10 +6777,9 @@
       ],
       "emails" : [
          "timothy@apple.com",
-         "timothy@hatcher.name",
-         "thatcher@tesla.com"
+         "timothy@hatcher.name"
       ],
-      "expertise" : "WebKit (Mac), Developer Tools (Web Inspector)",
+      "expertise" : "WebKit (Mac), Safari Extensions, Web Extensions, Developer Tools (Web Inspector)",
       "github" : "xeenon",
       "name" : "Timothy Hatcher",
       "nicks" : [
