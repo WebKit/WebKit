@@ -41,7 +41,7 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
 
     for (size_t i = 0; i < registerSaveLocations->registerCount(); ++i) {
         RegisterAtOffset entry { registerSaveLocations->at(i) };
-        if (!calleeSaveRegisters.includesRegister(entry.reg()))
+        if (!calleeSaveRegisters.includesRegister(entry.reg(), Width64))
             continue;
 
         int saveSlotIndexInCPURegisters = entry.offsetAsIndex();
@@ -70,7 +70,7 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
     }
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!calleeSaveRegisters.includesRegister(reg))
+        if (!calleeSaveRegisters.includesRegister(reg, Width64))
             continue;
 
         if (registers[reg])

@@ -178,7 +178,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     // 2. Restore callee saves.
     auto dontRestoreRegisters = RegisterSet::stackRegisters();
     for (const RegisterAtOffset& entry : *callee.calleeSaveRegisters()) {
-        if (dontRestoreRegisters.includesRegister(entry.reg()))
+        if (dontRestoreRegisters.includesRegister(entry.reg(), Width64))
             continue;
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = *bitwise_cast<UCPURegister*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());

@@ -669,7 +669,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/PutByIdFlags.h
     bytecode/SetPrivateBrandStatus.h
     bytecode/SetPrivateBrandVariant.h
-    bytecode/SimdInfo.h
+    bytecode/SIMDInfo.h
     bytecode/SourceID.h
     bytecode/SpeculatedType.h
     bytecode/StructureSet.h

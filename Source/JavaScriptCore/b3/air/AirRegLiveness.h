@@ -70,7 +70,7 @@ public:
         
         bool isLive(Reg reg) const
         {
-            return m_workset.includesRegister(reg);
+            return m_workset.includesRegister(reg, Width64);
         }
         
     protected:

@@ -28,7 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Common.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 #include <wtf/StdLibExtras.h>
 
 #if !ASSERT_ENABLED
@@ -83,26 +83,26 @@ private:
     TypeKind m_kind { Void };
 };
 
-inline constexpr TypeKind simdB3ScalarTypeKind(SimdLane lane)
+inline constexpr TypeKind simdB3ScalarTypeKind(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::i8x16:
-    case SimdLane::i16x8:
-    case SimdLane::i32x4:
+    case SIMDLane::i8x16:
+    case SIMDLane::i16x8:
+    case SIMDLane::i32x4:
         return Int32;
-    case SimdLane::i64x2:
+    case SIMDLane::i64x2:
         return Int64;
-    case SimdLane::f32x4:
+    case SIMDLane::f32x4:
         return Float;
-    case SimdLane::f64x2:
+    case SIMDLane::f64x2:
         return Double;
-    case SimdLane::v128:
+    case SIMDLane::v128:
         RELEASE_ASSERT_NOT_REACHED();
         return Int64;
     }
 }
 
-inline Type simdB3ScalarType(SimdLane lane)
+inline Type simdB3ScalarType(SIMDLane lane)
 {
     return { simdB3ScalarTypeKind(lane) };
 }

@@ -99,7 +99,7 @@ public:
     // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
     const WholeRegisterSet& mutableRegs() const { return m_mutableRegs; }
     
-    bool isPinned(Reg reg) const { return !mutableRegs().includesRegister(reg); }
+    bool isPinned(Reg reg) const { return !mutableRegs().includesRegister(reg, Width64); }
     void pinRegister(Reg);
     
     void setOptLevel(unsigned optLevel) { m_optLevel = optLevel; }

@@ -125,7 +125,7 @@ void lowerAfterRegAlloc(Code& code)
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
             for (Reg reg : code.regsInPriorityOrder(bank)) {
-                if (!WholeRegisterSet(set).includesRegister(reg) && !disallowedCalleeSaves.includesRegister(reg)) {
+                if (!WholeRegisterSet(set).includesRegister(reg, Width64) && !disallowedCalleeSaves.includesRegister(reg, Width64)) {
                     result[i] = Tmp(reg);
                     set.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
                     found = true;

@@ -2806,8 +2806,8 @@ void testPatchpointGPScratch()
             CHECK(params.gpScratch(1) != params[0].gpr());
             CHECK(params.gpScratch(1) != params[1].gpr());
             CHECK(params.gpScratch(1) != params[2].gpr());
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(0)));
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(1)));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(0), Width64));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(1), Width64));
             add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
@@ -2836,8 +2836,8 @@ void testPatchpointFPScratch()
             CHECK(params.fpScratch(0) != InvalidFPRReg);
             CHECK(params.fpScratch(1) != InvalidFPRReg);
             CHECK(params.fpScratch(1) != params.fpScratch(0));
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(0)));
-            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(1)));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(0), Width64));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(1), Width64));
             add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);

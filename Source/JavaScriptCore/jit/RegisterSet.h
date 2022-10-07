@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "wtf/Compiler.h"
 #if !ENABLE(C_LOOP)
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "Reg.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 #include <wtf/Bitmap.h>
 #include <wtf/CommaPrinter.h>
 
@@ -58,7 +59,7 @@ public:
         setMany(regs...);
     }
 
-    inline constexpr RegisterSet& includeRegister(Reg reg, Width width = Width128)
+    inline constexpr RegisterSet& includeRegister(Reg reg, Width width)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
@@ -68,8 +69,9 @@ public:
         return *this;
     }
 
-    inline constexpr RegisterSet& includeRegister(JSValueRegs regs)
+    inline constexpr RegisterSet& includeRegister(JSValueRegs regs, Width width)
     {
+        ASSERT_UNUSED(width, width == Width64);
         if (regs.tagGPR() != InvalidGPRReg)
             includeRegister(regs.tagGPR(), Width64);
         includeRegister(regs.payloadGPR(), Width64);
@@ -145,7 +147,7 @@ public:
 
 protected:
     inline constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); includeRegister(reg, Width128); }
-    inline constexpr void setAny(JSValueRegs regs) { includeRegister(regs); }
+    inline constexpr void setAny(JSValueRegs regs) { includeRegister(regs, Width64); }
     inline constexpr void setAny(const RegisterSet& set) { merge(set); }
     inline constexpr void setMany() { }
     template<typename RegType, typename... Regs>
@@ -197,7 +199,7 @@ public:
         m_bits.merge(m_upperBits);
     }
 
-    inline constexpr bool includesRegister(Reg reg, Width width = Width64) const
+    inline constexpr bool includesRegister(Reg reg, Width width) const
     {
         ASSERT(m_bits.count() >= m_upperBits.count());
         if (LIKELY(width <= Width64) || conservativeWidth(reg) <= Width64)
@@ -227,7 +229,11 @@ public:
 
     inline constexpr size_t sizeOfSetRegisters() const
     {
+#if USE(JSVALUE64)
         return (m_bits.count() + m_upperBits.count()) * sizeof(CPURegister);
+#else
+        return numberOfSetGPRs() * pointerWidth() + numberOfSetFPRs() * sizeof(double);
+#endif
     }
 
     inline constexpr bool subsumes(const WholeRegisterSet& other) const
@@ -305,18 +311,21 @@ public:
     inline constexpr iterator begin() const { return iterator(m_bits.begin()); }
     inline constexpr iterator end() const { return iterator(m_bits.end()); }
 
-    inline constexpr WholeRegisterSet& includeRegister(Reg reg, Width width = Width128)
+    inline constexpr WholeRegisterSet& includeRegister(Reg reg, Width width)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
 
+#if USE(JSVALUE64)
         if (UNLIKELY(width > Width64 && conservativeWidth(reg) > Width64))
             m_upperBits.set(reg.index());
+#endif
         return *this;
     }
 
-    inline constexpr WholeRegisterSet& includeRegister(JSValueRegs regs)
+    inline constexpr WholeRegisterSet& includeRegister(JSValueRegs regs, Width width)
     {
+        ASSERT_UNUSED(width, width == Width64);
         if (regs.tagGPR() != InvalidGPRReg)
             includeRegister(regs.tagGPR(), Width64);
         includeRegister(regs.payloadGPR(), Width64);
@@ -427,17 +436,19 @@ public:
         return result;
     }
 
-    inline constexpr void includeRegister(Reg reg)
+    inline constexpr void includeRegister(Reg reg, Width width)
     {
         ASSERT(!!reg);
+        ASSERT_UNUSED(width, width == Width64);
         m_bits.set(reg.index());
     }
 
-    inline constexpr void includeRegister(JSValueRegs regs)
+    inline constexpr void includeRegister(JSValueRegs regs, Width width)
     {
+        ASSERT_UNUSED(width, width == Width64);
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR());
-        includeRegister(regs.payloadGPR());
+            includeRegister(regs.tagGPR(), Width64);
+        includeRegister(regs.payloadGPR(), Width64);
     }
 
     inline constexpr void excludeRegister(Reg reg)
@@ -446,8 +457,11 @@ public:
         m_bits.clear(reg.index());
     }
 
-    inline constexpr bool includesRegister(Reg reg) const
+    inline constexpr bool includesRegister(Reg reg, Width width) const
     {
+        ASSERT_UNUSED(width, width == Width64);
+        if (UNLIKELY(width > Width64))
+            return false;
         return m_bits.get(reg.index());
     }
 

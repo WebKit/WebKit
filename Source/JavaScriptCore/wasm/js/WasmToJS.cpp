@@ -311,7 +311,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // jsArg10 might overlap with regT0, so store 'this' argument first
     jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))), jsArg10);
     constexpr GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
-    ASSERT(!wasmCC.calleeSaveRegisters.includesRegister(importJSCellGPRReg));
+    ASSERT(!wasmCC.calleeSaveRegisters.includesRegister(importJSCellGPRReg, Width64));
     materializeImportJSCell(jit, importIndex, importJSCellGPRReg);
     jit.storePtr(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 #if USE(JSVALUE32_64)

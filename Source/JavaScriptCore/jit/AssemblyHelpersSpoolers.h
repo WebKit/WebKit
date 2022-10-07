@@ -28,7 +28,7 @@
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 
 namespace JSC {
 
@@ -53,7 +53,7 @@ struct RegDispatch<GPRReg, Width64> {
     template<typename Spooler> static GPRReg temp2(const Spooler* spooler) { return spooler->m_temp2GPR; }
     template<typename Spooler> static GPRReg& regToStore(Spooler* spooler) { return spooler->m_gprToStore; }
     static constexpr GPRReg invalid() { return InvalidGPRReg; }
-    static constexpr size_t regSize() { return sizeof(CPURegister); }
+    static constexpr size_t regSize() { return bytesForWidth(pointerWidth()); }
 #if CPU(ARM64)
     static bool isValidLoadPairImm(int offset) { return ARM64Assembler::isValidLDPImm<64>(offset); }
     static bool isValidStorePairImm(int offset) { return ARM64Assembler::isValidSTPImm<64>(offset); }

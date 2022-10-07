@@ -417,7 +417,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     marshallJSResult(jit, typeDefinition, wasmCallInfo, savedResultRegisters);
 
-    ASSERT(!RegisterSet::runtimeTagRegisters().includesRegister(GPRInfo::nonPreservedNonReturnGPR));
+    ASSERT(!RegisterSet::runtimeTagRegisters().includesRegister(GPRInfo::nonPreservedNonReturnGPR, Width64));
     jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, previousInstanceOffset), GPRInfo::nonPreservedNonReturnGPR);
     if (Wasm::Context::useFastTLS())
         jit.storeWasmContextInstance(GPRInfo::nonPreservedNonReturnGPR);

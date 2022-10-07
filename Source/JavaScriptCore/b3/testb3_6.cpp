@@ -1556,7 +1556,7 @@ void testLateRegister()
     Vector<Value*> lateUseArgs;
     unsigned result = 0;
     for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-        if (!regs.whole().includesRegister(reg))
+        if (!regs.whole().includesRegister(reg, Width64))
             continue;
         result++;
         if (reg == GPRInfo::regT0)
@@ -1569,7 +1569,7 @@ void testLateRegister()
     {
         unsigned i = 0;
         for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-            if (!regs.whole().includesRegister(reg))
+            if (!regs.whole().includesRegister(reg, Width64))
                 continue;
             if (reg == GPRInfo::regT0)
                 continue;

@@ -51,8 +51,8 @@ void ValueRep::addUsedRegistersTo(RegisterSet& set) const
         return;
     case Stack:
     case StackArgument:
-        set.includeRegister(MacroAssembler::stackPointerRegister);
-        set.includeRegister(GPRInfo::callFrameRegister);
+        set.includeRegister(MacroAssembler::stackPointerRegister, Width64);
+        set.includeRegister(GPRInfo::callFrameRegister, Width64);
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

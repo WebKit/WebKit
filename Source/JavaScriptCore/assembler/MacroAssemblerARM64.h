@@ -30,7 +30,7 @@
 #include "ARM64Assembler.h"
 #include "AbstractMacroAssembler.h"
 #include "JITOperationValidation.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -4682,27 +4682,27 @@ public:
     }
 #endif // ENABLE(FAST_TLS_JIT)
     
-    void vectorReplaceLane(SimdLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
     {
         m_assembler.ins(dest, src, simdLane, lane.m_value);
     }
 
-    void vectorReplaceLane(SimdLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.ins(dest, src, simdLane, lane.m_value);
     }
 
     DEFINE_SIMD_FUNCS(vectorReplaceLane);
     
-    void vectorExtractLane(SimdLane simdLane, SimdSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
+    void vectorExtractLane(SIMDLane simdLane, SIMDSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
     {
-        if (signMode == SimdSignMode::Signed)
+        if (signMode == SIMDSignMode::Signed)
             m_assembler.smov(dest, src, simdLane, lane.m_value);
         else
             m_assembler.umov(dest, src, simdLane, lane.m_value);
     }
 
-    void vectorExtractLane(SimdLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.dupElement(dest, src, simdLane, lane.m_value);
     }

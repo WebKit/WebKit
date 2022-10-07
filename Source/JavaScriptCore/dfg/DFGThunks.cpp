@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DFGThunks.h"
+#include "bytecode/SIMDInfo.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -80,7 +81,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     for (unsigned i = firstGPR; i < GPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = i * sizeof(CPURegister);
-        storeSpooler.storeGPR({ GPRInfo::toRegister(i), offset, Width64 });
+        storeSpooler.storeGPR({ GPRInfo::toRegister(i), offset, pointerWidth() });
     }
     storeSpooler.finalizeGPR();
 
@@ -101,7 +102,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     for (unsigned i = firstGPR; i < GPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = i * sizeof(CPURegister);
-        loadSpooler.loadGPR({ GPRInfo::toRegister(i), offset, Width64 });
+        loadSpooler.loadGPR({ GPRInfo::toRegister(i), offset, pointerWidth() });
     }
     loadSpooler.finalizeGPR();
 

@@ -41,7 +41,9 @@ RegisterAtOffsetList* RegisterSet::vmCalleeSaveRegisterOffsets()
     static std::once_flag calleeSavesFlag;
     std::call_once(calleeSavesFlag, [] () {
         result = new RegisterAtOffsetList(vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
+#if USE(JSVALUE64)
         ASSERT(result->registerCount() == result->sizeOfAreaInBytes() / sizeof(CPURegister));
+#endif
     });
     return result;
 }
@@ -59,7 +61,7 @@ WholeRegisterSet RegisterSet::reservedHardwareRegisters()
 
 #define SET_IF_RESERVED(id, name, isReserved, isCalleeSaved)    \
     if (isReserved)                                             \
-        result.includeRegister(RegisterNames::id);
+        result.includeRegister(RegisterNames::id, Width128);
     FOR_EACH_GP_REGISTER(SET_IF_RESERVED)
     FOR_EACH_FP_REGISTER(SET_IF_RESERVED)
 #undef SET_IF_RESERVED
@@ -102,16 +104,16 @@ WholeRegisterSet RegisterSet::macroClobberedRegisters()
     return RegisterSet(MacroAssembler::dataTempRegister, MacroAssembler::memoryTempRegister).whole();
 #elif CPU(ARM_THUMB2)
     WholeRegisterSet result;
-    result.includeRegister(MacroAssembler::dataTempRegister);
-    result.includeRegister(MacroAssembler::addressTempRegister);
-    result.includeRegister(MacroAssembler::fpTempRegister);
+    result.includeRegister(MacroAssembler::dataTempRegister, Width64);
+    result.includeRegister(MacroAssembler::addressTempRegister, Width64);
+    result.includeRegister(MacroAssembler::fpTempRegister, Width64);
     return result;
 #elif CPU(MIPS)
     WholeRegisterSet result;
-    result.includeRegister(MacroAssembler::immTempRegister);
-    result.includeRegister(MacroAssembler::dataTempRegister);
-    result.includeRegister(MacroAssembler::addrTempRegister);
-    result.includeRegister(MacroAssembler::cmpTempRegister);
+    result.includeRegister(MacroAssembler::immTempRegister, Width64);
+    result.includeRegister(MacroAssembler::dataTempRegister, Width64);
+    result.includeRegister(MacroAssembler::addrTempRegister, Width64);
+    result.includeRegister(MacroAssembler::cmpTempRegister, Width64);
     return result;
 #else
     return { };
@@ -124,7 +126,7 @@ WholeRegisterSet RegisterSet::calleeSaveRegisters()
 
 #define SET_IF_CALLEESAVED(id, name, isReserved, isCalleeSaved)        \
     if (isCalleeSaved)                                                 \
-        result.includeRegister(RegisterNames::id);
+        result.includeRegister(RegisterNames::id, Width64);
     FOR_EACH_GP_REGISTER(SET_IF_CALLEESAVED)
 #undef SET_IF_CALLEESAVED
 #define SET_IF_CALLEESAVED(id, name, isReserved, isCalleeSaved)        \
@@ -140,26 +142,26 @@ WholeRegisterSet RegisterSet::vmCalleeSaveRegisters()
 {
     WholeRegisterSet result;
 #if CPU(X86_64)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
 #if OS(WINDOWS)
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
 #endif
 #elif CPU(ARM64)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
-    result.includeRegister(GPRInfo::regCS7);
-    result.includeRegister(GPRInfo::regCS8);
-    result.includeRegister(GPRInfo::regCS9);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
+    result.includeRegister(GPRInfo::regCS7, Width64);
+    result.includeRegister(GPRInfo::regCS8, Width64);
+    result.includeRegister(GPRInfo::regCS9, Width64);
     result.includeRegister(FPRInfo::fpRegCS0, Width64);
     result.includeRegister(FPRInfo::fpRegCS1, Width64);
     result.includeRegister(FPRInfo::fpRegCS2, Width64);
@@ -169,42 +171,42 @@ WholeRegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.includeRegister(FPRInfo::fpRegCS6, Width64);
     result.includeRegister(FPRInfo::fpRegCS7, Width64);
 #elif CPU(ARM_THUMB2)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
-    result.includeRegister(FPRInfo::fpRegCS0);
-    result.includeRegister(FPRInfo::fpRegCS1);
-    result.includeRegister(FPRInfo::fpRegCS2);
-    result.includeRegister(FPRInfo::fpRegCS3);
-    result.includeRegister(FPRInfo::fpRegCS4);
-    result.includeRegister(FPRInfo::fpRegCS5);
-    result.includeRegister(FPRInfo::fpRegCS6);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
+    result.includeRegister(FPRInfo::fpRegCS0, Width64);
+    result.includeRegister(FPRInfo::fpRegCS1, Width64);
+    result.includeRegister(FPRInfo::fpRegCS2, Width64);
+    result.includeRegister(FPRInfo::fpRegCS3, Width64);
+    result.includeRegister(FPRInfo::fpRegCS4, Width64);
+    result.includeRegister(FPRInfo::fpRegCS5, Width64);
+    result.includeRegister(FPRInfo::fpRegCS6, Width64);
 #elif CPU(MIPS)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
 #elif CPU(RISCV64)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
-    result.includeRegister(GPRInfo::regCS7);
-    result.includeRegister(GPRInfo::regCS8);
-    result.includeRegister(GPRInfo::regCS9);
-    result.includeRegister(GPRInfo::regCS10);
-    result.includeRegister(FPRInfo::fpRegCS0);
-    result.includeRegister(FPRInfo::fpRegCS1);
-    result.includeRegister(FPRInfo::fpRegCS2);
-    result.includeRegister(FPRInfo::fpRegCS3);
-    result.includeRegister(FPRInfo::fpRegCS4);
-    result.includeRegister(FPRInfo::fpRegCS5);
-    result.includeRegister(FPRInfo::fpRegCS6);
-    result.includeRegister(FPRInfo::fpRegCS7);
-    result.includeRegister(FPRInfo::fpRegCS8);
-    result.includeRegister(FPRInfo::fpRegCS9);
-    result.includeRegister(FPRInfo::fpRegCS10);
-    result.includeRegister(FPRInfo::fpRegCS11);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
+    result.includeRegister(GPRInfo::regCS7, Width64);
+    result.includeRegister(GPRInfo::regCS8, Width64);
+    result.includeRegister(GPRInfo::regCS9, Width64);
+    result.includeRegister(GPRInfo::regCS10, Width64);
+    result.includeRegister(FPRInfo::fpRegCS0, Width64);
+    result.includeRegister(FPRInfo::fpRegCS1, Width64);
+    result.includeRegister(FPRInfo::fpRegCS2, Width64);
+    result.includeRegister(FPRInfo::fpRegCS3, Width64);
+    result.includeRegister(FPRInfo::fpRegCS4, Width64);
+    result.includeRegister(FPRInfo::fpRegCS5, Width64);
+    result.includeRegister(FPRInfo::fpRegCS6, Width64);
+    result.includeRegister(FPRInfo::fpRegCS7, Width64);
+    result.includeRegister(FPRInfo::fpRegCS8, Width64);
+    result.includeRegister(FPRInfo::fpRegCS9, Width64);
+    result.includeRegister(FPRInfo::fpRegCS10, Width64);
+    result.includeRegister(FPRInfo::fpRegCS11, Width64);
 #endif
     return result;
 }
@@ -215,33 +217,33 @@ WholeRegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #if CPU(X86)
 #elif CPU(X86_64)
 #if !OS(WINDOWS)
-    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS1, Width64);
     static_assert(GPRInfo::regCS2 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
 #else
-    result.includeRegister(GPRInfo::regCS3);
+    result.includeRegister(GPRInfo::regCS3, Width64);
     static_assert(GPRInfo::regCS4 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS4);
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS4, Width64);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
 #endif
 #elif CPU(ARM_THUMB2) || CPU(MIPS)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
 #elif CPU(ARM64) || CPU(RISCV64)
-    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS6, Width64);
     static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS7);
-    result.includeRegister(GPRInfo::regCS8);
-    result.includeRegister(GPRInfo::regCS9);
+    result.includeRegister(GPRInfo::regCS7, Width64);
+    result.includeRegister(GPRInfo::regCS8, Width64);
+    result.includeRegister(GPRInfo::regCS9, Width64);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -253,35 +255,35 @@ WholeRegisterSet RegisterSet::dfgCalleeSaveRegisters()
     WholeRegisterSet result;
 #if CPU(X86)
 #elif CPU(X86_64)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
 #if !OS(WINDOWS)
     static_assert(GPRInfo::regCS2 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
 #else
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
     static_assert(GPRInfo::regCS4 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS4);
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS4, Width64);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
 #endif
 #elif CPU(ARM_THUMB2) || CPU(MIPS)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
 #elif CPU(ARM64) || CPU(RISCV64)
     static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS7);
-    result.includeRegister(GPRInfo::regCS8);
-    result.includeRegister(GPRInfo::regCS9);
+    result.includeRegister(GPRInfo::regCS7, Width64);
+    result.includeRegister(GPRInfo::regCS8, Width64);
+    result.includeRegister(GPRInfo::regCS9, Width64);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -293,29 +295,29 @@ WholeRegisterSet RegisterSet::ftlCalleeSaveRegisters()
     WholeRegisterSet result;
 #if ENABLE(FTL_JIT)
 #if CPU(X86_64) && !OS(WINDOWS)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
     static_assert(GPRInfo::regCS2 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
 #elif CPU(ARM64)
     // B3 might save and use all ARM64 callee saves specified in the ABI.
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
     static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS7);
-    result.includeRegister(GPRInfo::regCS8);
-    result.includeRegister(GPRInfo::regCS9);
+    result.includeRegister(GPRInfo::regCS7, Width64);
+    result.includeRegister(GPRInfo::regCS8, Width64);
+    result.includeRegister(GPRInfo::regCS9, Width64);
     result.includeRegister(FPRInfo::fpRegCS0, Width64);
     result.includeRegister(FPRInfo::fpRegCS1, Width64);
     result.includeRegister(FPRInfo::fpRegCS2, Width64);
@@ -325,32 +327,32 @@ WholeRegisterSet RegisterSet::ftlCalleeSaveRegisters()
     result.includeRegister(FPRInfo::fpRegCS6, Width64);
     result.includeRegister(FPRInfo::fpRegCS7, Width64);
 #elif CPU(RISCV64)
-    result.includeRegister(GPRInfo::regCS0);
-    result.includeRegister(GPRInfo::regCS1);
-    result.includeRegister(GPRInfo::regCS2);
-    result.includeRegister(GPRInfo::regCS3);
-    result.includeRegister(GPRInfo::regCS4);
-    result.includeRegister(GPRInfo::regCS5);
-    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS0, Width64);
+    result.includeRegister(GPRInfo::regCS1, Width64);
+    result.includeRegister(GPRInfo::regCS2, Width64);
+    result.includeRegister(GPRInfo::regCS3, Width64);
+    result.includeRegister(GPRInfo::regCS4, Width64);
+    result.includeRegister(GPRInfo::regCS5, Width64);
+    result.includeRegister(GPRInfo::regCS6, Width64);
     static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
-    result.includeRegister(GPRInfo::regCS7);
-    result.includeRegister(GPRInfo::regCS8);
-    result.includeRegister(GPRInfo::regCS9);
-    result.includeRegister(GPRInfo::regCS10);
-    result.includeRegister(FPRInfo::fpRegCS0);
-    result.includeRegister(FPRInfo::fpRegCS1);
-    result.includeRegister(FPRInfo::fpRegCS2);
-    result.includeRegister(FPRInfo::fpRegCS3);
-    result.includeRegister(FPRInfo::fpRegCS4);
-    result.includeRegister(FPRInfo::fpRegCS5);
-    result.includeRegister(FPRInfo::fpRegCS6);
-    result.includeRegister(FPRInfo::fpRegCS7);
-    result.includeRegister(FPRInfo::fpRegCS8);
-    result.includeRegister(FPRInfo::fpRegCS9);
-    result.includeRegister(FPRInfo::fpRegCS10);
-    result.includeRegister(FPRInfo::fpRegCS11);
+    result.includeRegister(GPRInfo::regCS7, Width64);
+    result.includeRegister(GPRInfo::regCS8, Width64);
+    result.includeRegister(GPRInfo::regCS9, Width64);
+    result.includeRegister(GPRInfo::regCS10, Width64);
+    result.includeRegister(FPRInfo::fpRegCS0, Width64);
+    result.includeRegister(FPRInfo::fpRegCS1, Width64);
+    result.includeRegister(FPRInfo::fpRegCS2, Width64);
+    result.includeRegister(FPRInfo::fpRegCS3, Width64);
+    result.includeRegister(FPRInfo::fpRegCS4, Width64);
+    result.includeRegister(FPRInfo::fpRegCS5, Width64);
+    result.includeRegister(FPRInfo::fpRegCS6, Width64);
+    result.includeRegister(FPRInfo::fpRegCS7, Width64);
+    result.includeRegister(FPRInfo::fpRegCS8, Width64);
+    result.includeRegister(FPRInfo::fpRegCS9, Width64);
+    result.includeRegister(FPRInfo::fpRegCS10, Width64);
+    result.includeRegister(FPRInfo::fpRegCS11, Width64);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -363,7 +365,7 @@ WholeRegisterSet RegisterSet::argumentGPRS()
     WholeRegisterSet result;
 #if NUMBER_OF_ARGUMENT_REGISTERS
     for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; i++)
-        result.includeRegister(GPRInfo::toArgumentRegister(i));
+        result.includeRegister(GPRInfo::toArgumentRegister(i), Width64);
 #endif
     return result;
 }
@@ -390,7 +392,7 @@ WholeRegisterSet RegisterSet::allGPRs()
 {
     WholeRegisterSet result;
     for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1))
-        result.includeRegister(reg);
+        result.includeRegister(reg, Width64);
     return result;
 }
 
@@ -398,7 +400,7 @@ WholeRegisterSet RegisterSet::allFPRs()
 {
     WholeRegisterSet result;
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1))
-        result.includeRegister(reg);
+        result.includeRegister(reg, Width128);
     return result;
 }
 

@@ -42,21 +42,21 @@ namespace JSC {
 
 namespace Wasm {
 
-constexpr Type scalarType(SimdLane lane)
+constexpr Type scalarType(SIMDLane lane)
 {
     switch (lane) {
-    case SimdLane::v128:
+    case SIMDLane::v128:
         RELEASE_ASSERT_NOT_REACHED();
         return Types::Void;
-    case SimdLane::i64x2:
+    case SIMDLane::i64x2:
         return Types::I64;
-    case SimdLane::f64x2:
+    case SIMDLane::f64x2:
         return Types::F64;
-    case SimdLane::i8x16:
-    case SimdLane::i16x8:
-    case SimdLane::i32x4:
+    case SIMDLane::i8x16:
+    case SIMDLane::i16x8:
+    case SIMDLane::i32x4:
         return Types::I32;
-    case SimdLane::f32x4:
+    case SIMDLane::f32x4:
         return Types::F32;
     }
 }

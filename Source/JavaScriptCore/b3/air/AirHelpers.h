@@ -28,7 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirOpcode.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 
 namespace JSC::B3::Air {
 

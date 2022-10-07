@@ -29,7 +29,7 @@
 
 #include "B3Procedure.h"
 #include "JITCompilation.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 #include "VirtualRegister.h"
 #include "WasmFormat.h"
 #include "WasmLimits.h"

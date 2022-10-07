@@ -64,9 +64,9 @@ SlowPathCallContext::SlowPathCallContext(
         callingConventionRegisters.includeRegister(GPRInfo::toArgumentRegister(i), Width64);
     callingConventionRegisters.merge(m_argumentRegisters.set());
     if (returnRegister != InvalidGPRReg)
-        callingConventionRegisters.includeRegister(GPRInfo::returnValueGPR);
+        callingConventionRegisters.includeRegister(GPRInfo::returnValueGPR, Width64);
     if (indirectCallTargetRegister != InvalidGPRReg)
-        callingConventionRegisters.includeRegister(indirectCallTargetRegister);
+        callingConventionRegisters.includeRegister(indirectCallTargetRegister, Width64);
     callingConventionRegisters.filter(usedRegisters);
     m_callingConventionRegisters = callingConventionRegisters.whole();
         
@@ -90,7 +90,7 @@ SlowPathCallContext::SlowPathCallContext(
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.includesRegister(reg))
+        if (!m_callingConventionRegisters.includesRegister(reg, Width64))
             continue;
         m_jit.storePtr(reg, CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize));
         usedRegisters.excludeRegister(reg);
@@ -108,7 +108,7 @@ SlowPathCallContext::~SlowPathCallContext()
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.includesRegister(reg))
+        if (!m_callingConventionRegisters.includesRegister(reg, Width64))
             continue;
         m_jit.loadPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize), reg);
     }

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "FTLOSRExitCompiler.h"
+#include "bytecode/SIMDInfo.h"
 
 #if ENABLE(FTL_JIT)
 
@@ -478,7 +479,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
         auto iterateCalleeSavesImpl = [&](auto check, auto func) {
             for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-                if (!allFTLCalleeSaves.includesRegister(reg))
+                if (!allFTLCalleeSaves.includesRegister(reg, Width64))
                     continue;
                 if (!check(reg))
                     continue;
@@ -501,18 +502,18 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             // This means that it also didn't use them. Their values at the beginning of OSR exit should
             // be the ones to retain. We saved all registers into the register scratch buffer at the beginning
             // of the thunk. So we can restore them from there.
-            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT3));
-            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT0));
-            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT1));
-            ASSERT(!allFTLCalleeSaves.includesRegister(FPRInfo::fpRegT0));
-            ASSERT(!allFTLCalleeSaves.includesRegister(FPRInfo::fpRegT1));
+            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT3, Width64));
+            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT0, Width64));
+            ASSERT(!allFTLCalleeSaves.includesRegister(GPRInfo::regT1, Width64));
+            ASSERT(!allFTLCalleeSaves.includesRegister(FPRInfo::fpRegT0, Width64));
+            ASSERT(!allFTLCalleeSaves.includesRegister(FPRInfo::fpRegT1, Width64));
             jit.move(CCallHelpers::TrustedImmPtr(registerScratch), GPRInfo::regT3);
             {
                 // Load from registerScratch buffer to callee-save registers.
                 CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
                 iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), Width64 });
+                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), pointerWidth() });
                 });
                 spooler.finalizeGPR();
                 iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
@@ -552,7 +553,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
                 iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), Width64 });
+                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), pointerWidth() });
                 });
                 spooler.finalizeGPR();
                 iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {

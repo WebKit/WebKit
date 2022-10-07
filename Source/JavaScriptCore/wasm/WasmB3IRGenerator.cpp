@@ -94,7 +94,7 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
 
-    static constexpr bool tierSupportsSimd = false;
+    static constexpr bool tierSupportsSIMD = false;
 
     struct ControlData {
         ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -801,8 +801,8 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restor
     if (!!memory) {
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         WholeRegisterSet clobbers;
-        clobbers.includeRegister(pinnedRegs->baseMemoryPointer);
-        clobbers.includeRegister(pinnedRegs->boundsCheckingSizeRegister);
+        clobbers.includeRegister(pinnedRegs->baseMemoryPointer, Width64);
+        clobbers.includeRegister(pinnedRegs->boundsCheckingSizeRegister, Width64);
         clobbers.merge(RegisterSet::macroClobberedRegisters());
 
         B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Void, origin());
@@ -2556,7 +2556,7 @@ void B3IRGenerator::emitEntryTierUpCheck()
 
             const unsigned extraPaddingBytes = 0;
             WholeRegisterSet registersToSpill = { };
-            registersToSpill.includeRegister(GPRInfo::argumentGPR1);
+            registersToSpill.includeRegister(GPRInfo::argumentGPR1, Width64);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
             jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
@@ -2613,7 +2613,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
 
     patch->clobber(RegisterSet::macroClobberedRegisters());
     WholeRegisterSet clobberLate;
-    clobberLate.includeRegister(GPRInfo::argumentGPR0);
+    clobberLate.includeRegister(GPRInfo::argumentGPR0, Width64);
     patch->clobberLate(clobberLate);
 
     patch->append(countDownLocation, ValueRep::SomeRegister);
@@ -2894,7 +2894,7 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     result->effects.exitsSideways = true;
     result->clobber(RegisterSet::macroClobberedRegisters());
     auto clobberLate = RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
-    clobberLate.includeRegister(GPRInfo::argumentGPR0);
+    clobberLate.includeRegister(GPRInfo::argumentGPR0, Width64);
     result->clobberLate(clobberLate);
     result->append(instanceValue(), ValueRep::SomeRegister);
     result->resultConstraints.append(ValueRep::reg(GPRInfo::returnValueGPR));

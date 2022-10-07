@@ -51,9 +51,9 @@ bool PatchCustom::isValidForm(Inst& inst)
             if (!tmp.isReg())
                 return;
             if (Arg::isLateDef(role) || Arg::isLateUse(role))
-                ok &= !clobberedLate.includesRegister(tmp.reg());
+                ok &= !clobberedLate.includesRegister(tmp.reg(), Width64);
             else
-                ok &= !clobberedEarly.includesRegister(tmp.reg());
+                ok &= !clobberedEarly.includesRegister(tmp.reg(), Width64);
         });
     return ok;
 }

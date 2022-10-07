@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "FTLThunks.h"
+#include "bytecode/SIMDInfo.h"
 
 #if ENABLE(FTL_JIT)
 
@@ -147,7 +148,7 @@ static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
     
     GPRReg someGPR = InvalidGPRReg;
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!wholeClobberedRegisters.includesRegister(reg) || !reg.isGPR())
+        if (!wholeClobberedRegisters.includesRegister(reg, Width64) || !reg.isGPR())
             continue;
         
         jit.move(AssemblyHelpers::TrustedImm32(0x1337beef), reg.gpr());
@@ -155,7 +156,7 @@ static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
     }
     
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!wholeClobberedRegisters.includesRegister(reg) || !reg.isFPR())
+        if (!wholeClobberedRegisters.includesRegister(reg, Width64) || !reg.isFPR())
             continue;
         
         jit.move64ToDouble(someGPR, reg.fpr());
@@ -180,15 +181,15 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     AssemblyHelpers::StoreRegSpooler storeSpooler(jit, MacroAssembler::stackPointerRegister);
 
     for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1)) {
-        if (!key.usedRegisters().includesRegister(reg))
+        if (!key.usedRegisters().includesRegister(reg, Width64))
             continue;
-        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
+        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset), pointerWidth() });
         currentOffset += sizeof(void*);
     }
     storeSpooler.finalizeGPR();
 
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1)) {
-        if (!key.usedRegisters().includesRegister(reg))
+        if (!key.usedRegisters().includesRegister(reg, Width64))
             continue;
         storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
         currentOffset += sizeof(double);
@@ -202,7 +203,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     if (UNLIKELY(Options::clobberAllRegsInFTLICSlowPath())) {
         auto dontClobber = key.argumentRegistersIfClobberingCheckIsEnabled();
         if (!key.callTarget())
-            dontClobber.includeRegister(GPRInfo::nonArgGPR0);
+            dontClobber.includeRegister(GPRInfo::nonArgGPR0, Width64);
         registerClobberCheck(jit, WTFMove(dontClobber));
     }
 
@@ -218,7 +219,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     AssemblyHelpers::LoadRegSpooler loadSpooler(jit, MacroAssembler::stackPointerRegister);
 
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::lastFPRegister(); ; reg = static_cast<MacroAssembler::FPRegisterID>(reg - 1)) {
-        if (key.usedRegisters().includesRegister(reg)) {
+        if (key.usedRegisters().includesRegister(reg, Width64)) {
             currentOffset -= sizeof(double);
             loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
         }
@@ -228,9 +229,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     loadSpooler.finalizeFPR();
 
     for (MacroAssembler::RegisterID reg = MacroAssembler::lastRegister(); ; reg = static_cast<MacroAssembler::RegisterID>(reg - 1)) {
-        if (key.usedRegisters().includesRegister(reg)) {
+        if (key.usedRegisters().includesRegister(reg, Width64)) {
             currentOffset -= sizeof(void*);
-            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
+            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset), pointerWidth() });
         }
         if (reg == MacroAssembler::firstRegister())
             break;

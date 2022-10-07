@@ -31,7 +31,7 @@
 #include "AssemblerCommon.h"
 #include "JITCompilationEffort.h"
 #include "RegisterInfo.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 #include <limits.h>
 #include <stdint.h>
 #include <wtf/Assertions.h>
@@ -2368,11 +2368,11 @@ public:
     }
 #endif
     
-    void pinsr(XMMRegisterID vd, RegisterID rn, SimdLane lane, uint8_t laneIndex)
+    void pinsr(XMMRegisterID vd, RegisterID rn, SIMDLane lane, uint8_t laneIndex)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);
 
-        if (lane == SimdLane::i64x2) {
+        if (lane == SIMDLane::i64x2) {
             RELEASE_ASSERT(laneIndex < 2);
             m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_PINSRD, (RegisterID) vd, rn);
         } else
@@ -2381,14 +2381,14 @@ public:
         m_formatter.immediate8((uint8_t) laneIndex);
     }
     
-    void pextr(RegisterID rd, XMMRegisterID vn, SimdLane lane, uint8_t laneIndex)
+    void pextr(RegisterID rd, XMMRegisterID vn, SIMDLane lane, uint8_t laneIndex)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);
 
-        if (lane == SimdLane::i8x16) {
+        if (lane == SIMDLane::i8x16) {
             ASSERT(laneIndex < 16);
             m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_PEXTRB, (RegisterID) vn, rd);
-        } else if (lane == SimdLane::i32x4) {
+        } else if (lane == SIMDLane::i32x4) {
             ASSERT(laneIndex < 4);
             m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_PEXTRD, (RegisterID) vn, rd);
         } else
@@ -2397,11 +2397,11 @@ public:
         m_formatter.immediate8((uint8_t) laneIndex);
     }
 
-    void vextractps(FPRegisterID rd, XMMRegisterID vn, SimdLane lane, uint8_t laneIndex)
+    void vextractps(FPRegisterID rd, XMMRegisterID vn, SIMDLane lane, uint8_t laneIndex)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);
 
-        if (lane == SimdLane::f32x4) {
+        if (lane == SIMDLane::f32x4) {
             ASSERT(laneIndex < 4);
             m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_EXTRACTPS, (RegisterID) vn, (RegisterID) rd);
         } else
@@ -4355,7 +4355,7 @@ private:
             {
                 putByteUnchecked(VexPrefix::TwoBytes);
 
-                uint8_t secondByte = vexEncodeSimdPrefix(simdPrefix);
+                uint8_t secondByte = vexEncodeSIMDPrefix(simdPrefix);
                 secondByte |= (~inOpReg & 0xf) << 3;
                 secondByte |= !regRequiresRex(r) << 7;
                 putByteUnchecked(secondByte);
@@ -4371,7 +4371,7 @@ private:
                 secondByte |= !regRequiresRex(b) << 5;
                 putByteUnchecked(secondByte);
 
-                uint8_t thirdByte = vexEncodeSimdPrefix(simdPrefix);
+                uint8_t thirdByte = vexEncodeSIMDPrefix(simdPrefix);
                 thirdByte |= (~inOpReg & 0xf) << 3;
                 putByteUnchecked(thirdByte);
             }
@@ -4386,12 +4386,12 @@ private:
                 secondByte |= !regRequiresRex(b) << 5;
                 putByteUnchecked(secondByte);
 
-                uint8_t thirdByte = vexEncodeSimdPrefix(simdPrefix);
+                uint8_t thirdByte = vexEncodeSIMDPrefix(simdPrefix);
                 thirdByte |= (~inOpReg & 0xf) << 3;
                 putByteUnchecked(thirdByte);
             }
         private:
-            uint8_t vexEncodeSimdPrefix(OneByteOpcodeID simdPrefix)
+            uint8_t vexEncodeSIMDPrefix(OneByteOpcodeID simdPrefix)
             {
                 switch (simdPrefix) {
                 case 0x66:

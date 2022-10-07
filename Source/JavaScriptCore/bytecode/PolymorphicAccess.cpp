@@ -112,7 +112,7 @@ const SmallRegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndE
 
         auto liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite.set(), allocator->usedRegisters());
         if (jit->codeBlock()->useDataIC())
-            liveRegistersForCall.includeRegister(stubInfo->m_stubInfoGPR);
+            liveRegistersForCall.includeRegister(stubInfo->m_stubInfoGPR, Width64);
         liveRegistersForCall.exclude(calleeSaveRegisters().whole().includeWholeRegisterWidth());
         m_liveRegistersForCall = liveRegistersForCall.whole();
     }
@@ -137,7 +137,7 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions
 {
     RegisterSet liveRegisters = allocator->usedRegisters();
     if (jit->codeBlock()->useDataIC())
-        liveRegisters.includeRegister(stubInfo->m_stubInfoGPR);
+        liveRegisters.includeRegister(stubInfo->m_stubInfoGPR, Width64);
     liveRegisters.exclude(calleeSaveRegisters().whole().includeWholeRegisterWidth());
     liveRegisters.filter(RegisterSet::allScalarRegisters());
 

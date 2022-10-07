@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SimdInfo))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
 end
 
 def isArch(token)
@@ -940,7 +940,7 @@ writeH("OpcodeGenerated") {
                 when "DoubleCond"
                 when "StatusCond"
                 when "ZeroReg"
-                when "SimdInfo"
+                when "SIMDInfo"
                 else
                     raise "Unexpected kind: #{kind.name}"
                 end
@@ -1253,7 +1253,7 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asDoubleCondition()"
                 when "StatusCond"
                     outp.print "args[#{index}].asStatusCondition()"
-                when "SimdInfo"
+                when "SIMDInfo"
                     outp.print "args[#{index}].simdInfo()"
                 end
             }

@@ -48,7 +48,7 @@ class LLIntGenerator : public BytecodeGeneratorBase<GeneratorTraits> {
 public:
     using ExpressionType = VirtualRegister;
 
-    static constexpr bool tierSupportsSimd = false;
+    static constexpr bool tierSupportsSIMD = false;
 
     struct ControlLoop  {
         Ref<Label> m_body;

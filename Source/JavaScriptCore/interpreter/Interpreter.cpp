@@ -645,7 +645,7 @@ private:
         VMEntryRecord* record = vmEntryRecord(m_vm.topEntryFrame);
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset currentEntry = currentCalleeSaves->at(i);
-            if (dontCopyRegisters.includesRegister(currentEntry.reg()))
+            if (dontCopyRegisters.includesRegister(currentEntry.reg(), Width64))
                 continue;
             RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
             

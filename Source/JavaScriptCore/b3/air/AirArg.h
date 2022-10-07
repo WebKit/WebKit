@@ -92,7 +92,7 @@ public:
         // ZeroReg is interpreted as a zero register in ARM64
         ZeroReg,
         
-        SimdInfo
+        SIMDInfo
     };
     
     enum Temperature : int8_t {
@@ -495,18 +495,18 @@ public:
     {
     }
     
-    static Arg simdInfo(SimdLane simdLane, SimdSignMode signMode = SimdSignMode::None)
+    static Arg simdInfo(SIMDLane simdLane, SIMDSignMode signMode = SIMDSignMode::None)
     {
         Arg result;
-        result.m_kind = SimdInfo;
-        result.m_simdInfo = ::JSC::SimdInfo { simdLane, signMode };
+        result.m_kind = SIMDInfo;
+        result.m_simdInfo = ::JSC::SIMDInfo { simdLane, signMode };
         return result;
     }
 
-    static Arg simdInfo(::JSC::SimdInfo info)
+    static Arg simdInfo(::JSC::SIMDInfo info)
     {
         Arg result;
-        result.m_kind = SimdInfo;
+        result.m_kind = SIMDInfo;
         result.m_simdInfo = info;
         return result;
     }
@@ -930,9 +930,9 @@ public:
         return isTmp() || isStack();
     }
     
-    bool isSimdInfo() const
+    bool isSIMDInfo() const
     {
-        return kind() == SimdInfo;
+        return kind() == SIMDInfo;
     }
 
     Air::Tmp tmp() const
@@ -1128,7 +1128,7 @@ public:
             return true;
         case Tmp:
             return isGPTmp();
-        case SimdInfo:
+        case SIMDInfo:
         case Invalid:
             return false;
         }
@@ -1150,7 +1150,7 @@ public:
         case WidthArg:
         case Invalid:
         case ZeroReg:
-        case SimdInfo:
+        case SIMDInfo:
             return false;
         case SimpleAddr:
         case Addr:
@@ -1345,7 +1345,7 @@ public:
         case ZeroReg:
         case SimpleAddr:
         case ExtendedOffsetAddr:
-        case SimdInfo:
+        case SIMDInfo:
             return true;
         case Addr:
         case Stack:
@@ -1516,15 +1516,15 @@ public:
         return static_cast<MacroAssembler::StatusCondition>(m_offset);
     }
     
-    ::JSC::SimdInfo simdInfo() const
+    ::JSC::SIMDInfo simdInfo() const
     {
-        ASSERT(isSimdInfo());
+        ASSERT(isSIMDInfo());
         return m_simdInfo;
     }
     
-    SimdSignMode simdSignMode() const
+    SIMDSignMode simdSignMode() const
     {
-        ASSERT(isSimdInfo());
+        ASSERT(isSIMDInfo());
         return m_simdInfo.signMode;
     }
     
@@ -1610,7 +1610,7 @@ private:
     int32_t m_scale { 1 };
     Air::Tmp m_base;
     Air::Tmp m_index;
-    ::JSC::SimdInfo m_simdInfo;
+    ::JSC::SIMDInfo m_simdInfo;
 };
 
 struct ArgHash {

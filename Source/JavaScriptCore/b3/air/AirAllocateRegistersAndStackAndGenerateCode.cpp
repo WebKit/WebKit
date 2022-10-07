@@ -58,7 +58,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
             if (!reg)
                 return;
 
-            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
+            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
             ASSERT(m_currentAllocation->at(reg) == tmp);
         });
 
@@ -68,11 +68,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
 
             Tmp tmp = m_currentAllocation->at(reg);
             if (!tmp) {
-                ASSERT(m_availableRegs[bankForReg(reg)].includesRegister(reg));
+                ASSERT(m_availableRegs[bankForReg(reg)].includesRegister(reg, Width64));
                 continue;
             }
 
-            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
+            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
             ASSERT(m_map[tmp].reg == reg);
         }
     }
@@ -162,7 +162,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
     ASSERT(reg);
     ASSERT(m_currentAllocation->at(reg) == tmp);
     m_currentAllocation->at(reg) = Tmp();
-    ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
+    ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
     m_availableRegs[tmp.bank()].includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     ASSERT(m_map[tmp].reg == reg);
     m_map[tmp].reg = Reg();
@@ -200,7 +200,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         spill(occupyingTmp, reg);
     else {
         ASSERT(!m_currentAllocation->at(reg));
-        ASSERT(m_availableRegs[tmp.bank()].includesRegister(reg));
+        ASSERT(m_availableRegs[tmp.bank()].includesRegister(reg, Width64));
     }
 
     m_map[tmp].reg = reg;
@@ -275,23 +275,23 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
     auto interferesWithClobber = [&] (Reg reg) {
         if (!mightInterfere)
             return false;
-        if (Arg::isAnyUse(role) && WholeRegisterSet(m_earlyClobber).includesRegister(reg))
+        if (Arg::isAnyUse(role) && WholeRegisterSet(m_earlyClobber).includesRegister(reg, Width64))
             return true;
-        if (Arg::isAnyDef(role) && WholeRegisterSet(m_lateClobber).includesRegister(reg))
+        if (Arg::isAnyDef(role) && WholeRegisterSet(m_lateClobber).includesRegister(reg, Width64))
             return true;
-        if (Arg::activeAt(role, Arg::Phase::Early) && WholeRegisterSet(m_earlyClobber).includesRegister(reg))
+        if (Arg::activeAt(role, Arg::Phase::Early) && WholeRegisterSet(m_earlyClobber).includesRegister(reg, Width64))
             return true;
-        if (Arg::activeAt(role, Arg::Phase::Late) && WholeRegisterSet(m_lateClobber).includesRegister(reg))
+        if (Arg::activeAt(role, Arg::Phase::Late) && WholeRegisterSet(m_lateClobber).includesRegister(reg, Width64))
             return true;
         return false;
     };
 
     if (Reg reg = m_map[tmp].reg) {
         if (!interferesWithClobber(reg)) {
-            ASSERT(!m_namedDefdRegs.includesRegister(reg));
+            ASSERT(!m_namedDefdRegs.includesRegister(reg, Width64));
             tmp = Tmp(reg);
             markRegisterAsUsed(reg);
-            ASSERT(!m_availableRegs[bank].includesRegister(reg));
+            ASSERT(!m_availableRegs[bank].includesRegister(reg, Width64));
             return true;
         }
         // This is a rare case when we've already allocated a Tmp in some way, but another 
@@ -306,9 +306,9 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
     if (m_availableRegs[bank].numberOfSetRegisters()) {
         // We first take an available register.
         for (Reg reg : m_registers[bank]) {
-            if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg) || m_namedDefdRegs.includesRegister(reg))
+            if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg, Width64) || m_namedDefdRegs.includesRegister(reg, Width64))
                 continue;
-            if (!m_availableRegs[bank].includesRegister(reg))
+            if (!m_availableRegs[bank].includesRegister(reg, Width64))
                 continue;
 
             markRegisterAsUsed(reg);
@@ -320,7 +320,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
     // Nothing was available, let's make some room.
     for (Reg reg : m_registers[bank]) {
-        if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg) || m_namedDefdRegs.includesRegister(reg))
+        if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg, Width64) || m_namedDefdRegs.includesRegister(reg, Width64))
             continue;
 
         markRegisterAsUsed(reg);
@@ -335,7 +335,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
 ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 {
-    return !m_allowedRegisters.includesRegister(reg);
+    return !m_allowedRegisters.includesRegister(reg, Width64);
 }
 
 void GenerateAndAllocateRegisters::prepareForGeneration()

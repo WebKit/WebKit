@@ -29,7 +29,7 @@
 
 #include "B3Bank.h"
 #include "B3Type.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
@@ -61,10 +61,14 @@ Type bestType(Bank, Width);
 
 inline constexpr Width conservativeWidth(Bank bank)
 {
-    return bank == GP ? pointerWidth() : Width128;
+#if USE(JSVALUE64)
+    return bank == FP ? Width128 : pointerWidth();
+#else
+    return conservativeWidthWithoutVectors(reg);
+#endif
 }
 
-inline constexpr Width conservativeWidthForC(Bank bank)
+inline constexpr Width conservativeWidthWithoutVectors(Bank bank)
 {
     return bank == GP ? pointerWidth() : Width64;
 }
@@ -81,7 +85,7 @@ inline constexpr unsigned conservativeRegisterBytes(Bank bank)
 
 inline constexpr unsigned conservativeRegisterBytesForC(Bank bank)
 {
-    return bytesForWidth(conservativeWidthForC(bank));
+    return bytesForWidth(conservativeWidthWithoutVectors(bank));
 }
 
 } } // namespace JSC::B3

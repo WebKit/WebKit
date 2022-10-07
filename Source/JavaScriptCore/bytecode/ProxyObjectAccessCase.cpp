@@ -162,7 +162,7 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     WholeRegisterSet dontRestore;
     // This is the result value. We don't want to overwrite the result with what we stored to the stack.
     // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-    dontRestore.includeRegister(valueRegs);
+    dontRestore.includeRegister(valueRegs, Width64);
     state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {

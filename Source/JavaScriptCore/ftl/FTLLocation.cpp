@@ -93,7 +93,7 @@ FPRReg Location::fpr() const
 
 void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg result, unsigned numFramesToPop) const
 {
-    if (involvesGPR() && RegisterSet::stackRegisters().includesRegister(gpr())) {
+    if (involvesGPR() && RegisterSet::stackRegisters().includesRegister(gpr(), Width64)) {
         // Make the result GPR contain the appropriate stack register.
         if (numFramesToPop) {
             jit.move(MacroAssembler::framePointerRegister, result);
@@ -110,7 +110,7 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
     }
     
     if (isGPR()) {
-        if (RegisterSet::stackRegisters().includesRegister(gpr())) {
+        if (RegisterSet::stackRegisters().includesRegister(gpr(), Width64)) {
             // Already restored into result.
         } else
             jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
@@ -134,7 +134,7 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
         return;
         
     case Indirect:
-        if (RegisterSet::stackRegisters().includesRegister(gpr())) {
+        if (RegisterSet::stackRegisters().includesRegister(gpr(), Width64)) {
             // The stack register is already recovered into result.
             jit.load64(MacroAssembler::Address(result, offset()), result);
             return;

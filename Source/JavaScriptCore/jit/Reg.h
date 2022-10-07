@@ -28,7 +28,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "MacroAssembler.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 
 namespace JSC {
 
@@ -232,10 +232,14 @@ struct RegHash {
 
 ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
 {
+#if USE(JSVALUE64)
     return reg.isFPR() ? Width128 : pointerWidth();
+#else
+    return conservativeWidthWithoutVectors(reg);
+#endif
 }
 
-ALWAYS_INLINE constexpr Width conservativeWidthForC(const Reg reg)
+ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
 {
     return reg.isFPR() ? Width64 : pointerWidth();
 }
@@ -247,7 +251,12 @@ ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)
 
 ALWAYS_INLINE constexpr unsigned conservativeRegisterBytesForC(const Reg reg)
 {
-    return bytesForWidth(conservativeWidthForC(reg));
+    return bytesForWidth(conservativeWidthWithoutVectors(reg));
+}
+
+ALWAYS_INLINE constexpr Width minimumWidth(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : pointerWidth();
 }
 
 } // namespace JSC

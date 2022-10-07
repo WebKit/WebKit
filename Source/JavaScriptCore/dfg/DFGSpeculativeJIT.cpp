@@ -389,7 +389,7 @@ RegisterSet SpeculativeJIT::usedRegisters()
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg gpr = GPRInfo::toRegister(i);
         if (m_gprs.isInUse(gpr))
-            result.includeRegister(gpr);
+            result.includeRegister(gpr, Width64);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg fpr = FPRInfo::toRegister(i);

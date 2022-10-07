@@ -121,13 +121,13 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
                 const ValueRecovery& recovery = valueRecoveries[index];
                 if (recovery.isInRegisters()) {
                     if (recovery.isInGPR())
-                        liveAtOSRExit.includeRegister(recovery.gpr());
+                        liveAtOSRExit.includeRegister(recovery.gpr(), Width64);
                     else if (recovery.isInFPR())
                         liveAtOSRExit.includeRegister(recovery.fpr(), Width64);
 #if USE(JSVALUE32_64)
                     else if (recovery.isInJSValueRegs()) {
-                        liveAtOSRExit.includeRegister(recovery.payloadGPR());
-                        liveAtOSRExit.includeRegister(recovery.tagGPR());
+                        liveAtOSRExit.includeRegister(recovery.payloadGPR(), Width64);
+                        liveAtOSRExit.includeRegister(recovery.tagGPR(), Width64);
                     }
 #endif
                     else

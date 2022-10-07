@@ -71,9 +71,9 @@ struct CallInformation {
         WholeRegisterSet usedResultRegisters;
         for (auto loc : results) {
             if (loc.location.isGPR()) {
-                usedResultRegisters.includeRegister(loc.location.jsr().payloadGPR());
+                usedResultRegisters.includeRegister(loc.location.jsr().payloadGPR(), Width64);
 #if USE(JSVALUE32_64)
-                usedResultRegisters.includeRegister(loc.location.jsr().tagGPR());
+                usedResultRegisters.includeRegister(loc.location.jsr().tagGPR(), Width64);
 #endif
             } else if (loc.location.isFPR()) {
                 ASSERT(loc.width <= Width64 || Options::useWebAssemblySIMD());

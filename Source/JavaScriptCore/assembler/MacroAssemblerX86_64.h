@@ -28,7 +28,7 @@
 #if ENABLE(ASSEMBLER) && CPU(X86_64)
 
 #include "MacroAssemblerX86Common.h"
-#include "SimdInfo.h"
+#include "SIMDInfo.h"
 
 #define REPATCH_OFFSET_CALL_R11 3
 
@@ -2051,9 +2051,9 @@ public:
         m_assembler.linkJump(done, m_assembler.label());
     }
 
-    // Simd
+    // SIMD
 
-    void signExtendForSimdLane(RegisterID reg, SimdLane simdLane)
+    void signExtendForSIMDLane(RegisterID reg, SIMDLane simdLane)
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdLane));
         if (elementByteSize(simdLane) == 1)
@@ -2064,12 +2064,12 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void vectorReplaceLane(SimdLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
     {
         m_assembler.pinsr(dest, src, simdLane, lane.m_value);
     }
 
-    void vectorReplaceLane(SimdLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
         RegisterID scratch = scratchRegister();
         moveDoubleTo64(src, scratch);
@@ -2078,17 +2078,17 @@ public:
 
     DEFINE_SIMD_FUNCS(vectorReplaceLane);
     
-    void vectorExtractLane(SimdLane simdLane, SimdSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
+    void vectorExtractLane(SIMDLane simdLane, SIMDSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
     {
         m_assembler.pextr(dest, src, simdLane, lane.m_value);
-        if (signMode == SimdSignMode::Signed)
-            signExtendForSimdLane(dest, simdLane);
+        if (signMode == SIMDSignMode::Signed)
+            signExtendForSIMDLane(dest, simdLane);
     }
 
-    void vectorExtractLane(SimdLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
         RELEASE_ASSERT(lane.m_value < 4);
-        RELEASE_ASSERT(simdLane == SimdLane::f32x4);
+        RELEASE_ASSERT(simdLane == SIMDLane::f32x4);
         if (src != dest)
             m_assembler.movaps_rr(src, dest);
         m_assembler.shufps(dest, dest, lane.m_value);

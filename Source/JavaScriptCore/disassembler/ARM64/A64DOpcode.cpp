@@ -1856,7 +1856,7 @@ const char* A64DOpcodeUnconditionalBranchRegister::format()
 const char* A64DOpcodeVectorDataProcessingLogical1Source::format()
 {
     appendInstructionName(opName());
-    appendSimdLaneIndexAndType((q() << 6) | imm5());
+    appendSIMDLaneIndexAndType((q() << 6) | imm5());
     appendSeparator();
     appendCharacter('v');
     appendCharacter('/');
@@ -1885,7 +1885,7 @@ const char* A64DOpcodeVectorDataProcessingLogical1Source::opName()
 const char* A64DOpcodeVectorDataProcessingLogical2Source::format()
 {
     appendInstructionName(opName());
-    appendSimdLaneType(q());
+    appendSIMDLaneType(q());
     appendSeparator();
     appendCharacter('v');
     appendCharacter('/');

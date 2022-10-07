@@ -153,7 +153,7 @@ private:
                     auto& pair = pairs[i];
                     RegType source = pair.first;
                     RegType dest = pair.second;
-                    if (freeDestinations.includesRegister(dest)) {
+                    if (freeDestinations.includesRegister(dest, Width64)) {
                         move(source, dest);
                         pairs.remove(i);
                         madeMove = true;
@@ -828,14 +828,14 @@ public:
     {
         WholeRegisterSet preserved;
         if (preservedGPR1 != InvalidGPRReg)
-            preserved.includeRegister(preservedGPR1);
+            preserved.includeRegister(preservedGPR1, Width64);
         if (preservedGPR2 != InvalidGPRReg)
-            preserved.includeRegister(preservedGPR2);
+            preserved.includeRegister(preservedGPR2, Width64);
 
         GPRReg temp1 = selectScratchGPR(preserved);
-        preserved.includeRegister(temp1);
+        preserved.includeRegister(temp1, Width64);
         GPRReg temp2 = selectScratchGPR(preserved);
-        preserved.includeRegister(temp2);
+        preserved.includeRegister(temp2, Width64);
         GPRReg temp3 = selectScratchGPR(preserved);
 
         GPRReg newFramePointer = temp1;

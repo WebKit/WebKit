@@ -194,7 +194,7 @@ protected:
         bufferPrintf("lsl #%u", 16 * amount);
     }
     
-    void appendSimdLaneIndexAndType(unsigned imm6)
+    void appendSIMDLaneIndexAndType(unsigned imm6)
     {
         unsigned lane = 0;
         if ((imm6 & 0b100001) == 0b000001) {
@@ -220,7 +220,7 @@ protected:
         bufferPrintf("[#%u]", lane);
     }
     
-    void appendSimdLaneType(unsigned q)
+    void appendSIMDLaneType(unsigned q)
     {
         if (q)
             bufferPrintf(".16B");

@@ -98,7 +98,7 @@ unsigned Arg::jsHash() const
     switch (m_kind) {
     case Invalid:
     case Special:
-    case SimdInfo:
+    case SIMDInfo:
         break;
     case Tmp:
         result += m_base.internalValue();
@@ -222,7 +222,7 @@ void Arg::dump(PrintStream& out) const
     case WidthArg:
         out.print(width());
         return;
-    case SimdInfo:
+    case SIMDInfo:
         out.print("{ ", simdInfo().lane, ", ", simdInfo().signMode, " }");
         return;
     }
@@ -302,8 +302,8 @@ void printInternal(PrintStream& out, Arg::Kind kind)
     case Arg::WidthArg:
         out.print("WidthArg");
         return;
-    case Arg::SimdInfo:
-        out.print("SimdInfo");
+    case Arg::SIMDInfo:
+        out.print("SIMDInfo");
         return;
     }
 

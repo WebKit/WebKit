@@ -29,7 +29,7 @@
 
 #include <wtf/PrintStream.h>
 
-enum class SimdLaneOperation : uint8_t {
+enum class SIMDLaneOperation : uint8_t {
     Const,
     ExtractLane,
     Load,
@@ -37,27 +37,27 @@ enum class SimdLaneOperation : uint8_t {
 };
 
 #define FOR_EACH_WASM_EXT_SIMD_OP(macro) \
-    macro(V128Load,                 0x00, SimdLaneOperation::Load,                      SimdLane::v128,     SimdSignMode::None) \
-    macro(V128Store,                0x0b, SimdLaneOperation::Store,                     SimdLane::v128,     SimdSignMode::None) \
-    macro(V128Const,                0x0c, SimdLaneOperation::Const,                     SimdLane::v128,     SimdSignMode::None) \
-    macro(I8x16ExtractLaneS,        0x15, SimdLaneOperation::ExtractLane,               SimdLane::i8x16,    SimdSignMode::Signed) \
-    macro(I8x16ExtractLaneU,        0x16, SimdLaneOperation::ExtractLane,               SimdLane::i8x16,    SimdSignMode::Unsigned) \
-    macro(I16x8ExtractLaneS,        0x18, SimdLaneOperation::ExtractLane,               SimdLane::i16x8,    SimdSignMode::Signed) \
-    macro(I16x8ExtractLaneU,        0x19, SimdLaneOperation::ExtractLane,               SimdLane::i16x8,    SimdSignMode::Unsigned) \
-    macro(I32x4ExtractLane,         0x1b, SimdLaneOperation::ExtractLane,               SimdLane::i32x4,    SimdSignMode::None) \
-    macro(I64x2ExtractLane,         0x1d, SimdLaneOperation::ExtractLane,               SimdLane::i64x2,    SimdSignMode::None) \
-    macro(F32x4ExtractLane,         0x1f, SimdLaneOperation::ExtractLane,               SimdLane::f32x4,    SimdSignMode::None) \
-    macro(F64x2ExtractLane,         0x21, SimdLaneOperation::ExtractLane,               SimdLane::f64x2,    SimdSignMode::None) \
+    macro(V128Load,                 0x00, SIMDLaneOperation::Load,                      SIMDLane::v128,     SIMDSignMode::None) \
+    macro(V128Store,                0x0b, SIMDLaneOperation::Store,                     SIMDLane::v128,     SIMDSignMode::None) \
+    macro(V128Const,                0x0c, SIMDLaneOperation::Const,                     SIMDLane::v128,     SIMDSignMode::None) \
+    macro(I8x16ExtractLaneS,        0x15, SIMDLaneOperation::ExtractLane,               SIMDLane::i8x16,    SIMDSignMode::Signed) \
+    macro(I8x16ExtractLaneU,        0x16, SIMDLaneOperation::ExtractLane,               SIMDLane::i8x16,    SIMDSignMode::Unsigned) \
+    macro(I16x8ExtractLaneS,        0x18, SIMDLaneOperation::ExtractLane,               SIMDLane::i16x8,    SIMDSignMode::Signed) \
+    macro(I16x8ExtractLaneU,        0x19, SIMDLaneOperation::ExtractLane,               SIMDLane::i16x8,    SIMDSignMode::Unsigned) \
+    macro(I32x4ExtractLane,         0x1b, SIMDLaneOperation::ExtractLane,               SIMDLane::i32x4,    SIMDSignMode::None) \
+    macro(I64x2ExtractLane,         0x1d, SIMDLaneOperation::ExtractLane,               SIMDLane::i64x2,    SIMDSignMode::None) \
+    macro(F32x4ExtractLane,         0x1f, SIMDLaneOperation::ExtractLane,               SIMDLane::f32x4,    SIMDSignMode::None) \
+    macro(F64x2ExtractLane,         0x21, SIMDLaneOperation::ExtractLane,               SIMDLane::f64x2,    SIMDSignMode::None) \
 
-static void dumpSimdLaneOperation(PrintStream& out, SimdLaneOperation op)
+static void dumpSIMDLaneOperation(PrintStream& out, SIMDLaneOperation op)
 {
     switch (op) {
-    case SimdLaneOperation::Const: out.print("Const"); break;
-    case SimdLaneOperation::ExtractLane: out.print("ExtractLane"); break;
-    case SimdLaneOperation::Load: out.print("Load"); break;
-    case SimdLaneOperation::Store: out.print("Store"); break;
+    case SIMDLaneOperation::Const: out.print("Const"); break;
+    case SIMDLaneOperation::ExtractLane: out.print("ExtractLane"); break;
+    case SIMDLaneOperation::Load: out.print("Load"); break;
+    case SIMDLaneOperation::Store: out.print("Store"); break;
     }
 }
-MAKE_PRINT_ADAPTOR(SimdLaneOperationDump, SimdLaneOperation, dumpSimdLaneOperation);
+MAKE_PRINT_ADAPTOR(SIMDLaneOperationDump, SIMDLaneOperation, dumpSIMDLaneOperation);
 
 #endif // ENABLE(WEBASSEMBLY)

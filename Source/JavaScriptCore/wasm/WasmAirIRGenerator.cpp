@@ -140,7 +140,7 @@ public:
     using ExpressionType = TypedTmp;
     using ResultList = Vector<ExpressionType, 8>;
 
-    static constexpr bool tierSupportsSimd = true;
+    static constexpr bool tierSupportsSIMD = true;
 
     struct ControlData {
         ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -405,33 +405,33 @@ public:
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // SIMD
-    PartialResult WARN_UNUSED_RETURN addSimdLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addSimdStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
 
     // SIMD generated
 
-    constexpr B3::Air::Opcode extractLaneAirOp(SimdInfo info) {
+    constexpr B3::Air::Opcode extractLaneAirOp(SIMDInfo info) {
         switch (info.signMode) {
-        case SimdSignMode::Unsigned:
+        case SIMDSignMode::Unsigned:
             switch (info.lane) {
-                case SimdLane::i8x16: return B3::Air::VectorExtractLaneUnsignedInt8;
-                case SimdLane::i16x8: return B3::Air::VectorExtractLaneUnsignedInt16;
+                case SIMDLane::i8x16: return B3::Air::VectorExtractLaneUnsignedInt8;
+                case SIMDLane::i16x8: return B3::Air::VectorExtractLaneUnsignedInt16;
                 default: break;
             }
             break;
-        case SimdSignMode::Signed:
+        case SIMDSignMode::Signed:
             switch (info.lane) {
-                case SimdLane::i8x16: return B3::Air::VectorExtractLaneSignedInt8;
-                case SimdLane::i16x8: return B3::Air::VectorExtractLaneSignedInt16;
+                case SIMDLane::i8x16: return B3::Air::VectorExtractLaneSignedInt8;
+                case SIMDLane::i16x8: return B3::Air::VectorExtractLaneSignedInt16;
                 default: break;
             }
             break;
-        case SimdSignMode::None:
+        case SIMDSignMode::None:
             switch (info.lane) {
-                case SimdLane::i32x4: return B3::Air::VectorExtractLaneInt32;
-                case SimdLane::i64x2: return B3::Air::VectorExtractLaneInt64;
-                case SimdLane::f32x4: return B3::Air::VectorExtractLaneFloat32;
-                case SimdLane::f64x2: return B3::Air::VectorExtractLaneFloat64;
+                case SIMDLane::i32x4: return B3::Air::VectorExtractLaneInt32;
+                case SIMDLane::i64x2: return B3::Air::VectorExtractLaneInt64;
+                case SIMDLane::f32x4: return B3::Air::VectorExtractLaneFloat32;
+                case SIMDLane::f64x2: return B3::Air::VectorExtractLaneFloat64;
                 default: break;
             }
             break;
@@ -440,7 +440,7 @@ public:
         return Oops;
     }
 
-    auto addExtractLane(SimdInfo info, uint8_t imm, ExpressionType arg0, ExpressionType& result) -> PartialResult
+    auto addExtractLane(SIMDInfo info, uint8_t imm, ExpressionType arg0, ExpressionType& result) -> PartialResult
     {
         auto airOp = extractLaneAirOp(info);
         result = tmpForType(simdScalarType(info.lane));
@@ -448,7 +448,7 @@ public:
             append(airOp, Arg::imm(imm), arg0, result);
             return { };
         }
-        if (isValidForm(airOp, Arg::Imm, Arg::SimdInfo, Arg::Tmp, Arg::Tmp)) {
+        if (isValidForm(airOp, Arg::Imm, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp)) {
             append(airOp, Arg::imm(imm), Arg::simdInfo(info), arg0, result);
             return { };
         }
@@ -730,7 +730,7 @@ private:
             // validation. We should abstrcat Patch enough so ValueRep's don't need to be
             // backed by Values.
             // https://bugs.webkit.org/show_bug.cgi?id=194040
-            B3::Value* dummyValue = m_proc.addConstant(B3::Origin(), toB3Type(tmp.tmp.type()), 0);
+            B3::Value* dummyValue = m_proc.addConstant(B3::Origin(), tmp.tmp.tmp().isGP() ? B3::Int64 : B3::Double, 0);
             patch->append(dummyValue, tmp.rep);
             switch (tmp.rep.kind()) {
             // B3::Value propagates (Late)ColdAny information and later Air will allocate appropriate stack.
@@ -1286,8 +1286,8 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
     if (!!memory) {
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         RegisterSet clobbers;
-        clobbers.includeRegister(pinnedRegs->baseMemoryPointer);
-        clobbers.includeRegister(pinnedRegs->boundsCheckingSizeRegister);
+        clobbers.includeRegister(pinnedRegs->baseMemoryPointer, Width64);
+        clobbers.includeRegister(pinnedRegs->boundsCheckingSizeRegister, Width64);
         clobbers.merge(RegisterSet::macroClobberedRegisters());
 
         auto* patchpoint = addPatchpoint(B3::Void);
@@ -3489,7 +3489,7 @@ auto AirIRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero,
     return { };
 }
 
-auto AirIRGenerator::addSimdLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result) -> PartialResult
+auto AirIRGenerator::addSIMDLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result) -> PartialResult
 {
     result = v128();
     auto offset = fixupPointerPlusOffset(pointer, uoffset);
@@ -3499,7 +3499,7 @@ auto AirIRGenerator::addSimdLoad(ExpressionType pointer, uint32_t uoffset, Expre
     return { };
 }
 
-auto AirIRGenerator::addSimdStore(ExpressionType value, ExpressionType pointer, uint32_t uoffset) -> PartialResult
+auto AirIRGenerator::addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t uoffset) -> PartialResult
 {
     auto offset = fixupPointerPlusOffset(pointer, uoffset);
     Arg addrArg = materializeAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width128)), offset, Width128);
@@ -3534,7 +3534,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
 
             const unsigned extraPaddingBytes = 0;
             WholeRegisterSet registersToSpill = { };
-            registersToSpill.includeRegister(GPRInfo::argumentGPR1);
+            registersToSpill.includeRegister(GPRInfo::argumentGPR1, Width64);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
             jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
@@ -3577,7 +3577,7 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedT
 
     patch->clobber(RegisterSet::macroClobberedRegisters());
     RegisterSet clobberLate;
-    clobberLate.includeRegister(GPRInfo::argumentGPR0);
+    clobberLate.includeRegister(GPRInfo::argumentGPR0, Width64);
     patch->clobberLate(clobberLate);
 
     Vector<ConstrainedTmp> patchArgs;
@@ -3799,7 +3799,7 @@ Tmp AirIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned ex
     patch->effects.exitsSideways = true;
     patch->clobber(RegisterSet::macroClobberedRegisters());
     auto clobberLate = RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
-    clobberLate.includeRegister(GPRInfo::argumentGPR0);
+    clobberLate.includeRegister(GPRInfo::argumentGPR0, Width64);
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));

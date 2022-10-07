@@ -93,7 +93,7 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
-    m_pinnedRegs.includeRegister(MacroAssembler::framePointerRegister);
+    m_pinnedRegs.includeRegister(MacroAssembler::framePointerRegister, Width64);
 }
 
 Code::~Code()
