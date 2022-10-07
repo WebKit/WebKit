@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "NinePieceImage.h"
 #include "PaintInfo.h"
+#include "RenderTheme.h"
 
 namespace WebCore {
 
@@ -176,6 +177,76 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         style.isHorizontalWritingMode()
     };
     paintSides(sides);
+}
+
+void BorderPainter::paintOutline(const LayoutRect& paintRect)
+{
+    auto& styleToUse = m_renderer.style();
+    float outlineWidth = floorToDevicePixel(styleToUse.outlineWidth(), document().deviceScaleFactor());
+    float outlineOffset = floorToDevicePixel(styleToUse.outlineOffset(), document().deviceScaleFactor());
+
+    // Only paint the focus ring by hand if the theme isn't able to draw it.
+    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !m_renderer.theme().supportsFocusRing(styleToUse)) {
+        Vector<LayoutRect> focusRingRects;
+        LayoutRect paintRectToUse { paintRect };
+        if (is<RenderBox>(m_renderer))
+            paintRectToUse = m_renderer.theme().adjustedPaintRect(downcast<RenderBox>(m_renderer), paintRectToUse);
+        m_renderer.addFocusRingRects(focusRingRects, paintRectToUse.location(), m_paintInfo.paintContainer);
+        m_renderer.paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
+    }
+
+    if (m_renderer.hasOutlineAnnotation() && styleToUse.outlineStyleIsAuto() == OutlineIsAuto::Off && !m_renderer.theme().supportsFocusRing(styleToUse))
+        m_renderer.addPDFURLRect(m_paintInfo, paintRect.location());
+
+    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On || styleToUse.outlineStyle() == BorderStyle::None)
+        return;
+
+    auto& graphicsContext = m_paintInfo.context();
+
+    FloatRect outer = paintRect;
+    outer.inflate(outlineOffset + outlineWidth);
+    FloatRect inner = outer;
+    inner.inflate(-outlineWidth);
+
+    // FIXME: This prevents outlines from painting inside the object. See bug 12042
+    if (outer.isEmpty())
+        return;
+
+    auto& document = this->document();
+    BorderStyle outlineStyle = styleToUse.outlineStyle();
+    Color outlineColor = styleToUse.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+
+    bool useTransparencyLayer = !outlineColor.isOpaque();
+    if (useTransparencyLayer) {
+        if (outlineStyle == BorderStyle::Solid) {
+            Path path;
+            path.addRect(outer);
+            path.addRect(inner);
+            graphicsContext.setFillRule(WindRule::EvenOdd);
+            graphicsContext.setFillColor(outlineColor);
+            graphicsContext.fillPath(path);
+            return;
+        }
+        graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
+        outlineColor = outlineColor.opaqueColor();
+    }
+
+    float leftOuter = outer.x();
+    float leftInner = inner.x();
+    float rightOuter = outer.maxX();
+    float rightInner = std::min(inner.maxX(), rightOuter);
+    float topOuter = outer.y();
+    float topInner = inner.y();
+    float bottomOuter = outer.maxY();
+    float bottomInner = std::min(inner.maxY(), bottomOuter);
+
+    drawLineForBoxSide(graphicsContext, document, FloatRect(FloatPoint(leftOuter, topOuter), FloatPoint(leftInner, bottomOuter)), BoxSide::Left, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+    drawLineForBoxSide(graphicsContext, document, FloatRect(FloatPoint(leftOuter, topOuter), FloatPoint(rightOuter, topInner)), BoxSide::Top, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+    drawLineForBoxSide(graphicsContext, document, FloatRect(FloatPoint(rightInner, topOuter), FloatPoint(rightOuter, bottomOuter)), BoxSide::Right, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+    drawLineForBoxSide(graphicsContext, document, FloatRect(FloatPoint(leftOuter, bottomInner), FloatPoint(rightOuter, bottomOuter)), BoxSide::Bottom, outlineColor, outlineStyle, outlineWidth, outlineWidth);
+
+    if (useTransparencyLayer)
+        graphicsContext.endTransparencyLayer();
 }
 
 void BorderPainter::paintSides(const Sides& sides)

@@ -259,7 +259,7 @@ void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void LegacyRenderSVGImage::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
+void LegacyRenderSVGImage::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*) const
 {
     // this is called from paint() after the localTransform has already been applied
     LayoutRect contentRect = LayoutRect(repaintRectInLocalCoordinates());

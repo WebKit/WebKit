@@ -774,7 +774,7 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) { };
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) const { };
 
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
@@ -789,6 +789,8 @@ public:
     virtual String description() const;
     virtual String debugDescription() const;
 
+    void addPDFURLRect(const PaintInfo&, const LayoutPoint&) const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -796,7 +798,6 @@ protected:
     void setNextSibling(RenderObject* next) { m_next = next; }
     void setParent(RenderElement*);
     //////////////////////////////////////////
-    void addPDFURLRect(PaintInfo&, const LayoutPoint&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;

@@ -33,6 +33,8 @@ public:
     BorderPainter(const RenderElement&, const PaintInfo&);
 
     void paintBorder(const LayoutRect&, const RenderStyle&, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+    void paintOutline(const LayoutRect&);
+
     bool paintNinePieceImage(const LayoutRect&, const RenderStyle&, const NinePieceImage&, CompositeOperator = CompositeOperator::SourceOver);
     struct Sides {
         RoundedRect outerBorder;

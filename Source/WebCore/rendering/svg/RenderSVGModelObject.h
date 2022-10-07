@@ -98,7 +98,7 @@ protected:
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
+    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
     // FIXME: [LBSE] Upstream SVG outline painting functionality
     // void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
 
