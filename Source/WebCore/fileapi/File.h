@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Blob.h"
+#include <wtf/FileSystem.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
@@ -41,7 +42,7 @@ public:
     };
 
     // Create a file with an optional name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    WEBCORE_EXPORT static Ref<File> create(ScriptExecutionContext*, const String& path, const String& replacementPath = { }, const String& nameOverride = { });
+    WEBCORE_EXPORT static Ref<File> create(ScriptExecutionContext*, const String& path, const String& replacementPath = { }, const String& nameOverride = { }, const std::optional<FileSystem::PlatformFileID>& fileID = { });
 
     // Create a File using the 'new File' constructor.
     static Ref<File> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
@@ -82,6 +83,7 @@ public:
     const String& name() const { return m_name; }
     WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
     const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
+    const std::optional<FileSystem::PlatformFileID> fileID() const { return m_fileID; }
 
     static String contentTypeForFile(const String& path);
 
@@ -95,6 +97,7 @@ private:
     WEBCORE_EXPORT explicit File(ScriptExecutionContext*, const String& path);
     File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name);
     File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
+    File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name, const std::optional<FileSystem::PlatformFileID>&);
     File(ScriptExecutionContext*, const Blob&, const String& name);
     File(ScriptExecutionContext*, const File&, const String& name);
 
@@ -113,6 +116,7 @@ private:
     String m_name;
 
     std::optional<int64_t> m_lastModifiedDateOverride;
+    std::optional<FileSystem::PlatformFileID> m_fileID;
     mutable std::optional<bool> m_isDirectory;
 };
 

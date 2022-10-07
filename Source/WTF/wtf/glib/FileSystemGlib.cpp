@@ -134,6 +134,18 @@ std::optional<uint64_t> fileSize(PlatformFileHandle handle)
     return g_file_info_get_size(info.get());
 }
 
+std::optional<PlatformFileID> fileID(PlatformFileHandle handle)
+{
+    // FIXME (246118): Implement this function properly.
+    return std::nullopt;
+}
+
+bool fileIDsAreEqual(std::optional<PlatformFileID> a, std::optional<PlatformFileID> b)
+{
+    // FIXME (246118): Implement this function properly.
+    return true;
+}
+
 std::optional<WallTime> fileCreationTime(const String& path)
 {
     const auto filename = fileSystemRepresentation(path);
