@@ -756,6 +756,32 @@ JSC_DEFINE_JIT_OPERATION(operationArithTrunc, EncodedJSValue, (JSGlobalObject* g
     return JSValue::encode(jsNumber(truncatedValueOfArgument));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationArithMinMultipleDouble, double, (const double* buffer, unsigned elementCount))
+{
+    double result = +std::numeric_limits<double>::infinity();
+    for (unsigned index = 0; index < elementCount; ++index) {
+        double val = buffer[index];
+        if (std::isnan(val))
+            return PNaN;
+        if (val < result || (!val && !result && std::signbit(val)))
+            result = val;
+    }
+    return result;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArithMaxMultipleDouble, double, (const double* buffer, unsigned elementCount))
+{
+    double result = -std::numeric_limits<double>::infinity();
+    for (unsigned index = 0; index < elementCount; ++index) {
+        double val = buffer[index];
+        if (std::isnan(val))
+            return PNaN;
+        if (val > result || (!val && !result && !std::signbit(val)))
+            result = val;
+    }
+    return result;
+}
+
 ALWAYS_INLINE EncodedJSValue getByValCellInt(JSGlobalObject* globalObject, VM& vm, JSCell* base, int32_t index)
 {
     if (index < 0) {

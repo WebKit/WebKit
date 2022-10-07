@@ -279,8 +279,6 @@ public:
                 case ArithIMul:
                 case ArithDiv:
                 case ArithMod:
-                case ArithMin:
-                case ArithMax:
                 case ArithPow:
                 case CompareLess:
                 case CompareLessEq:
@@ -292,8 +290,16 @@ public:
                 case CompareStrictEq:
                 case SameValue:
                 case StrCat:
-                    VALIDATE((node), !!node->child1());
-                    VALIDATE((node), !!node->child2());
+                    m_graph.doToChildren(node, [&](Edge& edge) {
+                        VALIDATE((node), !!edge);
+                    });
+                    break;
+                case ArithMin:
+                case ArithMax:
+                    m_graph.doToChildren(node, [&](Edge& edge) {
+                        VALIDATE((node), !!edge);
+                    });
+                    VALIDATE((node), node->numChildren());
                     break;
                 case CompareEqPtr:
                     VALIDATE((node), !!node->child1());

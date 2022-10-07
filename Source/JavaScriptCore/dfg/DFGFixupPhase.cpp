@@ -720,13 +720,15 @@ private:
             
         case ArithMin:
         case ArithMax: {
-            if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
-                fixIntOrBooleanEdge(node->child1());
-                fixIntOrBooleanEdge(node->child2());
+            if (m_graph.variadicArithShouldSpeculateInt32(node, FixupPass)) {
+                m_graph.doToChildren(node, [&](Edge& child) {
+                    fixIntOrBooleanEdge(child);
+                });
                 break;
             }
-            fixDoubleOrBooleanEdge(node->child1());
-            fixDoubleOrBooleanEdge(node->child2());
+            m_graph.doToChildren(node, [&](Edge& child) {
+                fixDoubleOrBooleanEdge(child);
+            });
             node->setResult(NodeResultDouble);
             break;
         }

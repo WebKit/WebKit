@@ -161,7 +161,7 @@ private:
 
     // Helper for min and max.
     template<typename ChecksFunctor>
-    bool handleMinMax(Operand result, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks);
+    void handleMinMax(Operand result, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks);
     
     void refineStatically(CallLinkStatus&, Node* callTarget);
     // Blocks can either be targetable (i.e. in the m_blockLinkingTargets of one InlineStackEntry) with a well-defined bytecodeBegin,
@@ -2300,7 +2300,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
 }
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks)
+void ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks)
 {
     ASSERT(op == ArithMin || op == ArithMax);
 
@@ -2308,7 +2308,7 @@ bool ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffse
         insertChecks();
         double limit = op == ArithMax ? -std::numeric_limits<double>::infinity() : +std::numeric_limits<double>::infinity();
         set(result, addToGraph(JSConstant, OpInfo(m_graph.freeze(jsDoubleNumber(limit)))));
-        return true;
+        return;
     }
      
     if (argumentCountIncludingThis == 2) {
@@ -2316,17 +2316,14 @@ bool ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffse
         Node* resultNode = get(VirtualRegister(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
         addToGraph(Phantom, Edge(resultNode, NumberUse));
         set(result, resultNode);
-        return true;
+        return;
     }
     
-    if (argumentCountIncludingThis == 3) {
-        insertChecks();
-        set(result, addToGraph(op, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset))));
-        return true;
-    }
-    
-    // Don't handle >=3 arguments for now.
-    return false;
+    insertChecks();
+    for (int index = 1; index < argumentCountIncludingThis; ++index)
+        addVarArgChild(get(virtualRegisterForArgumentIncludingThis(index, registerOffset)));
+    set(result, addToGraph(Node::VarArg, op, OpInfo(), OpInfo()));
+    return;
 }
 
 template<typename ChecksFunctor>
@@ -2378,11 +2375,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
 
         case MinIntrinsic:
         case MaxIntrinsic:
-            if (handleMinMax(result, intrinsic == MinIntrinsic ? ArithMin : ArithMax, registerOffset, argumentCountIncludingThis, insertChecks)) {
-                didSetResult = true;
-                return true;
-            }
-            return false;
+            handleMinMax(result, intrinsic == MinIntrinsic ? ArithMin : ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
+            didSetResult = true;
+            return true;
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
         case capitalizedName##Intrinsic:
