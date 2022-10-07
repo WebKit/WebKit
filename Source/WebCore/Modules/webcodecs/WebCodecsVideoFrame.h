@@ -117,6 +117,7 @@ public:
     void close();
 
     bool isDetached() const { return m_isDetached; }
+    RefPtr<VideoFrame> internalFrame() const { return m_internalFrame; }
 
     void setDisplaySize(size_t, size_t);
     void setVisibleRect(const DOMRectInit&);

@@ -1,6 +1,6 @@
 
 PASS Test VideoEncoder construction
-FAIL Test VideoEncoder.configure() assert_equals: expected "configured" but got "unconfigured"
+PASS Test VideoEncoder.configure()
 FAIL Test successful configure(), encode(), and flush() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL encodeQueueSize test promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL Test successful reset() and re-confiugre() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
