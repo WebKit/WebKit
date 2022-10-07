@@ -120,7 +120,7 @@ String CSSFontPaletteValuesRule::cssText() const
 
 void CSSFontPaletteValuesRule::reattach(StyleRuleBase& rule)
 {
-    m_fontPaletteValuesRule = static_cast<StyleRuleFontPaletteValues&>(rule);
+    m_fontPaletteValuesRule = downcast<StyleRuleFontPaletteValues>(rule);
 }
 
 } // namespace WebCore

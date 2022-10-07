@@ -32,8 +32,6 @@
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyNames.h"
-#include "StyleRule.h"
-
 #include <memory>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

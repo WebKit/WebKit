@@ -38,6 +38,8 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class FontFaceSet;
 
+template<typename> class ExceptionOr;
+
 class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFace::Client {
 public:
     static Ref<CSSFontFaceSet> create(CSSFontSelector* owningFontSelector = nullptr)

@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class CSSRule;
 class StyleRuleSupports;
 
 class CSSSupportsRule final : public CSSConditionRule {

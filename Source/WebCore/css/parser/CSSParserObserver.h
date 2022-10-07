@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "StyleRule.h"
+#include "StyleRuleType.h"
 
 namespace WebCore {
 

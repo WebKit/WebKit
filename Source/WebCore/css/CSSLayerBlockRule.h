@@ -30,9 +30,13 @@
 #pragma once
 
 #include "CSSGroupingRule.h"
-#include "StyleRule.h"
+#include "StyleRuleType.h"
 
 namespace WebCore {
+
+class StyleRuleLayer;
+
+using CascadeLayerName = Vector<AtomString>;
 
 class CSSLayerBlockRule final : public CSSGroupingRule {
 public:

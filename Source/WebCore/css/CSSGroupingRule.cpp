@@ -128,7 +128,7 @@ CSSRule* CSSGroupingRule::item(unsigned index) const
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
     auto& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = m_groupRule->childRules()[index]->createCSSOMWrapper(const_cast<CSSGroupingRule*>(this));
+        rule = m_groupRule->childRules()[index]->createCSSOMWrapper(const_cast<CSSGroupingRule&>(*this));
     return rule.get();
 }
 
@@ -141,7 +141,7 @@ CSSRuleList& CSSGroupingRule::cssRules() const
 
 void CSSGroupingRule::reattach(StyleRuleBase& rule)
 {
-    m_groupRule = static_cast<StyleRuleGroup&>(rule);
+    m_groupRule = downcast<StyleRuleGroup>(rule);
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])
             m_childRuleCSSOMWrappers[i]->reattach(*m_groupRule.get().childRules()[i]);
