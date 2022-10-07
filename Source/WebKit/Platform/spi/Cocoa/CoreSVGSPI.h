@@ -23,17 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/_WKWebExtension.h>
+#pragma once
 
-NS_ASSUME_NONNULL_BEGIN
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface _WKWebExtension ()
+#include <CoreSVG/CGSVGDocument.h>
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest;
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
+#else
 
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
+WTF_EXTERN_C_BEGIN
 
-@end
+typedef struct CGSVGDocument *CGSVGDocumentRef;
 
-NS_ASSUME_NONNULL_END
+CGSVGDocumentRef CGSVGDocumentCreateFromData(CFDataRef, CFDictionaryRef);
+void CGSVGDocumentRelease(CGSVGDocumentRef);
+
+WTF_EXTERN_C_END
+
+#endif // USE(APPLE_INTERNAL_SDK)

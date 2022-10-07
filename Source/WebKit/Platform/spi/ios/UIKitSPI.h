@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <CoreSVG/CGSVGDocument.h>
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication_Private.h>
@@ -398,10 +399,13 @@ typedef enum {
 @property (nonatomic, setter=_setShowsFileSizePicker:) BOOL _showsFileSizePicker;
 @end
 
+typedef struct CGSVGDocument *CGSVGDocumentRef;
+
 @interface UIImage ()
 - (id)initWithCGImage:(CGImageRef)CGImage imageOrientation:(UIImageOrientation)imageOrientation;
 - (UIImage *)_flatImageWithColor:(UIColor *)color;
 + (UIImage *)_systemImageNamed:(NSString *)name;
++ (UIImage *)_imageWithCGSVGDocument:(CGSVGDocumentRef)cgSVGDocument;
 @end
 
 @interface UIKeyCommand ()

@@ -23,17 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/_WKWebExtension.h>
+#pragma once
 
-NS_ASSUME_NONNULL_BEGIN
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface _WKWebExtension ()
+#include <Foundation/NSPrivateDecls.h>
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest;
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
+#else
 
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
-
+@interface NSBundle ()
+- (CFBundleRef)_cfBundle;
 @end
 
-NS_ASSUME_NONNULL_END
+#endif // USE(APPLE_INTERNAL_SDK)

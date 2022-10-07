@@ -451,9 +451,9 @@ namespace WebCore {
 #endif
 
 #if USE(CF) && !PLATFORM(WIN)
-    String formatLocalizedString(CFStringRef format, ...) CF_FORMAT_FUNCTION(1, 2);
+    WEBCORE_EXPORT String formatLocalizedString(CFStringRef format, ...) CF_FORMAT_FUNCTION(1, 2);
 #else
-    String formatLocalizedString(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+    WEBCORE_EXPORT String formatLocalizedString(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 #endif
 
 #ifdef __OBJC__

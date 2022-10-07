@@ -460,20 +460,23 @@
 /* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
 "Easy Reader (text track)" = "Easy Reader";
 
-/* WKWebExtensionErrorInvalidBackgroundContent description */
+/* WKWebExtensionErrorInvalidManifestEntry description for URL overrides */
+"Empty or invalid URL overrides manifest entry" = "Empty or invalid URL overrides manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for background */
 "Empty or invalid `background` manifest entry." = "Empty or invalid `background` manifest entry.";
 
-/* WKWebExtensionErrorInvalidContentScripts description */
+/* WKWebExtensionErrorInvalidManifestEntry description for content_scripts */
 "Empty or invalid `content_scripts` manifest entry." = "Empty or invalid `content_scripts` manifest entry.";
 
-/* WKWebExtensionErrorInvalidActionIcon description */
-"Empty or invalid `default_icon` for the `action`, `browser_action`, or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `action`, `browser_action`, or `page_action` manifest entry.";
+/* WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only */
+"Empty or invalid `default_icon` for the `action` manifest entry." = "Empty or invalid `default_icon` for the `action` manifest entry.";
 
-/* WKWebExtensionErrorInvalidExternallyConnectable description */
+/* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
+"Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for externally_connectable */
 "Empty or invalid `externally_connectable` manifest entry." = "Empty or invalid `externally_connectable` manifest entry.";
-
-/* WKWebExtensionErrorInvalidURLOverrides description */
-"Empty or invalid url overrides manifest entry" = "Empty or invalid url overrides manifest entry";
 
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
@@ -507,6 +510,21 @@
 
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action */
+"Failed to load image for `default_icon` in the `action` manifest entry." = "Failed to load image for `default_icon` in the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action */
+"Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry." = "Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only */
+"Failed to load images in `default_icon` for the `action` manifest entry." = "Failed to load images in `default_icon` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action */
+"Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry." = "Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidIcon description for failing to load images */
+"Failed to load images in `icons` manifest entry." = "Failed to load images in `icons` manifest entry.";
 
 /* The requested file doesn't exist */
 "File does not exist" = "File does not exist";
@@ -610,7 +628,7 @@
 /* WKWebExtensionErrorInvalidBackgroundPersistence description for iOS */
 "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.";
 
-/* WKWebExtensionErrorInvalidWebAccessibleResources description */
+/* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
 "Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
 
 /* Validation message for input form controls with a value not matching type */
@@ -739,16 +757,22 @@
 /* Label text to be used when a plugin is missing */
 "Missing Plug-in" = "Missing Plug-in";
 
-/* WKWebExtensionErrorInvalidDescription description */
+/* WKWebExtensionErrorInvalidManifestEntry description for action only */
+"Missing or empty `action` manifest entry." = "Missing or empty `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action */
+"Missing or empty `browser_action` or `page_action` manifest entry." = "Missing or empty `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for description */
 "Missing or empty `description` manifest entry." = "Missing or empty `description` manifest entry.";
 
-/* WKWebExtensionErrorInvalidIcon description */
+/* WKWebExtensionErrorInvalidManifestEntry description for icons */
 "Missing or empty `icons` manifest entry." = "Missing or empty `icons` manifest entry.";
 
-/* WKWebExtensionErrorInvalidName description */
+/* WKWebExtensionErrorInvalidManifestEntry description for name */
 "Missing or empty `name` manifest entry." = "Missing or empty `name` manifest entry.";
 
-/* WKWebExtensionErrorInvalidVersion description */
+/* WKWebExtensionErrorInvalidManifestEntry description for version */
 "Missing or empty `version` manifest entry." = "Missing or empty `version` manifest entry.";
 
 /* Media Mute context menu item */
@@ -1237,8 +1261,11 @@
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
 
-/* WKWebExtensionErrorManifestNotFound description */
-"Unable to find `manifest.json` in the extension bundle." = "Unable to find `manifest.json` in the extension bundle.";
+/* WKWebExtensionErrorResourceNotFound description with file name */
+"Unable to find \"%@\" in the extension’s resources." = "Unable to find \"%@\" in the extension’s resources.";
+
+/* WKWebExtensionErrorResourceNotFound description with invalid file path */
+"Unable to find \"%@\" in the extension’s resources. It is an invalid path." = "Unable to find \"%@\" in the extension’s resources. It is an invalid path.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description */
 "Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";
@@ -1251,6 +1278,9 @@
 
 /* WKWebExtensionErrorInvalidManifest description, because of a JSON error */
 "Unable to parse manifest: %@" = "Unable to parse manifest: %@";
+
+/* WKWebExtensionErrorInvalidResourceCodeSignature description with file name */
+"Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built." = "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.";
 
 /* Unacceptable TLS certificate error */
 "Unacceptable TLS certificate" = "Unacceptable TLS certificate";

@@ -30,27 +30,25 @@
 #import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionMatchPattern.h>
 
+#if TARGET_OS_IPHONE
+@class UIImage;
+#else
+@class NSImage;
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_ERROR_ENUM(_WKWebExtensionErrorDomain, _WKWebExtensionError) {
     _WKWebExtensionErrorUnknown = 1,
-    _WKWebExtensionErrorManifestNotFound,
+    _WKWebExtensionErrorResourceNotFound,
+    _WKWebExtensionErrorInvalidResourceCodeSignature,
     _WKWebExtensionErrorInvalidManifest,
     _WKWebExtensionErrorUnsupportedManifestVersion,
-    _WKWebExtensionErrorInvalidActionIcon,
-    _WKWebExtensionErrorInvalidBackgroundContent,
+    _WKWebExtensionErrorInvalidManifestEntry,
+    _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry,
     _WKWebExtensionErrorInvalidBackgroundPersistence,
-    _WKWebExtensionErrorInvalidContentScripts,
-    _WKWebExtensionErrorInvalidDeclarativeNetRequest,
-    _WKWebExtensionErrorInvalidDescription,
-    _WKWebExtensionErrorInvalidExternallyConnectable,
-    _WKWebExtensionErrorInvalidIcon,
-    _WKWebExtensionErrorInvalidName,
-    _WKWebExtensionErrorInvalidURLOverrides,
-    _WKWebExtensionErrorInvalidVersion,
-    _WKWebExtensionErrorInvalidWebAccessibleResources,
     _WKWebExtensionErrorBackgroundContentFailedToLoad,
 } NS_SWIFT_NAME(_WKWebExtension.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
@@ -77,8 +75,17 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (readonly, nullable, nonatomic) NSString *displayShortName;
 @property (readonly, nullable, nonatomic) NSString *displayVersion;
 @property (readonly, nullable, nonatomic) NSString *displayDescription;
+@property (readonly, nullable, nonatomic) NSString *displayActionLabel;
 
 @property (readonly, nullable, nonatomic) NSString *version;
+
+#if TARGET_OS_IPHONE
+- (nullable UIImage *)iconForSize:(CGSize)size;
+- (nullable UIImage *)actionIconForSize:(CGSize)size;
+#else
+- (nullable NSImage *)iconForSize:(CGSize)size;
+- (nullable NSImage *)actionIconForSize:(CGSize)size;
+#endif
 
 @property (readonly, nonatomic) NSSet<_WKWebExtensionPermission> *requestedPermissions;
 @property (readonly, nonatomic) NSSet<_WKWebExtensionPermission> *optionalPermissions;

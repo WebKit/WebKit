@@ -33,10 +33,28 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "FoundationSPI.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionPermission.h"
+#import <CoreFoundation/CFBundle.h>
+#import <UniformTypeIdentifiers/UTCoreTypes.h>
+#import <UniformTypeIdentifiers/UTType.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/text/WTFString.h>
+
+#if PLATFORM(MAC)
+#import <pal/spi/mac/NSImageSPI.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(CoreSVG)
+SOFT_LINK(CoreSVG, CGSVGDocumentCreateFromData, CGSVGDocumentRef, (CFDataRef data, CFDictionaryRef options), (data, options))
+SOFT_LINK(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (document))
+#endif
 
 namespace WebKit {
 
@@ -48,11 +66,23 @@ static NSString * const versionManifestKey = @"version";
 static NSString * const versionNameManifestKey = @"version_name";
 static NSString * const descriptionManifestKey = @"description";
 
+static NSString * const iconsManifestKey = @"icons";
+
+static NSString * const actionManifestKey = @"action";
+static NSString * const browserActionManifestKey = @"browser_action";
+static NSString * const pageActionManifestKey = @"page_action";
+
+static NSString * const defaultIconManifestKey = @"default_icon";
+static NSString * const defaultTitleManifestKey = @"default_title";
+static NSString * const defaultPopupManifestKey = @"default_popup";
+
 static NSString * const backgroundManifestKey = @"background";
 static NSString * const backgroundPageManifestKey = @"page";
 static NSString * const backgroundServiceWorkerManifestKey = @"service_worker";
 static NSString * const backgroundScriptsManifestKey = @"scripts";
 static NSString * const backgroundPersistentManifestKey = @"persistent";
+
+static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 
 static NSString * const contentScriptsManifestKey = @"content_scripts";
 static NSString * const contentScriptsMatchesManifestKey = @"matches";
@@ -75,32 +105,30 @@ static NSString * const optionalHostPermissionsManifestKey = @"optional_host_per
 
 WebExtension::WebExtension(NSBundle *appExtensionBundle)
     : m_bundle(appExtensionBundle)
-    , m_resourceBaseURL(appExtensionBundle.resourceURL.absoluteURL)
+    , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
 {
     ASSERT(appExtensionBundle);
 }
 
 WebExtension::WebExtension(NSURL *resourceBaseURL)
-    : m_resourceBaseURL(resourceBaseURL)
+    : m_resourceBaseURL(resourceBaseURL.URLByStandardizingPath.absoluteURL)
 {
     ASSERT(resourceBaseURL);
     ASSERT([resourceBaseURL isFileURL]);
     ASSERT([resourceBaseURL hasDirectoryPath]);
 }
 
-WebExtension::WebExtension(NSDictionary *manifest)
+WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
     : m_manifest([manifest copy])
+    , m_resources([resources mutableCopy])
     , m_parsedManifest(true)
 {
     ASSERT(manifest);
 }
 
-WebExtension::WebExtension(NSData *manifestData)
-    : m_parsedManifest(true)
+WebExtension::WebExtension(NSDictionary *resources)
+    : m_resources([resources mutableCopy])
 {
-    ASSERT(manifestData);
-
-    parseManifest(manifestData);
 }
 
 bool WebExtension::manifestParsedSuccessfully()
@@ -130,13 +158,9 @@ NSDictionary *WebExtension::manifest()
 
     m_parsedManifest = true;
 
-    // FIXME: This needs to check the bundle code signature (if a bundle is used).
-    NSURL *manifestURL = [NSURL fileURLWithPath:@"manifest.json" relativeToURL:m_resourceBaseURL.get()];
-    NSData *manifestData = [NSData dataWithContentsOfURL:manifestURL];
-    if (!manifestData) {
-        recordError(createError(Error::ManifestNotFound));
+    NSData *manifestData = resourceDataForPath(@"manifest.json");
+    if (!manifestData)
         return nil;
-    }
 
     if (!parseManifest(manifestData))
         return nil;
@@ -156,6 +180,131 @@ double WebExtension::manifestVersion()
     return objectForKey<NSNumber>(manifest(), manifestVersionManifestKey).doubleValue;
 }
 
+#if PLATFORM(MAC)
+
+SecStaticCodeRef WebExtension::bundleStaticCode()
+{
+#if USE(APPLE_INTERNAL_SDK)
+    if (!m_bundle)
+        return nullptr;
+
+    if (m_bundleStaticCode)
+        return m_bundleStaticCode.get();
+
+    SecStaticCodeRef staticCodeRef;
+    OSStatus error = SecStaticCodeCreateWithPath((__bridge CFURLRef)m_bundle.get().bundleURL, kSecCSDefaultFlags, &staticCodeRef);
+    if (error != noErr || !staticCodeRef) {
+        if (staticCodeRef)
+            CFRelease(staticCodeRef);
+        return nullptr;
+    }
+
+    m_bundleStaticCode = adoptCF(staticCodeRef);
+
+    return m_bundleStaticCode.get();
+#else
+    return nullptr;
+#endif
+}
+
+bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData, NSError **outError)
+{
+    ASSERT([resourceURL isFileURL]);
+    ASSERT(resourceData);
+
+#if USE(APPLE_INTERNAL_SDK)
+    if (!m_bundle)
+        return true;
+
+    if (!bundleStaticCode())
+        return false;
+
+    NSURL *bundleSupportFilesURL = CFBridgingRelease(CFBundleCopySupportFilesDirectoryURL(m_bundle.get()._cfBundle));
+    NSString *bundleSupportFilesURLString = bundleSupportFilesURL.absoluteString;
+    NSString *resourceURLString = resourceURL.absoluteString;
+    ASSERT([resourceURLString hasPrefix:bundleSupportFilesURLString]);
+
+    NSString *relativePathToResource = [resourceURLString substringFromIndex:bundleSupportFilesURLString.length].stringByRemovingPercentEncoding;
+    OSStatus result = SecCodeValidateFileResource(bundleStaticCode(), (__bridge CFStringRef)relativePathToResource, (__bridge CFDataRef)resourceData, kSecCSDefaultFlags);
+
+    if (outError && result != noErr)
+        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:result userInfo:nil];
+
+    return result == noErr;
+#else
+    return true;
+#endif
+}
+
+#endif // PLATFORM(MAC)
+
+NSURL *WebExtension::resourceFileURLForPath(NSString *path)
+{
+    ASSERT(path);
+
+    if (!path.length || !m_resourceBaseURL)
+        return nil;
+
+    NSURL *resourceURL = [NSURL fileURLWithPath:path.stringByRemovingPercentEncoding isDirectory:NO relativeToURL:m_resourceBaseURL.get()].URLByStandardizingPath;
+
+    // Don't allow escaping the base URL with "../".
+    if (![resourceURL.absoluteString hasPrefix:m_resourceBaseURL.get().absoluteString])
+        return nil;
+
+    return resourceURL;
+}
+
+NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResult)
+{
+    ASSERT(path);
+
+    if (NSData *cachedData = objectForKey<NSData>(m_resources, path))
+        return cachedData;
+
+    if (NSString *cachedString = objectForKey<NSString>(m_resources, path)) {
+        NSData *cachedData = [cachedString dataUsingEncoding:NSUTF8StringEncoding];
+        ASSERT(cachedData);
+        [m_resources setObject:cachedData forKey:path];
+        return cachedData;
+    }
+
+    if ([path isEqualToString:generatedBackgroundPageFilename])
+        return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSURL *resourceURL = resourceFileURLForPath(path);
+    if (!resourceURL) {
+        if (m_resources)
+            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path)));
+        else
+            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path)));
+
+        return nil;
+    }
+
+    NSError *fileReadError;
+    NSData *resultData = [NSData dataWithContentsOfURL:resourceURL options:NSDataReadingMappedIfSafe error:&fileReadError];
+    if (!resultData) {
+        recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path), fileReadError));
+        return nil;
+    }
+
+#if PLATFORM(MAC)
+    NSError *validationError;
+    if (!validateResourceData(resourceURL, resultData, &validationError)) {
+        recordError(createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)path), validationError));
+        return nil;
+    }
+#endif
+
+    if (cacheResult == CacheResult::Yes) {
+        if (!m_resources)
+            m_resources = [NSMutableDictionary dictionary];
+        [m_resources setObject:resultData forKey:path];
+    }
+
+    return resultData;
+}
+
 bool WebExtension::hasRequestedPermission(NSString *permission) const
 {
     return [m_permissions containsObject:permission];
@@ -172,9 +321,9 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         localizedDescription = WEB_UI_STRING("An unknown error has occurred.", "WKWebExtensionErrorUnknown description");
         break;
 
-    case Error::ManifestNotFound:
-        errorCode = _WKWebExtensionErrorManifestNotFound;
-        localizedDescription = WEB_UI_STRING("Unable to find `manifest.json` in the extension bundle.", "WKWebExtensionErrorManifestNotFound description");
+    case Error::ResourceNotFound:
+        errorCode = _WKWebExtensionErrorResourceNotFound;
+        ASSERT(customLocalizedDescription);
         break;
 
     case Error::InvalidManifest:
@@ -193,23 +342,34 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         localizedDescription = WEB_UI_STRING("An unsupported `manifest_version` was specified.", "WKWebExtensionErrorUnsupportedManifestVersion description");
         break;
 
+    case Error::InvalidAction:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        if (usesManifestVersion(3))
+            localizedDescription = WEB_UI_STRING("Missing or empty `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for action only");
+        else
+            localizedDescription = WEB_UI_STRING("Missing or empty `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action");
+        break;
+
     case Error::InvalidActionIcon:
-        errorCode = _WKWebExtensionErrorInvalidActionIcon;
-        localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action`, `browser_action`, or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        if (usesManifestVersion(3))
+            localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only");
+        else
+            localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action");
         break;
 
     case Error::InvalidBackgroundContent:
-        errorCode = _WKWebExtensionErrorInvalidBackgroundContent;
-        localizedDescription = WEB_UI_STRING("Empty or invalid `background` manifest entry.", "WKWebExtensionErrorInvalidBackgroundContent description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Empty or invalid `background` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for background");
         break;
 
     case Error::InvalidContentScripts:
-        errorCode = _WKWebExtensionErrorInvalidContentScripts;
-        localizedDescription = WEB_UI_STRING("Empty or invalid `content_scripts` manifest entry.", "WKWebExtensionErrorInvalidContentScripts description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Empty or invalid `content_scripts` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for content_scripts");
         break;
 
     case Error::InvalidDeclarativeNetRequest:
-        errorCode = _WKWebExtensionErrorInvalidDeclarativeNetRequest;
+        errorCode = _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
         if (NSString *debugDescription = underlyingError.userInfo[NSDebugDescriptionErrorKey])
@@ -220,38 +380,38 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidDescription:
-        errorCode = _WKWebExtensionErrorInvalidDescription;
-        localizedDescription = WEB_UI_STRING("Missing or empty `description` manifest entry.", "WKWebExtensionErrorInvalidDescription description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Missing or empty `description` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for description");
         break;
 
     case Error::InvalidExternallyConnectable:
-        errorCode = _WKWebExtensionErrorInvalidExternallyConnectable;
-        localizedDescription = WEB_UI_STRING("Empty or invalid `externally_connectable` manifest entry.", "WKWebExtensionErrorInvalidExternallyConnectable description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Empty or invalid `externally_connectable` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for externally_connectable");
         break;
 
     case Error::InvalidIcon:
-        errorCode = _WKWebExtensionErrorInvalidIcon;
-        localizedDescription = WEB_UI_STRING("Missing or empty `icons` manifest entry.", "WKWebExtensionErrorInvalidIcon description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Missing or empty `icons` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icons");
         break;
 
     case Error::InvalidName:
-        errorCode = _WKWebExtensionErrorInvalidName;
-        localizedDescription = WEB_UI_STRING("Missing or empty `name` manifest entry.", "WKWebExtensionErrorInvalidName description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Missing or empty `name` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for name");
         break;
 
     case Error::InvalidURLOverrides:
-        errorCode = _WKWebExtensionErrorInvalidURLOverrides;
-        localizedDescription = WEB_UI_STRING("Empty or invalid url overrides manifest entry", "WKWebExtensionErrorInvalidURLOverrides description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Empty or invalid URL overrides manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for URL overrides");
         break;
 
     case Error::InvalidVersion:
-        errorCode = _WKWebExtensionErrorInvalidVersion;
-        localizedDescription = WEB_UI_STRING("Missing or empty `version` manifest entry.", "WKWebExtensionErrorInvalidVersion description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Missing or empty `version` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for version");
         break;
 
     case Error::InvalidWebAccessibleResources:
-        errorCode = _WKWebExtensionErrorInvalidWebAccessibleResources;
-        localizedDescription = WEB_UI_STRING("Invalid `web_accessible_resources` manifest entry.", "WKWebExtensionErrorInvalidWebAccessibleResources description");
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
+        localizedDescription = WEB_UI_STRING("Invalid `web_accessible_resources` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources");
         break;
 
     case Error::InvalidBackgroundPersistence:
@@ -262,6 +422,11 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
     case Error::BackgroundContentFailedToLoad:
         errorCode = _WKWebExtensionErrorBackgroundContentFailedToLoad;
         localizedDescription = WEB_UI_STRING("The background content failed to load due to an error.", "WKWebExtensionErrorBackgroundContentFailedToLoad description");
+        break;
+
+    case Error::InvalidResourceCodeSignature:
+        errorCode = _WKWebExtensionErrorInvalidResourceCodeSignature;
+        ASSERT(customLocalizedDescription);
         break;
     }
 
@@ -293,6 +458,7 @@ NSArray *WebExtension::errors()
     // FIXME: Include runtime and declarativeNetRequest errors.
 
     populateDisplayStringsIfNeeded();
+    populateActionPropertiesIfNeeded();
     populateBackgroundPropertiesIfNeeded();
     populateContentScriptPropertiesIfNeeded();
     populatePermissionsPropertiesIfNeeded();
@@ -379,6 +545,251 @@ void WebExtension::populateDisplayStringsIfNeeded()
     m_displayDescription = objectForKey<NSString>(m_manifest, descriptionManifestKey);
     if (!m_displayDescription)
         recordError(createError(Error::InvalidDescription));
+}
+
+CocoaImage *WebExtension::icon(CGSize size)
+{
+    if (!manifestParsedSuccessfully())
+        return nil;
+
+    NSString *localizedErrorDescription = WEB_UI_STRING("Failed to load images in `icons` manifest entry.", "WKWebExtensionErrorInvalidIcon description for failing to load images");
+    return bestImageForIconsDictionaryManifestKey(m_manifest.get(), iconsManifestKey, size, m_icon, Error::InvalidIcon, localizedErrorDescription);
+}
+
+CocoaImage *WebExtension::actionIcon(CGSize size)
+{
+    if (!manifestParsedSuccessfully())
+        return nil;
+
+    populateActionPropertiesIfNeeded();
+
+    NSString *localizedErrorDescription;
+    if (usesManifestVersion(3))
+        localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only");
+    else
+        localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action");
+
+    return bestImageForIconsDictionaryManifestKey(m_actionDictionary.get(), defaultIconManifestKey, size, m_actionIcon, Error::InvalidActionIcon, localizedErrorDescription);
+}
+
+NSString *WebExtension::displayActionLabel()
+{
+    populateActionPropertiesIfNeeded();
+    return m_displayActionLabel.get();
+}
+
+NSString *WebExtension::actionPopupPath()
+{
+    populateActionPropertiesIfNeeded();
+    return m_actionPopupPath.get();
+}
+
+void WebExtension::populateActionPropertiesIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestActionProperties)
+        return;
+
+    m_parsedManifestActionProperties = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/action
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_action
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/page_action
+
+    if (usesManifestVersion(3))
+        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey);
+    else {
+        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
+        if (!m_actionDictionary)
+            m_actionDictionary = objectForKey<NSDictionary>(m_manifest, pageActionManifestKey);
+    }
+
+    if (!m_actionDictionary)
+        return;
+
+    // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
+    NSString *defaultIconPath = objectForKey<NSString>(m_actionDictionary, defaultIconManifestKey);
+    if (defaultIconPath.length) {
+        m_actionIcon = imageForPath(defaultIconPath);
+
+        if (!m_actionIcon) {
+            NSString *localizedErrorDescription;
+            if (usesManifestVersion(3))
+                localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action");
+            else
+                localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action");
+
+            recordError(createError(Error::InvalidActionIcon, localizedErrorDescription));
+        }
+    }
+
+    m_displayActionLabel = objectForKey<NSString>(m_actionDictionary, defaultTitleManifestKey);
+    m_actionPopupPath = objectForKey<NSString>(m_actionDictionary, defaultPopupManifestKey);
+}
+
+CocoaImage *WebExtension::imageForPath(NSString *imagePath)
+{
+    ASSERT(imagePath);
+
+    NSData *imageData = resourceDataForPath(imagePath, CacheResult::Yes);
+    if (!imageData)
+        return nil;
+
+    NSURL *imageURL = resourceFileURLForPath(imagePath);
+
+    UTType *imageType;
+    [imageURL getResourceValue:&imageType forKey:NSURLContentTypeKey error:nil];
+
+    if ([imageType.identifier isEqualToString:UTTypeSVG.identifier]) {
+#if PLATFORM(MAC)
+#if USE(NSIMAGE_FOR_SVG_SUPPORT)
+        return [[NSImage alloc] initWithData:imageData];
+#else // not USE(NSIMAGE_FOR_SVG_SUPPORT)
+        static Class svgImageRep = NSClassFromString(@"_NSSVGImageRep");
+        RELEASE_ASSERT(svgImageRep);
+
+        _NSSVGImageRep *imageRep = [[svgImageRep alloc] initWithData:imageData];
+        if (!imageRep)
+            return nil;
+
+        NSImage *result = [[NSImage alloc] init];
+        [result addRepresentation:imageRep];
+        result.size = imageRep.size;
+
+        return result;
+#endif // not USE(NSIMAGE_FOR_SVG_SUPPORT)
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY)
+        CGSVGDocumentRef document = CGSVGDocumentCreateFromData((__bridge CFDataRef)imageData, nullptr);
+        if (!document)
+            return nil;
+
+        UIImage *result = [UIImage _imageWithCGSVGDocument:document];
+        CGSVGDocumentRelease(document);
+
+        return result;
+#endif // PLATFORM(IOS_FAMILY)
+    }
+
+    return [[CocoaImage alloc] initWithData:imageData];
+}
+
+NSString *WebExtension::pathForBestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPixelSize)
+{
+    if (!iconsDictionary.count)
+        return nil;
+
+    // Check if the ideal size exists, if so return it.
+    NSString *idealSizeString = @(idealPixelSize).stringValue;
+    if (NSString *resultPath = iconsDictionary[idealSizeString])
+        return resultPath;
+
+    // Check if the ideal retina size exists, if so return it. This will cause downsampling to the ideal size,
+    // but it is an even multiplier so it is better than a fractional scaling.
+    idealSizeString = @(idealPixelSize * 2).stringValue;
+    if (NSString *resultPath = iconsDictionary[idealSizeString])
+        return resultPath;
+
+#if PLATFORM(IOS)
+    // Check if the ideal 3x retina size exists. This will usually be called on 2x iOS devices when a 3x image might exist.
+    // Since the ideal size is likly already 2x, multiply by 1.5x to get the 3x pixel size.
+    idealSizeString = @(idealPixelSize * 1.5).stringValue;
+    if (NSString *resultPath = iconsDictionary[idealSizeString])
+        return resultPath;
+#endif
+
+    // Since the ideal size does not exist, sort the keys and return the next largest size. This could cause
+    // fractional scaling when the final image is displayed. Better than nothing.
+    NSArray<NSString *> *sizeKeys = filterObjects(iconsDictionary.allKeys, ^bool(id, id value) {
+        return [value isKindOfClass:NSString.class];
+    });
+
+    if (!sizeKeys.count)
+        return nil;
+
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:YES selector:@selector(localizedStandardCompare:)];
+    NSArray<NSString *> *sortedKeys = [sizeKeys sortedArrayUsingDescriptors:@[ sortDescriptor ]];
+
+    size_t bestSize = 0;
+    for (NSString *size in sortedKeys) {
+        bestSize = size.integerValue;
+        if (bestSize >= idealPixelSize)
+            break;
+    }
+
+    ASSERT(bestSize);
+
+    return iconsDictionary[@(bestSize).stringValue];
+}
+
+CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPointSize)
+{
+    if (!iconsDictionary.count)
+        return nil;
+
+    NSUInteger standardPixelSize = idealPointSize;
+#if PLATFORM(IOS)
+    standardPixelSize *= UIScreen.mainScreen.scale;
+#endif
+
+    NSString *standardIconPath = pathForBestImageInIconsDictionary(iconsDictionary, standardPixelSize);
+    if (!standardIconPath.length)
+        return nil;
+
+    CocoaImage *resultImage = imageForPath(standardIconPath);
+    if (!resultImage)
+        return nil;
+
+#if PLATFORM(MAC)
+    static Class svgImageRep = NSClassFromString(@"_NSSVGImageRep");
+    RELEASE_ASSERT(svgImageRep);
+
+    BOOL isVectorImage = [resultImage.representations indexOfObjectPassingTest:^BOOL(NSImageRep *imageRep, NSUInteger, BOOL *) {
+        return [imageRep isKindOfClass:svgImageRep];
+    }] != NSNotFound;
+
+    if (isVectorImage)
+        return resultImage;
+
+    NSUInteger retinaPixelSize = standardPixelSize * 2;
+    NSString *retinaIconPath = pathForBestImageInIconsDictionary(iconsDictionary, retinaPixelSize);
+    if (retinaIconPath.length && ![retinaIconPath isEqualToString:standardIconPath]) {
+        if (CocoaImage *retinaImage = imageForPath(retinaIconPath))
+            [resultImage addRepresentations:retinaImage.representations];
+    }
+#endif // PLATFORM(MAC)
+
+    return resultImage;
+}
+
+CocoaImage *WebExtension::bestImageForIconsDictionaryManifestKey(NSDictionary *dictionary, NSString *manifestKey, CGSize idealSize, RetainPtr<CocoaImage>& cacheLocation, Error error, NSString *customLocalizedDescription)
+{
+    if (cacheLocation)
+        return cacheLocation.get();
+
+    CGFloat idealPointSize = idealSize.width > idealSize.height ? idealSize.width : idealSize.height;
+    NSDictionary *iconDictionary = objectForKey<NSDictionary>(dictionary, manifestKey);
+    CocoaImage *result = bestImageInIconsDictionary(iconDictionary, idealPointSize);
+    if (!result) {
+        if (iconDictionary.count) {
+            // Record an error if the dictionary had values, meaning the likely failure is the images were missing on disk or bad format.
+            recordError(createError(error, customLocalizedDescription));
+        } else if ((iconDictionary && !iconDictionary.count) || dictionary[manifestKey]) {
+            // Record an error if the key had dictionary that was empty, or the key had a value of the wrong type.
+            recordError(createError(error));
+        }
+
+        return nil;
+    }
+
+    // Cache the icon if there is only one size, usually this is a vector icon or a large bitmap.
+    if (iconDictionary.count == 1)
+        cacheLocation = result;
+
+    return result;
 }
 
 bool WebExtension::hasBackgroundContent()

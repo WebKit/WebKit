@@ -47,7 +47,7 @@ static NSError *matchingError(NSArray<NSError *> *errors, _WKWebExtensionError c
 TEST(WKWebExtension, BasicManifestParsing)
 {
     auto parse = ^(NSString *manifestString) {
-        return [[_WKWebExtension alloc] _initWithManifestData:[manifestString dataUsingEncoding:NSUTF8StringEncoding]].manifest;
+        return [[_WKWebExtension alloc] _initWithResources:@{ @"manifest.json": manifestString }].manifest;
     };
 
     EXPECT_NULL(parse(@""));
@@ -81,9 +81,7 @@ TEST(WKWebExtension, DisplayStringParsing)
     EXPECT_NULL(testExtension.version);
     EXPECT_NULL(testExtension.displayDescription);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidName));
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidDescription));
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidVersion));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
 
     testManifestDictionary[@"name"] = @"Test";
     testManifestDictionary[@"version"] = @"1.0";
@@ -107,6 +105,79 @@ TEST(WKWebExtension, DisplayStringParsing)
     EXPECT_NS_EQUAL(testExtension.version, @"1.0");
     EXPECT_NS_EQUAL(testExtension.displayDescription, @"Test description.");
     EXPECT_NULL(testExtension.errors);
+}
+
+TEST(WKWebExtension, ActionParsing)
+{
+    NSDictionary *testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0" };
+    auto testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"browser_action": @{ } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"page_action": @{ } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"browser_action": @{ }, @"page_action": @{ } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"safari_action": @{ } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"browser_action": @{ @"default_title": @"Button Title" } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NS_EQUAL(testExtension.displayActionLabel, @"Button Title");
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"page_action": @{ @"default_title": @"Button Title" } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NS_EQUAL(testExtension.displayActionLabel, @"Button Title");
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    // action should be ignored in manifest v2.
+    testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"action": @{ @"default_title": @"Button Title" } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    // Manifest v3 looks for the "action" key.
+    testManifestDictionary = @{ @"manifest_version": @3, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"action": @{ @"default_title": @"Button Title" } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NS_EQUAL(testExtension.displayActionLabel, @"Button Title");
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    // Manifest v3 should never find a browser_action.
+    testManifestDictionary = @{ @"manifest_version": @3, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"browser_action": @{ @"default_title": @"Button Title" } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
+
+    // Or a page action.
+    testManifestDictionary = @{ @"manifest_version": @3, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"page_action": @{ @"default_title": @"Button Title" } };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NULL(testExtension.errors);
+    EXPECT_NULL(testExtension.displayActionLabel);
+    EXPECT_NULL([testExtension actionIconForSize:NSMakeSize(16, 16)]);
 }
 
 TEST(WKWebExtension, ContentScriptsParsing)
@@ -143,7 +214,7 @@ TEST(WKWebExtension, ContentScriptsParsing)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidContentScripts));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
     EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
 
@@ -151,7 +222,7 @@ TEST(WKWebExtension, ContentScriptsParsing)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidContentScripts));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
     EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
 
@@ -159,7 +230,7 @@ TEST(WKWebExtension, ContentScriptsParsing)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidContentScripts));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
     EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
 
@@ -167,7 +238,7 @@ TEST(WKWebExtension, ContentScriptsParsing)
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidContentScripts));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
     EXPECT_TRUE([testExtension hasInjectedContentForURL:exampleURL]);
 }
@@ -425,7 +496,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_TRUE(testExtension.hasBackgroundContent);
     EXPECT_TRUE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 #endif
 
@@ -436,7 +507,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_TRUE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"manifest_version"] = @2;
@@ -446,7 +517,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_TRUE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ };
@@ -455,7 +526,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @[ @"invalid" ];
@@ -464,7 +535,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ @"scripts": @[ ], @"persistent": @NO };
@@ -473,7 +544,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ @"page": @"", @"persistent": @NO };
@@ -482,7 +553,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ @"page": @[ @"test.html" ], @"persistent": @NO };
@@ -491,7 +562,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ @"scripts": @[ @[ @"test.js" ] ], @"persistent": @NO };
@@ -500,7 +571,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ @"service_worker": @"", @"persistent": @NO };
@@ -509,7 +580,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
     testManifestDictionary[@"background"] = @{ @"service_worker": @[ @"test.js" ], @"persistent": @NO };
@@ -518,7 +589,7 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
     EXPECT_NOT_NULL(testExtension.errors);
-    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundContent));
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 }
 
