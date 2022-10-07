@@ -140,8 +140,6 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 
-    void paintOutlineForLine(GraphicsContext&, const LayoutPoint&, const LayoutRect& prevLine, const LayoutRect& thisLine, const LayoutRect& nextLine, const Color&);
-
     bool willChangeCreatesStackingContext() const
     {
         return style().willChange() && style().willChange()->canCreateStackingContext();

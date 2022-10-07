@@ -34,6 +34,7 @@ public:
 
     void paintBorder(const LayoutRect&, const RenderStyle&, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     void paintOutline(const LayoutRect&);
+    void paintOutline(const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects);
 
     bool paintNinePieceImage(const LayoutRect&, const RenderStyle&, const NinePieceImage&, CompositeOperator = CompositeOperator::SourceOver);
     struct Sides {
@@ -58,6 +59,7 @@ public:
     static Color calculateBorderStyleColor(const BorderStyle&, const BoxSide&, const Color&);
 
 private:
+    void paintOutlineForLine(const LayoutPoint& paintOffset, const LayoutRect& previousLine, const LayoutRect& currentLine, const LayoutRect& nextLine, const Color& outlineColor);
     void paintTranslucentBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
         const BorderEdges&, BoxSideSet edgesToDraw, std::optional<BorderData::Radii>, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal);
     void paintBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment, const BorderEdges&, BoxSideSet edgeSet, std::optional<BorderData::Radii>, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal, const Color* overrideColor = nullptr);

@@ -249,6 +249,166 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect)
         graphicsContext.endTransparencyLayer();
 }
 
+
+void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects)
+{
+    auto& graphicsContext = m_paintInfo.context();
+    auto& styleToUse = m_renderer.style();
+    auto outlineColor = styleToUse.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+    bool useTransparencyLayer = !outlineColor.isOpaque();
+    if (useTransparencyLayer) {
+        graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
+        outlineColor = outlineColor.opaqueColor();
+    }
+
+    for (size_t i = 1; i < lineRects.size() - 1; i++)
+        paintOutlineForLine(paintOffset, lineRects[i - 1], lineRects[i], lineRects[i + 1], outlineColor);
+
+    if (useTransparencyLayer)
+        graphicsContext.endTransparencyLayer();
+}
+
+void BorderPainter::paintOutlineForLine(const LayoutPoint& paintOffset, const LayoutRect& previousLine, const LayoutRect& currentLine, const LayoutRect& nextLine, const Color& outlineColor)
+{
+    auto& styleToUse = m_renderer.style();
+    auto& graphicsContext = m_paintInfo.context();
+
+    float outlineOffset = styleToUse.outlineOffset();
+    LayoutRect outlineBoxRect = currentLine;
+    outlineBoxRect.inflate(outlineOffset);
+    outlineBoxRect.moveBy(paintOffset);
+    if (outlineBoxRect.isEmpty())
+        return;
+
+    auto& document = this->document();
+    float outlineWidth = styleToUse.outlineWidth();
+    BorderStyle outlineStyle = styleToUse.outlineStyle();
+    bool antialias = shouldAntialiasLines(graphicsContext);
+
+    auto adjustedPreviousLine = previousLine;
+    adjustedPreviousLine.moveBy(paintOffset);
+    auto adjustedNextLine = nextLine;
+    adjustedNextLine.moveBy(paintOffset);
+    
+    float adjacentWidth1 = 0;
+    float adjacentWidth2 = 0;
+    // left edge
+    auto topLeft = outlineBoxRect.minXMinYCorner();
+    if (previousLine.isEmpty() || currentLine.x() < previousLine.x() || (previousLine.maxX()) <= currentLine.x()) {
+        topLeft.move(-outlineWidth, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+    } else {
+        topLeft.move(-outlineWidth, 2 * outlineOffset);
+        adjacentWidth1 = -outlineWidth;
+    }
+    auto bottomRight = outlineBoxRect.minXMaxYCorner();
+    if (nextLine.isEmpty() || currentLine.x() <= nextLine.x() || (nextLine.maxX()) <= currentLine.x()) {
+        bottomRight.move(0, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+    } else {
+        bottomRight.move(0, -2 * outlineOffset);
+        adjacentWidth2 = -outlineWidth;
+    }
+    drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Left, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    
+    // right edge
+    topLeft = outlineBoxRect.maxXMinYCorner();
+    if (previousLine.isEmpty() || previousLine.maxX() < currentLine.maxX() || currentLine.maxX() <= previousLine.x()) {
+        topLeft.move(0, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+    } else {
+        topLeft.move(0, 2 * outlineOffset);
+        adjacentWidth1 = -outlineWidth;
+    }
+    bottomRight = outlineBoxRect.maxXMaxYCorner();
+    if (nextLine.isEmpty() || nextLine.maxX() <= currentLine.maxX() || currentLine.maxX() <= nextLine.x()) {
+        bottomRight.move(outlineWidth, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+    } else {
+        bottomRight.move(outlineWidth, -2 * outlineOffset);
+        adjacentWidth2 = -outlineWidth;
+    }
+    drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Right, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+
+    // upper edge
+    if (currentLine.x() < previousLine.x()) {
+        topLeft = outlineBoxRect.minXMinYCorner();
+        topLeft.move(-outlineWidth, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMinYCorner();
+        bottomRight.move(outlineWidth, 0);
+        if (!previousLine.isEmpty() && adjustedPreviousLine.x() < bottomRight.x()) {
+            bottomRight.setX(adjustedPreviousLine.x() - outlineOffset);
+            adjacentWidth2 = -outlineWidth;
+        } else
+            adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+    
+    if (previousLine.maxX() < currentLine.maxX()) {
+        topLeft = outlineBoxRect.minXMinYCorner();
+        topLeft.move(-outlineWidth, -outlineWidth);
+        if (!previousLine.isEmpty() && adjustedPreviousLine.maxX() > topLeft.x()) {
+            topLeft.setX(adjustedPreviousLine.maxX() + outlineOffset);
+            adjacentWidth1 = -outlineWidth;
+        } else
+            adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMinYCorner();
+        bottomRight.move(outlineWidth, 0);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+
+    if (currentLine.x() == currentLine.maxX()) {
+        topLeft = outlineBoxRect.minXMinYCorner();
+        topLeft.move(-outlineWidth, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMinYCorner();
+        bottomRight.move(outlineWidth, 0);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+
+    // lower edge
+    if (currentLine.x() < nextLine.x()) {
+        topLeft = outlineBoxRect.minXMaxYCorner();
+        topLeft.move(-outlineWidth, 0);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMaxYCorner();
+        bottomRight.move(outlineWidth, outlineWidth);
+        if (!nextLine.isEmpty() && (adjustedNextLine.x() < bottomRight.x())) {
+            bottomRight.setX(adjustedNextLine.x() - outlineOffset);
+            adjacentWidth2 = -outlineWidth;
+        } else
+            adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+    
+    if (nextLine.maxX() < currentLine.maxX()) {
+        topLeft = outlineBoxRect.minXMaxYCorner();
+        topLeft.move(-outlineWidth, 0);
+        if (!nextLine.isEmpty() && adjustedNextLine.maxX() > topLeft.x()) {
+            topLeft.setX(adjustedNextLine.maxX() + outlineOffset);
+            adjacentWidth1 = -outlineWidth;
+        } else
+            adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMaxYCorner();
+        bottomRight.move(outlineWidth, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+
+    if (currentLine.x() == currentLine.maxX()) {
+        topLeft = outlineBoxRect.minXMaxYCorner();
+        topLeft.move(-outlineWidth, 0);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMaxYCorner();
+        bottomRight.move(outlineWidth, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+}
+
 void BorderPainter::paintSides(const Sides& sides)
 {
     GraphicsContext& graphicsContext = m_paintInfo.context();
