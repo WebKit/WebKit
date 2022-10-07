@@ -67,8 +67,9 @@
     auto surfaces = displayList.takeSurfaces();
     auto ports = adoptNS([[NSMutableArray alloc] initWithCapacity:surfaces.size()]);
     for (MachSendRight& surface : surfaces) {
-        // CAMachPortCreate "adopts" the incoming reference.
-        [ports addObject:static_cast<id>(CAMachPortCreate(surface.leakSendRight()))];
+        // We `leakSendRight` because CAMachPortCreate "adopts" the incoming reference.
+        RetainPtr portWrapper = adoptCF(CAMachPortCreate(surface.leakSendRight()));
+        [ports addObject:static_cast<id>(portWrapper.get())];
     }
 
     [self setValue:bridge_cast(data.get()) forKeyPath:WKCGDisplayListContentsKey];
