@@ -88,7 +88,7 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
 }
 
 #if ASSERT_ENABLED
-ThreadLikeAssertion WorkQueueBase::threadLikeAssertion() const
+ThreadLikeAssertion WorkQueue::threadLikeAssertion() const
 {
     return createThreadLikeAssertion(m_threadID);
 }
