@@ -110,8 +110,11 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&&
                 return;
 
             WebCodecsVideoFrame::BufferInit init;
+            init.codedWidth = result.frame->presentationSize().width();
+            init.codedHeight = result.frame->presentationSize().height();
             init.timestamp = result.timestamp;
             init.duration = result.duration;
+
             auto videoFrame = WebCodecsVideoFrame::create(WTFMove(result.frame), WTFMove(init));
             m_output->handleEvent(WTFMove(videoFrame));
         }, WTFMove(postTaskCallback));

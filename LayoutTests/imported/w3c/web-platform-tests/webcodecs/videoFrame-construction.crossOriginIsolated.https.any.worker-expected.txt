@@ -1,4 +1,4 @@
 
-FAIL Test SharedArrayBuffer constructed I420 VideoFrame assert_equals: plane format expected (string) "I420" but got (object) null
-FAIL Test Uint8Array(SharedArrayBuffer) constructed I420 VideoFrame assert_equals: plane format expected (string) "I420" but got (object) null
+PASS Test SharedArrayBuffer constructed I420 VideoFrame
+PASS Test Uint8Array(SharedArrayBuffer) constructed I420 VideoFrame
 

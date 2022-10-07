@@ -36,15 +36,15 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 #endif
 ) CanvasImageSource;
 
+// FIXME: Support Serializable and Transferable.
 [
     Conditional=WEB_CODECS,
     EnabledBySetting=WebCodecsEnabled,
     Exposed=(Window,DedicatedWorker),
-    Serializable,
-    Transferable,
     InterfaceName=VideoFrame,
 ] interface WebCodecsVideoFrame {
     constructor(CanvasImageSource image, optional VideoFrameInit init = {});
+    constructor(WebCodecsVideoFrame image, optional VideoFrameInit init = {});
     constructor([AllowShared] BufferSource data, VideoFrameBufferInit init);
 
     readonly attribute VideoPixelFormat? format;
@@ -95,6 +95,6 @@ dictionary VideoFrameBufferInit {
 
 [Conditional=WEB_CODECS]
 dictionary VideoFrameCopyToOptions {
-  required DOMRectInit rect;
+  DOMRectInit rect;
   sequence<PlaneLayout> layout;
 };

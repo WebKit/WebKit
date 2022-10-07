@@ -4,7 +4,7 @@ PASS Test isConfigSupported() with 1080p crop
 PASS Test that isConfigSupported() returns a parsed configuration
 FAIL Test invalid configs assert_unreached: Should have rejected: invalid codedWidth Reached unreachable code
 PASS Test configure()
-FAIL Decode a key frame assert_equals: duration expected 1 but got 0
+PASS Decode a key frame
 PASS Decode a non key frame first fails
 FAIL Verify reset() suppresses outputs assert_greater_than: expected a number greater than 0 but got 0
 PASS Test unconfigured VideoDecoder operations
@@ -13,7 +13,7 @@ FAIL Decode empty frame promise_rejects_dom: function "function () { throw e }" 
 FAIL Decode corrupt frame promise_rejects_dom: function "function () { throw e }" threw object "EncodingError: VPx decoding failed with error -1" that is not a DOMException AbortError: property "code" is equal to 0, expected 20
 PASS Close while decoding corrupt frame
 PASS Test decoding after flush
-FAIL Test decoding a with negative timestamp assert_equals: timestamp expected -42 but got 0
+PASS Test decoding a with negative timestamp
 PASS Test reset during flush
 PASS Test low-latency decoding
 PASS VideoDecoder decodeQueueSize test

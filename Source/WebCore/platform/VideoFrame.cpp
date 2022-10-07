@@ -49,6 +49,42 @@ void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMi
 }
 
 #if !PLATFORM(COCOA)
+RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
+RefPtr<VideoFrame> VideoFrame::createNV12(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
+RefPtr<VideoFrame> VideoFrame::createRGBA(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRA(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
+RefPtr<VideoFrame> VideoFrame::createI420(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
+void VideoFrame::copyTo(Span<uint8_t>, VideoPixelFormat, Vector<ComputedPlaneLayout>&&, CopyCallback&& callback)
+{
+    // FIXME: Add support.
+    callback({ });
+}
+
 RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
 {
 #if USE(GSTREAMER)
