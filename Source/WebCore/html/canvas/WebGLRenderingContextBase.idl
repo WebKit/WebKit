@@ -609,7 +609,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined pixelStorei(GLenum pname, GLint param);
     undefined polygonOffset(GLfloat factor, GLfloat units);
 
-    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView pixels);
+    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
     
     undefined renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
     undefined sampleCoverage(GLclampf value, GLboolean invert);
