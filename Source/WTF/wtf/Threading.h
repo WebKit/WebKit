@@ -44,8 +44,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomStringTable.h>
@@ -103,8 +103,7 @@ public:
     WTF_EXPORT_PRIVATE ~ThreadSuspendLocker();
 };
 
-class WTF_CAPABILITY("is current") Thread : public ThreadSafeRefCounted<Thread> {
-    static std::atomic<uint32_t> s_uid;
+class WTF_CAPABILITY("is current") Thread : public ThreadSafeRefCounted<Thread>, ThreadLike {
 public:
     friend class ThreadGroup;
     friend WTF_EXPORT_PRIVATE void initialize();
@@ -277,8 +276,9 @@ public:
 
     struct NewThreadContext;
     static void entryPoint(NewThreadContext*);
+    ThreadLikeAssertion threadLikeAssertion() const { return createThreadLikeAssertion(m_uid); }
 protected:
-    Thread();
+    Thread() = default;
 
     void initializeInThread();
 
@@ -369,7 +369,7 @@ protected:
     StackBounds m_stack { StackBounds::emptyBounds() };
     HashMap<ThreadGroup*, std::weak_ptr<ThreadGroup>> m_threadGroupMap;
     PlatformThreadHandle m_handle;
-    uint32_t m_uid;
+    uint32_t m_uid { ++s_uid };
 #if OS(WINDOWS)
     ThreadIdentifier m_id { 0 };
 #elif OS(DARWIN)
@@ -398,11 +398,6 @@ public:
     void* m_apiData { nullptr };
     RefPtr<ClientData> m_clientData { nullptr };
 };
-
-inline Thread::Thread()
-    : m_uid(++s_uid)
-{
-}
 
 #if !OS(WINDOWS)
 inline Thread* Thread::currentMayBeNull()
@@ -435,11 +430,7 @@ inline Thread& Thread::current()
 
 inline void assertIsCurrent(const Thread& thread) WTF_ASSERTS_ACQUIRED_CAPABILITY(thread)
 {
-#if ASSERT_ENABLED
-    ASSERT(&thread == &Thread::current());
-#else
-    UNUSED_PARAM(thread);
-#endif
+    assertIsCurrent(thread.threadLikeAssertion());
 }
 
 } // namespace WTF
