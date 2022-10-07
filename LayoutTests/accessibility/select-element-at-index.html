@@ -1,71 +1,84 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
-<select id="group" multiple="multiple">
+<select id="select" multiple="multiple">
     <option>Option 1</option>
     <option>Option 2</option>
     <option>Option 3</option>
     <option>Option 4</option>
 </select>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+    var testOutput = "This test ensures we can use AX APIs to set and remove option selection state.\n\n";
+    var selectElement = window.accessibilityController ? accessibilityController.accessibleElementById("select") : null;
 
-    description("Tests that checks whether setting selection at the given index works correctly");
+    async function setSelectedIndex(index) {
+        const initialSelectedChildrenCount = selectElement.selectedChildrenCount;
+        testOutput += `\nSetting selected index to ${index}.\n`
+        selectElement.setSelectedChildAtIndex(index);
+        await waitFor(() => selectElement.selectedChildrenCount !== initialSelectedChildrenCount);
+    }
+
+    async function removeSelectionAtIndex(index) {
+        const initialSelectedChildrenCount = selectElement.selectedChildrenCount;
+        testOutput += `\nRemoving selection at index ${index}.\n`
+        selectElement.removeSelectionAtIndex(index);
+        await waitFor(() => selectElement.selectedChildrenCount !== initialSelectedChildrenCount);
+    }
 
     if (window.accessibilityController) {
-        document.getElementById("group").focus();
-        var selectElement = accessibilityController.focusedElement;
+        window.jsTestIsAsync = true;
 
-        shouldBe("selectElement.selectedChildrenCount", "0");
+        testOutput += expect("selectElement.selectedChildrenCount", "0");
 
         var option1 = selectElement.childAtIndex(0);
         var option2 = selectElement.childAtIndex(1);
         var option3 = selectElement.childAtIndex(2);
         var option4 = selectElement.childAtIndex(3);
 
-        selectElement.setSelectedChildAtIndex(0);
-        shouldBe("selectElement.selectedChildrenCount", "1");
-        shouldBeTrue("option1.isSelected");
-        shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option1)");
+        setTimeout(async function() {
+            await setSelectedIndex(0);
+            testOutput += expect("selectElement.selectedChildrenCount", "1");
+            testOutput += expect("option1.isSelected", "true");
+            testOutput += expect("selectElement.selectedChildAtIndex(0).isEqual(option1)", "true");
 
-        selectElement.setSelectedChildAtIndex(1);
-        shouldBe("selectElement.selectedChildrenCount", "2");
-        shouldBeTrue("option2.isSelected");
-        shouldBeTrue("selectElement.selectedChildAtIndex(1).isEqual(option2)");
+            await setSelectedIndex(1);
+            testOutput += expect("selectElement.selectedChildrenCount", "2");
+            testOutput += expect("option2.isSelected", "true");
+            testOutput += expect("selectElement.selectedChildAtIndex(1).isEqual(option2)", "true");
+            testOutput += expect("option3.isSelected", "false");
 
-        shouldBeFalse("option3.isSelected");
+            await setSelectedIndex(3);
+            testOutput += expect("selectElement.selectedChildrenCount", "3");
+            testOutput += expect("option4.isSelected", "true");
 
-        selectElement.setSelectedChildAtIndex(3);
-        shouldBe("selectElement.selectedChildrenCount", "3");
-        shouldBeTrue("option4.isSelected");
+            // The index expected by selectedChildAtIndex is with respect to the array of
+            // selected children; not the array of all children. The element whose text is
+            // "Option 4" is the third of three selected items, thus the index should be 2.
+            testOutput += expect("selectElement.selectedChildAtIndex(2).isEqual(option4)", "true");
 
-        // The index expected by selectedChildAtIndex is with respect to the array of
-        // selected children; not the array of all children. The element whose text is
-        // "Option 4" is the third of three selected items, thus the index should be 2.
-        shouldBeTrue("selectElement.selectedChildAtIndex(2).isEqual(option4)");
+            await removeSelectionAtIndex(3);
+            testOutput += expect("option4.isSelected", "false");
+            testOutput += expect("selectElement.selectedChildrenCount", "2");
 
-        selectElement.removeSelectionAtIndex(3);
-        shouldBeFalse("option4.isSelected");
-        shouldBe("selectElement.selectedChildrenCount", "2");
+            await removeSelectionAtIndex(1);
+            testOutput += expect("option2.isSelected", "false");
+            testOutput += expect("selectElement.selectedChildrenCount", "1");
 
-        selectElement.removeSelectionAtIndex(1);
-        shouldBeFalse("option2.isSelected");
-        shouldBe("selectElement.selectedChildrenCount", "1");
+            await removeSelectionAtIndex(0);
+            testOutput += expect("option1.isSelected", "false");
+            testOutput += expect("selectElement.selectedChildrenCount", "0");
 
-        selectElement.removeSelectionAtIndex(0);
-        shouldBeFalse("option1.isSelected");
-        shouldBe("selectElement.selectedChildrenCount", "0");
-}
-
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

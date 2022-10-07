@@ -57,7 +57,7 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     case AXPageScrolled:
         name = "AXPageScrolled"_s;
         break;
-    case AXSelectedStateChanged:
+    case AXSelectedCellChanged:
         name = "AXSelectedCellsChanged"_s;
         break;
     case AXSelectedTextChanged:
