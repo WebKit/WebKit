@@ -336,7 +336,7 @@ class GitHub(Scm):
     def is_git(self):
         return True
 
-    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True, json=None, method='GET', endpoint_url=None, files=None):
+    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True, json=None, method='GET', endpoint_url=None, files=None, data=None):
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
 
@@ -362,9 +362,9 @@ class GitHub(Scm):
                 name=self.name,
                 path='/{}'.format(path) if path else '',
             )
-        response = self.session.request(method, url, params=params, json=json, headers=headers, auth=auth, files=files)
+        response = self.session.request(method, url, params=params, json=json, headers=headers, auth=auth, files=files, data=data)
         if authenticated is None and not auth and response.status_code // 100 == 4:
-            return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate, json=json, method=method, endpoint_url=endpoint_url, files=None)
+            return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate, json=json, method=method, endpoint_url=endpoint_url, files=files, data=data)
         if response.status_code not in [200, 201]:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             message = response.json().get('message')
@@ -714,22 +714,27 @@ class GitHub(Scm):
         }
         return self.request('releases', json=data, paginate=False, authenticated=True, method='POST')
 
-    def upload_release_asset(self, release_tag_name, source_filename, mime_type, asset_name=None, asset_label=None):
+    def upload_release_asset(self, release_tag_name, source_filename, mime_type, asset_name=None, asset_label=None, file_like_object=None):
         source_filename = os.path.abspath(os.path.realpath(os.path.expanduser(source_filename)))
         source_basename = os.path.basename(source_filename)
         asset_name = asset_name if asset_name else source_basename
         asset_label = asset_label if asset_label else source_basename
-        files = {
-            'file': (asset_name, open(source_filename, 'rb'), mime_type, {'Expires': '0'})
-        }
+        headers = dict()
+        headers['Content-Type'] = mime_type
+        params = dict(name=asset_name, label=asset_label)
         release_info = self.request('releases/tags/{tag}'.format(tag=release_tag_name), authenticated=True)
         upload_url = release_info['upload_url'][0:release_info['upload_url'].rfind('{?name,label}')]
-        params = dict(name=asset_name, label=asset_label)
-        return self.request(
-            params=params,
-            authenticated=True,
-            paginate=False,
-            method='POST',
-            endpoint_url=upload_url,
-            files=files
-        )
+        file_object = file_like_object if file_like_object else open(source_filename, 'rb')
+        try:
+            return self.request(
+                params=params,
+                authenticated=True,
+                paginate=False,
+                method='POST',
+                endpoint_url=upload_url,
+                headers=headers,
+                data=file_object
+            )
+        finally:
+            if not file_like_object:
+                file_object.close()
