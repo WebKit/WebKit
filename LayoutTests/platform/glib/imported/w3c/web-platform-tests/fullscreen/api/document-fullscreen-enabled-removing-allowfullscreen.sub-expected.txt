@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for iframe with origin 'http://www1.web-platform.test:8800' and allow attribute ''.
 
-FAIL Document#fullscreenEnabled removing allowfullscreen after load and then navigating assert_true: document.fullscreenEnabled in the iframe, before navigation expected true got undefined
+FAIL Document#fullscreenEnabled removing allowfullscreen after load and then navigating assert_true: document.fullscreenEnabled in the iframe, before navigation expected true got false
 

@@ -1676,6 +1676,18 @@ TransformStreamAPIEnabled:
     WebKit:
       default: true
 
+UnprefixedFullscreenAPIEnabled:
+  type: bool
+  humanReadableName: "Unprefixed Fullscreen API"
+  humanReadableDescription: "Enable Unprefixed Fullscreen API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UseGPUProcessForDOMRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: DOM Rendering"

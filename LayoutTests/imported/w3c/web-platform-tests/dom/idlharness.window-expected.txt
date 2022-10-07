@@ -342,7 +342,7 @@ PASS Document interface object length
 PASS Document interface object name
 PASS Document interface: existence and properties of interface prototype object
 PASS Document interface: existence and properties of interface prototype object's "constructor" property
-PASS Document interface: existence and properties of interface prototype object's @@unscopables property
+FAIL Document interface: existence and properties of interface prototype object's @@unscopables property assert_not_equals: Document.prototype[Symbol.unscopables] has unexpected property "fullscreen" got disallowed value -1
 PASS Document interface: attribute implementation
 PASS Document interface: attribute URL
 PASS Document interface: attribute documentURI

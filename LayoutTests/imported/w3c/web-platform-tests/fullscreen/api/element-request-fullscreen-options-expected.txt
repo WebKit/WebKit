@@ -1,5 +1,3 @@
 
-FAIL Element#requestFullscreen({ navigationUI }) support document.body.requestFullscreen is not a function. (In 'document.body.requestFullscreen({
-    get navigationUI() { invoked = true; return "irrelevant-value"; }
-  })', 'document.body.requestFullscreen' is undefined)
+PASS Element#requestFullscreen({ navigationUI }) support
 

@@ -1,3 +1,3 @@
 
-FAIL Document#fullscreenEnabled setting allowfullscreen after document creation, before response assert_false: document.fullscreenEnabled in the iframe expected false got undefined
+FAIL Document#fullscreenEnabled setting allowfullscreen after document creation, before response assert_false: document.fullscreenEnabled in the iframe expected false got true
 

@@ -63,6 +63,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
+#include "FullscreenOptions.h"
 #include "GetAnimationsOptions.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
@@ -81,6 +82,7 @@
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeAnimationOptions.h"
@@ -4091,9 +4093,20 @@ static Element* parentCrossingFrameBoundaries(const Element* element)
     return element->document().ownerElement();
 }
 
-void Element::webkitRequestFullscreen()
+void Element::webkitRequestFullscreen(RefPtr<DeferredPromise>&& promise)
 {
-    document().fullscreenManager().requestFullscreenForElement(*this, FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
+    document().fullscreenManager().requestFullscreenForElement(*this, WTFMove(promise), FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
+}
+
+// https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen
+// FIXME: Add proper support.
+void Element::requestFullscreen(FullscreenOptions&&, Ref<DeferredPromise>&& promise)
+{
+    if (!document().isFullyActive()) {
+        promise->reject(Exception { TypeError, "Document is not fully active"_s });
+        return;
+    }
+    webkitRequestFullscreen(WTFMove(promise));
 }
 
 void Element::setContainsFullScreenElement(bool flag)

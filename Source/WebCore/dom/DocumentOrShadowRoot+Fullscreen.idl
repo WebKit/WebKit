@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +26,8 @@
 // https://fullscreen.spec.whatwg.org/#api
 [
     Conditional=FULLSCREEN_API,
-    DisabledByQuirk=shouldDisableElementFullscreen,
-    EnabledBySetting=FullScreenEnabled
-] partial interface Element {
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenchange;
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenerror;
-
-    // Non-standard: WebKit prefixed variants.
-    [ImplementedAs=webkitRequestFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
-    undefined webkitRequestFullscreen(); // Prefixed W3C version.
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;
+    EnabledBySetting=UnprefixedFullscreenAPIEnabled,
+    ImplementedBy=DocumentOrShadowRootFullscreen
+] partial interface mixin DocumentOrShadowRoot {
+    [LegacyLenientSetter] readonly attribute Element? fullscreenElement;
 };

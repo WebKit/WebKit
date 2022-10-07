@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,28 +27,12 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "Document.h"
-#include "FullscreenManager.h"
-#include <wtf/Forward.h>
-
 namespace WebCore {
 
-class DeferredPromise;
-class Document;
-class Element;
+struct FullscreenOptions {
+    enum class NavigationUI : uint8_t { Auto, Show, Hide };
 
-class DocumentFullscreen {
-public:
-    static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
-    static bool fullscreenEnabled(Document&);
-
-    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
-    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
-    static void webkitExitFullscreen(Document& document) { document.fullscreenManager().exitFullscreen(); }
-    static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }
-    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreenManager().isFullscreenKeyboardInputAllowed(); }
-    static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().currentFullscreenElement()); }
-    static void webkitCancelFullScreen(Document& document) { document.fullscreenManager().cancelFullscreen(); }
+    NavigationUI navigationUI { NavigationUI::Auto };
 };
 
 } // namespace WebCore

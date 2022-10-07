@@ -27,6 +27,7 @@
 #include "InternalFunction.h"
 #include "JSCallee.h"
 #include "JSScope.h"
+#include "VM.h"
 
 namespace JSC {
 

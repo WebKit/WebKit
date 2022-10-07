@@ -23,19 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://fullscreen.spec.whatwg.org/#api
 [
-    Conditional=FULLSCREEN_API,
-    DisabledByQuirk=shouldDisableElementFullscreen,
-    EnabledBySetting=FullScreenEnabled
-] partial interface Element {
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenchange;
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenerror;
+    Conditional=FULLSCREEN_API
+] enum FullscreenNavigationUI {
+    "auto",
+    "show",
+    "hide"
+};
 
-    // Non-standard: WebKit prefixed variants.
-    [ImplementedAs=webkitRequestFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
-    undefined webkitRequestFullscreen(); // Prefixed W3C version.
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;
+[
+    Conditional=FULLSCREEN_API
+] dictionary FullscreenOptions {
+    FullscreenNavigationUI navigationUI = "auto";
 };

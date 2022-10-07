@@ -4,5 +4,5 @@ Tests user activation from a pointer click.
 
 Click anywhere in the document.
 
-FAIL Activation through  pointerevent click assert_true:  pointerup event should result in activation expected true got false
+FAIL Activation through  pointerevent click assert_false:  pointerdown event should not result in activation expected false got true
 

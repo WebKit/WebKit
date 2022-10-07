@@ -29,6 +29,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/WTFString.h>
 

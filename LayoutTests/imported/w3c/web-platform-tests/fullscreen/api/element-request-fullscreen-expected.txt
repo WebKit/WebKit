@@ -1,5 +1,3 @@
 
-Harness Error (FAIL), message = Test named 'Element#requestFullscreen()' specified 1 'cleanup' function, and 1 failed.
-
-FAIL Element#requestFullscreen() assert_unreached: TypeError: div.requestFullscreen is not a function. (In 'div.requestFullscreen()', 'div.requestFullscreen' is undefined) Reached unreachable code
+PASS Element#requestFullscreen()
 

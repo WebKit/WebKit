@@ -203,9 +203,11 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
 }
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-void HTMLVideoElement::webkitRequestFullscreen()
+void HTMLVideoElement::webkitRequestFullscreen(RefPtr<DeferredPromise>&& promise)
 {
     webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
+    if (promise)
+        promise->resolve();
 }
 #endif
 

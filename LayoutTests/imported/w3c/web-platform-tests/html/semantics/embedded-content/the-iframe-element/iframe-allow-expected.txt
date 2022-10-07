@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for iframe with origin 'null' and allow attribute ''.
 
-FAIL iframe-cross-origin-allow assert_false: Document inside cross-origin iframe without allow attribute should not have feature enabled expected false got undefined
+FAIL iframe-cross-origin-allow assert_false: Feature should be denied when correct allow attribute is added, before reload expected false got true
 

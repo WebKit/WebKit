@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
 
 #if ENABLE(FULLSCREEN_API)
+#include "DocumentFullscreen.h"
 
-#include "Document.h"
-#include "FullscreenManager.h"
-#include <wtf/Forward.h>
+#include "EventLoop.h"
+#include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 
-class DeferredPromise;
-class Document;
-class Element;
+// FIXME: Add proper support.
+// https://fullscreen.spec.whatwg.org/#exit-fullscreen
+void DocumentFullscreen::exitFullscreen(Document& document, Ref<DeferredPromise>&& promise)
+{
+    if (!document.isFullyActive() || !document.fullscreenManager().fullscreenElement()) {
+        promise->reject(Exception { TypeError, "Not in fullscreen"_s });
+        return;
+    }
+    document.fullscreenManager().exitFullscreen();
+    document.eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise)] {
+        promise->resolve();
+    });
+}
 
-class DocumentFullscreen {
-public:
-    static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
-    static bool fullscreenEnabled(Document&);
-
-    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
-    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
-    static void webkitExitFullscreen(Document& document) { document.fullscreenManager().exitFullscreen(); }
-    static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }
-    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreenManager().isFullscreenKeyboardInputAllowed(); }
-    static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().currentFullscreenElement()); }
-    static void webkitCancelFullScreen(Document& document) { document.fullscreenManager().cancelFullscreen(); }
-};
+// https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled
+bool DocumentFullscreen::fullscreenEnabled(Document& document)
+{
+    if (!document.isFullyActive())
+        return false;
+    return document.fullscreenManager().isFullscreenEnabled();
+}
 
 } // namespace WebCore
 
