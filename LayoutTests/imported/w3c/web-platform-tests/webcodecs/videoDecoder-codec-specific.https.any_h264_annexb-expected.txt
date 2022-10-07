@@ -2,7 +2,7 @@
 PASS Test isConfigSupported()
 PASS Test isConfigSupported() with 1080p crop
 PASS Test that isConfigSupported() returns a parsed configuration
-FAIL Test invalid configs assert_unreached: Should have rejected: invalid codedWidth Reached unreachable code
+PASS Test invalid configs
 PASS Test configure()
 FAIL Decode a key frame assert_equals: outputs expected 1 but got 0
 PASS Decode a non key frame first fails

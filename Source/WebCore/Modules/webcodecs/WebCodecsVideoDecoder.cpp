@@ -49,7 +49,6 @@ Ref<WebCodecsVideoDecoder> WebCodecsVideoDecoder::create(ScriptExecutionContext&
     return decoder;
 }
 
-
 WebCodecsVideoDecoder::WebCodecsVideoDecoder(ScriptExecutionContext& context, Init&& init)
     : ActiveDOMObject(&context)
     , m_output(init.output.releaseNonNull())
@@ -61,8 +60,34 @@ WebCodecsVideoDecoder::~WebCodecsVideoDecoder()
 {
 }
 
+static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
+{
+    // FIXME: Check codec more accurately.
+    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s))
+        return false;
+
+    if (!!config.codedWidth != !!config.codedHeight)
+        return false;
+    if (config.codedWidth && !*config.codedWidth)
+        return false;
+    if (config.codedHeight && !*config.codedHeight)
+        return false;
+
+    if (!!config.displayAspectWidth != !!config.displayAspectHeight)
+        return false;
+    if (config.displayAspectWidth && !*config.displayAspectWidth)
+        return false;
+    if (config.displayAspectHeight && !*config.displayAspectHeight)
+        return false;
+
+    return true;
+}
+
 ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&& config)
 {
+    if (!isValidDecoderConfig(config))
+        return Exception { TypeError, "Config is not valid"_s };
+
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
         return Exception { InvalidStateError, "VideoDecoder is closed"_s };
 
@@ -176,29 +201,6 @@ ExceptionOr<void> WebCodecsVideoDecoder::reset()
 ExceptionOr<void> WebCodecsVideoDecoder::close()
 {
     return closeDecoder(Exception { AbortError, "Close called"_s });
-}
-
-static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
-{
-    // FIXME: Check codec more accurately.
-    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09.00"_s) && !config.codec.startsWith("avc1."_s) && !config.codec.startsWith("hev1."_s))
-        return false;
-
-    if (!!config.codedWidth != !!config.codedHeight)
-        return false;
-    if (config.codedWidth && !config.codedWidth)
-        return false;
-    if (config.codedWidth && !config.codedHeight)
-        return false;
-
-    if (!!config.displayAspectWidth != !!config.displayAspectHeight)
-        return false;
-    if (config.displayAspectWidth && !config.displayAspectWidth)
-        return false;
-    if (config.displayAspectHeight && !config.displayAspectHeight)
-        return false;
-
-    return true;
 }
 
 void WebCodecsVideoDecoder::isConfigSupported(WebCodecsVideoDecoderConfig&& config, Ref<DeferredPromise>&& promise)
