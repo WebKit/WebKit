@@ -66,7 +66,7 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
     encoder << entries;
     encoder << hostNamesWithCookies;
     encoder << hostNamesWithHSTSCache;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     encoder << registrableDomainsWithResourceLoadStatistics;
 #endif
 }
@@ -79,7 +79,7 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
         return false;
     if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (!decoder.decode(result.registrableDomainsWithResourceLoadStatistics))
         return false;
 #endif
@@ -153,7 +153,7 @@ WebsiteData WebsiteData::isolatedCopy() const &
         crossThreadCopy(entries),
         crossThreadCopy(hostNamesWithCookies),
         crossThreadCopy(hostNamesWithHSTSCache),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
 #endif
     };
@@ -165,7 +165,7 @@ WebsiteData WebsiteData::isolatedCopy() &&
         crossThreadCopy(WTFMove(entries)),
         crossThreadCopy(WTFMove(hostNamesWithCookies)),
         crossThreadCopy(WTFMove(hostNamesWithHSTSCache)),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(WTFMove(registrableDomainsWithResourceLoadStatistics)),
 #endif
     };

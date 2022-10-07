@@ -42,7 +42,7 @@ struct ResourceLoadStatisticsParameters {
     bool enableLogTestingEvent { false };
     bool shouldIncludeLocalhost { true };
     bool enableDebugMode { false };
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
 #endif
@@ -60,7 +60,7 @@ struct ResourceLoadStatisticsParameters {
         encoder << enableLogTestingEvent;
         encoder << shouldIncludeLocalhost;
         encoder << enableDebugMode;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         encoder << thirdPartyCookieBlockingMode;
         encoder << sameSiteStrictEnforcementEnabled;
 #endif
@@ -107,7 +107,7 @@ struct ResourceLoadStatisticsParameters {
         if (!enableDebugMode)
             return std::nullopt;
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         std::optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
         decoder >> thirdPartyCookieBlockingMode;
         if (!thirdPartyCookieBlockingMode)
@@ -147,7 +147,7 @@ struct ResourceLoadStatisticsParameters {
             WTFMove(*enableLogTestingEvent),
             WTFMove(*shouldIncludeLocalhost),
             WTFMove(*enableDebugMode),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
             WTFMove(*thirdPartyCookieBlockingMode),
             WTFMove(*sameSiteStrictEnforcementEnabled),
 #endif

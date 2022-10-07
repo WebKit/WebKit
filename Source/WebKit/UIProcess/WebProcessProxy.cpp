@@ -550,7 +550,7 @@ WebPageProxy* WebProcessProxy::audioCapturingWebPage()
     return nullptr;
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
 {
     for (auto& page : globalPageMap())

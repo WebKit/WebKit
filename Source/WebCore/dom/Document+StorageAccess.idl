@@ -25,7 +25,7 @@
 
 // https://privacycg.github.io/storage-access/#the-document-object
 [
-    Conditional=INTELLIGENT_TRACKING_PREVENTION,
+    Conditional=TRACKING_PREVENTION,
     EnabledBySetting=storageAccessAPIEnabled,
     ImplementedBy=DocumentStorageAccess
 ] partial interface Document {
