@@ -54,8 +54,8 @@ if (Intl.DurationFormat) {
         });
 
         shouldBeOneOf(JSON.stringify(fmt.formatToParts({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 })), [
-            `[{"type":"years","value":"1y"},{"type":"literal","value":" "},{"type":"months","value":"2mo"},{"type":"literal","value":" "},{"type":"weeks","value":"3w"},{"type":"literal","value":" "},{"type":"days","value":"4d"},{"type":"literal","value":" "},{"type":"hours","value":"10"},{"type":"literal","value":":"},{"type":"minutes","value":"34"},{"type":"literal","value":":"},{"type":"seconds","value":"33.03"}]`,
-            `[{"type":"years","value":"1y"},{"type":"literal","value":" "},{"type":"months","value":"2m"},{"type":"literal","value":" "},{"type":"weeks","value":"3w"},{"type":"literal","value":" "},{"type":"days","value":"4d"},{"type":"literal","value":" "},{"type":"hours","value":"10"},{"type":"literal","value":":"},{"type":"minutes","value":"34"},{"type":"literal","value":":"},{"type":"seconds","value":"33.03"}]`,
+            `[{"type":"years","value":"1y"},{"type":"literal","value":", "},{"type":"months","value":"2mo"},{"type":"literal","value":", "},{"type":"weeks","value":"3w"},{"type":"literal","value":", "},{"type":"days","value":"4d"},{"type":"literal","value":", "},{"type":"hours","value":"10"},{"type":"literal","value":":"},{"type":"minutes","value":"34"},{"type":"literal","value":":"},{"type":"seconds","value":"33.03"}]`,
+            `[{"type":"years","value":"1y"},{"type":"literal","value":", "},{"type":"months","value":"2m"},{"type":"literal","value":", "},{"type":"weeks","value":"3w"},{"type":"literal","value":", "},{"type":"days","value":"4d"},{"type":"literal","value":", "},{"type":"hours","value":"10"},{"type":"literal","value":":"},{"type":"minutes","value":"34"},{"type":"literal","value":":"},{"type":"seconds","value":"33.03"}]`,
         ]);
     }
 }

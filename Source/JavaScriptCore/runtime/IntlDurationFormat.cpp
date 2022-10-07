@@ -249,15 +249,15 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
         auto toUListFormatterWidth = [](Style style) {
             // 6. Let listStyle be durationFormat.[[Style]].
             // 7. If listStyle is "digital", then
-            //     a. Set listStyle to "narrow".
+            //     a. Set listStyle to "short".
             // 8. Perform ! CreateDataPropertyOrThrow(lfOpts, "style", listStyle).
             switch (style) {
             case Style::Long:
                 return ULISTFMT_WIDTH_WIDE;
             case Style::Short:
+            case Style::Digital:
                 return ULISTFMT_WIDTH_SHORT;
             case Style::Narrow:
-            case Style::Digital:
                 return ULISTFMT_WIDTH_NARROW;
             }
             return ULISTFMT_WIDTH_WIDE;
