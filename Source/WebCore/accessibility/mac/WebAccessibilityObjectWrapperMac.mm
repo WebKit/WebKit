@@ -4024,11 +4024,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
-    if (backingObject->isTextControl() || backingObject->isStaticText()) {
-        if ([attribute isEqualToString:(NSString *)kAXAttributedStringForRangeParameterizedAttribute])
-            return rangeSet ? [self doAXAttributedStringForRange:range] : nil;
-    }
-
     if (backingObject->isTextControl()) {
         if ([attribute isEqualToString: (NSString *)kAXLineForIndexParameterizedAttribute]) {
             int lineNumber = backingObject->doAXLineForIndex([number intValue]);
@@ -4071,6 +4066,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         if ([attribute isEqualToString: (NSString*)kAXRTFForRangeParameterizedAttribute])
             return rangeSet ? [self doAXRTFForRange:range] : nil;
+
+        if ([attribute isEqualToString:(NSString *)kAXAttributedStringForRangeParameterizedAttribute])
+            return rangeSet ? [self doAXAttributedStringForRange:range] : nil;
 
         if ([attribute isEqualToString: (NSString*)kAXStyleRangeForIndexParameterizedAttribute]) {
             PlainTextRange textRange = backingObject->doAXStyleRangeForIndex([number intValue]);
