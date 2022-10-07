@@ -33,6 +33,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 
 - (instancetype)init; // Creates a persistent configuration.
 - (instancetype)initNonPersistentConfiguration WK_API_AVAILABLE(macos(10.15), ios(13.0));
+- (instancetype)initWithIdentifier:(NSUUID *)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly, getter=isPersistent) BOOL persistent WK_API_AVAILABLE(macos(10.15), ios(13.0));
 

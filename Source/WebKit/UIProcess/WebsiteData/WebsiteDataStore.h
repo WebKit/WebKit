@@ -343,6 +343,10 @@ public:
     SOAuthorizationCoordinator& soAuthorizationCoordinator(const WebPageProxy&);
 #endif
 
+#if PLATFORM(COCOA)
+    static String defaultWebsiteDataStoreDirectory(const String& identifier);
+    static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
+#endif
     static String defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory = nullString());
     static String defaultLocalStorageDirectory(const String& baseDataDirectory = nullString());
     static String defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory = nullString());

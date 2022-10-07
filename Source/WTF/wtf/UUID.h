@@ -55,7 +55,7 @@ public:
         return UUID { generateWeakRandomUUIDVersion4() };
     }
 
-    static std::optional<UUID> parse(StringView);
+    WTF_EXPORT_PRIVATE static std::optional<UUID> parse(StringView);
     WTF_EXPORT_PRIVATE static std::optional<UUID> parseVersion4(StringView);
 
     explicit UUID(Span<const uint8_t, 16> span)
