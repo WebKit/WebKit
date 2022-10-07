@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <functional>
 #include <initializer_list>
 #include <limits>
 #include <optional>
@@ -902,6 +903,19 @@ public:
 
     template<typename ResultVector, typename MapFunction>
     auto map(MapFunction&&) const -> std::enable_if_t<std::is_invocable_v<MapFunction, const T&>, ResultVector>;
+
+    template <typename BinaryOperation> T reduce(const BinaryOperation& binaryOperation, std::optional<T> initial = { }) const
+    {
+        if (isEmpty())
+            return initial ? *initial : T { };
+
+        auto accumulator = initial ? *initial : at(0);
+        auto start = initial ? 0 : 1;
+        for (size_t i = start ; i < size() ; i++)
+            accumulator = binaryOperation(accumulator, at(i));
+
+        return accumulator;
+    }
 
     template<typename MapFunction>
     auto map(MapFunction&&) const -> std::enable_if_t<std::is_invocable_v<MapFunction, const T&>, Vector<typename std::invoke_result_t<MapFunction, const T&>>>;

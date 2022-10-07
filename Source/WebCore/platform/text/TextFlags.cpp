@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TextFlags.h"
 
-#include <functional>
-#include <numeric>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -60,48 +58,35 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
     return ts;
 }
 
-template <typename T> using BinOp = std::function<T(T, T)>;
-
-template <typename T>
-T reduce(const std::vector<T>& vec, const BinOp<T>& binOp, std::optional<T> initial = { })
-{
-    if (vec.empty())
-        return initial ? *initial : T { };
-
-    auto accumulator = initial ? *initial : vec[0];
-    auto start = initial ? 0 : 1;
-    for (size_t i = start ; i < vec.size() ; i++)
-        accumulator = binOp(accumulator, vec[i]);
-
-    return accumulator;
-}
-
 WTF::TextStream& operator<<(TextStream& ts, FontVariantAlternates alternates)
 {
     if (alternates.isNormal())
         ts << "normal";
     else {
-        auto values = alternates.values();
-        std::vector<String> result;
-        if (values.stylistic)
-            result.push_back("stylistic(" + *values.stylistic + ")");
-        if (values.historicalForms)
-            result.push_back("historical-forms"_s);
-        if (values.styleset)
-            result.push_back("styleset(" + *values.styleset + ")");
-        if (values.characterVariant)
-            result.push_back("character-variant(" + *values.characterVariant + ")");
-        if (values.swash)
-            result.push_back("swash(" + *values.swash + ")");
-        if (values.ornaments)
-            result.push_back("ornaments(" + *values.ornaments + ")");
-        if (values.annotation)
-            result.push_back("annotation(" + *values.annotation + ")");
-        
-        BinOp<String> addWithSpace = [](auto a, auto b) { 
-            return a + " " + b;
+        StringBuilder builder;
+        auto add = [&builder](auto&& ...args) { 
+            if (!builder.isEmpty())
+                builder.append(" ");
+
+            builder.append(args...);
         };
-        ts << reduce(result, addWithSpace);
+        auto values = alternates.values();
+        if (values.stylistic)
+            add("stylistic(", *values.stylistic, ")");
+        if (values.historicalForms)
+            add("historical-forms");
+        if (values.styleset)
+            add("styleset(", *values.styleset, ")");
+        if (values.characterVariant)
+            add("character-variant(", *values.characterVariant, ")");
+        if (values.swash)
+            add("swash(", *values.swash, ")");
+        if (values.ornaments)
+            add("ornaments(", *values.ornaments, ")");
+        if (values.annotation)
+            add("annotation(", *values.annotation, ")");
+        
+        ts << builder.toString();
     }
     return ts;
 }

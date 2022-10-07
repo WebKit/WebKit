@@ -1810,4 +1810,26 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 }
 
+TEST(WTF_Vector, Reduce)
+{
+    {
+        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        auto concat = [] (auto& a, auto& b) {
+            return a + "-" + b;
+        };
+        auto without_initial = strings.reduce(concat);
+        EXPECT_EQ(without_initial.length(), 9U);
+        EXPECT_STREQ(without_initial.utf8().data(), "a-b-c-d-e");
+        auto with_initial = strings.reduce(concat, "hello"_str);
+        EXPECT_EQ(with_initial.length(), 15U);
+        EXPECT_STREQ(with_initial.utf8().data(), "hello-a-b-c-d-e");
+
+        Vector<int> empty;
+        auto add = [] (int a, int b) {
+            return a + b;
+        };
+        EXPECT_EQ(empty.reduce(add), 0);
+    }
+}
+
 } // namespace TestWebKitAPI
