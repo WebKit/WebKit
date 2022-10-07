@@ -347,8 +347,14 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
         request.setURL(newURL);
     }
 
+    std::sort(results.summary.modifyHeadersActions.begin(), results.summary.modifyHeadersActions.end(),
+        [] (const ModifyHeadersAction& a, const ModifyHeadersAction& b) {
+        return a.priority > b.priority;
+    });
+
+    HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType> headerNameToFirstOperationApplied;
     for (auto& action : results.summary.modifyHeadersActions)
-        action.applyToRequest(request);
+        action.applyToRequest(request, headerNameToFirstOperationApplied);
 
     for (auto& pair : results.summary.redirectActions)
         pair.first.applyToRequest(request, pair.second);

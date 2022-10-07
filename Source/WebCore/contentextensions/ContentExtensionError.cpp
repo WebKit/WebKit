@@ -126,6 +126,8 @@ const std::error_category& contentExtensionErrorCategory()
                 return "A modify-headers operation of \"set\" or \"append\" must have a value";
             case ContentExtensionError::JSONModifyHeadersNotArray:
                 return "A headers member must be an array";
+            case ContentExtensionError::JSONModifyHeadersInvalidPriority:
+                return "A priority must be a positive integer";
             }
 
             return std::string();

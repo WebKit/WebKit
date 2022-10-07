@@ -532,10 +532,11 @@ TEST_F(WKContentRuleListStoreTest, UnsafeMMap)
 
 static RetainPtr<WKContentRuleList> compileContentRuleList(const char* json, NSString *identifier = @"testidentifier")
 {
-    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
+    if ([identifier isEqualToString:@"testidentifier"])
+        [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 
     __block RetainPtr<WKContentRuleList> list;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"testidentifier" encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(error);
         list = filter;
     }];
@@ -549,7 +550,10 @@ static RetainPtr<TestNavigationDelegate> navigationDelegateAllowingActiveActions
 {
     static auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://testhost/*"] forKey:@"testidentifier"];
+        preferences._activeContentRuleListActionPatterns = @{
+            @"testidentifier": [NSSet setWithObject:@"*://testhost/*"],
+            @"testidentifier2": [NSSet setWithObject:@"*://testhost/*"],
+        };
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     return delegate;
@@ -566,20 +570,20 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
 {
     auto list = compileContentRuleList(R"JSON(
         [ {
-            "action": { "type": "modify-headers", "request-headers": [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
                 "operation": "set",
                 "header": "testkey",
                 "value": "testvalue"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
-            "action": { "type": "modify-headers", "request-headers": [ {
+            "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
                 "operation": "remove",
                 "header": "Accept"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
-            "action": { "type": "modify-headers", "request-headers": [ {
+            "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
                 "operation": "append",
                 "header": "Content-Type",
                 "value": "Modified-by-test"
@@ -637,6 +641,317 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
     });
     
     // FIXME: Appending to the User-Agent replaces the user agent because we haven't added the user agent yet when processing the request.
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereAppendWins)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
+                "operation": "append",
+                "header": "test-header-1",
+                "value": "test-value-1"
+            }, {
+                "operation": "append",
+                "header": "test-header-2",
+                "value": "test-value-2"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
+                "operation": "set",
+                "header": "test-header-1",
+                "value": "should-not-apply"
+            }, {
+                "operation": "set",
+                "header": "test-header-2",
+                "value": "should-not-apply"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "remove",
+                "header": "test-header-1"
+            }, {
+                "operation": "remove",
+                "header": "test-header-2"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "test-header-1",
+                "value": "other-test-value-1"
+            }, {
+                "operation": "append",
+                "header": "test-header-2",
+                "value": "other-test-value-2"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }]
+    )JSON");
+
+    __block bool receivedAllRequests { false };
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
+        if ([path isEqualToString:@"/main.html"]) {
+            EXPECT_WK_STREQ(fields[@"test-header-1"], "test-value-1; other-test-value-1");
+            EXPECT_WK_STREQ(fields[@"test-header-2"], "test-value-2; other-test-value-2");
+            receivedAllRequests = true;
+            return respond(task, "");
+        }
+        ASSERT_NOT_REACHED();
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urls;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urls.append(url.absoluteString);
+        EXPECT_TRUE(action.modifiedHeaders);
+        receivedActionNotification = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    checkURLs(urls, {
+        "testscheme://testhost/main.html"_s,
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereSetWins)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 10, "request-headers": [ {
+                "operation": "append",
+                "header": "test-header",
+                "value": "second-test-value"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 20, "request-headers": [ {
+                "operation": "set",
+                "header": "test-header",
+                "value": "should-not-apply"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 40, "request-headers": [ {
+                "operation": "remove",
+                "header": "test-header"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 80, "request-headers": [ {
+                "operation": "set",
+                "header": "test-header",
+                "value": "test-value"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
+                "operation": "set",
+                "header": "other-header",
+                "value": "a"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "append",
+                "header": "other-header",
+                "value": "b"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "other-header",
+                "value": "c"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }]
+    )JSON");
+
+    __block bool receivedAllRequests { false };
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
+        if ([path isEqualToString:@"/main.html"]) {
+            EXPECT_WK_STREQ(fields[@"test-header"], "test-value; second-test-value");
+            EXPECT_WK_STREQ(fields[@"other-header"], "a; b; c");
+            receivedAllRequests = true;
+            return respond(task, "");
+        }
+        ASSERT_NOT_REACHED();
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urls;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urls.append(url.absoluteString);
+        EXPECT_TRUE(action.modifiedHeaders);
+        receivedActionNotification = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    checkURLs(urls, {
+        "testscheme://testhost/main.html"_s,
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereRemoveWins)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 5, "request-headers": [ {
+                "operation": "append",
+                "header": "test-header",
+                "value": "second-should-not-apply"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 7, "request-headers": [ {
+                "operation": "set",
+                "header": "test-header",
+                "value": "should-not-apply"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 9, "request-headers": [ {
+                "operation": "remove",
+                "header": "test-header"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
+                "operation": "remove",
+                "header": "test-header"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }]
+    )JSON");
+
+    __block bool receivedAllRequests { false };
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
+        if ([path isEqualToString:@"/main.html"]) {
+            EXPECT_WK_STREQ(fields[@"test-header"], "");
+            receivedAllRequests = true;
+            return respond(task, "");
+        }
+        ASSERT_NOT_REACHED();
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urls;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urls.append(url.absoluteString);
+        EXPECT_TRUE(action.modifiedHeaders);
+        receivedActionNotification = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    checkURLs(urls, {
+        "testscheme://testhost/main.html"_s,
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithMultipleRuleLists)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
+                "operation": "append",
+                "header": "test-header",
+                "value": "b"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 8, "request-headers": [ {
+                "operation": "set",
+                "header": "test-header",
+                "value": "a"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON", @"testidentifier");
+
+    auto secondList = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "test-header",
+                "value": "c"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "remove",
+                "header": "test-header"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }]
+    )JSON", @"testidentifier2");
+
+    __block bool receivedAllRequests { false };
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
+        if ([path isEqualToString:@"/main.html"]) {
+            EXPECT_WK_STREQ(fields[@"test-header"], "a; b; c");
+            receivedAllRequests = true;
+            return respond(task, "");
+        }
+        ASSERT_NOT_REACHED();
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [[configuration userContentController] addContentRuleList:secondList.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urls;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urls.append(url.absoluteString);
+        EXPECT_TRUE(action.modifiedHeaders);
+        receivedActionNotification = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    checkURLs(urls, {
+        "testscheme://testhost/main.html"_s,
+        "testscheme://testhost/main.html"_s,
+    });
 }
 
 TEST_F(WKContentRuleListStoreTest, Redirect)

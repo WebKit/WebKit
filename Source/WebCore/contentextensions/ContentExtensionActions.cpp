@@ -113,28 +113,35 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
     if (!responseHeaders)
         return makeUnexpected(responseHeaders.error());
 
-    return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders) };
+    auto priority = modifyHeaders.getInteger("priority"_s);
+    if (!priority || priority.value() < 0)
+        return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidPriority);
+
+    return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders), static_cast<uint32_t>(priority.value()) };
 }
 
 ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const &
 {
-    return { crossThreadCopy(requestHeaders), crossThreadCopy(responseHeaders) };
+    return { crossThreadCopy(requestHeaders), crossThreadCopy(responseHeaders), crossThreadCopy(priority) };
 }
 
 ModifyHeadersAction ModifyHeadersAction::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)) };
+    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)), crossThreadCopy(priority) };
 }
 
 bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
 {
     return other.hashTableType == this->hashTableType
         && other.requestHeaders == this->requestHeaders
-        && other.responseHeaders == this->responseHeaders;
+        && other.responseHeaders == this->responseHeaders
+        && other.priority == this->priority;
 }
 
 void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 {
+    append(vector, priority);
+
     auto beginIndex = vector.size();
     append(vector, 0);
     auto requestHeadersLengthIndex = vector.size();
@@ -149,24 +156,25 @@ void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 
 ModifyHeadersAction ModifyHeadersAction::deserialize(Span<const uint8_t> span)
 {
-    auto serializedLength = deserializeLength(span, 0);
-    auto requestHeadersLength = deserializeLength(span, sizeof(uint32_t));
-    size_t progress = sizeof(uint32_t) * 2;
+    uint32_t priority = deserializeLength(span, 0);
+    auto serializedLength = deserializeLength(span, sizeof(uint32_t));
+    auto requestHeadersLength = deserializeLength(span, sizeof(uint32_t) * 2);
+    size_t progress = sizeof(uint32_t) * 3;
     Vector<ModifyHeaderInfo> requestHeaders;
-    while (progress < requestHeadersLength + sizeof(uint32_t)) {
+    while (progress < requestHeadersLength + sizeof(uint32_t) * 2) {
         auto subspan = span.subspan(progress);
         progress += ModifyHeaderInfo::serializedLength(subspan);
         requestHeaders.append(ModifyHeaderInfo::deserialize(subspan));
     }
-    RELEASE_ASSERT(progress == requestHeadersLength + sizeof(uint32_t));
+
+    RELEASE_ASSERT(progress == requestHeadersLength + sizeof(uint32_t) * 2);
     Vector<ModifyHeaderInfo> responseHeaders;
-    while (progress < serializedLength) {
+    while (progress < serializedLength + sizeof(uint32_t)) {
         auto subspan = span.subspan(progress);
         progress += ModifyHeaderInfo::serializedLength(subspan);
         responseHeaders.append(ModifyHeaderInfo::deserialize(subspan));
     }
-    RELEASE_ASSERT(progress == serializedLength);
-    return { WTFMove(requestHeaders), WTFMove(responseHeaders) };
+    return { WTFMove(requestHeaders), WTFMove(responseHeaders), priority };
 }
 
 size_t ModifyHeadersAction::serializedLength(Span<const uint8_t> span)
@@ -174,24 +182,39 @@ size_t ModifyHeadersAction::serializedLength(Span<const uint8_t> span)
     return deserializeLength(span, 0);
 }
 
-void ModifyHeadersAction::applyToRequest(ResourceRequest& request)
+void ModifyHeadersAction::applyToRequest(ResourceRequest& request, HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
 {
     for (auto& info : requestHeaders)
-        info.applyToRequest(request);
+        info.applyToRequest(request, headerNameToFirstOperationApplied);
 }
 
-void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request)
+void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request, HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
 {
     std::visit(WTF::makeVisitor([&] (const AppendOperation& operation) {
+        ModifyHeadersOperationType previouslyAppliedHeaderOperation = headerNameToFirstOperationApplied.get(operation.header);
+        if (previouslyAppliedHeaderOperation == ModifyHeadersAction::ModifyHeadersOperationType::Remove)
+            return;
+
         auto existingValue = request.httpHeaderField(operation.header);
         if (existingValue.isEmpty())
             request.setHTTPHeaderField(operation.header, operation.value);
         else
             request.setHTTPHeaderField(operation.header, makeString(existingValue, "; ", operation.value));
+
+        if (previouslyAppliedHeaderOperation == ModifyHeadersAction::ModifyHeadersOperationType::Unknown)
+            headerNameToFirstOperationApplied.add(operation.header, ModifyHeadersAction::ModifyHeadersOperationType::Append);
     }, [&] (const SetOperation& operation) {
+        if (headerNameToFirstOperationApplied.contains(operation.header))
+            return;
+
         request.setHTTPHeaderField(operation.header, operation.value);
+        headerNameToFirstOperationApplied.add(operation.header, ModifyHeadersAction::ModifyHeadersOperationType::Set);
     }, [&] (const RemoveOperation& operation) {
+        if (headerNameToFirstOperationApplied.contains(operation.header))
+            return;
+
         request.removeHTTPHeaderField(operation.header);
+        headerNameToFirstOperationApplied.add(operation.header, ModifyHeadersAction::ModifyHeadersOperationType::Remove);
     }), operation);
 }
 

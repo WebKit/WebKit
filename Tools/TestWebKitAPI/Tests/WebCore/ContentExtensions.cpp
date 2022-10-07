@@ -1586,12 +1586,15 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"!@#$%\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectURLSchemeInvalid);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"JaVaScRiPt\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectToJavaScriptURL);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"About\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":5},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersNotArray);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[5]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingOperation);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{\"operation\":\"remove\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingHeader);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{\"operation\":\"set\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingValue);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{\"operation\":\"invalid\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidOperation);
+
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":5},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersNotArray);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[5]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingOperation);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"remove\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingHeader);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"set\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingValue);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"invalid\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidOperation);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":\"\",\"request-headers\":[{\"operation\":\"remove\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidPriority);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":-1,\"request-headers\":[{\"operation\":\"remove\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidPriority);
 }
 
 TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1)
@@ -3061,10 +3064,10 @@ TEST_F(ContentExtensionTest, Serialization)
         { { ModifyHeadersAction::ModifyHeaderInfo::SetOperation { "key2"_s, "value2"_s } } }
     }, {
         { { ModifyHeadersAction::ModifyHeaderInfo::RemoveOperation { String::fromUTF8("💩") } } }
-    } };
+    }, 2 };
     Vector<uint8_t> modifyHeadersBuffer;
     modifyHeaders.serialize(modifyHeadersBuffer);
-    EXPECT_EQ(modifyHeadersBuffer.size(), 55u);
+    EXPECT_EQ(modifyHeadersBuffer.size(), 59u);
     auto deserializedModifyHeaders = ModifyHeadersAction::deserialize({ modifyHeadersBuffer.data(), modifyHeadersBuffer.size() });
     EXPECT_EQ(modifyHeaders, deserializedModifyHeaders);
 }

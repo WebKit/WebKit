@@ -82,6 +82,7 @@ enum class ContentExtensionError {
     JSONModifyHeadersInvalidOperation,
     JSONModifyHeadersMissingHeader,
     JSONModifyHeadersMissingValue,
+    JSONModifyHeadersInvalidPriority,
 
     ErrorWritingSerializedNFA,
 };
