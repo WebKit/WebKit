@@ -336,7 +336,7 @@ class GitHub(Scm):
     def is_git(self):
         return True
 
-    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True, json=None, method='GET', endpoint_url=None, files=None, data=None):
+    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True, json=None, method='GET', endpoint_url=None, files=None, data=None, stream=False):
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
 
@@ -362,17 +362,22 @@ class GitHub(Scm):
                 name=self.name,
                 path='/{}'.format(path) if path else '',
             )
-        response = self.session.request(method, url, params=params, json=json, headers=headers, auth=auth, files=files, data=data)
+        response = self.session.request(method, url, params=params, json=json, headers=headers, auth=auth, files=files, data=data, stream=stream)
+        is_json_response = response.headers.get('Content-Type', '').split(';')[0] in ['application/json', 'text/json']
         if authenticated is None and not auth and response.status_code // 100 == 4:
-            return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate, json=json, method=method, endpoint_url=endpoint_url, files=files, data=data)
+            return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate, json=json, method=method, endpoint_url=endpoint_url, files=files, data=data, stream=stream)
         if response.status_code not in [200, 201]:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-            message = response.json().get('message')
+            message = response.json().get('message') if is_json_response else ''
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             if auth:
                 sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
             return None
+
+        if not is_json_response:
+            return response
+
         result = response.json()
 
         while paginate and isinstance(response.json(), list) and len(response.json()) == params['per_page']:
@@ -738,3 +743,25 @@ class GitHub(Scm):
         finally:
             if not file_like_object:
                 file_object.close()
+
+    def download_release_assets(self, destination_directory, release_tag_name=None):
+        assert os.path.isdir(destination_directory), '`{destination_directory}` must be a directory'.format(destination_directory=destination_directory)
+        path = 'releases/tags/{release_tag_name}'.format(release_tag_name=release_tag_name) if release_tag_name else 'releases/latest'
+        release_info = self.request(path, authenticated=True, paginate=False)
+        release_assets = self.request(
+            'releases/{id}/assets'.format(id=release_info['id']),
+            authenticated=True,
+            paginate=False
+        )
+        headers = dict(Accept='application/octet-stream')
+        for asset_info in release_assets:
+            with self.request(
+                'releases/assets/{id}'.format(id=asset_info['id']),
+                headers=headers,
+                authenticated=True,
+                paginate=False,
+                stream=True
+            ) as response:
+                with open(os.path.join(destination_directory, asset_info['name']), 'wb') as file_object:
+                    for chunk in response.iter_content(chunk_size=10240):
+                        file_object.write(chunk)

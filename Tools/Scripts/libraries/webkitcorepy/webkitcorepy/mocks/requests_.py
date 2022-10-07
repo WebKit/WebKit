@@ -33,14 +33,14 @@ class Response(object):
         return Response(text=data, url=url, headers=headers)
 
     @staticmethod
-    def fromJson(data, url=None, headers=None):
+    def fromJson(data, url=None, headers=None, status_code=None):
         assert isinstance(data, list) or isinstance(data, dict)
 
         headers = headers or {}
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'text/json'
 
-        return Response(text=json.dumps(data), url=url, headers=headers)
+        return Response(text=json.dumps(data), url=url, headers=headers, status_code=status_code)
 
     @staticmethod
     def create404(url=None, headers=None):
