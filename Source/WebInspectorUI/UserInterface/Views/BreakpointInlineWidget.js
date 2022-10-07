@@ -48,6 +48,8 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
         this._element.addEventListener("click", this._handleClick.bind(this));
         this._element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
 
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._handleBreakpointsEnabledDidChange, this);
+
         this._update();
     }
 
@@ -61,7 +63,9 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
 
     _update()
     {
-        this._element.classList.toggle("disabled", !this._breakpoint || this._breakpoint.disabled);
+        this._element.classList.toggle("placeholder", !this._breakpoint);
+        this._element.classList.toggle("resolved", this._breakpoint?.resolved || WI.debuggerManager.breakpointsEnabled);
+        this._element.classList.toggle("disabled", !!this._breakpoint?.disabled);
         this._element.classList.toggle("auto-continue", !!this._breakpoint?.autoContinue);
     }
 
@@ -86,10 +90,7 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
     _handleClick(event)
     {
         if (this._breakpoint) {
-            if (this._breakpoint.disabled)
-                this._breakpoint.disabled = false;
-            else
-                this._breakpoint.remove();
+            this._breakpoint.disabled = !this._breakpoint.disabled;
             return;
         }
 
@@ -119,6 +120,11 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
                 });
             });
         }
+    }
+
+    _handleBreakpointsEnabledDidChange(event)
+    {
+        this._update();
     }
 
     _handleBreakpointDisabledStateChanged(event)
