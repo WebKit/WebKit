@@ -49,6 +49,8 @@ Ref<CSSLayerStatementRule> CSSLayerStatementRule::create(StyleRuleLayer& rule, C
     return adoptRef(*new CSSLayerStatementRule(rule, parent));
 }
 
+CSSLayerStatementRule::~CSSLayerStatementRule() = default;
+
 String CSSLayerStatementRule::cssText() const
 {
     StringBuilder result;
@@ -78,7 +80,7 @@ Vector<String> CSSLayerStatementRule::nameList() const
 
 void CSSLayerStatementRule::reattach(StyleRuleBase& rule)
 {
-    m_layerRule = static_cast<StyleRuleLayer&>(rule);
+    m_layerRule = downcast<StyleRuleLayer>(rule);
 }
 
 } // namespace WebCore

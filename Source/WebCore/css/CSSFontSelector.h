@@ -48,6 +48,7 @@ class CSSValueList;
 class CachedFont;
 class ScriptExecutionContext;
 class StyleRuleFontFace;
+class StyleRuleFontPaletteValues;
 
 class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
 public:

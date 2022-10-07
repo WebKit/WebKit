@@ -63,6 +63,7 @@ public:
         EXTColorBufferHalfFloatName,
         EXTFloatBlendName,
         EXTFragDepthName,
+        EXTProvokingVertexName,
         EXTShaderTextureLODName,
         EXTTextureCompressionBPTCName,
         EXTTextureCompressionRGTCName,

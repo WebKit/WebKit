@@ -512,6 +512,9 @@ webkit.org/b/166536 webgl/2.0.y/ [ Skip ]
 webkit.org/b/166536 webgl/pending/conformance2/ [ Skip ]
 webkit.org/b/166536 http/tests/webgl/2.0.y/ [ Skip ]
 
+webgl/webgl-draft-extensions-flag-default.html [ Skip ]
+webgl/webgl-draft-extensions-flag-on.html [ Skip ]
+
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
 Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
@@ -1825,6 +1828,7 @@ webkit.org/b/224062 webgl/1.0.3/conformance/rendering/gl-scissor-test.html [ Fai
 webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-filter-no-perspective-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001.html [ ImageOnlyFailure ]
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-computed.html  [ Failure ]

@@ -35,6 +35,7 @@
 #include "JSEXTColorBufferHalfFloat.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
+#include "JSEXTProvokingVertex.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
@@ -175,6 +176,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTColorBufferHalfFloat)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
+        TO_JS(EXTProvokingVertex)
         TO_JS(EXTShaderTextureLOD)
         TO_JS(EXTTextureCompressionBPTC)
         TO_JS(EXTTextureCompressionRGTC)

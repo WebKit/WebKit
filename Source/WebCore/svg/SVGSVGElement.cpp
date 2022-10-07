@@ -208,6 +208,18 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& 
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
+    auto isEmbeddedThroughFrameContainingSVGDocument = [](const RenderElement& renderer) -> bool {
+        if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer))
+            return svgRoot->isEmbeddedThroughFrameContainingSVGDocument();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer))
+            return svgRoot->isEmbeddedThroughFrameContainingSVGDocument();
+#endif
+
+        return false;
+    };
+
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         setPresentationalHintStyleIsDirty();
@@ -215,14 +227,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
             // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
             if (auto* renderer = this->renderer()) {
-                bool embeddedThroughFrame = false;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-                if (is<RenderSVGRoot>(renderer) && downcast<RenderSVGRoot>(renderer)->isEmbeddedThroughFrameContainingSVGDocument())
-                    embeddedThroughFrame = true;
-#endif
-                if (!embeddedThroughFrame && is<LegacyRenderSVGRoot>(renderer) && downcast<LegacyRenderSVGRoot>(renderer)->isEmbeddedThroughFrameContainingSVGDocument())
-                    embeddedThroughFrame = true;
-                if (embeddedThroughFrame)
+                if (isEmbeddedThroughFrameContainingSVGDocument(*renderer))
                     renderer->view().setNeedsLayout(MarkOnlyThis);
             }
         }
@@ -526,26 +531,36 @@ bool SVGSVGElement::hasTransformRelatedAttributes() const
 
 FloatRect SVGSVGElement::currentViewBoxRect() const
 {
-    if (m_useCurrentView)
-        return m_viewSpec ? m_viewSpec->viewBox() : FloatRect();
+    if (m_useCurrentView) {
+        if (m_viewSpec)
+            return m_viewSpec->viewBox();
+        return { };
+    }
 
-    FloatRect viewBox = this->viewBox();
+    auto viewBox = this->viewBox();
     if (!viewBox.isEmpty())
         return viewBox;
 
-    bool isEmbeddedThroughSVGImage = false;
-    if (is<LegacyRenderSVGRoot>(renderer()) && downcast<LegacyRenderSVGRoot>(*renderer()).isEmbeddedThroughSVGImage())
-        isEmbeddedThroughSVGImage = true;
+    auto isEmbeddedThroughSVGImage = [](const RenderElement* renderer) -> bool {
+        if (!renderer)
+            return false;
+
+        if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer))
+            return svgRoot->isEmbeddedThroughSVGImage();
+
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    else if (is<RenderSVGRoot>(renderer()) && downcast<RenderSVGRoot>(*renderer()).isEmbeddedThroughSVGImage())
-        isEmbeddedThroughSVGImage = true;
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer))
+            return svgRoot->isEmbeddedThroughSVGImage();
 #endif
 
-    if (!isEmbeddedThroughSVGImage)
+        return false;
+    };
+
+    if (!isEmbeddedThroughSVGImage(renderer()))
         return { };
 
-    Length intrinsicWidth = this->intrinsicWidth();
-    Length intrinsicHeight = this->intrinsicHeight();
+    auto intrinsicWidth = this->intrinsicWidth();
+    auto intrinsicHeight = this->intrinsicHeight();
     if (!intrinsicWidth.isFixed() || !intrinsicHeight.isFixed())
         return { };
 

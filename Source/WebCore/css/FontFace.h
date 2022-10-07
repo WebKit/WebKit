@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
+#include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include <variant>
 #include <wtf/UniqueRef.h>

@@ -214,7 +214,7 @@ String CSSCounterStyleRule::cssText() const
 
 void CSSCounterStyleRule::reattach(StyleRuleBase& rule)
 {
-    m_counterStyleRule = static_cast<StyleRuleCounterStyle&>(rule);
+    m_counterStyleRule = downcast<StyleRuleCounterStyle>(rule);
 }
 
 // https://drafts.csswg.org/css-counter-styles-3/#dom-csscounterstylerule-name

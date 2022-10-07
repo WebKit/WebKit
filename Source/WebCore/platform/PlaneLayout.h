@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS)
-
 namespace WebCore {
 
 struct PlaneLayout {
@@ -35,5 +33,3 @@ struct PlaneLayout {
 };
 
 }
-
-#endif // ENABLE(WEB_CODECS)

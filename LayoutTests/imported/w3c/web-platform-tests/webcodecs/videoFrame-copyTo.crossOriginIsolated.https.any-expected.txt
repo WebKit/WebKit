@@ -1,4 +1,4 @@
 
-FAIL Test copying I420 frame to SharedArrayBuffer. promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
-FAIL Test copying I420 frame to shared ArrayBufferView. promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
+FAIL Test copying I420 frame to SharedArrayBuffer. assert_equals: allocationSize() expected 12 but got 0
+FAIL Test copying I420 frame to shared ArrayBufferView. assert_equals: allocationSize() expected 12 but got 0
 

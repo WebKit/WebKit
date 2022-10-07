@@ -60,4 +60,16 @@ rtc::scoped_refptr<VideoFrameBuffer> toWebRTCVideoFrameBuffer(void*, GetBufferCa
 void* videoFrameBufferProvider(const VideoFrame&);
 
 bool convertBGRAToYUV(CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer);
+
+struct I420BufferLayout {
+    size_t offsetY { 0 };
+    size_t strideY { 0 };
+    size_t offsetU { 0 };
+    size_t strideU { 0 };
+    size_t offsetV { 0 };
+    size_t strideV { 0 };
+};
+
+CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout) CF_RETURNS_RETAINED;
+
 }

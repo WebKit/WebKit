@@ -31,11 +31,12 @@
 #include <wtf/WeakPtr.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
-
+ALLOW_COMMA_BEGIN
 #include <webrtc/api/dtmf_sender_interface.h>
 #include <webrtc/api/scoped_refptr.h>
 
 ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
 
 namespace WebCore {
 

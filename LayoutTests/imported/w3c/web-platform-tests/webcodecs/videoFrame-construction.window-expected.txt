@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Test that timestamp is required when constructing VideoFrame from HTMLImageElement assert_throws_js: timestamp required to construct VideoFrame from this source function "() => new VideoFrame(imageSource)" did not throw
+PASS Test that timestamp is required when constructing VideoFrame from HTMLImageElement
 TIMEOUT Test that timestamp is required when constructing VideoFrame from SVGImageElement Test timed out
 NOTRUN Test that timeamp is required when constructing VideoFrame from HTMLCanvasElement
 

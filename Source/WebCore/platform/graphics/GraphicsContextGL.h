@@ -788,6 +788,11 @@ public:
     static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
     static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
 
+    // GL_EXT_provoking_vertex
+    static constexpr GCGLenum FIRST_VERTEX_CONVENTION_EXT = 0x8E4D;
+    static constexpr GCGLenum LAST_VERTEX_CONVENTION_EXT = 0x8E4E;
+    static constexpr GCGLenum PROVOKING_VERTEX_EXT = 0x8E4F;
+
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
     static constexpr GCGLenum DRAW_BUFFER0_EXT = 0x8825;
@@ -1426,6 +1431,9 @@ public:
     virtual void drawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance) = 0;
     virtual void multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint> firstsCountsInstanceCountsAndBaseInstances) = 0;
     virtual void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) = 0;
+
+    // GL_ANGLE_provoking_vertex
+    virtual void provokingVertexANGLE(GCGLenum mode) = 0;
 
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);

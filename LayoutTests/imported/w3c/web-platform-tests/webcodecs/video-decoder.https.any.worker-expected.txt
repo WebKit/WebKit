@@ -4,20 +4,10 @@ PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Unrecogni
 PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Audio codec
 PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Ambiguous codec
 PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Codec with MIME type
-FAIL Test that VideoDecoder.configure() rejects invalid config:Empty codec assert_throws_js: function "() => {
-          codec.configure(entry.config);
-        }" did not throw
-FAIL Test that VideoDecoder.configure() rejects invalid config:Unrecognized codec assert_throws_js: function "() => {
-          codec.configure(entry.config);
-        }" did not throw
-FAIL Test that VideoDecoder.configure() rejects invalid config:Audio codec assert_throws_js: function "() => {
-          codec.configure(entry.config);
-        }" did not throw
-FAIL Test that VideoDecoder.configure() rejects invalid config:Ambiguous codec assert_throws_js: function "() => {
-          codec.configure(entry.config);
-        }" did not throw
-FAIL Test that VideoDecoder.configure() rejects invalid config:Codec with MIME type assert_throws_js: function "() => {
-          codec.configure(entry.config);
-        }" did not throw
+PASS Test that VideoDecoder.configure() rejects invalid config:Empty codec
+PASS Test that VideoDecoder.configure() rejects invalid config:Unrecognized codec
+PASS Test that VideoDecoder.configure() rejects invalid config:Audio codec
+PASS Test that VideoDecoder.configure() rejects invalid config:Ambiguous codec
+PASS Test that VideoDecoder.configure() rejects invalid config:Codec with MIME type
 PASS Test VideoDecoder construction
 

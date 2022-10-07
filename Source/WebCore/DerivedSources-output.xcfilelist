@@ -806,6 +806,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFloatBlend.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFloatBlend.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTProvokingVertex.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTProvokingVertex.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTShaderTextureLOD.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTShaderTextureLOD.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureCompressionBPTC.cpp

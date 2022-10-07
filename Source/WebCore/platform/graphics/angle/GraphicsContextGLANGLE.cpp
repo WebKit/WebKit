@@ -3049,6 +3049,14 @@ void GraphicsContextGLANGLE::multiDrawElementsInstancedBaseVertexBaseInstanceANG
     checkGPUStatus();
 }
 
+void GraphicsContextGLANGLE::provokingVertexANGLE(GCGLenum mode)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_ProvokingVertexANGLE(mode);
+}
+
 bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()
 {
     size_t oldestFrameCompletionFence = m_oldestFrameCompletionFence++ % maxPendingFrames;

@@ -257,7 +257,7 @@ TEST(WTF_RunLoop, MAYBE_CapabilityIsCurrentNegativeDeathTest)
         Thread::create("CapabilityIsCurrentNegative thread", [&] {
             assertIsCurrent(RunLoop::main()); // This should assert.
         })->waitForCompletion();
-    }, "ASSERTION FAILED: &RunLoop::current\\(\\) == &runLoop");
+    }, "ASSERTION FAILED: runLoop.isCurrent()");
 }
 
 TEST(WTF_RunLoop, Create)

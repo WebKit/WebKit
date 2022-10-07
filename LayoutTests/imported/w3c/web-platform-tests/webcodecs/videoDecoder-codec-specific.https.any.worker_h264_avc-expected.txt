@@ -2,7 +2,7 @@
 PASS Test isConfigSupported()
 PASS Test isConfigSupported() with 1080p crop
 PASS Test that isConfigSupported() returns a parsed configuration
-FAIL Test invalid configs assert_unreached: Should have rejected: invalid codedWidth Reached unreachable code
+PASS Test invalid configs
 FAIL Test configure() assert_equals: state expected "configured" but got "closed"
 FAIL Decode a key frame promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
 FAIL Decode a non key frame first fails assert_throws_dom: function "() => decoder.decode(CHUNKS[1], 'decode')" threw object "InvalidStateError: VideoDecoder is not configured" that is not a DOMException DataError: property "code" is equal to 11, expected 0

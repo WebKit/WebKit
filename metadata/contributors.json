@@ -1724,6 +1724,7 @@
       "emails" : [
          "djg@apple.com"
       ],
+      "expertise" : "WebGL, WebGPU",
       "github" : "djg",
       "name" : "Dan Glastonbury",
       "nicks" : [

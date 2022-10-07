@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "StyleRule.h"
+#include "StyleRuleType.h"
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

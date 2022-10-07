@@ -80,9 +80,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-child-will-change-transform.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-with-sibling-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-with-sibling-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-perspective-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-perspective-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-scale-wide-range-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-scale-wide-range-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-scale-wide-range.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-transform-origin-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/change-transform-origin-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip-perspective-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip-perspective-ref.html
@@ -294,6 +298,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scaley-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scaley-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scaley.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scrollable-hidden-3d-transform-z-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scrollable-hidden-3d-transform-z-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/scrollable-hidden-3d-transform-z.html
@@ -607,7 +612,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-003-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-004-ref.html

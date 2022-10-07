@@ -1,14 +1,14 @@
 
-FAIL Test closed frame. assert_throws_dom: allocationSize() function "() => frame.allocationSize()" threw object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL Test copying I420 frame to a non-shared ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
-FAIL Test copying I420 frame to a non-shared ArrayBufferView promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
-FAIL Test RGBA frame. promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
+PASS Test closed frame.
+FAIL Test copying I420 frame to a non-shared ArrayBuffer assert_equals: allocationSize() expected 12 but got 0
+FAIL Test copying I420 frame to a non-shared ArrayBufferView assert_equals: allocationSize() expected 12 but got 0
+FAIL Test RGBA frame. assert_equals: allocationSize() expected 16 but got 0
 PASS Test undersized buffer.
-PASS Test incorrect plane count.
-FAIL Test stride and offset work. promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
-FAIL Test stride and offset with padding. promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameCopyToOptions.rect is required and must be an instance of DOMRectInit"
-PASS Test invalid stride.
-PASS Test address overflow.
+FAIL Test incorrect plane count. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
+FAIL Test stride and offset work. assert_equals: allocationSize() expected 12 but got 0
+FAIL Test stride and offset with padding. assert_equals: allocationSize() expected 19 but got 0
+FAIL Test invalid stride. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
+FAIL Test address overflow. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
 FAIL Test codedRect. assert_equals: allocationSize() expected 12 but got 0
 FAIL Test empty rect. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
 FAIL Test unaligned rect. assert_throws_js: function "() => frame.allocationSize(options)" did not throw

@@ -27,18 +27,45 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "VideoFrame.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Expected.h>
+#include <wtf/Span.h>
+
 namespace WebCore {
 
-enum class VideoPixelFormat {
-    I420,
-    I420A,
-    I422,
-    I444,
-    NV12,
-    RGBA,
-    RGBX,
-    BGRA,
-    BGRX
+class VideoEncoder {
+public:
+    virtual ~VideoEncoder() = default;
+
+    struct Config {
+        uint64_t width { 0 };
+        uint64_t height { 0 };
+    };
+    struct EncodedFrame {
+        Vector<uint8_t> data;
+        bool isKeyFrame { false };
+        int64_t timestamp { 0 };
+        std::optional<uint64_t> duration;
+    };
+    struct RawFrame {
+        Ref<VideoFrame> frame;
+        int64_t timestamp { 0 };
+        std::optional<uint64_t> duration;
+    };
+    using CreateResult = Expected<UniqueRef<VideoEncoder>, String>;
+
+    using PostTaskCallback = Function<void(Function<void()>&&)>;
+    using OutputCallback = Function<void(EncodedFrame&&)>;
+    using CreateCallback = CompletionHandler<void(CreateResult&&)>;
+    static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+
+    using EncodeCallback = Function<void(String&&)>;
+    virtual void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) = 0;
+
+    virtual void flush(Function<void()>&&) = 0;
+    virtual void reset() = 0;
+    virtual void close() = 0;
 };
 
 }

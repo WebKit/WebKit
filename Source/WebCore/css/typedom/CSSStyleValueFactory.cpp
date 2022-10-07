@@ -56,6 +56,7 @@
 #include "CSSValueList.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
+#include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>

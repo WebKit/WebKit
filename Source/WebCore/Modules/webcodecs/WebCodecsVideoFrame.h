@@ -117,8 +117,16 @@ public:
     void close();
 
     bool isDetached() const { return m_isDetached; }
+    RefPtr<VideoFrame> internalFrame() const { return m_internalFrame; }
+
+    void setDisplaySize(size_t, size_t);
+    void setVisibleRect(const DOMRectInit&);
 
 private:
+    static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
+    static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(Ref<NativeImage>&&, Init&&);
+
     RefPtr<VideoFrame> m_internalFrame;
     std::optional<VideoPixelFormat> m_format;
     size_t m_codedWidth { 0 };

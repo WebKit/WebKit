@@ -49,6 +49,8 @@ public:
     static Ref<StyleRuleCounterStyle> create(const AtomString& name, Ref<StyleProperties>&&);
     ~StyleRuleCounterStyle();
 
+    Ref<StyleRuleCounterStyle> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
+
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 

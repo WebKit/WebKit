@@ -27,8 +27,8 @@
 
 #include "FontSelectionValueInlines.h"
 #include "FontTaggedSettings.h"
+#include "RenderStyleConstants.h"
 #include "Settings.h"
-#include "StyleRule.h"
 #include "TextFlags.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -46,11 +46,14 @@ class CSSFontSelector;
 class CSSSegmentedFontFace;
 class CSSValue;
 class CSSValueList;
+class Font;
 class FontCreationContext;
 class FontDescription;
-class Font;
 class FontFace;
+class FontPaletteValues;
 class ScriptExecutionContext;
+class StyleRuleFontFace;
+
 enum class ExternalResourceDownloadPolicy;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);

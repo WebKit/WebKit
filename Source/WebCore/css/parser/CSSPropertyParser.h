@@ -25,7 +25,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
-#include "StyleRule.h"
+#include "StyleRuleType.h"
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
