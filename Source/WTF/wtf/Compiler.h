@@ -524,18 +524,6 @@
 #define IGNORE_NULL_CHECK_WARNINGS_BEGIN IGNORE_WARNINGS_BEGIN("nonnull")
 #define IGNORE_NULL_CHECK_WARNINGS_END IGNORE_WARNINGS_END
 
-/* NO_UNIQUE_ADDRESS */
-
-#if !defined(NO_UNIQUE_ADDRESS) && defined(__has_cpp_attribute)
-#if __has_cpp_attribute(no_unique_address)
-#define NO_UNIQUE_ADDRESS [[no_unique_address]] // NOLINT: check-webkit-style does not understand annotations.
-#endif
-#endif
-
-#if !defined(NO_UNIQUE_ADDRESS)
-#define NO_UNIQUE_ADDRESS
-#endif
-
 /* TLS_MODEL_INITIAL_EXEC */
 
 #if !defined(TLS_MODEL_INITIAL_EXEC) && defined(__has_attribute)
