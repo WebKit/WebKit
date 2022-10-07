@@ -297,7 +297,7 @@ CSSRule* CSSStyleSheet::item(unsigned index)
 
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
     if (!cssRule)
-        cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(this);
+        cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(*this);
     return cssRule.get();
 }
 

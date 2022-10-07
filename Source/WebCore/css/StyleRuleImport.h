@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,12 +36,13 @@ class StyleRuleImport final : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<StyleRuleImport> create(const String& href, Ref<MediaQuerySet>&&, std::optional<CascadeLayerName>&&);
-
     ~StyleRuleImport();
-    
+
+    Ref<StyleRuleImport> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
+
     StyleSheetContents* parentStyleSheet() const { return m_parentStyleSheet; }
     void setParentStyleSheet(StyleSheetContents* sheet) { ASSERT(sheet); m_parentStyleSheet = sheet; }
-    void clearParentStyleSheet() { m_parentStyleSheet = 0; }
+    void clearParentStyleSheet() { m_parentStyleSheet = nullptr; }
     void cancelLoad();
 
     String href() const { return m_strHref; }

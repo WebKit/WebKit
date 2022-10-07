@@ -29,14 +29,16 @@
 
 #pragma once
 
-#include "CSSGroupingRule.h"
-#include "StyleRule.h"
+#include "CSSRule.h"
 
 namespace WebCore {
+
+class StyleRuleLayer;
 
 class CSSLayerStatementRule final : public CSSRule {
 public:
     static Ref<CSSLayerStatementRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
+    virtual ~CSSLayerStatementRule();
 
     String cssText() const final;
     Vector<String> nameList() const;

@@ -201,8 +201,7 @@ CSSRuleList& CSSKeyframesRule::cssRules()
 
 void CSSKeyframesRule::reattach(StyleRuleBase& rule)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(rule.isKeyframesRule());
-    m_keyframesRule = static_cast<StyleRuleKeyframes&>(rule);
+    m_keyframesRule = downcast<StyleRuleKeyframes>(rule);
 }
 
 } // namespace WebCore
