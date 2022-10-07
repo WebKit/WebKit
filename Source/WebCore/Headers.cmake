@@ -1603,6 +1603,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsLayerFactory.h
     platform/graphics/GraphicsLayerTransform.h
     platform/graphics/GraphicsLayerUpdater.h
+    platform/graphics/GraphicsStyle.h
     platform/graphics/GraphicsTypes.h
     platform/graphics/GraphicsTypesGL.h
     platform/graphics/Icon.h
@@ -1748,9 +1749,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FilterFunction.h
     platform/graphics/filters/FilterImage.h
     platform/graphics/filters/FilterImageVector.h
+    platform/graphics/filters/FilterMode.h
     platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
     platform/graphics/filters/FilterResults.h
+    platform/graphics/filters/FilterStyle.h
     platform/graphics/filters/LightSource.h
     platform/graphics/filters/PointLightSource.h
     platform/graphics/filters/SourceAlpha.h

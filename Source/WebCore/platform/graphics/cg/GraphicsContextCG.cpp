@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1075,6 +1075,25 @@ static void setCGShadow(CGContextRef context, RenderingMode renderingMode, const
         CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color).get());
 }
 
+#if HAVE(CORE_GRAPHICS_FILTERS)
+static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
+{
+    if (!style) {
+        CGContextSetStyle(context, nullptr);
+        return;
+    }
+
+    auto cgStyle = WTF::switchOn(*style,
+        [&] (const GraphicsStyleDropShadow& dropShadow) {
+            return adoptCF(CGStyleCreateShadow2(dropShadow.offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
+        }
+    );
+
+    if (cgStyle)
+        CGContextSetStyle(context, cgStyle.get());
+}
+#endif
+
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 {
     if (!state.changes())
@@ -1102,6 +1121,12 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 
         case GraphicsContextState::Change::DropShadow:
             setCGShadow(context, renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
+            break;
+
+        case GraphicsContextState::Change::Style:
+#if HAVE(CORE_GRAPHICS_FILTERS)
+            setCGStyle(context, state.style());
+#endif
             break;
 
         case GraphicsContextState::Change::Alpha:

@@ -36,9 +36,9 @@ namespace WebCore {
 static constexpr unsigned maxTotalNumberFilterEffects = 100;
 static constexpr unsigned maxCountChildNodes = 200;
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, FilterMode filterMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
-    auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, clipOperation, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
+    auto filter = adoptRef(*new SVGFilter(filterMode, filterScale, clipOperation, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
 
     auto expression = buildExpression(filterElement, filter, destinationContext);
     if (!expression)
@@ -47,8 +47,8 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, RenderingMo
     ASSERT(!expression->isEmpty());
     filter->setExpression(WTFMove(*expression));
 
-    if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
-        filter->setRenderingMode(RenderingMode::Unaccelerated);
+    if (filterMode != FilterMode::Software && !filter->supportedFilterModes().contains(filterMode))
+        filter->setFilterMode(FilterMode::Software);
 
     return filter;
 }
@@ -58,8 +58,8 @@ RefPtr<SVGFilter> SVGFilter::create(const FloatRect& targetBoundingBox, SVGUnitT
     return adoptRef(*new SVGFilter(targetBoundingBox, primitiveUnits, WTFMove(expression)));
 }
 
-SVGFilter::SVGFilter(RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
-    : Filter(Filter::Type::SVGFilter, renderingMode, filterScale, clipOperation, filterRegion)
+SVGFilter::SVGFilter(FilterMode filterMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+    : Filter(Filter::Type::SVGFilter, filterMode, filterScale, clipOperation, filterRegion)
     , m_targetBoundingBox(targetBoundingBox)
     , m_primitiveUnits(primitiveUnits)
 {
@@ -208,20 +208,6 @@ FloatPoint3D SVGFilter::resolvedPoint3D(const FloatPoint3D& point) const
     return resolvedPoint;
 }
 
-bool SVGFilter::supportsAcceleratedRendering() const
-{
-    if (renderingMode() == RenderingMode::Unaccelerated)
-        return false;
-
-    ASSERT(!m_expression.isEmpty());
-    for (auto& term : m_expression) {
-        if (!term.effect->supportsAcceleratedRendering())
-            return false;
-    }
-
-    return true;
-}
-
 FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
 {
     HashSet<Ref<FilterEffect>> effects;
@@ -233,6 +219,38 @@ FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) con
     }
 
     return copyToVector(effects);
+}
+
+OptionSet<FilterMode> SVGFilter::supportedFilterModes() const
+{
+    OptionSet<FilterMode> modes;
+
+    for (auto& term : m_expression) {
+        auto effectModes = term.effect->supportedFilterModes();
+        if (!modes)
+            modes = effectModes;
+        else
+            modes = modes & effectModes;
+    }
+
+    return modes;
+}
+
+template<typename InputVectorType>
+static InputVectorType takeEffectInputs(const FilterEffect& effect, InputVectorType& stack)
+{
+    unsigned inputsSize = effect.numberOfImageInputs();
+    ASSERT(stack.size() >= inputsSize);
+    if (!inputsSize)
+        return { };
+
+    InputVectorType inputs;
+    inputs.reserveInitialCapacity(inputsSize);
+
+    for (; inputsSize; --inputsSize)
+        inputs.uncheckedAppend(stack.takeLast());
+
+    return inputs;
 }
 
 RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage, FilterResults& results)
@@ -248,7 +266,7 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
 
     for (auto& term : m_expression) {
         auto& effect = term.effect;
-        auto geometry = term.geometry;
+        auto& geometry = term.geometry;
 
         if (effect->filterType() == FilterEffect::Type::SourceGraphic) {
             if (auto result = results.effectResult(effect)) {
@@ -264,9 +282,9 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
         }
 
         // Need to remove the inputs here in case the effect already has a result.
-        auto inputs = effect->takeImageInputs(stack);
+        auto inputs = takeEffectInputs(effect, stack);
 
-        auto result = term.effect->apply(*this, inputs, results, geometry);
+        auto result = effect->apply(*this, inputs, results, geometry);
         if (!result)
             return nullptr;
 
@@ -275,6 +293,42 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
     
     ASSERT(stack.size() == 1);
     return stack.takeLast();
+}
+
+FilterStyleVector SVGFilter::createFilterStyles(const Filter&, const FilterStyle& sourceStyle) const
+{
+    return createFilterStyles(sourceStyle);
+}
+
+FilterStyleVector SVGFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+{
+    ASSERT(!m_expression.isEmpty());
+    ASSERT(supportedFilterModes().contains(FilterMode::GraphicsContext));
+
+    FilterStyleVector stack;
+    FilterStyleVector styles;
+
+    for (auto& term : m_expression) {
+        auto& effect = term.effect;
+        auto& geometry = term.geometry;
+
+        // Add sourceImage as an input to the SourceGraphic.
+        if (effect->filterType() == FilterEffect::Type::SourceGraphic)
+            stack.append(sourceStyle);
+
+        // Need to remove the inputs here in case the effect already has a result.
+        auto inputs = takeEffectInputs(effect, stack);
+
+        auto result = effect->createFilterStyle(*this, inputs, geometry);
+        if (!result)
+            return { };
+
+        stack.append(*result);
+        styles.append(*result);
+    }
+
+    ASSERT(stack.size() == 1);
+    return styles;
 }
 
 TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

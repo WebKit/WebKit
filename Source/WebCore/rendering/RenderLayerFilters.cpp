@@ -160,7 +160,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_filter || m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_renderingMode, m_filterScale, Filter::ClipOperation::Unite, m_targetBoundingBox, context);
+        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_filterMode, m_filterScale, Filter::ClipOperation::Unite, m_targetBoundingBox, context);
     }
 
     if (!m_filter)
@@ -199,6 +199,12 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     resetDirtySourceRect();
 
     filter.setFilterRegion(m_filterRegion);
+
+    if (filter.filterMode() == FilterMode::GraphicsContext) {
+        m_stylesSize = filter.applyStyles(context, m_filterRegion);
+        return &context;
+    }
+
     allocateBackingStoreIfNeeded(context);
 
     auto* sourceGraphicsContext = inputContext();
@@ -218,11 +224,15 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 {
     LOG_WITH_STREAM(Filters, stream << "\nRenderLayerFilters " << this << " applyFilterEffect");
 
-    ASSERT(inputContext());
-    inputContext()->restore();
-
-    FilterResults results;
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_filterRegion, *m_filter, results);
+    if (m_filter->filterMode() == FilterMode::GraphicsContext)
+        m_filter->removeStyles(destinationContext, m_stylesSize);
+    else {
+        ASSERT(inputContext());
+        inputContext()->restore();
+        
+        FilterResults results;
+        destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_filterRegion, *m_filter, results);
+    }
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");
 }

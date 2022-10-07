@@ -42,18 +42,18 @@
 
 namespace WebCore {
 
-RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, FilterMode filterMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    auto filter = adoptRef(*new CSSFilter(renderingMode, filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
+    auto filter = adoptRef(*new CSSFilter(filterMode, filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 
     if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox, destinationContext))
         return nullptr;
 
-    if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
-        filter->setRenderingMode(RenderingMode::Unaccelerated);
+    if (filterMode != FilterMode::Software && !filter->supportedFilterModes().contains(filterMode))
+        filter->setFilterMode(FilterMode::Software);
 
     return filter;
 }
@@ -63,8 +63,8 @@ RefPtr<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions)
     return adoptRef(new CSSFilter(WTFMove(functions)));
 }
 
-CSSFilter::CSSFilter(RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
-    : Filter(Filter::Type::CSSFilter, renderingMode, filterScale, clipOperation)
+CSSFilter::CSSFilter(FilterMode filterMode, const FloatSize& filterScale, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
+    : Filter(Filter::Type::CSSFilter, filterMode, filterScale, clipOperation)
     , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
     , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
 {
@@ -215,7 +215,7 @@ static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const Referenc
 
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
 
-    return SVGFilter::create(*filterElement, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
+    return SVGFilter::create(*filterElement, filter.filterMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
 }
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
@@ -312,17 +312,19 @@ FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) con
     return effects;
 }
 
-bool CSSFilter::supportsAcceleratedRendering() const
+OptionSet<FilterMode> CSSFilter::supportedFilterModes() const
 {
-    if (renderingMode() == RenderingMode::Unaccelerated)
-        return false;
+    OptionSet<FilterMode> modes;
 
     for (auto& function : m_functions) {
-        if (!function->supportsAcceleratedRendering())
-            return false;
+        auto functionModes = function->supportedFilterModes();
+        if (!modes)
+            modes = functionModes;
+        else
+            modes = modes & functionModes;
     }
 
-    return true;
+    return modes;
 }
 
 RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& results)
@@ -339,6 +341,23 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
     }
 
     return result;
+}
+
+FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+{
+    ASSERT(supportedFilterModes().contains(FilterMode::GraphicsContext));
+    
+    FilterStyleVector result = { sourceStyle };
+    FilterStyleVector styles = result;
+
+    for (auto& function : m_functions) {
+        result = function->createFilterStyles(*this, result.last());
+        if (result.isEmpty())
+            return { };
+        styles.appendVector(WTFMove(result));
+    }
+
+    return styles;
 }
 
 void CSSFilter::setFilterRegion(const FloatRect& filterRegion)

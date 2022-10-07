@@ -74,27 +74,62 @@ void GraphicsContextState::mergeChanges(const GraphicsContextState& state, const
         };
 
         switch (toIndex(change)) {
-        case toIndex(Change::FillBrush):                   mergeChange(&GraphicsContextState::m_fillBrush); break;
-        case toIndex(Change::FillRule):                    mergeChange(&GraphicsContextState::m_fillRule); break;
+        case toIndex(Change::FillBrush):
+            mergeChange(&GraphicsContextState::m_fillBrush);
+            break;
+        case toIndex(Change::FillRule):
+            mergeChange(&GraphicsContextState::m_fillRule);
+            break;
 
-        case toIndex(Change::StrokeBrush):                 mergeChange(&GraphicsContextState::m_strokeBrush); break;
-        case toIndex(Change::StrokeThickness):             mergeChange(&GraphicsContextState::m_strokeThickness); break;
-        case toIndex(Change::StrokeStyle):                 mergeChange(&GraphicsContextState::m_strokeStyle); break;
+        case toIndex(Change::StrokeBrush):
+            mergeChange(&GraphicsContextState::m_strokeBrush);
+            break;
+        case toIndex(Change::StrokeThickness):
+            mergeChange(&GraphicsContextState::m_strokeThickness);
+            break;
+        case toIndex(Change::StrokeStyle):
+            mergeChange(&GraphicsContextState::m_strokeStyle);
+            break;
 
-        case toIndex(Change::CompositeMode):               mergeChange(&GraphicsContextState::m_compositeMode); break;
-        case toIndex(Change::DropShadow):                  mergeChange(&GraphicsContextState::m_dropShadow); break;
+        case toIndex(Change::CompositeMode):
+            mergeChange(&GraphicsContextState::m_compositeMode);
+            break;
+        case toIndex(Change::DropShadow):
+            mergeChange(&GraphicsContextState::m_dropShadow);
+            break;
+        case toIndex(Change::Style):
+            mergeChange(&GraphicsContextState::m_style);
+            break;
 
-        case toIndex(Change::Alpha):                       mergeChange(&GraphicsContextState::m_alpha); break;
-        case toIndex(Change::TextDrawingMode):             mergeChange(&GraphicsContextState::m_textDrawingMode); break;
-        case toIndex(Change::ImageInterpolationQuality):   mergeChange(&GraphicsContextState::m_imageInterpolationQuality); break;
+        case toIndex(Change::Alpha):
+            mergeChange(&GraphicsContextState::m_alpha);
+            break;
+        case toIndex(Change::TextDrawingMode):
+            mergeChange(&GraphicsContextState::m_textDrawingMode);
+            break;
+        case toIndex(Change::ImageInterpolationQuality):
+            mergeChange(&GraphicsContextState::m_imageInterpolationQuality);
+            break;
 
-        case toIndex(Change::ShouldAntialias):             mergeChange(&GraphicsContextState::m_shouldAntialias); break;
-        case toIndex(Change::ShouldSmoothFonts):           mergeChange(&GraphicsContextState::m_shouldSmoothFonts); break;
-        case toIndex(Change::ShouldSubpixelQuantizeFonts): mergeChange(&GraphicsContextState::m_shouldSubpixelQuantizeFonts); break;
-        case toIndex(Change::ShadowsIgnoreTransforms):     mergeChange(&GraphicsContextState::m_shadowsIgnoreTransforms); break;
-        case toIndex(Change::DrawLuminanceMask):           mergeChange(&GraphicsContextState::m_drawLuminanceMask); break;
+        case toIndex(Change::ShouldAntialias):
+            mergeChange(&GraphicsContextState::m_shouldAntialias);
+            break;
+        case toIndex(Change::ShouldSmoothFonts):
+            mergeChange(&GraphicsContextState::m_shouldSmoothFonts);
+            break;
+        case toIndex(Change::ShouldSubpixelQuantizeFonts):
+            mergeChange(&GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+            break;
+        case toIndex(Change::ShadowsIgnoreTransforms):
+            mergeChange(&GraphicsContextState::m_shadowsIgnoreTransforms);
+            break;
+        case toIndex(Change::DrawLuminanceMask):
+            mergeChange(&GraphicsContextState::m_drawLuminanceMask);
+            break;
 #if HAVE(OS_DARK_MODE_SUPPORT)
-        case toIndex(Change::UseDarkAppearance):           mergeChange(&GraphicsContextState::m_useDarkAppearance); break;
+        case toIndex(Change::UseDarkAppearance):
+            mergeChange(&GraphicsContextState::m_useDarkAppearance);
+            break;
 #endif
         }
     }
@@ -123,49 +158,40 @@ static const char* stateChangeName(GraphicsContextState::Change change)
     switch (change) {
     case GraphicsContextState::Change::FillBrush:
         return "fill-brush";
-
     case GraphicsContextState::Change::FillRule:
         return "fill-rule";
 
     case GraphicsContextState::Change::StrokeBrush:
         return "stroke-brush";
-
     case GraphicsContextState::Change::StrokeThickness:
         return "stroke-thickness";
-
     case GraphicsContextState::Change::StrokeStyle:
         return "stroke-style";
 
     case GraphicsContextState::Change::CompositeMode:
         return "composite-mode";
-
     case GraphicsContextState::Change::DropShadow:
         return "drop-shadow";
+    case GraphicsContextState::Change::Style:
+        return "style";
 
     case GraphicsContextState::Change::Alpha:
         return "alpha";
-
     case GraphicsContextState::Change::ImageInterpolationQuality:
         return "image-interpolation-quality";
-
     case GraphicsContextState::Change::TextDrawingMode:
         return "text-drawing-mode";
 
     case GraphicsContextState::Change::ShouldAntialias:
         return "should-antialias";
-
     case GraphicsContextState::Change::ShouldSmoothFonts:
         return "should-smooth-fonts";
-
     case GraphicsContextState::Change::ShouldSubpixelQuantizeFonts:
         return "should-subpixel-quantize-fonts";
-
     case GraphicsContextState::Change::ShadowsIgnoreTransforms:
         return "shadows-ignore-transforms";
-
     case GraphicsContextState::Change::DrawLuminanceMask:
         return "draw-luminance-mask";
-
 #if HAVE(OS_DARK_MODE_SUPPORT)
     case GraphicsContextState::Change::UseDarkAppearance:
         return "use-dark-appearance";
@@ -193,6 +219,7 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
 
     dump(Change::CompositeMode,                 &GraphicsContextState::m_compositeMode);
     dump(Change::DropShadow,                    &GraphicsContextState::m_dropShadow);
+    dump(Change::Style,                         &GraphicsContextState::m_style);
 
     dump(Change::Alpha,                         &GraphicsContextState::m_alpha);
     dump(Change::ImageInterpolationQuality,     &GraphicsContextState::m_imageInterpolationQuality);

@@ -87,6 +87,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     if (m_rendererFilterDataMap.contains(&renderer)) {
         FilterData* filterData = m_rendererFilterDataMap.get(&renderer);
+        if (filterData->filter->filterMode() == FilterMode::GraphicsContext) {
+            filterData->sylesSize = filterData->filter->applyStyles(*context, filterData->sourceImageRect);
+            return true;
+        }
         if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying)
             filterData->state = FilterData::CycleDetected;
         return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
@@ -119,11 +123,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // Determine scale factor for filter. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(filterData->sourceImageRect.size(), filterScale);
 
-    // Set the rendering mode from the page's settings.
-    auto renderingMode = renderer.page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto filterMode = renderer.page().preferredFilterMode();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), renderingMode, filterScale, Filter::ClipOperation::Intersect, filterRegion, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), filterMode, filterScale, Filter::ClipOperation::Intersect, filterRegion, targetBoundingBox, *context);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -131,12 +134,13 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     if (filterData->filter->clampFilterRegionIfNeeded())
         filterScale = filterData->filter->filterScale();
-    
+
+    filterData->savedContext = context;
+
     // If the sourceImageRect is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
     if (filterData->sourceImageRect.isEmpty()) {
         ASSERT(m_rendererFilterDataMap.contains(&renderer));
-        filterData->savedContext = context;
         return false;
     }
 
@@ -146,14 +150,17 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
 
+    if (filterData->filter->filterMode() == FilterMode::GraphicsContext) {
+        filterData->sylesSize = filterData->filter->applyStyles(*context, filterData->sourceImageRect);
+        return true;
+    }
+
     filterData->sourceImage = context->createScaledImageBuffer(filterData->sourceImageRect, filterScale, colorSpace, filterData->filter->renderingMode());
     if (!filterData->sourceImage) {
         ASSERT(m_rendererFilterDataMap.contains(&renderer));
-        filterData->savedContext = context;
         return false;
     }
 
-    filterData->savedContext = context;
     context = &filterData->sourceImage->context();
 
     ASSERT(m_rendererFilterDataMap.contains(&renderer));
@@ -203,7 +210,10 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
 
     if (filterData.filter) {
         filterData.state = FilterData::Built;
-        context->drawFilteredImageBuffer(filterData.sourceImage.get(), filterData.sourceImageRect, *filterData.filter, filterData.results);
+        if (filterData.filter->filterMode() == FilterMode::GraphicsContext)
+            filterData.filter->removeStyles(*context, filterData.sylesSize);
+        else
+            context->drawFilteredImageBuffer(filterData.sourceImage.get(), filterData.sourceImageRect, *filterData.filter, filterData.results);
     }
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");

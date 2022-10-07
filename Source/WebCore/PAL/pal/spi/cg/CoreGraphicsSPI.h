@@ -330,6 +330,7 @@ CGError CGSSetWindowClipShape(CGSConnectionID, CGSWindowID, CGRegionRef shape);
 CGError CGSSetWindowWarp(CGSConnectionID, CGSWindowID, int w, int h, const float* mesh);
 CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
 CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
+CGStyleRef CGStyleCreateShadow2(CGSize offset, CGFloat radius, CGColorRef);
 CGStyleRef CGStyleCreateFocusRingWithColor(const CGFocusRingStyle*, CGColorRef);
 void CGContextSetStyle(CGContextRef, CGStyleRef);
 void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGFloat angle);

@@ -93,9 +93,9 @@ bool FEDropShadow::setShadowOpacity(float shadowOpacity)
     return true;
 }
 
-FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const Vector<FloatRect>& inputImageRects, const FloatRect& primitiveSubregion) const
 {
-    auto imageRect = inputs[0]->imageRect();
+    auto imageRect = inputImageRects[0];
     auto imageRectWithOffset(imageRect);
     imageRectWithOffset.move(filter.resolvedSize({ m_dx, m_dy }));
     imageRect.unite(imageRectWithOffset);
@@ -124,6 +124,25 @@ IntOutsets FEDropShadow::calculateOutsets(const FloatSize& offset, const FloatSi
 std::unique_ptr<FilterEffectApplier> FEDropShadow::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEDropShadowSoftwareApplier>(*this);
+}
+
+OptionSet<FilterMode> FEDropShadow::supportedFilterModes() const
+{
+    return {
+#if HAVE(CORE_GRAPHICS_FILTERS)
+        FilterMode::GraphicsContext,
+#endif
+        FilterMode::Software
+    };
+}
+
+std::optional<GraphicsStyle> FEDropShadow::createGraphicsStyle(const Filter& filter) const
+{
+    auto offset = filter.resolvedSize({ m_dx, m_dy });
+    auto radius = 2 * filter.resolvedSize({ m_stdX, m_stdY });
+    auto color = m_shadowColor.colorWithAlpha(m_shadowOpacity);
+
+    return GraphicsStyleDropShadow { offset, radius, color };
 }
 
 TextStream& FEDropShadow::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

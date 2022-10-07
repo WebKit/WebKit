@@ -3754,13 +3754,17 @@ void Page::recomputeTextAutoSizingInAllFrames()
 
 #endif
 
-bool Page::acceleratedFiltersEnabled() const
+FilterMode Page::preferredFilterMode() const
 {
 #if USE(CORE_IMAGE)
-    return settings().acceleratedFiltersEnabled();
-#else
-    return false;
+    if (settings().acceleratedFiltersEnabled())
+        return FilterMode::Accelerated;
 #endif
+#if HAVE(CORE_GRAPHICS_FILTERS)
+    if (settings().graphicsContextFiltersEnabled())
+        return FilterMode::GraphicsContext;
+#endif
+    return FilterMode::Software;
 }
 
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const
