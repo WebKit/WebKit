@@ -14,6 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-rotate-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-rotate-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-scale-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-scale-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-translate-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/change-translate-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/individual-transform/individual-transform-1.html
