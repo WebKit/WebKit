@@ -6,6 +6,7 @@ let currentDraftExtensions = {
     "webgl": [
     ],
     "webgl2" : [
+        "EXT_provoking_vertex",
         "WEBGL_draw_instanced_base_vertex_base_instance",
         "WEBGL_multi_draw_instanced_base_vertex_base_instance",
     ]

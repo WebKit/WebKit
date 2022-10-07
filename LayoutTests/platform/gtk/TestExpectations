@@ -512,6 +512,9 @@ webkit.org/b/166536 webgl/2.0.y/ [ Skip ]
 webkit.org/b/166536 webgl/pending/conformance2/ [ Skip ]
 webkit.org/b/166536 http/tests/webgl/2.0.y/ [ Skip ]
 
+webgl/webgl-draft-extensions-flag-default.html [ Skip ]
+webgl/webgl-draft-extensions-flag-on.html [ Skip ]
+
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
 Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]

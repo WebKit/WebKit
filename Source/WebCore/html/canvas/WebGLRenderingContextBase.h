@@ -77,6 +77,7 @@ class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
 class EXTFloatBlend;
 class EXTFragDepth;
+class EXTProvokingVertex;
 class EXTShaderTextureLOD;
 class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
@@ -729,6 +730,7 @@ protected:
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
+    RefPtr<EXTProvokingVertex> m_extProvokingVertex;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     RefPtr<EXTTextureCompressionBPTC> m_extTextureCompressionBPTC;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;

@@ -2861,6 +2861,15 @@ void RemoteGraphicsContextGLProxy::drawElementsInstancedBaseVertexBaseInstanceAN
     }
 }
 
+void RemoteGraphicsContextGLProxy::provokingVertexANGLE(GCGLenum mode)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::ProvokingVertexANGLE(mode));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
 void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> params)
 {
     if (isContextLost())
