@@ -799,6 +799,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
                 auto crossOriginResourcePolicy = m_cacheEntryForValidation->response().httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy);
                 if (!crossOriginResourcePolicy.isEmpty())
                     m_response.setHTTPHeaderField(HTTPHeaderName::CrossOriginResourcePolicy, crossOriginResourcePolicy);
+                auto crossOriginEmbedderPolicy = m_cacheEntryForValidation->response().httpHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy);
+                if (!crossOriginEmbedderPolicy.isEmpty())
+                    m_response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, crossOriginEmbedderPolicy);
                 m_cacheEntryForValidation = nullptr;
             }
         } else
