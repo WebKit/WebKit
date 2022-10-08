@@ -29,7 +29,9 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

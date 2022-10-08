@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "NinePieceImage.h"
 #include "PaintInfo.h"
+#include "RenderBox.h"
 #include "RenderTheme.h"
 
 namespace WebCore {

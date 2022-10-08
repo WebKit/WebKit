@@ -33,6 +33,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
+namespace JSC {
+class JSValue;
+}
+
 namespace WebCore {
 
 class CSSStyleSheet;
