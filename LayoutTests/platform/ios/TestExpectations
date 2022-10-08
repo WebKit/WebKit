@@ -3821,3 +3821,22 @@ fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
 
 # rdar://100049360 ([ iOS ] fast/canvas/webgl/webgl-depth-texture.html is a constant failure)
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
+
+#rdar://100047661 ([ iOS ] 2X fast/events/touch/ios/long-press-on-(Layout tests))
+fast/events/touch/ios/long-press-on-image.html [ Failure ]
+fast/events/touch/ios/long-press-on-link.html [ Failure ]
+fast/forms/basic-selects.html [ Failure ]
+fast/forms/disabled-select-change-index.html [ Failure ]
+fast/forms/select-disabled-appearance.html [ Failure ]
+fast/forms/file/file-input-disabled.html [ Failure ]
+http/tests/app-privacy-report/user-attribution-cors-preflight-redirect.html [ Failure ]
+fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html [ Failure ]
+fast/images/text-recognition/ios/show-data-detector-context-menu.html [ Failure ]
+fast/text/capitalize-boundaries.html [ Failure ]
+http/tests/quicklook/cross-origin-iframe-blocked.html [ Failure ]
+http/tests/security/xss-DENIED-xsl-external-entity.xml [ Failure ]
+imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-138.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Failure ]
+imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext.html [ Failure ]
+imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html [ Failure ]
