@@ -33,11 +33,15 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class Document;
 class Element;
 
 class DocumentFullscreen {
 public:
+    static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
+    static bool fullscreenEnabled(Document&);
+
     static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
     static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
     static void webkitExitFullscreen(Document& document) { document.fullscreenManager().exitFullscreen(); }
@@ -47,6 +51,6 @@ public:
     static void webkitCancelFullScreen(Document& document) { document.fullscreenManager().cancelFullscreen(); }
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(FULLSCREEN_API)

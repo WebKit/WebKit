@@ -958,6 +958,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Document.idl
     dom/DocumentAndElementEventHandlers.idl
     dom/DocumentFragment.idl
+    dom/DocumentOrShadowRoot+Fullscreen.idl
     dom/DocumentOrShadowRoot+PointerLock.idl
     dom/DocumentOrShadowRoot.idl
     dom/DocumentType.idl
@@ -980,6 +981,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/FocusEvent.idl
     dom/FocusOptions.idl
     dom/FormDataEvent.idl
+    dom/FullscreenOptions.idl
     dom/GlobalEventHandlers+PointerEvents.idl
     dom/GlobalEventHandlers+Selection.idl
     dom/GlobalEventHandlers.idl

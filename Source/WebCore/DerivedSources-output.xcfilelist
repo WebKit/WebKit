@@ -776,6 +776,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentFragment.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentFragment.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+CSSOM.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+CSSOM.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+Fullscreen.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+Fullscreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+PictureInPicture.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+PictureInPicture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot+PointerLock.cpp
@@ -954,6 +956,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFormDataEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFormDataEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFullscreenOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFullscreenOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPU.cpp

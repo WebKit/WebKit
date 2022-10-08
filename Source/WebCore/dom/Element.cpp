@@ -63,6 +63,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
+#include "FullscreenOptions.h"
 #include "GetAnimationsOptions.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
@@ -81,6 +82,7 @@
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeAnimationOptions.h"
@@ -4093,7 +4095,13 @@ static Element* parentCrossingFrameBoundaries(const Element* element)
 
 void Element::webkitRequestFullscreen()
 {
-    document().fullscreenManager().requestFullscreenForElement(*this, FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
+    requestFullscreen({ }, nullptr);
+}
+
+// FIXME: Options are currently ignored.
+void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& promise)
+{
+    document().fullscreenManager().requestFullscreenForElement(*this, WTFMove(promise), FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
 }
 
 void Element::setContainsFullScreenElement(bool flag)

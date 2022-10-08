@@ -256,7 +256,7 @@ public:
         RefPtr<JSON::Object> data = JSON::Object::create();
 
 #if ENABLE(FULLSCREEN_API)
-        if (event.type() == eventNames().webkitfullscreenchangeEvent)
+        if (event.type() == eventNames().webkitfullscreenchangeEvent || event.type() == eventNames().fullscreenchangeEvent)
             data->setBoolean("enabled"_s, !!node->document().fullscreenManager().fullscreenElement());
 #endif // ENABLE(FULLSCREEN_API)
 

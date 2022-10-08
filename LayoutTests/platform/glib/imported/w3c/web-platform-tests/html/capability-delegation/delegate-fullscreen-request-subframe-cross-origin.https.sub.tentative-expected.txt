@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: TypeError: document.body.requestFullscreen is not a function. (In 'document.body.requestFullscreen()', 'document.body.requestFullscreen' is undefined)
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
 Verifies that element.requestFullscreen() calls from a cross-origin subframe without user activation work if and only if the top frame has user activation and it delegates the capability. https://wicg.github.io/capability-delegation/spec.html See wpt/html/user-activation/propagation*.html for frame tree user activation visibility tests.
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Fullscreen requests from a cross-origin subframe fails without delegation from an opener with no user activation Test timed out
-NOTRUN Fullscreen requests from a cross-origin subframe fails without delegation from an opener with user activation
-NOTRUN Fullscreen requests from a cross-origin subframe succeeds with delegation from an opener with user activation
+PASS Fullscreen requests from a cross-origin subframe fails without delegation from an opener with no user activation
+PASS Fullscreen requests from a cross-origin subframe fails without delegation from an opener with user activation
+FAIL Fullscreen requests from a cross-origin subframe succeeds with delegation from an opener with user activation assert_equals: expected "success" but got "failure"
 

@@ -26,9 +26,6 @@
 #pragma once
 
 #include "ScriptElementCachedScriptFetcher.h"
-#include <JavaScriptCore/ConsoleTypes.h>
-#include <JavaScriptCore/JSCJSValue.h>
-#include <JavaScriptCore/Strong.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,29 +34,16 @@ namespace WebCore {
 class LoadableScriptClient;
 class ScriptElement;
 
+struct LoadableScriptConsoleMessage;
+struct LoadableScriptError;
+
+enum class LoadableScriptErrorType : uint8_t;
+
 class LoadableScript : public ScriptElementCachedScriptFetcher {
 public:
-    enum class ErrorType : uint8_t {
-        Fetch,
-        CrossOriginLoad,
-        MIMEType,
-        Nosniff,
-        FailedIntegrityCheck,
-        Resolve,
-        Script,
-    };
-
-    struct ConsoleMessage {
-        MessageSource source;
-        MessageLevel level;
-        String message;
-    };
-
-    struct Error {
-        ErrorType type;
-        std::optional<ConsoleMessage> consoleMessage;
-        JSC::Strong<JSC::Unknown> errorValue;
-    };
+    using ConsoleMessage = LoadableScriptConsoleMessage;
+    using Error = LoadableScriptError;
+    using ErrorType = LoadableScriptErrorType;
 
     virtual ~LoadableScript() = default;
 

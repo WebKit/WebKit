@@ -29,12 +29,9 @@
     DisabledByQuirk=shouldDisableElementFullscreen,
     EnabledBySetting=FullScreenEnabled
 ] partial interface Element {
-    // FIXME: Implement unprefixed 'requestFullscreen'.
-    // Promise<undefined> requestFullscreen(optional FullscreenOptions options);
-    // FIXME: Implement unprefixed 'onfullscreenchange'.
-    // attribute EventHandler onfullscreenchange;
-    // FIXME: Implement unprefixed 'onfullscreenerror'.
-    // attribute EventHandler onfullscreenerror;
+    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
+    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenchange;
+    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenerror;
 
     // Non-standard: WebKit prefixed variants.
     [ImplementedAs=webkitRequestFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.

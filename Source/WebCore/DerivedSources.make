@@ -954,6 +954,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/DocumentAndElementEventHandlers.idl \
     $(WebCore)/dom/DocumentFragment.idl \
     $(WebCore)/dom/DocumentOrShadowRoot.idl \
+    $(WebCore)/dom/DocumentOrShadowRoot+Fullscreen.idl \
     $(WebCore)/dom/DocumentOrShadowRoot+PointerLock.idl \
     $(WebCore)/dom/DocumentType.idl \
     $(WebCore)/dom/DragEvent.idl \
@@ -976,6 +977,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/FocusEvent.idl \
     $(WebCore)/dom/FocusOptions.idl \
     $(WebCore)/dom/FormDataEvent.idl \
+    $(WebCore)/dom/FullscreenOptions.idl \
     $(WebCore)/dom/GlobalEventHandlers+PointerEvents.idl \
     $(WebCore)/dom/GlobalEventHandlers+Selection.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \

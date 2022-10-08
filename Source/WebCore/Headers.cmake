@@ -733,6 +733,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/KeyboardEvent.h
     dom/LiveNodeList.h
     dom/LoadableScript.h
+    dom/LoadableScriptError.h
     dom/MessagePort.h
     dom/MessagePortIdentifier.h
     dom/MouseEvent.h

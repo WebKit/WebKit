@@ -994,7 +994,9 @@ dom/DeviceOrientationEvent.cpp
 dom/Document.cpp
 dom/DocumentFontLoader.cpp
 dom/DocumentFragment.cpp
+dom/DocumentFullscreen.cpp
 dom/DocumentMarkerController.cpp
+dom/DocumentOrShadowRootFullscreen.cpp
 dom/DocumentParser.cpp
 dom/DocumentSharedObjectPool.cpp
 dom/DocumentStorageAccess.cpp
@@ -4104,6 +4106,7 @@ JSCSSTranslate.cpp
 JSCSSStyleValue.cpp
 JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp
+JSFullscreenOptions.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp

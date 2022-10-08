@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ImageBuffer.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Performance.h"
@@ -203,9 +204,11 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
 }
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-void HTMLVideoElement::webkitRequestFullscreen()
+void HTMLVideoElement::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& promise)
 {
     webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
+    if (promise)
+        promise->resolve();
 }
 #endif
 

@@ -1,9 +1,6 @@
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-orientation-lock' is an invalid sandbox flag.
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test without 'allow-orientation-lock' sandboxing directive Test timed out
-NOTRUN Test with 'allow-orientation-lock' sandboxing directive
+FAIL Test without 'allow-orientation-lock' sandboxing directive assert_equals: screen.lockOrientation() throws a SecurityError expected "SecurityError" but got "NotSupportedError"
+FAIL Test with 'allow-orientation-lock' sandboxing directive assert_equals: screen.orientation lock to portrait-primary expected "portrait-primary" but got "NotSupportedError"
 
