@@ -347,6 +347,13 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navig
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
 imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]
 
+http/wpt/selection-live-range/collapse-00.html [ Slow ]
+http/wpt/selection-live-range/collapse-15.html [ Slow ]
+http/wpt/selection-live-range/collapse-30.html [ Slow ]
+http/wpt/selection-live-range/collapse-45.html [ Slow ]
+http/wpt/selection-live-range/extend-00.html [ Slow ]
+http/wpt/selection-live-range/extend-20.html [ Slow ]
+
 # Newly imported service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
 webkit.org/b/201665 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]

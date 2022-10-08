@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<title>The getRangeAt method</title>
+<div id=log></div>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+test(function() {
+  var sel = getSelection();
+  var range = document.createRange();
+  sel.addRange(range);
+  assert_throws_dom("INDEX_SIZE_ERR", function() { sel.getRangeAt(-1); })
+  assert_throws_dom("INDEX_SIZE_ERR", function() { sel.getRangeAt(1); })
+});
+</script>
