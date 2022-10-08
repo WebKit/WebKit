@@ -892,6 +892,7 @@
 		449316A625DC9D0000AA66DE /* _WKAppHighlightInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 449316A525DC9D0000AA66DE /* _WKAppHighlightInternal.h */; };
 		449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */; };
 		44C51844266BE8C4006DD522 /* TCCSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C51842266BE8C3006DD522 /* TCCSoftLink.h */; };
+		44E4972A28CBD2DB00F7DAFA /* TCCSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44C51843266BE8C3006DD522 /* TCCSoftLink.mm */; };
 		44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */; };
 		44EC3EA9247F5C090059489C /* _WKDragActionsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 44EC3EA8247F5C080059489C /* _WKDragActionsInternal.h */; };
 		46088A00261FA8BC00E2500D /* RemoteRenderingBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 550640A324071A6100AAE045 /* RemoteRenderingBackend.h */; };
@@ -17384,6 +17385,7 @@
 				93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */,
 				93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
+				44E4972A28CBD2DB00F7DAFA /* TCCSoftLink.mm in Sources */,
 				2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */,
 				7B9FC5F028ABB557007570E7 /* UnifiedSource1.cpp in Sources */,
 				2D11B7532126A282006F8878 /* UnifiedSource2-mm.mm in Sources */,

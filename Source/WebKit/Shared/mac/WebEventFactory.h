@@ -28,6 +28,7 @@
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
 #import "WebWheelEvent.h"
+#import <WebCore/PlatformMouseEvent.h>
 
 #if USE(APPKIT)
 #if defined(__OBJC__)
@@ -47,13 +48,13 @@ namespace WebKit {
 class WebEventFactory {
 public:
 #if USE(APPKIT)
+    static bool shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent&);
+    static WebCore::PlatformMouseEvent::ModifierFlags toNSEventModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);
+
+#if defined(__OBJC__)
     static WebMouseEvent createWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *windowView);
     static WebWheelEvent createWebWheelEvent(NSEvent *, NSView *windowView);
     static WebKeyboardEvent createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
-    static bool shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent&);
-
-#if defined(__OBJC__)
-    static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);
     static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button);
 #endif
 #endif // USE(APPKIT)

@@ -162,7 +162,6 @@ Shared/Cocoa/SandboxExtensionCocoa.mm
 Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
 Shared/Cocoa/SandboxUtilities.mm
 Shared/Cocoa/SharedRingBufferStorage.cpp
-Shared/Cocoa/TCCSoftLink.mm
 Shared/Cocoa/WebCoreArgumentCodersCocoa.mm
 Shared/Cocoa/WebErrorsCocoa.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm

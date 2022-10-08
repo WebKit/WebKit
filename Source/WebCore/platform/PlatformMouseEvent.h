@@ -28,6 +28,7 @@
 #include "IntPoint.h"
 #include "PlatformEvent.h"
 #include "PointerID.h"
+#include <type_traits>
 #include <wtf/WindowsExtras.h>
 
 namespace WebCore {
@@ -61,6 +62,19 @@ const double ForceAtForceClick = 2;
         {
         }
 
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+        using ModifierFlags = NSEventModifierFlags;
+        static_assert(std::is_same_v<NSEventModifierFlags, unsigned long>, "NSEventModifierFlags type for pure C++");
+#else
+        using ModifierFlags = unsigned long;
+#endif
+#elif PLATFORM(WIN)
+        using ModifierFlags = WPARAM;
+#else
+        using ModifierFlags = unsigned;
+#endif
+
         // This position is relative to the enclosing NSWindow in WebKit1, and is WKWebView-relative in WebKit2.
         // Use ScrollView::windowToContents() to convert it to into the contents of a given view.
         const IntPoint& position() const { return m_position; }
@@ -70,7 +84,11 @@ const double ForceAtForceClick = 2;
         MouseButton button() const { return m_button; }
         unsigned short buttons() const { return m_buttons; }
         int clickCount() const { return m_clickCount; }
-        unsigned modifierFlags() const { return m_modifierFlags; }
+#if PLATFORM(MAC) || PLATFORM(WIN)
+        ModifierFlags mouseModifierFlags() const { return m_mouseModifierFlags; }
+#else
+        ModifierFlags mouseModifierFlags() const { return 0; }
+#endif
         double force() const { return m_force; }
         SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
         PointerID pointerId() const { return m_pointerId; }
@@ -104,7 +122,9 @@ const double ForceAtForceClick = 2;
         PointerID m_pointerId { mousePointerID };
         String m_pointerType { "mouse"_s };
         int m_clickCount { 0 };
-        unsigned m_modifierFlags { 0 };
+#if PLATFORM(MAC) || PLATFORM(WIN)
+        ModifierFlags m_mouseModifierFlags;
+#endif
         unsigned short m_buttons { 0 };
 #if PLATFORM(MAC)
         int m_eventNumber { 0 };

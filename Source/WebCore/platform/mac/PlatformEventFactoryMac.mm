@@ -735,8 +735,7 @@ public:
         double pressure = eventIsPressureEvent ? event.pressure : correspondingPressureEvent.pressure;
         m_force = pressure + stage;
 
-        // Mac specific
-        m_modifierFlags = [event modifierFlags];
+        m_mouseModifierFlags = [event modifierFlags];
         m_eventNumber = [event eventNumber];
         m_menuTypeForEvent = typeForEvent(event);
     }

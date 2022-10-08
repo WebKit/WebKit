@@ -40,6 +40,7 @@
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/CString.h>
 
 static constexpr auto classNameKey = "$class"_s;
