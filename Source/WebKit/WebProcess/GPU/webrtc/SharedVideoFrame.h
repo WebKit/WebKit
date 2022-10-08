@@ -73,6 +73,8 @@ public:
 #if USE(LIBWEBRTC)
     std::optional<SharedVideoFrame::Buffer> writeBuffer(const webrtc::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
 #endif
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
+
     void disable();
     bool isDisabled() const { return m_isDisabled; }
 
@@ -83,7 +85,6 @@ private:
     bool allocateStorage(size_t, const Function<void(const SharedMemory::Handle&)>&);
     bool prepareWriting(const WebCore::SharedVideoFrameInfo&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
 
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
 #if USE(LIBWEBRTC)
     std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
 #endif

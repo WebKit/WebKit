@@ -32,12 +32,24 @@
 
 namespace WebCore {
 
+VideoEncoder::CreatorFunction VideoEncoder::s_customCreator = nullptr;
+
+void VideoEncoder::setCreatorCallback(CreatorFunction&& function)
+{
+    s_customCreator = WTFMove(function);
+}
+
 void VideoEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
 {
-    UNUSED_PARAM(codecName);
-    UNUSED_PARAM(outputCallback);
-    UNUSED_PARAM(postCallback);
+    if (s_customCreator) {
+        s_customCreator(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        return;
+    }
+    createLocalEncoder(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+}
 
+void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+{
 #if USE(LIBWEBRTC)
     if (codecName == "vp8"_s) {
         UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(outputCallback), WTFMove(postCallback));
@@ -49,6 +61,10 @@ void VideoEncoder::create(const String& codecName, const Config& config, CreateC
         callback(WTFMove(encoder));
         return;
     }
+#else
+    UNUSED_PARAM(codecName);
+    UNUSED_PARAM(outputCallback);
+    UNUSED_PARAM(postCallback);
 #endif
 
     callback(makeUnexpected("Not supported"_s));

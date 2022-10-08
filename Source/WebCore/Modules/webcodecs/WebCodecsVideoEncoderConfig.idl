@@ -43,4 +43,5 @@ typedef [EnforceRange] unsigned long long WebCodecsVideoEncoderConfigBitrate;
     DOMString scalabilityMode;
     BitrateMode bitrateMode = "variable";
     LatencyMode latencyMode = "quality";
+    AvcEncoderConfig avc;
 };

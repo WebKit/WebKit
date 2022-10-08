@@ -702,6 +702,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
+    Modules/webcodecs/AvcEncoderConfig.idl
     Modules/webcodecs/BitrateMode.idl
     Modules/webcodecs/LatencyMode.idl
     Modules/webcodecs/HardwareAcceleration.idl

@@ -671,6 +671,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+    $(WebCore)/Modules/webcodecs/AvcEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/BitrateMode.idl \
     $(WebCore)/Modules/webcodecs/LatencyMode.idl \
     $(WebCore)/Modules/webcodecs/HardwareAcceleration.idl \

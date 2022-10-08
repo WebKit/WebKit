@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Error: assert_unreached: Not supported Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: H264 AVC format is not yet supported Reached unreachable code
 
 FAIL Reconfiguring encoder promise_test: Unhandled rejection with value: object "InvalidStateError: VideoEncoder is not configured"
 

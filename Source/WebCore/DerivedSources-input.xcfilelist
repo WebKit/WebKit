@@ -773,6 +773,7 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
 $(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
+$(PROJECT_DIR)/Modules/webcodecs/AvcEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/BitrateMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/HardwareAcceleration.idl
 $(PROJECT_DIR)/Modules/webcodecs/LatencyMode.idl

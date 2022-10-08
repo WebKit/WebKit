@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: Not supported Reached unreachable code
-CONSOLE MESSAGE: Error: assert_unreached: Not supported Reached unreachable code
 
 FAIL SVC L1T2 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL SVC L1T3 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"

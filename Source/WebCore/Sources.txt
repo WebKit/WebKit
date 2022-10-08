@@ -3027,6 +3027,7 @@ JSBeforeUnloadEvent.cpp
 JSBiquadFilterNode.cpp
 JSBiquadFilterOptions.cpp
 JSBiquadFilterType.cpp
+JSAvcEncoderConfig.cpp
 JSBitrateMode.cpp
 JSBlob.cpp
 JSBlobCallback.cpp

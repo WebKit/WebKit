@@ -27,27 +27,16 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "AvcEncoderConfig.h"
-#include "BitrateMode.h"
-#include "HardwareAcceleration.h"
-#include "LatencyMode.h"
-#include <optional>
-
 namespace WebCore {
 
-struct WebCodecsVideoEncoderConfig {
-    String codec;
-    size_t width;
-    size_t height;
-    std::optional<size_t> displayWidth;
-    std::optional<size_t> displayHeight;
-    std::optional<uint64_t> bitrate;
-    std::optional<double> framerate;
-    HardwareAcceleration hardwareAcceleration { HardwareAcceleration::NoPreference };
-    String scalabilityMode;
-    BitrateMode bitrateMode { BitrateMode::Variable };
-    LatencyMode latencyMode { LatencyMode::Quality };
-    std::optional<AvcEncoderConfig> avc;
+enum class AvcBitstreamFormat {
+    Annexb,
+    Avc
+};
+
+struct AvcEncoderConfig {
+    using BitstreamFormat = AvcBitstreamFormat;
+    AvcBitstreamFormat format;
 };
 
 }
