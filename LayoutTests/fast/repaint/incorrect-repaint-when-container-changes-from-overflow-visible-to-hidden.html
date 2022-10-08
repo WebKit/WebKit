@@ -1,0 +1,26 @@
+<style>
+#container {
+  overflow: visible;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background-color: green;
+}
+
+#abs {
+  position: absolute;
+  background-color: red;
+  width: 100px;
+  height: 100px;
+}
+
+</style>
+<div id=container><div id=abs></div></div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+repaintTest = function() {
+  abs.style.display = "none";
+  container.style.overflow = "hidden";
+};
+runRepaintTest();
+</script>
