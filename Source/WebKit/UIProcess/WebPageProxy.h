@@ -673,9 +673,6 @@ public:
     void setIsUsingHighPerformanceWebGL(bool value) { m_isUsingHighPerformanceWebGL = value; }
     bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
 
-    void didExceedInactiveMemoryLimitWhileActive();
-    void didExceedBackgroundCPULimitWhileInForeground();
-
     void closePage();
 
     void addPlatformLoadParameters(WebProcessProxy&, LoadParameters&);

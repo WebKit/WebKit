@@ -463,14 +463,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             else
                 parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(), 0);
         });
-        memoryPressureHandler.setDidExceedInactiveLimitWhileActiveCallback([this] () {
-            parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimitWhileActive(), 0);
-
-            if (!m_loggedProcessLimitCriticalMemoryStatistics) {
-                m_loggedProcessLimitCriticalMemoryStatistics = true;
-                scheduleLogMemoryStatistics(LogMemoryStatisticsReason::CriticalMemoryPressureNotification);
-            }
-        });
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](WTF::MemoryPressureStatus memoryPressureStatus) {
             if (parentProcessConnection())

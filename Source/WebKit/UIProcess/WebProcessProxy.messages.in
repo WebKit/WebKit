@@ -47,7 +47,6 @@ messages -> WebProcessProxy LegacyReceiver {
     DidReceiveBackgroundResponsivenessPing()
 
     MemoryPressureStatusChanged(bool isUnderMemoryPressure)
-    DidExceedInactiveMemoryLimitWhileActive()
 
     DidCollectPrewarmInformation(WebCore::RegistrableDomain domain, struct WebCore::PrewarmInformation prewarmInformation)
 

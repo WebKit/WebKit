@@ -140,7 +140,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDrawFooterInRectForPageWithTitleURL = [delegate respondsToSelector:@selector(_webView:drawFooterInRect:forPageWithTitle:URL:)];
     m_delegateMethods.webViewHeaderHeight = [delegate respondsToSelector:@selector(_webViewHeaderHeight:)];
     m_delegateMethods.webViewFooterHeight = [delegate respondsToSelector:@selector(_webViewFooterHeight:)];
-    m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewConfigurationForLocalInspector = [delegate respondsToSelector:@selector(_webView:configurationForLocalInspector:)];
@@ -941,33 +940,6 @@ void UIDelegate::UIClient::unfocus(WebPageProxy*)
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _unfocusWebView:m_uiDelegate->m_webView.get().get()];
-}
-
-static _WKResourceLimit toWKResourceLimit(WKResourceLimit limit)
-{
-    switch (limit) {
-    case kWKResourceLimitMemory:
-        return _WKResourceLimitMemory;
-    case kWKResourceLimitCPU:
-        return _WKResourceLimitCPU;
-    }
-    ASSERT_NOT_REACHED();
-    return _WKResourceLimitMemory;
-}
-
-void UIDelegate::UIClient::didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit limit)
-{
-    if (!m_uiDelegate)
-        return;
-
-    if (!m_uiDelegate->m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground)
-        return;
-    
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return;
-    
-    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didExceedBackgroundResourceLimitWhileInForeground:toWKResourceLimit(limit)];
 }
 
 void UIDelegate::UIClient::didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent& event)

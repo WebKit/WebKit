@@ -10253,18 +10253,6 @@ void WebPageProxy::playbackTargetPickerWasDismissed(PlaybackTargetClientContextI
 }
 #endif
 
-void WebPageProxy::didExceedInactiveMemoryLimitWhileActive()
-{
-    WEBPAGEPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedInactiveMemoryLimitWhileActive");
-    m_uiClient->didExceedBackgroundResourceLimitWhileInForeground(*this, kWKResourceLimitMemory);
-}
-
-void WebPageProxy::didExceedBackgroundCPULimitWhileInForeground()
-{
-    WEBPAGEPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedBackgroundCPULimitWhileInForeground");
-    m_uiClient->didExceedBackgroundResourceLimitWhileInForeground(*this, kWKResourceLimitCPU);
-}
-
 void WebPageProxy::didChangeBackgroundColor()
 {
     pageClient().didChangeBackgroundColor();

@@ -1592,12 +1592,6 @@ void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(const Stri
         (*pages().begin())->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), limitKey, ShouldSample::No);
 }
 
-void WebProcessProxy::didExceedInactiveMemoryLimitWhileActive()
-{
-    for (auto& page : pages())
-        page->didExceedInactiveMemoryLimitWhileActive();
-}
-
 void WebProcessProxy::didExceedActiveMemoryLimit()
 {
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedActiveMemoryLimit: Terminating WebProcess because it has exceeded the active memory limit");
@@ -1626,19 +1620,13 @@ void WebProcessProxy::didExceedCPULimit()
             WEBPROCESSPROXY_RELEASE_LOG(PerformanceLogging, "didExceedCPULimit: WebProcess has exceeded the background CPU limit but we are not terminating it because it is capturing audio / video");
             return;
         }
-    }
 
-    bool hasVisiblePage = false;
-    for (auto& page : pages()) {
         if (page->isViewVisible()) {
-            page->didExceedBackgroundCPULimitWhileInForeground();
-            hasVisiblePage = true;
+            // We only notify the client that the process exceeded the CPU limit when it is visible, we do not terminate it.
+            WEBPROCESSPROXY_RELEASE_LOG(PerformanceLogging, "didExceedCPULimit: WebProcess has exceeded the background CPU limit but we are not terminating it because it has a visible page");
+            return;
         }
     }
-
-    // We only notify the client that the process exceeded the CPU limit when it is visible, we do not terminate it.
-    if (hasVisiblePage)
-        return;
 
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedCPULimit: Terminating background WebProcess that has exceeded the background CPU limit");
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededBackgroundCPULimitKey());

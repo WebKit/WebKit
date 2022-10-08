@@ -131,7 +131,6 @@ typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void
 typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKDidLosePointerLockCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKHasVideoInPictureInPictureDidChangeCallback)(WKPageRef page, bool hasVideoInPictureInPicture, const void* clientInfo);
-typedef void (*WKDidExceedBackgroundResourceLimitWhileInForegroundCallback)(WKPageRef page, WKResourceLimit limit, const void* clientInfo);
 typedef void (*WKPageDidResignInputElementStrongPasswordAppearanceCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef bool (*WKPageShouldAllowDeviceOrientationAndMotionAccessCallback)(WKPageRef page, WKSecurityOriginRef securityOrigin, WKFrameInfoRef frame, const void *clientInfo);
 
@@ -944,7 +943,7 @@ typedef struct WKPageUIClientV10 {
     
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 } WKPageUIClientV10;
 
 typedef struct WKPageUIClientV11 {
@@ -1039,7 +1038,7 @@ typedef struct WKPageUIClientV11 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1137,7 +1136,7 @@ typedef struct WKPageUIClientV12 {
     
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
     
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1238,7 +1237,7 @@ typedef struct WKPageUIClientV13 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1342,7 +1341,7 @@ typedef struct WKPageUIClientV14 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1449,7 +1448,7 @@ typedef struct WKPageUIClientV15 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1560,7 +1559,7 @@ typedef struct WKPageUIClientV16 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1674,7 +1673,7 @@ typedef struct WKPageUIClientV17 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;
@@ -1790,7 +1789,7 @@ typedef struct WKPageUIClientV18 {
 
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                       hasVideoInPictureInPictureDidChange;
-    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
+    void*                                                               unused6; // Used to be didExceedBackgroundResourceLimitWhileInForeground
 
     // Version 11.
     WKPageDidResignInputElementStrongPasswordAppearanceCallback         didResignInputElementStrongPasswordAppearance;

@@ -1647,14 +1647,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.hasVideoInPictureInPictureDidChange(toAPI(page), hasVideoInPictureInPicture, m_client.base.clientInfo);
         }
 
-        void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy& page, WKResourceLimit limit) final
-        {
-            if (!m_client.didExceedBackgroundResourceLimitWhileInForeground)
-                return;
-
-            m_client.didExceedBackgroundResourceLimitWhileInForeground(toAPI(&page), limit, m_client.base.clientInfo);
-        }
-
         void close(WebPageProxy* page) final
         {
             if (!m_client.close)

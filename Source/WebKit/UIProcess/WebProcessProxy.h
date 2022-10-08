@@ -289,7 +289,6 @@ public:
 
     void memoryPressureStatusChanged(bool isUnderMemoryPressure) { m_isUnderMemoryPressure = isUnderMemoryPressure; }
     bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
-    void didExceedInactiveMemoryLimitWhileActive();
 
     void processTerminated();
 
