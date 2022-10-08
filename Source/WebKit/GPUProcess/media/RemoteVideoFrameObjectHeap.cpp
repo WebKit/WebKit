@@ -31,7 +31,6 @@
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
-#include <wtf/MainThread.h>
 #include <wtf/Scope.h>
 #include <wtf/WorkQueue.h>
 

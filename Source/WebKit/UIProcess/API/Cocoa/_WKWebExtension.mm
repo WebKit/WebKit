@@ -30,7 +30,6 @@
 #import "config.h"
 #import "_WKWebExtensionInternal.h"
 
-#import "CocoaImage.h"
 #import "WebExtension.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
@@ -70,29 +69,24 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
-    return [self _initWithManifestDictionary:manifest resources:nil];
-}
-
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
-{
     NSParameterAssert(manifest);
 
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest, resources);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest);
 
     return self;
 }
 
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
+- (instancetype)_initWithManifestData:(NSData *)manifestData
 {
-    NSParameterAssert(resources);
+    NSParameterAssert(manifestData);
 
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resources);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifestData);
 
     return self;
 }
@@ -140,24 +134,9 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->displayDescription();
 }
 
-- (NSString *)displayActionLabel
-{
-    return _webExtension->displayActionLabel();
-}
-
 - (NSString *)version
 {
     return _webExtension->version();
-}
-
-- (CocoaImage *)iconForSize:(CGSize)size
-{
-    return _webExtension->icon(size);
-}
-
-- (CocoaImage *)actionIconForSize:(CGSize)size
-{
-    return _webExtension->actionIcon(size);
 }
 
 - (NSSet<_WKWebExtensionPermission> *)requestedPermissions
@@ -243,15 +222,10 @@ static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const HashSet<Ref<WebK
 
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
-    return [self _initWithManifestDictionary:manifest resources:nil];
-}
-
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
-{
     return nil;
 }
 
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
+- (instancetype)_initWithManifestData:(NSData *)manifestData
 {
     return nil;
 }
@@ -291,22 +265,7 @@ static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const HashSet<Ref<WebK
     return nil;
 }
 
-- (NSString *)displayActionLabel
-{
-    return nil;
-}
-
 - (NSString *)version
-{
-    return nil;
-}
-
-- (CocoaImage *)iconForSize:(CGSize)size
-{
-    return nil;
-}
-
-- (CocoaImage *)actionIconForSize:(CGSize)size
 {
     return nil;
 }

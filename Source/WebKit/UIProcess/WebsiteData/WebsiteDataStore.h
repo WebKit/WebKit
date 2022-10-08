@@ -102,7 +102,7 @@ struct NetworkProcessConnectionInfo;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class StorageAccessPromptStatus;
@@ -170,7 +170,7 @@ public:
     static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
 #endif
 
@@ -183,7 +183,7 @@ public:
     void resetServiceWorkerTimeoutForTesting();
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     void fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Vector<WebCore::RegistrableDomain>&&, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&&);
     void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
@@ -343,10 +343,6 @@ public:
     SOAuthorizationCoordinator& soAuthorizationCoordinator(const WebPageProxy&);
 #endif
 
-#if PLATFORM(COCOA)
-    static String defaultWebsiteDataStoreDirectory(const String& identifier);
-    static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
-#endif
     static String defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory = nullString());
     static String defaultLocalStorageDirectory(const String& baseDataDirectory = nullString());
     static String defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory = nullString());
@@ -464,7 +460,7 @@ private:
     String m_resolvedCookieStorageDirectory;
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool m_resourceLoadStatisticsDebugMode { false };
     bool m_resourceLoadStatisticsEnabled { false };
     Function<void(const String&)> m_statisticsTestingCallback;
@@ -514,7 +510,7 @@ private:
 #if HAVE(APP_SSO)
     std::unique_ptr<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
 #endif
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     mutable std::optional<WebCore::ThirdPartyCookieBlockingMode> m_thirdPartyCookieBlockingMode; // Lazily computed.
 #endif
     Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;

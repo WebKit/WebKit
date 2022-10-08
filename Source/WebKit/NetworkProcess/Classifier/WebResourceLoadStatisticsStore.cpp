@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebResourceLoadStatisticsStore.h"
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "APIDictionary.h"
 #include "Logging.h"

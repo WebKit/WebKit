@@ -1,3 +1,0 @@
-
-PASS InvalidStateError exception is thrown for extend() when no ranges are present in Selection
-

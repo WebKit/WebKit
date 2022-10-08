@@ -146,10 +146,10 @@ class GitHub(bmocks.GitHub):
 
         base = self.commit(ref)
         if not base:
-            return mocks.Response.fromJson(
-                dict(message='No commit found for SHA: {}'.format(ref)),
-                url=url,
+            return mocks.Response(
                 status_code=404,
+                url=url,
+                text=jsonlib.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
             )
 
         response = []
@@ -192,10 +192,10 @@ class GitHub(bmocks.GitHub):
 
         commit = self.commit(ref)
         if not commit:
-            return mocks.Response.fromJson(
-                dict(message='No commit found for SHA: {}'.format(ref)),
-                url=url,
+            return mocks.Response(
                 status_code=404,
+                url=url,
+                text=jsonlib.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
             )
         return mocks.Response.fromJson({
             'sha': commit.hash,
@@ -222,10 +222,10 @@ class GitHub(bmocks.GitHub):
         commit_a = self.commit(ref_a)
         commit_b = self.commit(ref_b)
         if not commit_a or not commit_b:
-            return mocks.Response.fromJson(
-                dict(message='Not found'),
-                url=url,
+            return mocks.Response(
                 status_code=404,
+                url=url,
+                text=jsonlib.dumps(dict(message='Not found')),
             )
 
         if commit_a.branch != self.default_branch or commit_b.branch == self.default_branch:
@@ -435,11 +435,10 @@ class GitHub(bmocks.GitHub):
                     return mocks.Response.fromJson({
                         key: value for key, value in candidate.items() if key not in ('requested_reviews', 'reviews')
                     }, url=url)
-
-            return mocks.Response.fromJson(
-                dict(message='Not found'),
-                url=url,
+            return mocks.Response(
                 status_code=404,
+                text=jsonlib.dumps(dict(message='Not found')),
+                url=url,
             )
 
         # Create/update pull-request

@@ -113,7 +113,6 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if !USE(CG) && USE(OPENJPEG)
     "image/jpeg2000",
 #endif
-    "image/jpg",
 #if USE(JPEGXL)
     "image/jxl",
 #endif
@@ -423,11 +422,9 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
         }
     });
 #endif
-
-    String normalizedMIMEType = normalizedImageMIMEType(mimeType);
-    if (supportedImageMIMETypeSet.contains(normalizedMIMEType))
+    if (supportedImageMIMETypeSet.contains(mimeType))
         return true;
-    return additionalSupportedImageMIMETypes().contains(normalizedMIMEType);
+    return additionalSupportedImageMIMETypes().contains(normalizedImageMIMEType(mimeType));
 }
 
 bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType)
@@ -718,6 +715,8 @@ bool MIMETypeRegistry::isSupportedModelMIMEType(const String& mimeType)
 static String normalizedImageMIMEType(const String& mimeType)
 {
 #if USE(CURL)
+    return mimeType;
+#else
     // FIXME: Since this is only used in isSupportedImageMIMEType, we should consider removing the non-image types below.
     static constexpr std::pair<ComparableLettersLiteral, ASCIILiteral> mimeTypeAssociationArray[] = {
         { "application/ico", "image/vnd.microsoft.icon"_s },
@@ -770,8 +769,6 @@ static String normalizedImageMIMEType(const String& mimeType)
     static constexpr SortedArrayMap associationMap { mimeTypeAssociationArray };
     auto normalizedType = associationMap.tryGet(mimeType);
     return normalizedType ? *normalizedType : mimeType;
-#else
-    return mimeType;
 #endif
 }
 
@@ -848,7 +845,7 @@ bool MIMETypeRegistry::isJPEGMIMEType(const String& mimeType)
         return false;
     return CFEqual(destinationUTI.get(), jpegUTI());
 #else
-    return mimeType == "image/jpeg"_s || mimeType == "image/jpg"_s;
+    return mimeType == "image/jpeg"_s;
 #endif
 }
 

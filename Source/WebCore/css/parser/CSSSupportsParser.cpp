@@ -32,7 +32,6 @@
 
 #include "CSSParserImpl.h"
 #include "CSSSelectorParser.h"
-#include "StyleRule.h"
 
 namespace WebCore {
 

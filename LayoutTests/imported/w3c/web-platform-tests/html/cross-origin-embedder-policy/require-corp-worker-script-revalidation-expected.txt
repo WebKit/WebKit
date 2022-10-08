@@ -1,3 +1,0 @@
-
-PASS COEP: require-corp with revalidated worker script
-

@@ -155,17 +155,7 @@ void CSSMatrixComponent::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSMatrixComponent::toMatrix()
 {
-    if (!is2D())
-        return { m_matrix.get() };
-
-    // Flatten to 2d.
-    return { DOMMatrix::create({
-        m_matrix->a(),
-        m_matrix->b(),
-        m_matrix->c(),
-        m_matrix->d(),
-        m_matrix->e(),
-        m_matrix->f() }, DOMMatrixReadOnly::Is2D::Yes) };
+    return { m_matrix.get() };
 }
 
 DOMMatrix& CSSMatrixComponent::matrix()

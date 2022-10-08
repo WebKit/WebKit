@@ -67,8 +67,6 @@ struct IgnorePreviousRulesAction : public ActionWithoutMetadata<IgnorePreviousRu
 struct MakeHTTPSAction : public ActionWithoutMetadata<MakeHTTPSAction> { };
 
 struct WEBCORE_EXPORT ModifyHeadersAction {
-    enum class ModifyHeadersOperationType { Unknown, Append, Set, Remove };
-
     struct ModifyHeaderInfo {
         struct AppendOperation {
             String header;
@@ -103,19 +101,17 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
         void serialize(Vector<uint8_t>&) const;
         static ModifyHeaderInfo deserialize(Span<const uint8_t>);
         static size_t serializedLength(Span<const uint8_t>);
-        void applyToRequest(ResourceRequest&, HashMap<String, ModifyHeadersOperationType>&);
+        void applyToRequest(ResourceRequest&);
     };
 
     enum class HashTableType : uint8_t { Empty, Deleted, Full } hashTableType;
     Vector<ModifyHeaderInfo> requestHeaders;
     Vector<ModifyHeaderInfo> responseHeaders;
-    uint32_t priority = 0;
 
-    ModifyHeadersAction(Vector<ModifyHeaderInfo>&& requestHeaders, Vector<ModifyHeaderInfo>&& responseHeaders, uint32_t priority)
+    ModifyHeadersAction(Vector<ModifyHeaderInfo>&& requestHeaders, Vector<ModifyHeaderInfo>&& responseHeaders)
         : hashTableType(HashTableType::Full)
         , requestHeaders(WTFMove(requestHeaders))
-        , responseHeaders(WTFMove(responseHeaders))
-        , priority(priority) { }
+        , responseHeaders(WTFMove(responseHeaders)) { }
 
     enum EmptyValueTag { EmptyValue };
     enum DeletedValueTag { DeletedValue };
@@ -130,7 +126,7 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
     void serialize(Vector<uint8_t>&) const;
     static ModifyHeadersAction deserialize(Span<const uint8_t>);
     static size_t serializedLength(Span<const uint8_t>);
-    void applyToRequest(ResourceRequest&, HashMap<String, ModifyHeadersOperationType>&);
+    void applyToRequest(ResourceRequest&);
 };
 
 struct WEBCORE_EXPORT RedirectAction {
@@ -300,7 +296,7 @@ inline void add(Hasher& hasher, const RedirectAction& action)
 
 inline void add(Hasher& hasher, const ModifyHeadersAction& action)
 {
-    add(hasher, action.requestHeaders, action.responseHeaders, action.priority);
+    add(hasher, action.requestHeaders, action.responseHeaders);
 }
 
 } // namespace WebCore::ContentExtensions

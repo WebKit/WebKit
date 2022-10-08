@@ -463,6 +463,14 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             else
                 parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(), 0);
         });
+        memoryPressureHandler.setDidExceedInactiveLimitWhileActiveCallback([this] () {
+            parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimitWhileActive(), 0);
+
+            if (!m_loggedProcessLimitCriticalMemoryStatistics) {
+                m_loggedProcessLimitCriticalMemoryStatistics = true;
+                scheduleLogMemoryStatistics(LogMemoryStatisticsReason::CriticalMemoryPressureNotification);
+            }
+        });
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](WTF::MemoryPressureStatus memoryPressureStatus) {
             if (parentProcessConnection())
@@ -599,7 +607,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
     SharedWorkerProvider::setSharedProvider(WebSharedWorkerProvider::singleton());
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
@@ -634,7 +642,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     m_thirdPartyCookieBlockingMode = parameters.thirdPartyCookieBlockingMode;
     if (parameters.resourceLoadStatisticsEnabled) {
         if (!ResourceLoadObserver::sharedIfExists())
@@ -1668,7 +1676,7 @@ void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
     if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled)
         return;
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enabled);
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (enabled && !ResourceLoadObserver::sharedIfExists())
         WebCore::ResourceLoadObserver::setShared(*new WebResourceLoadObserver(m_sessionID && m_sessionID->isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
 #endif
@@ -1676,7 +1684,7 @@ void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 
 void WebProcess::clearResourceLoadStatistics()
 {
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->clearState();
     for (auto& page : m_pageMap.values())
@@ -1686,7 +1694,7 @@ void WebProcess::clearResourceLoadStatistics()
 
 void WebProcess::flushResourceLoadStatistics()
 {
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->updateCentralStatisticsStore([] { });
 #endif
@@ -1694,7 +1702,7 @@ void WebProcess::flushResourceLoadStatistics()
 
 void WebProcess::seedResourceLoadStatisticsForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->logSubresourceLoadingForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification);
 #endif
@@ -1996,7 +2004,7 @@ void WebProcess::displayWasRefreshed(uint32_t displayID, const DisplayUpdate& di
 }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
     m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;

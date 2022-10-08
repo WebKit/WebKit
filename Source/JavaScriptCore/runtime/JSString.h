@@ -203,7 +203,6 @@ public:
 
     StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
 
-    ALWAYS_INLINE bool equalInline(JSGlobalObject*, JSString* other) const;
     inline bool equal(JSGlobalObject*, JSString* other) const;
     const String& value(JSGlobalObject*) const;
     inline const String& tryGetValue(bool allocationAllowed = true) const;

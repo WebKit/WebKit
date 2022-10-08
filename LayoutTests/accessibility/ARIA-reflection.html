@@ -96,10 +96,7 @@
         dataProperty = getDataProperty(currentProperty);
         dataAttribute = getDataAttribute(currentProperty);
         element[currentProperty] = dataProperty;
-        if (isElementReflectionProperty(currentProperty) || isElementsArrayReflectionProperty(currentProperty))
-          shouldBeEmptyString("element.getAttribute(currentAttribute)");
-        else
-          shouldBe("element.getAttribute(currentAttribute)", "dataAttribute");
+        shouldBe("element.getAttribute(currentAttribute)", "dataAttribute");
 
         // Set the attribute value
         otherDataProperty = getOtherDataProperty(currentProperty);

@@ -95,7 +95,7 @@ private:
     std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
-    ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;
+    ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
 
 };
 

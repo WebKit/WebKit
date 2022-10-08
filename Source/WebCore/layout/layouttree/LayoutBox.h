@@ -139,7 +139,6 @@ public:
     bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
-    bool isFirstChildForIntegration() const { return m_isFirstChildForIntegration; }
 
     const ElementBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling.get(); }
@@ -174,7 +173,6 @@ public:
     std::optional<LayoutUnit> columnWidth() const;
 
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
-    void setIsFirstChildForIntegration(bool value) { m_isFirstChildForIntegration = value; }
 
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
@@ -221,7 +219,6 @@ private:
     unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
     bool m_hasRareData : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };
-    bool m_isFirstChildForIntegration : 1 { false };
 
     CheckedPtr<ElementBox> m_parent;
     

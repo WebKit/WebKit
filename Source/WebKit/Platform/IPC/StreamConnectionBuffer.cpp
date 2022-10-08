@@ -43,14 +43,16 @@ StreamConnectionBuffer::StreamConnectionBuffer(size_t memorySize)
     : m_dataSize(memorySize - headerSize())
     , m_sharedMemory(createMemory(memorySize))
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
+    ASSERT(m_dataSize > 0);
+    ASSERT(m_dataSize <= maximumSize());
 }
 
 StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memory)
     : m_dataSize(memory->size() - headerSize())
     , m_sharedMemory(WTFMove(memory))
 {
-    ASSERT(sharedMemorySizeIsValid(m_sharedMemory->size()));
+    ASSERT(m_dataSize > 0);
+    ASSERT(m_dataSize <= maximumSize());
 }
 
 StreamConnectionBuffer::StreamConnectionBuffer(StreamConnectionBuffer&& other) = default;
@@ -79,7 +81,9 @@ std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& de
     auto handle = decoder.decode<WebKit::SharedMemory::Handle>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    if (UNLIKELY(!sharedMemorySizeIsValid(handle->size())))
+    if (UNLIKELY(handle->size() <= headerSize()))
+        return std::nullopt;
+    if (UNLIKELY(handle->size() > headerSize() + maximumSize()))
         return std::nullopt;
     auto sharedMemory = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadWrite);
     if (UNLIKELY(!sharedMemory))

@@ -34,7 +34,6 @@
 #include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSProperty.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValueList.h"

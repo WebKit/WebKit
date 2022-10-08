@@ -54,12 +54,9 @@ let validUseGrouping = [
 
 let nonListedUseGrouping = [
     "min-2",
-];
-
-let specialUseGrouping = [
     "true",
     "false",
-]
+];
 
 validUseGrouping.forEach(function(useGrouping) {
     let nf = new Intl.NumberFormat(undefined, {useGrouping});
@@ -67,15 +64,8 @@ validUseGrouping.forEach(function(useGrouping) {
 });
 
 nonListedUseGrouping.forEach(function(useGrouping) {
-    shouldThrow(() => {
-        let nf = new Intl.NumberFormat(undefined, {useGrouping});
-        nf.resolvedOptions().useGrouping
-    }, `RangeError: useGrouping must be either true, false, "min2", "auto", or "always"`);
-});
-
-specialUseGrouping.forEach(function(useGrouping) {
     let nf = new Intl.NumberFormat(undefined, {useGrouping});
-    shouldBe("auto", nf.resolvedOptions().useGrouping);
+    shouldBe(nf.resolvedOptions().useGrouping, `auto`);
 });
 
 // useGrouping: undefined get "auto"

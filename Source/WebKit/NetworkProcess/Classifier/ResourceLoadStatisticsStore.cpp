@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -358,7 +358,7 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
 {
     ASSERT(!RunLoop::isMain());
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     
     Seconds capTime;
 #if ENABLE(JS_COOKIE_CHECKING)

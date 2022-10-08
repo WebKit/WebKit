@@ -25,22 +25,12 @@
 
 #pragma once
 
-#include <atomic>
+#include <wtf/Compiler.h>
+#include <wtf/MainThread.h>
 #include <wtf/ThreadSafetyAnalysis.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
-
-class ThreadLikeAssertion;
-
-class ThreadLike {
-public:
-    // Never returns 0.
-    WTF_EXPORT_PRIVATE static uint32_t currentSequence();
-
-protected:
-    static std::atomic<uint32_t> s_uid;
-    static ThreadLikeAssertion createThreadLikeAssertion(uint32_t);
-};
 
 // A type to use for asserting that private member functions or private member variables
 // of a class are accessed from correct threads.
@@ -53,44 +43,30 @@ protected:
 // private:
 //     void doTaskImpl() WTF_REQUIRES_CAPABILITY(m_ownerThread);
 //     int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };
-//     NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerThread;
+//     NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
 // };
-class WTF_CAPABILITY("is current") ThreadLikeAssertion {
+class WTF_CAPABILITY("is current") ThreadAssertion {
 public:
-    ThreadLikeAssertion() = default;
+    ThreadAssertion() = default;
     enum UninitializedTag { Uninitialized };
-    constexpr ThreadLikeAssertion(UninitializedTag)
+    constexpr ThreadAssertion(UninitializedTag)
 #if ASSERT_ENABLED
-        : m_uid(0)
+        : m_uid(0) // Thread::uid() does not return this.
 #endif
     {
     }
-    ~ThreadLikeAssertion() { assertIsCurrent(*this); }
-    void reset() { *this = ThreadLikeAssertion { }; }
+    ~ThreadAssertion() { assertIsCurrent(*this); }
+    void reset() { *this = ThreadAssertion { }; }
 private:
 #if ASSERT_ENABLED
-    constexpr ThreadLikeAssertion(uint32_t uid)
-        : m_uid(uid)
-    {
-    }
-    uint32_t m_uid { ThreadLike::currentSequence() };
-#else
-    constexpr ThreadLikeAssertion(uint32_t)
-    {
-    }
+    uint32_t m_uid { Thread::current().uid() };
 #endif
-    friend void assertIsCurrent(const ThreadLikeAssertion&);
-    friend class ThreadLike;
+    friend void assertIsCurrent(const ThreadAssertion&);
 };
 
-inline void assertIsCurrent(const ThreadLikeAssertion& threadLikeAssertion) WTF_ASSERTS_ACQUIRED_CAPABILITY(threadLikeAssertion)
+inline void assertIsCurrent(const ThreadAssertion& threadAssertion) WTF_ASSERTS_ACQUIRED_CAPABILITY(threadAssertion)
 {
-    ASSERT_UNUSED(threadLikeAssertion, ThreadLike::currentSequence() == threadLikeAssertion.m_uid);
-}
-
-inline ThreadLikeAssertion ThreadLike::createThreadLikeAssertion(uint32_t uid)
-{
-    return ThreadLikeAssertion { uid };
+    ASSERT_UNUSED(threadAssertion, Thread::current().uid() == threadAssertion.m_uid);
 }
 
 // Type for globally named assertions for describing access requirements.
@@ -109,9 +85,20 @@ inline ThreadLikeAssertion ThreadLike::createThreadLikeAssertion(uint32_t uid)
 // }
 class WTF_CAPABILITY("is current") NamedAssertion { };
 
+// To be used with WTF_REQUIRES_CAPABILITY(mainThread). Symbol is undefined.
+extern NamedAssertion& mainThread;
+inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainThread) { ASSERT(isMainThread()); }
+
+// To be used with WTF_REQUIRES_CAPABILITY(mainRunLoop). Symbol is undefined.
+extern NamedAssertion& mainRunLoop;
+inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainRunLoop) { ASSERT(isMainRunLoop()); }
+
 }
 
-using WTF::ThreadLike;
-using WTF::ThreadLikeAssertion;
+using WTF::ThreadAssertion;
 using WTF::assertIsCurrent;
 using WTF::NamedAssertion;
+using WTF::assertIsMainThread;
+using WTF::assertIsMainRunLoop;
+using WTF::mainThread;
+using WTF::mainRunLoop;

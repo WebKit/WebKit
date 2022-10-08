@@ -1,4 +1,0 @@
-Foo	Hello
-
-PASS Can serialize a range which starts at the end of an element
-

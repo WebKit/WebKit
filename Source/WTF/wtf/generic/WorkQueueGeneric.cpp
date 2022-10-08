@@ -88,9 +88,9 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
 }
 
 #if ASSERT_ENABLED
-ThreadLikeAssertion WorkQueue::threadLikeAssertion() const
+void WorkQueue::assertIsCurrent() const
 {
-    return createThreadLikeAssertion(m_threadID);
+    ASSERT(m_threadID == Thread::current().uid());
 }
 #endif
 

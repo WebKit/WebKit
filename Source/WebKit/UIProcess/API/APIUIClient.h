@@ -201,6 +201,8 @@ public:
 
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 
+    virtual void didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit) { }
+    
     virtual void didShowSafeBrowsingWarning() { }
 
     virtual void confirmPDFOpening(WebKit::WebPageProxy&, const WTF::URL&, WebKit::FrameInfoData&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }

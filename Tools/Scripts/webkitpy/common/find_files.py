@@ -73,21 +73,13 @@ def _normalized_find(filesystem, paths, skipped_directories, file_filter, direct
           Glob patterns are ok.
     """
 
-    sort_fn = (lambda lst: sorted(lst, key=directory_sort_key)) if directory_sort_key else (lambda lst: lst[:])
+    def sort_by_directory_key(files_list):
+        if not directory_sort_key:
+            return files_list[:]
 
-    def sorted_paths_generator(path, function):
-        base_path, separator, variant = path.partition('?')
-        if not separator:
-            return sort_fn(function(base_path))
-        # This isn't perfect, you won't be able glob the variant parts of the test name,
-        # but this is ultimately a design flaw stemming from a layout test not being a file
-        result = ['{}{}{}'.format(part, separator, variant) for part in function(base_path)]
-        if result:
-            return sort_fn(result)
-        return sort_fn(function(path))
+        return sorted(files_list, key=directory_sort_key)
 
-    paths_to_walk = itertools.chain(*(sorted_paths_generator(path, filesystem.glob) for path in paths))
-    all_files = itertools.chain(*(sorted_paths_generator(
-        path, lambda p: filesystem.files_under(p, skipped_directories, file_filter),
-    ) for path in paths_to_walk))
+    paths_to_walk = itertools.chain(*(sort_by_directory_key(filesystem.glob(path)) for path in paths))
+
+    all_files = itertools.chain(*(sort_by_directory_key(filesystem.files_under(path, skipped_directories, file_filter)) for path in paths_to_walk))
     return all_files

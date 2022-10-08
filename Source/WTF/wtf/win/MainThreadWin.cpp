@@ -37,17 +37,17 @@
 
 namespace WTF {
 
-static ThreadIdentifier s_mainThread { 0 };
+static ThreadIdentifier mainThread { 0 };
 
 void initializeMainThreadPlatform()
 {
-    s_mainThread = Thread::currentID();
+    mainThread = Thread::currentID();
     Thread::initializeCurrentThreadInternal("Main Thread");
 }
 
 bool isMainThread()
 {
-    return s_mainThread == Thread::currentID();
+    return mainThread == Thread::currentID();
 }
 
 } // namespace WTF

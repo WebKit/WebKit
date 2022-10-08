@@ -68,6 +68,7 @@ class Encoder;
 //   FIXME: Maybe would be simpler implementation if it would use the "wrap" flag instead of the hole as the indicator.
 //   This would move the alignedSpan implementation to the StreamConnectionBuffer.
 // * All atomic variable loads are untrusted, so they're clamped. Violations are not reported, though.
+// See SharedDisplayListHandle.
 class StreamConnectionBuffer {
 public:
     explicit StreamConnectionBuffer(size_t memorySize);
@@ -78,7 +79,7 @@ public:
     size_t wrapOffset(size_t offset) const
     {
         ASSERT(offset <= dataSize());
-        if (offset >= dataSize())
+        if (offset == dataSize())
             return 0;
         return offset;
     }
@@ -129,8 +130,6 @@ private:
     };
     Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->data()); }
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
-
-    static constexpr bool sharedMemorySizeIsValid(size_t size) { return headerSize() < size && size <= headerSize() + maximumSize(); }
 
     size_t m_dataSize { 0 };
     Ref<WebKit::SharedMemory> m_sharedMemory;

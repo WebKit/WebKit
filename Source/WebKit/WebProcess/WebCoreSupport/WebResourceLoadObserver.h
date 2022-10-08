@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -96,4 +96,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(TRACKING_PREVENTION)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)

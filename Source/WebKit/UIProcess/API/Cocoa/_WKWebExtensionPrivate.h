@@ -29,10 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtension ()
 
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest;
-- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
-
-- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithManifestData:(NSData *)manifestData NS_DESIGNATED_INITIALIZER;
 
 @end
 

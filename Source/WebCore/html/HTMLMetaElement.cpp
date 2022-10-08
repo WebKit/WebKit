@@ -34,7 +34,7 @@
 #include "HTMLParserIdioms.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
-#include "MediaQueryParserContext.h"
+#include "MediaQueryParser.h"
 #include "RenderStyle.h"
 #include "Settings.h"
 #include "StyleResolveForDocument.h"

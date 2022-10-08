@@ -186,7 +186,6 @@ public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
-    void onSelectedChanged(Node*);
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
@@ -310,7 +309,6 @@ public:
         AXRowIndexChanged,
         AXRowSpanChanged,
         AXSelectedChildrenChanged,
-        AXSelectedCellChanged,
         AXSelectedStateChanged,
         AXSelectedTextChanged,
         AXSetSizeChanged,
@@ -500,6 +498,7 @@ private:
     bool shouldProcessAttributeChange(Element*, const QualifiedName&);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
+    void selectedStateChanged(Node*);
 
     void handleActiveDescendantChanged(Element&);
 

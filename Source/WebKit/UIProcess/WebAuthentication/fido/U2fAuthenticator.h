@@ -57,8 +57,7 @@ private:
     enum class CommandType : uint8_t {
         RegisterCommand,
         CheckOnlyCommand,
-        BogusCommandExcludeCredentialsMatch,
-        BogusCommandNoCredentials,
+        BogusCommand,
         SignCommand
     };
     void issueNewCommand(Vector<uint8_t>&& command, CommandType);
@@ -67,8 +66,7 @@ private:
     void responseReceived(Vector<uint8_t>&& response, CommandType);
     void continueRegisterCommandAfterResponseReceived(apdu::ApduResponse&&);
     void continueCheckOnlyCommandAfterResponseReceived(apdu::ApduResponse&&);
-    void continueBogusCommandExcludeCredentialsMatchAfterResponseReceived(apdu::ApduResponse&&);
-    void continueBogusCommandNoCredentialsAfterResponseReceived(apdu::ApduResponse&&);
+    void continueBogusCommandAfterResponseReceived(apdu::ApduResponse&&);
     void continueSignCommandAfterResponseReceived(apdu::ApduResponse&&);
 
     RunLoop::Timer<U2fAuthenticator> m_retryTimer;

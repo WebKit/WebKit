@@ -39,18 +39,22 @@
 namespace WebCore {
 
 AXIsolatedObject::AXIsolatedObject(const Ref<AXCoreObject>& axObject, AXIsolatedTree* tree)
-    : AXCoreObject(axObject->objectID())
-    , m_cachedTree(tree)
+    : m_cachedTree(tree)
+    , m_id(axObject->objectID())
 {
     ASSERT(isMainThread());
     ASSERT(is<AccessibilityObject>(axObject));
-    ASSERT(objectID().isValid());
 
     auto* axParent = axObject->parentObjectUnignored();
     m_parentID = axParent ? axParent->objectID() : AXID();
 
-    auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
-    initializeProperties(axObject, isRoot);
+    if (m_id.isValid()) {
+        auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
+        initializeProperties(axObject, isRoot);
+    } else {
+        // Should never happen under normal circumstances.
+        ASSERT_NOT_REACHED();
+    }
 }
 
 Ref<AXIsolatedObject> AXIsolatedObject::create(const Ref<AXCoreObject>& object, AXIsolatedTree* tree)
@@ -368,10 +372,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
 AccessibilityObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
-    ASSERT(objectID().isValid());
+
+    if (!m_id.isValid())
+        return nullptr;
 
     auto* axObjectCache = this->axObjectCache();
-    return axObjectCache ? axObjectCache->objectForID(objectID()) : nullptr;
+    return axObjectCache ? axObjectCache->objectForID(m_id) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
@@ -502,7 +508,7 @@ bool AXIsolatedObject::isDetachedFromParent()
 
     // Check whether this is the root node, in which case we should return false.
     if (auto root = tree()->rootNode())
-        return root->objectID() != objectID();
+        return root->objectID() != m_id;
     return false;
 }
 

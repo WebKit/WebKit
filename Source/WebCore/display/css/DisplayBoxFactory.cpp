@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DisplayBoxFactory.h"
 
-#include "CachedImage.h"
 #include "DisplayBoxClip.h"
 #include "DisplayBoxDecorationData.h"
 #include "DisplayBoxDecorationPainter.h"

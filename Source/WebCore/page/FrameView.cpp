@@ -1190,17 +1190,9 @@ void FrameView::forceLayoutParentViewIfNeeded()
     if (!contentBox)
         return;
 
-    if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(contentBox)) {
-        if (svgRoot->everHadLayout() && !svgRoot->needsLayout())
-            return;
-    }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(contentBox)) {
-        if (svgRoot->everHadLayout() && !svgRoot->needsLayout())
-            return;
-    }
-#endif
+    auto& svgRoot = downcast<LegacyRenderSVGRoot>(*contentBox);
+    if (svgRoot.everHadLayout() && !svgRoot.needsLayout())
+        return;
 
     LOG(Layout, "FrameView %p forceLayoutParentViewIfNeeded scheduling layout on parent FrameView %p", this, &ownerRenderer->view().frameView());
 
@@ -1327,13 +1319,8 @@ RenderBox* FrameView::embeddedContentBox() const
     RenderObject* firstChild = renderView->firstChild();
 
     // Curently only embedded SVG documents participate in the size-negotiation logic.
-    if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(firstChild))
-        return svgRoot;
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(firstChild))
-        return svgRoot;
-#endif
+    if (is<LegacyRenderSVGRoot>(firstChild))
+        return downcast<LegacyRenderSVGRoot>(firstChild);
 
     return nullptr;
 }

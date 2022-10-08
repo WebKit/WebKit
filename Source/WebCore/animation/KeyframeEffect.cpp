@@ -1195,11 +1195,8 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
 {
     bool animationChanged = animation != this->animation();
     AnimationEffect::setAnimation(animation);
-    if (animationChanged) {
-        if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSAnimation)
-            clearBlendingKeyframes();
+    if (animationChanged)
         updateEffectStackMembership();
-    }
 }
 
 const std::optional<const Styleable> KeyframeEffect::targetStyleable() const

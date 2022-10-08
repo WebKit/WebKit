@@ -40,7 +40,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
-#include "MediaQueryParserContext.h"
+#include "MediaQueryParser.h"
 #include "RenderView.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"

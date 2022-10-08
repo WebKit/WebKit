@@ -1,3 +1,0 @@
-
-PASS Selection must not be replaced with a new object after document.open()
-

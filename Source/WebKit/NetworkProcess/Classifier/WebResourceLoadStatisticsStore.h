@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "ArgumentCoders.h"
 #include "Decoder.h"

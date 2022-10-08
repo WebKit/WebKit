@@ -87,6 +87,7 @@ public:
 
     void setMemoryKillCallback(WTF::Function<void()>&& function) { m_memoryKillCallback = WTFMove(function); }
     void setMemoryPressureStatusChangedCallback(WTF::Function<void(MemoryPressureStatus)>&& function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
+    void setDidExceedInactiveLimitWhileActiveCallback(WTF::Function<void()>&& function) { m_didExceedInactiveLimitWhileActiveCallback = WTFMove(function); }
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
@@ -249,6 +250,8 @@ private:
     void measurementTimerFired();
     void shrinkOrDie(size_t killThreshold);
     void setMemoryUsagePolicyBasedOnFootprint(size_t);
+    void doesExceedInactiveLimitWhileActive();
+    void doesNotExceedInactiveLimitWhileActive();
 
     unsigned m_pageCount { 0 };
 
@@ -256,6 +259,7 @@ private:
     bool m_installed { false };
     bool m_isSimulatingMemoryPressure { false };
     bool m_shouldLogMemoryMemoryPressureEvents { true };
+    bool m_hasInvokedDidExceedInactiveLimitWhileActiveCallback { false };
 
     WebsamProcessState m_processState { WebsamProcessState::Inactive };
     
@@ -264,6 +268,7 @@ private:
     std::unique_ptr<RunLoop::Timer<MemoryPressureHandler>> m_measurementTimer;
     WTF::Function<void()> m_memoryKillCallback;
     WTF::Function<void(MemoryPressureStatus)> m_memoryPressureStatusChangedCallback;
+    WTF::Function<void()> m_didExceedInactiveLimitWhileActiveCallback;
     LowMemoryHandler m_lowMemoryHandler;
 
     Configuration m_configuration;

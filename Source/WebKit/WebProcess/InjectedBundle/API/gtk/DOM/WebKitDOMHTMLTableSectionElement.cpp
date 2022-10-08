@@ -26,7 +26,6 @@
 #include <WebCore/Document.h>
 #include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLNames.h>
-#include <WebCore/HTMLTableRowElement.h>
 #include <WebCore/JSExecState.h>
 #include "GObjectEventListener.h"
 #include "WebKitDOMEventPrivate.h"

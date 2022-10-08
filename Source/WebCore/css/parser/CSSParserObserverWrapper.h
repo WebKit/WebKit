@@ -30,7 +30,6 @@
 #pragma once
 
 #include "CSSParserObserver.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

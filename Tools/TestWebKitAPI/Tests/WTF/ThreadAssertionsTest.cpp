@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include <wtf/ThreadAssertions.h>
 
 #include "Utilities.h"
-#include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/ThreadAssertions.h> // NOLINT: check-webkit-style has problems with files that do not have primary header.
 
 namespace TestWebKitAPI {
 namespace {
@@ -49,7 +48,7 @@ public:
 private:
     int doTaskImpl(int n) WTF_REQUIRES_CAPABILITY(m_ownerThread) { return n + 1; }
     int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };
-    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerThread;
+    NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
 };
 }
 

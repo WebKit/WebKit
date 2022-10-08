@@ -84,11 +84,6 @@ void AXLogger::log(const char* message)
         LOG(Accessibility, "%s", message);
 }
 
-void AXLogger::log(const AXCoreObject& object)
-{
-    log(const_cast<AXCoreObject*>(&object));
-}
-
 void AXLogger::log(RefPtr<AXCoreObject> object)
 {
     if (shouldLog()) {
@@ -479,9 +474,6 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
         stream << "AXSelectedChildrenChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSelectedCellChanged:
-        stream << "AXSelectedCellChanged";
         break;
     case AXObjectCache::AXNotification::AXSelectedStateChanged:
         stream << "AXSelectedStateChanged";
