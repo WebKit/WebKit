@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <wtf/ThreadSafetyAnalysis.h>
 
 namespace WTF {
