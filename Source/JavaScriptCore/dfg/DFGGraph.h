@@ -431,6 +431,23 @@ public:
     }
 #endif
 
+    bool variadicArithShouldSpeculateInt32(Node* node, PredictionPass pass)
+    {
+        bool result = true;
+        RareCaseProfilingSource source = AllRareCases;
+        if (pass == PrimaryPass)
+            source = DFGRareCase;
+
+        doToChildren(node, [&](Edge& child) {
+            if (!child->shouldSpeculateInt32OrBooleanForArithmetic())
+                result = false;
+            if (child->sawBooleans())
+                source = DFGRareCase;
+        });
+
+        return result && node->canSpeculateInt32(source);
+    }
+
     bool canOptimizeStringObjectAccess(const CodeOrigin&);
 
     bool getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue);

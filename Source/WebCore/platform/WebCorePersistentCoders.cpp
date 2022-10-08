@@ -526,7 +526,7 @@ std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decod
     WebCore::ResourceResponse response;
     if (!WebCore::ResourceResponseBase::decode(decoder, response))
         return std::nullopt;
-    return WTFMove(response);
+    return response;
 }
 
 void Coder<WebCore::FetchOptions>::encode(Encoder& encoder, const WebCore::FetchOptions& instance)
@@ -539,7 +539,7 @@ std::optional<WebCore::FetchOptions> Coder<WebCore::FetchOptions>::decode(Decode
     WebCore::FetchOptions options;
     if (!WebCore::FetchOptions::decodePersistent(decoder, options))
         return std::nullopt;
-    return WTFMove(options);
+    return options;
 }
 
 // Store common HTTP headers as strings instead of using their value in the HTTPHeaderName enumeration

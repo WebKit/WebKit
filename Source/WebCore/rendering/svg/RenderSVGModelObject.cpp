@@ -203,7 +203,7 @@ LayoutSize RenderSVGModelObject::offsetFromContainer(RenderElement& container, c
     return locationOffsetEquivalent();
 }
 
-void RenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
+void RenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const
 {
     auto repaintBoundingBox = enclosingLayoutRect(repaintRectInLocalCoordinates());
     if (repaintBoundingBox.size().isEmpty())

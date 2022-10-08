@@ -370,15 +370,19 @@ private:
         }
         case ArithMin:
         case ArithMax: {
-            SpeculatedType left = node->child1()->prediction();
-            SpeculatedType right = node->child2()->prediction();
-            
-            if (left && right) {
-                if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
-                    && node->canSpeculateInt32(m_pass))
+            bool unknownPrediction = false;
+            SpeculatedType prediction = SpecNone;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                if (!child->prediction())
+                    unknownPrediction = true;
+                prediction = mergeSpeculations(prediction, child->prediction());
+            });
+
+            if (!unknownPrediction) {
+                if (m_graph.variadicArithShouldSpeculateInt32(node, m_pass))
                     changed |= mergePrediction(SpecInt32Only);
                 else
-                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
+                    changed |= mergePrediction(speculatedDoubleTypeForPrediction(prediction));
             }
             break;
         }
@@ -701,7 +705,20 @@ private:
         }
 
         case ArithMin:
-        case ArithMax:
+        case ArithMax: {
+            bool shouldVoteDouble = true;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                if (!isFullNumberSpeculation(child->prediction()))
+                    shouldVoteDouble = false;
+            });
+
+            DoubleBallot ballot = shouldVoteDouble && !m_graph.variadicArithShouldSpeculateInt32(node, m_pass) ? VoteDouble : VoteValue;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                m_graph.voteNode(child, ballot, weight);
+            });
+            break;
+        }
+
         case ArithMod:
         case ValueDiv:
         case ValueMod:

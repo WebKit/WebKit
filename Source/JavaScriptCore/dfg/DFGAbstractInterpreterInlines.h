@@ -1172,29 +1172,54 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case ArithMin: {
-        JSValue left = forNode(node->child1()).value();
-        JSValue right = forNode(node->child2()).value();
-        switch (node->binaryUseKind()) {
-        case Int32Use:
-            if (left && right && left.isInt32() && right.isInt32()) {
-                setConstant(node, jsNumber(std::min(left.asInt32(), right.asInt32())));
+        switch (m_graph.child(node, 0).useKind()) {
+        case Int32Use: {
+            std::optional<int32_t> result;
+            bool found = true;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                JSValue constant = forNode(child).value();
+                if (!constant || !constant.isInt32()) {
+                    found = false;
+                    return;
+                }
+                if (!result)
+                    result = constant.asInt32();
+                else
+                    result = std::min(result.value(), constant.asInt32());
+            });
+            if (found && result) {
+                setConstant(node, jsNumber(result.value()));
                 break;
             }
             setNonCellTypeForNode(node, SpecInt32Only);
             break;
-        case DoubleRepUse:
-            if (left && right && left.isNumber() && right.isNumber()) {
-                double a = left.asNumber();
-                double b = right.asNumber();
-                // The spec for Math.min states that +0 is considered to be larger than -0.
-                double result = a < b || (!a && !b && std::signbit(a)) ? a : (b <= a ? b : a + b);
-                setConstant(node, jsDoubleNumber(result));
+        }
+        case DoubleRepUse: {
+            std::optional<double> result;
+            bool found = true;
+            SpeculatedType type = SpecNone;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                type = typeOfDoubleMinMax(type, forNode(child).m_type);
+                JSValue constant = forNode(child).value();
+                if (!constant || !constant.isNumber()) {
+                    found = false;
+                    return;
+                }
+                if (!result)
+                    result = constant.asNumber();
+                else {
+                    double a = result.value();
+                    double b = constant.asNumber();
+                    result = a < b || (!a && !b && std::signbit(a)) ? a : (b <= a ? b : a + b);
+                }
+            });
+            if (found && result) {
+                setConstant(node, jsDoubleNumber(result.value()));
                 break;
             }
-            setNonCellTypeForNode(node, 
-                typeOfDoubleMinMax(
-                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
+            setNonCellTypeForNode(node, type);
             break;
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -1203,29 +1228,54 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case ArithMax: {
-        JSValue left = forNode(node->child1()).value();
-        JSValue right = forNode(node->child2()).value();
-        switch (node->binaryUseKind()) {
-        case Int32Use:
-            if (left && right && left.isInt32() && right.isInt32()) {
-                setConstant(node, jsNumber(std::max(left.asInt32(), right.asInt32())));
+        switch (m_graph.child(node, 0).useKind()) {
+        case Int32Use: {
+            std::optional<int32_t> result;
+            bool found = true;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                JSValue constant = forNode(child).value();
+                if (!constant || !constant.isInt32()) {
+                    found = false;
+                    return;
+                }
+                if (!result)
+                    result = constant.asInt32();
+                else
+                    result = std::max(result.value(), constant.asInt32());
+            });
+            if (found && result) {
+                setConstant(node, jsNumber(result.value()));
                 break;
             }
             setNonCellTypeForNode(node, SpecInt32Only);
             break;
-        case DoubleRepUse:
-            if (left && right && left.isNumber() && right.isNumber()) {
-                double a = left.asNumber();
-                double b = right.asNumber();
-                // The spec for Math.max states that +0 is considered to be larger than -0.
-                double result = a > b || (!a && !b && !std::signbit(a)) ? a : (b >= a ? b : a + b);
-                setConstant(node, jsDoubleNumber(result));
+        }
+        case DoubleRepUse: {
+            std::optional<double> result;
+            bool found = true;
+            SpeculatedType type = SpecNone;
+            m_graph.doToChildren(node, [&](Edge& child) {
+                type = typeOfDoubleMinMax(type, forNode(child).m_type);
+                JSValue constant = forNode(child).value();
+                if (!constant || !constant.isNumber()) {
+                    found = false;
+                    return;
+                }
+                if (!result)
+                    result = constant.asNumber();
+                else {
+                    double a = result.value();
+                    double b = constant.asNumber();
+                    result = a > b || (!a && !b && !std::signbit(a)) ? a : (b >= a ? b : a + b);
+                }
+            });
+            if (found && result) {
+                setConstant(node, jsDoubleNumber(result.value()));
                 break;
             }
-            setNonCellTypeForNode(node, 
-                typeOfDoubleMinMax(
-                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
+            setNonCellTypeForNode(node, type);
             break;
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

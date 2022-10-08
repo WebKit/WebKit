@@ -73,7 +73,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         }
     }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(request))
         blockCookies();
 #endif
@@ -367,7 +367,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         }
     }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (!m_blockingCookies && shouldBlockCookies(request))
         blockCookies();
 #endif
@@ -548,21 +548,21 @@ String NetworkDataTaskCurl::suggestedFilename() const
 
 void NetworkDataTaskCurl::blockCookies()
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     m_blockingCookies = true;
 #endif
 }
 
 void NetworkDataTaskCurl::unblockCookies()
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     m_blockingCookies = false;
 #endif
 }
 
 bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& request)
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
 
     if (!shouldBlockCookies && m_session->networkStorageSession())

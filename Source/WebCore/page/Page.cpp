@@ -129,6 +129,7 @@
 #include "ResourceUsageOverlay.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGImage.h"
+#include "ScreenOrientationManager.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptRunner.h"

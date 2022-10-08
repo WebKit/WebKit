@@ -112,6 +112,18 @@ std::optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
     return getFileSizeFromByHandleFileInformationStructure(fileInformation);
 }
 
+std::optional<PlatformFileID> fileID(PlatformFileHandle fileHandle)
+{
+    // FIXME (246118): Implement this function properly.
+    return std::nullopt;
+}
+
+bool fileIDsAreEqual(std::optional<PlatformFileID> a, std::optional<PlatformFileID> b)
+{
+    // FIXME (246118): Implement this function properly.
+    return true;
+}
+
 std::optional<WallTime> fileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;

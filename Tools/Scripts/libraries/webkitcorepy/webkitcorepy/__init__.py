@@ -44,7 +44,7 @@ from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 13, 15)
+version = Version(0, 13, 16)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

@@ -41,7 +41,7 @@ class PlatformMouseEvent;
 class WeakPtrImplWithEventTargetData;
 struct SecurityOriginData;
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 class RegistrableDomain;
 enum class StorageAccessWasGranted : bool;
 #endif
@@ -144,7 +144,7 @@ public:
     WEBCORE_EXPORT bool blocksReturnToFullscreenFromPictureInPictureQuirk() const;
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
     static const String& BBCRadioPlayerURLString();

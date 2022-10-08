@@ -53,7 +53,7 @@ class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
 WebCookieJar::WebCookieJar()
     : WebCore::CookieJar(adoptRef(*new WebStorageSessionProvider)) { }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ShouldAskITP& shouldAskITPInNetworkProcess)
 {
     if (!WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
@@ -131,7 +131,7 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
         return { };
 
     ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
         return { };
 #endif
@@ -157,7 +157,7 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
         return;
 
     ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
         return;
 #endif
@@ -203,7 +203,7 @@ bool WebCookieJar::cookiesEnabled(const Document& document) const
     if (!webFrame || !webFrame->page())
         return false;
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     ShouldAskITP dummy;
     if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), document.cookieURL(), dummy))
         return false;
@@ -216,7 +216,7 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
 {
     ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
     auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(webFrame, firstParty, url, shouldAskITPInNetworkProcess))
         return { };
 #endif
@@ -233,7 +233,7 @@ bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& u
 {
     auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
         return { };
 #endif

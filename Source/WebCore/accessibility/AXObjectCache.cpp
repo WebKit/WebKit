@@ -1225,7 +1225,7 @@ void AXObjectCache::notificationPostTimerFired()
     notificationsToPost.reserveInitialCapacity(notifications.size());
     for (const auto& note : notifications) {
         ASSERT(note.first);
-        if (!note.first->objectID() || !note.first->axObjectCache())
+        if (note.first->isDetached() || !note.first->axObjectCache())
             continue;
 
 #ifndef NDEBUG
@@ -1434,12 +1434,16 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
     postNotification(renderer, AXSelectedChildrenChanged, PostTarget::ObservableParent);
 }
 
-void AXObjectCache::selectedStateChanged(Node* node)
+static bool isARIATableCell(Node* node)
 {
-    // For a table cell, post AXSelectedStateChanged on the cell itself.
-    // For any other element, post AXSelectedChildrenChanged on the parent.
-    if (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s)
-        || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s))
+    return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
+}
+
+void AXObjectCache::onSelectedChanged(Node* node)
+{
+    if (isARIATableCell(node))
+        postNotification(node, AXSelectedCellChanged);
+    else if (is<HTMLOptionElement>(node))
         postNotification(node, AXSelectedStateChanged);
     else
         selectedChildrenChanged(node);
@@ -2101,7 +2105,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_relevantAttr)
         postNotification(element, AXLiveRegionRelevantChanged);
     else if (attrName == aria_selectedAttr)
-        selectedStateChanged(element);
+        onSelectedChanged(element);
     else if (attrName == aria_setsizeAttr)
         postNotification(element, AXSetSizeChanged);
     else if (attrName == aria_expandedAttr)
@@ -2498,7 +2502,7 @@ void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMar
         vpOffset = deepPos.deprecatedEditingOffset();
     }
     
-    textMarkerData.axID = obj.get()->objectID();
+    textMarkerData.axID = obj->objectID();
     textMarkerData.node = domNode;
     textMarkerData.characterOffset = characterOffset.offset;
     textMarkerData.characterStartIndex = characterOffset.startIndex;
@@ -2791,7 +2795,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     TextMarkerData textMarkerData;
     memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
     
-    textMarkerData.axID = obj.get()->objectID();
+    textMarkerData.axID = obj->objectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
     textMarkerData.anchorType = deepPos.anchorType();
@@ -2824,7 +2828,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTex
     TextMarkerData textMarkerData;
     memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
     
-    textMarkerData.axID = obj.get()->objectID();
+    textMarkerData.axID = obj->objectID();
     textMarkerData.node = &textControl;
 
     cache->setNodeInUse(&textControl);
@@ -3653,7 +3657,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
 
     for (const auto& notification : notifications) {
         AXLOG(notification);
-        if (!notification.first || !notification.first->objectID().isValid())
+        if (!notification.first || notification.first->isDetached())
             continue;
 
         switch (notification.second) {
@@ -3713,6 +3717,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
+        case AXSelectedCellChanged:
         case AXSelectedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;

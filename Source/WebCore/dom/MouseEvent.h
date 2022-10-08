@@ -45,7 +45,7 @@ class MouseEvent : public MouseRelatedEvent {
     WTF_MAKE_ISO_ALLOCATED(MouseEvent);
 public:
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
-        const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, short button, unsigned short buttons,
+        const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, short button, unsigned short buttons,
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, int detail, Node* relatedTarget);
@@ -89,11 +89,11 @@ public:
 
 protected:
     MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
-        const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, short button, unsigned short buttons,
+        const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, short button, unsigned short buttons,
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated, IsTrusted);
 
     MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
-        const IntPoint& screenLocation, const IntPoint& clientLocation, const IntPoint& movementDelta, OptionSet<Modifier>, short button, unsigned short buttons,
+        const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY, OptionSet<Modifier>, short button, unsigned short buttons,
         unsigned short syntheticClickType, EventTarget* relatedTarget);
 
     MouseEvent(const AtomString& type, const MouseEventInit&);

@@ -229,25 +229,6 @@ void MemoryPressureHandler::measurementTimerFired()
         releaseMemory(Critical::Yes, Synchronous::No);
         break;
     }
-
-    if (processState() == WebsamProcessState::Active && footprint > thresholdForMemoryKillOfInactiveProcess(m_pageCount))
-        doesExceedInactiveLimitWhileActive();
-    else
-        doesNotExceedInactiveLimitWhileActive();
-}
-
-void MemoryPressureHandler::doesExceedInactiveLimitWhileActive()
-{
-    if (m_hasInvokedDidExceedInactiveLimitWhileActiveCallback)
-        return;
-    if (m_didExceedInactiveLimitWhileActiveCallback)
-        m_didExceedInactiveLimitWhileActiveCallback();
-    m_hasInvokedDidExceedInactiveLimitWhileActiveCallback = true;
-}
-
-void MemoryPressureHandler::doesNotExceedInactiveLimitWhileActive()
-{
-    m_hasInvokedDidExceedInactiveLimitWhileActiveCallback = false;
 }
 
 void MemoryPressureHandler::setProcessState(WebsamProcessState state)

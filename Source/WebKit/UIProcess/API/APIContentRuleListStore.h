@@ -54,7 +54,7 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     // This should be incremented every time a functional change is made to the bytecode, file format, etc.
     // to prevent crashing while loading old data.
-    static constexpr uint32_t CurrentContentRuleListFileVersion = 15;
+    static constexpr uint32_t CurrentContentRuleListFileVersion = 16;
 
     static ContentRuleListStore& defaultStore();
     static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);

@@ -96,7 +96,7 @@ static bool experimentalFeatureEnabled(const String& key, bool defaultValue = fa
     return defaultValue;
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
 {
     if (!m_thirdPartyCookieBlockingMode) {
@@ -118,7 +118,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     auto sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::No;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (experimentalFeatureEnabled(WebPreferencesKey::isSameSiteStrictEnforcementEnabledKey()))
         sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::Yes;
 
@@ -144,7 +144,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
     shouldLogCookieInformation = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
-#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#endif // ENABLE(TRACKING_PREVENTION)
 
     URL httpProxy = m_configuration->httpProxy();
     URL httpsProxy = m_configuration->httpsProxy();
@@ -231,13 +231,40 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
     WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
 }
 
-NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
-NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
-NSString *WebKitMediaCacheDirectoryDefaultsKey = @"WebKitMediaCacheDirectory";
-NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageDirectory";
-
-String WebsiteDataStore::defaultApplicationCacheDirectory(const String&)
+String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const String& identifier)
 {
+    static dispatch_once_t onceToken;
+    static NeverDestroyed<RetainPtr<NSURL>> websiteDataStoreDirectory;
+    dispatch_once(&onceToken, ^{
+        NSURL *libraryDirectory = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        RELEASE_ASSERT(libraryDirectory);
+        NSURL *webkitDirectory = [libraryDirectory URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+        if (!WebKit::processHasContainer()) {
+            NSString *applicationIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!applicationIdentifier)
+                applicationIdentifier = [NSProcessInfo processInfo].processName;
+            webkitDirectory = [webkitDirectory URLByAppendingPathComponent:applicationIdentifier isDirectory:YES];
+        }
+
+        websiteDataStoreDirectory.get() = [webkitDirectory URLByAppendingPathComponent:@"WebsiteDataStore" isDirectory:YES];
+    });
+
+    return [websiteDataStoreDirectory.get() URLByAppendingPathComponent:identifier isDirectory:YES].absoluteURL.path;
+}
+
+String WebsiteDataStore::defaultCookieStorageFile(const String& baseDirectory)
+{
+    if (baseDirectory.isEmpty())
+        return { };
+
+    return FileSystem::pathByAppendingComponents(baseDirectory, { "Cookies"_s, "Cookies.binarycookies"_s });
+}
+
+String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseDirectory)
+{
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "ApplicationCache"_s);
+
 #if PLATFORM(IOS_FAMILY)
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
     // Preserving it avoids the need to migrate data when upgrading.
@@ -250,18 +277,23 @@ String WebsiteDataStore::defaultApplicationCacheDirectory(const String&)
     }
 #endif
 
-    return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache"_s);
+    return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache"_s, { }, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultCacheStorageDirectory(const String&)
+String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "CacheStorage"_s);
+
     return cacheDirectoryFileSystemRepresentation("CacheStorage"_s);
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory(const String&)
+String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDirectory)
 {
-    auto directory = websiteDataDirectoryFileSystemRepresentation("Default"_s);
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "Origins"_s);
 
+    auto directory = websiteDataDirectoryFileSystemRepresentation("Default"_s);
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // This is the old storage directory, and there might be files left here.
@@ -284,69 +316,108 @@ String WebsiteDataStore::defaultGeneralStorageDirectory(const String&)
     return directory;
 }
 
-String WebsiteDataStore::defaultNetworkCacheDirectory(const String&)
+String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "NetworkCache"_s);
+
     return cacheDirectoryFileSystemRepresentation("NetworkCache"_s);
 }
 
-String WebsiteDataStore::defaultAlternativeServicesDirectory(const String&)
+String WebsiteDataStore::defaultAlternativeServicesDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "AlternativeServices"_s);
+
     return cacheDirectoryFileSystemRepresentation("AlternativeServices"_s, { }, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultHSTSStorageDirectory(const String&)
+String WebsiteDataStore::defaultHSTSStorageDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "HSTS"_s);
+
     return cacheDirectoryFileSystemRepresentation("HSTS"_s);
 }
 
-String WebsiteDataStore::defaultMediaCacheDirectory(const String&)
+String WebsiteDataStore::defaultMediaCacheDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "MediaCache"_s);
+
     return tempDirectoryFileSystemRepresentation("MediaCache"_s);
 }
 
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String&)
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "IndexedDB"_s);
+
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s);
 }
 
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String&)
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "ServiceWorkers"_s);
+
     return cacheDirectoryFileSystemRepresentation("ServiceWorkers"_s);
 }
 
-String WebsiteDataStore::defaultLocalStorageDirectory(const String&)
+String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "LocalStorage"_s);
+
     return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_s);
 }
 
-String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String&)
+String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "MediaKeys"_s);
+
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys"_s);
 }
 
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "DeviceIdHashSalts"_s);
+
     return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts"_s);
 }
 
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String&)
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "WebSQL"_s);
+
     return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, { }, ShouldCreateDirectory::No);
 }
 
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String&)
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "ResourceLoadStatistics"_s);
+
     return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_s);
 }
 
-String WebsiteDataStore::defaultJavaScriptConfigurationDirectory(const String&)
+String WebsiteDataStore::defaultJavaScriptConfigurationDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "JavaScriptCoreDebug"_s);
+
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug"_s, ShouldCreateDirectory::No);
 }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-String WebsiteDataStore::defaultModelElementCacheDirectory(const String&)
+String WebsiteDataStore::defaultModelElementCacheDirectory(const String& baseDirectory)
 {
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "ModelElement"_s);
+
     return tempDirectoryFileSystemRepresentation("ModelElement"_s, ShouldCreateDirectory::No);
 }
 #endif

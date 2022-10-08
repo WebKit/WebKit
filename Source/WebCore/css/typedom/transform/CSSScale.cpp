@@ -152,12 +152,16 @@ ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
     if (!is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
         return Exception { TypeError };
 
+    TransformationMatrix matrix { };
+
     auto x = downcast<CSSUnitValue>(m_x.get()).value();
     auto y = downcast<CSSUnitValue>(m_y.get()).value();
     auto z = downcast<CSSUnitValue>(m_z.get()).value();
 
-    TransformationMatrix matrix { };
-    matrix.scale3d(x, y, z);
+    if (is2D())
+        matrix.scaleNonUniform(x, y);
+    else
+        matrix.scale3d(x, y, z);
 
     return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }

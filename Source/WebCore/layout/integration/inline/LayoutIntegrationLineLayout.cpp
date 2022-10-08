@@ -71,15 +71,15 @@ namespace LayoutIntegration {
 
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
-    , m_layoutState(flow.document(), rootLayoutBox(), Layout::LayoutState::FormattingContextIntegrationType::Inline)
-    , m_inlineFormattingState(m_layoutState.ensureInlineFormattingState(rootLayoutBox()))
+    , m_layoutState(flow.view().ensureLayoutState())
+    , m_inlineFormattingState(layoutState().ensureInlineFormattingState(rootLayoutBox()))
 {
-    m_layoutState.setIsIntegratedRootBoxFirstChild(flow.parent()->firstChild() == &flow);
 }
 
 LineLayout::~LineLayout()
 {
     clearInlineContent();
+    layoutState().destroyInlineFormattingState(rootLayoutBox());
 }
 
 RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
@@ -173,7 +173,7 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
 
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(listMarker);
     if (layoutBox.isListMarkerOutside()) {
-        auto& rootGeometry = m_layoutState.geometryForRootBox();
+        auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox());
         auto& listMarkerGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
         auto horizontalMargin = listMarkerGeometry.horizontalMargin();
         auto outsideOffset = rootGeometry.paddingStart().value_or(0_lu) + rootGeometry.borderStart();
@@ -276,7 +276,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 {
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(replacedOrInlineBlock);
 
-    auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(layoutBox);
+    auto& replacedBoxGeometry = layoutState().ensureGeometryForBox(layoutBox);
     auto scrollbarSize = scrollbarLogicalSize(replacedOrInlineBlock);
     replacedBoxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
     replacedBoxGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
@@ -327,7 +327,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)
 {
     // This is just a box geometry reset (see InlineFormattingContext::layoutInFlowContent).
-    auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(lineBreakBox));
+    auto& boxGeometry = layoutState().ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(lineBreakBox));
 
     boxGeometry.setHorizontalMargin({ });
     boxGeometry.setBorder({ });
@@ -338,7 +338,7 @@ void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBo
 
 void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
 {
-    auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(renderInline));
+    auto& boxGeometry = layoutState().ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(renderInline));
 
     // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
     auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
@@ -387,7 +387,7 @@ void LineLayout::layout()
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
 
-    auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox);
+    auto& rootGeometry = layoutState().geometryForBox(rootLayoutBox);
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
 
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
@@ -405,7 +405,7 @@ void LineLayout::constructContent()
     inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
     ASSERT(m_inlineContent);
 
-    auto& rootGeometry = m_layoutState.geometryForRootBox();
+    auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox());
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();
     auto isLeftToRightFloatingStateInlineDirection = m_inlineFormattingState.floatingState().isLeftToRightDirection();
@@ -477,10 +477,10 @@ void LineLayout::updateFormattingRootGeometryAndInvalidate()
         root.setVerticalMargin({ });
     };
     auto& rootLayoutBox = this->rootLayoutBox();
-    if (!m_layoutState.hasBoxGeometry(rootLayoutBox))
-        return updateGeometry(m_layoutState.ensureGeometryForBox(rootLayoutBox));
+    if (!layoutState().hasBoxGeometry(rootLayoutBox))
+        return updateGeometry(layoutState().ensureGeometryForBox(rootLayoutBox));
 
-    auto& rootGeometry = m_layoutState.geometryForRootBox();
+    auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox);
     auto newLogicalWidth = flow.contentLogicalWidth();
     if (newLogicalWidth != rootGeometry.contentBoxWidth())
         Layout::InlineInvalidation(ensureLineDamage()).horizontalConstraintChanged();
@@ -489,7 +489,6 @@ void LineLayout::updateFormattingRootGeometryAndInvalidate()
 
 void LineLayout::prepareLayoutState()
 {
-    m_layoutState.setViewportSize(flow().frame().view()->size());
 }
 
 void LineLayout::prepareFloatingState()
@@ -500,7 +499,7 @@ void LineLayout::prepareFloatingState()
     if (!flow().containsFloats())
         return;
 
-    auto& rootGeometry = m_layoutState.geometryForRootBox();
+    auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox());
     auto isHorizontalWritingMode = flow().containingBlock() ? flow().containingBlock()->style().isHorizontalWritingMode() : true;
     auto floatingStateIsLeftToRightInlineDirection = flow().containingBlock() ? flow().containingBlock()->style().isLeftToRightDirection() : true;
     floatingState.setIsLeftToRightDirection(floatingStateIsLeftToRightInlineDirection);

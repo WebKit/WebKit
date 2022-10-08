@@ -35,13 +35,20 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
+#import "CocoaImage.h"
+
 OBJC_CLASS NSArray;
 OBJC_CLASS NSBundle;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSMutableArray;
+OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
+#endif
+
+#if PLATFORM(MAC)
+#include <Security/CSCommon.h>
 #endif
 
 namespace WebKit {
@@ -59,19 +66,22 @@ public:
 #if PLATFORM(COCOA)
     explicit WebExtension(NSBundle *appExtensionBundle);
     explicit WebExtension(NSURL *resourceBaseURL);
-    explicit WebExtension(NSDictionary *manifest);
-    explicit WebExtension(NSData *manifestData);
+    explicit WebExtension(NSDictionary *manifest, NSDictionary *resources);
+    explicit WebExtension(NSDictionary *resources);
 #endif
 
     ~WebExtension() { }
 
+    enum class CacheResult : bool { No, Yes };
     enum class SuppressNotification : bool { No, Yes };
 
     enum class Error : uint8_t {
         Unknown,
-        ManifestNotFound,
+        ResourceNotFound,
+        InvalidResourceCodeSignature,
         InvalidManifest,
         UnsupportedManifestVersion,
+        InvalidAction,
         InvalidActionIcon,
         InvalidBackgroundContent,
         InvalidBackgroundPersistence,
@@ -123,6 +133,14 @@ public:
     double manifestVersion();
     bool usesManifestVersion(double version) { return manifestVersion() >= version; }
 
+#if PLATFORM(MAC)
+    SecStaticCodeRef bundleStaticCode();
+    bool validateResourceData(NSURL *, NSData *, NSError **);
+#endif
+
+    NSURL *resourceFileURLForPath(NSString *);
+    NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No);
+
     NSString *webProcessDisplayName();
 
     NSString *displayName();
@@ -130,6 +148,18 @@ public:
     NSString *displayVersion();
     NSString *displayDescription();
     NSString *version();
+
+    CocoaImage *icon(CGSize idealSize);
+
+    CocoaImage *actionIcon(CGSize idealSize);
+    NSString *displayActionLabel();
+    NSString *actionPopupPath();
+
+    CocoaImage *imageForPath(NSString *);
+
+    NSString *pathForBestImageInIconsDictionary(NSDictionary *, size_t idealPixelSize);
+    CocoaImage *bestImageInIconsDictionary(NSDictionary *, size_t idealPointSize);
+    CocoaImage *bestImageForIconsDictionaryManifestKey(NSDictionary *, NSString *manifestKey, CGSize idealSize, RetainPtr<CocoaImage>& cacheLocation, Error, NSString *customLocalizedDescription);
 
     bool hasBackgroundContent();
     bool backgroundContentIsPersistent();
@@ -155,7 +185,7 @@ public:
     // Combined origin set that includes permissions origins and injected content patterns from the manifest.
     const HashSet<Ref<WebExtensionMatchPattern>>&& allRequestedOrigins();
 
-    static NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+    NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
     // If an error can't be synchronously determined by one of the populate methods in the errors() getter,
     // then the caller of recordError() should pass SuppressNotification::No.
@@ -169,6 +199,7 @@ private:
     bool parseManifest(NSData *);
 
     void populateDisplayStringsIfNeeded();
+    void populateActionPropertiesIfNeeded();
     void populateBackgroundPropertiesIfNeeded();
     void populateContentScriptPropertiesIfNeeded();
     void populatePermissionsPropertiesIfNeeded();
@@ -178,10 +209,15 @@ private:
     HashSet<Ref<WebExtensionMatchPattern>> m_permissionOrigins;
     HashSet<Ref<WebExtensionMatchPattern>> m_optionalPermissionOrigins;
 
+#if PLATFORM(MAC)
+    RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
+#endif
+
 #if PLATFORM(COCOA)
     RetainPtr<NSBundle> m_bundle;
     RetainPtr<NSURL> m_resourceBaseURL;
     RetainPtr<NSDictionary> m_manifest;
+    RetainPtr<NSMutableDictionary> m_resources;
 
     RetainPtr<NSMutableArray> m_errors;
 
@@ -190,6 +226,13 @@ private:
     RetainPtr<NSString> m_displayVersion;
     RetainPtr<NSString> m_displayDescription;
     RetainPtr<NSString> m_version;
+
+    RetainPtr<CocoaImage> m_icon;
+
+    RetainPtr<NSDictionary> m_actionDictionary;
+    RetainPtr<CocoaImage> m_actionIcon;
+    RetainPtr<NSString> m_displayActionLabel;
+    RetainPtr<NSString> m_actionPopupPath;
 
     RetainPtr<NSArray> m_backgroundScriptPaths;
     RetainPtr<NSString> m_backgroundPagePath;
@@ -202,6 +245,7 @@ private:
 
     bool m_parsedManifest = false;
     bool m_parsedManifestDisplayStrings = false;
+    bool m_parsedManifestActionProperties = false;
     bool m_parsedManifestBackgroundProperties = false;
     bool m_parsedManifestContentScriptProperties = false;
     bool m_parsedManifestPermissionProperties = false;

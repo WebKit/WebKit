@@ -190,6 +190,20 @@ std::optional<WallTime> fileCreationTime(const String& path)
 #endif
 }
 
+std::optional<PlatformFileID> fileID(PlatformFileHandle handle)
+{
+    struct stat fileInfo;
+    if (fstat(handle, &fileInfo))
+        return std::nullopt;
+
+    return fileInfo.st_ino;
+}
+
+bool fileIDsAreEqual(std::optional<PlatformFileID> a, std::optional<PlatformFileID> b)
+{
+    return a == b;
+}
+
 std::optional<uint32_t> volumeFileBlockSize(const String& path)
 {
     struct statvfs fileStat;

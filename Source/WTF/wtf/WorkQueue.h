@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Seconds.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Threading.h>
 
 #if USE(COCOA_EVENT_LOOP)
@@ -42,7 +41,7 @@
 
 namespace WTF {
 
-class WorkQueueBase : public FunctionDispatcher, public ThreadSafeRefCounted<WorkQueueBase> {
+class WorkQueueBase : public FunctionDispatcher, public ThreadSafeRefCounted<WorkQueueBase>, protected ThreadLike {
 public:
     using QOS = Thread::QOS;
 
@@ -99,6 +98,11 @@ public:
     RunLoop& runLoop() const { return *m_runLoop; }
 #endif
 
+#if ASSERT_ENABLED
+    WTF_EXPORT_PRIVATE ThreadLikeAssertion threadLikeAssertion() const;
+#else
+    ThreadLikeAssertion threadLikeAssertion() const { return { }; };
+#endif
 protected:
     WorkQueue(const char* name, QOS qos)
         : WorkQueueBase(name, Type::Serial, qos)
@@ -120,11 +124,7 @@ private:
 
 inline void assertIsCurrent(const WorkQueue& workQueue) WTF_ASSERTS_ACQUIRED_CAPABILITY(workQueue)
 {
-#if ASSERT_ENABLED
-    workQueue.assertIsCurrent();
-#else
-    UNUSED_PARAM(workQueue);
-#endif
+    assertIsCurrent(workQueue.threadLikeAssertion());
 }
 
 /**

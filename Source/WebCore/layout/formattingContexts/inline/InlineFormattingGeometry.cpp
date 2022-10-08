@@ -165,11 +165,10 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
     if (!previousLineEndsWithLineBreak) {
         shouldIndent = !root.isAnonymous();
         if (root.isAnonymous()) {
-            auto isIntegratedRootBoxFirstChild = layoutState().isIntegratedRootBoxFirstChild();
-            if (isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::NotApplicable)
+            if (!root.isInlineIntegrationRoot())
                 shouldIndent = root.parent().firstInFlowChild() == &root;
             else
-                shouldIndent = isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::Yes;
+                shouldIndent = root.isFirstChildForIntegration();
         }
     } else
         shouldIndent = root.style().textIndentLine() == TextIndentLine::EachLine && *previousLineEndsWithLineBreak;

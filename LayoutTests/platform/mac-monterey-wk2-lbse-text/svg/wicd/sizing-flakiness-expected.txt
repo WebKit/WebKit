@@ -4,13 +4,13 @@ layer at (0,0) size 800x410
   RenderBlock {HTML} at (0,0) size 800x410
     RenderBody {BODY} at (8,8) size 784x0
       RenderBlock (floating) {DIV} at (0,0) size 402x402 [border: (1px solid #FF0000)]
-        RenderEmbeddedObject {OBJECT} at (1,1) size 200x150
-          layer at (0,0) size 200x150
-            RenderView at (0,0) size 200x150
-          layer at (0,0) size 200x150
-            RenderSVGRoot {svg} at (0,0) size 200x150
-          layer at (0,0) size 200x150
-            RenderSVGViewportContainer at (0,0) size 200x150
+        RenderEmbeddedObject {OBJECT} at (1,1) size 200x67
+          layer at (0,0) size 200x67
+            RenderView at (0,0) size 200x67
+          layer at (0,0) size 200x67
+            RenderSVGRoot {svg} at (0,0) size 200x67
+          layer at (0,0) size 200x67
+            RenderSVGViewportContainer at (0,0) size 200x67
           layer at (1,1) size 118x38
             RenderSVGRect {rect} at (1,1) size 118x38 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=118.00] [height=38.00]
           layer at (54,9) size 12x23

@@ -31,6 +31,7 @@
 
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include <memory>
 #include <wtf/Vector.h>
@@ -47,6 +48,7 @@ class StyleRuleKeyframe;
 class StyleRule;
 class StyleRuleBase;
 class StyleRuleCharset;
+class StyleRuleContainer;
 class StyleRuleFontFace;
 class StyleRuleFontPaletteValues;
 class StyleRuleImport;

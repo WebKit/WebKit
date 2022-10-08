@@ -121,18 +121,23 @@
 /Source/WebCore/xml @cdumez
 /Source/WebCore/page @cdumez
 
-Source/WebCore/animation @graouts
-Source/WebCore/Modules/model-element @graouts
+/Source/WebCore/animation @graouts
+/Source/WebCore/Modules/model-element @graouts
 
 /Source/WebCore/crypto/ @zdobersek
 
 # ================================================================================
 # WebKit
 
+*ContentExtension* @b-weinstein @xeenon
+*InspectorExtension* @b-weinstein @xeenon
+*WebExtension* @b-weinstein @xeenon
 /Source/WebKit/NetworkProcess @cdumez
 /Source/WebKit/Platform @cdumez
 /Source/WebKit/UIProcess @cdumez
+/Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess @cdumez
+/Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
 
 # ================================================================================
 # WebDriver

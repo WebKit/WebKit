@@ -324,7 +324,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         return { };
     }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     auto reportRegistrableDomain = [domain = RegistrableDomain(m_url).isolatedCopy()](auto& context) mutable {
         if (auto* frame = downcast<Document>(context).frame())
             frame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));

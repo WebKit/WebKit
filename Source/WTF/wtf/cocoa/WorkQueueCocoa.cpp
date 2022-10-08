@@ -86,6 +86,13 @@ void WorkQueueBase::platformInitialize(const char* name, Type type, QOS qos)
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
     m_dispatchQueue = adoptOSObject(dispatch_queue_create(name, attr));
     dispatch_set_context(m_dispatchQueue.get(), this);
+#if ASSERT_ENABLED
+    // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
+    // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.
+    // This makes it possible to assert that code runs in the expected sequence, regardless of if it is
+    // in a thread or a work queue.
+    dispatch_queue_set_specific(m_dispatchQueue.get(), &s_uid, reinterpret_cast<void*>(static_cast<uintptr_t>(++s_uid)), nullptr);
+#endif
 }
 
 void WorkQueueBase::platformInvalidate()
@@ -95,6 +102,7 @@ void WorkQueueBase::platformInvalidate()
 WorkQueue::WorkQueue(OSObjectPtr<dispatch_queue_t>&& queue)
     : WorkQueueBase(WTFMove(queue))
 {
+    // Note: for main work queue we do not create a sequence id, the main thread id will be used.
 }
 
 Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
@@ -103,9 +111,12 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
 }
 
 #if ASSERT_ENABLED
-void WorkQueue::assertIsCurrent() const
+ThreadLikeAssertion WorkQueue::threadLikeAssertion() const
 {
-    dispatch_assert_queue(m_dispatchQueue.get());
+    auto sequenceID = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(dispatch_queue_get_specific(m_dispatchQueue.get(), &s_uid)));
+    if (!sequenceID)
+        sequenceID = Thread::current().uid(); // Main thread sequence id.
+    return createThreadLikeAssertion(sequenceID);
 }
 #endif
 

@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include <wtf/URL.h>
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -43,6 +44,10 @@ public:
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, ShouldInitializePaths::Yes)); }
     WebsiteDataStoreConfiguration(IsPersistent, ShouldInitializePaths = ShouldInitializePaths::Yes);
 
+#if PLATFORM(COCOA)
+    WebsiteDataStoreConfiguration(const UUID&);
+#endif
+
 #if !PLATFORM(COCOA)
     // All cache and data directories are initialized relative to baseCacheDirectory and
     // baseDataDirectory, respectively, if provided. On Cocoa ports, these are always null.
@@ -52,6 +57,7 @@ public:
     Ref<WebsiteDataStoreConfiguration> copy() const;
 
     bool isPersistent() const { return m_isPersistent == IsPersistent::Yes; }
+    std::optional<UUID> identifier() const { return m_identifier; }
 
     uint64_t perOriginStorageQuota() const { return m_perOriginStorageQuota; }
     void setPerOriginStorageQuota(uint64_t quota) { m_perOriginStorageQuota = quota; }
@@ -227,6 +233,7 @@ private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
     bool m_shouldUseCustomStoragePaths;
+    std::optional<UUID> m_identifier;
     String m_baseCacheDirectory;
     String m_baseDataDirectory;
     String m_cacheStorageDirectory;

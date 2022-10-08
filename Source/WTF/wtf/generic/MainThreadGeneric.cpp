@@ -37,7 +37,7 @@
 
 namespace WTF {
 
-static pthread_t mainThread;
+static pthread_t s_mainThread;
 
 void initializeMainThreadPlatform()
 {
@@ -46,12 +46,12 @@ void initializeMainThreadPlatform()
     // The WebKit main thread need not be the application's actual OS-level main thread, which might be
     // controlled by a language runtime or virtual machine; for example, in Eclipse, the OS main thread is
     // controlled by the JVM, while the separate WebKit main thread runs all the GUI and WebKit stuff.
-    mainThread = pthread_self();
+    s_mainThread = pthread_self();
 }
 
 bool isMainThread()
 {
-    return pthread_equal(pthread_self(), mainThread);
+    return pthread_equal(pthread_self(), s_mainThread);
 }
 
 } // namespace WTF

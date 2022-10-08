@@ -27,7 +27,7 @@
 #include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include "StyleScope.h"

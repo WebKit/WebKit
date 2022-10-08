@@ -48,6 +48,14 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface _NSSVGImageRep : NSImageRep
+- (nullable instancetype)initWithData:(NSData *)data;
+@end
+
+NS_ASSUME_NONNULL_END
+
 #if HAVE(ALTERNATE_ICONS)
 
 NS_ASSUME_NONNULL_BEGIN

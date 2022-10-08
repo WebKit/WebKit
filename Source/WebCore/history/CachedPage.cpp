@@ -59,7 +59,7 @@ CachedPage::CachedPage(Page& page)
     : m_page(page)
     , m_expirationTime(MonotonicTime::now() + page.settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(makeUnique<CachedFrame>(page.mainFrame()))
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     , m_loadedSubresourceDomains(page.mainFrame().loader().client().loadedSubresourceDomains())
 #endif
 {
@@ -171,7 +171,7 @@ void CachedPage::restore(Page& page)
 
     firePageShowAndPopStateEvents(page);
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     for (auto& domain : m_loadedSubresourceDomains)
         page.mainFrame().loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
 #endif
@@ -189,7 +189,7 @@ void CachedPage::clear()
 #endif
     m_needsDeviceOrPageScaleChanged = false;
     m_needsUpdateContentsSize = false;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     m_loadedSubresourceDomains.clear();
 #endif
 }

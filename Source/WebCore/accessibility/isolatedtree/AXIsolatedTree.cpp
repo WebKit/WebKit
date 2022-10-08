@@ -197,7 +197,7 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject)
     AXTRACE("AXIsolatedTree::generateSubtree"_s);
     ASSERT(isMainThread());
 
-    if (!axObject.objectID().isValid())
+    if (axObject.isDetached())
         return;
 
     collectNodeChangesForSubtree(axObject);
@@ -206,14 +206,14 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject)
 
 static bool shouldCreateNodeChange(AXCoreObject& axObject)
 {
-    // We should never create an isolated object from an ignored object or one with an invalid ID.
-    return !axObject.accessibilityIsIgnored() && axObject.objectID().isValid();
+    // We should never create an isolated object from a detached or ignored object.
+    return !axObject.isDetached() && !axObject.accessibilityIsIgnored();
 }
 
 std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Ref<AXCoreObject> axObject, AttachWrapper attachWrapper)
 {
     ASSERT(isMainThread());
-    ASSERT(axObject->objectID().isValid());
+    ASSERT(!axObject->isDetached());
 
     if (!shouldCreateNodeChange(axObject.get()))
         return std::nullopt;
@@ -263,8 +263,8 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
 {
     ASSERT(isMainThread());
 
-    if (!axObject->objectID().isValid() || !axObject->wrapper()) {
-        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject->objectID().loggingString(), " had no wrapper or had an invalid ID. Object is:"));
+    if (axObject->isDetached() || !axObject->wrapper()) {
+        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject->objectID().loggingString(), " had no wrapper or is detached. Object is:"));
         AXLOG(axObject.ptr());
         return;
     }
@@ -331,8 +331,8 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
     AXTRACE("AXIsolatedTree::collectNodeChangesForSubtree"_s);
     ASSERT(isMainThread());
 
-    if (!axObject.objectID().isValid()) {
-        // Bail out here, we can't build an isolated tree branch rooted at an object with no ID.
+    if (axObject.isDetached()) {
+        // Bail out here, we can't build an isolated tree branch rooted at a detached object.
         return;
     }
 
@@ -540,10 +540,10 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         return m_nodeMap.find(ancestor.objectID()) != m_nodeMap.end();
     });
 
-    if (!axAncestor || !axAncestor->objectID().isValid()) {
+    if (!axAncestor || axAncestor->isDetached()) {
         // This update was triggered before the isolated tree has been repopulated.
         // Return here since there is nothing to update.
-        AXLOG("Bailing because no ancestor could be found, or ancestor had an invalid objectID");
+        AXLOG("Bailing because no ancestor could be found, or ancestor is detached");
         return;
     }
 

@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#include <wtf/ThreadAssertions.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

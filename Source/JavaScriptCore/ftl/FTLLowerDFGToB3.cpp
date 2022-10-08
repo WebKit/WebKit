@@ -2945,63 +2945,74 @@ private:
 
     void compileArithMinOrMax()
     {
-        switch (m_node->binaryUseKind()) {
+        switch (m_graph.child(m_node, 0).useKind()) {
         case Int32Use: {
-            LValue left = lowInt32(m_node->child1());
-            LValue right = lowInt32(m_node->child2());
-            
-            setInt32(
-                m_out.select(
-                    m_node->op() == ArithMin
-                        ? m_out.lessThan(left, right)
-                        : m_out.lessThan(right, left),
-                    left, right));
+            LValue left = lowInt32(m_graph.child(m_node, 0));
+            for (unsigned index = 1; index < m_node->numChildren(); ++index) {
+                LValue right = lowInt32(m_graph.child(m_node, index));
+                left = m_out.select(m_node->op() == ArithMin ? m_out.lessThan(left, right) : m_out.lessThan(right, left), left, right);
+            }
+            setInt32(left);
             break;
         }
             
         case DoubleRepUse: {
-            LValue left = lowDouble(m_node->child1());
-            LValue right = lowDouble(m_node->child2());
+            if (m_node->numChildren() == 2) {
+                LValue left = lowDouble(m_graph.child(m_node, 0));
+                LValue right = lowDouble(m_graph.child(m_node, 1));
 
-            LBasicBlock notLessThan = m_out.newBlock();
-            LBasicBlock isEqual = m_out.newBlock();
-            LBasicBlock notEqual = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
+                LBasicBlock notLessThan = m_out.newBlock();
+                LBasicBlock isEqual = m_out.newBlock();
+                LBasicBlock notEqual = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
 
-            Vector<ValueFromBlock, 2> results;
+                Vector<ValueFromBlock, 2> results;
 
-            results.append(m_out.anchor(left));
-            m_out.branch(
-                m_node->op() == ArithMin
-                    ? m_out.doubleLessThan(left, right)
-                    : m_out.doubleGreaterThan(left, right),
-                unsure(continuation), unsure(notLessThan));
+                results.append(m_out.anchor(left));
+                m_out.branch(
+                    m_node->op() == ArithMin
+                        ? m_out.doubleLessThan(left, right)
+                        : m_out.doubleGreaterThan(left, right),
+                    unsure(continuation), unsure(notLessThan));
 
-            // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
-            LBasicBlock lastNext = m_out.appendTo(notLessThan, isEqual);
-            m_out.branch(
-                m_out.doubleEqual(left, right),
-                    rarely(isEqual), usually(notEqual));
+                // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
+                LBasicBlock lastNext = m_out.appendTo(notLessThan, isEqual);
+                m_out.branch(
+                    m_out.doubleEqual(left, right),
+                        rarely(isEqual), usually(notEqual));
 
-            lastNext = m_out.appendTo(isEqual, notEqual);
-            results.append(m_out.anchor(
-                m_node->op() == ArithMin
-                    ? m_out.bitOr(left, right)
-                    : m_out.bitAnd(left, right)));
-            m_out.jump(continuation);
+                lastNext = m_out.appendTo(isEqual, notEqual);
+                results.append(m_out.anchor(
+                    m_node->op() == ArithMin
+                        ? m_out.bitOr(left, right)
+                        : m_out.bitAnd(left, right)));
+                m_out.jump(continuation);
 
-            lastNext = m_out.appendTo(notEqual, continuation);
-            results.append(
-                m_out.anchor(
-                    m_out.select(
-                        m_node->op() == ArithMin
-                            ? m_out.doubleGreaterThan(left, right)
-                            : m_out.doubleLessThan(left, right),
-                        right, m_out.constDouble(PNaN))));
-            m_out.jump(continuation);
-            
-            m_out.appendTo(continuation, lastNext);
-            setDouble(m_out.phi(Double, results));
+                lastNext = m_out.appendTo(notEqual, continuation);
+                results.append(
+                    m_out.anchor(
+                        m_out.select(
+                            m_node->op() == ArithMin
+                                ? m_out.doubleGreaterThan(left, right)
+                                : m_out.doubleLessThan(left, right),
+                            right, m_out.constDouble(PNaN))));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                setDouble(m_out.phi(Double, results));
+                break;
+            }
+
+            size_t scratchSize = sizeof(double) * m_node->numChildren();
+            ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+            LValue buffer = m_out.constIntPtr(static_cast<const double*>(scratchBuffer->dataBuffer()));
+
+            for (unsigned index = 1; index < m_node->numChildren(); ++index) {
+                LValue value = lowDouble(m_graph.child(m_node, index));
+                m_out.storeDouble(value, m_out.baseIndex(m_heaps.indexedDoubleProperties, buffer, m_out.constInt32(index), jsNumber(index)));
+            }
+
+            setDouble(m_out.callWithoutSideEffects(Double, m_node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, buffer, m_out.constInt32(m_node->numChildren())));
             break;
         }
             

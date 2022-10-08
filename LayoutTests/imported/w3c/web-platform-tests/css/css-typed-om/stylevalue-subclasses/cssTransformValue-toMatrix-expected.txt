@@ -1,4 +1,4 @@
 
-FAIL CSSTransformValue.toMatrix() multiplies its component matrices assert_array_approx_equals: property 0, expected 10 +/- 0.000001, expected 10 but got 1
-FAIL CSSTransformValue.toMatrix() respects is2D changes in its components assert_array_approx_equals: property 0, expected -6 +/- 0.000001, expected -6 but got 1
+PASS CSSTransformValue.toMatrix() multiplies its component matrices
+PASS CSSTransformValue.toMatrix() respects is2D changes in its components
 

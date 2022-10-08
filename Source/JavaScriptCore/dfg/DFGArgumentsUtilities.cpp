@@ -140,10 +140,14 @@ Node* emitCodeToGetArgumentsArrayLength(
 
     if (numberOfArgumentsToSkip) {
         // The above subtraction may produce a negative number if this number is non-zero. We correct that here.
+        unsigned firstChild = graph.m_varArgChildren.size();
+        graph.m_varArgChildren.append(Edge(result, Int32Use));
+        graph.m_varArgChildren.append(insertionSet.insertConstantForUse(nodeIndex, origin, jsNumber(static_cast<unsigned>(addThis)), Int32Use));
+
         result = insertionSet.insertNode(
-            nodeIndex, SpecInt32Only, ArithMax, origin, 
-            Edge(result, Int32Use), 
-            insertionSet.insertConstantForUse(nodeIndex, origin, jsNumber(static_cast<unsigned>(addThis)), Int32Use));
+            nodeIndex, SpecInt32Only, Node::VarArg, ArithMax, origin,
+            OpInfo(), OpInfo(), firstChild, graph.m_varArgChildren.size() - firstChild);
+
         result->setResult(NodeResultInt32);
     }
 

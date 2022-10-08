@@ -1,0 +1,59 @@
+<meta name="fuzzy" content="maxDifference=24-68; totalPixels=319-573" />
+<style>
+div {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  outline: 2px solid green;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.container {
+  display: block;
+  margin: 0px;
+  width: auto;
+  height: auto;
+  outline: none;
+}
+
+#outline-width > div {
+  outline-width: 5px;
+}
+
+#outline-offset > div {
+  outline-offset: 2px;
+}
+</style>
+<div style="border-radius: 10px;"></div>
+<div style="border-radius: 15px;"></div>
+<div style="border-radius: 20px;"></div>
+<div style="border-radius: 25px;"></div>
+<div style="border-radius: 30px;"></div>
+<br>
+<div style="border-radius: 10px 30px;"></div>
+<div style="border-radius: 15px 25px;"></div>
+<div style="border-radius: 20px 20px;"></div>
+<div style="border-radius: 25px 15px;"></div>
+<div style="border-radius: 30px 10px;"></div>
+<br>
+<div style="border-radius: 0px 10px 30px 25px;"></div>
+<div style="border-radius: 10px 15px 25px 20px;"></div>
+<div style="border-radius: 15px 20px 20px 15px;"></div>
+<div style="border-radius: 20px 25px 15px 10px;"></div>
+<div style="border-radius: 25px 30px 10px 0px;"></div>
+<br>
+<div class=container id=outline-width>
+<div style="border-radius: 0px 10px 30px 25px;"></div>
+<div style="border-radius: 10px 15px 25px 20px;"></div>
+<div style="border-radius: 15px 20px 20px 15px;"></div>
+<div style="border-radius: 20px 25px 15px 10px;"></div>
+<div style="border-radius: 25px 30px 10px 0px;"></div>
+</div>
+<div class=container id=outline-offset>
+<div style="border-radius: 0px 10px 30px 25px;"></div>
+<div style="border-radius: 10px 15px 25px 20px;"></div>
+<div style="border-radius: 15px 20px 20px 15px;"></div>
+<div style="border-radius: 20px 25px 15px 10px;"></div>
+<div style="border-radius: 25px 30px 10px 0px;"></div>
+</div>

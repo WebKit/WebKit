@@ -52,6 +52,24 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
     }
 }
 
+#if PLATFORM(COCOA)
+
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identifier)
+    : m_isPersistent(IsPersistent::Yes)
+    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
+    , m_identifier(identifier)
+    , m_baseCacheDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier.toString()))
+    , m_baseDataDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier.toString()))
+    , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
+#if PLATFORM(IOS)
+    , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
+#endif
+{
+    initializePaths();
+}
+
+#endif
+
 #if !PLATFORM(COCOA)
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory)
     : m_isPersistent(IsPersistent::Yes)
@@ -87,6 +105,9 @@ void WebsiteDataStoreConfiguration::initializePaths()
     setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory(m_baseDataDirectory));
     setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(m_baseDataDirectory));
     setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory(m_baseDataDirectory));
+#if PLATFORM(COCOA)
+    setCookieStorageFile(WebsiteDataStore::defaultCookieStorageFile(m_baseDataDirectory));
+#endif
 }
 
 Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const

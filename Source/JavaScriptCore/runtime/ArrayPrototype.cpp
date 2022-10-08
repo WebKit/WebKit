@@ -201,6 +201,16 @@ static inline uint64_t argumentClampedIndexFromStartOrEnd(JSGlobalObject* global
     if (value.isUndefined())
         return undefinedValue;
 
+    if (LIKELY(value.isInt32())) {
+        int64_t indexInt64 = value.asInt32();
+        if (indexInt64 < 0) {
+            indexInt64 += length;
+            return indexInt64 < 0 ? 0 : static_cast<uint64_t>(indexInt64);
+        }
+        uint64_t indexUInt64 = static_cast<uint64_t>(indexInt64);
+        return std::min(indexUInt64, length);
+    }
+
     double indexDouble = value.toIntegerOrInfinity(globalObject);
     if (indexDouble < 0) {
         indexDouble += length;

@@ -218,6 +218,13 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
 
     m_scrollAnimator.scrollToPositionWithoutAnimation(newPosition);
 
+    // Stop the spring if it reaches the ideal position.
+    FloatSize newDisplacement = newPosition - idealPosition;
+    if (axesToApplySpring.width() && displacement.width() * newDisplacement.width() < 0)
+        m_velocity.setWidth(0);
+    if (axesToApplySpring.height() && displacement.height() * newDisplacement.height() < 0)
+        m_velocity.setHeight(0);
+
     if (!m_scrollTriggeringKeyIsPressed && m_velocity.diagonalLengthSquared() < 1) {
         m_scrollController.didStopKeyboardScrolling();
         m_velocity = { };

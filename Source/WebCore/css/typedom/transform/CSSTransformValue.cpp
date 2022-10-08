@@ -82,8 +82,20 @@ bool CSSTransformValue::is2D() const
 
 ExceptionOr<Ref<DOMMatrix>> CSSTransformValue::toMatrix()
 {
-    // FIXME: add correct behavior here.
-    return DOMMatrix::fromMatrix(DOMMatrixInit { });
+    auto matrix = TransformationMatrix();
+    auto is2D = DOMMatrixReadOnly::Is2D::Yes;
+
+    for (auto component : m_components) {
+        auto componentMatrixOrException = component->toMatrix();
+        if (componentMatrixOrException.hasException())
+            return componentMatrixOrException.releaseException();
+        auto componentMatrix = componentMatrixOrException.returnValue();
+        if (!componentMatrix->is2D())
+            is2D = DOMMatrixReadOnly::Is2D::No;
+        matrix.multiply(componentMatrix->transformationMatrix());
+    }
+
+    return DOMMatrix::create(WTFMove(matrix), is2D);
 }
 
 CSSTransformValue::CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&& transforms)

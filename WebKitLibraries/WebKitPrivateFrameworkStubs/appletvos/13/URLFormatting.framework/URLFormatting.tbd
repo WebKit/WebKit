@@ -1,6 +1,0 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64 ]
-install-name:    '/System/Library/PrivateFrameworks/URLFormatting.framework/URLFormatting'
-objc-constraint: none
-platform: tvos
-...

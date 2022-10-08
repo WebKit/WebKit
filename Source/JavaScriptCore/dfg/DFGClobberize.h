@@ -219,8 +219,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case ArithIMul:
-    case ArithMin:
-    case ArithMax:
     case ArithPow:
     case GetScope:
     case SkipScope:
@@ -254,6 +252,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case BottomValue:
     case TypeOf:
         def(PureValue(node));
+        return;
+
+    case ArithMin:
+    case ArithMax:
+        def(PureValue(graph, node));
         return;
 
     case GetGlobalThis:
