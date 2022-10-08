@@ -77,6 +77,7 @@ void ReportingScope::removeAllObservers()
 void ReportingScope::clearReports()
 {
     m_queuedReports.clear();
+    m_queuedReportTypeCounts.clear();
 }
 
 void ReportingScope::notifyReportObservers(Ref<Report>&& report)
@@ -91,16 +92,23 @@ void ReportingScope::notifyReportObservers(Ref<Report>&& report)
     for (auto& observer : possibleReportObservers)
         observer->appendQueuedReportIfCorrectType(report);
 
+    auto currentReportType = report->body()->reportBodyType();
+
     // Step 4.2.2
+    m_queuedReportTypeCounts.add(currentReportType);
     m_queuedReports.append(WTFMove(report));
 
     // Step 4.2.3-4: If scope’s report buffer now contains more than 100 reports with type equal to type, remove the earliest item with type equal to type in the report buffer.
-    // FIXME(244369): When we support more than one time of report, remove only the specific type of report.
-    if (m_queuedReports.size() > 100)
-        m_queuedReports.removeFirst();
+    if (m_queuedReportTypeCounts.count(currentReportType) > 100) {
+        bool removed = m_queuedReports.removeFirstMatching([currentReportType](auto& report) {
+            return report->body()->reportBodyType() == currentReportType;
+        });
+        ASSERT_UNUSED(removed, removed);
+        m_queuedReportTypeCounts.remove(currentReportType);
+    }
 }
 
-void ReportingScope::appendQueuedReportForRelevantType(ReportingObserver& observer)
+void ReportingScope::appendQueuedReportsForRelevantType(ReportingObserver& observer)
 {
     // https://www.w3.org/TR/reporting-1/#concept-report-type
     for (auto& report : m_queuedReports)

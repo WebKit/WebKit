@@ -104,7 +104,7 @@ void ReportingObserver::observe()
     m_options.buffered = false;
 
     // For each report in global’s report buffer, queue a task to execute § 4.3 Add report to observer with report and the context object.
-    m_reportingScope->appendQueuedReportForRelevantType(*this);
+    m_reportingScope->appendQueuedReportsForRelevantType(*this);
 }
 
 auto ReportingObserver::takeRecords() -> Vector<Ref<Report>>
@@ -121,11 +121,16 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
         return;
     
     // Step 4.3.2
-    if (m_options.types && m_options.types->contains(report->type()))
+    if (m_options.types && !m_options.types->contains(report->type()))
         return;
     
     // Step 4.3.3:
     m_queuedReports.append(report);
+
+    // Step 4.3.4: (Only enqueue the task once per set of reports)
+    if (m_queuedReports.size() > 1)
+        return;
+
     auto* context = m_callback->scriptExecutionContext();
     if (!context)
         return;

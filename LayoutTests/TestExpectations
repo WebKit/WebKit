@@ -544,6 +544,7 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/link-upgrade.sub.https
 
 imported/w3c/web-platform-tests/reporting/disconnect.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/reporting/document-reporting-destroy-after-document-close.https.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/reporting/reporting-api-honors-limits.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ DumpJSConsoleLogInStdErr ]
 
 # Skip some reporting tests that now timeout

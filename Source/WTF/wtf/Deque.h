@@ -95,7 +95,8 @@ public:
     void remove(const_iterator&);
     
     template<typename Func> size_t removeAllMatching(const Func&);
-    
+    template<typename Func> bool removeFirstMatching(const Func&);
+
     // This is a priority enqueue. The callback is given a value, and if it returns true, then this
     // will put the appended value before that value. It will keep bubbling until the callback returns
     // false or the value ends up at the head of the queue.
@@ -578,6 +579,19 @@ inline size_t Deque<T, inlineCapacity>::removeAllMatching(const Func& func)
             append(WTFMove(value));
     }
     return size() - oldSize;
+}
+
+template<typename T, size_t inlineCapacity>
+template<typename Func>
+inline bool Deque<T, inlineCapacity>::removeFirstMatching(const Func& func)
+{
+    for (auto iter = begin(); iter != end(); ++iter) {
+        if (func(*iter)) {
+            remove(iter);
+            return true;
+        }
+    }
+    return false;
 }
 
 template<typename T, size_t inlineCapacity>

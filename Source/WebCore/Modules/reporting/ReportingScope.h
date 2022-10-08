@@ -27,6 +27,7 @@
 
 #include "ContextDestructionObserver.h"
 #include <wtf/Deque.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -54,7 +55,7 @@ public:
     void registerReportingObserver(ReportingObserver&);
     void unregisterReportingObserver(ReportingObserver&);
     void notifyReportObservers(Ref<Report>&&);
-    void appendQueuedReportForRelevantType(ReportingObserver&);
+    void appendQueuedReportsForRelevantType(ReportingObserver&);
 
     static MemoryCompactRobinHoodHashMap<String, String> parseReportingEndpointsFromHeader(const String&, const URL& baseURL);
     void parseReportingEndpoints(const String&, const URL& baseURL);
@@ -68,6 +69,8 @@ private:
 
     Vector<Ref<ReportingObserver>> m_reportingObservers;
     Deque<Ref<Report>> m_queuedReports;
+    HashCountedSet<ViolationReportType, IntHash<ViolationReportType>, WTF::StrongEnumHashTraits<ViolationReportType>> m_queuedReportTypeCounts;
+
     MemoryCompactRobinHoodHashMap<String, String> m_reportingEndpoints;
 };
 
