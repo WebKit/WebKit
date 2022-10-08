@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "CachedImage.h"
 #include "DisplayBoxClip.h"
 #include "DisplayBoxDecorationData.h"
 #include "DisplayBoxDecorationPainter.h"

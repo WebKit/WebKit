@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "ProcessThrottlerClient.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
     

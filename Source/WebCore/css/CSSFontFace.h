@@ -46,6 +46,7 @@ class CSSFontSelector;
 class CSSSegmentedFontFace;
 class CSSValue;
 class CSSValueList;
+class Document;
 class FontCreationContext;
 class FontDescription;
 class Font;

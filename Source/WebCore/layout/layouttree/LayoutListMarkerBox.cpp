@@ -31,6 +31,8 @@
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 namespace Layout {
 
