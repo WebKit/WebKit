@@ -5339,3 +5339,9 @@ fast/css/text-overflow-input.html [ Failure ]
 
 # rdar://100049123 (REGRESSION [ Mac iOS ] fast/css/focus-ring-exists-for-search-field.html is a constant failure)
 fast/css/focus-ring-exists-for-search-field.html [ Failure ]
+
+# rdar://100049123 (REGRESSION [ Mac iOS ] 5* fast/ layout-tests are constant failures)
+fast/forms/control-restrict-line-height.html [ Failure ]
+fast/forms/box-shadow-override.html [ Failure ]
+fast/forms/placeholder-pseudo-style.html [ Failure ]
+fast/forms/input-appearance-height.html [ Failure ]
