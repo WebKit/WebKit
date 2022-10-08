@@ -29,6 +29,8 @@
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+enum class ShareDataOriginator : bool { Web, User };
     
 struct ShareData {
     String title;
@@ -46,6 +48,7 @@ struct ShareDataWithParsedURL {
     ShareData shareData;
     std::optional<URL> url;
     Vector<RawFile> files;
+    ShareDataOriginator originator;
 };
     
 }
