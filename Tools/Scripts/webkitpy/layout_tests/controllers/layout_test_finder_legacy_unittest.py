@@ -197,6 +197,11 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/i[m]age.html'])]
         self.assertEqual(tests, ['failures/expected/image.html'])
 
+    def test_find_glob_query(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/image.html?variant'])]
+        self.assertEqual(tests, ['failures/expected/image.html?variant'])
+
     def test_find_glob_mixed_file_type_sorted(self):
         finder = self.finder
         # this should expand the *, sort the result, then recurse;

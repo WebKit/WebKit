@@ -148,6 +148,7 @@ class LayoutTestFinder(object):
             if ".any." not in f:
                 expanded.append(f)
                 continue
+            f, variant_separator, passed_variant = f.partition('?')
             opened_file = fs.open_text_file_for_reading(f)
             try:
                 first_line = opened_file.readline()
@@ -164,7 +165,8 @@ class LayoutTestFinder(object):
                         variants.append(variant)
                 if variants:
                     for variant in variants:
-                        expanded.append(f + variant)
+                        if not passed_variant or variant.startswith(variant_separator + passed_variant):
+                            expanded.append(f + variant)
                 else:
                     expanded.append(f)
             except UnicodeDecodeError:
