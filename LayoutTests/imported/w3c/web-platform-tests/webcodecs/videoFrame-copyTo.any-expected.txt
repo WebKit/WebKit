@@ -1,17 +1,17 @@
 
 PASS Test closed frame.
-FAIL Test copying I420 frame to a non-shared ArrayBuffer assert_equals: allocationSize() expected 12 but got 0
-FAIL Test copying I420 frame to a non-shared ArrayBufferView assert_equals: allocationSize() expected 12 but got 0
-FAIL Test RGBA frame. assert_equals: allocationSize() expected 16 but got 0
+FAIL Test copying I420 frame to a non-shared ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL Test copying I420 frame to a non-shared ArrayBufferView promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL Test RGBA frame. assert_object_equals: plane 0 layout property "stride" expected 8 got 0
 PASS Test undersized buffer.
-FAIL Test incorrect plane count. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
-FAIL Test stride and offset work. assert_equals: allocationSize() expected 12 but got 0
-FAIL Test stride and offset with padding. assert_equals: allocationSize() expected 19 but got 0
-FAIL Test invalid stride. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
+PASS Test incorrect plane count.
+FAIL Test stride and offset work. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL Test stride and offset with padding. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+PASS Test invalid stride.
 FAIL Test address overflow. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
-FAIL Test codedRect. assert_equals: allocationSize() expected 12 but got 0
-FAIL Test empty rect. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
-FAIL Test unaligned rect. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
-FAIL Test left crop. assert_equals: allocationSize() expected 6 but got 0
-FAIL Test invalid rect. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
+FAIL Test codedRect. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+PASS Test empty rect.
+PASS Test unaligned rect.
+FAIL Test left crop. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+PASS Test invalid rect.
 

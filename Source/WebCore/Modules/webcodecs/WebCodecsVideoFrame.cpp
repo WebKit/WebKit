@@ -293,7 +293,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
 }
 
 
-ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(CopyToOptions&&)
+ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(const CopyToOptions& options)
 {
     if (isDetached())
         return Exception { InvalidStateError,  "VideoFrame is detached"_s };
@@ -301,8 +301,11 @@ ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(CopyToOptions&&)
     if (!m_format)
         return Exception { NotSupportedError,  "VideoFrame has no format"_s };
 
-    // FIXME: Implement.
-    return 0;
+    auto layoutOrException = parseVideoFrameCopyToOptions(*this, options);
+    if (layoutOrException.hasException())
+        return layoutOrException.releaseException();
+
+    return layoutOrException.returnValue().allocationSize;
 }
 
 void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options, CopyToPromise&& promise)

@@ -218,6 +218,7 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         }
 
         Vector<PlaneLayout> planeLayouts;
+        // FIXME: Fill PlaneLayout
         planeLayouts.append(PlaneLayout { });
         callback(WTFMove(planeLayouts));
         return;
@@ -250,6 +251,7 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         std::memcpy(span.data(), planeA, planeASize);
 
         Vector<PlaneLayout> planeLayouts;
+        // FIXME: Fill PlaneLayout
         planeLayouts.append(PlaneLayout { });
         callback(WTFMove(planeLayouts));
         return;

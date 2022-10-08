@@ -106,10 +106,10 @@ public:
     VideoColorSpace* colorSpace() const { return m_colorSpace.get(); }
 
     struct CopyToOptions {
-        DOMRectInit rect;
-        Vector<PlaneLayout> layout;
+        std::optional<DOMRectInit> rect;
+        std::optional<Vector<PlaneLayout>> layout;
     };
-    ExceptionOr<size_t> allocationSize(CopyToOptions&&);
+    ExceptionOr<size_t> allocationSize(const CopyToOptions&);
 
     using CopyToPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<PlaneLayout>>>;
     void copyTo(BufferSource&&, CopyToOptions&&, CopyToPromise&&);
