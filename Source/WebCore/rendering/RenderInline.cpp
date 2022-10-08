@@ -957,8 +957,6 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
 
     Vector<LayoutRect> rects;
-    rects.append(LayoutRect());
-
     for (auto box = InlineIterator::firstInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
         auto lineBox = box->lineBox();
         auto top = LayoutUnit { std::max(lineBox->contentLogicalTop(), box->logicalTop()) };
@@ -966,8 +964,6 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // FIXME: This is mixing physical and logical coordinates.
         rects.append({ LayoutUnit(box->visualRectIgnoringBlockDirection().x()), top, LayoutUnit(box->logicalWidth()), bottom - top });
     }
-    rects.append(LayoutRect());
-
     BorderPainter { *this, paintInfo }.paintOutline(paintOffset, rects);
 }
 

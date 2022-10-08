@@ -59,7 +59,6 @@ public:
     static Color calculateBorderStyleColor(const BorderStyle&, const BoxSide&, const Color&);
 
 private:
-    void paintOutlineForLine(const LayoutPoint& paintOffset, const LayoutRect& previousLine, const LayoutRect& currentLine, const LayoutRect& nextLine, const Color& outlineColor);
     void paintTranslucentBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
         const BorderEdges&, BoxSideSet edgesToDraw, std::optional<BorderData::Radii>, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal);
     void paintBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment, const BorderEdges&, BoxSideSet edgeSet, std::optional<BorderData::Radii>, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal, const Color* overrideColor = nullptr);
