@@ -960,7 +960,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (button != noButton) {
         // FIXME: Use createPlatformMouseEvent instead.
         event = WebCore::MouseEvent::create(WebCore::eventNames().clickEvent, WebCore::Event::CanBubble::Yes, WebCore::Event::IsCancelable::Yes, WebCore::Event::IsComposed::Yes,
-            MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, { }, WebCore::modifiersForEvent(nsEvent),
+            MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, 0, 0, WebCore::modifiersForEvent(nsEvent),
             button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, WebCore::MouseEvent::IsSimulated::Yes);
     }
 
