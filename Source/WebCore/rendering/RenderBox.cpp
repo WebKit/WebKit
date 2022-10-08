@@ -529,8 +529,8 @@ void RenderBox::updateFromStyle()
                 // Erase the overflow.
                 // Overflow changes have to result in immediate repaints of the entire layout overflow area because
                 // repaints issued by removal of descendants get clipped using the updated style when they shouldn't.
-                repaintRectangle(visualOverflowRect());
-                repaintRectangle(layoutOverflowRect());
+                issueRepaint(visualOverflowRect(), ClipRepaintToLayer::Yes, ForceRepaint::Yes);
+                issueRepaint(layoutOverflowRect(), ClipRepaintToLayer::Yes, ForceRepaint::Yes);
             }
             setHasNonVisibleOverflow();
         }
