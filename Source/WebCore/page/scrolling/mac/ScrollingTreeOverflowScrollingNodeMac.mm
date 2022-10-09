@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "ScrollingStateOverflowScrollingNode.h"
 #import "ScrollingTree.h"
+#import "ScrollingTreeScrollingNodeDelegateMac.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/TextStream.h>
@@ -44,21 +45,26 @@ Ref<ScrollingTreeOverflowScrollingNodeMac> ScrollingTreeOverflowScrollingNodeMac
 
 ScrollingTreeOverflowScrollingNodeMac::ScrollingTreeOverflowScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeOverflowScrollingNode(scrollingTree, nodeID)
-    , m_delegate(*this)
 {
+    m_delegate = makeUnique<ScrollingTreeScrollingNodeDelegateMac>(*this);
 }
 
 ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac() = default;
 
+ScrollingTreeScrollingNodeDelegateMac& ScrollingTreeOverflowScrollingNodeMac::delegate() const
+{
+    return *static_cast<ScrollingTreeScrollingNodeDelegateMac*>(m_delegate.get());
+}
+
 void ScrollingTreeOverflowScrollingNodeMac::willBeDestroyed()
 {
-    m_delegate.nodeWillBeDestroyed();
+    delegate().nodeWillBeDestroyed();
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
-    m_delegate.updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
+    delegate().updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
 }
 
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
@@ -71,36 +77,18 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent
     if (!canHandleWheelEvent(wheelEvent, eventTargeting))
         return WheelEventHandlingResult::unhandled();
 
-    return WheelEventHandlingResult::result(m_delegate.handleWheelEvent(wheelEvent));
-}
-
-bool ScrollingTreeOverflowScrollingNodeMac::startAnimatedScrollToPosition(FloatPoint destinationPosition)
-{
-    bool started = m_delegate.startAnimatedScrollToPosition(destinationPosition);
-    if (started)
-        willStartAnimatedScroll();
-    return started;
-}
-
-void ScrollingTreeOverflowScrollingNodeMac::stopAnimatedScroll()
-{
-    m_delegate.stopAnimatedScroll();
-}
-
-void ScrollingTreeOverflowScrollingNodeMac::serviceScrollAnimation(MonotonicTime currentTime)
-{
-    m_delegate.serviceScrollAnimation(currentTime);
+    return WheelEventHandlingResult::result(delegate().handleWheelEvent(wheelEvent));
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::willDoProgrammaticScroll(const FloatPoint& targetScrollPosition)
 {
-    m_delegate.willDoProgrammaticScroll(targetScrollPosition);
+    delegate().willDoProgrammaticScroll(targetScrollPosition);
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::currentScrollPositionChanged(ScrollType scrollType, ScrollingLayerPositionAction action)
 {
     ScrollingTreeOverflowScrollingNode::currentScrollPositionChanged(scrollType, action);
-    m_delegate.currentScrollPositionChanged();
+    delegate().currentScrollPositionChanged();
 }
 
 FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const
@@ -118,7 +106,7 @@ void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()
 
 void ScrollingTreeOverflowScrollingNodeMac::repositionRelatedLayers()
 {
-    m_delegate.updateScrollbarPainters();
+    delegate().updateScrollbarPainters();
 }
 
 } // namespace WebCore

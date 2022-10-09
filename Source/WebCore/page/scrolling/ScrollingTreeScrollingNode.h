@@ -37,6 +37,7 @@ namespace WebCore {
 
 class ScrollingTree;
 class ScrollingStateScrollingNode;
+class ScrollingTreeScrollingNodeDelegate;
 struct WheelEventHandlingResult;
 
 struct ScrollPropagationInfo {
@@ -80,7 +81,7 @@ public:
     bool isScrollSnapInProgress() const;
     void setScrollSnapInProgress(bool);
 
-    virtual void serviceScrollAnimation(MonotonicTime) { }
+    virtual void serviceScrollAnimation(MonotonicTime);
 
     // These are imperative; they adjust the scrolling layers.
     void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);
@@ -135,10 +136,9 @@ protected:
     
     virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
     
-    virtual bool startAnimatedScrollToPosition(FloatPoint) { return false; }
-    virtual void stopAnimatedScroll() { }
+    virtual bool startAnimatedScrollToPosition(FloatPoint);
+    virtual void stopAnimatedScroll();
 
-    void willStartAnimatedScroll();
     void didStopAnimatedScroll();
 
     void setScrollAnimationInProgress(bool);
@@ -174,6 +174,8 @@ protected:
     bool overscrollBehaviorAllowsRubberBand() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior != OverscrollBehavior::None ||  m_scrollableAreaParameters.verticalOverscrollBehavior != OverscrollBehavior::None; }
     bool shouldRubberBand(const PlatformWheelEvent&, EventTargeting) const;
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
+
+    std::unique_ptr<ScrollingTreeScrollingNodeDelegate> m_delegate;
 
 private:
     FloatSize m_scrollableAreaSize;

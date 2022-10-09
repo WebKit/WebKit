@@ -45,16 +45,12 @@ public:
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 
+    ScrollingTreeScrollingNodeDelegateIOS& delegate() const;
+
     void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) final;
     void commitStateAfterChildren(const WebCore::ScrollingStateNode&) final;
     
     void repositionScrollingLayers() final;
-
-    bool startAnimatedScrollToPosition(WebCore::FloatPoint) final;
-    void stopAnimatedScroll() final;
-
-    // The delegate is non-null for subframes.
-    std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 };
 
 } // namespace WebKit
