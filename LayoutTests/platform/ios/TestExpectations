@@ -2535,8 +2535,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/flex-one-sets-flex-basis-to-zero
 # These tests fail due to slight differences in font rendering.
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-003.xhtml [ ImageOnlyFailure ]
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-004.xhtml [ ImageOnlyFailure ]
-webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml [ ImageOnlyFailure ]
-webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-002.xhtml [ ImageOnlyFailure ]
 webkit.org/b/211891 fast/flexbox/flex-with-min-max-height.html [ ImageOnlyFailure ]
 
 # min-width: auto issues.

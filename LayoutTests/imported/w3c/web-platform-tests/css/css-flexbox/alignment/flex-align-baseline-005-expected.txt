@@ -1,0 +1,12 @@
+
+
+
+
+FAIL #target > div 1 assert_equals:
+<div data-offset-y="20"><span></span><br><span></span></div>
+offsetTop expected 20 but got 0
+PASS #target > div 2
+FAIL #target > div 3 assert_equals:
+<div data-offset-y="50"><span></span><br><span></span></div>
+offsetTop expected 50 but got 0
+

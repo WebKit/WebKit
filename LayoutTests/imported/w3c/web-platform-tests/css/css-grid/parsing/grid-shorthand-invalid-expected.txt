@@ -28,4 +28,9 @@ PASS e.style['grid'] = "\"a\" / none" should not set the property value
 PASS e.style['grid'] = "none / [] \"a\"" should not set the property value
 PASS e.style['grid'] = "none / \"a\" []" should not set the property value
 PASS e.style['grid'] = "none / \"a\" [] 10px" should not set the property value
+PASS e.style['grid'] = "auto-flow 100px" should not set the property value
+PASS e.style['grid'] = "auto-flow / auto-flow" should not set the property value
+PASS e.style['grid'] = "auto-flow 1fr / auto-flow 1fr" should not set the property value
+PASS e.style['grid'] = "dense auto-flow / dense auto-flow" should not set the property value
+PASS e.style['grid'] = "auto / auto-flow foo()" should not set the property value
 

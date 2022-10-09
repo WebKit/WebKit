@@ -28,17 +28,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/abspos-autopos-vrl-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/abspos-descendent-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-003.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-005.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-007.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-003.html
@@ -58,9 +47,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-004.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-align-content-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-align-content-001-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-align-content-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-justify-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-justify-content-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-justify-content-001.html

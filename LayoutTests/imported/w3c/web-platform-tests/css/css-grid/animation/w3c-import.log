@@ -15,8 +15,20 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-neutral-keyframe-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-neutral-keyframe-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-neutral-keyframe-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-columns-neutral-keyframe-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-neutral-keyframe-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-neutral-keyframe-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-neutral-keyframe-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/animation/grid-template-rows-neutral-keyframe-004.html
