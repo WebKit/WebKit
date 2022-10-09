@@ -566,6 +566,9 @@ template<bool isSpecialCharacter(UChar)> inline bool StringView::isAllSpecialCha
 
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const
 {
+    if (!characters8())
+        return;
+
     ASSERT(is8Bit());
     StringImpl::copyCharacters(destination, characters8(), m_length);
 }
@@ -573,9 +576,14 @@ inline void StringView::getCharactersWithUpconvert(LChar* destination) const
 inline void StringView::getCharactersWithUpconvert(UChar* destination) const
 {
     if (is8Bit()) {
+        if (!characters8())
+            return;
+
         StringImpl::copyCharacters(destination, characters8(), m_length);
         return;
     }
+    if (!characters16())
+        return;
     StringImpl::copyCharacters(destination, characters16(), m_length);
 }
 
