@@ -13,6 +13,7 @@
             selection.setPosition(elem, 1);
             for (i = 0; i < 9; i++)
                 document.execCommand("Delete");
+            document.getElementById("editable").blur();
             if (window.testRunner)
                 testRunner.notifyDone();
         }
@@ -31,7 +32,7 @@ As the words &ldquo;sit amet&rdquo; will be deleted, the blue outline will leave
 trails behind as it shrinks to fit the remaining text.
 </p>
 
-<div contenteditable style="width: 100px; outline: none;">
+<div id=editable contenteditable style="width: 100px; outline: none;">
 <span id="test" style="outline: blue solid;">Lorem ipsum dolor sit amet&nbsp;</span>
 </div>
 

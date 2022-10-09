@@ -398,6 +398,7 @@ header: <WebCore/ShareData.h>
     WebCore::ShareData shareData;
     std::optional<URL> url;
     Vector<WebCore::RawFile> files;
+    WebCore::ShareDataOriginator originator;
 };
 
 struct WebCore::ShareData {
@@ -405,6 +406,8 @@ struct WebCore::ShareData {
     String text;
     String url;
 };
+
+enum class WebCore::ShareDataOriginator : bool
 
 [CustomHeader=True] struct WebCore::RawFile {
     String fileName;

@@ -10,28 +10,196 @@ Vertical LR 4x1 grid with parallel and orthogonal items.
 É
 
 
-PASS #grid1-auto-auto 1
-PASS #grid2-auto-auto 2
-PASS #grid1-auto-min-content 3
-PASS #grid2-auto-min-content 4
-PASS #grid1-auto-max-content 5
-PASS #grid2-auto-max-content 6
-PASS #grid1-min-content-auto 7
-PASS #grid2-min-content-auto 8
-PASS #grid1-min-content-min-content 9
-PASS #grid2-min-content-min-content 10
-PASS #grid1-min-content-max-content 11
-PASS #grid2-min-content-max-content 12
-PASS #grid1-max-content-auto 13
-PASS #grid2-max-content-auto 14
-PASS #grid1-max-content-min-content 15
-PASS #grid2-max-content-min-content 16
-PASS #grid1-max-content-max-content 17
-PASS #grid2-max-content-max-content 18
-PASS #grid1-0px-auto 19
-PASS #grid2-0px-auto 20
-PASS #grid1-0px-min-content 21
-PASS #grid2-0px-min-content 22
-PASS #grid1-0px-max-content 23
-PASS #grid2-0px-max-content 24
+FAIL #grid1-auto-auto 1 assert_equals:
+<div id="grid1-auto-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(auto, auto);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-auto-auto 2 assert_equals:
+<div id="grid2-auto-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(auto, auto);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-auto-min-content 3 assert_equals:
+<div id="grid1-auto-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(auto, min-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-auto-min-content 4 assert_equals:
+<div id="grid2-auto-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(auto, min-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-auto-max-content 5 assert_equals:
+<div id="grid1-auto-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(auto, max-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-auto-max-content 6 assert_equals:
+<div id="grid2-auto-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(auto, max-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-min-content-auto 7 assert_equals:
+<div id="grid1-min-content-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(min-content, auto);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-min-content-auto 8 assert_equals:
+<div id="grid2-min-content-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(min-content, auto);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-min-content-min-content 9 assert_equals:
+<div id="grid1-min-content-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(min-content, min-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-min-content-min-content 10 assert_equals:
+<div id="grid2-min-content-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(min-content, min-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-min-content-max-content 11 assert_equals:
+<div id="grid1-min-content-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(min-content, max-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-min-content-max-content 12 assert_equals:
+<div id="grid2-min-content-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(min-content, max-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-max-content-auto 13 assert_equals:
+<div id="grid1-max-content-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(max-content, auto);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-max-content-auto 14 assert_equals:
+<div id="grid2-max-content-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(max-content, auto);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-max-content-min-content 15 assert_equals:
+<div id="grid1-max-content-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(max-content, min-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-max-content-min-content 16 assert_equals:
+<div id="grid2-max-content-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(max-content, min-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-max-content-max-content 17 assert_equals:
+<div id="grid1-max-content-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(max-content, max-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-max-content-max-content 18 assert_equals:
+<div id="grid2-max-content-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(max-content, max-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-0px-auto 19 assert_equals:
+<div id="grid1-0px-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(0px, auto);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-0px-auto 20 assert_equals:
+<div id="grid2-0px-auto" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(0px, auto);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-0px-min-content 21 assert_equals:
+<div id="grid1-0px-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(0px, min-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-0px-min-content 22 assert_equals:
+<div id="grid2-0px-min-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(0px, min-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
+FAIL #grid1-0px-max-content 23 assert_equals:
+<div id="grid1-0px-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="104" style="grid-template-columns: minmax(0px, max-content);">
+    <div class="item" data-offset-x="12" data-offset-y="40" data-expected-width="40" data-expected-height="38">É</div>
+    <div class="item horizontalTB" data-offset-x="70" data-offset-y="46" data-expected-width="50" data-expected-height="48">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="10" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="22" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 104 but got 92
+FAIL #grid2-0px-max-content 24 assert_equals:
+<div id="grid2-0px-max-content" class="grid verticalLR contentStart itemsBaseline" data-expected-height="155" style="grid-template-columns: minmax(0px, max-content);">
+    <div class="item extraTopPadding" data-offset-x="12" data-offset-y="10" data-expected-width="40" data-expected-height="82">É</div>
+    <div class="item horizontalTB extraBottomPadding" data-offset-x="70" data-offset-y="60" data-expected-width="50" data-expected-height="91">É</div>
+    <div class="item" data-offset-x="138" data-offset-y="24" data-expected-width="70" data-expected-height="68">É</div>
+    <div class="item horizontalTB" data-offset-x="226" data-offset-y="36" data-expected-width="80" data-expected-height="78">É</div>
+</div>
+height expected 155 but got 129
 

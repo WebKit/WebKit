@@ -112,9 +112,9 @@ ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit& defaultRect, const 
     if (overrideRect) {
         if (!overrideRect->width || !overrideRect->height)
             return Exception { TypeError, "overrideRect is not valid"_s };
-        if (overrideRect->y + overrideRect->height > codedHeight)
-            return Exception { TypeError, "overrideRect is not valid"_s };
         if (overrideRect->x + overrideRect->width > codedWidth)
+            return Exception { TypeError, "overrideRect is not valid"_s };
+        if (overrideRect->y + overrideRect->height > codedHeight)
             return Exception { TypeError, "overrideRect is not valid"_s };
         sourceRect = *overrideRect;
     }
@@ -147,6 +147,24 @@ size_t videoPixelFormatToSampleByteSizePerPlane()
     return 1;
 }
 
+static inline size_t sampleCountPerPixel(VideoPixelFormat format)
+{
+    switch (format) {
+    case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I444:
+    case VideoPixelFormat::I422:
+    case VideoPixelFormat::NV12:
+        return 1;
+    case VideoPixelFormat::RGBA:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRA:
+    case VideoPixelFormat::BGRX:
+        return 4;
+    }
+    return 1;
+}
+
 size_t videoPixelFormatToSubSampling(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
@@ -172,6 +190,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
     if (layout && layout->size() != planeCount)
         return Exception { TypeError, "layout size is invalid"_s };
 
+    size_t pixelSampleCount = sampleCountPerPixel(format);
     size_t minAllocationSize = 0;
     Vector<ComputedPlaneLayout> computedLayouts;
     computedLayouts.reserveInitialCapacity(planeCount);
@@ -184,8 +203,8 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         ComputedPlaneLayout computedLayout;
         computedLayout.sourceTop = parsedRect.y / sampleHeight;
         computedLayout.sourceHeight = parsedRect.height / sampleHeight;
-        computedLayout.sourceLeftBytes = parsedRect.x / sampleWidthBytes;
-        computedLayout.sourceWidthBytes = parsedRect.width / sampleWidthBytes;
+        computedLayout.sourceLeftBytes = pixelSampleCount * parsedRect.x / sampleWidthBytes;
+        computedLayout.sourceWidthBytes = pixelSampleCount * parsedRect.width / sampleWidthBytes;
 
         if (layout) {
             if (layout.value()[i].stride < computedLayout.sourceWidthBytes)
@@ -210,14 +229,15 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
     return CombinedPlaneLayout { minAllocationSize, WTFMove(computedLayouts) };
 }
 
+// https://w3c.github.io/webcodecs/#videoframe-parse-videoframecopytooptions
 ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVideoFrame& frame, const WebCodecsVideoFrame::CopyToOptions& options)
 {
+    ASSERT(!frame.isDetached());
     ASSERT(frame.format());
 
-    if (!verifyRectSizeAlignment(*frame.format(), options.rect))
+    if (options.rect && !verifyRectSizeAlignment(*frame.format(), *options.rect))
         return Exception { TypeError, "rect size alignment is invalid"_s };
 
-    // Are we sure frame.visibleRect() is not null?
     auto& visibleRect = *frame.visibleRect();
     auto parsedRect = parseVisibleRect({ visibleRect.x(), visibleRect.y(), visibleRect.width(), visibleRect.height() }, options.rect, frame.codedWidth(), frame.codedHeight(), *frame.format());
 

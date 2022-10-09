@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class RenderFullScreen;
 class RenderTreeBuilder;
 class RenderStyle;
@@ -71,7 +72,7 @@ public:
         EnforceIFrameAllowFullscreenRequirement,
         ExemptIFrameAllowFullscreenRequirement,
     };
-    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, FullscreenCheckType);
+    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, RefPtr<DeferredPromise>&&, FullscreenCheckType);
 
     WEBCORE_EXPORT bool willEnterFullscreen(Element&);
     WEBCORE_EXPORT bool didEnterFullscreen();
@@ -98,7 +99,9 @@ public:
 protected:
     friend class Document;
 
-    void dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>&, const AtomString& eventName, bool shouldNotifyMediaElement);
+    enum class EventType : bool { Change, Error };
+    void dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>&, EventType, bool shouldNotifyMediaElement);
+    void dispatchEventForNode(Node&, EventType);
     void clearFullscreenElementStack();
     void popFullscreenElementStack();
     void pushFullscreenElementStack(Element&);

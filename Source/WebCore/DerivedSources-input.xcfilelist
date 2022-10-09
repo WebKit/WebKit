@@ -773,6 +773,7 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
 $(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
+$(PROJECT_DIR)/Modules/webcodecs/AvcEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/BitrateMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/HardwareAcceleration.idl
 $(PROJECT_DIR)/Modules/webcodecs/LatencyMode.idl
@@ -1094,6 +1095,7 @@ $(PROJECT_DIR)/dom/Document+UndoMananger.idl
 $(PROJECT_DIR)/dom/Document.idl
 $(PROJECT_DIR)/dom/DocumentAndElementEventHandlers.idl
 $(PROJECT_DIR)/dom/DocumentFragment.idl
+$(PROJECT_DIR)/dom/DocumentOrShadowRoot+Fullscreen.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRoot+PointerLock.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
@@ -1119,6 +1121,7 @@ $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
 $(PROJECT_DIR)/dom/FocusOptions.idl
 $(PROJECT_DIR)/dom/FormDataEvent.idl
+$(PROJECT_DIR)/dom/FullscreenOptions.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+PointerEvents.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+Selection.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers.idl

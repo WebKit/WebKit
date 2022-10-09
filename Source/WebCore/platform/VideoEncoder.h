@@ -41,6 +41,7 @@ public:
     struct Config {
         uint64_t width { 0 };
         uint64_t height { 0 };
+        bool useAnnexB { false };
     };
     struct EncodedFrame {
         Vector<uint8_t> data;
@@ -58,7 +59,12 @@ public:
     using PostTaskCallback = Function<void(Function<void()>&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = CompletionHandler<void(CreateResult&&)>;
+
+    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
+
     static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
 
     using EncodeCallback = Function<void(String&&)>;
     virtual void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) = 0;
@@ -66,6 +72,8 @@ public:
     virtual void flush(Function<void()>&&) = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
+
+    static CreatorFunction s_customCreator;
 };
 
 }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LoadableScript.h"
+#include "LoadableScriptError.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

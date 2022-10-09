@@ -1,8 +1,16 @@
 
 PASS .before 1
-PASS .before 2
-PASS .before 3
-PASS .after 4
+FAIL .before 2 assert_equals:
+<div id="item2" data-expected-width="50" data-expected-height="50" data-offset-y="50" class=" before" data-offset-x="40"></div>
+offsetLeft expected 40 but got 10
+FAIL .before 3 assert_equals:
+<div id="item3" data-expected-width="30" data-expected-height="50" data-offset-y="100" class=" before" data-offset-x="40"></div>
+offsetLeft expected 40 but got 30
+FAIL .after 4 assert_equals:
+<div id="item1" data-expected-width="20" data-expected-height="50" data-offset-y="0" class=" before after" data-offset-x="70"></div>
+offsetLeft expected 70 but got 10
 PASS .after 5
-PASS .after 6
+FAIL .after 6 assert_equals:
+<div id="item3" data-expected-width="30" data-expected-height="50" data-offset-y="100" class=" before after" data-offset-x="70"></div>
+offsetLeft expected 70 but got 0
 

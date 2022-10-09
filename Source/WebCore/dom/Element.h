@@ -55,6 +55,7 @@ class DatasetDOMStringMap;
 class DOMRect;
 class DOMRectList;
 class DOMTokenList;
+class DeferredPromise;
 class Document;
 class ElementAnimationRareData;
 class ElementData;
@@ -82,10 +83,12 @@ class WebAnimation;
 enum class AnimationImpact;
 enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
+enum class FullscreenNavigationUI : uint8_t;
 enum class IsSyntheticClick : bool { No, Yes };
 enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
 
+struct FullscreenOptions;
 struct GetAnimationsOptions;
 struct IntersectionObserverData;
 struct KeyframeAnimationOptions;
@@ -565,7 +568,8 @@ public:
     bool containsFullScreenElement() const { return hasNodeFlag(NodeFlag::ContainsFullScreenElement); }
     void setContainsFullScreenElement(bool);
     void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
-    WEBCORE_EXPORT virtual void webkitRequestFullscreen();
+    WEBCORE_EXPORT void webkitRequestFullscreen();
+    virtual void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&);
 #endif
 
     ExceptionOr<void> setPointerCapture(int32_t);

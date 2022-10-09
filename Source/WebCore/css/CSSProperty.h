@@ -37,6 +37,8 @@ struct StylePropertyMetadata {
         , m_implicit(implicit)
         , m_inherited(inherited)
     {
+        ASSERT(propertyID != CSSPropertyInvalid);
+        ASSERT(propertyID < firstShorthandProperty);
     }
 
     CSSPropertyID shorthandID() const;

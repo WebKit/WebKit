@@ -449,7 +449,7 @@ def riscv64LowerAddressLoads(list)
                     end
                 when [LabelReference, RegisterID]
                     label, dest = node.operands[0], node.operands[1]
-                    newList << Instruction.new(node.codeOrigin, "rv_lla", [label, dest])
+                    newList << Instruction.new(node.codeOrigin, "rv_la", [label, dest])
                     if label.offset != 0
                         offset = Immediate.new(node.codeOrigin, label.offset)
                         if offset.riscv64RequiresLoad

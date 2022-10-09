@@ -1,0 +1,7 @@
+
+FAIL grid-template: none / 1px and "grid-template-areas: "a";" should be valid. assert_equals: expected "none / 1px" but got ""
+FAIL grid-template: none / none and "grid-template-areas: "a";" should be valid. assert_equals: expected "none" but got ""
+FAIL grid-template: auto / 1px and "grid-template-areas: "a a a";" should be valid. assert_equals: expected "\"a a a\" / 1px" but got ""
+FAIL grid-template: auto / auto and "grid-template-areas: "a a a";" should be valid. assert_equals: expected "\"a a a\" / auto" but got ""
+FAIL grid-template: 10px 20px 30px / 40px 50px 60px 70px and "grid-template-areas: "a . b ." "c d . e" "f g h .";" should be valid. assert_equals: expected "\"a . b .\" 10px \"c d . e\" 20px \"f g h .\" 30px / 40px 50px 60px 70px" but got ""
+

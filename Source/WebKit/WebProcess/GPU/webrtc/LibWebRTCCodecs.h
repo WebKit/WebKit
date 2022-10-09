@@ -91,6 +91,7 @@ public:
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
+    using EncoderCallback = Function<void(Span<const uint8_t>&&, bool isKeyFrame, uint64_t timestamp)>;
     struct EncoderInitializationData {
         uint16_t width;
         uint16_t height;
@@ -107,6 +108,7 @@ public:
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
+        EncoderCallback encoderCallback;
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
         SharedVideoFrameWriter sharedVideoFrameWriter;
@@ -114,10 +116,13 @@ public:
     };
 
     Encoder* createEncoder(VideoCodecType, const std::map<std::string, std::string>&);
+    void createEncoderAndWaitUntilReady(VideoCodecType, const std::map<std::string, std::string>&, Function<void(Encoder&)>&&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
+    int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, uint32_t timestamp, bool shouldEncodeAsKeyFrame);
     int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
+    void registerEncodedVideoFrameCallback(Encoder&, EncoderCallback&&);
     void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
 
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
@@ -153,6 +158,8 @@ private:
     WorkQueue& workQueue() const { return m_queue; }
 
     Decoder* createDecoderInternal(VideoCodecType, Function<void(Decoder&)>&&);
+    Encoder* createEncoderInternal(VideoCodecType, const std::map<std::string, std::string>&, Function<void(Encoder&)>&&);
+    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation, MediaTime, uint32_t);
 
 private:
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());

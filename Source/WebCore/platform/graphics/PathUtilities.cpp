@@ -495,8 +495,6 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
 Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const BorderData& borderData,
     float outlineOffset, TextDirection direction, WritingMode writingMode, float deviceScaleFactor)
 {
-    ASSERT(borderData.hasBorderRadius());
-
     FloatSize topLeftRadius { borderData.topLeftRadius().width.value(), borderData.topLeftRadius().height.value() };
     FloatSize topRightRadius { borderData.topRightRadius().width.value(), borderData.topRightRadius().height.value() };
     FloatSize bottomRightRadius { borderData.bottomRightRadius().width.value(), borderData.bottomRightRadius().height.value() };

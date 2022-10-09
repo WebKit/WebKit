@@ -1,0 +1,20 @@
+top
+
+
+
+
+bottom
+top
+
+
+
+
+bottom
+
+PASS .target > * 1
+PASS .target > * 2
+FAIL .target > * 3 assert_equals:
+<div data-offset-x="65"><span></span></div>
+offsetLeft expected 65 but got 115
+PASS .target > * 4
+

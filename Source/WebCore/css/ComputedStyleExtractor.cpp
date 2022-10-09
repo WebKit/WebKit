@@ -4354,8 +4354,8 @@ Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CS
 Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties()
 {
     Vector<CSSProperty> list;
-    list.reserveInitialCapacity(numCSSProperties);
-    for (unsigned i = firstCSSProperty; i < lastCSSProperty; ++i) {
+    list.reserveInitialCapacity(firstShorthandProperty - firstCSSProperty);
+    for (unsigned i = firstCSSProperty; i < firstShorthandProperty; ++i) {
         auto propertyID = convertToCSSPropertyID(i);
         if (auto value = propertyValue(propertyID))
             list.append(CSSProperty(propertyID, WTFMove(value)));

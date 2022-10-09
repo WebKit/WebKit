@@ -1,3 +1,3 @@
 
-FAIL Re-locking orientation during event dispatch must reject existing orientationPendingPromise promise_test: Unhandled rejection with value: object "TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)"
+FAIL Re-locking orientation during event dispatch must reject existing orientationPendingPromise promise_rejects_dom: function "function () { throw e }" threw object "NotSupportedError: Screen orientation locking is not supported" that is not a DOMException AbortError: property "code" is equal to 9, expected 20
 

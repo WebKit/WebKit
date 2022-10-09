@@ -30,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-columns-rows-get-set-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-content-sized-columns-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-computed.html
@@ -50,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand-areas-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand.html

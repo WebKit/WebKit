@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEB_CODECS)
 
 #include <WebCore/VideoDecoder.h>
+#include <WebCore/VideoEncoder.h>
 
 namespace WebKit {
 
@@ -41,7 +42,7 @@ public:
 
 private:
     static void createDecoder(const String&, const WebCore::VideoDecoder::Config&, WebCore::VideoDecoder::CreateCallback&&, WebCore::VideoDecoder::OutputCallback&&, WebCore::VideoDecoder::PostTaskCallback&&);
-
+    static void createEncoder(const String&, const WebCore::VideoEncoder::Config&, WebCore::VideoEncoder::CreateCallback&&, WebCore::VideoEncoder::OutputCallback&&, WebCore::VideoEncoder::PostTaskCallback&&);
 };
 
 } // namespace WebKit

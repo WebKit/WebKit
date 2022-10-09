@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "AvcEncoderConfig.h"
 #include "BitrateMode.h"
 #include "HardwareAcceleration.h"
 #include "LatencyMode.h"
@@ -46,6 +47,7 @@ struct WebCodecsVideoEncoderConfig {
     String scalabilityMode;
     BitrateMode bitrateMode { BitrateMode::Variable };
     LatencyMode latencyMode { LatencyMode::Quality };
+    std::optional<AvcEncoderConfig> avc;
 };
 
 }

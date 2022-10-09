@@ -994,7 +994,9 @@ dom/DeviceOrientationEvent.cpp
 dom/Document.cpp
 dom/DocumentFontLoader.cpp
 dom/DocumentFragment.cpp
+dom/DocumentFullscreen.cpp
 dom/DocumentMarkerController.cpp
+dom/DocumentOrShadowRootFullscreen.cpp
 dom/DocumentParser.cpp
 dom/DocumentSharedObjectPool.cpp
 dom/DocumentStorageAccess.cpp
@@ -3027,6 +3029,7 @@ JSBeforeUnloadEvent.cpp
 JSBiquadFilterNode.cpp
 JSBiquadFilterOptions.cpp
 JSBiquadFilterType.cpp
+JSAvcEncoderConfig.cpp
 JSBitrateMode.cpp
 JSBlob.cpp
 JSBlobCallback.cpp
@@ -4103,6 +4106,7 @@ JSCSSTranslate.cpp
 JSCSSStyleValue.cpp
 JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp
+JSFullscreenOptions.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp

@@ -24,10 +24,50 @@
 PASS .wrapper 1
 PASS .wrapper 2
 PASS .wrapper 3
-PASS .wrapper 4
-PASS .wrapper 5
-PASS .wrapper 6
-PASS .wrapper 7
+FAIL .wrapper 4 assert_equals:
+<div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+  <div class="grid">
+    <div class="i1"></div>
+    <div class="i2" data-offset-x="0"></div>
+    <div class="i3"></div>
+  </div>
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 75
+FAIL .wrapper 5 assert_equals:
+<div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+  <div class="grid">
+    <div class="i1"></div>
+    <div class="i2" style="writing-mode: horizontal-tb;" data-offset-x="0"></div>
+    <div class="i3"></div>
+  </div>
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 75
+FAIL .wrapper 6 assert_equals:
+<div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+  <div class="grid">
+    <div class="i1"></div>
+    <div class="i2" data-offset-x="0"></div>
+    <div class="i3"></div>
+  </div>
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 75
+FAIL .wrapper 7 assert_equals:
+<div class="wrapper" style="writing-mode: vertical-lr; text-orientation: sideways;">
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+  <div class="grid">
+    <div class="i1"></div>
+    <div class="i2" style="writing-mode: horizontal-tb;" data-offset-x="0"></div>
+    <div class="i3"></div>
+  </div>
+  <div style="display: inline-block; width: 20px; height: 10px; background: black" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 75
 PASS .wrapper 8
 PASS .wrapper 9
 PASS .wrapper 10

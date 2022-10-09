@@ -4,5 +4,5 @@ Tests user activation from a mouse right-click.
 
 Right-click anywhere in the document.
 
-FAIL Activation through right-click mouse event assert_true: mousedown event should result in activation expected true got false
+FAIL Activation through right-click mouse event assert_false: mouseup should have no activation after mousedown consumption expected false got true
 

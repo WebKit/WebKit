@@ -47,7 +47,7 @@
     'grid': ['auto-flow / 100px 100px', 'none / 100px 100px'],
     'grid-template-areas': 'none'
   });
-  
+
   test_shorthand_roundtrip('grid: auto-flow auto / 100px 100px; grid-template-areas: "one two" "three four"',
                             {
     'grid': '',
@@ -85,7 +85,7 @@
   test_shorthand_roundtrip('grid: auto-flow 1px / 2px; grid-auto-columns: auto', { 'grid': 'auto-flow 1px / 2px' });
   test_shorthand_roundtrip('grid: auto-flow dense / 2px; grid-auto-rows: auto', { 'grid': 'auto-flow dense / 2px' });
 
-  test_shorthand_roundtrip('grid: auto-flow 1px / 2px; grid-auto-columns: 3px', 
+  test_shorthand_roundtrip('grid: auto-flow 1px / 2px; grid-auto-columns: 3px',
                            {
     'grid': '',
     'grid-auto-columns': '3px',
@@ -94,7 +94,7 @@
     'grid-template-columns': '2px',
     'grid-template-rows': 'none'
   });
-  test_shorthand_roundtrip('grid: 1px / auto-flow 2px; grid-auto-rows: 3px', 
+  test_shorthand_roundtrip('grid: 1px / auto-flow 2px; grid-auto-rows: 3px',
                            {
     'grid': '',
     'grid-auto-columns': '2px',
@@ -103,7 +103,7 @@
     'grid-template-columns': 'none',
     'grid-template-rows': '1px'
   });
-  test_shorthand_roundtrip('grid: none / auto-flow 1px; grid-template-columns: 3px', 
+  test_shorthand_roundtrip('grid: none / auto-flow 1px; grid-template-columns: 3px',
                            {
     'grid': '',
     'grid-auto-columns': '1px',
@@ -112,7 +112,7 @@
     'grid-template-columns': '3px',
     'grid-template-rows': 'none'
   });
-  test_shorthand_roundtrip('grid: auto-flow 1px / none; grid-template-rows: 3px', 
+  test_shorthand_roundtrip('grid: auto-flow 1px / none; grid-template-rows: 3px',
                            {
     'grid': '',
     'grid-auto-columns': 'auto',

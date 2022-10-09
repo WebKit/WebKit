@@ -4188,7 +4188,7 @@ sub GetCastingHelperForThisObject
     return "jsDynamicCast<JS$interfaceName*>";
 }
 
-# http://heycam.github.io/webidl/#Unscopable
+# https://webidl.spec.whatwg.org/#Unscopable
 sub addUnscopableProperties
 {
     my $interface = shift;

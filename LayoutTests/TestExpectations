@@ -441,6 +441,7 @@ imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-popup-same-origin.https.tentative.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/multi-globals/workers-coep-report.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html [ DumpJSConsoleLogInStdErr ]
@@ -604,6 +605,7 @@ imported/w3c/web-platform-tests/feature-policy/picture-in-picture-allowed-by-fea
 imported/w3c/web-platform-tests/feature-policy/picture-in-picture-default-feature-policy.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/picture-in-picture-disabled-by-feature-policy.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/policy-extends-to-sandbox.html [ Skip ]
+imported/w3c/web-platform-tests/feature-policy/reporting/fullscreen-reporting.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/reporting/geolocation-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/reporting/screen-wake-lock-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/fullscreen/api/fullscreen-display-contents.html [ Skip ]
@@ -707,7 +709,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-inline-sizi
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_navigate_ancestor-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/historical-search-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/anchor-with-inline-element.html [ Skip ]
-imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/same-site-cookies.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-module-Error.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg.html [ Skip ]
@@ -1536,8 +1537,6 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-001.html [ ImageOnlyFailure ]
-
 webkit.org/b/234879 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic.html [ ImageOnlyFailure ]
@@ -1591,10 +1590,29 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-0
 
 webkit.org/b/236959 imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-001.html [ ImageOnlyFailure ]
 webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
-webkit.org/b/236949 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-001.html [ ImageOnlyFailure ]
-webkit.org/b/236949 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-002.html [ ImageOnlyFailure ]
-webkit.org/b/236949 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-003.html [ ImageOnlyFailure ]
-webkit.org/b/236949 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004.html [ ImageOnlyFailure ]
+
+# CSS Grid Baseline tests
+imported/w3c/web-platform-tests/css/css-grid/alignment/grid-justify-baseline-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-002-b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-007.html [ ImageOnlyFailure ]
+
+
+# CSS Grid Stretch Grid Item failures
+webkit.org/b/246187 imported/w3c/web-platform-tests/css/css-grid/stretch-grid-item-checkbox-input.html [ ImageOnlyFailure ]
+webkit.org/b/246187 imported/w3c/web-platform-tests/css/css-grid/stretch-grid-item-radio-input.html [ ImageOnlyFailure ]
 
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]
 webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]
@@ -4443,7 +4461,6 @@ webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 
 # Static position alignment in Flexbox.
 webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-safe-001.html [ ImageOnlyFailure ]
-webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-align-content-001.html [ ImageOnlyFailure ]
 
 # Tables as flex items.
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html [ ImageOnlyFailure ]
@@ -4464,7 +4481,17 @@ webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-base
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change-nested.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change.html [ ImageOnlyFailure ]
-webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/synthesize-vrl-baseline.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-baseline.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-items-baseline-column-horz.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-items-baseline-column-vert.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-items-baseline-row-horz.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-items-baseline-row-vert.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-002.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-003.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-004.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-005.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-002.html [ ImageOnlyFailure ]
 
 # Flex item's min|max content contributions
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-max-content-001.html [ ImageOnlyFailure ]

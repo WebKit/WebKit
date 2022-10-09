@@ -1,4 +1,4 @@
-Horizontal grid and verticalLR item with relative width
+Horizontal grid and verticalLR item with fixed width
 É É ÉÉ
  Horizontal grid and verticalRL item with fixed width
 É É ÉÉ
@@ -8,7 +8,13 @@ Horizontal grid and verticalLR item with relative width
 É É ÉÉ
 
 PASS .inline-grid 1
-PASS .inline-grid 2
+FAIL .inline-grid 2 assert_equals:
+<div class="inline-grid justifyItemsBaseline" data-expected-width="150" data-expected-height="300">
+  <div class="firstRowFirstColumn fixedWidth" data-offset-x="0" data-offset-y="0" data-expected-width="125" data-expected-height="100"></div>
+  <div class="secondRowFirstColumn bigFont paddingRight verticalRL" data-offset-x="5" data-offset-y="100" data-expected-width="120" data-expected-height="200">É É ÉÉ</div>
+  <div class="autoRowSpanning2AutoColumn width25"></div>
+</div>
+width expected 150 but got 210
 PASS .inline-grid 3
 PASS .inline-grid 4
 

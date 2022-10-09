@@ -33,6 +33,9 @@
 #include "GraphicsContext.h"
 #include "NinePieceImage.h"
 #include "PaintInfo.h"
+#include "PathUtilities.h"
+#include "RenderBox.h"
+#include "RenderTheme.h"
 
 namespace WebCore {
 
@@ -162,7 +165,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     if (haveAllSolidEdges && outerBorder.isRounded() && allCornersClippedOut(outerBorder, m_paintInfo.rect))
         outerBorder.setRadii(RoundedRect::Radii());
 
-    auto sides = Sides {
+    paintSides({
         outerBorder,
         innerBorder,
         unadjustedInnerBorder,
@@ -174,8 +177,133 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         includeLogicalRightEdge,
         appliedClipAlready,
         style.isHorizontalWritingMode()
+    });
+}
+
+void BorderPainter::paintOutline(const LayoutRect& paintRect)
+{
+    auto& styleToUse = m_renderer.style();
+    auto outlineWidth = floorToDevicePixel(styleToUse.outlineWidth(), document().deviceScaleFactor());
+    auto outlineOffset = floorToDevicePixel(styleToUse.outlineOffset(), document().deviceScaleFactor());
+
+    // Only paint the focus ring by hand if the theme isn't able to draw it.
+    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !m_renderer.theme().supportsFocusRing(styleToUse)) {
+        Vector<LayoutRect> focusRingRects;
+        LayoutRect paintRectToUse { paintRect };
+        if (is<RenderBox>(m_renderer))
+            paintRectToUse = m_renderer.theme().adjustedPaintRect(downcast<RenderBox>(m_renderer), paintRectToUse);
+        m_renderer.addFocusRingRects(focusRingRects, paintRectToUse.location(), m_paintInfo.paintContainer);
+        m_renderer.paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
+    }
+
+    if (m_renderer.hasOutlineAnnotation() && styleToUse.outlineStyleIsAuto() == OutlineIsAuto::Off && !m_renderer.theme().supportsFocusRing(styleToUse))
+        m_renderer.addPDFURLRect(m_paintInfo, paintRect.location());
+
+    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On || styleToUse.outlineStyle() == BorderStyle::None)
+        return;
+
+    // FIXME: This prevents outlines from painting inside the object. See bug 12042
+    auto outer = paintRect;
+    outer.inflate(outlineOffset + outlineWidth);
+    if (outer.isEmpty())
+        return;
+
+    auto isHorizontal = styleToUse.isHorizontalWritingMode();
+    auto hasBorderRadius = styleToUse.hasBorderRadius();
+    auto includeLogicalLeftEdge = true;
+    auto includeLogicalRightEdge = true;
+    auto roundedBorderRectFor = [&] (auto& borderRect, auto borderOffset) {
+        auto adjustedRadius = [&] (auto& radius, auto offset) {
+            auto widthValue = radius.width.isAuto() ? 0 : intValueForLength(radius.width, paintRect.width());
+            auto heightValue = radius.height.isAuto() ? 0 : intValueForLength(radius.height, paintRect.height());
+            if (!widthValue && !heightValue)
+                return LengthSize { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+            if (!widthValue)
+                return LengthSize { { 0, LengthType::Fixed }, { heightValue + offset, LengthType::Fixed } };
+            return LengthSize { { widthValue + offset, LengthType::Fixed }, { heightValue + offset, LengthType::Fixed } };
+        };
+
+        auto borderRadii = std::optional<BorderData::Radii> { };
+        if (hasBorderRadius) {
+            borderRadii = BorderData::Radii {
+                adjustedRadius(styleToUse.borderTopLeftRadius(), borderOffset),
+                adjustedRadius(styleToUse.borderTopRightRadius(), borderOffset),
+                adjustedRadius(styleToUse.borderBottomLeftRadius(), borderOffset),
+                adjustedRadius(styleToUse.borderBottomRightRadius(), borderOffset)
+            };
+        }
+        return RenderStyle::getRoundedInnerBorderFor(borderRect, { }, { }, { }, { }, borderRadii, isHorizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
     };
-    paintSides(sides);
+    auto innerRectForOutline = paintRect;
+    innerRectForOutline.inflate(outlineOffset);
+    auto innerBorder = roundedBorderRectFor(innerRectForOutline, LayoutUnit { outlineOffset });
+    auto outerBorder = roundedBorderRectFor(outer, LayoutUnit { outlineWidth + outlineOffset });
+    auto bleedAvoidance = BackgroundBleedShrinkBackground;
+    auto appliedClipAlready = false;
+    auto haveAllSolidEdges = true;
+
+    paintSides({
+        outerBorder,
+        innerBorder,
+        innerBorder,
+        hasBorderRadius ? std::make_optional(styleToUse.borderRadii()) : std::nullopt,
+        borderEdgesForOutline(styleToUse, document().deviceScaleFactor()),
+        haveAllSolidEdges,
+        bleedAvoidance,
+        includeLogicalLeftEdge,
+        includeLogicalRightEdge,
+        appliedClipAlready,
+        isHorizontal
+    });
+}
+
+void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects)
+{
+    if (lineRects.size() == 1) {
+        auto adjustedPaintRect = lineRects[0];
+        adjustedPaintRect.moveBy(paintOffset);
+        paintOutline(adjustedPaintRect);
+        return;
+    }
+
+    auto& styleToUse = m_renderer.style();
+    auto outlineOffset = styleToUse.outlineOffset();
+    auto outlineWidth = styleToUse.outlineWidth();
+    auto deviceScaleFactor = document().deviceScaleFactor();
+
+    Vector<FloatRect> pixelSnappedRects;
+    for (size_t index = 0; index < lineRects.size(); ++index) {
+        auto rect = lineRects[index];
+
+        rect.moveBy(paintOffset);
+        rect.inflate(outlineOffset + outlineWidth / 2);
+        pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
+    }
+    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse.border(), outlineOffset, styleToUse.direction(), styleToUse.writingMode(), deviceScaleFactor);
+    if (path.isEmpty()) {
+        // Disjoint line spanning inline boxes.
+        for (auto rect : lineRects) {
+            rect.moveBy(paintOffset);
+            paintOutline(rect);
+        }
+        return;
+    }
+
+    auto& graphicsContext = m_paintInfo.context();
+    auto outlineColor = styleToUse.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+    auto useTransparencyLayer = !outlineColor.isOpaque();
+    if (useTransparencyLayer) {
+        graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
+        outlineColor = outlineColor.opaqueColor();
+    }
+
+    graphicsContext.setStrokeColor(outlineColor);
+    graphicsContext.setStrokeThickness(outlineWidth);
+    graphicsContext.setStrokeStyle(SolidStroke);
+    graphicsContext.strokePath(path);
+
+    if (useTransparencyLayer)
+        graphicsContext.endTransparencyLayer();
 }
 
 void BorderPainter::paintSides(const Sides& sides)

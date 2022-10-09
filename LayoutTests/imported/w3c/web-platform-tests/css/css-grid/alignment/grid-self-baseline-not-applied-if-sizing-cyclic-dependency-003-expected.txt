@@ -1,32 +1,50 @@
-flex rows - column-axis baseline - the blue orthogonal item didn't participate in the first iteration
+flex row
 É
 É
 É
- flex row - column-axis baseline - the blue relative sized item didn't participate in the first iterarion
+ flex row
 É
 É
 É
- flex row - both the blue relative sized and red orthogonal didn't participate in the first iteration
+ flex row
 É
 É
 É
- flex column - row-axis baseline - the blue orthogonal item didn't participate in the first iteration
+ flex column - all items share a baseline group
 É
 É
 É
- flex column - column-axis baseline - the blue relative sized item didn't participate in the first iterarion
+ flex column - all items share a baseline group
 É
 É
 É
- flex columns - both the blue relative sized and red orthogonal didn't participate in the first iteration
+ flex column - all items share a baseline group
 É
 É
 É
 
 PASS .grid 1
-PASS .grid 2
+FAIL .grid 2 assert_equals:
+<div class="grid row alignItemsBaseline">
+  <div class="item1 relativeHeight" data-offset-x="0" data-offset-y="56" data-expected-width="30" data-expected-height="43">É</div>
+  <div class="item2" data-offset-x="30" data-offset-y="64" data-expected-width="50" data-expected-height="20">É</div>
+  <div class="item3 verticalLR" data-offset-x="80" data-offset-y="0" data-expected-width="100" data-expected-height="80">É</div>
+</div>
+height expected 43 but got 40
 PASS .grid 3
 PASS .grid 4
-PASS .grid 5
-PASS .grid 6
+FAIL .grid 5 assert_equals:
+<div class="grid column justifyItemsBaseline">
+  <div class="item1 relativeWidth height50" data-offset-x="0" data-offset-y="0" data-expected-width="40" data-expected-height="50">É</div>
+  <div class="item2 verticalLR" data-offset-x="12" data-offset-y="50" data-expected-width="20" data-expected-height="50">É</div>
+  <div class="item3 verticalLR" data-offset-x="0" data-offset-y="100" data-expected-width="80" data-expected-height="100">É</div>
+</div>
+offsetLeft expected 0 but got 16
+FAIL .grid 6 assert_equals:
+<div class="grid column justifyItemsBaseline">
+  <div class="item1 relativeWidth height50" data-offset-x="0" data-offset-y="0" data-expected-width="40" data-expected-height="50">É</div>
+  <div class="item2" data-offset-x="16" data-offset-y="50" data-expected-width="20" data-expected-height="50">É</div>
+  <div class="item3 verticalLR" data-offset-x="0" data-offset-y="100" data-expected-width="80" data-expected-height="100">É</div>
+</div>
+offsetLeft expected 0 but got 16
 

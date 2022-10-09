@@ -29,6 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "LoadableScript.h"
+#include "LoadableScriptError.h"
 #include "ReferrerPolicy.h"
 #include <wtf/TypeCasts.h>
 

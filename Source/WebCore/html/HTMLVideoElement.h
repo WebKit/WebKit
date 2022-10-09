@@ -71,7 +71,7 @@ public:
 #endif
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-    void webkitRequestFullscreen() override;
+    void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&) override;
 #endif
 
     RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, const DestinationColorSpace&, PixelFormat) const;

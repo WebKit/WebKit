@@ -29,6 +29,7 @@
 #include "DefaultResourceLoadPriority.h"
 #include "FetchIdioms.h"
 #include "LoadableImportMap.h"
+#include "LoadableScriptError.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include "SubresourceIntegrity.h"

@@ -27,6 +27,7 @@
 
 #include "FetchOptions.h"
 #include "LoadableScript.h"
+#include "LoadableScriptError.h"
 #include "ModuleFetchParameters.h"
 #include <JavaScriptCore/ScriptFetcher.h>
 #include <wtf/text/WTFString.h>
