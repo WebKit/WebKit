@@ -1201,6 +1201,23 @@ TEST(WTF_WeakPtr, WeakHashMapConstObjects)
     }
 }
 
+TEST(WTF_WeakPtr, WeakHashMapRemoveIterator)
+{
+    WeakHashMap<Base, int> weakHashMap;
+    Vector<std::unique_ptr<Base>> objects;
+    for (unsigned i = 0; i < 13; ++i) {
+        auto object = makeUnique<Base>();
+        weakHashMap.add(*object, 0);
+        objects.append(WTFMove(object));
+    }
+    while (!objects.isEmpty()) {
+        auto it = weakHashMap.find(*objects.last());
+        objects.remove(0);
+        weakHashMap.remove(it);
+        weakHashMap.checkConsistency();
+    }
+}
+
 TEST(WTF_WeakPtr, WeakHashMapExpansion)
 {
     unsigned initialCapacity;
