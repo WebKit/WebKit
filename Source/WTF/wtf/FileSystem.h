@@ -77,7 +77,7 @@ const PlatformFileHandle invalidPlatformFileHandle = -1;
 
 // PlatformFileID
 #if USE(GLIB) && !OS(WINDOWS)
-typedef uint64_t PlatformFileID;
+typedef CString PlatformFileID;
 #elif OS(WINDOWS)
 typedef FILE_ID_128 PlatformFileID;
 #else
