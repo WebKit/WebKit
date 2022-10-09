@@ -266,8 +266,9 @@ public:
 
     bool remove(iterator it)
     {
+        auto didRemove = m_map.remove(it.m_position);
         amortizedCleanupIfNeeded();
-        return m_map.remove(it.m_position);
+        return didRemove;
     }
 
     bool remove(const KeyType& key)
