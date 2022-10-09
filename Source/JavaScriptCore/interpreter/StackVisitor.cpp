@@ -444,7 +444,7 @@ bool StackVisitor::Frame::isImplementationVisibilityPrivate() const
 
     case ImplementationVisibility::Private:
     case ImplementationVisibility::PrivateRecursive:
-        return true;
+        return !Options::showPrivateScriptsInStackTraces();
     }
 
     ASSERT_NOT_REACHED();

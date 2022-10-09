@@ -558,9 +558,11 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal.") \
-    v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing.") \
-    v(Bool, useWebAssemblySIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
-    v(Bool, useWebAssemblyTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec.") \
+    v(Bool, useWebAssemblyExceptions, true, Normal, "Allow the new section and instructions from the wasm exception handling spec.") \
+    v(Bool, useWebAssemblyBranchHints, true, Normal, "Allow the new section from the wasm branch hinting spec.") \
+    \
+    /* Bun Features */\
+    v(Bool, showPrivateScriptsInStackTraces, false, Normal, "Show private scripts in stack traces.") \
 
 
 enum OptionEquivalence {
