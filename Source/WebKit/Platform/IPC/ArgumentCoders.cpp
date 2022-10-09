@@ -44,18 +44,8 @@ void ArgumentCoder<WallTime>::encode(Encoder& encoder, const WallTime& time)
 template
 void ArgumentCoder<WallTime>::encode<Encoder>(Encoder&, const WallTime&);
 
-WARN_UNUSED_RETURN bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
-{
-    double value;
-    if (!decoder.decode(value))
-        return false;
-
-    time = WallTime::fromRawSeconds(value);
-    return true;
-}
-
 template<typename Decoder>
-WARN_UNUSED_RETURN std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
+std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
 {
     std::optional<double> time;
     decoder >> time;
@@ -71,14 +61,12 @@ void ArgumentCoder<AtomString>::encode(Encoder& encoder, const AtomString& atomS
     encoder << atomString.string();
 }
 
-WARN_UNUSED_RETURN bool ArgumentCoder<AtomString>::decode(Decoder& decoder, AtomString& atomString)
+std::optional<AtomString> ArgumentCoder<AtomString>::decode(Decoder& decoder)
 {
-    String string;
-    if (!decoder.decode(string))
-        return false;
-
-    atomString = AtomString { string };
-    return true;
+    auto string = decoder.decode<String>();
+    if (!string)
+        return std::nullopt;
+    return AtomString { WTFMove(*string) };
 }
 
 template<typename Encoder>
@@ -187,16 +175,6 @@ WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& 
 template
 std::optional<String> ArgumentCoder<String>::decode<Decoder>(Decoder&);
 
-WARN_UNUSED_RETURN bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
-{
-    std::optional<String> string;
-    decoder >> string;
-    if (!string)
-        return false;
-    result = WTFMove(*string);
-    return true;
-}
-
 template<typename Encoder>
 void ArgumentCoder<StringView>::encode(Encoder& encoder, StringView string)
 {
@@ -226,9 +204,12 @@ void ArgumentCoder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& d
     encoder.encodeFixedLengthData(digest.data(), sizeof(digest), 1);
 }
 
-WARN_UNUSED_RETURN bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
+std::optional<SHA1::Digest> ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder)
 {
-    return decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1);
+    SHA1::Digest digest;
+    if (!decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1))
+        return std::nullopt;
+    return digest;
 }
 
 #if HAVE(AUDIT_TOKEN)
@@ -239,13 +220,16 @@ void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t&
         encoder << auditToken.val[i];
 }
 
-WARN_UNUSED_RETURN bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& auditToken)
+std::optional<audit_token_t> ArgumentCoder<audit_token_t>::decode(Decoder& decoder)
 {
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++) {
-        if (!decoder.decode(auditToken.val[i]))
-            return false;
+    audit_token_t auditToken { };
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); ++i) {
+        auto val = decoder.decode<std::remove_extent_t<decltype(auditToken.val)>>();
+        if (!val)
+            return std::nullopt;
+        auditToken.val[i] = *val;
     }
-    return true;
+    return auditToken;
 }
 
 #endif // HAVE(AUDIT_TOKEN)
