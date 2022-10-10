@@ -1,4 +1,4 @@
-//@ skip if buildType != "debug" or ($architecture != "arm" and $architecture != "mips")
+//@ skip if $buildType != "debug" or ($architecture != "arm" and $architecture != "mips")
 function __getProperties(obj) {
   properties = []
   for (name of Object.getOwnPropertyNames(obj)) properties.push(name)
