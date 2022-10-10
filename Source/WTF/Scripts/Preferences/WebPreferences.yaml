@@ -2127,8 +2127,10 @@ SourceBufferChangeTypeEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      "USE(GSTREAMER)": false
       default: true
     WebCore:
+      "USE(GSTREAMER)": false
       default: true
 
 SpatialNavigationEnabled:
