@@ -27,8 +27,7 @@
 
 namespace WTF {
 
-enum class UTF8ConversionError {
-    None,
+enum class UTF8ConversionError : uint8_t {
     OutOfMemory,
     IllegalSource,
     SourceExhausted

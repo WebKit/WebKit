@@ -312,7 +312,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
 
 void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIdentifier> frameID)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->toUInt64() : 0);
+    ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->object().toUInt64() : 0);
 
     if (frameID) {
         m_grantedRequests.removeAllMatching([frameID](const auto& grantedRequest) {
@@ -637,7 +637,7 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
         return;
 
     // If page navigated, there is no need to call the page client for authorization.
-    auto* webFrame = m_page.process().webFrame(m_currentUserMediaRequest->frameID());
+    auto* webFrame = WebFrameProxy::webFrame(m_currentUserMediaRequest->frameID());
 
     if (!webFrame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(m_currentUserMediaRequest->topLevelDocumentSecurityOrigin())) {
         denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, emptyString());
@@ -652,7 +652,7 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
 
 void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, const WebCore::CaptureDevice& device, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* frame = m_page.process().webFrame(frameIdentifier);
+    auto* frame = WebFrameProxy::webFrame(frameIdentifier);
     if (!frame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topOrigin)) {
         completionHandler(false);
         return;
@@ -718,7 +718,7 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
 
 void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&& handler)
 {
-    auto* webFrame = m_page.process().webFrame(frameID);
+    auto* webFrame = WebFrameProxy::webFrame(frameID);
     if (!webFrame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topLevelDocumentOrigin.get())) {
         handler({ });
         return;

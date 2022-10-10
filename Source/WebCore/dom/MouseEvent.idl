@@ -40,8 +40,8 @@
 
     boolean getModifierState(DOMString keyArg);
 
-    [Conditional=POINTER_LOCK] readonly attribute long movementX;
-    [Conditional=POINTER_LOCK] readonly attribute long movementY;
+    [Conditional=POINTER_LOCK] readonly attribute double movementX;
+    [Conditional=POINTER_LOCK] readonly attribute double movementY;
     [Conditional=MOUSE_FORCE_EVENTS, ImplementedAs=force]readonly attribute double webkitForce;
 
     // FIXME: relatedTarget should be of type EventTarget? but we need to use any to support a quirk for iAd Producer (rdar://problem/30640101).

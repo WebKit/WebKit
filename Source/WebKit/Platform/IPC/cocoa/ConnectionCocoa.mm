@@ -171,10 +171,8 @@ static void clearNoSenderNotifications(mach_port_t port)
     requestNoSenderNotifications(port, MACH_PORT_NULL);
 }
 
-bool Connection::open(Client& client)
+void Connection::platformOpen()
 {
-    ASSERT(!m_client);
-    m_client = &client;
     if (m_isServer) {
         ASSERT(m_receivePort);
         ASSERT(!m_sendPort);
@@ -235,8 +233,6 @@ bool Connection::open(Client& client)
         if (m_sendSource)
             dispatch_resume(m_sendSource.get());
     });
-
-    return true;
 }
 
 bool Connection::sendMessage(std::unique_ptr<MachMessage> message)

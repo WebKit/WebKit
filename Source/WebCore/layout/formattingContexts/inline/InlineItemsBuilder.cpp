@@ -190,12 +190,18 @@ static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBui
         // For inline boxes, implicit reordering works across box boundaries.
         break;
     case UnicodeBidi::Embed:
+        // Isolate and embed values are enforced by default and redundant on the block level boxes.
+        if (enterExitType == EnterExitType::EnteringBlock)
+            break;
         paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightEmbed : rightToLeftEmbed) : popDirectionalFormatting);
         break;
     case UnicodeBidi::Override:
         paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightOverride : rightToLeftOverride) : popDirectionalFormatting);
         break;
     case UnicodeBidi::Isolate:
+        // Isolate and embed values are enforced by default and redundant on the block level boxes.
+        if (enterExitType == EnterExitType::EnteringBlock)
+            break;
         paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightIsolate : rightToLeftIsolate) : popDirectionalIsolate);
         break;
     case UnicodeBidi::Plaintext:

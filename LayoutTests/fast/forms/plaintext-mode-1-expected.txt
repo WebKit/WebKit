@@ -5,9 +5,9 @@ Success: document.queryCommandEnabled("Copy") == true
 Success: document.queryCommandEnabled("CreateLink") == false
 Success: document.queryCommandEnabled("Cut") == true
 Success: document.queryCommandEnabled("Delete") == true
-Success: document.queryCommandEnabled("FontName") == true
-Success: document.queryCommandEnabled("FontSize") == true
-Success: document.queryCommandEnabled("FontSizeDelta") == true
+Success: document.queryCommandEnabled("FontName") == false
+Success: document.queryCommandEnabled("FontSize") == false
+Success: document.queryCommandEnabled("FontSizeDelta") == false
 Success: document.queryCommandEnabled("ForeColor") == false
 Success: document.queryCommandEnabled("ForwardDelete") == true
 Success: document.queryCommandEnabled("Indent") == false

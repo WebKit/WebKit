@@ -1680,6 +1680,19 @@ StringBuilder StyleProperties::asTextInternal() const
             shorthands.append(substitutionValue.shorthandPropertyId());
             value = substitutionValue.shorthandValue().cssText();
         } else {
+            // FIXME: could probably use matchingShorthandsForLonghand() instead of populating 'shorthands' manually.
+            switch (propertyID) {
+            case CSSPropertyCustom:
+            case CSSPropertyDirection:
+            case CSSPropertyUnicodeBidi:
+                // These are the only longhands not included in the 'all' shorthand.
+                break;
+            default:
+                ASSERT(propertyID >= firstCSSProperty);
+                ASSERT(propertyID < firstShorthandProperty);
+                shorthands.append(CSSPropertyAll);
+            }
+
             switch (propertyID) {
             case CSSPropertyAnimationName:
             case CSSPropertyAnimationDuration:
@@ -1968,6 +1981,8 @@ StringBuilder StyleProperties::asTextInternal() const
     // In 2007 we decided this was required because background-position-x/y are non-standard properties and WebKit generated output would not work in Firefox (<rdar://problem/5143183>).
     // FIXME: This can probably be cleaned up now that background-position-x/y are standardized.
     auto appendPositionOrProperty = [&] (int xIndex, int yIndex, const char* name, const StylePropertyShorthand& shorthand) {
+        if (shorthandPropertyUsed[CSSPropertyAll - firstShorthandProperty])
+            return;
         if (xIndex != -1 && yIndex != -1 && propertyAt(xIndex).isImportant() == propertyAt(yIndex).isImportant()) {
             String value;
             auto xProperty = propertyAt(xIndex);

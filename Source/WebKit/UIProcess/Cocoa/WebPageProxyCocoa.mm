@@ -193,7 +193,7 @@ void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilte
 
 void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&& process, const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
 {
-    if (WebFrameProxy* frame = process->webFrame(frameID))
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->contentFilterDidBlockLoad(unblockHandler);
 }
 #endif

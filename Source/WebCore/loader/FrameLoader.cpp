@@ -155,7 +155,7 @@
 #endif
 
 #define PAGE_ID (valueOrDefault(pageID()).toUInt64())
-#define FRAME_ID (valueOrDefault(frameID()).toUInt64())
+#define FRAME_ID (valueOrDefault(frameID()).object().toUInt64())
 #define FRAMELOADER_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 #define FRAMELOADER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 
@@ -762,6 +762,9 @@ void FrameLoader::didBeginDocument(bool dispatch)
             m_frame.document()->contentSecurityPolicy()->didReceiveHeaders(*contentSecurityPolicy, ContentSecurityPolicy::ReportParsingErrors::No);
         else
             m_frame.document()->contentSecurityPolicy()->didReceiveHeaders(ContentSecurityPolicyResponseHeaders(m_documentLoader->response()), referrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+
+        if (m_frame.document()->url().protocolIsBlob())
+            m_frame.document()->contentSecurityPolicy()->updateSourceSelf(SecurityOrigin::create(m_frame.document()->url()));
 
         if (m_frame.document()->url().protocolIsInHTTPFamily() || m_frame.document()->url().protocolIsBlob())
             m_frame.document()->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(m_documentLoader->response(), m_frame.document()));

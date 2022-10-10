@@ -64,10 +64,10 @@ bool ScriptBuffer::containsSingleFileMappedSegment() const
 
 void ScriptBuffer::append(const String& string)
 {
-    auto result = string.tryGetUTF8ForRange([&](Span<const char> span) -> bool {
+    auto result = string.tryGetUTF8([&](Span<const char> span) -> bool {
         m_buffer.append(span.data(), span.size());
         return true;
-    }, 0, string.length());
+    });
     RELEASE_ASSERT(result);
 }
 

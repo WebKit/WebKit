@@ -751,9 +751,6 @@ public:
     
     void setHasActiveAnimatedScrolls(bool isRunning);
 
-    void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
-    bool delegatesScrolling() const { return m_delegatesScrolling; }
-
     struct PrivateClickMeasurementAndMetadata {
         WebCore::PrivateClickMeasurement pcm;
         String sourceDescription;
@@ -2155,6 +2152,10 @@ public:
 
     void generateTestReport(const String& message, const String& group);
 
+    void frameCreated(WebCore::FrameIdentifier, WebFrameProxy&);
+    void didDestroyFrame(WebCore::FrameIdentifier);
+    void disconnectFramesFromPage();
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2166,6 +2167,9 @@ private:
     bool shouldUseBackForwardCache() const;
 
     bool shouldForceForegroundPriorityForClientNavigation() const;
+
+    using WebFrameProxyMap = HashMap<WebCore::FrameIdentifier, Ref<WebFrameProxy>>;
+    bool canCreateFrame(WebCore::FrameIdentifier) const;
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
 
@@ -3066,8 +3070,6 @@ private:
     WebCore::RectEdges<bool> m_mainFramePinnedState { true, true, true, true };
     WebCore::RectEdges<bool> m_rubberBandableEdges { true, true, true, true };
 
-    bool m_delegatesScrolling { false };
-
     bool m_mainFrameHasHorizontalScrollbar { false };
     bool m_mainFrameHasVerticalScrollbar { false };
 
@@ -3303,6 +3305,8 @@ private:
     bool m_isCaptivePortalModeExplicitlySet { false };
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;
+
+    WebFrameProxyMap m_frameMap;
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     std::unique_ptr<PlatformXRSystem> m_xrSystem;

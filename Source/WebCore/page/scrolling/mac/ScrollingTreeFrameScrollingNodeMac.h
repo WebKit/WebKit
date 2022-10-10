@@ -73,7 +73,7 @@ private:
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const final;
 
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
-    void repositionScrollingLayers() final;
+    void repositionScrollingLayers() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
 
     RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;

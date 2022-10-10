@@ -1698,6 +1698,7 @@ loader/NavigationScheduler.cpp
 loader/NetscapePlugInStreamLoader.cpp
 loader/PingLoader.cpp
 loader/PolicyChecker.cpp
+loader/PolicyContainer.cpp
 loader/PrivateClickMeasurement.cpp
 loader/ProgressTracker.cpp
 loader/ResourceCryptographicDigest.cpp

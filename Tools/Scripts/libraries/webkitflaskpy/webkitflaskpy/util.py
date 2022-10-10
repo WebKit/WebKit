@@ -129,3 +129,35 @@ def cache_for(hours=12):
         real_method.__name__ = method.__name__
         return real_method
     return decorator
+
+
+def unescape_argument(**need_unescape):
+    SUPPORTED_CHARS = {
+        '#': '$23',
+        '?': '$3F',
+        '@': '$40',
+    }
+
+    # Sanity check that we support the character the caller requested
+    for values in need_unescape.values():
+        for value in values:
+            if value not in SUPPORTED_CHARS.keys():
+                raise ValueError("No escape sequence defined for '{}'".format(value))
+
+    def decorator(method):
+        def real_method(self=None, method=method, **kwargs):
+            for key, values in need_unescape.items():
+                if key not in kwargs:
+                    continue
+                for value in values:
+                    if isinstance(kwargs[key], list) or isinstance(kwargs[key], tuple):
+                        kwargs[key] = tuple(e.replace(SUPPORTED_CHARS[value], value) for e in kwargs[key])
+                    elif isinstance(kwargs[key], str):
+                        kwargs[key] = kwargs[key].replace(SUPPORTED_CHARS[value], value)
+            if self:
+                return method(self=self, **kwargs)
+            return method(**kwargs)
+
+        real_method.__name__ = method.__name__
+        return real_method
+    return decorator

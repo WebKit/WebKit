@@ -85,11 +85,11 @@ AriaReflectionForElementReferencesEnabled:
   humanReadableDescription: "Enable ARIA reflection for attributes that refer to elements"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 AspectRatioEnabled:
   type: bool

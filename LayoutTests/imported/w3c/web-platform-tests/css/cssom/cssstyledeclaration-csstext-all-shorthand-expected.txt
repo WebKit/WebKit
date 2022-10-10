@@ -1,0 +1,7 @@
+
+PASS 'all' shorthand alone
+PASS 'all' shorthand with 'width' and 'height'
+PASS 'all' shorthand with 'direction' and 'unicode-bidi'
+PASS 'all' shorthand with 'width', 'height' and custom properties
+PASS 'all' shorthand with all longhands
+

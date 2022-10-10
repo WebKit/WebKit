@@ -111,7 +111,9 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
         if (equalIgnoringFragmentIdentifier(url, baseURL))
             continue;
 
-        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(), ReferrerPolicy::EmptyString };
+        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),
+            parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString) };
+
         preconnectIfNeeded(params, document);
         preloadIfNeeded(params, document, nullptr);
     }

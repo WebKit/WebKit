@@ -8,6 +8,9 @@
     var mouseEvent = document.createEvent("MouseEvent");
     shouldBeDefined("mouseEvent.movementX");
     shouldBeDefined("mouseEvent.movementY");
+    mouseEvent = new MouseEvent("pointerlockerror", {movementX: 1 / 4096, movementY: 1 / 8196});
+    shouldBe('mouseEvent.movementX', '1 / 4096');
+    shouldBe('mouseEvent.movementY', '1 / 8196');
 </script>
 <script src="../http/tests/resources/js-test-post.js"></script>
 </body>

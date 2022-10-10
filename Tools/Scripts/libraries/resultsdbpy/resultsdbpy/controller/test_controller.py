@@ -27,7 +27,7 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.controller.configuration_controller import configuration_for_query
 from resultsdbpy.controller.suite_controller import time_range_for_query
 from resultsdbpy.model.test_context import Expectations
-from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query
+from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query, unescape_argument
 
 
 class TestController(HasCommitContext):
@@ -39,6 +39,10 @@ class TestController(HasCommitContext):
 
     @query_as_kwargs()
     @limit_for_query(DEFAULT_LIMIT)
+    @unescape_argument(
+        suite=['?', '#'],
+        test=['?', '#'],
+    )
     def list_tests(self, suite=None, test=None, limit=None, **kwargs):
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
@@ -57,6 +61,10 @@ class TestController(HasCommitContext):
     @limit_for_query(DEFAULT_LIMIT)
     @configuration_for_query()
     @time_range_for_query()
+    @unescape_argument(
+        suite=['?', '#'],
+        test=['?', '#'],
+    )
     def find_test_result(
         self, suite=None, test=None,
         configurations=None, recent=None,
@@ -109,6 +117,10 @@ class TestController(HasCommitContext):
     @commit_for_query()
     @limit_for_query(100)
     @configuration_for_query()
+    @unescape_argument(
+        suite=['?', '#'],
+        test=['?', '#'],
+    )
     def summarize_test_results(
         self, suite=None, test=None,
         configurations=None, recent=None,

@@ -213,9 +213,8 @@ public:
 #endif
 
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
-    Vector<WebFrame*> webFrames() const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
-    void removeWebFrame(WebCore::FrameIdentifier);
+    void removeWebFrame(WebCore::FrameIdentifier, std::optional<WebPageProxyIdentifier>);
 
     WebPageGroupProxy* webPageGroup(WebCore::PageGroup*);
     WebPageGroupProxy* webPageGroup(PageGroupIdentifier);
@@ -617,7 +616,7 @@ private:
     bool m_hasStylusDevice { false };
 #endif
 
-    HashMap<WebCore::FrameIdentifier, WebFrame*> m_frameMap;
+    HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrame>> m_frameMap;
 
     typedef HashMap<const char*, std::unique_ptr<WebProcessSupplement>, PtrHash<const char*>> WebProcessSupplementMap;
     WebProcessSupplementMap m_supplements;

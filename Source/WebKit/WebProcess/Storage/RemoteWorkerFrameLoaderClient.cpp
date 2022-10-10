@@ -37,7 +37,7 @@ RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebPageProxyIdentif
     , m_frameID(frameID)
     , m_userAgent(userAgent)
 {
-    RELEASE_LOG(Worker, "RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient webPageProxyID %" PRIu64 ", pageID %" PRIu64 ", frameID  %" PRIu64, webPageProxyID.toUInt64(), pageID.toUInt64(), frameID.toUInt64());
+    RELEASE_LOG(Worker, "RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient webPageProxyID %" PRIu64 ", pageID %" PRIu64 ", frameID  %" PRIu64, webPageProxyID.toUInt64(), pageID.toUInt64(), frameID.object().toUInt64());
 }
 
 Ref<WebCore::DocumentLoader> RemoteWorkerFrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& substituteData)

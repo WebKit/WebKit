@@ -356,17 +356,18 @@ void Connection::readyReadHandler()
     }
 }
 
-bool Connection::open(Client& client)
+bool Connection::platformPrepareForOpen()
 {
-    ASSERT(!m_client);
-    if (!setNonBlock(m_socketDescriptor)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    if (setNonBlock(m_socketDescriptor))
+        return true;
+    ASSERT_NOT_REACHED();
+    return false;
+}
 
+void Connection::platformOpen()
+{
     RefPtr<Connection> protectedThis(this);
     m_isConnected = true;
-    m_client = &client;
 #if USE(GLIB)
     m_readSocketMonitor.start(m_socket.get(), G_IO_IN, m_connectionQueue->runLoop(), [protectedThis] (GIOCondition condition) -> gboolean {
         if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
@@ -402,15 +403,13 @@ bool Connection::open(Client& client)
 
         }
     });
-    return true;
+    return;
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal handler.
     m_connectionQueue->dispatch([protectedThis] {
         protectedThis->readyReadHandler();
     });
-
-    return true;
 }
 
 bool Connection::platformCanSendOutgoingMessages() const

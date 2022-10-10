@@ -210,7 +210,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(globalObject, stackSize);
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
-    StringBuilder builder;
+    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
 
     if (!lastCaller.sourceURL().isEmpty()) {
         appendURLAndPosition(builder, lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());
@@ -226,7 +226,10 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
         scope.clearException();
     }
 
-    WTFLogAlways("%s", builder.toString().utf8().data());
+    if (builder.hasOverflowed())
+        WTFLogAlways("Console message exceeded maximum length.");
+    else
+        WTFLogAlways("%s", builder.toString().utf8().data());
 
     if (isTraceMessage) {
         for (size_t i = 0; i < callStack->size(); ++i) {

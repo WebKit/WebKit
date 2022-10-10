@@ -1,5 +1,7 @@
 PASS mouseEvent.movementX is defined.
 PASS mouseEvent.movementY is defined.
+PASS mouseEvent.movementX is 1 / 4096
+PASS mouseEvent.movementY is 1 / 8196
 PASS successfullyParsed is true
 
 TEST COMPLETE

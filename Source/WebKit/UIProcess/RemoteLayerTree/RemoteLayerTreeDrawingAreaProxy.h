@@ -38,6 +38,7 @@ OBJC_CLASS WKOneShotDisplayLinkHandler;
 namespace WebKit {
 
 class RemoteLayerTreeTransaction;
+class RemoteScrollingCoordinatorProxy;
 class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxy final : public DrawingAreaProxy {
@@ -47,6 +48,8 @@ public:
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return *m_remoteLayerTreeHost; }
     std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
+    
+    std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const;
 
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key);
@@ -65,6 +68,8 @@ public:
 #endif
 
 private:
+    bool usesDelegatedScrolling() const final { return true; }
+
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;

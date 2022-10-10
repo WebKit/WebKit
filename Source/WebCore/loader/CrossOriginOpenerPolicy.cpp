@@ -233,19 +233,19 @@ CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() &&
     return { value, WTFMove(reportingEndpoint).isolatedCopy(), reportOnlyValue, WTFMove(reportOnlyReportingEndpoint).isolatedCopy() };
 }
 
-void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOriginOpenerPolicy& coop)
+void CrossOriginOpenerPolicy::addPolicyHeadersTo(ResourceResponse& response) const
 {
-    if (coop.value != CrossOriginOpenerPolicyValue::UnsafeNone) {
-        if (coop.reportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, crossOriginOpenerPolicyToString(coop.value));
+    if (value != CrossOriginOpenerPolicyValue::UnsafeNone) {
+        if (reportingEndpoint.isEmpty())
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, crossOriginOpenerPolicyToString(value));
         else
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(coop.value), "; report-to=\"", coop.reportingEndpoint, '\"'));
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(value), "; report-to=\"", reportingEndpoint, '\"'));
     }
-    if (coop.reportOnlyValue != CrossOriginOpenerPolicyValue::UnsafeNone) {
-        if (coop.reportOnlyReportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, crossOriginOpenerPolicyToString(coop.reportOnlyValue));
+    if (reportOnlyValue != CrossOriginOpenerPolicyValue::UnsafeNone) {
+        if (reportOnlyReportingEndpoint.isEmpty())
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, crossOriginOpenerPolicyToString(reportOnlyValue));
         else
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(coop.reportOnlyValue), "; report-to=\"", coop.reportOnlyReportingEndpoint, '\"'));
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(reportOnlyValue), "; report-to=\"", reportOnlyReportingEndpoint, '\"'));
     }
 }
 

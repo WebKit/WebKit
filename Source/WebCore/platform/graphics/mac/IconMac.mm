@@ -27,23 +27,14 @@
 #import "IntRect.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "UTIUtilities.h"
+#import <AVFoundation/AVFoundation.h>
 #import <wtf/RefPtr.h>
 #import <wtf/text/WTFString.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
+
 namespace WebCore {
-
-Icon::Icon(NSImage *image)
-    : m_nsImage(image)
-{
-    // Need this because WebCore uses AppKit's flipped coordinate system exclusively.
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [image setFlipped:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-Icon::~Icon()
-{
-}
 
 // FIXME: Move the code to ChromeClient::iconForFiles().
 RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
@@ -63,13 +54,15 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         if (!image)
             return nullptr;
 
-        return adoptRef(new Icon(image));
+        PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+        return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
     }
     NSImage *image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)
         return nullptr;
 
-    return adoptRef(new Icon(image));
+    PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+    return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
 }
 
 RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
@@ -80,7 +73,8 @@ RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
     if (!image)
         return nullptr;
 
-    return adoptRef(new Icon(image));
+    PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+    return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
 }
 
 RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
@@ -91,17 +85,8 @@ RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
     if (!image)
         return nullptr;
 
-    return adoptRef(new Icon(image));
-}
-
-void Icon::paint(GraphicsContext& context, const FloatRect& rect)
-{
-    if (context.paintingDisabled())
-        return;
-
-    LocalCurrentGraphicsContext localCurrentGC(context);
-
-    [m_nsImage drawInRect:rect fromRect:NSMakeRect(0, 0, [m_nsImage size].width, [m_nsImage size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
+    PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+    return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
 }
 
 }

@@ -62,7 +62,6 @@
 #import "HTMLSelectElement.h"
 #import "HTMLTextAreaElement.h"
 #import "IOSurface.h"
-#import "Icon.h"
 #import "LocalCurrentTraitCollection.h"
 #import "LocalizedDateCache.h"
 #import "NodeRenderStyle.h"
@@ -1306,44 +1305,6 @@ void RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const P
     }
 }
 
-const int kThumbnailBorderStrokeWidth = 1;
-const int kThumbnailBorderCornerRadius = 1;
-const int kVisibleBackgroundImageWidth = 1;
-const int kMultipleThumbnailShrinkSize = 2;
-
-void RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const RenderObject& buttonRenderer, const PaintInfo& paintInfo, const IntRect& rect, Icon* icon, FileUploadDecorations fileUploadDecorations)
-{
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    IntSize cornerSize(kThumbnailBorderCornerRadius, kThumbnailBorderCornerRadius);
-    Color pictureFrameColor = buttonRenderer.style().visitedDependentColor(CSSPropertyBorderTopColor);
-
-    IntRect thumbnailPictureFrameRect = rect;
-    IntRect thumbnailRect = rect;
-    thumbnailRect.contract(2 * kThumbnailBorderStrokeWidth, 2 * kThumbnailBorderStrokeWidth);
-    thumbnailRect.move(kThumbnailBorderStrokeWidth, kThumbnailBorderStrokeWidth);
-
-    if (fileUploadDecorations == MultipleFiles) {
-        // Smaller thumbnails for multiple selection appearance.
-        thumbnailPictureFrameRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
-        thumbnailRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
-
-        // Background picture frame and simple background icon.
-        Color backgroundImageColor = buttonRenderer.style().visitedDependentColor(CSSPropertyBackgroundColor);
-        paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
-        paintInfo.context().fillRect(thumbnailRect, backgroundImageColor);
-
-        // Move the rects for the Foreground picture frame and icon.
-        int inset = kVisibleBackgroundImageWidth + kThumbnailBorderStrokeWidth;
-        thumbnailPictureFrameRect.move(inset, inset);
-        thumbnailRect.move(inset, inset);
-    }
-
-    // Foreground picture frame and icon.
-    paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
-    icon->paint(paintInfo.context(), thumbnailRect);
-}
-
 Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return Color::transparentBlack;
@@ -1557,6 +1518,11 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
             return *color;
         return RenderTheme::systemColor(cssValueID, options);
     }).iterator->value;
+}
+
+Color RenderThemeIOS::pictureFrameColor(const RenderObject& buttonRenderer)
+{
+    return buttonRenderer.style().visitedDependentColor(CSSPropertyBorderTopColor);
 }
 
 Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<StyleColorOptions> options) const

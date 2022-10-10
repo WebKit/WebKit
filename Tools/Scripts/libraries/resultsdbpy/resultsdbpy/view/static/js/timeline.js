@@ -24,7 +24,7 @@
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
-import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify} from '/assets/js/common.js';
+import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams, linkify, escapeEndpoint} from '/assets/js/common.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {ToolTip} from '/assets/js/tooltip.js';
@@ -460,7 +460,7 @@ class TimelineFromEndpoint {
                 params[key] = sharedParams[key];
             const query = paramsToQuery(params);
 
-            fetch(query ? this.endpoint + '?' + query : this.endpoint).then(response => {
+            fetch(query ? escapeEndpoint(this.endpoint) + '?' + query : escapeEndpoint(this.endpoint)).then(response => {
                 response.json().then(json => {
                     if (myDispatch !== this.latestDispatch)
                         return;

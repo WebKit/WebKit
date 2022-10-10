@@ -192,6 +192,7 @@ depends:
 - freedesktop-sdk.bst:components/python3-setuptools.bst
 - freedesktop-sdk.bst:components/python3-sitecustomize.bst
 - freedesktop-sdk.bst:components/python3-six.bst
+- freedesktop-sdk.bst:components/python3-tomli.bst
 - freedesktop-sdk.bst:components/python3-usercustomize.bst
 - freedesktop-sdk.bst:components/python3-virtualenv.bst
 - freedesktop-sdk.bst:components/python3.bst

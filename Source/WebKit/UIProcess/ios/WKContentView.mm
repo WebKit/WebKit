@@ -173,7 +173,6 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor(WebCore::screenScaleFactor([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);
-    _page->setDelegatesScrolling(true);
     _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
 
     _page->windowScreenDidChange(_page->generateDisplayIDFromPageID(), std::nullopt);

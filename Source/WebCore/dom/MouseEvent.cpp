@@ -57,32 +57,32 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowPro
     auto isComposed = !isMouseEnterOrLeave ? IsComposed::Yes : IsComposed::No;
 
     return MouseEvent::create(eventType, canBubble, isCancelable, isComposed, event.timestamp().approximateMonotonicTime(), WTFMove(view), detail,
-        event.globalPosition(), event.position(), event.movementDelta(),
+        event.globalPosition(), event.position(), event.movementDelta().x(), event.movementDelta().y(),
         event.modifiers(), event.button(), event.buttons(), relatedTarget, event.force(), event.syntheticClickType());
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
-    const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
+    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
     EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
 {
     return adoptRef(*new MouseEvent(type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
-        screenLocation, windowLocation, movementDelta, modifiers, button, buttons, relatedTarget, force, syntheticClickType, isSimulated, isTrusted));
+        screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, isSimulated, isTrusted));
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail,
     int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
     unsigned short syntheticClickType, EventTarget* relatedTarget)
 {
-    return adoptRef(*new MouseEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, { }, modifiers, button, buttons, syntheticClickType, relatedTarget));
+    return adoptRef(*new MouseEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, 0, 0, modifiers, button, buttons, syntheticClickType, relatedTarget));
 }
 
 MouseEvent::MouseEvent() = default;
 
 MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
-    const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
+    const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
     EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
-    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementDelta, modifiers, isSimulated, isTrusted)
+    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, isSimulated, isTrusted)
     , m_button(button == -2 ? 0 : button)
     , m_buttons(buttons)
     , m_syntheticClickType(button == -2 ? 0 : syntheticClickType)
@@ -93,9 +93,9 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
 }
 
 MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
-    RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, const IntPoint& movementDelta,
+    RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY,
     OptionSet<Modifier> modifiers, short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
-    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementDelta, modifiers, IsSimulated::No)
+    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementX, movementY, modifiers, IsSimulated::No)
     , m_button(button == -2 ? 0 : button)
     , m_buttons(buttons)
     , m_syntheticClickType(button == -2 ? 0 : syntheticClickType)

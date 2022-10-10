@@ -146,7 +146,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 - (RetainPtr<UIImage>)displayImage
 {
-    return WebKit::iconForImageFile(self.fileURL);
+    return adoptNS([[UIImage alloc] initWithCGImage:WebKit::iconForImageFile(self.fileURL).get()]);
 }
 
 @end
@@ -164,7 +164,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 - (RetainPtr<UIImage>)displayImage
 {
-    return WebKit::iconForVideoFile(self.fileURL);
+    return adoptNS([[UIImage alloc] initWithCGImage:WebKit::iconForVideoFile(self.fileURL).get()]);
 }
 
 @end
@@ -891,7 +891,8 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
         auto [maybeMovedURLs, temporaryURLs] = copyToNewTemporaryDirectory(urlsFromUIKit.get());
         [retainedSelf->_view _removeTemporaryDirectoriesWhenDeallocated:WTFMove(temporaryURLs)];
         RunLoop::main().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
-            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:WebKit::iconForFile(maybeMovedURLs.get()[0]).get()];
+            auto icon = adoptNS([[UIImage alloc] initWithCGImage:WebKit::iconForFiles({ maybeMovedURLs.get()[0].absoluteString }).get()]);
+            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:icon.get()];
         });
     }).get());
 }

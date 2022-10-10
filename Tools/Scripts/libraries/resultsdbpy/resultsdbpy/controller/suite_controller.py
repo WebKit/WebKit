@@ -24,7 +24,7 @@ from flask import abort, jsonify, request
 from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.controller.configuration_controller import configuration_for_query
-from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query
+from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query, unescape_argument
 
 
 def time_range_for_query():
@@ -61,6 +61,7 @@ class SuiteController(HasCommitContext):
     @limit_for_query(DEFAULT_LIMIT)
     @configuration_for_query()
     @time_range_for_query()
+    @unescape_argument(suite=['?', '#'])
     def find_run_results(
         self, suite=None, configurations=None, recent=None,
         branch=None, begin=None, end=None,

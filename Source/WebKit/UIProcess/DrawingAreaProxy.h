@@ -66,6 +66,8 @@ public:
 
     void startReceivingMessages();
 
+    virtual bool usesDelegatedScrolling() const { return false; }
+
     virtual void deviceScaleFactorDidChange() = 0;
 
     // FIXME: These should be pure virtual.

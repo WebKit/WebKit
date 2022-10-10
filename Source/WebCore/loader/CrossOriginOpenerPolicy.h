@@ -65,6 +65,8 @@ struct CrossOriginOpenerPolicy {
     CrossOriginOpenerPolicy isolatedCopy() &&;
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CrossOriginOpenerPolicy> decode(Decoder&);
+
+    void addPolicyHeadersTo(ResourceResponse&) const;
 };
 
 inline const String& CrossOriginOpenerPolicy::reportingEndpointForDisposition(COOPDisposition disposition) const
@@ -132,7 +134,6 @@ struct CrossOriginOpenerPolicyEnforcementResult {
 };
 
 CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
-WEBCORE_EXPORT void addCrossOriginOpenerPolicyHeaders(ResourceResponse&, const CrossOriginOpenerPolicy&);
 WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
 
 } // namespace WebCore

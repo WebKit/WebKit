@@ -193,11 +193,11 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
         document->contentSecurityPolicy()->copyStateFrom(ownerDocument->contentSecurityPolicy());
         document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(ownerDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
-    } else if (url.hasLocalScheme()) {
+    } else if (url.protocolIsAbout() || url.protocolIsData()) {
         // https://html.spec.whatwg.org/multipage/origin.html#determining-navigation-params-policy-container
         auto* currentHistoryItem = m_frame->loader().history().currentItem();
 
-        if (!url.protocolIsBlob() && currentHistoryItem && currentHistoryItem->policyContainer()) {
+        if (currentHistoryItem && currentHistoryItem->policyContainer()) {
             const auto& policyContainerFromHistory = currentHistoryItem->policyContainer();
             ASSERT(policyContainerFromHistory);
             document->inheritPolicyContainerFrom(*policyContainerFromHistory);
@@ -213,7 +213,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         }
 
         // https://html.spec.whatwg.org/multipage/origin.html#requires-storing-the-policy-container-in-history
-        if (triggeringAction && triggeringAction->type() != NavigationType::BackForward && !url.protocolIsBlob() && currentHistoryItem)
+        if (triggeringAction && triggeringAction->type() != NavigationType::BackForward && currentHistoryItem)
             currentHistoryItem->setPolicyContainer(document->policyContainer());
     }
 

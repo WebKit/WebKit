@@ -3,7 +3,7 @@ sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
   track: 'release/22.08'
-  ref: freedesktop-sdk-22.08.1-45-g0cc0140fac8eda36fa446cb8fa7c1a525fa56e7d
+  ref: freedesktop-sdk-22.08.2.1-65-gfc506a76fb04b35566582a25203828aa2fb5e281
 - kind: patch
   path: patches/fdo-0001-pipewire-base-Disable-AEC-module.patch
 config:

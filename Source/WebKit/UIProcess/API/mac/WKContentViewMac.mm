@@ -44,7 +44,6 @@
     
     _page = WTFMove(page);
     _page->setUseFixedLayout(true);
-    _page->setDelegatesScrolling(true);
 
     [self setWantsLayer:YES];
     return self;

@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include "ProcessQualified.h"
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
 enum FrameIdentifierType { };
-using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
+using FrameIdentifier = ProcessQualified<ObjectIdentifier<FrameIdentifierType>>;
 
 }

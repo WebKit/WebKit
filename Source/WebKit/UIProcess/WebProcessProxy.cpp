@@ -515,9 +515,8 @@ void WebProcessProxy::shutDown()
     m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = std::nullopt;
 
-    for (auto& frame : copyToVector(m_frameMap.values()))
-        frame->webProcessWillShutDown();
-    m_frameMap.clear();
+    for (auto& page : copyToVector(m_pageMap.values()))
+        page->disconnectFramesFromPage();
 
     for (auto* webUserContentControllerProxy : m_webUserContentControllerProxies)
         webUserContentControllerProxy->removeProcess(*this);
@@ -1075,57 +1074,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     beginResponsivenessChecks();
 }
 
-WebFrameProxy* WebProcessProxy::webFrame(FrameIdentifier frameID) const
+void WebProcessProxy::didDestroyFrame(WebCore::FrameIdentifier frameID, WebPageProxyIdentifier pageID)
 {
-    if (!WebFrameProxyMap::isValidKey(frameID))
-        return nullptr;
-
-    return m_frameMap.get(frameID);
-}
-
-bool WebProcessProxy::canCreateFrame(FrameIdentifier frameID) const
-{
-    return WebFrameProxyMap::isValidKey(frameID) && !m_frameMap.contains(frameID);
-}
-
-void WebProcessProxy::frameCreated(FrameIdentifier frameID, WebFrameProxy& frameProxy)
-{
-    m_frameMap.set(frameID, &frameProxy);
-}
-
-void WebProcessProxy::didDestroyFrame(FrameIdentifier frameID)
-{
-    // If the page is closed before it has had the chance to send the DidCreateMainFrame message
-    // back to the UIProcess, then the frameDestroyed message will still be received because it
-    // gets sent directly to the WebProcessProxy.
-    ASSERT(WebFrameProxyMap::isValidKey(frameID));
-#if ENABLE(WEB_AUTHN)
-    if (auto* frame = webFrame(frameID)) {
-        if (auto* page = frame->page())
-            page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
-    }
-#endif
-    if (auto* automationSession = m_processPool->automationSession())
-        automationSession->didDestroyFrame(frameID);
-    m_frameMap.remove(frameID);
-}
-
-void WebProcessProxy::disconnectFramesFromPage(WebPageProxy* page)
-{
-    for (auto& frame : copyToVector(m_frameMap.values())) {
-        if (frame->page() == page)
-            frame->webProcessWillShutDown();
-    }
-}
-
-size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
-{
-    size_t result = 0;
-    for (auto& frame : m_frameMap.values()) {
-        if (frame->page() == page)
-            ++result;
-    }
-    return result;
+    if (auto* page = m_pageMap.get(pageID))
+        page->didDestroyFrame(frameID);
 }
 
 auto WebProcessProxy::visiblePageToken() const -> VisibleWebPageToken
@@ -1365,7 +1317,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
             switch (object.type()) {
             case API::Object::Type::FrameHandle:
                 ASSERT(static_cast<API::FrameHandle&>(object).isAutoconverting());
-                return m_webProcessProxy.webFrame(static_cast<API::FrameHandle&>(object).frameID());
+                return WebFrameProxy::webFrame(static_cast<API::FrameHandle&>(object).frameID());
 
             case API::Object::Type::PageHandle:
                 ASSERT(static_cast<API::PageHandle&>(object).isAutoconverting());

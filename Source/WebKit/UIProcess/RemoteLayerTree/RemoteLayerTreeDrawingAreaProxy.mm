@@ -196,6 +196,10 @@ std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemo
     return WTFMove(m_remoteLayerTreeHost);
 }
 
+std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy::createScrollingCoordinatorProxy() const
+{
+    return makeUnique<RemoteScrollingCoordinatorProxy>(m_webPageProxy);
+}
 
 #if PLATFORM(IOS_FAMILY)
 WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxy::displayLinkHandler()
@@ -349,26 +353,22 @@ void RemoteLayerTreeDrawingAreaProxy::didChangeViewExposedRect()
 
 FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 {
-    if (m_webPageProxy.delegatesScrolling()) {
+    FloatPoint tiledMapLocation;
 #if PLATFORM(IOS_FAMILY)
-        FloatPoint tiledMapLocation = m_webPageProxy.unobscuredContentRect().location().expandedTo(FloatPoint());
-        tiledMapLocation = tiledMapLocation.expandedTo(m_webPageProxy.exposedContentRect().location());
+    tiledMapLocation = m_webPageProxy.unobscuredContentRect().location().expandedTo(FloatPoint());
+    tiledMapLocation = tiledMapLocation.expandedTo(m_webPageProxy.exposedContentRect().location());
 
-        float absoluteInset = indicatorInset / m_webPageProxy.displayedContentScale();
-        tiledMapLocation += FloatSize(absoluteInset, absoluteInset);
+    float absoluteInset = indicatorInset / m_webPageProxy.displayedContentScale();
+    tiledMapLocation += FloatSize(absoluteInset, absoluteInset);
 #else
-        FloatPoint tiledMapLocation;
-        if (auto viewExposedRect = m_webPageProxy.viewExposedRect())
-            tiledMapLocation = viewExposedRect->location();
+    if (auto viewExposedRect = m_webPageProxy.viewExposedRect())
+        tiledMapLocation = viewExposedRect->location();
 
-        tiledMapLocation += FloatSize(indicatorInset, indicatorInset);
-        float scale = 1 / m_webPageProxy.pageScaleFactor();
-        tiledMapLocation.scale(scale);
+    tiledMapLocation += FloatSize(indicatorInset, indicatorInset);
+    float scale = 1 / m_webPageProxy.pageScaleFactor();
+    tiledMapLocation.scale(scale);
 #endif
-        return tiledMapLocation;
-    }
-    
-    return FloatPoint(indicatorInset, indicatorInset + m_webPageProxy.topContentInset());
+    return tiledMapLocation;
 }
 
 void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicatorPosition()
@@ -406,9 +406,6 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
     [m_tileMapHostLayer removeFromSuperlayer];
     [rootLayer addSublayer:m_tileMapHostLayer.get()];
 
-    // Pick a good scale.
-    IntSize viewSize = m_webPageProxy.viewSize();
-
     [m_tileMapHostLayer setBounds:FloatRect(FloatPoint(), contentsSize)];
     [m_tileMapHostLayer setPosition:indicatorLocation()];
     [m_tileMapHostLayer setTransform:CATransform3DMakeScale(scale, scale, 1)];
@@ -424,22 +421,17 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
     [m_exposedRectIndicatorLayer setBorderWidth:counterScaledBorder];
 
-    if (m_webPageProxy.delegatesScrolling()) {
-        FloatRect scaledExposedRect;
+    FloatRect scaledExposedRect;
 #if PLATFORM(IOS_FAMILY)
-        scaledExposedRect = m_webPageProxy.exposedContentRect();
+    scaledExposedRect = m_webPageProxy.exposedContentRect();
 #else
-        if (auto viewExposedRect = m_webPageProxy.viewExposedRect())
-            scaledExposedRect = *viewExposedRect;
-        float scale = 1 / m_webPageProxy.pageScaleFactor();
-        scaledExposedRect.scale(scale);
+    if (auto viewExposedRect = m_webPageProxy.viewExposedRect())
+        scaledExposedRect = *viewExposedRect;
+    float counterScale = 1 / m_webPageProxy.pageScaleFactor();
+    scaledExposedRect.scale(counterScale);
 #endif
-        [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
-        [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), scaledExposedRect.size())];
-    } else {
-        [m_exposedRectIndicatorLayer setPosition:scrollPosition];
-        [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), viewSize)];
-    }
+    [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
+    [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), scaledExposedRect.size())];
 }
 
 void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()

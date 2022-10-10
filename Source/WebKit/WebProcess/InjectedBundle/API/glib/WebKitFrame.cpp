@@ -87,7 +87,7 @@ guint64 webkit_frame_get_id(WebKitFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_FRAME(frame), 0);
 
-    return frame->priv->webFrame->frameID().toUInt64();
+    return frame->priv->webFrame->frameID().object().toUInt64();
 }
 
 /**

@@ -38,11 +38,11 @@ std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
 
 void KeyedEncoderGeneric::encodeString(const String& key)
 {
-    auto result = key.tryGetUTF8ForRange([&](Span<const char> span) -> bool {
+    auto result = key.tryGetUTF8([&](Span<const char> span) -> bool {
         m_encoder << span.size();
         m_encoder.encodeFixedLengthData({ bitwise_cast<const uint8_t*>(span.data()), span.size() });
         return true;
-    }, 0, key.length());
+    });
     RELEASE_ASSERT(result);
 }
 

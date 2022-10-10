@@ -116,7 +116,7 @@ private:
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const
 {
     if (!hasEllipsis())
-        return m_lineBoxRect;
+        return m_inkOverflow;
     if (m_ellipsis->isLeftPositioned) {
         auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsis->visualRect.maxX());
         return { m_lineBoxRect.location(), FloatPoint { visibleLineBoxRight, m_lineBoxRect.maxY() } };

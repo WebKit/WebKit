@@ -150,20 +150,6 @@ int WebChromeClient::deviceOrientation() const
 }
 #endif
 
-RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
-{
-    if (!filenames.size())
-        return nullptr;
-
-    // FIXME: We should generate an icon showing multiple files here, if applicable. Currently, if there are multiple
-    // files, we only use the first URL to generate an icon.
-    NSURL *url = [NSURL fileURLWithPath:filenames[0] isDirectory:NO];
-    if (!url)
-        return nullptr;
-
-    return Icon::createIconForImage(iconForFile(url).get().CGImage);
-}
-
 bool WebChromeClient::shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent& event)
 {
     // In iPadOS and macCatalyst, despite getting mouse events, we still want UITextInteraction and friends to own selection gestures.

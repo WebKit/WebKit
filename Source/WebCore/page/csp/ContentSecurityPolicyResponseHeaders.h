@@ -62,6 +62,8 @@ public:
         }
     };
 
+    void addPolicyHeadersTo(ResourceResponse&) const;
+
 private:
     friend bool operator==(const ContentSecurityPolicyResponseHeaders&, const ContentSecurityPolicyResponseHeaders&);
     friend class ContentSecurityPolicy;

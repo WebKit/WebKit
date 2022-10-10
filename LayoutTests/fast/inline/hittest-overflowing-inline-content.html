@@ -1,0 +1,35 @@
+<style>
+body {
+  margin: 0px;
+  font-size: 20px;
+  font-family: Monospace;
+}
+div {
+  width: 100px;
+  white-space: nowrap;
+}
+</style>
+<body id=body>
+<div id=first>this content overflows</div>
+<div id=second style="overflow: hidden">this does not</div>
+<div id=third style="overflow: scroll">neither does this</div>
+<pre id=result></pre>
+</body>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+function log(text) {
+  result.innerText += text + " ";
+}
+
+log(document.elementFromPoint(20, 18).id);
+log(document.elementFromPoint(20, 38).id);
+log(document.elementFromPoint(20, 58).id);
+
+log(document.elementFromPoint(120, 18).id);
+log(document.elementFromPoint(120, 38).id);
+log(document.elementFromPoint(120, 58).id);
+</script>

@@ -139,6 +139,21 @@ function escapeHTML(text) {
   });
 }
 
+function escapeEndpoint(text) {
+    if (!text)
+        return text;
+    return text.replace(/[#?]/g, function(character) {
+        switch (character) {
+            case '#':
+                return '$23';
+            case '?':
+                return '$3F';
+            default:
+                return character;
+        }
+  });
+}
+
 function linkify(text) {
     return text.replace(/\b(https?|rdar):\/{2}[^\s<>&]+[^\.\s<>&,]/gmi, `<a href="$&" target="_blank">$&</a>`);
 }
@@ -197,4 +212,4 @@ function elapsedTime(startTimestamp, endTimestamp)
     return result;
 }
 
-export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, linkify, percentage, elapsedTime};
+export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, escapeEndpoint, linkify, percentage, elapsedTime};

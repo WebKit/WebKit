@@ -2433,7 +2433,7 @@ JSValueRef JSIPC::visitedLinkStoreID(JSContextRef context, JSObjectRef thisObjec
 JSValueRef JSIPC::frameID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
     return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) {
-        return wrapped.m_webFrame->frameID().toUInt64();
+        return wrapped.m_webFrame->frameID().object().toUInt64();
     });
 }
 

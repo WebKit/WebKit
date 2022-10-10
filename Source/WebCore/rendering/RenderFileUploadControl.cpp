@@ -178,7 +178,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
             else
                 iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
             if (RenderButton* buttonRenderer = downcast<RenderButton>(button->renderer())) {
                 // Draw the file icon and decorations.
                 IntRect iconRect(iconX, iconY, iconWidth, iconHeight);

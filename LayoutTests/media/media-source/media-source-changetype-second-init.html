@@ -25,6 +25,12 @@
 
         run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
         initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        if (sourceBuffer.changeType == undefined) {
+            consoleWrite("SourceBuffer.changeType is undefined");
+            endTest();
+        }
+
         run('sourceBuffer.appendBuffer(initSegment)');
         await waitFor(sourceBuffer, 'updateend');
 

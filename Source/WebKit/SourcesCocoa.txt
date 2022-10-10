@@ -176,6 +176,7 @@ Shared/Cocoa/WKNSURL.mm
 Shared/Cocoa/WKNSURLExtras.mm
 Shared/Cocoa/WKNSURLRequest.mm
 Shared/Cocoa/WKObject.mm
+Shared/Cocoa/WebIconUtilities.mm
 Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm
 
 Shared/Daemon/DaemonUtilities.mm
@@ -190,7 +191,6 @@ Shared/ios/NativeWebKeyboardEventIOS.mm
 Shared/ios/NativeWebMouseEventIOS.mm
 Shared/ios/NativeWebTouchEventIOS.mm
 Shared/ios/WebAutocorrectionData.mm
-Shared/ios/WebIconUtilities.mm
 Shared/ios/WebIOSEventFactory.mm
 Shared/ios/WebPlatformTouchPointIOS.cpp
 Shared/ios/WebPreferencesDefaultValuesIOS.mm
