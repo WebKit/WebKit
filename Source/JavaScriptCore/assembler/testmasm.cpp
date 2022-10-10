@@ -1302,7 +1302,7 @@ void testExtractUnsignedBitfield32()
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     for (auto lsb : imms) {
         for (auto width : imms) {
-            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+            if (width > 0 && lsb + width < 32) {
                 auto ubfx32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 

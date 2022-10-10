@@ -56,7 +56,7 @@ template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerive
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(DECLARE_TYPED_ARRAY_TYPE)
 #undef DECLARE_TYPED_ARRAY_TYPE
     }
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(Visitor&& visitor) const
