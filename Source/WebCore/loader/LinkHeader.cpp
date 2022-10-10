@@ -159,6 +159,8 @@ static LinkHeader::LinkParameterName paramterNameFromString(StringView name)
         return LinkHeader::LinkParameterImageSizes;
     if (equalLettersIgnoringASCIICase(name, "nonce"_s))
         return LinkHeader::LinkParameterNonce;
+    if (equalLettersIgnoringASCIICase(name, "referrerpolicy"_s))
+        return LinkHeader::LinkParameterReferrerPolicy;  
     return LinkHeader::LinkParameterUnknown;
 }
 
@@ -284,6 +286,9 @@ void LinkHeader::setValue(LinkParameterName name, String&& value)
         break;
     case LinkParameterNonce:
         m_nonce = WTFMove(value);
+        break;
+    case LinkParameterReferrerPolicy:
+        m_referrerPolicy = WTFMove(value);
         break;
     case LinkParameterTitle:
     case LinkParameterRev:
