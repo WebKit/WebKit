@@ -1,8 +1,8 @@
 
 PASS History navigation: "about:blank" document is navigated back from history same-origin.
 PASS History navigation: "about:blank" document is navigated back from history cross-origin.
-FAIL History navigation: blob URL document is navigated back from history same-origin. assert_equals: Image should be blocked by CSP reloaded from history. expected "img blocked" but got "img loaded"
-FAIL History navigation: blob URL document is navigated back from history cross-origin. assert_equals: Image should be blocked by CSP reloaded from history. expected "img blocked" but got "img loaded"
-FAIL History navigation: blob URL document is navigated back from history (without bfcache on Firefox) same-origin. assert_equals: Image should be blocked by CSP reloaded from history. expected "img blocked" but got "img loaded"
-FAIL History navigation: blob URL document is navigated back from history (without bfcache on Firefox) cross-origin. assert_equals: Image should be blocked by CSP reloaded from history. expected "img blocked" but got "img loaded"
+PASS History navigation: blob URL document is navigated back from history same-origin.
+PASS History navigation: blob URL document is navigated back from history cross-origin.
+PASS History navigation: blob URL document is navigated back from history (without bfcache on Firefox) same-origin.
+PASS History navigation: blob URL document is navigated back from history (without bfcache on Firefox) cross-origin.
 

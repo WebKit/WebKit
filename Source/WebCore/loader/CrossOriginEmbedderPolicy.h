@@ -54,6 +54,8 @@ struct CrossOriginEmbedderPolicy {
     CrossOriginEmbedderPolicy isolatedCopy() &&;
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CrossOriginEmbedderPolicy> decode(Decoder&);
+
+    void addPolicyHeadersTo(ResourceResponse&) const;
 };
 
 inline bool operator==(const CrossOriginEmbedderPolicy& a, const CrossOriginEmbedderPolicy& b)
@@ -101,7 +103,6 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(Decod
 enum class COEPDisposition : bool { Reporting , Enforce };
 
 WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, const ScriptExecutionContext*);
-WEBCORE_EXPORT void addCrossOriginEmbedderPolicyHeaders(ResourceResponse&, const CrossOriginEmbedderPolicy&);
 WEBCORE_EXPORT void sendCOEPInheritenceViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, const String& type, const URL& blockedURL);
 WEBCORE_EXPORT void sendCOEPCORPViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, FetchOptions::Destination, const URL& blockedURL);
 

@@ -61,4 +61,18 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isola
     return isolatedCopy;
 }
 
+void ContentSecurityPolicyResponseHeaders::addPolicyHeadersTo(ResourceResponse& response) const
+{
+    for (const auto& header : m_headers) {
+        switch (header.second) {
+        case ContentSecurityPolicyHeaderType::Enforce:
+            response.setHTTPHeaderField(HTTPHeaderName::ContentSecurityPolicy, header.first);
+            break;
+        case ContentSecurityPolicyHeaderType::Report:
+            response.setHTTPHeaderField(HTTPHeaderName::ContentSecurityPolicyReportOnly, header.first);
+            break;
+        }
+    }
+}
+
 } // namespace WebCore

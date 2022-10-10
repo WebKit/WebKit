@@ -90,4 +90,6 @@ std::optional<PolicyContainer> PolicyContainer::decode(Decoder& decoder)
     }};
 }
 
+WEBCORE_EXPORT void addPolicyContainerHeaders(ResourceResponse&, const PolicyContainer&);
+
 } // namespace WebCore

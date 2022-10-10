@@ -42,10 +42,9 @@
 #include "WebErrors.h"
 #include <WebCore/AsyncFileStream.h>
 #include <WebCore/BlobRegistryImpl.h>
-#include <WebCore/CrossOriginEmbedderPolicy.h>
-#include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/ParsedContentRange.h>
+#include <WebCore/PolicyContainer.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -268,8 +267,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
         response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_blobData->contentType());
         response.setTextEncodingName(extractCharsetFromMediaType(m_blobData->contentType()).toAtomString());
         response.setHTTPHeaderField(HTTPHeaderName::ContentLength, String::number(m_totalRemainingSize));
-        addCrossOriginOpenerPolicyHeaders(response, m_blobData->policyContainer().crossOriginOpenerPolicy);
-        addCrossOriginEmbedderPolicyHeaders(response, m_blobData->policyContainer().crossOriginEmbedderPolicy);
+        addPolicyContainerHeaders(response, m_blobData->policyContainer());
 
         if (isRangeRequest) {
             auto rangeEnd = m_rangeEnd;
