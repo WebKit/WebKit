@@ -32,6 +32,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -55,6 +56,19 @@ TEST(WKWebView, PrepareForMoveToWindow)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+TEST(WKWebView, PrepareToUnparentView)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    __block bool done = false;
+    [webView _prepareForMoveToWindow:nil completionHandler:^{
+        [webView removeFromSuperview];
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
 
 TEST(WKWebView, PrepareForMoveToWindowThenClose)
 {
