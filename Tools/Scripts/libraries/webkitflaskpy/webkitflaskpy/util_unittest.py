@@ -23,7 +23,7 @@
 import unittest
 
 from werkzeug.exceptions import BadRequest
-from webkitflaskpy.util import boolean_query, limit_for_query
+from webkitflaskpy.util import boolean_query, limit_for_query, unescape_argument
 
 
 class UtilTest(unittest.TestCase):
@@ -48,3 +48,19 @@ class UtilTest(unittest.TestCase):
         self.assertRaises(BadRequest, func, limit=['string'])
         self.assertRaises(BadRequest, func, limit=['0'])
         self.assertRaises(BadRequest, func, limit=['-1'])
+
+    def test_unescape_decorator(self):
+        @unescape_argument(
+            value=['?', '#'],
+        )
+        def func(value=None):
+            return value
+
+        self.assertEqual(func(value='test'), 'test')
+        self.assertEqual(func(value='test$3Fvalue'), 'test?value')
+        self.assertEqual(
+            func(value=('test$3Fvalue1', 'test$3Fvalue2')),
+            ('test?value1', 'test?value2'),
+        )
+        self.assertEqual(func(value='test$40value'), 'test$40value')
+        self.assertEqual(func(value='test$23value'), 'test#value')

@@ -30,7 +30,7 @@
 <script type="module">
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
-import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, elapsedTime, escapeHTML} from '/assets/js/common.js';
+import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, elapsedTime, escapeHTML, escapeEndpoint} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {Drawer, BranchSelector, ConfigurationSelectors} from '/assets/js/drawer.js';
@@ -288,7 +288,7 @@ class SuiteFailuresView {
 
         agregateConnfiguration.forEach(configToSearch => {
             const resultParams = Object.assign(configToSearch.toParams(), rangeParams);
-            fetch(`/api/results/${this.suite}?${paramsToQuery(resultParams)}`).then(response => {
+            fetch(`/api/results/${escapeEndpoint(this.suite)}?${paramsToQuery(resultParams)}`).then(response => {
                 response.json().then(json => {
                     let minUuid = Math.round(new Date().getTime()/10);
                     let maxUuid = 0;
