@@ -310,7 +310,7 @@ public:
 
     JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*) const;
     int64_t toBigInt64(JSGlobalObject*) const;
-    uint64_t toBigUInt64(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE uint64_t toBigUInt64(JSGlobalObject*) const;
 
     std::optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
 

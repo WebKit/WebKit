@@ -177,7 +177,7 @@ TEST(IPCTestingAPI, CanSendAlert)
 
     done = false;
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100,"
-        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData', value: IPC}, {'type': 'String', 'value': 'hi'}]);</script>"];
+        "[{type: 'FrameID', value: IPC.frameID}, {type: 'FrameInfoData', value: IPC}, {'type': 'String', 'value': 'hi'}]);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "hi");
@@ -222,7 +222,7 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 
     done = false;
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
-        "IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'uint64_t', value: IPC.frameID}]);"
+        "IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'FrameID', value: IPC.frameID}]);"
         "alert('hi')</script>"];
     TestWebKitAPI::Util::run(&done);
 
@@ -347,7 +347,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     done = false;
     promptResult = @"foo";
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>result = IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptPrompt.name, 100,"
-        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData', value: IPC}, {'type': 'String', 'value': 'hi'}, {'type': 'String', 'value': 'bar'}]);</script>"];
+        "[{type: 'FrameID', value: IPC.frameID}, {type: 'FrameInfoData', value: IPC}, {'type': 'String', 'value': 'hi'}, {'type': 'String', 'value': 'bar'}]);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([promptDefault UTF8String], "bar");
@@ -365,7 +365,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
     done = false;
     promptResult = @"foo";
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>IPC.sendMessage(\"Networking\", 0, IPC.messages.NetworkConnectionToWebProcess_HasStorageAccess.name,"
-        "[{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'}, {type: 'uint64_t', value: IPC.frameID},"
+        "[{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'}, {type: 'FrameID', value: IPC.frameID},"
         "{type: 'uint64_t', value: IPC.pageID}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
     TestWebKitAPI::Util::run(&done);
 
@@ -406,8 +406,8 @@ TEST(IPCTestingAPI, CanInterceptAlert)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages = messages.filter((message) => message.name == IPC.messages.WebPageProxy_RunJavaScriptAlert.name); messages.length"].UTF8String, "1");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages[0].description"].UTF8String, "WebPageProxy_RunJavaScriptAlert");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args = messages[0].arguments; args.length"].intValue, 3);
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].type"].UTF8String, "uint64_t");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[0].value"].intValue, [webView stringByEvaluatingJavaScript:@"IPC.frameID.toString()"].intValue);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].type"].UTF8String, "(null)");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[0].value"].intValue, 0);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[1] instanceof ArrayBuffer"].boolValue, YES);
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].type"].UTF8String, "String");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].value"].UTF8String, "ok");
@@ -429,7 +429,7 @@ TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>let targetMessage = {}; const messageName = IPC.messages.NetworkConnectionToWebProcess_HasStorageAccess.name;"
         "IPC.addOutgoingMessageListener('Networking', (currentMessage) => { if (currentMessage.name == messageName) targetMessage = currentMessage; });"
         "IPC.sendMessage('Networking', 0, messageName, [{type: 'RegistrableDomain', value: 'https://ipctestingapi.com'}, {type: 'RegistrableDomain', value: 'https://webkit.org'},"
-        "{type: 'uint64_t', value: IPC.frameID}, {type: 'uint64_t', value: IPC.pageID}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
+        "{type: 'FrameID', value: IPC.frameID}, {type: 'uint64_t', value: IPC.pageID}]).then((result) => alert(JSON.stringify(result.arguments)));</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
@@ -439,8 +439,8 @@ TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[0].value"].UTF8String, "ipctestingapi.com");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[1].type"].UTF8String, "RegistrableDomain");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[1].value"].UTF8String, "webkit.org");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[2].type"].UTF8String, "uint64_t");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[2].value"].UTF8String, [webView stringByEvaluatingJavaScript:@"IPC.frameID.toString()"].UTF8String);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[2].type"].UTF8String, "(null)");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[2].value"].UTF8String, "(null)");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[3].type"].UTF8String, "uint64_t");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[3].value"].intValue, [webView stringByEvaluatingJavaScript:@"IPC.pageID.toString()"].intValue);
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(targetMessage.syncRequestID)"].UTF8String, "undefined");

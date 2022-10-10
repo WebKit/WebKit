@@ -2103,6 +2103,18 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
+    if (type == "FrameID"_s) {
+        uint64_t frameIdentifier = jsValue.get(globalObject, 0u).toBigUInt64(globalObject);
+        uint64_t processIdentifier = jsValue.get(globalObject, 1u).toBigUInt64(globalObject);
+        if (!frameIdentifier || !processIdentifier)
+            return false;
+        encoder << WebCore::FrameIdentifier {
+            makeObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
+            makeObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
+        };
+        return true;
+    }
+
     if (type == "RGBA"_s) {
         if (!jsValue.isNumber()) {
             *exception = createTypeError(context, "RGBA value should be a number"_s);
@@ -2432,9 +2444,24 @@ JSValueRef JSIPC::visitedLinkStoreID(JSContextRef context, JSObjectRef thisObjec
 
 JSValueRef JSIPC::frameID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
-    return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) {
-        return wrapped.m_webFrame->frameID().object().toUInt64();
-    });
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSC::JSObject* array = JSC::constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+    RefPtr<JSIPC> wrapped = toWrapped(context, thisObject);
+    if (!wrapped) {
+        *exception = toRef(JSC::createTypeError(toJS(context), "Wrong type"_s));
+        return JSValueMakeUndefined(context);
+    }
+
+    auto frameID = wrapped->m_webFrame->frameID();
+    array->putDirectIndex(globalObject, 0, JSC::JSBigInt::createFrom(globalObject, frameID.object().toUInt64()));
+    array->putDirectIndex(globalObject, 1, JSC::JSBigInt::createFrom(globalObject, frameID.processIdentifier().toUInt64()));
+    return toRef(vm, array);
 }
 
 JSValueRef JSIPC::pageID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
