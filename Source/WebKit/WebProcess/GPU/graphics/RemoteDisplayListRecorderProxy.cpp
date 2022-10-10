@@ -480,7 +480,7 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const Floa
     }
 
     if (renderingMethod)
-        return Recorder::createImageBuffer(size, resolutionScale, colorSpace, renderingMode, renderingMethod);
+        return Recorder::createImageBuffer(size, resolutionScale, colorSpace, RenderingMode::Unaccelerated, renderingMethod);
 
     // FIXME: Ideally we'd plumb the purpose through for callers of GraphicsContext::createImageBuffer().
     RenderingPurpose purpose = m_imageBuffer ? m_imageBuffer->renderingPurpose() : RenderingPurpose::Unspecified;

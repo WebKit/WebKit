@@ -33,6 +33,7 @@ namespace WebCore {
 // This class automatically saves and restores the current NSGraphicsContext for
 // functions which call out into AppKit and rely on the currentContext being set
 class LocalCurrentGraphicsContext {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LocalCurrentGraphicsContext);
 public:
     WEBCORE_EXPORT LocalCurrentGraphicsContext(GraphicsContext&);

@@ -35,7 +35,7 @@
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "LengthSize.h"
-#import "LocalCurrentGraphicsContext.h"
+#import "LocalCurrentGraphicsContextSwitcher.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ScrollView.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
@@ -634,7 +634,7 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
     return NSControlSizeMini;
 }
 
-static void paintStepper(ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*)
+static void paintStepper(ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor)
 {
     // We don't use NSStepperCell because there are no ways to draw an
     // NSStepperCell with the up button highlighted.
@@ -667,9 +667,9 @@ static void paintStepper(ControlStates& controlStates, GraphicsContext& context,
         context.translate(-rect.location());
     }
 
-    LocalCurrentGraphicsContext localContext(context);
+    LocalCurrentGraphicsContextSwitcher localContextSwitcher(context, zoomedRect, deviceScaleFactor);
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:rect context:localContext.cgContext() options:@{
+    [[NSAppearance currentAppearance] _drawInRect:localContextSwitcher.drawingRect() context:localContextSwitcher.cgContext() options:@{
     ALLOW_DEPRECATED_DECLARATIONS_END
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetButtonLittleArrows,
         (__bridge NSString *)kCUISizeKey: coreUISize,
@@ -730,11 +730,11 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
     bool needsRepaint = false;
     auto platformContext = context.platformContext();
     auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext))));
-    bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0;
+    bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0 || !context.hasPlatformContext();
 
     if (useImageBuffer) {
         NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
-        auto imageBuffer = context.createImageBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor);
+        auto imageBuffer = context.createImageBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, DestinationColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local);
         if (!imageBuffer)
             return needsRepaint;
         {
@@ -970,7 +970,7 @@ void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& c
             break;
 #endif
         case InnerSpinButtonPart:
-            paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
+            paintStepper(states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);
             break;
         default:
             break;

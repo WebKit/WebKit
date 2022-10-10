@@ -273,6 +273,7 @@ platform/cocoa/DragDataCocoa.mm
 platform/cocoa/DragImageCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
+platform/cocoa/LocalCurrentGraphicsContextSwitcher.cpp
 platform/cocoa/LocalizedStringsCocoa.mm
 platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/MIMETypeRegistryCocoa.mm

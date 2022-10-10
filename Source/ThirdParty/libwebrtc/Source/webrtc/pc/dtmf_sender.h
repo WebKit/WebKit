@@ -16,6 +16,7 @@
 #include <string>
 
 #include "api/dtmf_sender_interface.h"
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"

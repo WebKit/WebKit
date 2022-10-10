@@ -459,9 +459,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     if (paintInfo.context().paintingDisabled())
         return false;
 
-    if (UNLIKELY(!canPaint(paintInfo, box.settings())))
-        return false;
-
     ControlPart part = box.style().effectiveAppearance();
     IntRect integralSnappedRect = snappedIntRect(rect);
     float deviceScaleFactor = box.document().deviceScaleFactor();

@@ -176,6 +176,8 @@ private:
     void updateFocusedState(NSCell *, const RenderObject*);
     void updatePressedState(NSCell*, const RenderObject&);
 
+    void drawListButtonForInput(const RenderObject&, GraphicsContext&, const FloatRect& paintRect);
+
     // Helpers for adjusting appearance and for painting
 
     void paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell*, const RenderObject&, const PaintInfo&, const FloatRect&);

@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "api/make_ref_counted.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"

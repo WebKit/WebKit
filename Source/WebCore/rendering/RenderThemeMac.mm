@@ -46,7 +46,7 @@
 #import "Icon.h"
 #import "Image.h"
 #import "ImageBuffer.h"
-#import "LocalCurrentGraphicsContext.h"
+#import "LocalCurrentGraphicsContextSwitcher.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
@@ -1100,12 +1100,22 @@ bool RenderThemeMac::shouldPaintCustomTextField(const RenderObject& renderer) co
 #endif
 }
 
+void RenderThemeMac::drawListButtonForInput(const RenderObject& o, GraphicsContext& context, const FloatRect& paintRect)
+{
+    if (!is<HTMLInputElement>(o.generatingNode()))
+        return;
+#if ENABLE(DATALIST_ELEMENT)
+    const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
+    if (input.list())
+        paintListButtonForInput(o, context, paintRect);
+#endif
+}
+
 bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
     FloatRect paintRect(r);
     auto& context = paintInfo.context();
 
-    LocalCurrentGraphicsContext localContext(context);
     GraphicsContextStateSaver stateSaver(context);
 
     auto enabled = isEnabled(o) && !isReadOnlyControl(o);
@@ -1119,6 +1129,8 @@ bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& pain
         context.setStrokeColor(enabled ? Color::black : Color::darkGray);
         context.setStrokeStyle(SolidStroke);
         context.strokeRect(strokeRect, strokeThickness);
+
+        drawListButtonForInput(o, context, paintRect);
     } else {
         // <rdar://problem/22896977> We adjust the paint rect here to account for how AppKit draws the text
         // field cell slightly smaller than the rect we pass to drawWithFrame.
@@ -1129,20 +1141,14 @@ bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& pain
             paintRect.move(0, -1 / transform.yScale());
         }
 
+        LocalCurrentGraphicsContextSwitcher localContextSwitcher(context, paintRect, o.document().deviceScaleFactor());
         NSTextFieldCell *textField = this->textField();
         [textField setEnabled:enabled];
-        [textField drawWithFrame:NSRect(paintRect) inView:documentViewFor(o)];
+        [textField drawWithFrame:NSRect(localContextSwitcher.drawingRect()) inView:documentViewFor(o)];
         [textField setControlView:nil];
+
+        drawListButtonForInput(o, localContextSwitcher.context(), localContextSwitcher.drawingRect());
     }
-
-#if ENABLE(DATALIST_ELEMENT)
-    if (!is<HTMLInputElement>(o.generatingNode()))
-        return false;
-
-    const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
-    if (input.list())
-        paintListButtonForInput(o, context, paintRect);
-#endif
 
     return false;
 }
@@ -1153,8 +1159,8 @@ void RenderThemeMac::adjustTextFieldStyle(RenderStyle&, const Element*) const
 
 bool RenderThemeMac::paintTextArea(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    _NSDrawCarbonThemeListBox(r, isEnabled(o) && !isReadOnlyControl(o), YES, YES);
+    LocalCurrentGraphicsContextSwitcher localContextSwitcher(paintInfo.context(), r, o.document().deviceScaleFactor());
+    _NSDrawCarbonThemeListBox(localContextSwitcher.drawingRect(), isEnabled(o) && !isReadOnlyControl(o), YES, YES);
     return false;
 }
 
@@ -1371,7 +1377,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
     float deviceScaleFactor = renderObject.document().deviceScaleFactor();
     bool isIndeterminate = renderProgress.position() < 0;
-    auto imageBuffer = paintInfo.context().createImageBuffer(inflatedRect.size(), deviceScaleFactor);
+    auto imageBuffer = paintInfo.context().createImageBuffer(inflatedRect.size(), deviceScaleFactor, DestinationColorSpace::SRGB(), paintInfo.context().renderingMode(), RenderingMethod::Local);
     if (!imageBuffer)
         return true;
 
@@ -1751,30 +1757,29 @@ bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& pa
         bounds.setX(r.x() + r.width() / 2 - zoomedTrackWidth / 2);
     }
 
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    CGContextRef context = localContext.cgContext();
+    LocalCurrentGraphicsContextSwitcher localContextSwitcher(paintInfo.context(), bounds, o.document().deviceScaleFactor());
+    auto& context = localContextSwitcher.context();
+    auto paintRect = localContextSwitcher.drawingRect();
     CGColorSpaceRef cspace = sRGBColorSpaceRef();
 
 #if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(o, paintInfo, r);
 #endif
 
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    CGContextClipToRect(context, bounds);
+    GraphicsContextStateSaver stateSaver(context);
+    CGContextClipToRect(context.platformContext(), paintRect);
 
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
     if (o.style().effectiveAppearance() == SliderVerticalPart)
-        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
+        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(paintRect.x(),  paintRect.maxY()), CGPointMake(paintRect.maxX(), paintRect.maxY()), mainFunction.get(), false, false));
     else
-        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
+        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(paintRect.x(),  paintRect.y()), CGPointMake(paintRect.x(), paintRect.maxY()), mainFunction.get(), false, false));
 
     IntSize radius(trackRadius, trackRadius);
-    paintInfo.context().clipRoundedRect(FloatRoundedRect(bounds, radius, radius, radius, radius));
-    context = localContext.cgContext();
-    CGContextDrawShading(context, mainShading.get());
-
+    context.clipRoundedRect(FloatRoundedRect(paintRect, radius, radius, radius, radius));
+    CGContextDrawShading(context.platformContext(), mainShading.get());
     return false;
 }
 
