@@ -748,9 +748,6 @@ public:
     
     void setHasActiveAnimatedScrolls(bool isRunning);
 
-    void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
-    bool delegatesScrolling() const { return m_delegatesScrolling; }
-
     struct PrivateClickMeasurementAndMetadata {
         WebCore::PrivateClickMeasurement pcm;
         String sourceDescription;
@@ -3069,8 +3066,6 @@ private:
 
     WebCore::RectEdges<bool> m_mainFramePinnedState { true, true, true, true };
     WebCore::RectEdges<bool> m_rubberBandableEdges { true, true, true, true };
-
-    bool m_delegatesScrolling { false };
 
     bool m_mainFrameHasHorizontalScrollbar { false };
     bool m_mainFrameHasVerticalScrollbar { false };
