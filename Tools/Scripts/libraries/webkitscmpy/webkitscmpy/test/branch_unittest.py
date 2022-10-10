@@ -118,7 +118,7 @@ class TestBranch(testing.PathTestCase):
 
             issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
             self.assertEqual(len(issue.references), 2)
-            self.assertEqual(issue.references[0].link, '<rdar://4>')
+            self.assertEqual(issue.references[0].link, 'rdar://4')
             self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
 
         self.assertEqual(
@@ -152,7 +152,7 @@ class TestBranch(testing.PathTestCase):
 
             issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
             self.assertEqual(len(issue.references), 2)
-            self.assertEqual(issue.references[0].link, '<rdar://4>')
+            self.assertEqual(issue.references[0].link, 'rdar://4')
             self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
 
         self.assertEqual(
@@ -186,7 +186,7 @@ class TestBranch(testing.PathTestCase):
 
             issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
             self.assertEqual(len(issue.references), 2)
-            self.assertEqual(issue.references[0].link, '<rdar://4>')
+            self.assertEqual(issue.references[0].link, 'rdar://4')
             self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
 
         self.assertEqual(
@@ -316,7 +316,7 @@ What version of 'WebKit SVG' should the bug be associated with?:
     3) Safari Technology Preview
     4) WebKit Local Build
 : 
-Created '<rdar://4> [Area] New Issue'
+Created 'rdar://4 [Area] New Issue'
 Created the local development branch 'eng/Area-New-Issue'
 ''',
         )

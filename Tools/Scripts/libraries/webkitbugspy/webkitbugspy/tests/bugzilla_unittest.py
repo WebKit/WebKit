@@ -460,7 +460,7 @@ What version of 'WebKit' should the bug be associated with?:
                 self.assertEqual(issue.references, [])
                 self.assertIsNotNone(issue.cc_radar(block=True))
                 self.assertEqual(len(issue.references), 1)
-                self.assertEqual(issue.references[0].link, '<rdar://1>')
+                self.assertEqual(issue.references[0].link, 'rdar://1')
                 self.assertEqual(issue.references[0].title, None)
 
     def test_cc_with_radarclient(self):
@@ -478,7 +478,7 @@ What version of 'WebKit' should the bug be associated with?:
                 self.assertEqual(issue.references, [])
                 self.assertIsNotNone(issue.cc_radar(block=True))
                 self.assertEqual(len(issue.references), 1)
-                self.assertEqual(issue.references[0].link, '<rdar://4>')
+                self.assertEqual(issue.references[0].link, 'rdar://4')
                 self.assertEqual(issue.references[0].title, 'An example issue for testing (1)')
 
     def test_cc_existing_radar(self):
@@ -497,5 +497,5 @@ What version of 'WebKit' should the bug be associated with?:
                 self.assertIsNotNone(issue.cc_radar(block=True, radar=Tracker.from_string('<rdar://1>')))
                 self.assertEqual(issue.comments[-1].content, '<rdar://problem/1>')
                 self.assertEqual(len(issue.references), 1)
-                self.assertEqual(issue.references[0].link, '<rdar://1>')
+                self.assertEqual(issue.references[0].link, 'rdar://1')
                 self.assertEqual(issue.references[0].title, 'Example issue 1')

@@ -169,7 +169,7 @@ class Tracker(GenericTracker):
         return Issue(id=int(id), tracker=self)
 
     def populate(self, issue, member=None):
-        issue._link = '<rdar://{}>'.format(issue.id)
+        issue._link = 'rdar://{}'.format(issue.id)
         issue._labels = []
         if (not self.client or not self.library) and member:
             sys.stderr.write('radarclient inaccessible on this machine\n')
