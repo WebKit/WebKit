@@ -358,6 +358,8 @@ public:
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
+    bool platformPrepareForOpen();
+    void platformOpen();
     void platformInvalidate();
 
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
@@ -383,7 +385,8 @@ private:
     bool sendOutgoingMessage(UniqueRef<Encoder>&&);
     void connectionDidClose();
     
-    // Called on the listener thread.
+    // Called on the connection run loop.
+    void dispatchSyncStateMessages();
     void dispatchOneIncomingMessage();
     void dispatchIncomingMessages();
     void dispatchMessage(std::unique_ptr<Decoder>);
@@ -403,7 +406,6 @@ private:
 #if PLATFORM(COCOA)
     bool sendMessage(std::unique_ptr<MachMessage>);
 #endif
-
     class MessagesThrottler {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -419,9 +421,14 @@ private:
         DispatchMessagesFunction m_dispatchMessages;
         unsigned m_throttlingLevel { 0 };
     };
+    class SyncMessageState;
+    struct SyncMessageStateRelease {
+        void operator()(SyncMessageState*) const;
+    };
 
     static Lock s_connectionMapLock;
     Client* m_client { nullptr };
+    std::unique_ptr<SyncMessageState, SyncMessageStateRelease> m_syncState;
     UniqueID m_uniqueID;
     bool m_isServer;
     std::atomic<bool> m_isValid { true };
@@ -457,8 +464,6 @@ private:
 
     struct WaitForMessageState;
     WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { nullptr }; // NOLINT
-
-    class SyncMessageState;
 
     Lock m_syncReplyStateLock;
     bool m_shouldWaitForSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock) { true };

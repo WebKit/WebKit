@@ -250,12 +250,10 @@ void Connection::invokeWriteEventHandler()
     });
 }
 
-bool Connection::open(Client& client)
+void Connection::platformOpen()
 {
-    ASSERT(!m_client);
     // We connected the two ends of the pipe in createServerAndClientIdentifiers.
     m_isConnected = true;
-    m_client = &client;
 
     // Start listening for read and write state events.
     m_readListener.open([this] {
@@ -268,7 +266,6 @@ bool Connection::open(Client& client)
 
     // Schedule a read.
     invokeReadEventHandler();
-    return true;
 }
 
 bool Connection::platformCanSendOutgoingMessages() const
