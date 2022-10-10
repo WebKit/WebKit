@@ -2576,6 +2576,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case ArrayPush:
+        switch (node->arrayMode().type()) {
+        case Array::ForceExit:
+            m_state.setIsValid(false);
+            break;
+        default:
+            break;
+        }
         clobberWorld();
         setNonCellTypeForNode(node, SpecBytecodeNumber);
         break;

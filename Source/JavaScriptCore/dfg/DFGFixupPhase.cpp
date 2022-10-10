@@ -1433,7 +1433,20 @@ private:
                         SpecInt32Only,
                         element->prediction()));
             }
-            blessArrayOperation(arrayEdge, Edge(), storageEdge);
+
+            if (!elementCount)
+                node->setArrayMode(node->arrayMode().refine(m_graph, node, arrayEdge->prediction() & SpecCell, SpecInt32Only));
+
+            switch (node->arrayMode().type()) {
+            case Array::SlowPutArrayStorage: {
+                Edge unusedEdge;
+                blessArrayOperation(arrayEdge, Edge(), unusedEdge, neverNeedsStorage);
+                break;
+            }
+            default:
+                blessArrayOperation(arrayEdge, Edge(), storageEdge);
+                break;
+            }
             fixEdge<KnownCellUse>(arrayEdge);
 
             // Convert `array.push()` to GetArrayLength.
@@ -1458,6 +1471,8 @@ private:
                     break;
                 case Array::Contiguous:
                 case Array::ArrayStorage:
+                case Array::SlowPutArrayStorage:
+                case Array::ForceExit:
                     speculateForBarrier(element);
                     break;
                 default:

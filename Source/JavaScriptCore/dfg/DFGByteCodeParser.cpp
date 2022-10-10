@@ -2491,24 +2491,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             ArrayMode arrayMode = getArrayMode(Array::Write);
             if (!arrayMode.isJSArray())
                 return false;
-            switch (arrayMode.type()) {
-            case Array::Int32:
-            case Array::Double:
-            case Array::Contiguous:
-            case Array::ArrayStorage: {
-                insertChecks();
 
-                addVarArgChild(nullptr); // For storage.
-                for (int i = 0; i < argumentCountIncludingThis; ++i)
-                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
-                Node* arrayPush = addToGraph(Node::VarArg, ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction));
-                setResult(arrayPush);
-                return true;
-            }
-                
-            default:
-                return false;
-            }
+            insertChecks();
+
+            addVarArgChild(nullptr); // For storage.
+            for (int i = 0; i < argumentCountIncludingThis; ++i)
+                addVarArgChild(get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
+            Node* arrayPush = addToGraph(Node::VarArg, ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+            setResult(arrayPush);
+            return true;
         }
 
         case ArraySliceIntrinsic: {

@@ -10324,6 +10324,38 @@ void SpeculativeJIT::compileArrayPush(Node* node)
 
     Edge& storageEdge = m_graph.varArgChild(node, 0);
     Edge& arrayEdge = m_graph.varArgChild(node, 1);
+    unsigned elementOffset = 2;
+    unsigned elementCount = node->numChildren() - elementOffset;
+
+    if (node->arrayMode().type() == Array::SlowPutArrayStorage) {
+        SpeculateCellOperand base(this, arrayEdge);
+        GPRTemporary buffer(this);
+        ASSERT(!storageEdge.node());
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg bufferGPR = buffer.gpr();
+
+        size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
+        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+        m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
+
+        for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+            Edge& element = m_graph.varArgChild(node, elementIndex + elementOffset);
+            JSValueOperand value(this, element);
+            JSValueRegs valueRegs = value.jsValueRegs();
+            m_jit.storeValue(valueRegs, MacroAssembler::Address(bufferGPR, sizeof(EncodedJSValue) * elementIndex));
+            value.use();
+        }
+        base.use();
+
+        flushRegisters();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+        callOperation(operationArrayPushMultipleSlow, resultRegs, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, bufferGPR, CCallHelpers::TrustedImm32(elementCount));
+
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        return;
+    }
 
     SpeculateCellOperand base(this, arrayEdge);
     GPRTemporary storageLength(this);
@@ -10333,8 +10365,6 @@ void SpeculativeJIT::compileArrayPush(Node* node)
 
     StorageOperand storage(this, storageEdge);
     GPRReg storageGPR = storage.gpr();
-    unsigned elementOffset = 2;
-    unsigned elementCount = node->numChildren() - elementOffset;
 
 #if USE(JSVALUE32_64)
     GPRTemporary tag(this);
@@ -10570,6 +10600,11 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         return;
     }
+
+    case Array::ForceExit:
+    case Array::SlowPutArrayStorage:
+        DFG_CRASH(m_graph, node, "Bad array mode type");
+        break;
 
     default:
         RELEASE_ASSERT_NOT_REACHED();

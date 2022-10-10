@@ -1147,6 +1147,35 @@ JSC_DEFINE_JIT_OPERATION(operationArrayPushDoubleMultiple, EncodedJSValue, (JSGl
     return JSValue::encode(jsNumber(array->length()));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationArrayPushMultipleSlow, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* array, void* buffer, int32_t elementCount))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), elementCount);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // If JS interaction happens, and if it invokes DFG functions, then scratch buffer can be overridden. Thus we first need to copy all of them into the local buffer.
+    MarkedArgumentBuffer arguments;
+    arguments.ensureCapacity(elementCount);
+
+    EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
+    for (int32_t i = 0; i < elementCount; ++i)
+        arguments.append(JSValue::decode(values[i]));
+
+    if (UNLIKELY(arguments.hasOverflowed())) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    for (int32_t i = 0; i < elementCount; ++i) {
+        array->pushInline(globalObject, arguments.at(i));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(jsNumber(array->length()));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationArrayPop, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* array))
 {
     VM& vm = globalObject->vm();

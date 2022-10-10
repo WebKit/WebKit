@@ -184,6 +184,7 @@ JSC_DECLARE_JIT_OPERATION(operationDefineAccessorPropertyStringIdent, void, (JSG
 JSC_DECLARE_JIT_OPERATION(operationDefineAccessorPropertySymbol, void, (JSGlobalObject*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationArrayPush, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedValue, JSArray*));
 JSC_DECLARE_JIT_OPERATION(operationArrayPushMultiple, EncodedJSValue, (JSGlobalObject*, JSArray*, void* buffer, int32_t elementCount));
+JSC_DECLARE_JIT_OPERATION(operationArrayPushMultipleSlow, EncodedJSValue, (JSGlobalObject*, JSArray*, void* buffer, int32_t elementCount));
 JSC_DECLARE_JIT_OPERATION(operationArrayPushDouble, EncodedJSValue, (JSGlobalObject*, double value, JSArray*));
 JSC_DECLARE_JIT_OPERATION(operationArrayPushDoubleMultiple, EncodedJSValue, (JSGlobalObject*, JSArray*, void* buffer, int32_t elementCount));
 JSC_DECLARE_JIT_OPERATION(operationArrayPop, EncodedJSValue, (JSGlobalObject*, JSArray*));
