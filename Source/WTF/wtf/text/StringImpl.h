@@ -1154,6 +1154,7 @@ inline void StringImpl::copyCharacters(DestinationCharacterType* destination, co
             *destination = *source;
             return;
         }
+        ASSERT(source);
         memcpy(destination, source, numCharacters * sizeof(DestinationCharacterType));
     } else {
 #if CPU(ARM64)
