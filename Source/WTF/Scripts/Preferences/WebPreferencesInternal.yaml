@@ -275,7 +275,7 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || PLATFORM(WIN)": true
       default: false
     WebCore:
       default: false
