@@ -87,6 +87,12 @@
     return retainPtr(wrapper(_node->parentFrameHandle())).autorelease();
 }
 
+- (pid_t)_processIdentifier
+{
+    auto* frame = WebKit::WebFrameProxy::webFrame(_node->handle()->frameID());
+    return frame ? frame->processIdentifier() : 0;
+}
+
 - (API::Object&)_apiObject
 {
     return *_node;

@@ -113,6 +113,11 @@ bool WebFrameProxy::isMainFrame() const
     return this == m_page->mainFrame() || (m_page->provisionalPageProxy() && this == m_page->provisionalPageProxy()->mainFrame());
 }
 
+ProcessID WebFrameProxy::processIdentifier() const
+{
+    return m_process->processIdentifier();
+}
+
 std::optional<PageIdentifier> WebFrameProxy::pageIdentifier() const
 {
     if (!m_page)

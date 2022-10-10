@@ -136,6 +136,7 @@ public:
 
     void disconnect();
     void addChildFrame(Ref<WebFrameProxy>&&);
+    ProcessID processIdentifier() const;
 
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
