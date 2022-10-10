@@ -680,7 +680,7 @@ RefPtr<SharedBuffer> utf8Buffer(const String& string)
                 return nullptr;
         } else {
             const UChar* d = string.characters16();
-            if (WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size()) != WTF::Unicode::ConversionOK)
+            if (WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size()) != WTF::Unicode::ConversionResult::Success)
                 return nullptr;
         }
     }

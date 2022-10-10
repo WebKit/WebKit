@@ -31,8 +31,8 @@
 namespace WTF {
 namespace Unicode {
 
-enum ConversionResult {
-    ConversionOK, // conversion successful
+enum class ConversionResult : uint8_t {
+    Success, // conversion successful
     SourceExhausted, // partial character in source, but hit end
     TargetExhausted, // insufficient room in target for conversion
     SourceIllegal // source sequence is illegal/malformed
@@ -48,7 +48,6 @@ WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16(const char* sourceStart, const char* 
 WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* sourceStart, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* isSourceAllASCII = nullptr);
 WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, char* targetEnd);
 WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, char* targetEnd, bool strict = true);
-
 WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length);
 
 // Callers of these functions must check that the lengths are the same; accordingly we omit an end argument for UTF-16 and Latin-1.

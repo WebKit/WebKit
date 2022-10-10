@@ -125,7 +125,7 @@ public:
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     template<typename Func>
-    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8ForRange(const Func&, unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
 
     class UpconvertedCharacters;
     UpconvertedCharacters upconvertedCharacters() const;
@@ -1440,13 +1440,11 @@ inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringView::tryGetUTF8ForRange(const Func& function, unsigned offset, unsigned length, ConversionMode mode) const
+inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringView::tryGetUTF8(const Func& function, ConversionMode mode) const
 {
-    ASSERT(offset <= this->length());
-    ASSERT(length <= (this->length() - offset));
     if (is8Bit())
-        return StringImpl::tryGetUTF8ForCharacters(function, characters8() + offset, length);
-    return StringImpl::tryGetUTF8ForCharacters(function, characters16() + offset, length, mode);
+        return StringImpl::tryGetUTF8ForCharacters(function, characters8(), length());
+    return StringImpl::tryGetUTF8ForCharacters(function, characters16(), length(), mode);
 }
 
 } // namespace WTF

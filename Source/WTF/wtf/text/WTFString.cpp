@@ -470,11 +470,6 @@ CString String::utf8(ConversionMode mode) const
     return expectedString.value();
 }
 
-CString String::utf8() const
-{
-    return utf8(LenientConversion);
-}
-
 String String::make8BitFrom16BitSource(const UChar* source, size_t length)
 {
     if (!length)

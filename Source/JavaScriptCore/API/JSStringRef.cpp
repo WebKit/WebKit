@@ -109,7 +109,7 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
     } else {
         const UChar* source = string->characters16();
         auto result = convertUTF16ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
-        failed = result != ConversionOK && result != TargetExhausted;
+        failed = result != ConversionResult::Success && result != ConversionResult::TargetExhausted;
     }
 
     *destination++ = '\0';

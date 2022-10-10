@@ -38,9 +38,9 @@ String TextEncoder::encoding() const
 
 RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
 {
-    auto result = input.tryGetUTF8ForRange([&](Span<const char> span) -> RefPtr<Uint8Array> {
+    auto result = input.tryGetUTF8([&](Span<const char> span) -> RefPtr<Uint8Array> {
         return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(span.data()), span.size());
-    }, 0, input.length());
+    });
     if (result)
         return result.value();
     return Uint8Array::tryCreate(nullptr, 0);

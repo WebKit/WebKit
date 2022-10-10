@@ -1535,23 +1535,43 @@ size_t StringImpl::sizeInBytes() const
 static inline void putUTF8Triple(char*& buffer, UChar character)
 {
     ASSERT(character >= 0x0800);
-    *buffer++ = static_cast<char>(((character >> 12) & 0x0F) | 0xE0);
-    *buffer++ = static_cast<char>(((character >> 6) & 0x3F) | 0x80);
-    *buffer++ = static_cast<char>((character & 0x3F) | 0x80);
+    int i = 0;
+    U8_APPEND_UNSAFE(buffer, i, character);
+    ASSERT(i == 3);
+    buffer += i;
 }
 
-UTF8ConversionError StringImpl::utf8Impl(const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode mode)
+Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const LChar* source, unsigned length)
 {
-    if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
-        const UChar* charactersEnd = characters + length;
-        char* bufferEnd = buffer + bufferSize;
+    return tryGetUTF8ForCharacters([] (Span<const char> converted) {
+        return CString(converted.data(), converted.size());
+    }, source, length);
+}
+
+Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode mode)
+{
+    return tryGetUTF8ForCharacters([] (Span<const char> converted) {
+        return CString(converted.data(), converted.size());
+    }, characters, length, mode);
+}
+
+Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(const UChar* characters, unsigned length, ConversionMode mode, Vector<char, 1024>& bufferVector)
+{
+    ASSERT(bufferVector.size() == length * 3);
+
+    char* buffer = bufferVector.data();
+    const UChar* const charactersEnd = characters + length;
+    char* const bufferEnd = buffer + bufferVector.size();
+
+    switch (mode) {
+    case StrictConversionReplacingUnpairedSurrogatesWithFFFD: {
         while (characters < charactersEnd) {
             // Use strict conversion to detect unpaired surrogates.
             auto result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd);
-            ASSERT(result != TargetExhausted);
+            ASSERT(result != ConversionResult::TargetExhausted);
             // Conversion fails when there is an unpaired surrogate.
             // Put replacement character (U+FFFD) instead of the unpaired surrogate.
-            if (result != ConversionOK) {
+            if (result != ConversionResult::Success) {
                 ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
                 // There should be room left, since one UChar hasn't been converted.
                 ASSERT((buffer + 3) <= bufferEnd);
@@ -1559,67 +1579,47 @@ UTF8ConversionError StringImpl::utf8Impl(const UChar* characters, unsigned lengt
                 ++characters;
             }
         }
-    } else {
+        break;
+    }
+    case StrictConversion:
+    case LenientConversion: {
         bool strict = mode == StrictConversion;
-        const UChar* originalCharacters = characters;
-        auto result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferSize, strict);
-        ASSERT(result != TargetExhausted); // (length * 3) should be sufficient for any conversion
-
-        // Only produced from strict conversion.
-        if (result == SourceIllegal) {
-            ASSERT(strict);
-            return UTF8ConversionError::IllegalSource;
-        }
-
-        // Check for an unconverted high surrogate.
-        if (result == SourceExhausted) {
+        auto conversionResult = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, strict);
+        switch (conversionResult) {
+        case ConversionResult::Success:
+            break;
+        case ConversionResult::SourceExhausted:
             if (strict)
-                return UTF8ConversionError::SourceExhausted;
-            // This should be one unpaired high surrogate. Treat it the same
-            // was as an unpaired high surrogate would have been handled in
-            // the middle of a string with non-strict conversion - which is
-            // to say, simply encode it to UTF-8.
-            ASSERT_UNUSED(
-                originalCharacters, (characters + 1) == (originalCharacters + length));
-            ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
-            // There should be room left, since one UChar hasn't been converted.
-            ASSERT((buffer + 3) <= (buffer + bufferSize));
+                return makeUnexpected(UTF8ConversionError::SourceExhausted);
+            ASSERT(characters + 1 == charactersEnd);
+            ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
             putUTF8Triple(buffer, *characters);
+                break;
+        case ConversionResult::TargetExhausted:
+            // (length * 3) should be sufficient for any conversion.
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+
+        case ConversionResult::SourceIllegal:
+            // Only produced from strict conversion.
+            ASSERT(strict);
+            return makeUnexpected(UTF8ConversionError::IllegalSource);
         }
     }
-    
-    return UTF8ConversionError::None;
-}
-
-Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const LChar* characters, unsigned length)
-{
-    return StringImpl::tryGetUTF8ForCharacters([](Span<const char> span) -> CString {
-        return CString(span.data(), span.size());
-    }, characters, length);
-}
-
-Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode mode)
-{
-    return StringImpl::tryGetUTF8ForCharacters([](Span<const char> span) -> CString {
-        return CString(span.data(), span.size());
-    }, characters, length, mode);
-}
-
-Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8ForRange(unsigned offset, unsigned length, ConversionMode mode) const
-{
-    return tryGetUTF8ForRange([](Span<const char> span) -> CString {
-        return CString(span.data(), span.size());
-    }, offset, length, mode);
+    }
+    return buffer - bufferVector.data();
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
 {
-    return tryGetUTF8ForRange(0, length(), mode);
+    if (is8Bit())
+        return utf8ForCharacters(characters8(), length());
+    return utf8ForCharacters(characters16(), length(), mode);
 }
 
 CString StringImpl::utf8(ConversionMode mode) const
 {
-    auto expectedString = tryGetUTF8ForRange(0, length(), mode);
+    auto expectedString = tryGetUTF8(mode);
     RELEASE_ASSERT(expectedString);
     return expectedString.value();
 }
