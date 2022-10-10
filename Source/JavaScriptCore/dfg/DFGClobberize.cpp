@@ -36,7 +36,7 @@ bool doesWrites(Graph& graph, Node* node)
 {
     NoOpClobberize noOp;
     CheckClobberize addWrite;
-    clobberize(graph, node, noOp, addWrite, noOp);
+    clobberize(graph, node, noOp, addWrite, noOp, ClobberPhase::LICM);
     return addWrite.result();
 }
 

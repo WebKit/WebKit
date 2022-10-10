@@ -39,14 +39,16 @@
 
 namespace JSC { namespace DFG {
 
+enum class ClobberPhase : uint8_t { Others, LICM };
+
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
-void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
+void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def, const ClobberPhase phase = ClobberPhase::Others)
 {
-    clobberize(graph, node, read, write, def, [] { });
+    clobberize(graph, node, read, write, def, [] { }, phase);
 }
 
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor, typename ClobberTopFunctor>
-void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def, const ClobberTopFunctor& clobberTopFunctor)
+void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def, const ClobberTopFunctor& clobberTopFunctor, const ClobberPhase phase = ClobberPhase::Others)
 {
     // Some notes:
     //
@@ -804,15 +806,18 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ValueMod:
     case ValuePow:
     case ValueBitLShift:
-    case ValueBitRShift:
+    case ValueBitRShift: {
+        bool isLICMPhase = phase == ClobberPhase::LICM;
+        bool hasSideEffect = node->op() == ValueMod || node->op() == ValueDiv || node->op() == ValuePow;
         // FIXME: this use of single-argument isBinaryUseKind would prevent us from specializing (for example) for a HeapBigInt left-operand and a BigInt32 right-operand.
-        if (node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use) || node->isBinaryUseKind(HeapBigIntUse)) {
+        bool isBigIntUse = node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use) || node->isBinaryUseKind(HeapBigIntUse);
+        if (isBigIntUse && !(isLICMPhase && hasSideEffect)) {
             def(PureValue(node));
             return;
         }
         clobberTop();
         return;
-
+    }
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:
