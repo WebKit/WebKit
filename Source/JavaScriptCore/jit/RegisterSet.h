@@ -227,7 +227,7 @@ public:
         return m_bits.count();
     }
 
-    inline constexpr size_t sizeOfSetRegisters() const
+    inline size_t sizeOfSetRegisters() const
     {
 #if USE(JSVALUE64)
         return (m_bits.count() + m_upperBits.count()) * sizeof(CPURegister);
