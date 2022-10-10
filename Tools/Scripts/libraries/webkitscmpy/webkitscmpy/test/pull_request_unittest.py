@@ -686,6 +686,47 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_bugzilla_commit_on_main(self):
+        # This test doesn't mock the whole process because we don't have a functional remote
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch(
+                'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+
+            repo.commits['main'].append(Commit(
+                hash='5d697791f2e1fb3991e441fbd79f412fcff93c75',
+                branch='main',
+                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                identifier="6@main",
+                timestamp=int(time.time()),
+                message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
+            ))
+            repo.head = repo.commits['main'][-1]
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/Example-issue-1'\n",
+        )
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/Example-issue-1'...",
+            ],
+        )
+
     def test_github_branch_bugzilla_redacted_to_origin(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
             self.BUGZILLA.split('://')[-1],
