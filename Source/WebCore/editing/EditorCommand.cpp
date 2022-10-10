@@ -109,7 +109,7 @@ static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAc
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame.editor().applyStyle(WTFMove(style), EditAction::Unspecified, Editor::ColorFilterMode::UseOriginalColor);
+        frame.editor().applyStyle(WTFMove(style), action, Editor::ColorFilterMode::UseOriginalColor);
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -1674,9 +1674,9 @@ static const CommandMap& createCommandMap()
         { "DeleteWordBackward"_s, { executeDeleteWordBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "DeleteWordForward"_s, { executeDeleteWordForward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "FindString"_s, { executeFindString, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "FontName"_s, { executeFontName, supported, enabledInEditableText, stateNone, valueFontName, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "FontSize"_s, { executeFontSize, supported, enabledInEditableText, stateNone, valueFontSize, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "FontSizeDelta"_s, { executeFontSizeDelta, supported, enabledInEditableText, stateNone, valueFontSizeDelta, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "FontName"_s, { executeFontName, supported, enabledInRichlyEditableText, stateNone, valueFontName, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "FontSize"_s, { executeFontSize, supported, enabledInRichlyEditableText, stateNone, valueFontSize, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "FontSizeDelta"_s, { executeFontSizeDelta, supported, enabledInRichlyEditableText, stateNone, valueFontSizeDelta, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ForeColor"_s, { executeForeColor, supported, enabledInRichlyEditableText, stateNone, valueForeColor, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "FormatBlock"_s, { executeFormatBlock, supported, enabledInRichlyEditableText, stateNone, valueFormatBlock, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ForwardDelete"_s, { executeForwardDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
