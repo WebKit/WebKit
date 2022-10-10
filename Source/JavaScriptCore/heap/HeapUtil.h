@@ -142,6 +142,12 @@ public:
             ASSERT(set);
             if (set->isEmpty())
                 return false;
+#if USE(JSVALUE32_64)
+            // In 32bit systems a cell pointer can be 0xFFFFFFFF (an entries in the call frame), and this
+            // value clashes with the deletedValue in a set<JSCell*>.
+            if (!set->isValidValue(pointer))
+                return false;
+#endif
             return set->contains(pointer);
         }
     
