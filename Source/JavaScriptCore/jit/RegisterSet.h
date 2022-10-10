@@ -232,7 +232,7 @@ public:
 #if USE(JSVALUE64)
         return (m_bits.count() + m_upperBits.count()) * sizeof(CPURegister);
 #else
-        return numberOfSetGPRs() * pointerWidth() + numberOfSetFPRs() * sizeof(double);
+        return numberOfSetGPRs() * bytesForWidth(pointerWidth()) + numberOfSetFPRs() * sizeof(double);
 #endif
     }
 
@@ -279,7 +279,7 @@ public:
 
     class iterator {
     public:
-        inline constexpr iterator() = default;
+        inline constexpr iterator() { }
 
         inline constexpr iterator(const RegisterBitmap::iterator& iter)
             : m_iter(iter)

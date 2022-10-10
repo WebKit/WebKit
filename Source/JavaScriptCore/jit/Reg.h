@@ -230,6 +230,11 @@ struct RegHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
+ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : pointerWidth();
+}
+
 ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
 {
 #if USE(JSVALUE64)
@@ -237,11 +242,6 @@ ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
 #else
     return conservativeWidthWithoutVectors(reg);
 #endif
-}
-
-ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
-{
-    return reg.isFPR() ? Width64 : pointerWidth();
 }
 
 ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)

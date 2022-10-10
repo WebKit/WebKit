@@ -84,7 +84,11 @@ public:
     class iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        constexpr iterator() = default;
+        constexpr iterator()
+            : m_bitmap(nullptr)
+            , m_index(0)
+        {
+        }
 
         constexpr iterator(const Bitmap& bitmap, size_t index)
             : m_bitmap(&bitmap)
