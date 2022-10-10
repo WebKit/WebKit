@@ -52,6 +52,7 @@
 #include "BooleanPrototype.h"
 #include "BuiltinNames.h"
 #include "CatchScope.h"
+#include "ChainedWatchpoint.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
@@ -1796,8 +1797,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         m_objectPrototypeSymbolReplaceMissWatchpoint->install(vm);
     }
 
-    tryInstallArraySpeciesWatchpoint();
+    installArraySpeciesWatchpoint();
     catchScope.assertNoException();
+
+    installSaneChainWatchpoints();
 
     // Unfortunately, the prototype objects of the builtin objects can be touched from concurrent compilers. So eagerly initialize them only if we use JIT.
     if (Options::useJIT()) {
@@ -2668,12 +2671,41 @@ void JSGlobalObject::tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* 
     speciesWatchpoint->install(vm);
 }
 
-void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
+void JSGlobalObject::installArraySpeciesWatchpoint()
 {
+    // Species watchpoint.
     RELEASE_ASSERT(!m_arrayPrototypeConstructorWatchpoint);
     RELEASE_ASSERT(!m_arrayConstructorSpeciesWatchpoint);
 
     tryInstallSpeciesWatchpoint(arrayPrototype(), arrayConstructor(), m_arrayPrototypeConstructorWatchpoint, m_arrayConstructorSpeciesWatchpoint, m_arraySpeciesWatchpointSet, HasSpeciesProperty::Yes);
+}
+
+void JSGlobalObject::installSaneChainWatchpoints()
+{
+    ASSERT(!arrayPrototype()->structure()->mayInterceptIndexedAccesses());
+    ASSERT(!arrayPrototype()->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero());
+    ASSERT(!arrayPrototype()->structure()->hasPolyProto());
+    ASSERT(arrayPrototype()->structure()->storedPrototype() == objectPrototype());
+    ASSERT(!hasIndexedProperties(arrayPrototype()->structure()->indexingType()));
+    {
+        auto result = ObjectPropertyCondition::absenceOfIndexedProperties(*m_vm, this, arrayPrototype(), objectPrototype());
+        ASSERT(result.isWatchable(PropertyCondition::MakeNoChanges));
+        m_arrayPrototypeAbsenceOfIndexedPropertiesWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, result, m_arrayPrototypeChainIsSaneWatchpointSet);
+        m_arrayPrototypeAbsenceOfIndexedPropertiesWatchpoint->install(*m_vm);
+    }
+    ASSERT(!objectPrototype()->structure()->mayInterceptIndexedAccesses());
+    ASSERT(!objectPrototype()->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero());
+    ASSERT(!objectPrototype()->structure()->hasPolyProto());
+    ASSERT(objectPrototype()->structure()->storedPrototype() == jsNull());
+    ASSERT(!hasIndexedProperties(objectPrototype()->structure()->indexingType()));
+    {
+        auto result = ObjectPropertyCondition::absenceOfIndexedProperties(*m_vm, this, objectPrototype(), nullptr);
+        ASSERT(result.isWatchable(PropertyCondition::MakeNoChanges));
+        m_objectPrototypeAbsenceOfIndexedPropertiesWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, result, m_objectPrototypeChainIsSaneWatchpointSet);
+        m_objectPrototypeAbsenceOfIndexedPropertiesWatchpoint->install(*m_vm);
+    }
+    m_objectPrototypeAbsenceOfIndexedPropertiesWatchpointForArray = makeUnique<ChainedWatchpoint>(this, m_arrayPrototypeChainIsSaneWatchpointSet);
+    m_objectPrototypeAbsenceOfIndexedPropertiesWatchpointForArray->install(m_objectPrototypeChainIsSaneWatchpointSet, *m_vm);
 }
 
 void JSGlobalObject::tryInstallArrayBufferSpeciesWatchpoint(ArrayBufferSharingMode sharingMode)

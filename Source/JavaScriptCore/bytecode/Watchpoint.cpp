@@ -28,6 +28,7 @@
 
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
 #include "CachedSpecialPropertyAdaptiveStructureWatchpoint.h"
+#include "ChainedWatchpoint.h"
 #include "CodeBlockJettisoningWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
 #include "FunctionRareData.h"

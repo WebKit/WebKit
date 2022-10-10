@@ -177,7 +177,6 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    // Own destructor may not be called. Keep members trivially destructible.
     PackedCellPtr<FunctionRareData> m_rareData;
 };
 

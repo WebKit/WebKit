@@ -887,6 +887,26 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
+    bool isWatchingArrayPrototypeIsSaneChainWatchpoint(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->arrayPrototypeChainIsSaneWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
+    bool isWatchingObjectPrototypeIsSaneChainWatchpoint(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->objectPrototypeChainIsSaneWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
 
     DesiredIdentifiers& identifiers() { return m_plan.identifiers(); }

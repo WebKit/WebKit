@@ -65,9 +65,7 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSaneConcurrently(Struct
 ALWAYS_INLINE bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    Structure* arrayPrototypeStructure = arrayPrototype()->structure();
-    Structure* objectPrototypeStructure = objectPrototype()->structure();
-    return arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure);
+    return m_arrayPrototypeChainIsSaneWatchpointSet.isStillValid();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()

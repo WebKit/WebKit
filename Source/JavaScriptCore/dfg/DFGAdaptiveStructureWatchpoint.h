@@ -48,7 +48,6 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    // Own destructor may not be called. Keep members trivially destructible.
     PackedCellPtr<CodeBlock> m_codeBlock;
     ObjectPropertyCondition m_key;
 };
