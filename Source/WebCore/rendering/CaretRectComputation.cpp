@@ -40,7 +40,7 @@ namespace WebCore {
 
 static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& renderer, LayoutUnit width, LayoutUnit textIndentOffset, CaretRectMode caretRectMode)
 {
-    ASSERT(!renderer.firstChild());
+    ASSERT(!renderer.firstChild() || renderer.firstChild()->isPseudoElement());
 
     // FIXME: This does not take into account either :first-line or :first-letter
     // However, as soon as some content is entered, the line boxes will be
@@ -266,7 +266,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
 static LayoutRect computeCaretRectForBlock(const RenderBlock& renderer, const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)
 {
     // Do the normal calculation in most cases.
-    if (renderer.firstChild())
+    if (renderer.firstChild() && !renderer.firstChild()->isPseudoElement())
         return computeCaretRectForBox(renderer, boxAndOffset, caretRectMode);
 
     return computeCaretRectForEmptyElement(renderer, renderer.width(), renderer.textIndentOffset(), caretRectMode);
