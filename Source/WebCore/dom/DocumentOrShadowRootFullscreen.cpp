@@ -29,6 +29,7 @@
 #include "DocumentOrShadowRootFullscreen.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "FullscreenManager.h"
 #include "TreeScope.h"
 

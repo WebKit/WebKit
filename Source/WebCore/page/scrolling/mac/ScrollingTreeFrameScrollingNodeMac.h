@@ -37,6 +37,8 @@ OBJC_CLASS CALayer;
 
 namespace WebCore {
 
+class ScrollingTreeScrollingNodeDelegateMac;
+
 class WEBCORE_EXPORT ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode {
 public:
     static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -63,19 +65,15 @@ protected:
     unsigned exposedUnfilledArea() const;
 
 private:
+    ScrollingTreeScrollingNodeDelegateMac& delegate() const;
+
     void willBeDestroyed() final;
     void willDoProgrammaticScroll(const FloatPoint&) final;
-
-    bool startAnimatedScrollToPosition(FloatPoint) final;
-    void stopAnimatedScroll() final;
-    void serviceScrollAnimation(MonotonicTime) final;
 
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const final;
 
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
     void repositionScrollingLayers() final;
-
-    ScrollingTreeScrollingNodeDelegateMac m_delegate;
 
     RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;

@@ -35,6 +35,7 @@
 #include "Logging.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingTreeScrollingNodeDelegateNicosia.h"
 #include "ThreadedScrollingTree.h"
 
 namespace WebCore {
@@ -46,11 +47,16 @@ Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeNicosia::cre
 
 ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeType, nodeID)
-    , m_delegate(*this, downcast<ThreadedScrollingTree>(scrollingTree).scrollAnimatorEnabled())
 {
+    m_delegate = makeUnique<ScrollingTreeScrollingNodeDelegateNicosia>(*this, downcast<ThreadedScrollingTree>(scrollingTree).scrollAnimatorEnabled());
 }
 
 ScrollingTreeFrameScrollingNodeNicosia::~ScrollingTreeFrameScrollingNodeNicosia() = default;
+
+ScrollingTreeScrollingNodeDelegateNicosia& ScrollingTreeFrameScrollingNodeNicosia::delegate() const
+{
+    return *static_cast<ScrollingTreeScrollingNodeDelegateNicosia*>(m_delegate.get());
+}
 
 void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
@@ -83,31 +89,12 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
         m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
 
-    m_delegate.updateFromStateNode(scrollingStateNode);
+    delegate().updateFromStateNode(scrollingStateNode);
 }
 
 WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
-    return m_delegate.handleWheelEvent(wheelEvent, eventTargeting);
-}
-
-bool ScrollingTreeFrameScrollingNodeNicosia::startAnimatedScrollToPosition(FloatPoint destinationPosition)
-{
-    bool started = m_delegate.startAnimatedScrollToPosition(destinationPosition);
-    if (started)
-        willStartAnimatedScroll();
-
-    return started;
-}
-
-void ScrollingTreeFrameScrollingNodeNicosia::stopAnimatedScroll()
-{
-    m_delegate.stopAnimatedScroll();
-}
-
-void ScrollingTreeFrameScrollingNodeNicosia::serviceScrollAnimation(MonotonicTime currentTime)
-{
-    m_delegate.serviceScrollAnimation(currentTime);
+    return delegate().handleWheelEvent(wheelEvent, eventTargeting);
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const
@@ -186,7 +173,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
             applyLayerPosition(*m_footerLayer, FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsSize().height(), footerHeight())));
     }
 
-    m_delegate.updateVisibleLengths();
+    delegate().updateVisibleLengths();
 }
 
 } // namespace WebCore

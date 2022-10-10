@@ -91,7 +91,7 @@ void InsertLineBreakCommand::doApply()
         nodeToInsert = document().createTextNode("\n"_s);
     
     // FIXME: Need to merge text nodes when inserting just after or before text.
-    
+    document().updateLayoutIgnorePendingStylesheets();
     if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
         bool needExtraLineBreak = !is<HTMLHRElement>(*position.deprecatedNode()) && !is<HTMLTableElement>(*position.deprecatedNode());
 

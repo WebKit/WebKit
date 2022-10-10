@@ -170,10 +170,16 @@ bool XDGDBusProxy::launch()
         argv[i++] = const_cast<char*>(arg.data());
     argv[i] = nullptr;
 
-    // Warning: do not set a child setup function, because we want GIO to be able to spawn with
-    // posix_spawn() rather than fork()/exec(), in order to better accomodate applications that use
-    // a huge amount of memory or address space in the UI process, like Eclipse.
-    GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_NONE));
+    // Warning: we want GIO to be able to spawn with posix_spawn() rather than fork()/exec(), in
+    // order to better accommodate applications that use a huge amount of memory or address space
+    // in the UI process, like Eclipse. This means we must use GSubprocess in a manner that follows
+    // the rules documented in g_spawn_async_with_pipes_and_fds() for choosing between posix_spawn()
+    // (optimized/ideal codepath) vs. fork()/exec() (fallback codepath). As of GLib 2.74, the rules
+    // relevant to GSubprocess are (a) must inherit fds, (b) must not search path from envp, and (c)
+    // must not use a child setup fuction.
+    //
+    // Please keep this comment in sync with the duplicate comment in ProcessLauncher::launchProcess.
+    GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
     g_subprocess_launcher_take_fd(launcher.get(), proxyFd, proxyFd);
     g_subprocess_launcher_take_fd(launcher.get(), syncFds[1], syncFds[1]);
     m_syncFD = UnixFileDescriptor(syncFds[0], UnixFileDescriptor::Adopt);

@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API)
 #include "DocumentFullscreen.h"
 
+#include "Element.h"
 #include "EventLoop.h"
 #include "JSDOMPromiseDeferred.h"
 
