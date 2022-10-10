@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@ import math
 import subprocess
 import sys
 import time
+import threading
 
 from webkitcorepy import Timeout, string_utils
 
@@ -146,3 +147,32 @@ else:
         if check and retcode:
             raise subprocess.CalledProcessError(retcode, popenargs[0], output=decode(stdout), stderr=decode(stderr))
         return CompletedProcess(popenargs[0], retcode, decode(stdout), decode(stderr))
+
+
+class Thread(threading.Thread):
+    @classmethod
+    def terminated(cls):
+        return getattr(threading.current_thread(), '_terminated', False)
+
+    def __init__(self, *args, **kwargs):
+        super(Thread, self).__init__(*args, **kwargs)
+        self._terminated = False
+
+    def poll(self):
+        return None if self.is_alive() else {True: 1, False: 0}.get(self._terminated, -1)
+
+    def terminate(self):
+        self._terminated = True
+
+    def kill(self):
+        self._terminated = True
+
+    def __enter__(self):
+        self.start()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        with Timeout.DisableAlarm():
+            current_time = time.time()
+            Timeout.check(current_time=current_time)
+            self.join(Timeout.difference(current_time=current_time))
