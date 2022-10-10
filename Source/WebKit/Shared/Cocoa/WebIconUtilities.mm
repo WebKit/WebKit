@@ -26,14 +26,19 @@
 #import "config.h"
 #import "WebIconUtilities.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#else
+#import <CoreServices/CoreServices.h>
+#endif
+
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreMedia/CoreMedia.h>
 #import <ImageIO/ImageIO.h>
-#import <MobileCoreServices/MobileCoreServices.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
 
@@ -57,46 +62,61 @@ static CGRect squareCropRectForSize(CGSize size)
     return cropRect;
 }
 
-static UIImage *squareImage(CGImageRef image)
+static PlatformImagePtr squareImage(CGImageRef image)
 {
     if (!image)
         return nil;
 
     CGSize imageSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
     if (imageSize.width == imageSize.height)
-        return [UIImage imageWithCGImage:image];
+        return image;
 
     CGRect squareCropRect = squareCropRectForSize(imageSize);
-    RetainPtr<CGImageRef> squareImage = adoptCF(CGImageCreateWithImageInRect(image, squareCropRect));
-    return [UIImage imageWithCGImage:squareImage.get()];
+    return adoptCF(CGImageCreateWithImageInRect(image, squareCropRect));
 }
 
-static RetainPtr<UIImage> thumbnailSizedImageForImage(CGImageRef image)
+static PlatformImagePtr thumbnailSizedImageForImage(CGImageRef image)
 {
-    UIImage *squaredImage = squareImage(image);
+    auto squaredImage = squareImage(image);
     if (!squaredImage)
-        return nil;
+        return nullptr;
 
-    CGRect destRect = CGRectMake(0, 0, iconSideLength, iconSideLength);
-    UIGraphicsBeginImageContext(destRect.size);
-    CGContextSetInterpolationQuality(UIGraphicsGetCurrentContext(), kCGInterpolationHigh);
-    [squaredImage drawInRect:destRect];
-    RetainPtr<UIImage> resultImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return resultImage;
+    CGRect destinationRect = CGRectMake(0, 0, iconSideLength, iconSideLength);
+
+    RetainPtr colorSpace = CGImageGetColorSpace(image);
+    if (!CGColorSpaceSupportsOutput(colorSpace.get()))
+        colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+
+    auto context = adoptCF(CGBitmapContextCreate(nil, iconSideLength, iconSideLength, 8, 4 * iconSideLength, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+
+    CGContextSetInterpolationQuality(context.get(), kCGInterpolationHigh);
+    CGContextDrawImage(context.get(), destinationRect, squaredImage.get());
+
+    auto scaledImage = adoptCF(CGBitmapContextCreateImage(context.get()));
+    if (!scaledImage)
+        return squaredImage;
+
+    return scaledImage;
 }
 
-RetainPtr<UIImage> fallbackIconForFile(NSURL *file)
+PlatformImagePtr fallbackIconForFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
+#if PLATFORM(MAC)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:file.pathExtension]];
+    return [icon CGImageForProposedRect:nil context:nil hints:nil];
+ALLOW_DEPRECATED_DECLARATIONS_END
+#else
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
     if (![interactionController.icons count])
         return nil;
     return thumbnailSizedImageForImage(interactionController.icons[0].CGImage);
+#endif
 }
 
-RetainPtr<UIImage> iconForImageFile(NSURL *file)
+PlatformImagePtr iconForImageFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
@@ -115,7 +135,7 @@ RetainPtr<UIImage> iconForImageFile(NSURL *file)
     return thumbnailSizedImageForImage(thumbnail.get());
 }
 
-RetainPtr<UIImage> iconForVideoFile(NSURL *file)
+PlatformImagePtr iconForVideoFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
@@ -133,8 +153,17 @@ RetainPtr<UIImage> iconForVideoFile(NSURL *file)
     return thumbnailSizedImageForImage(imageRef.get());
 }
 
-RetainPtr<UIImage> iconForFile(NSURL *file)
+PlatformImagePtr iconForFiles(const Vector<String>& filenames)
 {
+    if (!filenames.size())
+        return nil;
+
+    // FIXME: We should generate an icon showing multiple files here, if applicable. Currently, if there are multiple
+    // files, we only use the first URL to generate an icon.
+    NSURL *file = [NSURL fileURLWithPath:filenames[0] isDirectory:NO];
+    if (!file)
+        return nil;
+
     ASSERT_ARG(file, [file isFileURL]);
 
     NSString *fileExtension = file.pathExtension;

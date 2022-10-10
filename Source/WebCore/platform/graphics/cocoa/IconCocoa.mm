@@ -26,15 +26,43 @@
 #import "config.h"
 #import "Icon.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
+
+#import "BitmapImage.h"
+#import "GraphicsContext.h"
 
 namespace WebCore {
 
-RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& /*filenames*/)
+Icon::Icon(RefPtr<NativeImage>&& image)
+    : m_cgImage(WTFMove(image))
 {
-    return nullptr;
+    ASSERT(m_cgImage);
+}
+
+Icon::~Icon()
+{
+}
+
+RefPtr<Icon> Icon::createIconForImage(PlatformImagePtr&& image)
+{
+    if (!image)
+        return nullptr;
+
+    return adoptRef(new Icon(NativeImage::create(WTFMove(image))));
+}
+
+void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
+{
+    if (context.paintingDisabled())
+        return;
+
+    GraphicsContextStateSaver stateSaver(context);
+
+    FloatRect srcRect(FloatPoint::zero(), m_cgImage->size());
+    context.setImageInterpolationQuality(InterpolationQuality::High);
+    context.drawNativeImage(*m_cgImage, srcRect.size(), destRect, srcRect);
 }
 
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)

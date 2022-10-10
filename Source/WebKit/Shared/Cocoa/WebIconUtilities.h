@@ -25,18 +25,16 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 
 #import <wtf/RetainPtr.h>
 
-@class UIImage;
-
 namespace WebKit {
 
-RetainPtr<UIImage> fallbackIconForFile(NSURL *file);
-RetainPtr<UIImage> iconForImageFile(NSURL *file);
-RetainPtr<UIImage> iconForVideoFile(NSURL *file);
-RetainPtr<UIImage> iconForFile(NSURL *file);
+WebCore::PlatformImagePtr fallbackIconForFile(NSURL *file);
+WebCore::PlatformImagePtr iconForImageFile(NSURL *file);
+WebCore::PlatformImagePtr iconForVideoFile(NSURL *file);
+WebCore::PlatformImagePtr iconForFiles(const Vector<String>& filenames);
 
 }
 

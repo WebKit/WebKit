@@ -408,6 +408,7 @@ platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.cpp
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm
 platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
+platform/graphics/cocoa/IconCocoa.mm
 platform/graphics/cocoa/IntRectCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/MediaPlaybackTargetContext.mm

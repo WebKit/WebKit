@@ -26,6 +26,7 @@
 #pragma once
 
 #import "RemoteLayerBackingStoreCollection.h"
+#import <WebCore/RenderingResourceIdentifier.h>
 
 namespace WebKit {
 

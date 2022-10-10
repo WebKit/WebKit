@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Icon.h"
 #include "RenderTheme.h"
 #include <wtf/RetainPtr.h>
 
@@ -36,10 +37,15 @@ class RenderThemeCocoa : public RenderTheme {
 public:
     WEBCORE_EXPORT static RenderThemeCocoa& singleton();
 
+protected:
+    virtual Color pictureFrameColor(const RenderObject&);
+
 private:
     void purgeCaches() override;
 
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
+
+    void paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
 #if ENABLE(APPLE_PAY)
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;

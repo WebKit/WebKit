@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,21 @@
  */
 
 #import "config.h"
-#import "Icon.h"
+#import "WebChromeClient.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 
-namespace WebCore {
+#import "WebIconUtilities.h"
+#import <WebCore/Icon.h>
 
-RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& /*filenames*/)
+namespace WebKit {
+using namespace WebCore;
+
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
 {
-    return nullptr;
+    return Icon::createIconForImage(iconForFiles(filenames).get());
 }
 
-}
+} // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)

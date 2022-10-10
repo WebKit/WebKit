@@ -2593,7 +2593,8 @@ RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, con
         return nil;
 
     if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title))
-        return icon->nsImage();
+        return adoptNS([[NSImage alloc] initWithCGImage:icon->image()->platformImage().get() size:NSZeroSize]);
+
     return nil;
 }
 

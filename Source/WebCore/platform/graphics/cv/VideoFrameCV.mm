@@ -28,8 +28,14 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "CVUtilities.h"
+#include "ImageTransferSessionVT.h"
+#include "Logging.h"
+#include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "ProcessIdentity.h"
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <pal/cf/AudioToolboxSoftLink.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <wtf/Scope.h>
 
 #include "CoreVideoSoftLink.h"
