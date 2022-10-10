@@ -1627,7 +1627,7 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFram
 {
     auto* webPage = m_frame->page();
     ASSERT(webPage);
-    auto subframe = WebFrame::createSubframe(*webPage, name, &ownerElement);
+    auto subframe = WebFrame::createSubframe(*webPage, m_frame, name, &ownerElement);
     auto* coreSubframe = subframe->coreFrame();
     if (!coreSubframe)
         return nullptr;

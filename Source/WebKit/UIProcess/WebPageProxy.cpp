@@ -4711,7 +4711,7 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     PageClientProtector protector(pageClient());
 
     MESSAGE_CHECK(m_process, !m_mainFrame);
-    MESSAGE_CHECK(m_process, canCreateFrame(frameID));
+    MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
 
     m_mainFrame = WebFrameProxy::create(*this, m_process, frameID);
 
@@ -4722,11 +4722,9 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
         });
     }
 #endif
-
-    frameCreated(frameID, *m_mainFrame);
 }
 
-void WebPageProxy::didCreateSubframe(FrameIdentifier frameID)
+void WebPageProxy::didCreateSubframe(FrameIdentifier frameID, WebCore::FrameIdentifier parentFrameID)
 {
     PageClientProtector protector(pageClient());
 
@@ -4738,21 +4736,11 @@ void WebPageProxy::didCreateSubframe(FrameIdentifier frameID)
     if (WebFrameProxy::webFrame(frameID))
         return;
 
-    MESSAGE_CHECK(m_process, canCreateFrame(frameID));
+    auto* parentFrame = WebFrameProxy::webFrame(parentFrameID);
+    MESSAGE_CHECK(m_process, parentFrame);
+    MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
     
-    auto subFrame = WebFrameProxy::create(*this, m_process, frameID);
-
-    frameCreated(frameID, subFrame.get());
-}
-
-void WebPageProxy::frameCreated(FrameIdentifier frameID, WebFrameProxy& frameProxy)
-{
-    m_frameMap.set(frameID, frameProxy);
-}
-
-bool WebPageProxy::canCreateFrame(FrameIdentifier frameID) const
-{
-    return WebFrameProxyMap::isValidKey(frameID) && !m_frameMap.contains(frameID);
+    parentFrame->addChildFrame(WebFrameProxy::create(*this, m_process, frameID));
 }
 
 void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
@@ -4761,24 +4749,21 @@ void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
     // back to the UIProcess, then the frameDestroyed message will still be received because it
     // gets sent directly to the WebProcessProxy.
     ASSERT(WebFrameProxyMap::isValidKey(frameID));
+    auto* frame = WebFrameProxy::webFrame(frameID);
 #if ENABLE(WEB_AUTHN)
-    if (auto* frame = WebFrameProxy::webFrame(frameID)) {
-        if (auto* page = frame->page())
-            page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
-    }
+    if (auto* page = frame ? frame->page() : nullptr)
+        page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
 #endif
     if (auto* automationSession = process().processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
-    m_frameMap.remove(frameID);
+    if (frame)
+        frame->disconnect();
 }
 
 void WebPageProxy::disconnectFramesFromPage()
 {
-    for (auto& frame : copyToVector(m_frameMap.values())) {
-        if (frame->page() == this)
-            frame->webProcessWillShutDown();
-    }
-    m_frameMap.clear();
+    if (auto mainFrame = std::exchange(m_mainFrame, nullptr))
+        mainFrame->webProcessWillShutDown();
 }
 
 // FIXME: Remove this.
@@ -5909,8 +5894,10 @@ void WebPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, 
         // This synchronous IPC message was processed before the asynchronous DidCreateMainFrame / DidCreateSubframe one so we do not know about this frameID yet.
         if (isMainFrame)
             didCreateMainFrame(frameID);
-        else
-            didCreateSubframe(frameID);
+        else {
+            MESSAGE_CHECK(m_process, frameInfo.parentFrameID);
+            didCreateSubframe(frameID, *frameInfo.parentFrameID);
+        }
     }
 
     decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, frameID, isMainFrame, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));

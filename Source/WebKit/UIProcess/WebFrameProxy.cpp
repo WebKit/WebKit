@@ -59,6 +59,12 @@ WebFrameProxy* WebFrameProxy::webFrame(FrameIdentifier identifier)
     return allFrames().get(identifier);
 }
 
+bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
+{
+    return std::remove_reference_t<decltype(allFrames())>::isValidKey(frameID)
+        && !allFrames().contains(frameID);
+}
+
 WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, FrameIdentifier frameID)
     : m_page(page)
     , m_process(process)
@@ -85,6 +91,9 @@ WebFrameProxy::~WebFrameProxy()
 
 void WebFrameProxy::webProcessWillShutDown()
 {
+    for (auto& childFrame : std::exchange(m_childFrames, { }))
+        childFrame->webProcessWillShutDown();
+
     m_page = nullptr;
 
     if (m_activeListener) {
@@ -318,5 +327,17 @@ void WebFrameProxy::collapseSelection()
     m_page->send(Messages::WebPage::CollapseSelectionInFrame(m_frameID));
 }
 #endif
+
+void WebFrameProxy::disconnect()
+{
+    if (m_parentFrame)
+        m_parentFrame->m_childFrames.remove(*this);
+}
+
+void WebFrameProxy::addChildFrame(Ref<WebFrameProxy>&& child)
+{
+    child->m_parentFrame = *this;
+    m_childFrames.add(WTFMove(child));
+}
 
 } // namespace WebKit

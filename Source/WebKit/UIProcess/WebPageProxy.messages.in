@@ -117,7 +117,7 @@ messages -> WebPageProxy {
 
     # Frame lifetime messages
     DidCreateMainFrame(WebCore::FrameIdentifier frameID)
-    DidCreateSubframe(WebCore::FrameIdentifier frameID)
+    DidCreateSubframe(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier parentFrameID)
 
     DidCreateWindow(WebCore::FrameIdentifier frameID, struct WebCore::GlobalWindowIdentifier windowIdentifier)
 

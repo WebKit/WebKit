@@ -33,6 +33,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_FILTERING)
@@ -56,7 +57,7 @@ enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
 struct WebsitePoliciesData;
 
-class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
+class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy> {
 public:
     static Ref<WebFrameProxy> create(WebPageProxy& page, WebProcessProxy& process, WebCore::FrameIdentifier frameID)
     {
@@ -64,6 +65,7 @@ public:
     }
 
     static WebFrameProxy* webFrame(WebCore::FrameIdentifier);
+    static bool canCreateFrame(WebCore::FrameIdentifier);
 
     virtual ~WebFrameProxy();
 
@@ -132,6 +134,9 @@ public:
     void transferNavigationCallbackToFrame(WebFrameProxy&);
     void setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
 
+    void disconnect();
+    void addChildFrame(Ref<WebFrameProxy>&&);
+
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 
@@ -148,6 +153,8 @@ private:
     WebCore::CertificateInfo m_certificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     WebCore::FrameIdentifier m_frameID;
+    HashSet<Ref<WebFrameProxy>> m_childFrames;
+    WeakPtr<WebFrameProxy> m_parentFrame;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif

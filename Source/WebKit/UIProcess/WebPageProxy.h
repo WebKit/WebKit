@@ -2204,7 +2204,7 @@ private:
 #endif
 
     void didCreateMainFrame(WebCore::FrameIdentifier);
-    void didCreateSubframe(WebCore::FrameIdentifier);
+    void didCreateSubframe(WebCore::FrameIdentifier, WebCore::FrameIdentifier parentFrameID);
     void didCreateWindow(WebCore::FrameIdentifier, WebCore::GlobalWindowIdentifier&&);
 
     void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
@@ -3302,8 +3302,6 @@ private:
     bool m_isCaptivePortalModeExplicitlySet { false };
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;
-
-    WebFrameProxyMap m_frameMap;
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     std::unique_ptr<PlatformXRSystem> m_xrSystem;

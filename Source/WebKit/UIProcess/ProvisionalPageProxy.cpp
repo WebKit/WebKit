@@ -97,7 +97,6 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         ASSERT(&suspendedPage->process() == m_process.ptr());
         suspendedPage->unsuspend();
         m_mainFrame = WebFrameProxy::create(m_page, m_process, suspendedPage->mainFrameID());
-        m_page.frameCreated(suspendedPage->mainFrameID(), *m_mainFrame);
     }
 
     initializeWebPage(websitePolicies);
@@ -232,8 +231,6 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     ASSERT(!m_mainFrame);
 
     m_mainFrame = WebFrameProxy::create(m_page, m_process, frameID);
-
-    m_page.frameCreated(frameID, *m_mainFrame);
 
     // This navigation was destroyed so no need to notify of redirect.
     if (!m_page.navigationState().hasNavigation(m_navigationID))
