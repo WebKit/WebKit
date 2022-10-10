@@ -133,7 +133,7 @@ template<typename CharacterType> static bool parseParameterDelimiter(StringParsi
     return true;
 }
 
-static LinkHeader::LinkParameterName paramterNameFromString(StringView name)
+static LinkHeader::LinkParameterName parameterNameFromString(StringView name)
 {
     if (equalLettersIgnoringASCIICase(name, "rel"_s))
         return LinkHeader::LinkParameterRel;
@@ -183,7 +183,7 @@ template<typename CharacterType> static std::optional<LinkHeader::LinkParameterN
     skipWhile<isSpaceOrTab>(buffer);
     bool hasEqual = skipExactly(buffer, '=');
     skipWhile<isSpaceOrTab>(buffer);
-    auto name = paramterNameFromString(StringView { nameStart, static_cast<unsigned>(nameEnd - nameStart) });
+    auto name = parameterNameFromString(StringView { nameStart, static_cast<unsigned>(nameEnd - nameStart) });
     if (hasEqual)
         return name;
     bool validParameterValueEnd = buffer.atEnd() || isParameterValueEnd(*buffer);
