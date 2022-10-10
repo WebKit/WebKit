@@ -684,9 +684,11 @@ void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPagePro
         return;
 
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-    if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo)
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
-    else if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    } else if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
         [navigationDelegate webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation)];
 }
 
