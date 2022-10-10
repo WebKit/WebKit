@@ -217,20 +217,20 @@ class TestGroup extends LabeledObject {
             result.changeType = summary.changeType;
             result.label = summary.changeLabel;
 
-
-            const constructSignificanceLabel = (probabilityRange) => !!probabilityRange.range[0] ? `significant with ${(probabilityRange.range[0] * 100).toFixed()}% probability` : 'insignificant';
+            const isStatisticallySignificant = (probabilityRange) => probabilityRange && probabilityRange.range && probabilityRange.range[0] && probabilityRange.range[0] >= 0.95;
+            const constructSignificanceLabel = (probabilityRange) => isStatisticallySignificant(probabilityRange) ? `significant with ${(probabilityRange.range[0] * 100).toFixed()}% probability` : 'insignificant';
 
             const probabilityRangeForMean = Statistics.probabilityRangeForWelchsT(beforeValues, afterValues);
             const significanceLabelForMean = constructSignificanceLabel(probabilityRangeForMean);
             result.fullLabelForMean = `${result.label} (${significanceLabelForMean})`;
-            result.isStatisticallySignificantForMean = !!probabilityRangeForMean.range[0];
+            result.isStatisticallySignificantForMean = isStatisticallySignificant(probabilityRangeForMean);
             result.probabilityRangeForMean = probabilityRangeForMean.range;
 
             const adaptMeasurementToSamples = (measurement) => ({sum: measurement.sum, squareSum: measurement.squareSum, sampleSize: measurement.iterationCount});
             const probabilityRangeForIndividual = Statistics.probabilityRangeForWelchsTForMultipleSamples(beforeMeasurements.map(adaptMeasurementToSamples), afterMeasurements.map(adaptMeasurementToSamples));
             const significanceLabelForIndividual = constructSignificanceLabel(probabilityRangeForIndividual);
             result.fullLabelForIndividual = `${result.label} (${significanceLabelForIndividual})`;
-            result.isStatisticallySignificantForIndividual = !!probabilityRangeForIndividual.range[0];
+            result.isStatisticallySignificantForIndividual = isStatisticallySignificant(probabilityRangeForIndividual.range[0]);
             result.probabilityRangeForIndividual = probabilityRangeForIndividual.range;
 
             if (hasCompleted)
