@@ -465,7 +465,7 @@ void AuthenticatorManager::runPanel()
     if (!page)
         return;
     ASSERT(m_pendingRequestData.globalFrameID && page->webPageID() == m_pendingRequestData.globalFrameID->pageID);
-    auto* frame = page->process().webFrame(m_pendingRequestData.globalFrameID->frameID);
+    auto* frame = WebFrameProxy::webFrame(m_pendingRequestData.globalFrameID->frameID);
     if (!frame)
         return;
 

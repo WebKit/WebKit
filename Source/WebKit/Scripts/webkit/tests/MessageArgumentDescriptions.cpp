@@ -74,7 +74,6 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
-#include <WebCore/FrameIdentifier.h>
 #include <WebCore/GraphicsContextFlushIdentifier.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
@@ -376,7 +375,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FetchIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemHandleIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemSyncAccessHandleIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebCore::FrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::GraphicsContextFlushIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ImageDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LibWebRTCSocketIdentifier));
@@ -449,7 +447,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::FetchIdentifier"_s,
         "WebCore::FileSystemHandleIdentifier"_s,
         "WebCore::FileSystemSyncAccessHandleIdentifier"_s,
-        "WebCore::FrameIdentifier"_s,
         "WebCore::GraphicsContextFlushIdentifier"_s,
         "WebCore::ImageDecoderIdentifier"_s,
         "WebCore::LibWebRTCSocketIdentifier"_s,

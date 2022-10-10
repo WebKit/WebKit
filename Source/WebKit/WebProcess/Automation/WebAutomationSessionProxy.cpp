@@ -189,22 +189,26 @@ static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjec
 
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    ASSERT_ARG(argumentCount, argumentCount == 3);
+    ASSERT_ARG(argumentCount, argumentCount == 4);
     ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[0]));
     ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[1]));
-    ASSERT_ARG(arguments, JSValueIsObject(context, arguments[2]) || JSValueIsString(context, arguments[2]));
+    ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[2]));
+    ASSERT_ARG(arguments, JSValueIsObject(context, arguments[3]) || JSValueIsString(context, arguments[3]));
 
     auto automationSessionProxy = WebProcess::singleton().automationSessionProxy();
     if (!automationSessionProxy)
         return JSValueMakeUndefined(context);
 
-    WebCore::FrameIdentifier frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(JSValueToNumber(context, arguments[0], exception));
-    uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
-    if (JSValueIsString(context, arguments[2])) {
-        auto result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
+    WebCore::FrameIdentifier frameID {
+        makeObjectIdentifier<WebCore::FrameIdentifierType>(JSValueToNumber(context, arguments[0], exception)),
+        makeObjectIdentifier<WebCore::ProcessIdentifierType>(JSValueToNumber(context, arguments[1], exception))
+    };
+    uint64_t callbackID = JSValueToNumber(context, arguments[2], exception);
+    if (JSValueIsString(context, arguments[3])) {
+        auto result = adoptRef(JSValueToStringCopy(context, arguments[3], exception));
         automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), { });
-    } else if (JSValueIsObject(context, arguments[2])) {
-        JSObjectRef error = JSValueToObject(context, arguments[2], exception);
+    } else if (JSValueIsObject(context, arguments[3])) {
+        JSObjectRef error = JSValueToObject(context, arguments[3], exception);
         JSValueRef nameValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("name"_s).get(), exception);
         String exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
         String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
@@ -412,7 +416,8 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
         toJSValue(context, function),
         toJSArray(context, arguments, toJSValue, &exception),
         JSValueMakeBoolean(context, expectsImplicitCallbackArgument),
-        JSValueMakeNumber(context, frameID.toUInt64()),
+        JSValueMakeNumber(context, frameID.object().toUInt64()),
+        JSValueMakeNumber(context, frameID.processIdentifier().toUInt64()),
         JSValueMakeNumber(context, callbackID),
         JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))

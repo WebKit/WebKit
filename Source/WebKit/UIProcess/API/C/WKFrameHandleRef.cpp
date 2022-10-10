@@ -38,5 +38,5 @@ WKTypeID WKFrameHandleGetTypeID()
 
 uint64_t WKFrameHandleGetFrameID(WKFrameHandleRef frameHandleRef)
 {
-    return toImpl(frameHandleRef)->frameID().toUInt64();
+    return toImpl(frameHandleRef)->frameID().object().toUInt64();
 }

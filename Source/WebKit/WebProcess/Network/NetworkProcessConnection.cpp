@@ -347,10 +347,9 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
-    for (auto* frame : WebProcess::singleton().webFrames()) {
-        if (frame->isMainFrame())
-            frame->addConsoleMessage(source, level, message);
-    }
+    Page::forEachPage([&] (Page& page) {
+        WebPage::fromCorePage(page).mainWebFrame().addConsoleMessage(source, level, message);
+    });
 }
 
 #if ENABLE(WEB_RTC)

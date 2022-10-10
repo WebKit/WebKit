@@ -134,7 +134,7 @@ enum class CheckBackForwardList : bool { No, Yes };
 
 class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
-    typedef HashMap<WebCore::FrameIdentifier, RefPtr<WebFrameProxy>> WebFrameProxyMap;
+    // FIXME: This should be a WeakPtr<WebPageProxy> as the key.
     typedef HashMap<WebPageProxyIdentifier, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
@@ -221,12 +221,6 @@ public:
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
 
     bool isResponsive() const;
-
-    WebFrameProxy* webFrame(WebCore::FrameIdentifier) const;
-    bool canCreateFrame(WebCore::FrameIdentifier) const;
-    void frameCreated(WebCore::FrameIdentifier, WebFrameProxy&);
-    void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
-    size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
 
     VisibleWebPageToken visiblePageToken() const;
 
@@ -490,7 +484,7 @@ private:
 
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);
-    void didDestroyFrame(WebCore::FrameIdentifier);
+    void didDestroyFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(uint64_t);
 
     bool canBeAddedToWebProcessCache() const;
@@ -602,8 +596,7 @@ private:
     HashSet<String> m_localPathsWithAssumedReadAccess;
 
     WebPageProxyMap m_pageMap;
-    WebFrameProxyMap m_frameMap;
-    HashSet<ProvisionalPageProxy*> m_provisionalPages;
+    HashSet<ProvisionalPageProxy*> m_provisionalPages; // FIXME: This should be a WeakHashSet.
     UserInitiatedActionMap m_userInitiatedActionMap;
 
     HashMap<VisitedLinkStore*, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;

@@ -298,20 +298,20 @@ void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier c
     }
 
     auto frameIdentifier = *data->frameIdentifier;
-    m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, frameIdentifier, url, clientOrigin = worker->origin(), callback = WTFMove(callback)](auto pageIdentifier) mutable {
+    m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, url, clientOrigin = worker->origin(), callback = WTFMove(callback)](auto pageIdentifier, auto frameIdentifier) mutable {
         if (!weakThis || !weakThis->server()) {
             callback(makeUnexpected(ExceptionData { TypeError, "service worker is gone"_s }));
             return;
         }
 
-        if (!pageIdentifier) {
+        if (!pageIdentifier || !frameIdentifier) {
             callback(makeUnexpected(ExceptionData { TypeError, "navigate failed"_s }));
             return;
         }
 
         std::optional<ServiceWorkerClientData> clientData;
         weakThis->server()->forEachClientForOrigin(clientOrigin, [pageIdentifier, frameIdentifier, url, &clientData](auto& data) {
-            if (!clientData && data.pageIdentifier && *data.pageIdentifier == *pageIdentifier && data.frameIdentifier && *data.frameIdentifier == frameIdentifier && equalIgnoringFragmentIdentifier(data.url, url))
+            if (!clientData && data.pageIdentifier && *data.pageIdentifier == *pageIdentifier && data.frameIdentifier && *data.frameIdentifier == *frameIdentifier && equalIgnoringFragmentIdentifier(data.url, url))
                 clientData = data;
         });
         callback(WTFMove(clientData));

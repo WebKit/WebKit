@@ -944,12 +944,7 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 
 WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const
 {
-    return m_frameMap.get(frameID);
-}
-
-Vector<WebFrame*> WebProcess::webFrames() const
-{
-    return copyToVector(m_frameMap.values());
+    return m_frameMap.get(frameID).get();
 }
 
 void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
@@ -957,7 +952,7 @@ void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
     m_frameMap.set(frameID, frame);
 }
 
-void WebProcess::removeWebFrame(FrameIdentifier frameID)
+void WebProcess::removeWebFrame(FrameIdentifier frameID, std::optional<WebPageProxyIdentifier> pageID)
 {
     m_frameMap.remove(frameID);
 
@@ -967,7 +962,10 @@ void WebProcess::removeWebFrame(FrameIdentifier frameID)
     if (!parentProcessConnection())
         return;
 
-    parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
+    if (!pageID)
+        return;
+
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID, *pageID), 0);
 }
 
 WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)

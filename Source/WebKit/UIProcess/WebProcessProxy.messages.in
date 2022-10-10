@@ -22,7 +22,7 @@
 
 messages -> WebProcessProxy LegacyReceiver {
     UpdateBackForwardItem(struct WebKit::BackForwardListItemState backForwardListItemState)
-    DidDestroyFrame(WebCore::FrameIdentifier frameID) 
+    DidDestroyFrame(WebCore::FrameIdentifier frameID, WebKit::WebPageProxyIdentifier pageID) 
 
     DidDestroyUserGestureToken(uint64_t userGestureTokenID) 
 

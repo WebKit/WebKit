@@ -1149,8 +1149,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     
     std::optional<WebCore::FrameIdentifier> frameID;
     if (frame) {
-        if (uint64_t identifier = frame._handle.frameID)
-            frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(identifier);
+        if (frame._handle.frameID)
+            frameID = frame._handle->_frameHandle->frameID();
     }
 
     _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {

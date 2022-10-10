@@ -100,7 +100,7 @@
 
 #define PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
 #define WEBFRAME (&webFrame())
-#define WEBFRAMEID (webFrame().frameID().toUInt64())
+#define WEBFRAMEID (webFrame().frameID().object().toUInt64())
 #define WEBPAGE (webFrame().page())
 #define WEBPAGEID (WEBPAGE ? WEBPAGE->identifier().toUInt64() : 0)
 
@@ -1626,8 +1626,8 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *doc
 RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
 {
     auto* webPage = m_frame->page();
-
-    auto subframe = WebFrame::createSubframe(webPage, name, &ownerElement);
+    ASSERT(webPage);
+    auto subframe = WebFrame::createSubframe(*webPage, name, &ownerElement);
     auto* coreSubframe = subframe->coreFrame();
     if (!coreSubframe)
         return nullptr;

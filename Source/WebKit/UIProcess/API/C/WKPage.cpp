@@ -2869,7 +2869,7 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
 WKFrameRef WKPageLookUpFrameFromHandle(WKPageRef pageRef, WKFrameHandleRef handleRef)
 {
     auto page = toImpl(pageRef);
-    auto frame = page->process().webFrame(toImpl(handleRef)->frameID());
+    auto frame = WebFrameProxy::webFrame(toImpl(handleRef)->frameID());
     if (!frame || frame->page() != page)
         return nullptr;
 

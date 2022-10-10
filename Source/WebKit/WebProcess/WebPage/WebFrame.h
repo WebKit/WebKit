@@ -70,8 +70,8 @@ struct WebsitePoliciesData;
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
-    static Ref<WebFrame> create() { return adoptRef(*new WebFrame); }
-    static Ref<WebFrame> createSubframe(WebPage*, const AtomString& frameName, WebCore::HTMLFrameOwnerElement*);
+    static Ref<WebFrame> create(WebPage& page) { return adoptRef(*new WebFrame(page)); }
+    static Ref<WebFrame> createSubframe(WebPage&, const AtomString& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 
     void initWithCoreMainFrame(WebPage&, WebCore::Frame&);
@@ -200,9 +200,10 @@ public:
 #endif
 
 private:
-    WebFrame();
+    WebFrame(WebPage&);
 
     WeakPtr<WebCore::Frame> m_coreFrame;
+    WeakPtr<WebPage> m_page;
 
     struct PolicyCheck {
         WebCore::PolicyCheckIdentifier corePolicyIdentifier;

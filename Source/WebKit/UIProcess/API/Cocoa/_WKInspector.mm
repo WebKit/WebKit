@@ -160,8 +160,7 @@ private:
 
 - (void)showMainResourceForFrame:(_WKFrameHandle *)frame
 {
-    if (auto* page = _inspector->inspectedPage())
-        _inspector->showMainResourceForFrame(page->process().webFrame(frame->_frameHandle->frameID()));
+    _inspector->showMainResourceForFrame(WebKit::WebFrameProxy::webFrame(frame->_frameHandle->frameID()));
 }
 
 - (void)attach

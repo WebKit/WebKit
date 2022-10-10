@@ -227,13 +227,8 @@ String WebAutomationSession::handleForWebFrameID(std::optional<FrameIdentifier> 
     if (!frameID || !*frameID)
         return emptyString();
 
-    for (auto& process : m_processPool->processes()) {
-        if (WebFrameProxy* frame = process->webFrame(*frameID)) {
-            if (frame->isMainFrame())
-                return emptyString();
-            break;
-        }
-    }
+    if (auto* frame = WebFrameProxy::webFrame(*frameID); frame && frame->isMainFrame())
+        return emptyString();
 
     auto iter = m_webFrameHandleMap.find(*frameID);
     if (iter != m_webFrameHandleMap.end())
@@ -457,7 +452,7 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
         auto frameID = webFrameIDForHandle(optionalFrameHandle, frameNotFound);
         if (frameNotFound)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
-        WebFrameProxy* frame = page->process().webFrame(frameID.value());
+        WebFrameProxy* frame = WebFrameProxy::webFrame(frameID.value());
         if (!frame)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
         if (!shouldTimeoutDueToUnexpectedAlert)
@@ -534,10 +529,8 @@ void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(Ha
 
 static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, FrameIdentifier frameID)
 {
-    for (auto& process : processPool.processes()) {
-        if (auto* frame = process->webFrame(frameID))
-            return frame->page();
-    }
+    if (auto* frame = WebFrameProxy::webFrame(frameID))
+        return frame->page();
     return nullptr;
 }
 
@@ -754,7 +747,7 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
         // New page loaded, clear frame handles previously cached for frame's page.
         HashSet<String> handlesToRemove;
         for (const auto& iter : m_handleWebFrameMap) {
-            auto* webFrame = frame.page()->process().webFrame(iter.value);
+            RefPtr webFrame = WebFrameProxy::webFrame(iter.value);
             if (webFrame && webFrame->page() == frame.page()) {
                 handlesToRemove.add(iter.key);
                 m_webFrameHandleMap.remove(iter.value);

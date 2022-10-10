@@ -115,12 +115,12 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
     m_coreFrame->init();
 }
 
-Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
+Ref<WebFrame> WebFrame::createSubframe(WebPage& page, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
 {
-    auto frame = create();
-    page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
+    auto frame = create(page);
+    page.send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
 
-    auto coreFrame = Frame::create(page->corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
+    auto coreFrame = Frame::create(page.corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
     frame->m_coreFrame = coreFrame;
 
     coreFrame->tree().setName(frameName);
@@ -133,8 +133,9 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const AtomString& frameNam
     return frame;
 }
 
-WebFrame::WebFrame()
-    : m_frameID(FrameIdentifier::generate())
+WebFrame::WebFrame(WebPage& page)
+    : m_page(page)
+    , m_frameID(FrameIdentifier::generate())
 {
     WebProcess::singleton().addWebFrame(m_frameID, this);
 
@@ -165,7 +166,7 @@ WebPage* WebFrame::page() const
 {
     if (!m_coreFrame)
         return nullptr;
-    
+
     if (auto* page = m_coreFrame->page())
         return &WebPage::fromCorePage(*page);
 
@@ -205,7 +206,7 @@ FrameInfoData WebFrame::info() const
 
 void WebFrame::invalidate()
 {
-    WebProcess::singleton().removeWebFrame(m_frameID);
+    WebProcess::singleton().removeWebFrame(m_frameID, m_page ? std::optional<WebPageProxyIdentifier>(m_page->webPageProxyIdentifier()) : std::nullopt);
     m_coreFrame = 0;
 }
 
