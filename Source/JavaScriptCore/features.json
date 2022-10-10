@@ -2,7 +2,7 @@
     "specification": [
     {
         "name": "ES6",
-        "url": "http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts",
+        "url": "https://262.ecma-international.org/6.0/",
         "keywords": ["es6", "es2015", "ecmascript"],
         "status": {
             "status": "Supported"
@@ -21,12 +21,12 @@
     },
     {
         "name": "ES7",
-        "url": "https://github.com/tc39/ecma262",
+        "url": "https://262.ecma-international.org/7.0/",
         "keywords": ["es7", "ecmascript"]
     },
     {
         "name": "ESNext",
-        "url": "https://github.com/tc39/ecma262",
+        "url": "https://tc39.es/ecma262/",
         "keywords": ["esnext", "ecmascript"]
     },
     {
@@ -45,7 +45,7 @@
         "status": {
             "status": "Supported"
         },
-        "url": "http://webassembly.github.io",
+        "url": "https://webassembly.github.io/spec/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=146064",
         "description": "WebAssembly is a new format for native programs on the web. It aims to support everything that asm.js supports, but allows the VM to sidestep the JS parsing and profiling pipeline entirely.",
         "keywords": ["webassembly", "wasm", "webassy"],
@@ -64,7 +64,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.prototype.copywithin",
+        "url": "https://262.ecma-international.org/6.0/#sec-array.prototype.copywithin",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=145107",
         "specification": "ES6",
@@ -79,7 +79,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://github.com/tc39/Array.prototype.includes",
+        "url": "https://262.ecma-international.org/7.0/#sec-array.prototype.includes",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142707",
         "specification": "ES7"
@@ -172,11 +172,11 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://tc39.github.io/ecma262/#prod-ExponentiationExpression",
+        "url": "https://262.ecma-international.org/7.0/#sec-exp-operator",
         "specification": "ES7",
         "description": "Exponentiation syntax (like x ** y) provides the syntax suger for exponentiation.",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=159969",
-        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Exponentiation_(**)",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Exponentiation",
         "contact": {
             "name": "Yusuke Suzuki",
             "twitter": "@Constellation",
@@ -206,7 +206,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-map-constructor",
+        "url": "hhttp://www.ecma-international.org/ecma-262/6.0/index.html#sec-map-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120333",
         "description": "Map provides an <a href=\"https://en.wikipedia.org/wiki/Associative_array\">associative array data</a> structure that maps keys to values.",
@@ -230,7 +230,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number-objects",
+        "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-number-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=131707",
         "specification": "ES6",
@@ -242,7 +242,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://github.com/tc39/proposal-object-rest-spread",
+        "url": "https://tc39.es/proposal-object-rest-spread/",
         "documentation-url": "http://2ality.com/2016/10/rest-spread-properties.html",
         "specification": "ESNext",
         "description": "New syntax for gathering the rest of an object's properties when using destructuring."
@@ -253,7 +253,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-numeric-literals",
+        "url": "https://262.ecma-international.org/6.0/#sec-literals-numeric-literals",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142681",
         "specification": "ES6",
         "description": "New syntax for number literals. Numbers can be provided as binary (e.g. 0b001001) or octal (e.g. 0o24)."
@@ -265,7 +265,7 @@
             "enabled-by-default": true,
             "shipped": ["ios8-safari", "osx-safari-7.1"]
         },
-        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects",
+        "url": "https://262.ecma-international.org/6.0/#sec-promise-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120260",
         "specification": "ES6"
@@ -276,6 +276,7 @@
             "status": "Supported"
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=35731",
         "specification": "ES6",
         "description": "An intermediary object that defines custom basic behaviors of another object such as property lookup, assignment, enumeration.",
@@ -318,7 +319,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-set-constructor",
+        "url": "https://262.ecma-international.org/6.0/#sec-set-constructor",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120549",
         "description": "Set is a collection of unique objects.",
@@ -330,7 +331,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-symbol-objects",
+        "url": "https://262.ecma-international.org/6.0/#sec-symbol-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=140435",
         "specification": "ES6",
@@ -345,7 +346,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tagged-templates",
+        "url": "https://262.ecma-international.org/6.0/#sec-tagged-templates",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=143183",
         "description": "The tagged-templates (like String.raw`Hello ${World}`) provides a way to modify the produced string from a given template-literals with a function.",
@@ -372,7 +373,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literals",
+        "url": "https://262.ecma-international.org/6.0/#sec-template-literals",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142691",
         "description": "The template-literals (like `Hello ${World}`) provides string interpolation feature. Line terminators are also allowed in the template-literals.",
@@ -388,7 +389,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakmap-objects",
+        "url": "https://262.ecma-international.org/6.0/#sec-weakmap-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120912",
         "description": "WeakMap provides an <a href=\"https://en.wikipedia.org/wiki/Associative_array\">associative array data</a> structure that maps keys to values. WeakMap's keys must be objects.",
@@ -400,7 +401,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakset-objects",
+        "url": "https://262.ecma-international.org/6.0/#sec-weakset-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142408",
         "description": "WeakSet is a collection of unique objects. Keys stored in WeakSet are referenced weakly.",
@@ -432,7 +433,7 @@
             "status": "Supported",
             "enabled-by-default": true
         },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-for-in-and-for-of-statements",
+        "url": "https://262.ecma-international.org/6.0/#sec-for-in-and-for-of-statements",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of",
         "description": "The for...of loops iterate over the values provided by the iterator of the target object.",
         "specification": "ES6",
