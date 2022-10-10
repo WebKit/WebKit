@@ -38,8 +38,8 @@ class FrontendChannel;
 
 class JS_EXPORT_PRIVATE RemoteInspectionTarget : public RemoteControllableTarget {
 public:
-    bool remoteDebuggingAllowed() const { return m_allowed; }
-    void setRemoteDebuggingAllowed(bool);
+    bool inspectable() const;
+    void setInspectable(bool);
 
 #if USE(CF)
     CFRunLoopRef targetRunLoop() const final { return m_runLoop.get(); }
@@ -60,7 +60,7 @@ public:
     bool remoteControlAllowed() const final;
 
 private:
-    bool m_allowed { false };
+    bool m_inspectable;
 #if USE(CF)
     RetainPtr<CFRunLoopRef> m_runLoop;
 #endif

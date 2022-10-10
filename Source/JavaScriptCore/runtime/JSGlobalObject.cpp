@@ -2791,19 +2791,21 @@ void slowValidateCell(JSGlobalObject* globalObject)
     ASSERT_GC_OBJECT_INHERITS(globalObject, JSGlobalObject::info());
 }
 
-void JSGlobalObject::setRemoteDebuggingEnabled(bool enabled)
+void JSGlobalObject::setInspectable(bool inspectable)
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    m_inspectorDebuggable->setRemoteDebuggingAllowed(enabled);
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    m_inspectorDebuggable->setInspectable(inspectable);
 #else
-    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(inspectable);
 #endif
 }
 
-bool JSGlobalObject::remoteDebuggingEnabled() const
+bool JSGlobalObject::inspectable() const
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    return m_inspectorDebuggable->remoteDebuggingAllowed();
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    return m_inspectorDebuggable->inspectable();
 #else
     return false;
 #endif

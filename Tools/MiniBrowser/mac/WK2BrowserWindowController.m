@@ -92,6 +92,7 @@ static const int testFooterBannerHeight = 58;
 - (void)awakeFromNib
 {
     _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:_configuration];
+    _webView.inspectable = YES;
     [self didChangeSettings];
 
     _webView.allowsMagnification = YES;
