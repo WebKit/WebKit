@@ -1401,39 +1401,17 @@ webkit.org/b/223624 webgl/conformance/extensions/khr-parallel-shader-compile.htm
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
 
-webkit.org/b/229052 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
-
 # Not applicable.
 webgl/webgl-via-metal-flag-on.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 
-# Remove after ANGLE is the default backend and results have been triaged.
-fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input.html [ Failure ]
+# Failing with ANGLE backend
 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
-fast/canvas/webgl/drawElements-empty-vertex-data.html [ Failure ]
-fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
-fast/canvas/webgl/largeBuffer.html [ Failure ]
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
-fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html [ Failure ]
-fast/canvas/webgl/tex-image-webgl.html [ Failure ]
-fast/canvas/webgl/tex-image-with-format-and-type.html [ Failure ]
-fast/canvas/webgl/tex-image-with-greyscale-image.html [ Failure ]
-fast/canvas/webgl/tex-input-validation.html [ Failure ]
-fast/canvas/webgl/tex-sub-image-2d.html [ Failure ]
-fast/canvas/webgl/tex-sub-image-cube-maps.html [ Failure ]
-fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Failure ]
-fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Failure ]
-fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
-fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
-fast/canvas/webgl/webgl-drawarrays-crash-2.html [ Failure ]
-fast/canvas/webgl/webgl-drawarrays-crash.html [ Failure ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Failure ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Failure ]
-http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Skip ]
+http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
 http/wpt/offscreen-canvas/getContext-webgl.html [ Failure ]
 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ Failure ]
@@ -1445,13 +1423,14 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canva
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Failure ]
 inspector/canvas/updateShader-webgl.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Failure ]
+
 webgl/webgl2-primitive-restart.html [ Failure ]
+
+webgl/webgl-draft-extensions-flag-default.html [ Skip ]
+webgl/webgl-draft-extensions-flag-on.html [ Skip ]
+
+webgl/conformance/extensions/s3tc-and-rgtc.html [ Pass Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
