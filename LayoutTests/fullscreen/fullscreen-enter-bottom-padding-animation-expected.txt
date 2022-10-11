@@ -1,0 +1,12 @@
+supportsFullScreen() == true
+enterFullScreenForElement()
+beganEnterFullScreen() - initialRect.size: {100, 600}, finalRect.size: {800, 600}
+exitFullScreenForElement()
+beganExitFullScreen() - initialRect.size: {800, 600}, finalRect.size: {100, 600}
+RUN(testRunner.dumpFullScreenCallbacks())
+RUN(target.webkitRequestFullScreen())
+EVENT(webkitfullscreenchange)
+RUN(document.webkitExitFullscreen())
+EVENT(webkitfullscreenchange)
+END OF TEST
+

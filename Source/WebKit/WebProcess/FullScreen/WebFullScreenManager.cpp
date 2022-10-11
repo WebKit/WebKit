@@ -62,7 +62,7 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
         return { };
 
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
-        WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
+        WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->compositedBounds());
         contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
         return element->renderer()->view().frameView().contentsToScreen(contentsBox.enclosingBoundingBox());
     }
