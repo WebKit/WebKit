@@ -47,7 +47,7 @@
 #import "PageClientImplMac.h"
 #import "PasteboardTypes.h"
 #import "PlaybackSessionManagerProxy.h"
-#import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "StringUtilities.h"
@@ -1678,7 +1678,7 @@ std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(We
     case DrawingAreaType::TiledCoreAnimation:
         return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page, process);
     case DrawingAreaType::RemoteLayerTree:
-        return makeUnique<RemoteLayerTreeDrawingAreaProxy>(m_page, process);
+        return makeUnique<RemoteLayerTreeDrawingAreaProxyMac>(m_page, process);
     }
 
     ASSERT_NOT_REACHED();

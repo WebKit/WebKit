@@ -36,7 +36,7 @@
 
 // Subclasses
 #if PLATFORM(COCOA)
-#include "RemoteLayerTreeDrawingArea.h"
+#include "RemoteLayerTreeDrawingAreaMac.h"
 #include "TiledCoreAnimationDrawingArea.h"
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 #include "DrawingAreaCoordinatedGraphics.h"
@@ -57,7 +57,11 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
         return makeUnique<TiledCoreAnimationDrawingArea>(webPage, parameters);
 #endif
     case DrawingAreaType::RemoteLayerTree:
+#if PLATFORM(MAC)
+        return makeUnique<RemoteLayerTreeDrawingAreaMac>(webPage, parameters);
+#else
         return makeUnique<RemoteLayerTreeDrawingArea>(webPage, parameters);
+#endif
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     case DrawingAreaType::CoordinatedGraphics:
         return makeUnique<DrawingAreaCoordinatedGraphics>(webPage, parameters);

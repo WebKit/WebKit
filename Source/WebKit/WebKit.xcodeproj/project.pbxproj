@@ -2995,6 +2995,10 @@
 		0F174AA2142A4CB60039250F /* APIGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeometry.h; sourceTree = "<group>"; };
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
 		0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayLinkObserverID.h; sourceTree = "<group>"; };
+		0F2E0DF628F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingCoordinatorProxyMac.mm; sourceTree = "<group>"; };
+		0F2E0DF728F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorProxyMac.h; sourceTree = "<group>"; };
+		0F2E0DF828F0D04D006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaProxyMac.mm; sourceTree = "<group>"; };
+		0F2E0DF928F0D04E006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMac.h; sourceTree = "<group>"; };
 		0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorHighlightView.mm; sourceTree = "<group>"; };
 		0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorHighlightView.h; sourceTree = "<group>"; };
 		0F4000FD2527D69D00E91DA7 /* WebWheelEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebWheelEvent.h; sourceTree = "<group>"; };
@@ -3007,6 +3011,8 @@
 		0F45A334239D89AF00294ABF /* WKWebViewTestingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTestingMac.mm; sourceTree = "<group>"; };
 		0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTesting.h; sourceTree = "<group>"; };
 		0F45A33C239D8CC400294ABF /* WKWebViewTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTesting.mm; sourceTree = "<group>"; };
+		0F4A438428F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaMac.mm; sourceTree = "<group>"; };
+		0F4A438528F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaMac.h; sourceTree = "<group>"; };
 		0F5403002531006E00082BB9 /* WebWheelEventCoalescer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebWheelEventCoalescer.cpp; sourceTree = "<group>"; };
 		0F5403012531006E00082BB9 /* WebWheelEventCoalescer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebWheelEventCoalescer.h; sourceTree = "<group>"; };
 		0F5562DE27EE28D000953585 /* GPUProcessMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessMessages.h; sourceTree = "<group>"; };
@@ -12779,6 +12785,8 @@
 				0FBB5FC02609A0910054572C /* DisplayRefreshMonitorMac.cpp */,
 				0FBB5FBF2609A0910054572C /* DisplayRefreshMonitorMac.h */,
 				7C6D37FA172F555F009D2847 /* PageBannerMac.mm */,
+				0F4A438528F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.h */,
+				0F4A438428F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.mm */,
 				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
 				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,
 				0FE27FAE2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.h */,
@@ -13970,6 +13978,10 @@
 		E404906F21DE65D70037F0DB /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				0F2E0DF928F0D04E006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.h */,
+				0F2E0DF828F0D04D006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.mm */,
+				0F2E0DF728F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.h */,
+				0F2E0DF628F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.mm */,
 				E404907521DE65F70037F0DB /* ScrollerMac.h */,
 				E404907421DE65F70037F0DB /* ScrollerMac.mm */,
 				E404907021DE65F70037F0DB /* ScrollerPairMac.h */,
