@@ -2130,7 +2130,8 @@ bool RenderElement::createsNewFormattingContext() const
         return true;
     return isInlineBlockOrInlineTable() || isFlexItemIncludingDeprecated()
         || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow()
-        || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext();
+        || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext()
+        || isSVGForeignObject();
 }
 
 bool RenderElement::establishesIndependentFormattingContext() const
