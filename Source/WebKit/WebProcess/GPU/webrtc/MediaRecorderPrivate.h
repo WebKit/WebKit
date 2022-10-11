@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
+#include "GPUProcessConnection.h"
 #include "MediaRecorderIdentifier.h"
 #include "SharedRingBufferStorage.h"
 #include "SharedVideoFrame.h"

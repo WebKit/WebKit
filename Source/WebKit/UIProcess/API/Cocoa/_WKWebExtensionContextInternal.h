@@ -23,40 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "_WKWebExtensionContextPrivate.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "APIObject.h"
-#include "MessageReceiver.h"
-#include "WebExtensionControllerIdentifier.h"
-#include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
+#import "WKObject.h"
+#import "WebExtensionContext.h"
 
 namespace WebKit {
-
-struct WebExtensionControllerParameters;
-
-class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(WebExtensionController);
-
-public:
-    static Ref<WebExtensionController> create() { return adoptRef(*new WebExtensionController); }
-    static WebExtensionController* get(WebExtensionControllerIdentifier);
-
-    explicit WebExtensionController();
-    ~WebExtensionController();
-
-    WebExtensionControllerIdentifier identifier() const { return m_identifier; }
-    WebExtensionControllerParameters parameters() const;
-
-private:
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    WebExtensionControllerIdentifier m_identifier;
+template<> struct WrapperTraits<WebExtensionContext> {
+    using WrapperClass = _WKWebExtensionContext;
 };
+}
 
-} // namespace WebKit
+@interface _WKWebExtensionContext () <WKObject> {
+@package
+    API::ObjectStorage<WebKit::WebExtensionContext> _webExtensionContext;
+}
+
+@property (nonatomic, readonly) WebKit::WebExtensionContext& _webExtensionContext;
+
+@end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

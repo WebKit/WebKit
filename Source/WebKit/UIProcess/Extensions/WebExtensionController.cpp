@@ -39,8 +39,7 @@ using namespace WebCore;
 
 static HashMap<WebExtensionControllerIdentifier, WebExtensionController*>& webExtensionControllers()
 {
-    ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionController*>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionController*>> controllers;
     return controllers;
 }
 

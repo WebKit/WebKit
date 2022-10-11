@@ -177,6 +177,7 @@ public:
         VisitedLinkStore,
 #if ENABLE(WK_WEB_EXTENSIONS)
         WebExtension,
+        WebExtensionContext,
         WebExtensionController,
         WebExtensionMatchPattern,
 #endif
@@ -431,6 +432,7 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::VisitedLinkStore,
 #if ENABLE(WK_WEB_EXTENSIONS)
         API::Object::Type::WebExtension,
+        API::Object::Type::WebExtensionContext,
         API::Object::Type::WebExtensionController,
         API::Object::Type::WebExtensionMatchPattern,
 #endif

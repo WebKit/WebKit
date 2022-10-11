@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "WebExtensionControllerProxy.h"
+#include "WebExtensionContextProxy.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "WebExtensionControllerMessages.h"
-#include "WebExtensionControllerProxyMessages.h"
+#include "WebExtensionContextMessages.h"
+#include "WebExtensionContextProxyMessages.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -37,36 +37,36 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>& webExtensionControllerProxies()
+static HashMap<WebExtensionContextIdentifier, WebExtensionContextProxy*>& webExtensionContextProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>> controllers;
-    return controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WebExtensionContextProxy*>> contexts;
+    return contexts;
 }
 
-Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExtensionControllerIdentifier identifier)
+Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(WebExtensionContextIdentifier identifier)
 {
-    auto& webExtensionControllerProxyPtr = webExtensionControllerProxies().add(identifier, nullptr).iterator->value;
-    if (webExtensionControllerProxyPtr)
-        return *webExtensionControllerProxyPtr;
+    auto& webExtensionContextProxyPtr = webExtensionContextProxies().add(identifier, nullptr).iterator->value;
+    if (webExtensionContextProxyPtr)
+        return *webExtensionContextProxyPtr;
 
-    RefPtr<WebExtensionControllerProxy> webExtensionControllerProxy = adoptRef(new WebExtensionControllerProxy(identifier));
-    webExtensionControllerProxyPtr = webExtensionControllerProxy.get();
+    RefPtr<WebExtensionContextProxy> webExtensionContextProxy = adoptRef(new WebExtensionContextProxy(identifier));
+    webExtensionContextProxyPtr = webExtensionContextProxy.get();
 
-    return webExtensionControllerProxy.releaseNonNull();
+    return webExtensionContextProxy.releaseNonNull();
 }
 
-WebExtensionControllerProxy::WebExtensionControllerProxy(WebExtensionControllerIdentifier identifier)
+WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextIdentifier identifier)
     : m_identifier(identifier)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier, *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
 }
 
-WebExtensionControllerProxy::~WebExtensionControllerProxy()
+WebExtensionContextProxy::~WebExtensionContextProxy()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier);
+    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
 
-    ASSERT(webExtensionControllerProxies().contains(m_identifier));
-    webExtensionControllerProxies().remove(m_identifier);
+    ASSERT(webExtensionContextProxies().contains(m_identifier));
+    webExtensionContextProxies().remove(m_identifier);
 }
 
 } // namespace WebKit

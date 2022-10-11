@@ -2008,6 +2008,7 @@
 		1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthogonalFlowAvailableSize.mm; sourceTree = "<group>"; };
 		1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "orthogonal-flow-available-size.html"; sourceTree = "<group>"; };
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
+		1CBEE26228F47FA9006D1A02 /* WKWebExtensionContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionContext.mm; sourceTree = "<group>"; };
 		1CC4C7492889072900A3B23D /* CaptivePortalModeFonts.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CaptivePortalModeFonts.mm; sourceTree = "<group>"; };
 		1CC4C74A288909F600A3B23D /* WKPrinting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrinting.mm; sourceTree = "<group>"; };
 		1CC4C74B28890C5400A3B23D /* SVGFont.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = SVGFont.html; sourceTree = "<group>"; };
@@ -4040,6 +4041,7 @@
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
 				5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */,
 				1CFAA40828947999009F894D /* WKWebExtension.mm */,
+				1CBEE26228F47FA9006D1A02 /* WKWebExtensionContext.mm */,
 				1CFAA40928974405009F894D /* WKWebExtensionMatchPattern.mm */,
 				5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */,
 				371195AA1FE5797700A1FB92 /* WKWebViewAlwaysShowsScroller.mm */,

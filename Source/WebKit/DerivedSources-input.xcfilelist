@@ -148,6 +148,7 @@ $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
+$(PROJECT_DIR)/Shared/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionControllerParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBlendComponent.serialization.in
@@ -183,6 +184,7 @@ $(PROJECT_DIR)/UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Extensions/WebExtensionContext.messages.in
 $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionController.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in
@@ -222,6 +224,7 @@ $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.js
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Cache/WebCacheStorageConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
+$(PROJECT_DIR)/WebProcess/Extensions/WebExtensionContextProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/FullScreen/WebFullScreenManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/GPUProcessConnection.messages.in

@@ -33,27 +33,35 @@
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 #import "CocoaImage.h"
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSBundle;
+OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
+OBJC_CLASS _WKWebExtension;
+OBJC_CLASS _WKWebExtensionMatchPattern;
 #endif
 
 #if PLATFORM(MAC)
 #include <Security/CSCommon.h>
 #endif
 
+#ifdef __OBJC__
+#include "_WKWebExtensionPermission.h"
+#endif
+
 namespace WebKit {
 
-class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension> {
+class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension>, public CanMakeWeakPtr<WebExtension> {
     WTF_MAKE_NONCOPYABLE(WebExtension);
 
 public:
@@ -103,9 +111,12 @@ public:
         DocumentEnd,
     };
 
+    using PermissionsSet = HashSet<String>;
+    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
     struct InjectedContentData {
-        HashSet<Ref<WebExtensionMatchPattern>> includeMatchPatterns;
-        HashSet<Ref<WebExtensionMatchPattern>> excludeMatchPatterns;
+        MatchPatternSet includeMatchPatterns;
+        MatchPatternSet excludeMatchPatterns;
 
         InjectionTime injectionTime = InjectionTime::DocumentIdle;
 
@@ -124,8 +135,10 @@ public:
 #endif
     };
 
+    using InjectedContentVector = Vector<InjectedContentData>;
+
 #if PLATFORM(COCOA)
-    static NSSet *supportedPermissions();
+    static const PermissionsSet& supportedPermissions();
 
     bool manifestParsedSuccessfully();
     NSDictionary *manifest();
@@ -167,23 +180,23 @@ public:
 
     NSString *generatedBackgroundContent();
 
-    const Vector<InjectedContentData>& injectedContents();
+    const InjectedContentVector& injectedContents();
     bool hasInjectedContentForURL(NSURL *);
 
     // Permissions requested by the extension in their manifest.
     // These are not the currently allowed permissions.
-    NSSet *requestedPermissions();
-    NSSet *optionalPermissions();
+    const PermissionsSet& requestedPermissions();
+    const PermissionsSet& optionalPermissions();
 
     bool hasRequestedPermission(NSString *) const;
 
-    // Permission origins requested by the extension in their manifest.
-    // These are not the currently allowed permission origins.
-    const HashSet<Ref<WebExtensionMatchPattern>>& requestedPermissionOrigins();
-    const HashSet<Ref<WebExtensionMatchPattern>>& optionalPermissionOrigins();
+    // Permission patterns requested by the extension in their manifest.
+    // These are not the currently allowed permission patterns.
+    const MatchPatternSet& requestedPermissionMatchPatterns();
+    const MatchPatternSet& optionalPermissionMatchPatterns();
 
-    // Combined origin set that includes permissions origins and injected content patterns from the manifest.
-    const HashSet<Ref<WebExtensionMatchPattern>>&& allRequestedOrigins();
+    // Combined pattern set that includes permission patterns and injected content patterns from the manifest.
+    MatchPatternSet allRequestedMatchPatterns();
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
@@ -192,6 +205,8 @@ public:
     void recordError(NSError *, SuppressNotification = SuppressNotification::Yes);
 
     NSArray *errors();
+
+    _WKWebExtension *wrapper() const { return (_WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
 #endif
 
 private:
@@ -205,9 +220,13 @@ private:
     void populatePermissionsPropertiesIfNeeded();
 #endif
 
-    Vector<InjectedContentData> m_injectedContents;
-    HashSet<Ref<WebExtensionMatchPattern>> m_permissionOrigins;
-    HashSet<Ref<WebExtensionMatchPattern>> m_optionalPermissionOrigins;
+    InjectedContentVector m_injectedContents;
+
+    MatchPatternSet m_permissionMatchPatterns;
+    MatchPatternSet m_optionalPermissionMatchPatterns;
+
+    PermissionsSet m_permissions;
+    PermissionsSet m_optionalPermissions;
 
 #if PLATFORM(MAC)
     RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
@@ -240,9 +259,6 @@ private:
     RetainPtr<NSString> m_generatedBackgroundContent;
     bool m_backgroundContentIsPersistent = false;
 
-    RetainPtr<NSSet> m_permissions;
-    RetainPtr<NSSet> m_optionalPermissions;
-
     bool m_parsedManifest = false;
     bool m_parsedManifestDisplayStrings = false;
     bool m_parsedManifestActionProperties = false;
@@ -251,6 +267,13 @@ private:
     bool m_parsedManifestPermissionProperties = false;
 #endif
 };
+
+#ifdef __OBJC__
+
+NSSet<_WKWebExtensionPermission> *toAPI(const WebExtension::PermissionsSet&);
+NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet&);
+
+#endif
 
 } // namespace WebKit
 

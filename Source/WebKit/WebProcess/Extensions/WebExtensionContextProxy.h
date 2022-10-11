@@ -27,34 +27,30 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "APIObject.h"
 #include "MessageReceiver.h"
-#include "WebExtensionControllerIdentifier.h"
+#include "WebExtensionContextIdentifier.h"
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-struct WebExtensionControllerParameters;
-
-class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(WebExtensionController);
+class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(WebExtensionContextProxy);
 
 public:
-    static Ref<WebExtensionController> create() { return adoptRef(*new WebExtensionController); }
-    static WebExtensionController* get(WebExtensionControllerIdentifier);
+    static Ref<WebExtensionContextProxy> getOrCreate(WebExtensionContextIdentifier);
 
-    explicit WebExtensionController();
-    ~WebExtensionController();
+    ~WebExtensionContextProxy();
 
-    WebExtensionControllerIdentifier identifier() const { return m_identifier; }
-    WebExtensionControllerParameters parameters() const;
+    WebExtensionContextIdentifier identifier() { return m_identifier; }
 
 private:
+    explicit WebExtensionContextProxy(WebExtensionContextIdentifier);
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    WebExtensionControllerIdentifier m_identifier;
+    WebExtensionContextIdentifier m_identifier;
 };
 
 } // namespace WebKit

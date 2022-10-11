@@ -162,37 +162,27 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (NSSet<_WKWebExtensionPermission> *)requestedPermissions
 {
-    return _webExtension->requestedPermissions();
+    return WebKit::toAPI(_webExtension->requestedPermissions());
 }
 
 - (NSSet<_WKWebExtensionPermission> *)optionalPermissions
 {
-    return _webExtension->optionalPermissions();
+    return WebKit::toAPI(_webExtension->optionalPermissions());
 }
 
-static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const HashSet<Ref<WebKit::WebExtensionMatchPattern>>& patterns)
+- (NSSet<_WKWebExtensionMatchPattern *> *)requestedPermissionMatchPatterns
 {
-    NSMutableSet<_WKWebExtensionMatchPattern *> *result = [NSMutableSet setWithCapacity:patterns.size()];
-
-    for (auto& matchPattern : patterns)
-        [result addObject:WebKit::wrapper(matchPattern)];
-
-    return [result copy];
+    return toAPI(_webExtension->requestedPermissionMatchPatterns());
 }
 
-- (NSSet<_WKWebExtensionMatchPattern *> *)requestedPermissionOrigins
+- (NSSet<_WKWebExtensionMatchPattern *> *)optionalPermissionMatchPatterns
 {
-    return toAPI(_webExtension->requestedPermissionOrigins());
+    return toAPI(_webExtension->optionalPermissionMatchPatterns());
 }
 
-- (NSSet<_WKWebExtensionMatchPattern *> *)optionalPermissionOrigins
+- (NSSet<_WKWebExtensionMatchPattern *> *)allRequestedMatchPatterns
 {
-    return toAPI(_webExtension->optionalPermissionOrigins());
-}
-
-- (NSSet<_WKWebExtensionMatchPattern *> *)allRequestedOrigins
-{
-    return toAPI(_webExtension->allRequestedOrigins());
+    return toAPI(_webExtension->allRequestedMatchPatterns());
 }
 
 - (NSArray<NSError *> *)errors
@@ -321,17 +311,17 @@ static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const HashSet<Ref<WebK
     return nil;
 }
 
-- (NSSet<_WKWebExtensionMatchPattern *> *)requestedPermissionOrigins
+- (NSSet<_WKWebExtensionMatchPattern *> *)requestedPermissionMatchPatterns
 {
     return nil;
 }
 
-- (NSSet<_WKWebExtensionMatchPattern *> *)optionalPermissionOrigins
+- (NSSet<_WKWebExtensionMatchPattern *> *)optionalPermissionMatchPatterns
 {
     return nil;
 }
 
-- (NSSet<_WKWebExtensionMatchPattern *> *)allRequestedOrigins
+- (NSSet<_WKWebExtensionMatchPattern *> *)allRequestedMatchPatterns
 {
     return nil;
 }

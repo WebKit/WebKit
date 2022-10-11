@@ -40,6 +40,8 @@
 #import <UniformTypeIdentifiers/UTCoreTypes.h>
 #import <UniformTypeIdentifiers/UTType.h>
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/HashSet.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -307,7 +309,7 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
 
 bool WebExtension::hasRequestedPermission(NSString *permission) const
 {
-    return [m_permissions containsObject:permission];
+    return m_permissions.contains(permission);
 }
 
 NSError *WebExtension::createError(Error error, NSString *customLocalizedDescription, NSError *underlyingError)
@@ -1057,47 +1059,47 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         addInjectedContentData(contentScriptsManifestEntry);
 }
 
-NSSet *WebExtension::supportedPermissions()
+const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 {
-    static NSSet *permissions = [NSSet setWithObjects:_WKWebExtensionPermissionActiveTab, _WKWebExtensionPermissionAlarms, _WKWebExtensionPermissionClipboardWrite,
+    static MainThreadNeverDestroyed<PermissionsSet> permissions = std::initializer_list<String> { _WKWebExtensionPermissionActiveTab, _WKWebExtensionPermissionAlarms, _WKWebExtensionPermissionClipboardWrite,
         _WKWebExtensionPermissionContextMenus, _WKWebExtensionPermissionCookies, _WKWebExtensionPermissionDeclarativeNetRequest, _WKWebExtensionPermissionDeclarativeNetRequestFeedback,
         _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess, _WKWebExtensionPermissionMenus, _WKWebExtensionPermissionNativeMessaging, _WKWebExtensionPermissionScripting,
-        _WKWebExtensionPermissionStorage, _WKWebExtensionPermissionTabs, _WKWebExtensionPermissionUnlimitedStorage, _WKWebExtensionPermissionWebNavigation, _WKWebExtensionPermissionWebRequest, nil];
+        _WKWebExtensionPermissionStorage, _WKWebExtensionPermissionTabs, _WKWebExtensionPermissionUnlimitedStorage, _WKWebExtensionPermissionWebNavigation, _WKWebExtensionPermissionWebRequest };
     return permissions;
 }
 
-NSSet *WebExtension::requestedPermissions()
+const WebExtension::PermissionsSet& WebExtension::requestedPermissions()
 {
     populatePermissionsPropertiesIfNeeded();
-    return m_permissions.get();
+    return m_permissions;
 }
 
-NSSet *WebExtension::optionalPermissions()
+const WebExtension::PermissionsSet& WebExtension::optionalPermissions()
 {
     populatePermissionsPropertiesIfNeeded();
-    return m_optionalPermissions.get();
+    return m_optionalPermissions;
 }
 
-const HashSet<Ref<WebExtensionMatchPattern>>& WebExtension::requestedPermissionOrigins()
+const WebExtension::MatchPatternSet& WebExtension::requestedPermissionMatchPatterns()
 {
     populatePermissionsPropertiesIfNeeded();
-    return m_permissionOrigins;
+    return m_permissionMatchPatterns;
 }
 
-const HashSet<Ref<WebExtensionMatchPattern>>& WebExtension::optionalPermissionOrigins()
+const WebExtension::MatchPatternSet& WebExtension::optionalPermissionMatchPatterns()
 {
     populatePermissionsPropertiesIfNeeded();
-    return m_optionalPermissionOrigins;
+    return m_optionalPermissionMatchPatterns;
 }
 
-const HashSet<Ref<WebExtensionMatchPattern>>&& WebExtension::allRequestedOrigins()
+WebExtension::MatchPatternSet WebExtension::allRequestedMatchPatterns()
 {
     populatePermissionsPropertiesIfNeeded();
     populateContentScriptPropertiesIfNeeded();
 
-    HashSet<Ref<WebExtensionMatchPattern>> result;
+    WebExtension::MatchPatternSet result;
 
-    for (auto& matchPattern : m_permissionOrigins)
+    for (auto& matchPattern : m_permissionMatchPatterns)
         result.add(matchPattern);
 
     // FIXME: Add externally connectable match patterns.
@@ -1107,7 +1109,7 @@ const HashSet<Ref<WebExtensionMatchPattern>>&& WebExtension::allRequestedOrigins
             result.add(matchPattern);
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 void WebExtension::populatePermissionsPropertiesIfNeeded()
@@ -1120,37 +1122,33 @@ void WebExtension::populatePermissionsPropertiesIfNeeded()
 
     m_parsedManifestPermissionProperties = YES;
 
-    bool findOriginsInPermissions = !usesManifestVersion(3);
+    bool findMatchPatternsInPermissions = !usesManifestVersion(3);
 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions
 
     NSArray<NSString *> *permissions = objectForKey<NSArray>(m_manifest, permissionsManifestKey, true, NSString.class);
-    NSMutableSet<NSString *> *filteredPermissions = [NSMutableSet set];
-
     for (NSString *permission in permissions) {
-        if (findOriginsInPermissions) {
+        if (findMatchPatternsInPermissions) {
             if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(permission)) {
                 if (matchPattern->isSupported())
-                    m_permissionOrigins.add(matchPattern.releaseNonNull());
+                    m_permissionMatchPatterns.add(matchPattern.releaseNonNull());
                 continue;
             }
         }
 
-        if ([supportedPermissions() containsObject:permission])
-            [filteredPermissions addObject:permission];
+        if (supportedPermissions().contains(permission))
+            m_permissions.add(permission);
     }
-
-    m_permissions = filteredPermissions;
 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/host_permissions
 
-    if (!findOriginsInPermissions) {
+    if (!findMatchPatternsInPermissions) {
         NSArray<NSString *> *hostPermissions = objectForKey<NSArray>(m_manifest, hostPermissionsManifestKey, true, NSString.class);
 
         for (NSString *hostPattern in hostPermissions) {
             if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(hostPattern)) {
                 if (matchPattern->isSupported())
-                    m_permissionOrigins.add(matchPattern.releaseNonNull());
+                    m_permissionMatchPatterns.add(matchPattern.releaseNonNull());
             }
         }
     }
@@ -1158,35 +1156,51 @@ void WebExtension::populatePermissionsPropertiesIfNeeded()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/optional_permissions
 
     NSArray<NSString *> *optionalPermissions = objectForKey<NSArray>(m_manifest, optionalPermissionsManifestKey, true, NSString.class);
-    NSMutableSet<NSString *> *filteredOptionalPermissions = [NSMutableSet set];
-
     for (NSString *optionalPermission in optionalPermissions) {
-        if (findOriginsInPermissions) {
+        if (findMatchPatternsInPermissions) {
             if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(optionalPermission)) {
-                if (matchPattern->isSupported() && !m_permissionOrigins.contains(*matchPattern))
-                    m_optionalPermissionOrigins.add(matchPattern.releaseNonNull());
+                if (matchPattern->isSupported() && !m_permissionMatchPatterns.contains(*matchPattern))
+                    m_optionalPermissionMatchPatterns.add(matchPattern.releaseNonNull());
                 continue;
             }
         }
 
-        if (![m_permissions containsObject:optionalPermission] && [supportedPermissions() containsObject:optionalPermission])
-            [filteredOptionalPermissions addObject:optionalPermission];
+        if (!m_permissions.contains(optionalPermission) && supportedPermissions().contains(optionalPermission))
+            m_optionalPermissions.add(optionalPermission);
     }
-
-    m_optionalPermissions = filteredOptionalPermissions;
 
     // Documentation: https://github.com/w3c/webextensions/issues/119
 
-    if (!findOriginsInPermissions) {
+    if (!findMatchPatternsInPermissions) {
         NSArray<NSString *> *hostPermissions = objectForKey<NSArray>(m_manifest, optionalHostPermissionsManifestKey, true, NSString.class);
 
         for (NSString *hostPattern in hostPermissions) {
             if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(hostPattern)) {
-                if (matchPattern->isSupported() && !m_permissionOrigins.contains(*matchPattern))
-                    m_optionalPermissionOrigins.add(matchPattern.releaseNonNull());
+                if (matchPattern->isSupported() && !m_permissionMatchPatterns.contains(*matchPattern))
+                    m_optionalPermissionMatchPatterns.add(matchPattern.releaseNonNull());
             }
         }
     }
+}
+
+NSSet<_WKWebExtensionPermission> *toAPI(const WebExtension::PermissionsSet& permissions)
+{
+    NSMutableSet<_WKWebExtensionPermission> *result = [NSMutableSet setWithCapacity:permissions.size()];
+
+    for (auto& permission : permissions)
+        [result addObject:(NSString *)permission];
+
+    return [result copy];
+}
+
+NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet& patterns)
+{
+    NSMutableSet<_WKWebExtensionMatchPattern *> *result = [NSMutableSet setWithCapacity:patterns.size()];
+
+    for (auto& matchPattern : patterns)
+        [result addObject:matchPattern->wrapper()];
+
+    return [result copy];
 }
 
 } // namespace WebKit

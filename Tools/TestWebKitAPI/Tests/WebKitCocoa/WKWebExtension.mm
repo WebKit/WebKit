@@ -251,12 +251,12 @@ TEST(WKWebExtension, PermissionsParsing)
 
     EXPECT_NOT_NULL(testExtension.requestedPermissions);
     EXPECT_EQ(testExtension.requestedPermissions.count, 0ul);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
     EXPECT_NOT_NULL(testExtension.optionalPermissions);
     EXPECT_EQ(testExtension.optionalPermissions.count, 0ul);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "permissions" key alone is defined but is empty.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @[ ] };
@@ -264,124 +264,124 @@ TEST(WKWebExtension, PermissionsParsing)
 
     EXPECT_NOT_NULL(testExtension.requestedPermissions);
     EXPECT_EQ(testExtension.requestedPermissions.count, 0ul);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
     EXPECT_NOT_NULL(testExtension.optionalPermissions);
     EXPECT_EQ(testExtension.optionalPermissions.count, 0ul);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key alone is defined but is empty.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.requestedPermissions);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
     EXPECT_NOT_NULL(testExtension.optionalPermissions);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
     EXPECT_EQ(testExtension.requestedPermissions.count, 0ul);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testExtension.optionalPermissions.count, 0ul);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "permissions" and "optional_permissions" keys are defined as invalid types.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @(1), @"optional_permissions": @"foo" };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.requestedPermissions);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
     EXPECT_NOT_NULL(testExtension.optionalPermissions);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
     EXPECT_EQ(testExtension.requestedPermissions.count, 0ul);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testExtension.optionalPermissions.count, 0ul);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "permissions" key is defined with an invalid permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @[ @"invalid" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.requestedPermissions, [NSSet set]);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
 
     // The "permissions" key is defined with a valid permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @[ @"tabs" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.requestedPermissions, [NSSet setWithArray:@[ @"tabs" ]]);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
 
     // The "permissions" key is defined with a valid and an invalid permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @[ @"tabs", @"invalid" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.requestedPermissions, [NSSet setWithArray:(@[ @"tabs" ])]);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
 
     // The "permissions" key is defined with a valid permission and a valid origin.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @[ @"tabs", @"http://www.webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.requestedPermissions, [NSSet setWithArray:@[ @"tabs" ]]);
-    EXPECT_NS_EQUAL(testExtension.requestedPermissionOrigins.anyObject.description, @"http://www.webkit.org/");
+    EXPECT_NS_EQUAL(testExtension.requestedPermissionMatchPatterns.anyObject.description, @"http://www.webkit.org/");
 
     // The "permissions" key is defined with a valid permission and an invalid origin.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions": @[ @"tabs", @"foo://www.webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.requestedPermissions, [NSSet setWithArray:(@[ @"tabs" ])]);
-    EXPECT_NOT_NULL(testExtension.requestedPermissionOrigins);
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.requestedPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key is defined with an invalid permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ @"invalid" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.optionalPermissions, [NSSet set]);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key is defined with a valid permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ @"tabs" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.optionalPermissions, [NSSet setWithArray:@[ @"tabs" ]]);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key is defined with a valid and an invalid permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ @"tabs", @"invalid" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.optionalPermissions, [NSSet setWithArray:(@[ @"tabs" ])]);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key is defined with a valid permission and a valid origin.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ @"tabs", @"http://www.webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.optionalPermissions, [NSSet setWithArray:@[ @"tabs" ]]);
-    EXPECT_NS_EQUAL(testExtension.optionalPermissionOrigins.anyObject.description, @"http://www.webkit.org/");
+    EXPECT_NS_EQUAL(testExtension.optionalPermissionMatchPatterns.anyObject.description, @"http://www.webkit.org/");
 
     // The "optional_permissions" key is defined with a valid permission and an invalid origin.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ @"tabs", @"foo://www.webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.optionalPermissions, [NSSet setWithArray:(@[ @"tabs" ])]);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key is defined with a valid permission and a forbidden optional permission.
     testManifestDictionary = @{ @"manifest_version": @2, @"optional_permissions": @[ @"tabs", @"geolocation" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NS_EQUAL(testExtension.optionalPermissions, [NSSet setWithArray:(@[ @"tabs" ])]);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // The "optional_permissions" key contains a permission already defined in the "permissions" key.
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions" : @[ @"tabs", @"geolocation" ], @"optional_permissions": @[@"tabs"] };
@@ -395,39 +395,39 @@ TEST(WKWebExtension, PermissionsParsing)
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions" : @[ @"http://www.webkit.org/" ], @"optional_permissions": @[ @"http://www.webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
-    EXPECT_NS_EQUAL(testExtension.requestedPermissionOrigins.anyObject.description, @"http://www.webkit.org/");
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_NS_EQUAL(testExtension.requestedPermissionMatchPatterns.anyObject.description, @"http://www.webkit.org/");
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // Make sure manifest v2 extensions ignore hosts from host_permissions (this should only be checked for manifest v3).
     testManifestDictionary = @{ @"manifest_version": @2, @"permissions" : @[ @"http://www.webkit.org/" ], @"optional_permissions": @[ @"http://www.example.com/" ], @"host_permissions": @[ @"https://webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 1ul);
-    EXPECT_TRUE([testExtension.requestedPermissionOrigins containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"http://www.webkit.org/"]]);
-    EXPECT_FALSE([testExtension.requestedPermissionOrigins containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"https://webkit.org/"]]);
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 1ul);
-    EXPECT_TRUE([testExtension.optionalPermissionOrigins containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"http://www.example.com/"]]);
-    EXPECT_FALSE([testExtension.optionalPermissionOrigins containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"https://webkit.org/"]]);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 1ul);
+    EXPECT_TRUE([testExtension.requestedPermissionMatchPatterns containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"http://www.webkit.org/"]]);
+    EXPECT_FALSE([testExtension.requestedPermissionMatchPatterns containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"https://webkit.org/"]]);
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 1ul);
+    EXPECT_TRUE([testExtension.optionalPermissionMatchPatterns containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"http://www.example.com/"]]);
+    EXPECT_FALSE([testExtension.optionalPermissionMatchPatterns containsObject:[_WKWebExtensionMatchPattern matchPatternWithString:@"https://webkit.org/"]]);
 
     // Make sure manifest v3 parses hosts from host_permissions, and ignores hosts in permissions and optional_permissions.
     testManifestDictionary = @{ @"manifest_version": @3, @"permissions" : @[ @"http://www.webkit.org/" ], @"optional_permissions": @[ @"http://www.example.com/" ], @"host_permissions": @[ @"https://webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 1ul);
-    EXPECT_NS_EQUAL(testExtension.requestedPermissionOrigins.anyObject.description, @"https://webkit.org/");
-    EXPECT_NOT_NULL(testExtension.optionalPermissionOrigins);
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 0ul);
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 1ul);
+    EXPECT_NS_EQUAL(testExtension.requestedPermissionMatchPatterns.anyObject.description, @"https://webkit.org/");
+    EXPECT_NOT_NULL(testExtension.optionalPermissionMatchPatterns);
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 0ul);
 
     // Make sure manifest v3 parses optional_host_permissions.
     testManifestDictionary = @{ @"manifest_version": @3, @"optional_host_permissions": @[ @"http://www.example.com/" ], @"host_permissions": @[ @"https://webkit.org/" ] };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
-    EXPECT_EQ(testExtension.requestedPermissionOrigins.count, 1ul);
-    EXPECT_NS_EQUAL(testExtension.requestedPermissionOrigins.anyObject.description, @"https://webkit.org/");
-    EXPECT_EQ(testExtension.optionalPermissionOrigins.count, 1ul);
-    EXPECT_NS_EQUAL(testExtension.optionalPermissionOrigins.anyObject.description, @"http://www.example.com/");
+    EXPECT_EQ(testExtension.requestedPermissionMatchPatterns.count, 1ul);
+    EXPECT_NS_EQUAL(testExtension.requestedPermissionMatchPatterns.anyObject.description, @"https://webkit.org/");
+    EXPECT_EQ(testExtension.optionalPermissionMatchPatterns.count, 1ul);
+    EXPECT_NS_EQUAL(testExtension.optionalPermissionMatchPatterns.anyObject.description, @"http://www.example.com/");
 }
 
 TEST(WKWebExtension, BackgroundParsing)

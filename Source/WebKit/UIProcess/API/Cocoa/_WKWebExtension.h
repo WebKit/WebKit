@@ -90,10 +90,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (readonly, nonatomic) NSSet<_WKWebExtensionPermission> *requestedPermissions;
 @property (readonly, nonatomic) NSSet<_WKWebExtensionPermission> *optionalPermissions;
 
-@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *requestedPermissionOrigins;
-@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *optionalPermissionOrigins;
+@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *requestedPermissionMatchPatterns;
+@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *optionalPermissionMatchPatterns;
 
-@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *allRequestedOrigins;
+@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *allRequestedMatchPatterns;
 
 @property (readonly, nonatomic) BOOL hasBackgroundContent;
 @property (readonly, nonatomic) BOOL backgroundContentIsPersistent;

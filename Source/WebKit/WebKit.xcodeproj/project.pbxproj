@@ -371,7 +371,22 @@
 		1AFDE6621954E9B100C48FFA /* APISessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE6601954E9B100C48FFA /* APISessionState.h */; };
 		1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE436418B6C081009C7A48 /* UIDelegate.h */; };
 		1BBBE4A019B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BBBE49E19B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp */; };
+		1C0234CD28A00FE400AC1E5B /* WebExtensionContextMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0234C828A00FA800AC1E5B /* WebExtensionContextMessageReceiver.cpp */; };
+		1C0234CE28A00FE600AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0234CB28A00FA900AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp */; };
+		1C0234CF28A00FF000AC1E5B /* WebExtensionContextMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234C728A00FA800AC1E5B /* WebExtensionContextMessagesReplies.h */; };
+		1C0234D028A00FF000AC1E5B /* WebExtensionContextProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234C928A00FA800AC1E5B /* WebExtensionContextProxyMessages.h */; };
+		1C0234D128A00FF000AC1E5B /* WebExtensionContextProxyMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234CA28A00FA800AC1E5B /* WebExtensionContextProxyMessagesReplies.h */; };
+		1C0234D228A00FF000AC1E5B /* WebExtensionContextMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234CC28A00FA900AC1E5B /* WebExtensionContextMessages.h */; };
+		1C0234D428A0135600AC1E5B /* _WKWebExtensionContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0234D328A0135600AC1E5B /* _WKWebExtensionContext.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C0234D728A013D900AC1E5B /* _WKWebExtensionContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234D528A013D900AC1E5B /* _WKWebExtensionContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C0234D828A013D900AC1E5B /* _WKWebExtensionContextInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234D628A013D900AC1E5B /* _WKWebExtensionContextInternal.h */; };
+		1C0234D928A01B1C00AC1E5B /* WebExtensionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */; };
+		1C0234DA28A01B2100AC1E5B /* WebExtensionContextParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */; };
+		1C0234DC28A0268C00AC1E5B /* WebExtensionContextCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0234DB28A0268B00AC1E5B /* WebExtensionContextCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C049838289AF5AD0010308B /* _WKWebExtensionPermission.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C049837289AF5AD0010308B /* _WKWebExtensionPermission.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C04983E289AFF9B0010308B /* _WKWebExtensionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C04983A289AFF9B0010308B /* _WKWebExtensionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C049840289AFF9B0010308B /* _WKWebExtensionTab.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C04983C289AFF9B0010308B /* _WKWebExtensionTab.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C049841289AFF9B0010308B /* _WKWebExtensionWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C04983D289AFF9B0010308B /* _WKWebExtensionWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C0A19471C8FF1A800FE0EBB /* WebAutomationSessionProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A19451C8FF1A800FE0EBB /* WebAutomationSessionProxy.h */; };
 		1C0A19531C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0A19511C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp */; };
 		1C0A19541C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A19521C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessages.h */; };
@@ -3424,7 +3439,28 @@
 		1AFE436418B6C081009C7A48 /* UIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIDelegate.h; sourceTree = "<group>"; };
 		1AFF48FE1833DE78009AB15A /* WKDeprecatedFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKDeprecatedFunctions.cpp; sourceTree = "<group>"; };
 		1BBBE49E19B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteWebInspectorUIMessageReceiver.cpp; path = DerivedSources/WebKit/RemoteWebInspectorUIMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextParameters.h; sourceTree = "<group>"; };
+		1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextIdentifier.h; sourceTree = "<group>"; };
+		1C0234C128A00E7D00AC1E5B /* WebExtensionContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionContext.cpp; sourceTree = "<group>"; };
+		1C0234C228A00E7D00AC1E5B /* WebExtensionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContext.h; sourceTree = "<group>"; };
+		1C0234C328A00E7E00AC1E5B /* WebExtensionContext.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionContext.messages.in; sourceTree = "<group>"; };
+		1C0234C428A00E9E00AC1E5B /* WebExtensionContextProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionContextProxy.cpp; sourceTree = "<group>"; };
+		1C0234C528A00E9E00AC1E5B /* WebExtensionContextProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionContextProxy.messages.in; sourceTree = "<group>"; };
+		1C0234C628A00E9F00AC1E5B /* WebExtensionContextProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextProxy.h; sourceTree = "<group>"; };
+		1C0234C728A00FA800AC1E5B /* WebExtensionContextMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextMessagesReplies.h; sourceTree = "<group>"; };
+		1C0234C828A00FA800AC1E5B /* WebExtensionContextMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionContextMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C0234C928A00FA800AC1E5B /* WebExtensionContextProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextProxyMessages.h; sourceTree = "<group>"; };
+		1C0234CA28A00FA800AC1E5B /* WebExtensionContextProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextProxyMessagesReplies.h; sourceTree = "<group>"; };
+		1C0234CB28A00FA900AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionContextProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C0234CC28A00FA900AC1E5B /* WebExtensionContextMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContextMessages.h; sourceTree = "<group>"; };
+		1C0234D328A0135600AC1E5B /* _WKWebExtensionContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionContext.mm; sourceTree = "<group>"; };
+		1C0234D528A013D900AC1E5B /* _WKWebExtensionContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionContextPrivate.h; sourceTree = "<group>"; };
+		1C0234D628A013D900AC1E5B /* _WKWebExtensionContextInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionContextInternal.h; sourceTree = "<group>"; };
+		1C0234DB28A0268B00AC1E5B /* WebExtensionContextCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextCocoa.mm; sourceTree = "<group>"; };
 		1C049837289AF5AD0010308B /* _WKWebExtensionPermission.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionPermission.mm; sourceTree = "<group>"; };
+		1C04983A289AFF9B0010308B /* _WKWebExtensionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionContext.h; sourceTree = "<group>"; };
+		1C04983C289AFF9B0010308B /* _WKWebExtensionTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionTab.h; sourceTree = "<group>"; };
+		1C04983D289AFF9B0010308B /* _WKWebExtensionWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionWindow.h; sourceTree = "<group>"; };
 		1C0A19441C8FF1A800FE0EBB /* WebAutomationSessionProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAutomationSessionProxy.cpp; sourceTree = "<group>"; };
 		1C0A19451C8FF1A800FE0EBB /* WebAutomationSessionProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSessionProxy.h; sourceTree = "<group>"; };
 		1C0A19481C8FF30E00FE0EBB /* WebAutomationSessionProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAutomationSessionProxy.messages.in; sourceTree = "<group>"; };
@@ -3813,6 +3849,7 @@
 		1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIMessages.h; path = DerivedSources/WebKit/WebInspectorUIMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBD753C2747AA31004FA0FF /* WebGPUObjectHeap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUObjectHeap.cpp; sourceTree = "<group>"; };
 		1CBD753D2747AA31004FA0FF /* WebGPUObjectHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUObjectHeap.h; sourceTree = "<group>"; };
+		1CBEE26128F334D6006D1A02 /* WebExtensionContextParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionContextParameters.serialization.in; sourceTree = "<group>"; };
 		1CBF9012271018B5000C457D /* QualifiedResourceHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QualifiedResourceHeap.h; sourceTree = "<group>"; };
 		1CC23B1B288732A800D0A65A /* WebExtensionController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionController.messages.in; sourceTree = "<group>"; };
 		1CC23B1C288732A800D0A65A /* WebExtensionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionController.h; sourceTree = "<group>"; };
@@ -8203,6 +8240,9 @@
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
 				BC032DB010F4380F0058C15A /* WebEventConversion.cpp */,
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
+				1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */,
+				1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */,
+				1CBEE26128F334D6006D1A02 /* WebExtensionContextParameters.serialization.in */,
 				1C3BEB482887415100E66E38 /* WebExtensionControllerIdentifier.h */,
 				1C3BEB46288740AE00E66E38 /* WebExtensionControllerParameters.h */,
 				1C4B7BBF28E7A43F00B7265A /* WebExtensionControllerParameters.serialization.in */,
@@ -8573,6 +8613,7 @@
 			isa = PBXGroup;
 			children = (
 				1C627477288A1DDE00CED3A2 /* WebExtensionCocoa.mm */,
+				1C0234DB28A0268B00AC1E5B /* WebExtensionContextCocoa.mm */,
 				1C1CE96C288DF46C0098D3A1 /* WebExtensionMatchPatternCocoa.mm */,
 			);
 			path = Cocoa;
@@ -8872,6 +8913,9 @@
 			children = (
 				1C627476288A1DDE00CED3A2 /* Cocoa */,
 				1C3BEB5E2888710500E66E38 /* WebExtension.h */,
+				1C0234C128A00E7D00AC1E5B /* WebExtensionContext.cpp */,
+				1C0234C228A00E7D00AC1E5B /* WebExtensionContext.h */,
+				1C0234C328A00E7E00AC1E5B /* WebExtensionContext.messages.in */,
 				1CC23B1D288732A800D0A65A /* WebExtensionController.cpp */,
 				1CC23B1C288732A800D0A65A /* WebExtensionController.h */,
 				1CC23B1B288732A800D0A65A /* WebExtensionController.messages.in */,
@@ -8883,6 +8927,9 @@
 		1CC23B1E288732F600D0A65A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				1C0234C428A00E9E00AC1E5B /* WebExtensionContextProxy.cpp */,
+				1C0234C628A00E9F00AC1E5B /* WebExtensionContextProxy.h */,
+				1C0234C528A00E9E00AC1E5B /* WebExtensionContextProxy.messages.in */,
 				1CC23B21288732F600D0A65A /* WebExtensionControllerProxy.cpp */,
 				1CC23B20288732F600D0A65A /* WebExtensionControllerProxy.h */,
 				1CC23B1F288732F600D0A65A /* WebExtensionControllerProxy.messages.in */,
@@ -9861,6 +9908,10 @@
 				574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */,
 				1C3BEB6C288883E200E66E38 /* _WKWebExtension.h */,
 				1C3BEB6E288883E200E66E38 /* _WKWebExtension.mm */,
+				1C04983A289AFF9B0010308B /* _WKWebExtensionContext.h */,
+				1C0234D328A0135600AC1E5B /* _WKWebExtensionContext.mm */,
+				1C0234D628A013D900AC1E5B /* _WKWebExtensionContextInternal.h */,
+				1C0234D528A013D900AC1E5B /* _WKWebExtensionContextPrivate.h */,
 				1C3BEB5728875CE400E66E38 /* _WKWebExtensionController.h */,
 				1C3BEB5528875CE400E66E38 /* _WKWebExtensionController.mm */,
 				1C3BEB5628875CE400E66E38 /* _WKWebExtensionControllerInternal.h */,
@@ -9873,6 +9924,8 @@
 				1C8B2362289AE89400020CDC /* _WKWebExtensionPermission.h */,
 				1C049837289AF5AD0010308B /* _WKWebExtensionPermission.mm */,
 				1C3BEB6F288883E300E66E38 /* _WKWebExtensionPrivate.h */,
+				1C04983C289AFF9B0010308B /* _WKWebExtensionTab.h */,
+				1C04983D289AFF9B0010308B /* _WKWebExtensionWindow.h */,
 				1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */,
 				1AE286751C7E76510069AC4F /* _WKWebsiteDataSize.mm */,
 				1AE2867F1C7F92BF0069AC4F /* _WKWebsiteDataSizeInternal.h */,
@@ -13282,6 +13335,12 @@
 				E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */,
 				E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */,
 				E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */,
+				1C0234C828A00FA800AC1E5B /* WebExtensionContextMessageReceiver.cpp */,
+				1C0234CC28A00FA900AC1E5B /* WebExtensionContextMessages.h */,
+				1C0234C728A00FA800AC1E5B /* WebExtensionContextMessagesReplies.h */,
+				1C0234CB28A00FA900AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp */,
+				1C0234C928A00FA800AC1E5B /* WebExtensionContextProxyMessages.h */,
+				1C0234CA28A00FA800AC1E5B /* WebExtensionContextProxyMessagesReplies.h */,
 				1C3BEB4A2887492600E66E38 /* WebExtensionControllerMessageReceiver.cpp */,
 				1C3BEB492887492600E66E38 /* WebExtensionControllerMessages.h */,
 				1C3BEB4C2887492600E66E38 /* WebExtensionControllerMessagesReplies.h */,
@@ -14151,6 +14210,9 @@
 				5790A6532565DED30077C5A7 /* _WKWebAuthenticationPanelForTesting.h in Headers */,
 				574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */,
 				1C3BEB702888842400E66E38 /* _WKWebExtension.h in Headers */,
+				1C04983E289AFF9B0010308B /* _WKWebExtensionContext.h in Headers */,
+				1C0234D828A013D900AC1E5B /* _WKWebExtensionContextInternal.h in Headers */,
+				1C0234D728A013D900AC1E5B /* _WKWebExtensionContextPrivate.h in Headers */,
 				1C3BEB5B28875CE500E66E38 /* _WKWebExtensionController.h in Headers */,
 				1C3BEB5A28875CE500E66E38 /* _WKWebExtensionControllerInternal.h in Headers */,
 				1C3BEB5C28875CE500E66E38 /* _WKWebExtensionControllerPrivate.h in Headers */,
@@ -14160,6 +14222,8 @@
 				1C1CE974288DF5030098D3A1 /* _WKWebExtensionMatchPatternPrivate.h in Headers */,
 				1C8B2363289AE89400020CDC /* _WKWebExtensionPermission.h in Headers */,
 				1C3BEB712888842A00E66E38 /* _WKWebExtensionPrivate.h in Headers */,
+				1C049840289AFF9B0010308B /* _WKWebExtensionTab.h in Headers */,
+				1C049841289AFF9B0010308B /* _WKWebExtensionWindow.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
 				1AFB4C721ADF155D00B33339 /* _WKWebsiteDataStore.h in Headers */,
@@ -15059,6 +15123,12 @@
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
 				DDA0A41727E67039005E086E /* WebEventRegion.h in Headers */,
+				1C0234D928A01B1C00AC1E5B /* WebExtensionContextIdentifier.h in Headers */,
+				1C0234D228A00FF000AC1E5B /* WebExtensionContextMessages.h in Headers */,
+				1C0234CF28A00FF000AC1E5B /* WebExtensionContextMessagesReplies.h in Headers */,
+				1C0234DA28A01B2100AC1E5B /* WebExtensionContextParameters.h in Headers */,
+				1C0234D028A00FF000AC1E5B /* WebExtensionContextProxyMessages.h in Headers */,
+				1C0234D128A00FF000AC1E5B /* WebExtensionContextProxyMessagesReplies.h in Headers */,
 				1C3BEB7C2888A01000E66E38 /* WebExtensionController.h in Headers */,
 				1C3BEB7A2888A00800E66E38 /* WebExtensionControllerIdentifier.h in Headers */,
 				1C3BEB502887492F00E66E38 /* WebExtensionControllerMessages.h in Headers */,
@@ -17271,6 +17341,7 @@
 				49FBEFFF239B012F00BD032F /* _WKResourceLoadStatisticsThirdParty.mm in Sources */,
 				99E7189A21F79D9E0055E975 /* _WKTouchEventGenerator.mm in Sources */,
 				1C627479288B2F7400CED3A2 /* _WKWebExtension.mm in Sources */,
+				1C0234D428A0135600AC1E5B /* _WKWebExtensionContext.mm in Sources */,
 				1C62747A288B2F7400CED3A2 /* _WKWebExtensionController.mm in Sources */,
 				1C1CE972288DF5030098D3A1 /* _WKWebExtensionMatchPattern.mm in Sources */,
 				1C049838289AF5AD0010308B /* _WKWebExtensionPermission.mm in Sources */,
@@ -17626,6 +17697,9 @@
 				E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */,
 				E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */,
 				1C627478288A1E1D00CED3A2 /* WebExtensionCocoa.mm in Sources */,
+				1C0234DC28A0268C00AC1E5B /* WebExtensionContextCocoa.mm in Sources */,
+				1C0234CD28A00FE400AC1E5B /* WebExtensionContextMessageReceiver.cpp in Sources */,
+				1C0234CE28A00FE600AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp in Sources */,
 				1C3BEB522887492F00E66E38 /* WebExtensionControllerMessageReceiver.cpp in Sources */,
 				1C3BEB532887492F00E66E38 /* WebExtensionControllerProxyMessageReceiver.cpp in Sources */,
 				1C1CE96D288DF46D0098D3A1 /* WebExtensionMatchPatternCocoa.mm in Sources */,

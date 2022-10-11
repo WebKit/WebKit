@@ -180,6 +180,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebProcessPool \
         UIProcess/WebScreenOrientationManagerProxy \
 	UIProcess/Downloads/DownloadProxy \
+	UIProcess/Extensions/WebExtensionContext \
 	UIProcess/Extensions/WebExtensionController \
 	UIProcess/Media/AudioSessionRoutingArbitratorProxy \
 	UIProcess/Media/RemoteMediaSessionCoordinatorProxy \
@@ -187,6 +188,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/SpeechRecognitionServer \
 	UIProcess/XR/PlatformXRSystem \
 	WebProcess/Databases/IndexedDB/WebIDBConnectionToServer \
+	WebProcess/Extensions/WebExtensionContextProxy \
 	WebProcess/Extensions/WebExtensionControllerProxy \
 	WebProcess/GPU/GPUProcessConnection \
 	WebProcess/GPU/graphics/RemoteRenderingBackendProxy \
@@ -462,6 +464,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/TextFlags.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
+	Shared/WebExtensionContextParameters.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/WebsiteDataStoreParameters.serialization.in \

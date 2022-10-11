@@ -24,8 +24,15 @@
  */
 
 #import <wtf/RetainPtr.h>
+#import <wtf/UUID.h>
+#import <wtf/WallTime.h>
 
+OBJC_CLASS NSArray;
+OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSSet;
+OBJC_CLASS NSString;
+OBJC_CLASS NSUUID;
 
 namespace WebKit {
 
@@ -67,5 +74,11 @@ T *objectForKey(const RetainPtr<NSDictionary>& dictionary, id key, bool returnin
 }
 
 NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
+
+NSDate *toAPI(const WallTime&);
+WallTime toImpl(NSDate *);
+
+NSUUID *toAPI(const UUID&);
+UUID toImpl(NSUUID *);
 
 } // namespace WebKit

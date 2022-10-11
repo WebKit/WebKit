@@ -213,4 +213,44 @@ NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscap
     return result;
 }
 
+NSUUID *toAPI(const UUID& uuid)
+{
+    if (!uuid)
+        return nil;
+
+    return [[NSUUID alloc] initWithUUIDBytes:uuid.toSpan().data()];
+}
+
+UUID toImpl(NSUUID *uuid)
+{
+    if (!uuid)
+        return UUID(0);
+
+    uuid_t bytes;
+    [uuid getUUIDBytes:bytes];
+    return UUID(bytes);
+}
+
+NSDate *toAPI(const WallTime& time)
+{
+    if (std::isnan(time))
+        return nil;
+
+    if (std::isinf(time))
+        return NSDate.distantFuture;
+
+    return [NSDate dateWithTimeIntervalSince1970:time.secondsSinceEpoch().value()];
+}
+
+WallTime toImpl(NSDate *date)
+{
+    if (!date)
+        return WallTime::nan();
+
+    if ([date isEqualToDate:NSDate.distantFuture])
+        return WallTime::infinity();
+
+    return WallTime::fromRawSeconds(date.timeIntervalSince1970);
+}
+
 } // namespace WebKit

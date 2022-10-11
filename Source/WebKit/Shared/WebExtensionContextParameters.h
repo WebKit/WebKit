@@ -27,34 +27,12 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "APIObject.h"
-#include "MessageReceiver.h"
-#include "WebExtensionControllerIdentifier.h"
-#include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
+#include "WebExtensionContextIdentifier.h"
 
 namespace WebKit {
 
-struct WebExtensionControllerParameters;
-
-class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(WebExtensionController);
-
-public:
-    static Ref<WebExtensionController> create() { return adoptRef(*new WebExtensionController); }
-    static WebExtensionController* get(WebExtensionControllerIdentifier);
-
-    explicit WebExtensionController();
-    ~WebExtensionController();
-
-    WebExtensionControllerIdentifier identifier() const { return m_identifier; }
-    WebExtensionControllerParameters parameters() const;
-
-private:
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    WebExtensionControllerIdentifier m_identifier;
+struct WebExtensionContextParameters {
+    WebExtensionContextIdentifier identifier;
 };
 
 } // namespace WebKit
