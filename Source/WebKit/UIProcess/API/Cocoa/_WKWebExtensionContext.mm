@@ -39,6 +39,8 @@
 #import "_WKWebExtensionTab.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
+NSErrorDomain const _WKWebExtensionContextErrorDomain = @"_WKWebExtensionContextErrorDomain";
+
 NSNotificationName const _WKWebExtensionContextPermissionsWereGrantedNotification = @"_WKWebExtensionContextPermissionsWereGranted";
 NSNotificationName const _WKWebExtensionContextPermissionsWereDeniedNotification = @"_WKWebExtensionContextPermissionsWereDenied";
 NSNotificationName const _WKWebExtensionContextGrantedPermissionsWereRemovedNotification = @"_WKWebExtensionContextGrantedPermissionsWereRemoved";
@@ -91,6 +93,11 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 - (_WKWebExtensionController *)extensionController
 {
     return wrapper(_webExtensionContext->extensionController());
+}
+
+- (BOOL)isLoaded
+{
+    return _webExtensionContext->isLoaded();
 }
 
 - (NSURL *)baseURL
@@ -473,6 +480,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (_WKWebExtensionController *)extensionController
 {
     return nil;
+}
+
+- (BOOL)isLoaded
+{
+    return NO;
 }
 
 - (NSURL *)baseURL

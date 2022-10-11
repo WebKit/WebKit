@@ -282,6 +282,7 @@ Tests/WebKitCocoa/WKURLSchemeHandler-1.mm
 Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm
 Tests/WebKitCocoa/WKWebExtension.mm
 Tests/WebKitCocoa/WKWebExtensionContext.mm
+Tests/WebKitCocoa/WKWebExtensionController.mm
 Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm
 Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm
 Tests/WebKitCocoa/WKWebViewCandidateTests.mm

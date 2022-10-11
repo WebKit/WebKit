@@ -511,6 +511,12 @@
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
 
+/* WKWebExtensionContextErrorAlreadyLoaded description */
+"Extension context is already loaded." = "Extension context is already loaded.";
+
+/* WKWebExtensionContextErrorNotLoaded description */
+"Extension context is not loaded." = "Extension context is not loaded.";
+
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action */
 "Failed to load image for `default_icon` in the `action` manifest entry." = "Failed to load image for `default_icon` in the `action` manifest entry.";
 

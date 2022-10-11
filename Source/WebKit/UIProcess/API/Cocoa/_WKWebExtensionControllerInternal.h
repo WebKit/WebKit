@@ -41,6 +41,8 @@ template<> struct WrapperTraits<WebExtensionController> {
     API::ObjectStorage<WebKit::WebExtensionController> _webExtensionController;
 }
 
+@property (nonatomic, readonly) WebKit::WebExtensionController& _webExtensionController;
+
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

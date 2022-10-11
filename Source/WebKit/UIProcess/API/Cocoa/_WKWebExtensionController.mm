@@ -31,6 +31,8 @@
 #import "_WKWebExtensionControllerInternal.h"
 
 #import "WebExtensionController.h"
+#import "_WKWebExtensionContextInternal.h"
+#import "_WKWebExtensionInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKWebExtensionController
@@ -38,6 +40,16 @@
 + (BOOL)supportsSecureCoding
 {
     return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    return [self init];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    // Nothing to meaningfully encode.
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -60,16 +72,56 @@
     _webExtensionController->~WebExtensionController();
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder
+- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {
-    if (!(self = [self init]))
-        return nil;
-
-    return self;
+    return [self loadExtensionContext:extensionContext error:nullptr];
 }
 
-- (void)encodeWithCoder:(NSCoder *)coder
+- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
+    return _webExtensionController->load(extensionContext._webExtensionContext, outError);
+}
+
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext
+{
+    return [self unloadExtensionContext:extensionContext error:nullptr];
+}
+
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
+{
+    return _webExtensionController->unload(extensionContext._webExtensionContext, outError);
+}
+
+- (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
+{
+    if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
+        return extensionContext.value()->wrapper();
+    return nil;
+}
+
+template<typename T>
+static inline NSSet *toAPI(const T& inputSet)
+{
+    if (inputSet.isEmpty())
+        return [NSSet set];
+
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:inputSet.size()];
+
+    for (auto& entry : inputSet)
+        [result addObject:entry->wrapper()];
+
+    return [result copy];
+}
+
+- (NSSet<_WKWebExtension *> *)extensions
+{
+    auto extensions = _webExtensionController->extensions();
+    return toAPI(extensions);
+}
+
+- (NSSet<_WKWebExtensionContext *> *)extensionContexts
+{
+    return toAPI(_webExtensionController->extensionContexts());
 }
 
 #pragma mark WKObject protocol implementation
@@ -79,15 +131,46 @@
     return *_webExtensionController;
 }
 
+- (WebKit::WebExtensionController&)_webExtensionController
+{
+    return *_webExtensionController;
+}
+
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)initWithCoder:(NSCoder *)coder
+- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
+{
+    return NO;
+}
+
+- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error
+{
+    return NO;
+}
+
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext
+{
+    return NO;
+}
+
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
+{
+    return NO;
+}
+
+- (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
 {
     return nil;
 }
 
-- (void)encodeWithCoder:(NSCoder *)coder
+- (NSSet<_WKWebExtension *> *)extensions
 {
+    return nil;
+}
+
+- (NSSet<_WKWebExtensionContext *> *)extensionContexts
+{
+    return nil;
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
