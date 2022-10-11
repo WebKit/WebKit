@@ -6098,6 +6098,10 @@ js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
 js/ShadowRealm-importValue.html [ Pass Failure ]
 js/ShadowRealm-worker.html [ Pass Failure ]
 
+# We don't support screen orientation locking yet, making these tests flaky.
+imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Failure Pass ]
+imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure Pass ]
+
 # Old SVG+currentcolor tests are incorrect https://bugs.webkit.org/show_bug.cgi?id=245400
 imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual.svg [ Skip ]
 svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Skip ]
