@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+namespace Style {
+class BuilderState;
+}
+
 class CSSNamedImageValue final : public CSSImageGeneratorValue {
 public:
     static Ref<CSSNamedImageValue> create(const String& name)
@@ -45,6 +49,8 @@ public:
     RefPtr<Image> image(RenderElement&, const FloatSize&);
 
     bool equals(const CSSNamedImageValue&) const;
+
+    Ref<CSSNamedImageValue> valueWithStylesResolved(Style::BuilderState&) { return *this; }
 
 private:
     explicit CSSNamedImageValue(const String& name)

@@ -35,10 +35,12 @@ class StyleImageSet final : public StyleMultiImage {
 public:
     static Ref<StyleImageSet> create(CSSImageSetValue&);
     virtual ~StyleImageSet();
+
     bool operator==(const StyleImage& other) const;
 
 private:
     explicit StyleImageSet(CSSImageSetValue&);
+
     Ref<CSSValue> cssValue() const final;
     ImageWithScale selectBestFitImage(const Document&) const final;
     Ref<CSSImageSetValue> m_cssValue;

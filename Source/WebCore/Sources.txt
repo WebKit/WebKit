@@ -2552,12 +2552,16 @@ rendering/style/ShapeValue.cpp
 rendering/style/StyleBackgroundData.cpp
 rendering/style/StyleBoxData.cpp
 rendering/style/StyleCachedImage.cpp
+rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleContentAlignmentData.cpp
+rendering/style/StyleCrossfadeImage.cpp
 rendering/style/StyleCursorImage.cpp
 rendering/style/StyleDeprecatedFlexibleBoxData.cpp
 rendering/style/StyleFilterData.cpp
+rendering/style/StyleFilterImage.cpp
 rendering/style/StyleFlexibleBoxData.cpp
 rendering/style/StyleGeneratedImage.cpp
+rendering/style/StyleGradientImage.cpp
 rendering/style/StyleGridData.cpp
 rendering/style/StyleGridItemData.cpp
 rendering/style/StyleImageSet.cpp
@@ -2565,6 +2569,8 @@ rendering/style/StyleInheritedData.cpp
 rendering/style/StyleMarqueeData.cpp
 rendering/style/StyleMultiColData.cpp
 rendering/style/StyleMultiImage.cpp
+rendering/style/StyleNamedImage.cpp
+rendering/style/StylePaintImage.cpp
 rendering/style/StyleRareInheritedData.cpp
 rendering/style/StyleRareNonInheritedData.cpp
 rendering/style/StyleSelfAlignmentData.cpp

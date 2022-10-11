@@ -31,6 +31,11 @@
 #include "CSSImageGeneratorValue.h"
 
 namespace WebCore {
+
+namespace Style {
+class BuilderState;
+}
+
 class CSSVariableData;
 
 class CSSPaintImageValue final : public CSSImageGeneratorValue {
@@ -54,6 +59,8 @@ public:
     bool knownToBeOpaque(const RenderElement&) const { return false; }
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
+
+    Ref<CSSPaintImageValue> valueWithStylesResolved(Style::BuilderState&) { return *this; }
 
 private:
     CSSPaintImageValue(const String& name, Ref<CSSVariableData>&& arguments)

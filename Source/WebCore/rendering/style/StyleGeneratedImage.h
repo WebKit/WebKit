@@ -27,42 +27,25 @@
 
 namespace WebCore {
 
-class CSSValue;
 class CSSImageGeneratorValue;
 
-class StyleGeneratedImage final : public StyleImage {
+class StyleGeneratedImage : public StyleImage {
 public:
-    static Ref<StyleGeneratedImage> create(Ref<CSSImageGeneratorValue>&& value)
-    {
-        return adoptRef(*new StyleGeneratedImage(WTFMove(value)));
-    }
+    virtual CSSImageGeneratorValue& imageValue() = 0;
 
-    CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue; }
+protected:
+    explicit StyleGeneratedImage(Type, bool isFixedSize);
 
-private:
-    bool operator==(const StyleImage& other) const final;
-
-    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
-
-    Ref<CSSValue> cssValue() const final;
-
-    bool isPending() const override;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     FloatSize imageSize(const RenderElement*, float multiplier) const final;
+    void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool imageHasRelativeWidth() const final { return !m_fixedSize; }
     bool imageHasRelativeHeight() const final { return !m_fixedSize; }
-    void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool usesImageContainerSize() const final { return !m_fixedSize; }
     void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float) final { m_containerSize = containerSize; }
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
-    RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
-    bool knownToBeOpaque(const RenderElement&) const final;
 
-    explicit StyleGeneratedImage(Ref<CSSImageGeneratorValue>&&);
-    
-    Ref<CSSImageGeneratorValue> m_imageGeneratorValue;
+    // All generated images must be able to compute their fixed size.
+    virtual FloatSize fixedSize(const RenderElement&) const = 0;
+
     FloatSize m_containerSize;
     bool m_fixedSize;
 };

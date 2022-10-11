@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+namespace Style {
+class BuilderState;
+}
+
 class Document;
 
 class CSSCanvasValue final : public CSSImageGeneratorValue {
@@ -84,6 +88,8 @@ public:
 
         CSSCanvasValue& m_ownerValue;
     };
+
+    Ref<CSSCanvasValue> valueWithStylesResolved(Style::BuilderState&) { return *this; }
 
 private:
     explicit CSSCanvasValue(const String& name)
