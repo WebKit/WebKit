@@ -50,7 +50,7 @@ public:
     template <class Decoder> static std::optional<ContentSecurityPolicyResponseHeaders> decode(Decoder&);
 
     enum EmptyTag { Empty };
-    struct MarkableTraits {
+    struct MarkableTraits : DirectCodedMarkableTraits<ContentSecurityPolicyResponseHeaders, MarkableTraits> {
         static bool isEmptyValue(const ContentSecurityPolicyResponseHeaders& identifier)
         {
             return identifier.m_emptyForMarkable;

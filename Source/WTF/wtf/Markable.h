@@ -36,6 +36,7 @@
 
 #include <optional>
 #include <type_traits>
+#include <wtf/EnumTraits.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -59,10 +60,60 @@ struct EnumMarkableTraits {
     {
         return static_cast<EnumType>(constant);
     }
+
+    template <typename Encoder>
+    static void encode(Encoder& encoder, EnumType value)
+    {
+        ASSERT(isValidEnum<EnumType>(enumToUnderlyingType(value)));
+        encoder << value;
+    }
+
+    template <typename Decoder>
+    static std::optional<EnumType> decode(Decoder& decoder)
+    {
+        std::optional<UnderlyingType> value;
+        decoder >> value;
+        if (!value)
+            return std::nullopt;
+
+        if (*value != constant && !isValidEnum<EnumType>(*value))
+            return std::nullopt;
+
+        return static_cast<EnumType>(*value);
+    }
+};
+
+// This supplies a coding scheme for Markable traits types where it is safe to
+// code the wrapped T value directly, without a need to check for validity. Use
+// it like this:
+//
+// struct Uuid {
+//     Uint128 value;
+// };
+//
+// struct UuidMarkableTraits : DefaultCodedMarkableTraits<Uuid, UuidMarkableTraits> {
+//     static bool isEmptyValue(const Uuid& uuid) { return !uuid.value; }
+//     static Uuid emptyValue() { return { }; }
+// };
+template <typename T, typename Traits>
+struct DirectCodedMarkableTraits {
+    template <typename Encoder>
+    static void encode(Encoder& encoder, const T& value)
+    {
+        encoder << value;
+    }
+
+    template <typename Decoder>
+    static std::optional<T> decode(Decoder& decoder)
+    {
+        std::optional<T> value;
+        decoder >> value;
+        return value;
+    }
 };
 
 template<typename IntegralType, IntegralType constant = 0>
-struct IntegralMarkableTraits {
+struct IntegralMarkableTraits : DirectCodedMarkableTraits<IntegralType, IntegralMarkableTraits<IntegralType, constant>> {
     static_assert(std::is_integral<IntegralType>::value);
     constexpr static bool isEmptyValue(IntegralType value)
     {
@@ -167,37 +218,25 @@ template <typename T, typename Traits> constexpr bool operator!=(const Markable<
 template <typename T, typename Traits> constexpr bool operator!=(const T& v, const Markable<T, Traits>& x) { return !(v == x); }
 
 template <typename T, typename Traits>
-template<typename Encoder>
+template <typename Encoder>
 void Markable<T, Traits>::encode(Encoder& encoder) const
 {
-    bool isEmpty = Traits::isEmptyValue(m_value);
-    encoder << isEmpty;
-    if (!isEmpty)
-        encoder << m_value;
+    Traits::encode(encoder, m_value);
 }
 
 template <typename T, typename Traits>
-template<typename Decoder>
+template <typename Decoder>
 std::optional<Markable<T, Traits>> Markable<T, Traits>::decode(Decoder& decoder)
 {
-    std::optional<bool> isEmpty;
-    decoder >> isEmpty;
-    if (!isEmpty)
-        return std::nullopt;
-
-    if (*isEmpty)
-        return Markable { };
-
-    std::optional<T> value;
-    decoder >> value;
+    auto value = Traits::decode(decoder);
     if (!value)
         return std::nullopt;
-
     return Markable { WTFMove(*value) };
 }
 
 } // namespace WTF
 
-using WTF::Markable;
-using WTF::IntegralMarkableTraits;
+using WTF::DirectCodedMarkableTraits;
 using WTF::EnumMarkableTraits;
+using WTF::IntegralMarkableTraits;
+using WTF::Markable;

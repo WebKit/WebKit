@@ -103,7 +103,7 @@ public:
         return String::number(m_identifier);
     }
 
-    struct MarkableTraits {
+    struct MarkableTraits : DirectCodedMarkableTraits<ObjectIdentifier, MarkableTraits> {
         static bool isEmptyValue(ObjectIdentifier identifier)
         {
             return !identifier.m_identifier;

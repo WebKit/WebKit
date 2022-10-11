@@ -99,7 +99,7 @@ public:
     template<typename Encoder> void encode(Encoder& encoder) const { encoder << m_object << m_processIdentifier; }
     template<typename Decoder> static std::optional<ProcessQualified> decode(Decoder&);
 
-    struct MarkableTraits {
+    struct MarkableTraits : DirectCodedMarkableTraits<ProcessQualified, MarkableTraits> {
         static bool isEmptyValue(const ProcessQualified& identifier) { return !identifier; }
         static constexpr ProcessQualified emptyValue() { return { }; }
     };

@@ -28,6 +28,7 @@
 #include <wtf/ClockType.h>
 #include <wtf/GenericTimeMixin.h>
 #include <wtf/Int128.h>
+#include <wtf/Markable.h>
 
 namespace WTF {
 
@@ -64,7 +65,7 @@ private:
 };
 static_assert(sizeof(WallTime) == sizeof(double));
 
-struct WallTime::MarkableTraits {
+struct WallTime::MarkableTraits : DirectCodedMarkableTraits<WallTime, WallTime::MarkableTraits> {
     static bool isEmptyValue(WallTime time)
     {
         return std::isnan(time.m_value);

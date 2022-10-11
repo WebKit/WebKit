@@ -67,7 +67,7 @@ private:
 };
 static_assert(sizeof(MonotonicTime) == sizeof(double));
 
-struct MonotonicTime::MarkableTraits {
+struct MonotonicTime::MarkableTraits : DirectCodedMarkableTraits<MonotonicTime, MonotonicTime::MarkableTraits> {
     static bool isEmptyValue(MonotonicTime time)
     {
         return std::isnan(time.m_value);

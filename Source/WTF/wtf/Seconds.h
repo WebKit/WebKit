@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <wtf/FastMalloc.h>
+#include <wtf/Markable.h>
 #include <wtf/MathExtras.h>
 
 namespace WTF {
@@ -260,7 +261,7 @@ private:
 
 WTF_EXPORT_PRIVATE void sleep(Seconds);
 
-struct Seconds::MarkableTraits {
+struct Seconds::MarkableTraits : DirectCodedMarkableTraits<Seconds, Seconds::MarkableTraits> {
     static bool isEmptyValue(Seconds seconds)
     {
         return std::isnan(seconds.value());

@@ -27,6 +27,7 @@
 
 #include <wtf/ClockType.h>
 #include <wtf/GenericTimeMixin.h>
+#include <wtf/Markable.h>
 
 namespace WTF {
 
@@ -66,7 +67,7 @@ private:
 };
 static_assert(sizeof(ApproximateTime) == sizeof(double));
 
-struct ApproximateTime::MarkableTraits {
+struct ApproximateTime::MarkableTraits : DirectCodedMarkableTraits<ApproximateTime, ApproximateTime::MarkableTraits> {
     static bool isEmptyValue(ApproximateTime time)
     {
         return std::isnan(time.m_value);
