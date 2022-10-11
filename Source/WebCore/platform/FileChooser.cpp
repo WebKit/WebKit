@@ -68,6 +68,14 @@ void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<Stri
     m_client->filesChosen(WTFMove(files));
 }
 
+void FileChooser::cancelFileChoosing()
+{
+    if (!m_client)
+        return;
+
+    m_client->fileChoosingCancelled();
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this function
@@ -87,10 +95,6 @@ void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String
 
 void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
 {
-    auto paths = files.map([](auto& file) {
-        return file.path;
-    });
-
     if (m_client)
         m_client->filesChosen(files);
 }

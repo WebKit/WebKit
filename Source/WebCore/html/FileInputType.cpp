@@ -400,7 +400,9 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
         // input instance is safe since it is ref-counted.
         protectedInputElement->dispatchInputEvent();
         protectedInputElement->dispatchChangeEvent();
-    }
+    } else
+        protectedInputElement->dispatchCancelEvent();
+
     protectedInputElement->setChangedSinceLastFormControlChangeEvent(false);
 }
 
@@ -448,6 +450,14 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
         files.uncheckedAppend({ paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } });
 
     filesChosen(WTFMove(files));
+}
+
+void FileInputType::fileChoosingCancelled()
+{
+    ASSERT(element());
+    Ref<HTMLInputElement> protectedInputElement(*element());
+
+    protectedInputElement->dispatchCancelEvent();
 }
 
 void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& icon)

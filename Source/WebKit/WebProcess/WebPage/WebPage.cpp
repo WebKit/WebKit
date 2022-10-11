@@ -5094,6 +5094,10 @@ void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files, const Vect
 
 void WebPage::didCancelForOpenPanel()
 {
+    if (!m_activeOpenPanelResultListener)
+        return;
+
+    m_activeOpenPanelResultListener->didCancelFileChoosing();
     m_activeOpenPanelResultListener = nullptr;
 }
 

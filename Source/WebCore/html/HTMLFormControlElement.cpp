@@ -299,6 +299,11 @@ void HTMLFormControlElement::dispatchChangeEvent()
     dispatchScopedEvent(Event::create(eventNames().changeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
+void HTMLFormControlElement::dispatchCancelEvent()
+{
+    dispatchScopedEvent(Event::create(eventNames().cancelEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+}
+
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
     dispatchChangeEvent();

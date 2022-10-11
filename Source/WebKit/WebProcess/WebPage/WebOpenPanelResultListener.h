@@ -45,6 +45,7 @@ public:
 
     void disconnectFromPage() { m_page = 0; }
     void didChooseFiles(const Vector<String>& files, const Vector<String>& replacementFiles);
+    void didCancelFileChoosing();
 #if PLATFORM(IOS_FAMILY)
     void didChooseFilesWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, WebCore::Icon*);
 #endif
