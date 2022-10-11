@@ -91,7 +91,7 @@ public:
         wakeUpServer(WakeUpServer::Yes);
     }
 
-    void open();
+    void open(SerialFunctionDispatcher&);
     void invalidate();
 
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);

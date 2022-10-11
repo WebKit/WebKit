@@ -69,6 +69,7 @@ class RemoteRenderingBackendProxy
     , public GPUProcessConnection::Client {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
+    static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher*);
 
     ~RemoteRenderingBackendProxy();
 
@@ -150,8 +151,10 @@ public:
         sendToStream(WTFMove(message), renderingBackendIdentifier());
     }
 
+    SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+
 private:
-    explicit RemoteRenderingBackendProxy(WebPage&);
+    explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher*);
 
     IPC::StreamClientConnection& streamConnection();
 
@@ -177,7 +180,7 @@ private:
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
-    GPUProcessConnection* m_gpuProcessConnection { nullptr };
+    RefPtr<GPUProcessConnection> m_gpuProcessConnection;
     RefPtr<IPC::Connection> m_connection;
     std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;
@@ -185,6 +188,7 @@ private:
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
+    SerialFunctionDispatcher& m_dispatcher;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;

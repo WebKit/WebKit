@@ -51,6 +51,7 @@
 #include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
+#include "WorkerClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <wtf/Assertions.h>
@@ -280,6 +281,8 @@ public:
     // other existing caches for the origin that would not be replaced by
     // the new cache.
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t totalSpaceNeeded) = 0;
+
+    virtual std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&) { return nullptr; }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     virtual void didPreventDefaultForEvent() = 0;

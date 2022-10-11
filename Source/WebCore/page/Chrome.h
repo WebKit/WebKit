@@ -26,6 +26,7 @@
 #include "FocusDirection.h"
 #include "HostWindow.h"
 #include <wtf/Forward.h>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(COCOA)
@@ -60,6 +61,7 @@ class PopupMenu;
 class PopupMenuClient;
 class PopupOpeningObserver;
 class SearchPopupMenu;
+class WorkerClient;
 
 struct AppHighlight;
 struct ContactInfo;
@@ -171,6 +173,8 @@ public:
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
 #endif
+
+    std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
 
 #if ENABLE(APP_HIGHLIGHTS)
     void storeAppHighlight(AppHighlight&&) const;

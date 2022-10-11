@@ -49,7 +49,7 @@ enum class ImageBufferOptions : uint8_t {
     UseDisplayList  = 1 << 1
 };
 
-class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
+class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     struct CreationContext {
         // clang 13.1.6 throws errors if we use default initializers here.
@@ -161,6 +161,7 @@ public:
     RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
     const ImageBufferBackend::Parameters& parameters() const { return m_parameters; }
+    virtual bool isRemote() const { return false; }
 
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
     bool canMapBackingStore() const { return m_backendInfo.canMapBackingStore; }

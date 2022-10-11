@@ -48,15 +48,17 @@ using namespace WebCore;
 
 std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
-    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(webPage));
+    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy({ RenderingBackendIdentifier::generate(), webPage.webPageProxyIdentifier(), webPage.identifier() }, &RunLoop::main()));
 }
 
-RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(WebPage& webPage)
-    : m_parameters {
-        RenderingBackendIdentifier::generate(),
-        webPage.webPageProxyIdentifier(),
-        webPage.identifier()
-    }
+std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher* dispatcher)
+{
+    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(parameters, dispatcher));
+}
+
+RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher* dispatcher)
+    : m_parameters(parameters)
+    , m_dispatcher(dispatcher ? *dispatcher : RunLoop::main())
 {
 }
 
@@ -74,13 +76,16 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        if (&m_dispatcher == &RunLoop::main())
+            m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        else
+            m_gpuProcessConnection = WebProcess::singleton().createGPUProcessConnection(&m_dispatcher);
         m_gpuProcessConnection->addClient(*this);
 
         static constexpr auto connectionBufferSize = 1 << 21;
         auto [streamConnection, dedicatedConnectionClientHandle] = IPC::StreamClientConnection::createWithDedicatedConnection(*this, connectionBufferSize);
         m_streamConnection = WTFMove(streamConnection);
-        m_streamConnection->open();
+        m_streamConnection->open(m_dispatcher);
         m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(dedicatedConnectionClientHandle), m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     return *m_gpuProcessConnection;

@@ -151,7 +151,7 @@ protected:
 
 TEST_F(StreamConnectionTest, OpenConnections)
 {
-    m_clientConnection->open();
+    m_clientConnection->open(RunLoop::main());
     m_serverConnection->open();
     m_clientConnection->invalidate();
     m_serverConnection->invalidate();
@@ -159,7 +159,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
 
 TEST_F(StreamConnectionTest, SendLocalMessage)
 {
-    m_clientConnection->open();
+    m_clientConnection->open(RunLoop::main());
     m_serverConnection->open();
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockTestMessage1::name()), 77);

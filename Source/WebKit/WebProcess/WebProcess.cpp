@@ -1296,6 +1296,11 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 
 #if ENABLE(GPU_PROCESS)
 
+RefPtr<GPUProcessConnection> WebProcess::createGPUProcessConnection(SerialFunctionDispatcher* dispatcher)
+{
+    return GPUProcessConnection::create(*singleton().parentProcessConnection(), dispatcher);
+}
+
 GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());

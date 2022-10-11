@@ -54,6 +54,8 @@
 #include "SharedBuffer.h"
 #include "SuspendableTimer.h"
 #include "WebCodecsVideoFrame.h"
+#include "WorkerClient.h"
+#include "WorkerGlobalScope.h"
 #include <variant>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
@@ -99,12 +101,10 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
         if (document.view() && document.view()->root()) {
             client = document.view()->root()->hostWindow();
         }
-    }
+    } else if (scriptExecutionContext.isWorkerGlobalScope())
+        client = downcast<WorkerGlobalScope>(scriptExecutionContext).getWorkerClient();
 
-    if (client)
-        return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { client });
-
-    return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions);
+    return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { client });
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
@@ -124,7 +124,22 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
 Vector<std::optional<ImageBitmapBacking>> ImageBitmap::detachBitmaps(Vector<RefPtr<ImageBitmap>>&& bitmaps)
 {
     return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) {
-        return bitmap->takeImageBitmapBacking();
+        auto backing = bitmap->takeImageBitmapBacking();
+        // FIXME: Currently remote-backed ImageBuffers can't be transferred to a different thread,
+        // so we have to read the contents back to a local ImageBuffer and transfer that instead.
+        // Bug 244830 will add support for direct transfers.
+        if (!backing || !backing->buffer() || !backing->buffer()->isRemote())
+            return backing;
+
+        auto source = backing->buffer();
+        auto copyBuffer = ImageBuffer::create(source->logicalSize(), RenderingPurpose::Unspecified, source->resolutionScale(), source->colorSpace(), source->pixelFormat());
+        if (copyBuffer) {
+            copyBuffer->context().drawImageBuffer(*source, FloatPoint { }, CompositeOperator::Copy);
+            backing.emplace(WTFMove(copyBuffer), backing->serializationState());
+        } else
+            backing.reset();
+
+        return backing;
     });
 }
 
@@ -905,10 +920,6 @@ ImageBitmap::ImageBitmap(std::optional<ImageBitmapBacking>&& backingStore)
 
 ImageBitmap::~ImageBitmap()
 {
-    if (isMainThread())
-        return;
-    if (auto imageBuffer = takeImageBuffer())
-        callOnMainThread([imageBuffer = WTFMove(imageBuffer)] { });
 }
 
 std::optional<ImageBitmapBacking> ImageBitmap::takeImageBitmapBacking()

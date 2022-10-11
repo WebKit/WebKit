@@ -31,6 +31,7 @@
 #include "NotificationPermission.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
+#include "WorkerClient.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkerType.h"
@@ -106,6 +107,8 @@ public:
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
     bool isInStaticScriptEvaluation() const { return m_isInStaticScriptEvaluation; }
 
+    void setWorkerClient(std::unique_ptr<WorkerClient>&& client) { m_workerClient = WTFMove(client); }
+    WorkerClient* workerClient() { return m_workerClient.get(); }
 protected:
     WorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 
@@ -117,6 +120,7 @@ protected:
     IDBClient::IDBConnectionProxy* idbConnectionProxy();
     SocketProvider* socketProvider();
 
+    std::unique_ptr<WorkerClient> m_workerClient;
 private:
     virtual ASCIILiteral threadName() const = 0;
 

@@ -52,7 +52,7 @@ public:
     void postConnectEvent(TransferredMessagePort&&, const String& sourceOrigin);
 
 private:
-    SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
 
     EventTargetInterface eventTargetInterface() const final { return SharedWorkerGlobalScopeEventTargetInterfaceType; }
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Sharedworker; }

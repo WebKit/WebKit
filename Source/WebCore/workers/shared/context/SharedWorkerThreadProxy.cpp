@@ -27,6 +27,7 @@
 #include "SharedWorkerThreadProxy.h"
 
 #include "CacheStorageProvider.h"
+#include "Chrome.h"
 #include "ErrorEvent.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -43,6 +44,7 @@
 #include "SharedWorkerGlobalScope.h"
 #include "SharedWorkerThread.h"
 #include "WebRTCProvider.h"
+#include "WorkerClient.h"
 #include "WorkerFetchResult.h"
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
@@ -108,6 +110,9 @@ SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedW
         platformStrategies()->loaderStrategy()->addOnlineStateChangeListener(&networkStateChanged);
         addedListener = true;
     }
+
+    if (auto workerClient = m_page->chrome().createWorkerClient(thread()))
+        thread().setWorkerClient(WTFMove(workerClient));
 }
 
 SharedWorkerThreadProxy::~SharedWorkerThreadProxy()

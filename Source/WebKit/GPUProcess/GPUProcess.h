@@ -39,6 +39,7 @@
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -81,6 +82,7 @@ public:
     void connectionToWebProcessClosed(IPC::Connection&);
 
     GPUConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
+    const Vector<Ref<GPUConnectionToWebProcess>>* extraWebProcessConnections(WebCore::ProcessIdentifier) const;
 
     const String& mediaCacheDirectory(PAL::SessionID) const;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -188,7 +190,11 @@ private:
 #endif
 
     // Connections to WebProcesses.
-    HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+    struct WebProcessConnections {
+        RefPtr<GPUConnectionToWebProcess> primary;
+        Vector<Ref<GPUConnectionToWebProcess>> secondary;
+    };
+    HashMap<WebCore::ProcessIdentifier, WebProcessConnections> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };
     
     GPUProcessPreferences m_preferences;

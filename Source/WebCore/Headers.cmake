@@ -1290,6 +1290,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WheelEventTestMonitor.h
     page/WindowFeatures.h
     page/WindowOrWorkerGlobalScope.h
+    page/WorkerClient.h
 
     page/csp/CSPViolationReportBody.h
     page/csp/ContentSecurityPolicy.h

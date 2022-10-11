@@ -49,7 +49,9 @@ RetainPtr<NSDictionary> GPUProcess::additionalStateForDiagnosticReport() const
         auto webProcessConnectionInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_webProcessConnections.size()]);
         for (auto& identifierAndConnection : m_webProcessConnections) {
             auto& [webProcessIdentifier, connection] = identifierAndConnection;
-            auto& backendMap = connection->remoteRenderingBackendMap();
+            if (!connection.primary)
+                continue;
+            auto& backendMap = connection.primary->remoteRenderingBackendMap();
             if (backendMap.isEmpty())
                 continue;
 

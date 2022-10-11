@@ -63,7 +63,7 @@ class RemoteVideoFrameObjectHeapProxy;
 
 class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public IPC::Connection::Client {
 public:
-    static RefPtr<GPUProcessConnection> create(IPC::Connection& parentConnection);
+    static RefPtr<GPUProcessConnection> create(IPC::Connection& parentConnection, SerialFunctionDispatcher* = nullptr);
     ~GPUProcessConnection();
     
     IPC::Connection& connection() { return m_connection.get(); }
@@ -115,7 +115,7 @@ public:
 
     static constexpr Seconds defaultTimeout = 3_s;
 private:
-    GPUProcessConnection(IPC::Connection::Identifier&&);
+    GPUProcessConnection(IPC::Connection::Identifier&&, SerialFunctionDispatcher*);
     bool waitForDidInitialize();
     void invalidate();
 

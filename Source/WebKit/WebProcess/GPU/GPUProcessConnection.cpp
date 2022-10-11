@@ -109,25 +109,28 @@ static void languagesChanged(void* context)
     static_cast<GPUProcessConnection*>(context)->connection().send(Messages::GPUConnectionToWebProcess::SetUserPreferredLanguages(userPreferredLanguages()), { });
 }
 
-static GPUProcessConnectionParameters getGPUProcessConnectionParameters()
+static GPUProcessConnectionParameters getGPUProcessConnectionParameters(bool forMainThread)
 {
     GPUProcessConnectionParameters parameters;
 #if PLATFORM(COCOA)
     parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
     parameters.overrideLanguages = userPreferredLanguagesOverride();
 #endif
+    parameters.isForMainThread = forMainThread;
     return parameters;
 }
 
-RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& parentConnection)
+RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& parentConnection, SerialFunctionDispatcher* dispatcher)
 {
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers)
         return nullptr;
 
-    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(connectionIdentifiers->client, getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    ensureOnMainRunLoop([client = WTFMove(connectionIdentifiers->client), parentConnection = Ref { parentConnection }, isForMainThread = isMainRunLoop()]() {
+        parentConnection->send(Messages::WebProcessProxy::CreateGPUProcessConnection(client, getGPUProcessConnectionParameters(isForMainThread)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    });
 
-    auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server)));
+    auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server), dispatcher));
 #if ENABLE(IPC_TESTING_API)
     if (parentConnection.ignoreInvalidMessageForTesting())
         instance->connection().setIgnoreInvalidMessageForTesting();
@@ -135,10 +138,10 @@ RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& paren
     return instance;
 }
 
-GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
+GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connectionIdentifier, SerialFunctionDispatcher* dispatcher)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier))
 {
-    m_connection->open(*this);
+    m_connection->open(*this, dispatcher ? *dispatcher : RunLoop::main());
 
     addLanguageChangeObserver(this, languagesChanged);
 

@@ -83,10 +83,10 @@ StreamClientConnection::~StreamClientConnection()
     ASSERT(!m_dedicatedConnectionClient || !m_connection->isValid());
 }
 
-void StreamClientConnection::open()
+void StreamClientConnection::open(SerialFunctionDispatcher& dispatcher)
 {
     if (m_dedicatedConnectionClient)
-        m_connection->open(*m_dedicatedConnectionClient);
+        m_connection->open(*m_dedicatedConnectionClient, dispatcher);
 }
 
 void StreamClientConnection::invalidate()

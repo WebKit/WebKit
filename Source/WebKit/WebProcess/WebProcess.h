@@ -236,6 +236,7 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
+    RefPtr<GPUProcessConnection> createGPUProcessConnection(SerialFunctionDispatcher*);
     void gpuProcessConnectionClosed(GPUProcessConnection&);
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
 

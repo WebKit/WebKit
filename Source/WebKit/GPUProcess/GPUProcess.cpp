@@ -140,15 +140,33 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
         newConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
-    ASSERT(!m_webProcessConnections.contains(identifier));
-    m_webProcessConnections.add(identifier, WTFMove(newConnection));
+    auto& connections = m_webProcessConnections.ensure(identifier, []() {
+        return WebProcessConnections { };
+    }).iterator->value;
+
+    if (parameters.isForMainThread) {
+        ASSERT(!connections.primary);
+        connections.primary = newConnection.ptr();
+    } else
+        connections.secondary.append(newConnection);
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
-    ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
-    m_webProcessConnections.remove(connection.webProcessIdentifier());
+    auto iter = m_webProcessConnections.find(connection.webProcessIdentifier());
+    ASSERT(iter != m_webProcessConnections.end());
+    auto& connections = iter->value;
+    if (connections.primary == &connection)
+        connections.primary = nullptr;
+    else {
+        bool removed = connections.secondary.removeFirstMatching([&connection](const Ref<GPUConnectionToWebProcess>& current) {
+            return current.ptr() == &connection;
+        });
+        ASSERT_UNUSED(removed, removed);
+    }
+    if (!connections.primary && !connections.secondary.size())
+        m_webProcessConnections.remove(iter);
     tryExitIfUnusedAndUnderMemoryPressure();
 }
 
@@ -165,8 +183,12 @@ bool GPUProcess::canExitUnderMemoryPressure() const
 {
     ASSERT(isMainRunLoop());
     for (auto& webProcessConnection : m_webProcessConnections.values()) {
-        if (!webProcessConnection->allowsExitUnderMemoryPressure())
+        if (webProcessConnection.primary && !webProcessConnection.primary->allowsExitUnderMemoryPressure())
             return false;
+        for (auto& secondary : webProcessConnection.secondary) {
+            if (!secondary->allowsExitUnderMemoryPressure())
+                return false;
+        }
     }
     return true;
 }
@@ -211,8 +233,12 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
     RELEASE_LOG(Process, "GPUProcess::lowMemoryHandler: critical=%d, synchronous=%d", critical == Critical::Yes, synchronous == Synchronous::Yes);
     tryExitIfUnused();
 
-    for (auto& connection : m_webProcessConnections.values())
-        connection->lowMemoryHandler(critical, synchronous);
+    for (auto& connection : m_webProcessConnections.values()) {
+        if (connection.primary)
+            connection.primary->lowMemoryHandler(critical, synchronous);
+        for (auto& secondary : connection.secondary)
+            secondary->lowMemoryHandler(critical, synchronous);
+    }
 
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
@@ -348,7 +374,18 @@ void GPUProcess::resume()
 
 GPUConnectionToWebProcess* GPUProcess::webProcessConnection(WebCore::ProcessIdentifier identifier) const
 {
-    return m_webProcessConnections.get(identifier);
+    auto iter = m_webProcessConnections.find(identifier);
+    if (iter == m_webProcessConnections.end())
+        return nullptr;
+    return iter->value.primary.get();
+}
+
+const Vector<Ref<GPUConnectionToWebProcess>>* GPUProcess::extraWebProcessConnections(WebCore::ProcessIdentifier identifier) const
+{
+    auto iter = m_webProcessConnections.find(identifier);
+    if (iter == m_webProcessConnections.end())
+        return nullptr;
+    return &iter->value.secondary;
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -360,8 +397,12 @@ void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
 {
     m_orientation = orientation;
-    for (auto& connection : m_webProcessConnections.values())
-        connection->setOrientationForMediaCapture(orientation);
+    for (auto& connection : m_webProcessConnections.values()) {
+        if (connection.primary)
+            connection.primary->setOrientationForMediaCapture(orientation);
+        for (auto& secondary : connection.secondary)
+            secondary->setOrientationForMediaCapture(orientation);
+    }
 }
 
 void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
@@ -441,8 +482,12 @@ void GPUProcess::showScreenPicker(CompletionHandler<void(std::optional<WebCore::
 #if PLATFORM(MAC)
 void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 {
-    for (auto& connection : m_webProcessConnections.values())
-        connection->displayConfigurationChanged(displayID, flags);
+    for (auto& connection : m_webProcessConnections.values()) {
+        if (connection.primary)
+            connection.primary->displayConfigurationChanged(displayID, flags);
+        for (auto& secondary : connection.secondary)
+            secondary->displayConfigurationChanged(displayID, flags);
+    }
 }
 #endif
 
@@ -548,20 +593,24 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& process)
 {
-    for (auto& connection : m_webProcessConnections.values())
-        connection->processIsStartingToCaptureAudio(process);
+    for (auto& connection : m_webProcessConnections.values()) {
+        if (connection.primary)
+            connection.primary->processIsStartingToCaptureAudio(process);
+        for (auto& secondary : connection.secondary)
+            secondary->processIsStartingToCaptureAudio(process);
+    }
 }
 #endif
 
 void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&& completion)
 {
     auto iterator = m_webProcessConnections.find(processIdentifier);
-    if (iterator == m_webProcessConnections.end()) {
+    if (iterator == m_webProcessConnections.end() || !iterator->value.primary) {
         completion({ });
         return;
     }
 
-    completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
+    completion(iterator->value.primary->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
 }
 
 } // namespace WebKit
