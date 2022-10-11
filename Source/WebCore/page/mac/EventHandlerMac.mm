@@ -401,6 +401,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         if (subframe.page()->dragController().didInitiateDrag())
             return false;
 #endif
+        FALLTHROUGH;
     case NSEventTypeMouseMoved:
         // Since we're passing in currentNSEvent() here, we can call
         // handleMouseMoveEvent() directly, since the save/restore of
