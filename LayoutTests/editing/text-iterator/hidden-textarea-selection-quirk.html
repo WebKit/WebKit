@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Selections in hidden elements</title>
+<meta name="timeout" content="long">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 </head>
@@ -36,63 +37,114 @@ container, my-text {
 <textarea class=select>test text</textarea>
 <my-text class=select>test text</my-text>
 </container>
+<button id="nextStepButton" onclick="runNextStep()">Run next step</button>
+<div id="output" contenteditable></div>
 <script>
-function checkSelectable(element, expected)
+let runNextStep = null;
+async function checkSelectable(test, element, expected)
 {
-    var selection = document.getSelection();
-    if (element.select)
-        element.select();
-    else
-        selection.selectAllChildren(element);
+    const selectText = () => {
+        var selection = document.getSelection();
+        if (element.select)
+            element.select();
+        else
+            selection.selectAllChildren(element);
+    };
 
-    var selectionText = selection.toString();
-    if (expected)
-        assert_equals(selectionText, "test text");
-    else
-        assert_equals(selectionText, "");
+    const copyPromise = new Promise((resolve) => {
+        runNextStep = () => {
+            test.step(() => {
+                selectText();
+                document.execCommand('copy');
+            });
+            setTimeout(resolve, 0);
+        }
+    });
+    if (window.testRunner || document.queryCommandEnabled('copy'))
+        runNextStep();
+
+    await copyPromise;
+
+    const pastePromise = new Promise((resolve) => {
+        runNextStep = () => {
+            test.step(() => {
+                output.textContent = '';
+                let pastedContent = null;
+                output.addEventListener('paste', (event) => {
+                    pastedContent = event.clipboardData.getData('text/plain');
+                }, {once: true});
+                output.focus();
+                getSelection().collapse(output, 0);
+                document.execCommand('paste');
+                if (expected)
+                    assert_equals(output.textContent, "test text");
+                else
+                    assert_equals(output.textContent, "");
+            });
+            test.done();
+            setTimeout(resolve, 0);
+        }
+    });
+    if (window.testRunner || document.queryCommandEnabled('paste'))
+        runNextStep();
+
+    await pastePromise;
 }
+
+if (window.testRunner)
+    nextStepButton.style.display = 'none';
 
 var textarea = document.querySelector("textarea");
 var myText = document.querySelector("my-text");
 
-test(function () {
-    checkSelectable(textarea, true);
+let test1 = null;
+async_test(function (test) {
+    test1 = checkSelectable(test, textarea, true);
 }, "Selecting in barely visible textarea");
 
-test(function () {
-    checkSelectable(myText, true);
-}, "Selecting in barely visible div");
+let test2 = null;
+async_test(function (test) {
+    test2 = test1.then(() => checkSelectable(test, myText, true));
+}, "Selecting in barely visible div");  
 
-document.querySelector("container").classList.add("hide");
-
-test(function () {
-    checkSelectable(textarea, false);
+let test3 = null;
+async_test(function (test) {
+    test3 = test2.then(() => {
+        document.querySelector("container").classList.add("hide");
+        return checkSelectable(test, textarea, false);
+    });
 }, "Selecting in textarea hidden by container");
 
-test(function () {
-    checkSelectable(myText, false);
+let test4 = null;
+async_test(function (test) {
+    test4 = test3.then(() => checkSelectable(test, myText, false));
 }, "Selecting in div hidden by container");
 
-textarea.classList.add("abs");
-myText.classList.add("abs");
-
-test(function () {
-    checkSelectable(textarea, true);
+let test5 = null;
+async_test(function (test) {
+    test5 = test4.then(() => {
+        textarea.classList.add("abs");
+        myText.classList.add("abs");
+        return checkSelectable(test, textarea, true);
+    });
 }, "Selecting in absolute positioned textarea hidden by container");
 
-test(function () {
-    checkSelectable(myText, true);
+let test6 = null;
+async_test(function (test) {
+    test6 = test5.then(() => checkSelectable(test, myText, true));
 }, "Selecting in absolute positioned div hidden by container");
 
-textarea.classList.add("borderBox");
-myText.classList.add("borderBox");
-
-test(function () {
-    checkSelectable(textarea, true);
+let test7 = null;
+async_test(function (test) {
+    test7 = test6.then(() => {
+        textarea.classList.add("borderBox");
+        myText.classList.add("borderBox");
+        return checkSelectable(test, textarea, true);
+    });
 }, "Selecting in absolute positioned zero content width textarea hidden by container (quirk behavior)");
 
-test(function () {
-    checkSelectable(myText, false);
+async_test(function (test) {
+    test7.then(() => checkSelectable(test, myText, false));
 }, "Selecting in absolute positioned zero content width div hidden by container");
 
 </script>
