@@ -2320,7 +2320,7 @@ ExceptionOr<void> Internals::setDelegatesScrolling(bool enabled)
     if (!document || !document->view() || !document->page() || &document->page()->mainFrame() != document->frame())
         return Exception { InvalidAccessError };
 
-    document->view()->setDelegatesScrolling(enabled);
+    document->view()->setDelegatedScrollingMode(enabled ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);
     return { };
 }
 

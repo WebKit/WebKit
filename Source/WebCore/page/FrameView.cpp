@@ -2684,14 +2684,15 @@ void FrameView::contentsResized()
         updateTiledBackingAdaptiveSizing();
 }
 
-void FrameView::delegatesScrollingDidChange()
+void FrameView::delegatedScrollingModeDidChange()
 {
-    RenderView* renderView = this->renderView();
+    auto* renderView = this->renderView();
     if (!renderView)
         return;
 
     RenderLayerCompositor& compositor = renderView->compositor();
     // When we switch to delegatesScrolling mode, we should destroy the scrolling/clipping layers in RenderLayerCompositor.
+    // FIXME: Is this right? What turns compositing back on?
     if (compositor.usesCompositing()) {
         ASSERT(compositor.usesCompositing());
         compositor.enableCompositingMode(false);

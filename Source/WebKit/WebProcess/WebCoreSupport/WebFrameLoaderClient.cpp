@@ -1589,7 +1589,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     auto* drawingArea = webPage->drawingArea();
     view->setViewExposedRect(drawingArea->viewExposedRect());
     if (isMainFrame)
-        view->setDelegatesScrolling(drawingArea->usesDelegatedScrolling());
+        view->setDelegatedScrollingMode(drawingArea->delegatedScrollingMode());
 
     webPage->corePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
 #endif
@@ -1599,7 +1599,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
 #if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {
-        view->setDelegatesScrolling(shouldUseFixedLayout);
+        view->setDelegatedScrollingMode(shouldUseFixedLayout ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);
         view->setPaintsEntireContents(shouldUseFixedLayout);
         return;
     }

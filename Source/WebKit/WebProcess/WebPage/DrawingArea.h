@@ -57,6 +57,7 @@ class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
 struct ViewportAttributes;
+enum class DelegatedScrollingMode : uint8_t;
 }
 
 namespace WebKit {
@@ -109,8 +110,8 @@ public:
     virtual void mainFrameScrollabilityChanged(bool) { }
 
     virtual bool supportsAsyncScrolling() const { return false; }
-    virtual bool usesDelegatedScrolling() const { return false; }
     virtual bool usesDelegatedPageScaling() const { return false; }
+    virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const { return false; }
 

@@ -44,6 +44,10 @@ class MachSendRight;
 }
 #endif
 
+namespace WebCore {
+enum class DelegatedScrollingMode : uint8_t;
+}
+
 namespace WebKit {
 
 class LayerTreeContext;
@@ -66,7 +70,7 @@ public:
 
     void startReceivingMessages();
 
-    virtual bool usesDelegatedScrolling() const { return false; }
+    virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
     virtual void deviceScaleFactorDidChange() = 0;
 
