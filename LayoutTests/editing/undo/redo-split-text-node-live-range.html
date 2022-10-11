@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<script src="../../resources/dump-as-markup.js" type="text/javascript"></script>
+<body>
+<div id="test" contenteditable>hello</div>
+<script>
+
+var div = document.getElementById('test');
+window.getSelection().setBaseAndExtent(div.firstChild, 2, div.firstChild, 2);
+document.execCommand('InsertParagraph', true, null);
+window.getSelection().setBaseAndExtent(div.firstChild, 0, div.firstChild, 2);
+document.execCommand('bold', false, null);
+
+Markup.description("This test splits a text node by inserting a new paragraph and bolds the the first half.\nIf splitTextNode correctly reapplied the split, undo and redo should preserve the style. (See bug 42941).")
+Markup.dump(div, "before undo");
+document.execCommand('undo', false, null);
+document.execCommand('undo', false, null);
+Markup.dump(div, "after undo");
+document.execCommand('redo', false, null);
+document.execCommand('redo', false, null);
+Markup.dump(div, "after redo");
+
+</script>
+</body>
