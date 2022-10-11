@@ -687,11 +687,11 @@ LiveRangeSelectionEnabled:
   humanReadableDescription: "Live range behavior for ranges in the Selection object"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 ManageCaptureStatusBarInGPUProcessEnabled:
   type: bool
