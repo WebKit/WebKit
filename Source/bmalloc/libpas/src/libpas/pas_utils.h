@@ -165,6 +165,10 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_COMPILER_ARM64_ATOMICS_LL_SC 1
 #endif
 
+#if PAS_X86_64 && !defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_16)
+#define PAS_COMPILER_X86_64_ATOMICS_MISSING_CMPXCHG16B 1
+#endif
+
 #ifdef __cplusplus
 #define PAS_TYPEOF(a) decltype (a)
 #else
@@ -877,6 +881,36 @@ static inline uintptr_t pas_pair_high(pas_pair pair)
 
 #endif
 
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+
+PAS_API void* pas_x86_64_cmpxchg16b_available(void);
+PAS_API void* pas_x86_64_cmpxchg16b_unavailable(void);
+PAS_API extern void* pas_x86_64_cmpxchg16b_status(void);
+
+static PAS_ALWAYS_INLINE pas_pair pas_cmpxchg16b(void* raw_ptr, pas_pair old_value, pas_pair new_value, uint8_t* res)
+{
+    uintptr_t low = 0;
+    uintptr_t high = 0;
+    uintptr_t old_low = pas_pair_low(old_value);
+    uintptr_t old_high = pas_pair_high(old_value);
+    uintptr_t new_low = pas_pair_low(new_value);
+    uintptr_t new_high = pas_pair_high(new_value);
+    uint8_t flag = 0;
+
+    asm (
+        "lock cmpxchg16b %[ptr]\t\n"
+        "setz %b[flag]\t\n"
+        /* outputs */  : "=a"(low), "=d"(high), [flag]"=r"(flag), [ptr]"+m"(*((volatile pas_pair*)raw_ptr))
+        /* inputs  */  : "a"(old_low), "d"(old_high), "b"(new_low), "c"(new_high)
+        /* clobbers */ : "cc", "memory"
+    );
+
+    *res = flag;
+    return pas_pair_create(low, high);
+}
+
+#endif
+
 static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
                                                   pas_pair old_value, pas_pair new_value)
 {
@@ -912,10 +946,19 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
         /* clobbers */ : "cc", "memory"
     );
     return cond;
-#elif PAS_COMPILER(CLANG)
+#else
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+    if (PAS_LIKELY(pas_x86_64_cmpxchg16b_status == pas_x86_64_cmpxchg16b_available)) {
+        uint8_t res;
+        pas_cmpxchg16b(raw_ptr, old_value, new_value, &res);
+        return res;
+    }
+#endif
+#if PAS_COMPILER(CLANG)
     return __c11_atomic_compare_exchange_weak((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 #else
     return __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
 #endif
 }
 
@@ -950,17 +993,34 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
         /* clobbers */ : "cc", "memory"
     );
     return pas_pair_create(low, high);
-#elif PAS_COMPILER(CLANG)
+#else
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+    if (PAS_LIKELY(pas_x86_64_cmpxchg16b_status == pas_x86_64_cmpxchg16b_available)) {
+        uint8_t res;
+        pas_pair result = pas_cmpxchg16b(raw_ptr, old_value, new_value, &res);
+        if (res)
+            return old_value;
+        return result;
+    }
+#endif
+#if PAS_COMPILER(CLANG)
     __c11_atomic_compare_exchange_strong((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
 #else
     __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
 #endif
+#endif
 }
 
 static inline pas_pair pas_atomic_load_pair_relaxed(void* raw_ptr)
 {
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+    if (PAS_LIKELY(pas_x86_64_cmpxchg16b_status == pas_x86_64_cmpxchg16b_available)) {
+        uint8_t res;
+        return pas_cmpxchg16b(raw_ptr, 0, 0, &res);
+    }
+#endif
 #if PAS_COMPILER(CLANG)
     /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
     return __c11_atomic_load((_Atomic pas_pair*)raw_ptr, __ATOMIC_RELAXED);
@@ -985,15 +1045,35 @@ static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
         /* inputs  */  : [low]"r"(low), [high]"r"(high), [ptr]"r"(raw_ptr)
         /* clobbers */ : "cc", "memory"
     );
-#elif PAS_COMPILER(CLANG)
+#else
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+    if (PAS_LIKELY(pas_x86_64_cmpxchg16b_status == pas_x86_64_cmpxchg16b_available)) {
+        uint8_t flag;
+        pas_pair previous = pas_pair_create(0, 0);
+        do {
+            previous = pas_cmpxchg16b(raw_ptr, previous, value, &flag);
+        } while (!flag);
+    }
+#endif
+#if PAS_COMPILER(CLANG)
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
+#endif
 #endif
 }
 
 static inline void pas_atomic_store_pair_relaxed(void* raw_ptr, pas_pair value)
 {
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+    if (PAS_LIKELY(pas_x86_64_cmpxchg16b_status == pas_x86_64_cmpxchg16b_available)) {
+        uint8_t flag;
+        pas_pair previous = pas_pair_create(0, 0);
+        do {
+            previous = pas_cmpxchg16b(raw_ptr, previous, value, &flag);
+        } while (!flag);
+    }
+#endif
     /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
 #if PAS_COMPILER(CLANG)
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);

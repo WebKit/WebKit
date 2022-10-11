@@ -242,4 +242,37 @@ void pas_set_reallocation_did_fail_callback(void (*callback)(const char* reason,
     reallocation_did_fail_callback = callback;
 }
 
+#if PAS_COMPILER(X86_64_ATOMICS_MISSING_CMPXCHG16B)
+/* cmpxchg16b can be used for pas_pair atomics in a lock-free manner. But the problem is that some of early x86_64 processors do not support it.
+   Since all supported macOS's CPU supports cmpxchg16b, macOS clang emits cmpxchg16b directly. However Linux does not assume it and instead it
+   is emitting calls to libatomics functions. But only very old x86_64 CPUs are not supporting cmpxchg16b, thus, in most cases, cmpxchg16b should
+   exist and inline asm for cmpxchg16b is more efficient.
+   Here we use ELF loader's "ifunc" feature to detect whether cmpxchg16b is available on this machine at ELF loader's initialization phase. ifunc
+   can be invoked from ELF loader to link symbols to optimized ones (e.g. memcpy is linked to specific AVX version via this resolver). We resolve
+   pas_x86_64_cmpxchg16b_status function pointer to pas_x86_64_cmpxchg16b_available or pas_x86_64_cmpxchg16b_unavailable at that time so that we
+   can know whether the running machine supports cmpxchg16b before running any part of libpas code. */
+
+void* pas_x86_64_cmpxchg16b_available()
+{
+    pas_panic("Not calling x86_64_cmpxchg16b_available\n");
+    return NULL;
+}
+
+void* pas_x86_64_cmpxchg16b_unavailable()
+{
+    pas_panic("Not calling x86_64_cmpxchg16b_unavailable\n");
+    return NULL;
+}
+
+static void* resolve_pas_x86_64_cmpxchg16b_status(void)
+{
+    __builtin_cpu_init();
+    if (__builtin_cpu_supports("cmpxchg16b"))
+        return pas_x86_64_cmpxchg16b_available;
+    return pas_x86_64_cmpxchg16b_unavailable;
+}
+void* pas_x86_64_cmpxchg16b_status(void) __attribute__((ifunc("resolve_pas_x86_64_cmpxchg16b_status")));
+
+#endif
+
 #endif /* LIBPAS_ENABLED */
