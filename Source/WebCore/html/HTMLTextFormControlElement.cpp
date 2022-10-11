@@ -322,9 +322,8 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
         direction = SelectionHasForwardDirection;
 
     if (!hasFocus && innerText) {
-        if (!isConnected()) {
+        if (!isConnected())
             return cacheSelection(start, end, direction);
-        }
 
         // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
         document().updateLayoutIgnorePendingStylesheets();
@@ -333,19 +332,15 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
             return false;
 
         // Double-check our connected state after the layout update.
-        if (!isConnected()) {
+        if (!isConnected())
             return cacheSelection(start, end, direction);
-        }
 
         // Double-check the state of innerTextElement after the layout.
         innerText = innerTextElement();
         auto* rendererTextControl = renderer();
 
-        if (innerText && rendererTextControl) {
-            if (rendererTextControl->style().visibility() == Visibility::Hidden || !innerText->renderBox() || !innerText->renderBox()->height()) {
-                return cacheSelection(start, end, direction);
-            }
-        }
+        if (innerText && rendererTextControl && (rendererTextControl->style().visibility() == Visibility::Hidden || !innerText->renderBox() || !innerText->renderBox()->height()))
+            return cacheSelection(start, end, direction);
     }
 
     auto previousSelectionStart = m_cachedSelectionStart;
