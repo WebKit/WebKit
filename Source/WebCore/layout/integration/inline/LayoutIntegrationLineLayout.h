@@ -35,7 +35,6 @@
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
-#include "layout/integration/inline/LayoutIntegrationLine.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {

@@ -1,0 +1,30 @@
+line1
+line2
+line1
+line2
+line1
+line2
+line1
+line2
+line1
+line2
+line1
+line2
+
+FAIL #target > div 1 assert_equals:
+<div data-offset-x="15">line1<br>line2</div>
+offsetLeft expected 15 but got 120
+PASS #target > div 2
+FAIL #target > div 3 assert_equals:
+<div data-offset-x="21">line1<br>line2</div>
+offsetLeft expected 21 but got 28
+FAIL #target > div 4 assert_equals:
+<div data-offset-x="125">line1<br>line2</div>
+offsetLeft expected 125 but got 120
+FAIL #target > div 5 assert_equals:
+<div data-offset-x="140">line1<br>line2</div>
+offsetLeft expected 140 but got 0
+FAIL #target > div 6 assert_equals:
+<div data-offset-x="147">line1<br>line2</div>
+offsetLeft expected 147 but got 28
+
