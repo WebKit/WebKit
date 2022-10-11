@@ -98,8 +98,6 @@ webkit.org/b/140798 accessibility/textarea-insertion-point-line-number.html [ Fa
 webkit.org/b/140798 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/140798 accessibility/title-ui-element-correctness.html [ Failure ]
 
-webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html [ Failure ]
-
 webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-false-works-in-subtrees.html [ Skip ]
 
 # The following fail because of missing numerical output support.

@@ -206,6 +206,9 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
         }
         moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
+    
+    if (auto* cache = document().existingAXObjectCache())
+        cache->childrenChanged(this);
 }
 
 void RenderWidget::layout()
