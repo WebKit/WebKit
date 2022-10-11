@@ -72,7 +72,7 @@ public:
 
     unsigned long long blobSize(const URL&);
 
-    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
+    void writeBlobsToFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
     struct BlobForFileWriting {
         String blobURL;

@@ -812,7 +812,7 @@ void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& complet
     });
 }
 
-void NetworkStorageManager::registerTemporaryBlobFilePaths(IPC::Connection& connection, const Vector<String>& filePaths)
+void NetworkStorageManager::registerBlobFilePaths(IPC::Connection& connection, const Vector<String>& filePaths)
 {
     ASSERT(RunLoop::isMain());
 

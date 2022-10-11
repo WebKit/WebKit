@@ -94,9 +94,9 @@ unsigned long long BlobRegistryProxy::blobSize(const URL& url)
     return resultSize;
 }
 
-void BlobRegistryProxy::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void BlobRegistryProxy::writeBlobsToFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().writeBlobsToFilesForIndexedDB(blobURLs, WTFMove(completionHandler));
 }
 
 }
