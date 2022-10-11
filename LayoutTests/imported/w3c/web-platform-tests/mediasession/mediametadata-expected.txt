@@ -16,5 +16,5 @@ PASS Test that MediaMetadata.artwork returns parsed urls
 PASS Test that MediaMetadata throws when setting an invalid url
 PASS Test MediaImage default values
 PASS Test that MediaImage.src is required
-FAIL Test that the base URL of MediaImage is the base URL of entry setting object assert_equals: expected "http://localhost:8800/foo" but got "http://localhost:8800/mediasession/foo"
+FAIL Test that the base URL of MediaImage is the base URL of entry setting object assert_equals: expected "http://web-platform.test:8800/foo" but got "http://web-platform.test:8800/mediasession/foo"
 

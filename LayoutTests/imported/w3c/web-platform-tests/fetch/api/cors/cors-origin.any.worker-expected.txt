@@ -1,3 +1,12 @@
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS Cross domain different subdomain [origin OK]
 PASS Cross domain different subdomain [origin KO]

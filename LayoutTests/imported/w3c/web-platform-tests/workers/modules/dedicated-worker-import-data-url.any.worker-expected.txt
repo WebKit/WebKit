@@ -1,10 +1,10 @@
-Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
+CONSOLE MESSAGE: Cross-origin redirection to http://web-platform.test:8800/workers/modules/resources/export-on-load-script.js denied by Cross-Origin Resource Sharing policy: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 302
 
 Harness Error (FAIL), message = Error in remote: Importing a module script failed.
 
 PASS Static import.
-TIMEOUT Static import (cross-origin). Test timed out
-NOTRUN Static import (redirect).
+PASS Static import (cross-origin).
+TIMEOUT Static import (redirect). Test timed out
 NOTRUN Nested static import.
 NOTRUN Static import and then dynamic import.
 NOTRUN Dynamic import.

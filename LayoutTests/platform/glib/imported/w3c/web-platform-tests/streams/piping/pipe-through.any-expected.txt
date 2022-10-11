@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: this rejection should not be reported as unhandled
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
 Harness Error (FAIL), message = Unhandled rejection
 

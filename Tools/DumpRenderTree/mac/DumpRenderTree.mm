@@ -66,6 +66,7 @@
 #import <JavaScriptCore/TestRunnerUtils.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/WebCoreNSURLSession.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -274,6 +275,7 @@ static int printTestCount;
 static int checkForWorldLeaks;
 static BOOL printSeparators;
 static std::set<std::string> allowedHosts;
+static std::set<std::string> localhostAliases;
 static std::string webCoreLogging;
 
 static RetainPtr<CFStringRef>& persistentUserStyleSheetLocation()
@@ -1004,6 +1006,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"no-timeout", no_argument, &useTimeoutWatchdog, NO},
         {"allowed-host", required_argument, nullptr, 'a'},
         {"allow-any-certificate-for-allowed-hosts", no_argument, &allowAnyHTTPSCertificateForAllowedHosts, YES},
+        {"localhost-alias", required_argument, nullptr, 'l'},
         {"no-enable-all-experimental-features", no_argument, &enableAllExperimentalFeatures, NO},
         {"show-webview", no_argument, &showWebView, YES},
         {"print-test-count", no_argument, &printTestCount, YES},
@@ -1021,6 +1024,9 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
                 break;
             case 'a': // "allowed-host"
                 allowedHosts.insert(optarg);
+                break;
+            case 'l': // "localhost-alias"
+                localhostAliases.insert(optarg);
                 break;
             case 'w': // "webcore-logging"
                 webCoreLogging = optarg;
@@ -1188,6 +1194,12 @@ void dumpRenderTree(int argc, const char *argv[])
         for (auto& host : allowedHosts)
             [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[NSString stringWithUTF8String:host.c_str()]];
     }
+    auto nsLocalhostAliases = createNSArray(localhostAliases, [](auto& host) {
+        NSString *nsHost = [NSString stringWithUTF8String:host.c_str()];
+        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:nsHost];
+        return nsHost;
+    });
+    [WebView _setLocalhostAliasesForTesting:(NSArray<NSString *> *)nsLocalhostAliases.get()];
 
     if (threaded)
         startJavaScriptThreads();

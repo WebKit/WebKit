@@ -1,3 +1,63 @@
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt due to access control checks.
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Fetch API cannot load http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt due to access control checks.
 
 PASS same-origin redirect 301 in error redirect and cors mode
 PASS same-origin redirect 301 in error redirect and no-cors mode

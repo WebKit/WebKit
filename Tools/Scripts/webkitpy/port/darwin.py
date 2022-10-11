@@ -40,6 +40,7 @@ class DarwinPort(ApplePort):
 
     CURRENT_VERSION = None
     SDK = None
+    supports_localhost_aliases = True
 
     API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL']
 

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load foobar://dummy due to access control checks.
 This shouldn't be tested inside a tunnel.
 
 

@@ -1,4 +1,4 @@
-The beacon should not follow the redirect to http://www1.localhost:8800/content-security-policy/support/fail.png and send a CSP violation report.
+The beacon should not follow the redirect to http://www1.web-platform.test:8800/content-security-policy/support/fail.png and send a CSP violation report.
 
 Verify that a CSP connect-src directive blocks redirects.
 

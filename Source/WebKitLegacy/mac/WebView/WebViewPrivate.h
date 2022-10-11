@@ -809,6 +809,7 @@ Could be worth adding to the API.
 // SPI for DumpRenderTree
 + (void)_setLoadResourcesSerially:(BOOL)serialize;
 - (void)_forceRepaintForTesting;
++ (void)_setLocalhostAliasesForTesting:(NSArray<NSString *> *)localhostAliases;
 
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme;
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme;
