@@ -15,5 +15,11 @@ offsetLeft expected 0 but got 5
 FAIL .target > * 3 assert_equals:
 <div data-offset-x="45"><span></span></div>
 offsetLeft expected 45 but got 0
-PASS .target > * 4
+FAIL .target > * 4 assert_equals:
+<fieldset data-offset-x="0">
+    <span></span><br><span></span>
+    <legend><span></span></legend>
+
+</fieldset>
+offsetLeft expected 0 but got 5
 
