@@ -825,6 +825,9 @@ http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/mani
 # Flaky CSP console logging
 http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-partial-wildcard.html [ DumpJSConsoleLogInStdErr ]
 
+# Fullscreen callback dumps are WK2 only
+fullscreen/fullscreen-enter-bottom-padding-animation.html [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fullscreen-enter-bottom-padding-animation</title>
+    <style>
+        #target { 
+            padding-bottom: 500px;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script src="full-screen-test.js"></script>
+    <script>
+
+    window.addEventListener('load', async event => {
+        run("testRunner.dumpFullScreenCallbacks()");
+
+        internals.withUserGesture(() => { run('target.webkitRequestFullScreen()'); });
+
+        await waitFor(target, 'webkitfullscreenchange');
+
+        await sleepFor(10);
+
+        run('document.webkitExitFullscreen()');
+
+        await waitFor(target, 'webkitfullscreenchange');
+
+        await sleepFor(10);
+
+        endTest();
+    });
+</script>
+</head>
+<body>
+<div id="target">
+</div>
+</body>
+</html>

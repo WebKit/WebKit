@@ -5323,3 +5323,6 @@ fast/forms/control-restrict-line-height.html [ Failure ]
 fast/forms/box-shadow-override.html [ Failure ]
 fast/forms/placeholder-pseudo-style.html [ Failure ]
 fast/forms/input-appearance-height.html [ Failure ]
+
+# WebKit2 Only
+fullscreen/fullscreen-enter-bottom-padding-animation.html [ Skip ]
