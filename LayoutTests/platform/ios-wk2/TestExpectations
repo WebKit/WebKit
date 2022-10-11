@@ -2400,6 +2400,8 @@ webkit.org/b/237547 fast/canvas/webgl/gl-teximage-imagebitmap-memory.html [ Pass
 webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-display-inline-composited.html [ Skip ]
 webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-display-block-composited.html [ Skip ]
 
+webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html [ Pass Failure ]
+
 # webkit.org/b/245967 3X imported/w3c/web-platform-tests/feature-policy/(Layout tests) failing since added
 imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html [ Pass Failure ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
