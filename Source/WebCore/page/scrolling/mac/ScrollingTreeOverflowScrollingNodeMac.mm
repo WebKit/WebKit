@@ -64,7 +64,7 @@ void ScrollingTreeOverflowScrollingNodeMac::willBeDestroyed()
 void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
-    delegate().updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
+    m_delegate->updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
 }
 
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
@@ -89,12 +89,6 @@ void ScrollingTreeOverflowScrollingNodeMac::currentScrollPositionChanged(ScrollT
 {
     ScrollingTreeOverflowScrollingNode::currentScrollPositionChanged(scrollType, action);
     delegate().currentScrollPositionChanged();
-}
-
-FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const
-{
-    FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
-    return ScrollingTreeOverflowScrollingNode::adjustedScrollPosition(scrollPosition, clamp);
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()

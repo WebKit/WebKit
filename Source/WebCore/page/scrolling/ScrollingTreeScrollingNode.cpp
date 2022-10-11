@@ -285,10 +285,11 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
 
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
 {
+    auto adjustedPosition = m_delegate ? m_delegate->adjustedScrollPosition(scrollPosition) : scrollPosition;
     if (clamping == ScrollClamping::Clamped)
-        return clampScrollPosition(scrollPosition);
+        return clampScrollPosition(adjustedPosition);
 
-    return scrollPosition;
+    return adjustedPosition;
 }
 
 void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollClamping clamp)

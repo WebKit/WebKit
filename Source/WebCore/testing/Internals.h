@@ -120,6 +120,7 @@ class SerializedScriptValue;
 class SharedBuffer;
 class SourceBuffer;
 class SpeechSynthesisUtterance;
+class StaticRange;
 class StringCallback;
 class StyleSheet;
 class TextIterator;
@@ -738,6 +739,7 @@ public:
 #endif
 
     ExceptionOr<Ref<DOMRect>> selectionBounds();
+    ExceptionOr<RefPtr<StaticRange>> selectedRange();
     void setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset);
 
     ExceptionOr<bool> isPluginUnavailabilityIndicatorObscured(Element&);

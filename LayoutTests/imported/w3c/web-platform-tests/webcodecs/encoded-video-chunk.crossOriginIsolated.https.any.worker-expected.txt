@@ -1,4 +1,4 @@
 
-FAIL Test construction and copyTo() using a SharedArrayBuffer Type error
-FAIL Test construction and copyTo() using a Uint8Array(SharedArrayBuffer) Type error
+PASS Test construction and copyTo() using a SharedArrayBuffer
+PASS Test construction and copyTo() using a Uint8Array(SharedArrayBuffer)
 

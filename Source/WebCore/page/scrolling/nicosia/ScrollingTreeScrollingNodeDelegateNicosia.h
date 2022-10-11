@@ -30,57 +30,24 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "NicosiaPlatformLayer.h"
-#include "ScrollingEffectsController.h"
-#include "ScrollingStateOverflowScrollingNode.h"
-#include "ThreadedScrollingTree.h"
-#include <wtf/RunLoop.h>
+#include "ThreadedScrollingTreeScrollingNodeDelegate.h"
 
 namespace WebCore {
 
-class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate, public ScrollingEffectsControllerClient {
+class ScrollingTreeScrollingNodeDelegateNicosia final : public ThreadedScrollingTreeScrollingNodeDelegate {
 public:
     explicit ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
     virtual ~ScrollingTreeScrollingNodeDelegateNicosia();
 
-    void updateFromStateNode(const ScrollingStateScrollingNode&);
     std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> createUpdateScope();
     void updateVisibleLengths();
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting);
 
-    // ScrollingTreeScrollingNodeDelegate
-    bool startAnimatedScrollToPosition(FloatPoint) final;
-    void stopAnimatedScroll() final;
-
-    void serviceScrollAnimation(MonotonicTime) final;
-
 private:
     // ScrollingEffectsControllerClient.
-    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
-
-    void startAnimationCallback(ScrollingEffectsController&) final;
-    void stopAnimationCallback(ScrollingEffectsController&) final;
-
-    bool allowsHorizontalScrolling() const final;
-    bool allowsVerticalScrolling() const final;
-
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
 
-    void adjustScrollPositionToBoundsIfNecessary() final;
-
-    FloatPoint scrollOffset() const final;
-
-    void willStartScrollSnapAnimation() final;
-    void didStopScrollSnapAnimation() final;
-
-    void didStopAnimatedScroll() final;
-
-    float pageScaleFactor() const final;
-    ScrollExtents scrollExtents() const final;
-
     bool scrollAnimationEnabled() const final { return m_scrollAnimatorEnabled; }
-
-    ScrollingEffectsController m_scrollController;
 
     bool m_scrollAnimatorEnabled { false };
 };

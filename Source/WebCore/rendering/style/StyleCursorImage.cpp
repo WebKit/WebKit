@@ -38,6 +38,14 @@ Ref<StyleCursorImage> StyleCursorImage::create(CSSCursorImageValue& cssValue)
     return adoptRef(*new StyleCursorImage(cssValue)); 
 }
 
+StyleCursorImage::StyleCursorImage(CSSCursorImageValue& cssValue)
+    : StyleMultiImage(Type::CursorImage)
+    , m_cssValue(cssValue)
+{
+}
+
+StyleCursorImage::~StyleCursorImage() = default;
+
 bool StyleCursorImage::operator==(const StyleImage& other) const
 {
     return is<StyleCursorImage>(other) && equals(downcast<StyleCursorImage>(other));
@@ -47,14 +55,6 @@ Ref<CSSValue> StyleCursorImage::cssValue() const
 { 
     return m_cssValue.copyRef(); 
 }
-
-StyleCursorImage::StyleCursorImage(CSSCursorImageValue& cssValue)
-    : m_cssValue(cssValue)
-{
-    m_isCursorImage = true;
-}
-
-StyleCursorImage::~StyleCursorImage() = default;
 
 ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document) const
 {

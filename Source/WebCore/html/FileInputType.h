@@ -86,6 +86,7 @@ private:
 
     void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) final;
     void filesChosen(const Vector<String>& paths, const Vector<String>& replacementPaths = { });
+    void fileChoosingCancelled();
 
     // FileIconLoaderClient implementation.
     void iconLoaded(RefPtr<Icon>&&) final;

@@ -39,7 +39,7 @@ using namespace WebCore;
 
 static HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>& webExtensionControllerProxies()
 {
-    static NeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>> controllers;
     return controllers;
 }
 

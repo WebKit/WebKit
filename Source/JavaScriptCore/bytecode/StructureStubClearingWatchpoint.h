@@ -54,7 +54,6 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    // Own destructor may not be called. Keep members trivially destructible.
     PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
     ObjectPropertyCondition m_key;
 };

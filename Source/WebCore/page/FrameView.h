@@ -785,7 +785,7 @@ private:
     void scrollToFocusedElementTimerFired();
     void scrollToFocusedElementInternal();
 
-    void delegatesScrollingDidChange() final;
+    void delegatedScrollingModeDidChange() final;
 
     void unobscuredContentSizeChanged() final;
     

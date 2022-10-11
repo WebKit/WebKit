@@ -27,7 +27,8 @@
 #import "HTTPServer.h"
 
 #import "Utilities.h"
-#import <WebCore/SQLiteFileSystem.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/CompletionHandler.h>
@@ -432,6 +433,15 @@ NSURLRequest *HTTPServer::request(StringView path) const
 NSURLRequest *HTTPServer::requestWithLocalhost(StringView path) const
 {
     return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://localhost:%d%@", scheme(), port(), path.createNSString().get()]]];
+}
+
+WKWebViewConfiguration *HTTPServer::httpsProxyConfiguration() const
+{
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", port()]]];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    return viewConfiguration.autorelease();
 }
 
 void Connection::receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler, size_t minimumSize) const

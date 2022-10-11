@@ -741,6 +741,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_simulateMouseMove:(NSEvent *)event WK_API_AVAILABLE(macos(13.0));
 
+- (void)_setFont:(NSFont *)font sender:(id)sender WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 @end
 
 #endif // !TARGET_OS_IPHONE

@@ -31,6 +31,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/DisplayRefreshMonitor.h>
+#include <WebCore/ScrollView.h>
 #include <WebCore/TransformationMatrix.h>
 
 // Subclasses
@@ -81,6 +82,11 @@ DrawingArea::DrawingArea(DrawingAreaType type, DrawingAreaIdentifier identifier,
 DrawingArea::~DrawingArea()
 {
     removeMessageReceiverIfNeeded();
+}
+
+DelegatedScrollingMode DrawingArea::delegatedScrollingMode() const
+{
+    return DelegatedScrollingMode::NotDelegated;
 }
 
 void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&& function)

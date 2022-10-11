@@ -24,39 +24,15 @@
 #include "config.h"
 #include "StyleGeneratedImage.h"
 
-#include "CSSImageGeneratorValue.h"
 #include "RenderElement.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
     
-StyleGeneratedImage::StyleGeneratedImage(Ref<CSSImageGeneratorValue>&& value)
-    : m_imageGeneratorValue(WTFMove(value))
-    , m_fixedSize(m_imageGeneratorValue->isFixedSize())
+StyleGeneratedImage::StyleGeneratedImage(Type type, bool fixedSize)
+    : StyleImage { type }
+    , m_fixedSize { fixedSize }
 {
-    m_isGeneratedImage = true;
-}
-
-bool StyleGeneratedImage::operator==(const StyleImage& other) const
-{
-    if (is<StyleGeneratedImage>(other))
-        return arePointingToEqualData(m_imageGeneratorValue.ptr(), downcast<StyleGeneratedImage>(other).m_imageGeneratorValue.ptr());
-    return false;
-}
-
-Ref<CSSValue> StyleGeneratedImage::cssValue() const
-{
-    return m_imageGeneratorValue.copyRef();
-}
-
-bool StyleGeneratedImage::isPending() const
-{
-    return m_imageGeneratorValue->isPending();
-}
-
-void StyleGeneratedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
-{
-    m_imageGeneratorValue->loadSubimages(loader, options);
 }
 
 FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
@@ -67,7 +43,7 @@ FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float mu
     if (!renderer)
         return { };
 
-    FloatSize fixedSize = m_imageGeneratorValue->fixedSize(*renderer);
+    FloatSize fixedSize = this->fixedSize(*renderer);
     if (multiplier == 1.0f)
         return fixedSize;
 
@@ -91,31 +67,6 @@ void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* render
     intrinsicWidth = Length(size.width(), LengthType::Fixed);
     intrinsicHeight = Length(size.height(), LengthType::Fixed);
     intrinsicRatio = size;
-}
-
-void StyleGeneratedImage::addClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->addClient(renderer);
-}
-
-void StyleGeneratedImage::removeClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->removeClient(renderer);
-}
-
-bool StyleGeneratedImage::hasClient(RenderElement& renderer) const
-{
-    return m_imageGeneratorValue->clients().contains(&renderer);
-}
-
-RefPtr<Image> StyleGeneratedImage::image(const RenderElement* renderer, const FloatSize& size) const
-{
-    return renderer ? m_imageGeneratorValue->image(const_cast<RenderElement&>(*renderer), size) : &Image::nullImage();
-}
-
-bool StyleGeneratedImage::knownToBeOpaque(const RenderElement& renderer) const
-{
-    return m_imageGeneratorValue->knownToBeOpaque(renderer);
 }
 
 }

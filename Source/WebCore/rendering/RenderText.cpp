@@ -85,7 +85,9 @@ struct SameSizeAsRenderText : public RenderObject {
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateTextSize;
 #endif
-    float widths[4];
+    float widths[2];
+    std::optional<float> minWidth;
+    std::optional<float> maxWidth;
     String text;
 };
 
@@ -816,8 +818,8 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
     if (!length || (stripFrontSpaces && text().isAllSpecialCharacters<isHTMLSpace>()))
         return widths;
 
-    widths.min = m_minWidth;
-    widths.max = m_maxWidth;
+    widths.min = m_minWidth.value_or(-1);
+    widths.max = m_maxWidth.value_or(-1);
 
     widths.beginMin = m_beginMinWidth;
     widths.endMin = m_endMinWidth;
@@ -882,18 +884,18 @@ static inline bool isSpaceAccordingToStyle(UChar c, const RenderStyle& style)
 
 float RenderText::minLogicalWidth() const
 {
-    if (preferredLogicalWidthsDirty())
+    if (preferredLogicalWidthsDirty() || !m_minWidth)
         const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
-        
-    return m_minWidth;
+
+    return *m_minWidth;
 }
 
 float RenderText::maxLogicalWidth() const
 {
-    if (preferredLogicalWidthsDirty())
+    if (preferredLogicalWidthsDirty() || !m_maxWidth)
         const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
-        
-    return m_maxWidth;
+
+    return *m_maxWidth;
 }
 
 LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
@@ -1156,7 +1158,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             }
             m_endMinWidth = currMinWidth;
 
-            m_minWidth = std::max(currMinWidth, m_minWidth);
+            m_minWidth = std::max(currMinWidth, *m_minWidth);
 
             i += wordLen - 1;
         } else {
@@ -1173,7 +1175,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
                         m_beginMinWidth = currMaxWidth;
                 }
 
-                if (currMaxWidth > m_maxWidth)
+                if (currMaxWidth > *m_maxWidth)
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
@@ -1195,14 +1197,14 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     if ((needsWordSpacing && length > 1) || (ignoringSpaces && !firstWord))
         currMaxWidth += wordSpacing;
 
-    m_maxWidth = std::max(currMaxWidth, m_maxWidth);
+    m_maxWidth = std::max(currMaxWidth, *m_maxWidth);
 
     if (!style.autoWrap())
         m_minWidth = m_maxWidth;
 
     if (style.whiteSpace() == WhiteSpace::Pre) {
         if (firstLine)
-            m_beginMinWidth = m_maxWidth;
+            m_beginMinWidth = *m_maxWidth;
         m_endMinWidth = currMaxWidth;
     }
 
@@ -1559,7 +1561,7 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
                     if (fallbackFonts->isEmpty() && !glyphOverflow->left && !glyphOverflow->right && !glyphOverflow->top && !glyphOverflow->bottom)
                         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
                 }
-                width = m_maxWidth;
+                width = *m_maxWidth;
             } else
                 width = maxLogicalWidth();
         } else

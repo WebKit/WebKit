@@ -35,38 +35,38 @@ PASS setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'in-d
 PASS setSelection(shadowRoot, 0); window.find('in-document'); selectedText() is '(#test-content, 2) 1 to 12'
 PASS rangeText(internals.rangeOfString('in-document', range(shadowRoot, 0), ['DoNotTraverseFlatTree'])) is '(#test-content, 2) 1 to 12'
 PASS rangeText(internals.rangeOfString('in-document', range(shadowRoot, 0), [])) is '(#test-content, 2) 1 to 12'
-PASS setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'in-shadow'); selectedText() is '#test-content 1 to 1'
-PASS setSelection(shadowRoot, 0); window.find('in-shadow'); selectedText() is '#test-content 1 to 1'
+PASS setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'in-shadow'); selectedText() is '(#shadow-root, 0) 0 to 9'
+PASS setSelection(shadowRoot, 0); window.find('in-shadow'); selectedText() is '(#shadow-root, 0) 0 to 9'
 PASS rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 0), ['DoNotTraverseFlatTree'])) is '(#shadow-root, 0) 0 to 9'
 PASS rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 0), [])) is '(#shadow-root, 0) 0 to 9'
 PASS setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'slotted'); selectedText() is '(#slotted-element, 0) 0 to 7' /* Wrapped around */
-PASS setSelection(shadowRoot, 0); window.find('slotted'); selectedText() is '#test-content 1 to 1'
+PASS setSelection(shadowRoot, 0); window.find('slotted'); selectedText() is '(#shadow-root, 0) 0 to 0'
 PASS setSelection(shadowRoot, 0); window.find('slotted', /* caseSensitive */ true, /* backwards */ false, /* wrap */ true); selectedText() is '(#slotted-element, 0) 0 to 7'
 PASS rangeText(internals.rangeOfString('slotted', range(shadowRoot, 0), ['DoNotTraverseFlatTree'])) is null
 PASS rangeText(internals.rangeOfString('slotted', range(shadowRoot, 0), [])) is '(#slotted-element, 0) 0 to 7'
 PASS setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'slotted'); selectedText() is '(#slotted-element, 0) 0 to 7' /* Wrapped around */
-PASS setSelection(shadowRoot, 1); window.find('slotted'); selectedText() is '#test-content 1 to 1'
+PASS setSelection(shadowRoot, 1); window.find('slotted'); selectedText() is '(#shadow-root, 0) 10 to 10'
 PASS setSelection(shadowRoot, 1); window.find('slotted', /* caseSensitive */ true, /* backwards */ false, /* wrap */ true); selectedText() is '(#slotted-element, 0) 0 to 7'
 PASS rangeText(internals.rangeOfString('slotted', range(shadowRoot, 1), ['DoNotTraverseFlatTree'])) is null
 PASS rangeText(internals.rangeOfString('slotted', range(shadowRoot, 1), [])) is '(#slotted-element, 0) 0 to 7'
-PASS setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-shadow'); selectedText() is '#test-content 1 to 1'
-PASS setSelection(shadowRoot, 1); window.find('in-shadow'); selectedText() is '#test-content 1 to 1'
+PASS setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-shadow'); selectedText() is '(#shadow-root, 2) 1 to 10'
+PASS setSelection(shadowRoot, 1); window.find('in-shadow'); selectedText() is '(#shadow-root, 2) 1 to 10'
 PASS rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 1), ['DoNotTraverseFlatTree'])) is '(#shadow-root, 2) 1 to 10'
 PASS rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 1), [])) is '(#shadow-root, 2) 1 to 10'
 PASS setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-document'); selectedText() is '(#test-content, 2) 1 to 12'
 PASS setSelection(shadowRoot, 1); window.find('in-document'); selectedText() is '(#test-content, 2) 1 to 12'
 PASS rangeText(internals.rangeOfString('in-document', range(shadowRoot, 1), ['DoNotTraverseFlatTree'])) is '(#test-content, 2) 1 to 12'
 PASS rangeText(internals.rangeOfString('in-document', range(shadowRoot, 1), [])) is '(#test-content, 2) 1 to 12'
-PASS setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-slot'); selectedText() is '#test-content 1 to 1'
-PASS setSelection(shadowRoot, 1); window.find('in-slot'); selectedText() is '#test-content 1 to 1'
+PASS setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-slot'); selectedText() is '(#shadow-root, 0) 10 to 10'
+PASS setSelection(shadowRoot, 1); window.find('in-slot'); selectedText() is '(#shadow-root, 0) 10 to 10'
 PASS rangeText(internals.rangeOfString('in-slot', range(shadowRoot, 1), ['DoNotTraverseFlatTree'])) is null
 PASS rangeText(internals.rangeOfString('in-slot', range(shadowRoot, 1), [])) is null
 PASS clearSelection(); document.execCommand('FindString', null, 'in-user-agent-shadow'); selectedText() is null
 PASS clearSelection(); window.find('in-user-agent-shadow'); selectedText() is null
 PASS rangeText(internals.rangeOfString('in-user-agent-shadow', null, ['DoNotTraverseFlatTree'])) is null
 PASS rangeText(internals.rangeOfString('in-user-agent-shadow', null, [])) is null
-PASS setSelection(userAgentShadowRoot, 0); document.execCommand('FindString', null, 'in-user-agent-shadow'); selectedText() is '#test-content 3 to 3'
-PASS setSelection(userAgentShadowRoot, 0); window.find('in-user-agent-shadow'); selectedText() is '#test-content 3 to 3'
+PASS setSelection(userAgentShadowRoot, 0); document.execCommand('FindString', null, 'in-user-agent-shadow'); selectedText() is '(#user-agent-shadow-root, 0) 0 to 20'
+PASS setSelection(userAgentShadowRoot, 0); window.find('in-user-agent-shadow'); selectedText() is '(#user-agent-shadow-root, 0) 0 to 20'
 PASS rangeText(internals.rangeOfString('in-user-agent-shadow', range(userAgentShadowRoot, 0), ['DoNotTraverseFlatTree'])) is '(#user-agent-shadow-root, 0) 0 to 20'
 PASS rangeText(internals.rangeOfString('in-user-agent-shadow', range(userAgentShadowRoot, 0), [])) is '(#user-agent-shadow-root, 0) 0 to 20'
 PASS clearSelection(); internals.countFindMatches('in-document', ['DoNotTraverseFlatTree']) is 2

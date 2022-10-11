@@ -37,6 +37,7 @@
 #import <WebCore/AnimationFrameRate.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
+#import <WebCore/ScrollView.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
@@ -189,6 +190,10 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 #endif
 }
 
+DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxy::delegatedScrollingMode() const
+{
+    return DelegatedScrollingMode::DelegatedToNativeScrollView;
+}
 
 std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemoteLayerTreeHost()
 {

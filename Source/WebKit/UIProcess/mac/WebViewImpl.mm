@@ -2421,6 +2421,24 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
     m_viewInWindowChangeWasDeferred = false;
 }
 
+void WebViewImpl::setFontForWebView(NSFont *font, id sender)
+{
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFontTraitMask fontTraits = [fontManager traitsOfFont:font];
+
+    WebCore::FontChanges changes;
+    changes.setFontFamily(font.familyName);
+    changes.setFontName(font.fontName);
+    changes.setFontSize(font.pointSize);
+    changes.setBold(fontTraits & NSBoldFontMask);
+    changes.setItalic(fontTraits & NSItalicFontMask);
+
+    if (NSString *textStyleAttribute = [font.fontDescriptor objectForKey:(__bridge NSString *)kCTFontDescriptorTextStyleAttribute])
+        changes.setFontFamily(textStyleAttribute);
+
+    m_page->changeFont(WTFMove(changes));
+}
+
 void WebViewImpl::updateSecureInputState()
 {
     if (![[m_view window] isKeyWindow] || !isFocused()) {

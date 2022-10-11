@@ -35,17 +35,17 @@ Ref<StyleImageSet> StyleImageSet::create(CSSImageSetValue& cssValue)
 }
 
 StyleImageSet::StyleImageSet(CSSImageSetValue& cssValue)
-    : m_cssValue(cssValue)
+    : StyleMultiImage(Type::ImageSet)
+    , m_cssValue(cssValue)
 {
-    m_isImageSet = true;
 }
+
+StyleImageSet::~StyleImageSet() = default;
 
 bool StyleImageSet::operator==(const StyleImage& other) const
 {
     return is<StyleImageSet>(other) && equals(downcast<StyleImageSet>(other));
 }
-
-StyleImageSet::~StyleImageSet() = default;
 
 Ref<CSSValue> StyleImageSet::cssValue() const
 { 

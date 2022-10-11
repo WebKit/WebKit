@@ -63,6 +63,12 @@ class HostWindow;
 class LegacyTileCache;
 class Scrollbar;
 
+enum class DelegatedScrollingMode : uint8_t {
+    NotDelegated,
+    DelegatedToNativeScrollView,
+    DelegatedToWebKit,
+};
+
 class ScrollView : public Widget, public ScrollableArea {
 public:
     virtual ~ScrollView();
@@ -129,11 +135,12 @@ public:
     bool paintsEntireContents() const { return m_paintsEntireContents; }
     WEBCORE_EXPORT void setPaintsEntireContents(bool);
 
-    // By default programmatic scrolling is handled by WebCore and not by the UI application.
-    // In the case of using a tiled backing store, this mode can be set, so that the scroll requests
-    // are delegated to the UI application.
-    bool delegatesScrolling() const { return m_delegatesScrolling; }
-    WEBCORE_EXPORT void setDelegatesScrolling(bool);
+    // By default scrolling is handled by WebCore, but some WebKit implementations take over scrolling,
+    // delegating it to a native scrolling widget or the UI process.
+    DelegatedScrollingMode delegatedScrollingMode() const { return m_delegatedScrollingMode; }
+    WEBCORE_EXPORT void setDelegatedScrollingMode(DelegatedScrollingMode);
+
+    bool delegatesScrolling() const { return m_delegatedScrollingMode != DelegatedScrollingMode::NotDelegated; }
 
     // Overridden by FrameView to create custom CSS scrollbars if applicable.
     virtual Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
@@ -418,7 +425,7 @@ protected:
 
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
     virtual void addedOrRemovedScrollbar() = 0;
-    virtual void delegatesScrollingDidChange() = 0;
+    virtual void delegatedScrollingModeDidChange() = 0;
 
     // These functions are used to create/destroy scrollbars.
     // They return true if the scrollbar was added or removed.
@@ -562,6 +569,8 @@ private:
     unsigned m_updateScrollbarsPass { 0 };
     unsigned m_prohibitsScrollingWhenChangingContentSizeCount { 0 };
 
+    DelegatedScrollingMode m_delegatedScrollingMode { DelegatedScrollingMode::NotDelegated };
+
     bool m_horizontalScrollbarLock { false };
     bool m_verticalScrollbarLock { false };
 
@@ -579,7 +588,6 @@ private:
     bool m_useFixedLayout { false };
 
     bool m_paintsEntireContents { false };
-    bool m_delegatesScrolling { false };
 
 }; // class ScrollView
 

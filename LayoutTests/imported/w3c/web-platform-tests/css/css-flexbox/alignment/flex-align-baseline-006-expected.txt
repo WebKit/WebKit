@@ -2,11 +2,11 @@
 
 
 
-FAIL #target > div 1 assert_equals:
-<div data-offset-y="20"><span></span><br><span></span></div>
-offsetTop expected 20 but got 0
-PASS #target > div 2
+PASS #target > div 1
+FAIL #target > div 2 assert_equals:
+<div data-offset-y="0"><span></span><br><span></span></div>
+offsetTop expected 0 but got 20
 FAIL #target > div 3 assert_equals:
 <div data-offset-y="55"><span></span><br><span></span></div>
-offsetTop expected 55 but got 0
+offsetTop expected 55 but got 65
 

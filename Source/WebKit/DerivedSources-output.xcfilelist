@@ -512,6 +512,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMe
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionContextMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionContextMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionContextMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionContextProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionContextProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionContextProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessagesReplies.h

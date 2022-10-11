@@ -874,7 +874,6 @@ webkit.org/b/212144 http/tests/xmlhttprequest/on-network-timeout-error-during-pr
 webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
 
 webkit.org/b/244480 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
-webkit.org/b/244481 webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS FAILING
@@ -890,7 +889,6 @@ Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
 # webgl/1.0.3:
 #  Failing:
-Bug(WPE) webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
@@ -901,7 +899,47 @@ webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Timeout ]
 #  One of these tests is DDoS-ing Mesa AMD drivers.
-Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
+webgl/1.0.3/conformance/glsl/bugs [ Skip ]
+
+# Flakies with ANGLE backend
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Pass Failure ]
+webkit.org/b/246337 webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Timeout Pass ]
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-webgl-canvas-rgba5551.html [ Failure Pass ]
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass Timeout ]
+webkit.org/b/246337 fast/canvas/webgl/getIndexedParameter-crash.html [ Pass Failure ]
+webkit.org/b/246337 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
+webkit.org/b/246337 fast/canvas/webgl/context-attributes-alpha.html [ Pass ImageOnlyFailure ]
+webkit.org/b/246337 fast/canvas/webgl/copyBufferSubData.html [ Pass Failure ]
+webkit.org/b/246337 webgl/1.0.3/conformance/canvas/drawingbuffer-static-canvas-test.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/context/context-release-with-workers.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Timeout Failure ]
+webkit.org/b/246337 webgl/1.0.3/conformance/extensions/oes-texture-float-with-image.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/extensions/oes-texture-half-float-linear.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-canvas.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/functions/glsl-function-clamp-float.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/misc/expression-list-in-declarator-initializer.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/misc/struct-mixed-array-declarators.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/samplers/glsl-function-texture2dprojlod.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/variables/gl-fragcoord.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/variables/gl-pointcoord.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/rendering/gl-viewport-test.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.x/conformance/textures/misc/exif-orientation.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/extensions/oes-texture-float-with-canvas.html [ Timeout Pass ]
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Timeout Pass ]
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Timeout Pass ]
+webkit.org/b/246337 webgl/1.0.3/conformance/uniforms/uniform-values-per-program.html [ Timeout Pass ]
+webkit.org/b/246337 webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Timeout Pass ]
+webkit.org/b/246337 webgl/1.0.3/conformance/context/context-lost-restored.html [ Pass Failure ]
+webkit.org/b/246337 webgl/1.0.3/conformance/rendering/gl-scissor-test.html [ Pass Failure Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/glsl/functions/glsl-function-clamp-gentype.html [ Pass Timeout ]
+webkit.org/b/246337 webgl/1.0.3/conformance/textures/gl-teximage.html [ Pass Timeout ]
 
 # fast/canvas/
 fast/canvas/canvas-blend-image.html [ Failure ]
@@ -1317,12 +1355,8 @@ webkit.org/b/244479 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-
 webkit.org/b/244482 webgl/webgl2-primitive-restart.html [ ImageOnlyFailure ]
 
 webkit.org/b/244489 fast/canvas/webgl/bufferData-offset-length.html [ Failure ]
-webkit.org/b/244490 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/244491 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
-webgl/webgl-draft-extensions-flag-default.html [ Failure ]
-webgl/webgl-draft-extensions-flag-off.html [ Failure ]
-webgl/webgl-draft-extensions-flag-on.html [ Failure ]
 
 ######################################################
 # Test failures from turning GPU Process on by default

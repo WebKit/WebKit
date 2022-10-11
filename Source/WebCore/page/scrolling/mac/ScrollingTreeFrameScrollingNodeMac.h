@@ -70,8 +70,6 @@ private:
     void willBeDestroyed() final;
     void willDoProgrammaticScroll(const FloatPoint&) final;
 
-    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const final;
-
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
     void repositionScrollingLayers() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
 

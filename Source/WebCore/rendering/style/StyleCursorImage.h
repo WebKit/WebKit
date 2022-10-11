@@ -37,15 +37,18 @@ class StyleCursorImage final : public StyleMultiImage {
 public:
     static Ref<StyleCursorImage> create(CSSCursorImageValue&);
     virtual ~StyleCursorImage();
+
     bool operator==(const StyleImage& other) const;
+
     bool usesDataProtocol() const final;
 
 private:
+    explicit StyleCursorImage(CSSCursorImageValue&);
+
     void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom) final;
     Ref<CSSValue> cssValue() const final;
     ImageWithScale selectBestFitImage(const Document&) const final;
 
-    explicit StyleCursorImage(CSSCursorImageValue&);
     Ref<CSSCursorImageValue> m_cssValue;
 };
 

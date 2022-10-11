@@ -31,12 +31,13 @@
 #include "MessageReceiver.h"
 #include "WebExtensionControllerIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 struct WebExtensionControllerParameters;
 
-class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, private IPC::MessageReceiver {
+class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebExtensionController);
 
 public:

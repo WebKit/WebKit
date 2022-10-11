@@ -2320,7 +2320,7 @@ ExceptionOr<void> Internals::setDelegatesScrolling(bool enabled)
     if (!document || !document->view() || !document->page() || &document->page()->mainFrame() != document->frame())
         return Exception { InvalidAccessError };
 
-    document->view()->setDelegatesScrolling(enabled);
+    document->view()->setDelegatedScrollingMode(enabled ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);
     return { };
 }
 
@@ -4275,6 +4275,17 @@ ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
         return Exception { InvalidAccessError };
 
     return DOMRect::create(document->frame()->selection().selectionBounds());
+}
+
+ExceptionOr<RefPtr<StaticRange>> Internals::selectedRange()
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return Exception { InvalidAccessError };
+    auto range = contextDocument()->selection().selection().range();
+    if (!range)
+        return nullptr;
+    return RefPtr { StaticRange::create(*range) };
 }
 
 void Internals::setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset)

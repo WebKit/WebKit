@@ -1,0 +1,21 @@
+<html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+    <head>
+        <style>
+        body {
+            -webkit-user-select: none;
+        }
+        </style>
+        <script>
+            function test() {
+                if (window.testRunner)
+                    testRunner.dumpAsText();
+                document.execCommand('SelectAll');
+                if (window.getSelection().toString() == "")
+                    document.body.innerHTML = "Test Passed";
+            }
+        </script>
+    </head>
+    <body onload="test()">
+    Test Failed (this should not be selected)
+    </body>
+</html>

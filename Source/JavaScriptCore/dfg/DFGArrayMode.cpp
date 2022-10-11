@@ -252,20 +252,11 @@ ArrayMode ArrayMode::refine(
 
         // If we have an OriginalArray and the JSArray prototype chain is sane,
         // any indexed access always return undefined. We have a fast path for that.
-        JSGlobalObject* globalObject = graph.globalObjectFor(node->origin.semantic);
-        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
-        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
         if (node->op() == GetByVal
             && isJSArrayWithOriginalStructure()
             && !graph.hasExitSite(node->origin.semantic, OutOfBounds)
-            && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
-            && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-            && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {
-            graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
-            graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-            if (globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure))
-                return withSpeculation(Array::InBoundsSaneChain);
-        }
+            && graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(node))
+            return withSpeculation(Array::InBoundsSaneChain);
         return ArrayMode(Array::Generic, action());
     }
     case Array::Int32:

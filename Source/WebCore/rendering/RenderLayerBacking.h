@@ -192,7 +192,7 @@ public:
     void suspendAnimations(MonotonicTime = MonotonicTime());
     void resumeAnimations();
 
-    LayoutRect compositedBounds() const;
+    WEBCORE_EXPORT LayoutRect compositedBounds() const;
     // Returns true if changed.
     bool setCompositedBounds(const LayoutRect&);
     // Returns true if changed.

@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include "ScrollingTreeScrollingNodeDelegate.h"
-
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include "ScrollingEffectsController.h"
+#include "ThreadedScrollingTreeScrollingNodeDelegate.h"
 #include <wtf/RunLoop.h>
 
 OBJC_CLASS NSScrollerImp;
@@ -43,7 +42,7 @@ class ScrollingStateScrollingNode;
 class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
-class ScrollingTreeScrollingNodeDelegateMac : public ScrollingTreeScrollingNodeDelegate, private ScrollingEffectsControllerClient {
+class ScrollingTreeScrollingNodeDelegateMac : public ThreadedScrollingTreeScrollingNodeDelegate {
 public:
     explicit ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode&);
     virtual ~ScrollingTreeScrollingNodeDelegateMac();
@@ -51,11 +50,6 @@ public:
     void nodeWillBeDestroyed();
 
     bool handleWheelEvent(const PlatformWheelEvent&);
-
-    bool startAnimatedScrollToPosition(FloatPoint) final;
-    void stopAnimatedScroll() final;
-
-    void serviceScrollAnimation(MonotonicTime) final;
 
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();
@@ -66,48 +60,27 @@ public:
 
     bool isRubberBandInProgress() const;
 
-    void updateFromStateNode(const ScrollingStateScrollingNode&);
     void updateScrollbarPainters();
 
     void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 
 private:
-    // ScrollingEffectsControllerClient.
-    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
-    void startAnimationCallback(ScrollingEffectsController&) final;
-    void stopAnimationCallback(ScrollingEffectsController&) final;
+    void updateFromStateNode(const ScrollingStateScrollingNode&) final;
 
+    // ScrollingEffectsControllerClient.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
     IntSize stretchAmount() const final;
     bool isPinnedOnSide(BoxSide) const final;
-
     RectEdges<bool> edgePinnedState() const final;
-    bool allowsHorizontalScrolling() const final;
-    bool allowsVerticalScrolling() const final;
 
     bool shouldRubberBandOnSide(BoxSide) const final;
-    void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
     void didStopRubberBandAnimation() final;
     void rubberBandingStateChanged(bool) final;
-    void adjustScrollPositionToBoundsIfNecessary() final;
-
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
 
-    FloatPoint scrollOffset() const final;
-    float pageScaleFactor() const final;
-
-    void didStopAnimatedScroll() final;
-
-    void willStartScrollSnapAnimation() final;
-    void didStopScrollSnapAnimation() final;
-
-    ScrollExtents scrollExtents() const final;
-
     void releaseReferencesToScrollerImpsOnTheMainThread();
-
-    ScrollingEffectsController m_scrollController;
 
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;

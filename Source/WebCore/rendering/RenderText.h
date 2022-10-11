@@ -252,8 +252,8 @@ private:
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
     float m_candidateComputedTextSize { 0 };
 #endif
-    float m_minWidth { -1 };
-    float m_maxWidth { -1 };
+    std::optional<float> m_minWidth;
+    std::optional<float> m_maxWidth;
     float m_beginMinWidth { 0 };
     float m_endMinWidth { 0 };
 

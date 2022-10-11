@@ -1451,7 +1451,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     if (isMainFrame) {
 #if PLATFORM(IOS_FAMILY)
-        coreView->setDelegatesScrolling(true);
+        coreView->setDelegatedScrollingMode(WebCore::DelegatedScrollingMode::DelegatedToNativeScrollView);
 #endif
         coreView->setParentVisible(true);
     }

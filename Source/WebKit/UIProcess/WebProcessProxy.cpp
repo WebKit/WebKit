@@ -329,7 +329,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     if (value) {
         RELEASE_ASSERT(m_pageMap.isEmpty());
         RELEASE_ASSERT(!m_suspendedPageCount);
-        RELEASE_ASSERT(m_provisionalPages.isEmpty());
+        RELEASE_ASSERT(m_provisionalPages.computesEmpty());
     }
 
     ASSERT(m_isInProcessCache != value);
@@ -385,9 +385,9 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page().identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
 
     ASSERT(!m_isInProcessCache);
-    ASSERT(!m_provisionalPages.contains(&provisionalPage));
+    ASSERT(!m_provisionalPages.contains(provisionalPage));
     markProcessAsRecentlyUsed();
-    m_provisionalPages.add(&provisionalPage);
+    m_provisionalPages.add(provisionalPage);
     updateRegistrationWithDataStore();
 }
 
@@ -395,10 +395,10 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page().identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
 
-    ASSERT(m_provisionalPages.contains(&provisionalPage));
-    m_provisionalPages.remove(&provisionalPage);
+    ASSERT(m_provisionalPages.contains(provisionalPage));
+    m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
-    if (m_provisionalPages.isEmpty())
+    if (m_provisionalPages.computesEmpty())
         maybeShutDown();
 }
 
@@ -765,8 +765,8 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 
 bool WebProcessProxy::hasProvisionalPageWithID(WebPageProxyIdentifier pageID) const
 {
-    for (auto* provisionalPage : m_provisionalPages) {
-        if (provisionalPage->page().identifier() == pageID)
+    for (auto& provisionalPage : m_provisionalPages) {
+        if (provisionalPage.page().identifier() == pageID)
             return true;
     }
     return false;
@@ -901,7 +901,11 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         webConnection->didClose();
 
     auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
-    auto provisionalPages = WTF::map(m_provisionalPages, [](auto* provisionalPage) { return WeakPtr { provisionalPage }; });
+
+    Vector<WeakPtr<ProvisionalPageProxy>> provisionalPages;
+    m_provisionalPages.forEach([&] (auto& page) {
+        provisionalPages.append(page);
+    });
 
     auto isResponsiveCallbacks = std::exchange(m_isResponsiveCallbacks, { });
     for (auto& callback : isResponsiveCallbacks)
@@ -1142,8 +1146,8 @@ void WebProcessProxy::maybeShutDown()
 
 bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
-    if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.isEmpty() || m_isInProcessCache || m_shutdownPreventingScopeCounter.value()) {
-        WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, m_suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.size(), m_suspendedPageCount, m_isInProcessCache, m_shutdownPreventingScopeCounter.value());
+    if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.computesEmpty() || m_isInProcessCache || m_shutdownPreventingScopeCounter.value()) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, m_suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.computeSize(), m_suspendedPageCount, m_isInProcessCache, m_shutdownPreventingScopeCounter.value());
         return false;
     }
 

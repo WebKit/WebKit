@@ -30,6 +30,7 @@
 #include "config.h"
 #include "StyleBuilderState.h"
 
+#include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
@@ -38,6 +39,7 @@
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "CSSNamedImageValue.h"
 #include "CSSShadowValue.h"
 #include "Document.h"
 #include "ElementInlines.h"
@@ -49,10 +51,16 @@
 #include "Settings.h"
 #include "StyleBuilder.h"
 #include "StyleCachedImage.h"
+#include "StyleCanvasImage.h"
+#include "StyleCrossfadeImage.h"
 #include "StyleCursorImage.h"
+#include "StyleFilterImage.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
+#include "StyleGradientImage.h"
 #include "StyleImageSet.h"
+#include "StyleNamedImage.h"
+#include "StylePaintImage.h"
 #include "TransformFunctions.h"
 
 namespace WebCore {
@@ -87,18 +95,26 @@ bool BuilderState::useSVGZoomRulesForLength() const
 
 Ref<CSSValue> BuilderState::resolveImageStyles(CSSValue& value)
 {
-    if (is<CSSCrossfadeValue>(value))
-        return downcast<CSSCrossfadeValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSImageValue>(value))
+        return downcast<CSSImageValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSImageSetValue>(value))
+        return downcast<CSSImageSetValue>(value).valueWithStylesResolved(*this);
     if (is<CSSCursorImageValue>(value))
         return downcast<CSSCursorImageValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSNamedImageValue>(value))
+        return downcast<CSSNamedImageValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSCanvasValue>(value))
+        return downcast<CSSCanvasValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSCrossfadeValue>(value))
+        return downcast<CSSCrossfadeValue>(value).valueWithStylesResolved(*this);
     if (is<CSSFilterImageValue>(value))
         return downcast<CSSFilterImageValue>(value).valueWithStylesResolved(*this);
     if (is<CSSGradientValue>(value))
         return downcast<CSSGradientValue>(value).valueWithStylesResolved(*this);
-    if (is<CSSImageSetValue>(value))
-        return downcast<CSSImageSetValue>(value).valueWithStylesResolved(*this);
-    if (is<CSSImageValue>(value))
-        return downcast<CSSImageValue>(value).valueWithStylesResolved(*this);
+#if ENABLE(CSS_PAINTING_API)
+    if (is<CSSPaintImageValue>(value))
+        return downcast<CSSPaintImageValue>(value).valueWithStylesResolved(*this);
+#endif
     return value;
 }
 
@@ -106,12 +122,24 @@ RefPtr<StyleImage> BuilderState::createStyleImage(CSSValue& value)
 {
     if (is<CSSImageValue>(value))
         return StyleCachedImage::create(downcast<CSSImageValue>(resolveImageStyles(value).get()));
-    if (is<CSSCursorImageValue>(value))
-        return StyleCursorImage::create(downcast<CSSCursorImageValue>(resolveImageStyles(value).get()));
-    if (is<CSSImageGeneratorValue>(value))
-        return StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(resolveImageStyles(value).get()));
     if (is<CSSImageSetValue>(value))
         return StyleImageSet::create(downcast<CSSImageSetValue>(resolveImageStyles(value).get()));
+    if (is<CSSCursorImageValue>(value))
+        return StyleCursorImage::create(downcast<CSSCursorImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSNamedImageValue>(value))
+        return StyleNamedImage::create(downcast<CSSNamedImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSCanvasValue>(value))
+        return StyleCanvasImage::create(downcast<CSSCanvasValue>(resolveImageStyles(value).get()));
+    if (is<CSSCrossfadeValue>(value))
+        return StyleCrossfadeImage::create(downcast<CSSCrossfadeValue>(resolveImageStyles(value).get()));
+    if (is<CSSFilterImageValue>(value))
+        return StyleFilterImage::create(downcast<CSSFilterImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSGradientValue>(value))
+        return StyleGradientImage::create(downcast<CSSGradientValue>(resolveImageStyles(value).get()));
+#if ENABLE(CSS_PAINTING_API)
+    if (is<CSSPaintImageValue>(value))
+        return StylePaintImage::create(downcast<CSSPaintImageValue>(resolveImageStyles(value).get()));
+#endif
     return nullptr;
 }
 

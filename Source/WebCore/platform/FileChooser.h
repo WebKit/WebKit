@@ -70,6 +70,8 @@ public:
     virtual ~FileChooserClient() = default;
 
     virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) = 0;
+
+    virtual void fileChoosingCancelled() = 0;
 };
 
 class FileChooser : public RefCounted<FileChooser> {
@@ -81,6 +83,7 @@ public:
 
     WEBCORE_EXPORT void chooseFile(const String& path);
     WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths, const Vector<String>& replacementPaths = { });
+    WEBCORE_EXPORT void cancelFileChoosing();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this
     // function with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS_FAMILY)-guard.

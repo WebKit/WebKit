@@ -37,10 +37,10 @@ Ref<StyleCachedImage> StyleCachedImage::create(CSSImageValue& cssValue, float sc
 }
 
 StyleCachedImage::StyleCachedImage(CSSImageValue& cssValue, float scaleFactor)
-    : m_cssValue(cssValue)
+    : StyleImage(Type::CachedImage)
+    , m_cssValue(cssValue)
     , m_scaleFactor(scaleFactor)
 {
-    m_isCachedImage = true;
     m_cachedImage = m_cssValue->cachedImage();
     if (m_cachedImage)
         m_isPending = false;

@@ -52,7 +52,6 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    // Own destructor may not be called. Keep members trivially destructible.
     PackedCellPtr<JSCell> m_owner;
     ObjectPropertyCondition m_key;
     InlineWatchpointSet& m_watchpointSet;

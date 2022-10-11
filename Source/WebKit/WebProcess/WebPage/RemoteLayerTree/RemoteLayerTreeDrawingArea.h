@@ -81,8 +81,8 @@ private:
     void updatePreferences(const WebPreferencesStore&) override;
 
     bool supportsAsyncScrolling() const override { return true; }
-    bool usesDelegatedScrolling() const override { return true; }
     bool usesDelegatedPageScaling() const override { return true; }
+    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_isRenderingSuspended; }

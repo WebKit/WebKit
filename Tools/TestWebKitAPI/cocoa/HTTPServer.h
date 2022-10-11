@@ -95,6 +95,7 @@ public:
     String origin() const;
     NSURLRequest *request(StringView path = "/"_s) const;
     NSURLRequest *requestWithLocalhost(StringView path = "/"_s) const;
+    WKWebViewConfiguration *httpsProxyConfiguration() const;
     size_t totalRequests() const;
     void cancel();
     void terminateAllConnections(CompletionHandler<void()>&&);

@@ -1,0 +1,32 @@
+This tests deleting a selection that has a styling element in it. Should move styling elements to head to prevent style loss.
+
+styling elements have been moved:
+| "\n        "
+| <div>
+|   <#selection-caret>
+|   <br>
+| "\n    "
+| <style>
+|   " .text { color:red; } "
+| <link>
+|   href="../editingStyle.css"
+|   rel="stylesheet"
+|   type="text/css"
+
+styling elements are back to their original place:
+| "\n        "
+| <div>
+|   " <#selection-anchor>hide styling elements in --> "
+| "\n        "
+| <style>
+|   " .text { color:red; } "
+| "\n        "
+| <link>
+|   href="../editingStyle.css"
+|   rel="stylesheet"
+|   type="text/css"
+| "\n        "
+| <div>
+|   class="text"
+|   " between<#selection-focus> "
+| "\n    "

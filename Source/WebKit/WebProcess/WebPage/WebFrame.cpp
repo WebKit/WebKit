@@ -115,10 +115,10 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
     m_coreFrame->init();
 }
 
-Ref<WebFrame> WebFrame::createSubframe(WebPage& page, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
+Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     auto frame = create(page);
-    page.send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
+    page.send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID(), parent.frameID()));
 
     auto coreFrame = Frame::create(page.corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
     frame->m_coreFrame = coreFrame;

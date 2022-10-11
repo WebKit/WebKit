@@ -62,6 +62,11 @@ void DrawingAreaProxy::startReceivingMessages()
     process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier, *this);
 }
 
+DelegatedScrollingMode DrawingAreaProxy::delegatedScrollingMode() const
+{
+    return DelegatedScrollingMode::NotDelegated;
+}
+
 bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollDelta)
 { 
     if (m_size == size && scrollDelta.isZero())

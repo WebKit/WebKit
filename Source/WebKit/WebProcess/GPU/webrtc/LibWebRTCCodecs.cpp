@@ -307,6 +307,19 @@ int32_t LibWebRTCCodecs::releaseDecoder(Decoder& decoder)
 }
 
 // May be called on any thread.
+void LibWebRTCCodecs::flushDecoder(Decoder& decoder, Function<void()>&& callback)
+{
+    Locker locker { m_connectionLock };
+    if (!decoder.connection || decoder.hasError) {
+        callback();
+        return;
+    }
+
+    decoder.connection->send(Messages::LibWebRTCCodecsProxy::FlushDecoder { decoder.identifier }, 0);
+    Locker flushLocker { decoder.flushCallbacksLock };
+    decoder.flushCallbacks.append(WTFMove(callback));
+}
+
 int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };
@@ -345,6 +358,19 @@ void LibWebRTCCodecs::failedDecoding(VideoDecoderIdentifier decoderIdentifier)
 
     if (auto* decoder = m_decoders.get(decoderIdentifier))
         decoder->hasError = true;
+}
+
+void LibWebRTCCodecs::flushDecoderCompleted(VideoDecoderIdentifier decoderIdentifier)
+{
+    assertIsCurrent(workQueue());
+
+    auto* decoder = m_decoders.get(decoderIdentifier);
+    if (!decoder)
+        return;
+
+    Locker locker { decoder->flushCallbacksLock };
+    if (!decoder->flushCallbacks.isEmpty())
+        decoder->flushCallbacks.takeFirst()();
 }
 
 void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
@@ -629,6 +655,11 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
         {
             Locker locker { m_connectionLock };
             for (auto& decoder : m_decoders.values()) {
+                {
+                    Locker locker { decoder->flushCallbacksLock };
+                    while (!decoder->flushCallbacks.isEmpty())
+                        decoder->flushCallbacks.takeFirst()();
+                }
                 createRemoteDecoder(*decoder, *connection, m_useRemoteFrames);
                 setDecoderConnection(*decoder, connection.get());
             }

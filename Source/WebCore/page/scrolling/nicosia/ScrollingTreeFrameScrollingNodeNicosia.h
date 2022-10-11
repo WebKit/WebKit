@@ -56,7 +56,6 @@ private:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
 
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
-    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) override;
     void repositionScrollingLayers() override;
     void repositionRelatedLayers() override;

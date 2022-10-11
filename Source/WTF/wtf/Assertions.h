@@ -69,7 +69,7 @@ extern "C" void _ReadWriteBarrier(void);
 #endif
 #endif
 
-/* ASSERT_ENABLED is defined in Platform.h. */
+/* ASSERT_ENABLED is defined in PlatformEnable.h. */
 
 #ifndef BACKTRACE_DISABLED
 #define BACKTRACE_DISABLED !ASSERT_ENABLED

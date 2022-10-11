@@ -45,6 +45,10 @@ public:
 
     virtual void serviceScrollAnimation(MonotonicTime) = 0;
 
+    virtual void updateFromStateNode(const ScrollingStateScrollingNode&) { }
+
+    virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
+
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;

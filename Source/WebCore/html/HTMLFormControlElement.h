@@ -70,6 +70,7 @@ public:
 
     virtual void dispatchFormControlChangeEvent();
     void dispatchChangeEvent();
+    void dispatchCancelEvent();
     void dispatchFormControlInputEvent();
 
     bool isDisabledFormControl() const final { return m_disabled || m_disabledByAncestorFieldset; }

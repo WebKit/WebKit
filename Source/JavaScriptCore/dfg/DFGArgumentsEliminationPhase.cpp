@@ -249,13 +249,8 @@ private:
 
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
-                JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
-                if (objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                    && globalObject->objectPrototypeIsSaneConcurrently(objectPrototypeStructure)) {
-                    m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                if (m_graph.isWatchingObjectPrototypeIsSaneChainWatchpoint(edge.node()))
                     break;
-                }
                 escape(edge, source);
                 break;
             }
@@ -272,23 +267,12 @@ private:
                 
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
-                JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
                 if (edge->op() == CreateRest) {
-                    Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
-                    if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
-                        && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                        && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {
-                        m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
-                        m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                    if (m_graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(edge.node()))
                         break;
-                    }
                 } else {
-                    if (objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                        && globalObject->objectPrototypeIsSaneConcurrently(objectPrototypeStructure)) {
-                        m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                    if (m_graph.isWatchingObjectPrototypeIsSaneChainWatchpoint(edge.node()))
                         break;
-                    }
                 }
                 escape(edge, source);
                 break;

@@ -40,6 +40,7 @@
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
 #include <map>
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -81,12 +82,15 @@ public:
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
+        Deque<Function<void()>> flushCallbacks WTF_GUARDED_BY_LOCK(flushCallbacksLock);
+        Lock flushCallbacksLock;
     };
 
     Decoder* createDecoder(VideoCodecType);
     void createDecoderAndWaitUntilReady(VideoCodecType, Function<void(Decoder&)>&&);
 
     int32_t releaseDecoder(Decoder&);
+    void flushDecoder(Decoder&, Function<void()>&&);
     int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t, uint16_t width, uint16_t height);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
@@ -140,6 +144,7 @@ private:
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(VideoDecoderIdentifier);
+    void flushDecoderCompleted(VideoDecoderIdentifier);
     void completedDecoding(VideoDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
     void completedDecodingCV(VideoDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);

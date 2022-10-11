@@ -4472,10 +4472,7 @@ webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-001.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-003.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-004.html [ ImageOnlyFailure ]
-webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001a.xhtml [ ImageOnlyFailure ]
-webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001b.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-006.xhtml [ ImageOnlyFailure ]
-webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-007.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-008.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html [ ImageOnlyFailure ]
@@ -6090,6 +6087,10 @@ js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
 js/ShadowRealm-importValue.html [ Pass Failure ]
 js/ShadowRealm-worker.html [ Pass Failure ]
 
+# We don't support screen orientation locking yet, making these tests flaky.
+imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Failure Pass ]
+imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure Pass ]
+
 # Old SVG+currentcolor tests are incorrect https://bugs.webkit.org/show_bug.cgi?id=245400
 imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual.svg [ Skip ]
 svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Skip ]
@@ -6100,3 +6101,6 @@ imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.
 
 # WPT meta name="variant" is not supported. And iframe 'load' event has a bug.
 imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]
+
+# WebKit2 Only
+fullscreen/fullscreen-enter-bottom-padding-animation.html [ Skip ]

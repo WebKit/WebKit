@@ -61,7 +61,8 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "StyleCachedImage.h"
-#include "StyleGeneratedImage.h"
+#include "StyleCrossfadeImage.h"
+#include "StyleFilterImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "TabSize.h"
@@ -390,7 +391,7 @@ static inline RefPtr<StyleImage> blendFilter(CachedImage* image, const FilterOpe
 
     auto result = CSSFilterImageValue::create(WTFMove(imageValue), WTFMove(filterValue));
     result.get().setFilterOperations(filterResult);
-    return StyleGeneratedImage::create(WTFMove(result));
+    return StyleFilterImage::create(WTFMove(result));
 }
 
 static inline Visibility blendFunc(Visibility from, Visibility to, const CSSPropertyBlendingContext& context)
@@ -472,7 +473,7 @@ static inline RefPtr<StyleImage> crossfadeBlend(StyleCachedImage* fromStyleImage
     auto percentageValue = CSSPrimitiveValue::create(context.progress, CSSUnitType::CSS_NUMBER);
 
     auto crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue), WTFMove(percentageValue));
-    return StyleGeneratedImage::create(WTFMove(crossfadeValue));
+    return StyleCrossfadeImage::create(WTFMove(crossfadeValue));
 }
 
 static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, const CSSPropertyBlendingContext& context)
@@ -510,7 +511,7 @@ static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, con
             CSSCrossfadeValue& toCrossfade = downcast<CSSCrossfadeValue>(toGenerated);
             if (fromCrossfade.equalInputImages(toCrossfade)) {
                 if (auto crossfadeBlend = toCrossfade.blend(fromCrossfade, context))
-                    return StyleGeneratedImage::create(*crossfadeBlend);
+                    return StyleCrossfadeImage::create(*crossfadeBlend);
             }
         }
 

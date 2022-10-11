@@ -83,7 +83,7 @@ VisibleSelection::VisibleSelection(const SimpleRange& range, Affinity affinity, 
 VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
 {
     ASSERT(!editingIgnoresContent(*node));
-    return VisibleSelection(firstPositionInNode(node), lastPositionInNode(node));
+    return VisibleSelection(VisiblePosition { firstPositionInNode(node) }, VisiblePosition { lastPositionInNode(node) });
 }
 
 Position VisibleSelection::anchor() const

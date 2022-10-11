@@ -22,19 +22,32 @@
 #include "config.h"
 #include "StyleMultiImage.h"
 
-#include "CSSImageGeneratorValue.h"
+#include "CSSCanvasValue.h"
+#include "CSSCrossfadeValue.h"
+#include "CSSFilterImageValue.h"
+#include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "CSSNamedImageValue.h"
+#include "CSSPaintImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "RenderElement.h"
 #include "RenderView.h"
 #include "StyleCachedImage.h"
-#include "StyleGeneratedImage.h"
+#include "StyleCanvasImage.h"
+#include "StyleCrossfadeImage.h"
+#include "StyleFilterImage.h"
+#include "StyleGradientImage.h"
+#include "StyleNamedImage.h"
+#include "StylePaintImage.h"
 
 namespace WebCore {
 
-StyleMultiImage::StyleMultiImage() = default;
+StyleMultiImage::StyleMultiImage(Type type)
+    : StyleImage(type)
+{
+}
 
 StyleMultiImage::~StyleMultiImage() = default;
 
@@ -52,16 +65,44 @@ void StyleMultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOpt
     auto imageWithScale = selectBestFitImage(*loader.document());
     ASSERT(is<CSSImageValue>(imageWithScale.value) || is<CSSImageGeneratorValue>(imageWithScale.value));
 
-    if (is<CSSImageGeneratorValue>(imageWithScale.value)) {
-        m_selectedImage = StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-    }
-    
     if (is<CSSImageValue>(imageWithScale.value)) {
         m_selectedImage = StyleCachedImage::create(downcast<CSSImageValue>(*imageWithScale.value.get()), imageWithScale.scaleFactor);
         if (m_selectedImage->isPending())
             m_selectedImage->load(loader, options);
+        return;
     }
+    if (is<CSSNamedImageValue>(imageWithScale.value)) {
+        m_selectedImage = StyleNamedImage::create(downcast<CSSNamedImageValue>(*imageWithScale.value.get()));
+        m_selectedImage->load(loader, options);
+        return;
+    }
+    if (is<CSSCanvasValue>(imageWithScale.value)) {
+        m_selectedImage = StyleCanvasImage::create(downcast<CSSCanvasValue>(*imageWithScale.value.get()));
+        m_selectedImage->load(loader, options);
+        return;
+    }
+    if (is<CSSCrossfadeValue>(imageWithScale.value)) {
+        m_selectedImage = StyleCrossfadeImage::create(downcast<CSSCrossfadeValue>(*imageWithScale.value.get()));
+        m_selectedImage->load(loader, options);
+        return;
+    }
+    if (is<CSSFilterImageValue>(imageWithScale.value)) {
+        m_selectedImage = StyleFilterImage::create(downcast<CSSFilterImageValue>(*imageWithScale.value.get()));
+        m_selectedImage->load(loader, options);
+        return;
+    }
+    if (is<CSSGradientValue>(imageWithScale.value)) {
+        m_selectedImage = StyleGradientImage::create(downcast<CSSGradientValue>(*imageWithScale.value.get()));
+        m_selectedImage->load(loader, options);
+        return;
+    }
+#if ENABLE(CSS_PAINTING_API)
+    if (is<CSSPaintImageValue>(imageWithScale.value)) {
+        m_selectedImage = StylePaintImage::create(downcast<CSSPaintImageValue>(*imageWithScale.value.get()));
+        m_selectedImage->load(loader, options);
+        return;
+    }
+#endif
 }
 
 CachedImage* StyleMultiImage::cachedImage() const

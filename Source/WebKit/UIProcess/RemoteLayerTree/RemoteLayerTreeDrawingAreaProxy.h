@@ -68,8 +68,7 @@ public:
 #endif
 
 private:
-    bool usesDelegatedScrolling() const final { return true; }
-
+    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;

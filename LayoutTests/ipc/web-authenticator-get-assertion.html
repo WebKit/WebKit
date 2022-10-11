@@ -6,7 +6,7 @@ Test passes if it does not crash.
 if (window.testRunner)
     testRunner.dumpAsText();
 if (window.IPC)
-    IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebAuthenticatorCoordinatorProxy_GetAssertion.name, [{type: 'uint64_t', value: IPC.frameID}, {type: 'uint64_t', value: IPC.frameID}, {type: 'double', value: 453.75480017156707}, new Uint8Array([242, 32, 251, 155, 232, 78, 109, 31, 95, 69, 230, 204, 180, 223, 143, 117, 37, 60, 58, 234, 166, 206, 166, 206, 203, 85, 208, 103, 123, 14, 238, 123, 249, 177, 191, 157, 19, 241, 74, 52, 240, 127, 62, 78, 131, 232, 254, 248, 252, 14, 151, 233, 194, 221, 116, 119, 116, 242, 86, 137, 172, 196, 222, 14, 141, 153, 71, 241, 156, 147, 252, 0, 244, 202, 250, 224]), {type: 'bool', value: 1}]);
+    IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebAuthenticatorCoordinatorProxy_GetAssertion.name, [{type: 'FrameID', value: IPC.frameID}, {type: 'FrameID', value: IPC.frameID}, {type: 'double', value: 453.75480017156707}, new Uint8Array([242, 32, 251, 155, 232, 78, 109, 31, 95, 69, 230, 204, 180, 223, 143, 117, 37, 60, 58, 234, 166, 206, 166, 206, 203, 85, 208, 103, 123, 14, 238, 123, 249, 177, 191, 157, 19, 241, 74, 52, 240, 127, 62, 78, 131, 232, 254, 248, 252, 14, 151, 233, 194, 221, 116, 119, 116, 242, 86, 137, 172, 196, 222, 14, 141, 153, 71, 241, 156, 147, 252, 0, 244, 202, 250, 224]), {type: 'bool', value: 1}]);
 </script>
 </body>
 </html>

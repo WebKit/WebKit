@@ -38,7 +38,8 @@ public:
     virtual ~StyleMultiImage();
 
 protected:
-    StyleMultiImage();
+    StyleMultiImage(Type);
+
     bool equals(const StyleMultiImage& other) const;
     virtual ImageWithScale selectBestFitImage(const Document&) const = 0;
     CachedImage* cachedImage() const final;

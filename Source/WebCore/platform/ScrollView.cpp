@@ -189,13 +189,13 @@ void ScrollView::setPaintsEntireContents(bool paintsEntireContents)
     m_paintsEntireContents = paintsEntireContents;
 }
 
-void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
+void ScrollView::setDelegatedScrollingMode(DelegatedScrollingMode delegatedScrollingMode)
 {
-    if (m_delegatesScrolling == delegatesScrolling)
+    if (m_delegatedScrollingMode == delegatedScrollingMode)
         return;
 
-    m_delegatesScrolling = delegatesScrolling;
-    delegatesScrollingDidChange();
+    m_delegatedScrollingMode = delegatedScrollingMode;
+    delegatedScrollingModeDidChange();
 }
 
 IntPoint ScrollView::contentsScrollPosition() const
@@ -578,12 +578,15 @@ IntSize ScrollView::overhangAmount() const
 bool ScrollView::managesScrollbars() const
 {
 #if PLATFORM(IOS_FAMILY)
+    // FIXME: We should be able to remove this. iOS should always hit the DelegatedToNativeScrollView condition below.
     return false;
 #else
     if (platformWidget())
         return false;
-    if (delegatesScrolling())
+
+    if (delegatedScrollingMode() == DelegatedScrollingMode::DelegatedToNativeScrollView)
         return false;
+
     return true;
 #endif
 }

@@ -35,8 +35,8 @@
 #import "CocoaHelpers.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/RunLoop.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -45,25 +45,23 @@ static NSString * const allURLsPattern = @"<all_urls>";
 static NSString * const allHostsAndSchemesPattern = @"*://*/*";
 static NSString * const patternFormat = @"%@://%@%@";
 
-NSSet *WebExtensionMatchPattern::validSchemes()
+const WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
 {
-    // FIXME: Add extension schemes to this set.
-    static NSSet<NSString *> *schemes = [NSSet setWithObjects:@"*", @"http", @"https", @"file", @"ftp", nil];
+    // FIXME: Add custom extension schemes to this set.
+    static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "file"_s, "ftp"_s, "webkit-extension"_s };
     return schemes;
 }
 
-NSSet *WebExtensionMatchPattern::supportedSchemes()
+const WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchemes()
 {
-    // FIXME: Add extension schemes to this set.
-    static NSSet<NSString *> *schemes = [NSSet setWithObjects:@"*", @"http", @"https", nil];
-    ASSERT([schemes isSubsetOfSet:validSchemes()]);
+    // FIXME: Add custom extension schemes to this set.
+    static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "webkit-extension"_s };
     return schemes;
 }
 
 static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
 {
-    ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
+    static MainThreadNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
     return cache;
 }
 
@@ -158,7 +156,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(NSString *scheme, NSString *h
 
 bool WebExtensionMatchPattern::isSupported() const
 {
-    return isValid() && (m_matchesAllURLs || [supportedSchemes() containsObject:m_scheme.get()]);
+    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(m_scheme.get()));
 }
 
 bool WebExtensionMatchPattern::operator==(const WebExtensionMatchPattern& other) const
@@ -207,13 +205,14 @@ NSArray *WebExtensionMatchPattern::expandedStrings() const
 
     if (m_matchesAllURLs) {
         NSMutableArray<NSString *> *result = [NSMutableArray arrayWithCapacity:2];
-        for (NSString *scheme in supportedSchemes()) {
-            if ([scheme isEqualToString:@"*"])
+
+        for (auto& scheme : supportedSchemes()) {
+            if (scheme == "*"_s)
                 continue;
-            [result addObject:[NSString stringWithFormat:patternFormat, scheme, @"*", @"/*"]];
+            [result addObject:[NSString stringWithFormat:patternFormat, (NSString *)scheme, @"*", @"/*"]];
         }
 
-        return result;
+        return [result copy];
     }
 
     if ([m_scheme isEqualToString:@"*"])
@@ -229,7 +228,7 @@ bool WebExtensionMatchPattern::matchesAllHosts() const
 
 bool WebExtensionMatchPattern::isValidScheme(NSString *scheme)
 {
-    return [validSchemes() containsObject:scheme];
+    return validSchemes().contains(scheme);
 }
 
 bool WebExtensionMatchPattern::isValidHost(NSString *host)
@@ -309,7 +308,7 @@ bool WebExtensionMatchPattern::matchesURL(NSURL *urlToMatch, OptionSet<Options> 
     ASSERT(!options.contains(Options::MatchBidirectionally));
 
     if (m_matchesAllURLs)
-        return [supportedSchemes() containsObject:urlToMatch.scheme];
+        return supportedSchemes().contains(urlToMatch.scheme);
 
     // If this is a file URL, the host can be nil. Pass empty string instead of nil to match our non-nil expectations.
     return schemeMatches(urlToMatch.scheme, options) && hostMatches(urlToMatch.host ?: @"", options) && pathMatches(urlToMatch.path, options);
@@ -324,7 +323,7 @@ bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& pa
         return true;
 
     auto compareAllURLs = ^(const WebExtensionMatchPattern& a, const WebExtensionMatchPattern& b) {
-        return a.matchesAllURLs() && (b.matchesAllURLs() || [supportedSchemes() containsObject:b.scheme()]);
+        return a.matchesAllURLs() && (b.matchesAllURLs() || supportedSchemes().contains(b.scheme()));
     };
 
     if (compareAllURLs(*this, patternToMatch))

@@ -1589,7 +1589,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     auto* drawingArea = webPage->drawingArea();
     view->setViewExposedRect(drawingArea->viewExposedRect());
     if (isMainFrame)
-        view->setDelegatesScrolling(drawingArea->usesDelegatedScrolling());
+        view->setDelegatedScrollingMode(drawingArea->delegatedScrollingMode());
 
     webPage->corePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
 #endif
@@ -1599,7 +1599,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
 #if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {
-        view->setDelegatesScrolling(shouldUseFixedLayout);
+        view->setDelegatedScrollingMode(shouldUseFixedLayout ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);
         view->setPaintsEntireContents(shouldUseFixedLayout);
         return;
     }
@@ -1627,7 +1627,7 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFram
 {
     auto* webPage = m_frame->page();
     ASSERT(webPage);
-    auto subframe = WebFrame::createSubframe(*webPage, name, &ownerElement);
+    auto subframe = WebFrame::createSubframe(*webPage, m_frame, name, &ownerElement);
     auto* coreSubframe = subframe->coreFrame();
     if (!coreSubframe)
         return nullptr;
@@ -1943,15 +1943,6 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 
     for (auto& icon : icons)
         webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon.first, CallbackID::fromInteger(icon.second)));
-}
-
-void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
-{
-    auto* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    webPage->send(Messages::WebPageProxy::DidCreateWindow(m_frame->frameID(), window.identifier()));
 }
 
 #if ENABLE(SERVICE_WORKER)

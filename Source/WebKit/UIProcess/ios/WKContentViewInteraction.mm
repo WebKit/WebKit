@@ -3805,6 +3805,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     changes.setFontSize(font.pointSize);
     changes.setBold(font.traits & UIFontTraitBold);
     changes.setItalic(font.traits & UIFontTraitItalic);
+
+    if (NSString *textStyleAttribute = [font.fontDescriptor.fontAttributes objectForKey:UIFontDescriptorTextStyleAttribute])
+        changes.setFontFamily(textStyleAttribute);
+
     _page->changeFont(WTFMove(changes));
 }
 

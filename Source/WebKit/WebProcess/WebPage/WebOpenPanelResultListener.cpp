@@ -51,6 +51,11 @@ void WebOpenPanelResultListener::didChooseFiles(const Vector<String>& files, con
     m_fileChooser->chooseFiles(files, replacementFiles);
 }
 
+void WebOpenPanelResultListener::didCancelFileChoosing()
+{
+    m_fileChooser->cancelFileChoosing();
+}
+
 #if PLATFORM(IOS_FAMILY)
 void WebOpenPanelResultListener::didChooseFilesWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, WebCore::Icon* displayIcon)
 {

@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<body>
+<p id="description">This tests selecting all, copying, and pasting a content that starts and ends with canvas elements.
+To manually test, copy and paste the content below:</p>
+<div id="editor" contenteditable>
+<canvas width="100" height="100" style="border: 1px solid black"></canvas>
+some text
+<canvas width="100" height="100" style="border: 1px solid black"></canvas>
+some more text
+<canvas width="100" height="100" style="border: 1px solid black"></canvas>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description(document.getElementById('description').textContent);
+
+var editor = document.getElementById('editor');
+editor.focus();
+document.execCommand('selectAll');
+
+document.execCommand('copy');
+Markup.dump(editor, 'Before paste');
+
+if (document.queryCommandSupported('copy') && document.queryCommandSupported('paste')) {
+    document.execCommand('paste');
+    Markup.dump(editor, 'After paste');
+} else
+    editor.onpaste = function () { setTimeout(function () { Markup.dump(editor, 'After paste'); }, 0); }
+
+</script>
+</body>
+</html>

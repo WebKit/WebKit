@@ -537,6 +537,7 @@ UIProcess/Automation/WebAutomationSession.cpp @no-unify
 UIProcess/Downloads/DownloadProxy.cpp
 UIProcess/Downloads/DownloadProxyMap.cpp
 
+UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
 
 UIProcess/Gamepad/UIGamepad.cpp
@@ -611,6 +612,7 @@ WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp
 
 WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 
+WebProcess/Extensions/WebExtensionContextProxy.cpp
 WebProcess/Extensions/WebExtensionControllerProxy.cpp
 
 WebProcess/FileAPI/BlobRegistryProxy.cpp

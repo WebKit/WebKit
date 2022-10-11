@@ -38,6 +38,7 @@ OBJC_CLASS NSError;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
+OBJC_CLASS _WKWebExtensionMatchPattern;
 #endif
 
 namespace WebKit {
@@ -67,6 +68,8 @@ public:
 
     ~WebExtensionMatchPattern() { }
 
+    using URLSchemeSet = HashSet<String>;
+
     enum class Options : uint8_t {
         IgnoreSchemes        = 1 << 0, // Ignore the scheme component when matching.
         IgnorePaths          = 1 << 1, // Ignore the path component when matching.
@@ -74,8 +77,8 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    static NSSet *validSchemes();
-    static NSSet *supportedSchemes();
+    static const URLSchemeSet& validSchemes();
+    static const URLSchemeSet& supportedSchemes();
 
     bool operator==(const WebExtensionMatchPattern&) const;
     bool operator!=(const WebExtensionMatchPattern& other) const { return !(*this == other); }
@@ -97,6 +100,8 @@ public:
     NSArray *expandedStrings() const;
 
     unsigned hash() const { return m_hash; }
+
+    _WKWebExtensionMatchPattern *wrapper() const { return (_WKWebExtensionMatchPattern *)API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper(); }
 #endif
 
 private:
