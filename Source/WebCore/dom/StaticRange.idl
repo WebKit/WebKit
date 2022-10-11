@@ -24,6 +24,7 @@
  */
 
 [
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
     JSGenerateToNativeObject,
     JSCustomMarkFunction,

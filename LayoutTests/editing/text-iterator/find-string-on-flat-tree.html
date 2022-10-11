@@ -49,16 +49,17 @@ else {
         getSelection().removeAllRanges();
     }
 
-    function selectedText(range)
+    function selectedText()
     {
-        if (!getSelection().rangeCount)
+        const range = internals.selectedRange();
+        if (!range)
             return null;
-        return rangeText(getSelection().getRangeAt(0));
+        return rangeText(range);
     }
 
     function setSelection(node, offset)
     {
-        getSelection().setPosition(node, offset);
+        internals.setSelectionWithoutValidation(node, offset, node, offset);
     }
 
     function range(node, offset)
@@ -108,25 +109,25 @@ else {
     shouldBe("rangeText(internals.rangeOfString('in-document', range(shadowRoot, 0), ['DoNotTraverseFlatTree']))", "'(#test-content, 2) 1 to 12'");
     shouldBe("rangeText(internals.rangeOfString('in-document', range(shadowRoot, 0), []))", "'(#test-content, 2) 1 to 12'");
 
-    shouldBe("setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'in-shadow'); selectedText()", "'#test-content 1 to 1'");
-    shouldBe("setSelection(shadowRoot, 0); window.find('in-shadow'); selectedText()", "'#test-content 1 to 1'");
+    shouldBe("setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'in-shadow'); selectedText()", "'(#shadow-root, 0) 0 to 9'");
+    shouldBe("setSelection(shadowRoot, 0); window.find('in-shadow'); selectedText()", "'(#shadow-root, 0) 0 to 9'");
     shouldBe("rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 0), ['DoNotTraverseFlatTree']))", "'(#shadow-root, 0) 0 to 9'");
     shouldBe("rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 0), []))", "'(#shadow-root, 0) 0 to 9'");
 
     shouldBe("setSelection(shadowRoot, 0); document.execCommand('FindString', null, 'slotted'); selectedText()", "'(#slotted-element, 0) 0 to 7' /* Wrapped around */");
-    shouldBe("setSelection(shadowRoot, 0); window.find('slotted'); selectedText()", "'#test-content 1 to 1'");
+    shouldBe("setSelection(shadowRoot, 0); window.find('slotted'); selectedText()", "'(#shadow-root, 0) 0 to 0'");
     shouldBe("setSelection(shadowRoot, 0); window.find('slotted', /* caseSensitive */ true, /* backwards */ false, /* wrap */ true); selectedText()", "'(#slotted-element, 0) 0 to 7'");
     shouldBe("rangeText(internals.rangeOfString('slotted', range(shadowRoot, 0), ['DoNotTraverseFlatTree']))", "null");
     shouldBe("rangeText(internals.rangeOfString('slotted', range(shadowRoot, 0), []))", "'(#slotted-element, 0) 0 to 7'");
 
     shouldBe("setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'slotted'); selectedText()", "'(#slotted-element, 0) 0 to 7' /* Wrapped around */");
-    shouldBe("setSelection(shadowRoot, 1); window.find('slotted'); selectedText()", "'#test-content 1 to 1'");
+    shouldBe("setSelection(shadowRoot, 1); window.find('slotted'); selectedText()", "'(#shadow-root, 0) 10 to 10'");
     shouldBe("setSelection(shadowRoot, 1); window.find('slotted', /* caseSensitive */ true, /* backwards */ false, /* wrap */ true); selectedText()", "'(#slotted-element, 0) 0 to 7'");
     shouldBe("rangeText(internals.rangeOfString('slotted', range(shadowRoot, 1), ['DoNotTraverseFlatTree']))", "null");
     shouldBe("rangeText(internals.rangeOfString('slotted', range(shadowRoot, 1), []))", "'(#slotted-element, 0) 0 to 7'");
 
-    shouldBe("setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-shadow'); selectedText()", "'#test-content 1 to 1'");
-    shouldBe("setSelection(shadowRoot, 1); window.find('in-shadow'); selectedText()", "'#test-content 1 to 1'");
+    shouldBe("setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-shadow'); selectedText()", "'(#shadow-root, 2) 1 to 10'");
+    shouldBe("setSelection(shadowRoot, 1); window.find('in-shadow'); selectedText()", "'(#shadow-root, 2) 1 to 10'");
     shouldBe("rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 1), ['DoNotTraverseFlatTree']))", "'(#shadow-root, 2) 1 to 10'");
     shouldBe("rangeText(internals.rangeOfString('in-shadow', range(shadowRoot, 1), []))", "'(#shadow-root, 2) 1 to 10'");
 
@@ -135,8 +136,8 @@ else {
     shouldBe("rangeText(internals.rangeOfString('in-document', range(shadowRoot, 1), ['DoNotTraverseFlatTree']))", "'(#test-content, 2) 1 to 12'");
     shouldBe("rangeText(internals.rangeOfString('in-document', range(shadowRoot, 1), []))", "'(#test-content, 2) 1 to 12'");
 
-    shouldBe("setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-slot'); selectedText()", "'#test-content 1 to 1'");
-    shouldBe("setSelection(shadowRoot, 1); window.find('in-slot'); selectedText()", "'#test-content 1 to 1'");
+    shouldBe("setSelection(shadowRoot, 1); document.execCommand('FindString', null, 'in-slot'); selectedText()", "'(#shadow-root, 0) 10 to 10'");
+    shouldBe("setSelection(shadowRoot, 1); window.find('in-slot'); selectedText()", "'(#shadow-root, 0) 10 to 10'");
     shouldBe("rangeText(internals.rangeOfString('in-slot', range(shadowRoot, 1), ['DoNotTraverseFlatTree']))", "null");
     shouldBe("rangeText(internals.rangeOfString('in-slot', range(shadowRoot, 1), []))", "null");
 
@@ -145,8 +146,8 @@ else {
     shouldBe("rangeText(internals.rangeOfString('in-user-agent-shadow', null, ['DoNotTraverseFlatTree']))", "null");
     shouldBe("rangeText(internals.rangeOfString('in-user-agent-shadow', null, []))", "null");
 
-    shouldBe("setSelection(userAgentShadowRoot, 0); document.execCommand('FindString', null, 'in-user-agent-shadow'); selectedText()", "'#test-content 3 to 3'");
-    shouldBe("setSelection(userAgentShadowRoot, 0); window.find('in-user-agent-shadow'); selectedText()", "'#test-content 3 to 3'");
+    shouldBe("setSelection(userAgentShadowRoot, 0); document.execCommand('FindString', null, 'in-user-agent-shadow'); selectedText()", "'(#user-agent-shadow-root, 0) 0 to 20'");
+    shouldBe("setSelection(userAgentShadowRoot, 0); window.find('in-user-agent-shadow'); selectedText()", "'(#user-agent-shadow-root, 0) 0 to 20'");
     shouldBe("rangeText(internals.rangeOfString('in-user-agent-shadow', range(userAgentShadowRoot, 0), ['DoNotTraverseFlatTree']))", "'(#user-agent-shadow-root, 0) 0 to 20'");
     shouldBe("rangeText(internals.rangeOfString('in-user-agent-shadow', range(userAgentShadowRoot, 0), []))", "'(#user-agent-shadow-root, 0) 0 to 20'");
 
