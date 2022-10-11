@@ -64,9 +64,9 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
             imageBuffer = DisplayList::ImageBuffer::create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
-    if (creationContext.hostWindow && !imageBuffer) {
+    if (creationContext.graphicsClient && !imageBuffer) {
         auto renderingMode = options.contains(ImageBufferOptions::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-        imageBuffer = creationContext.hostWindow->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext.avoidIOSurfaceSizeCheckInWebProcessForTesting);
+        imageBuffer = creationContext.graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext.avoidIOSurfaceSizeCheckInWebProcessForTesting);
     }
 
     if (imageBuffer)

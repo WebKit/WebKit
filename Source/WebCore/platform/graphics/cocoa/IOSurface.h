@@ -45,7 +45,7 @@ class TextStream;
 namespace WebCore {
 
 class GraphicsContext;
-class HostWindow;
+class GraphicsClient;
 class IOSurfacePool;
 
 enum class PixelFormat : uint8_t;
@@ -128,7 +128,7 @@ public:
 #endif
     IOSurfaceRef surface() const { return m_surface.get(); }
     WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
-    WEBCORE_EXPORT CGContextRef ensurePlatformContext(const HostWindow* = nullptr);
+    WEBCORE_EXPORT CGContextRef ensurePlatformContext(const GraphicsClient* = nullptr);
 
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to

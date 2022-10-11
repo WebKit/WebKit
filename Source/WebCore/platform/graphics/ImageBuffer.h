@@ -39,7 +39,7 @@
 namespace WebCore {
 
 class Filter;
-class HostWindow;
+class GraphicsClient;
 #if HAVE(IOSURFACE)
 class IOSurfacePool;
 #endif
@@ -53,7 +53,7 @@ class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThr
 public:
     struct CreationContext {
         // clang 13.1.6 throws errors if we use default initializers here.
-        HostWindow* hostWindow;
+        GraphicsClient* graphicsClient;
 #if HAVE(IOSURFACE)
         IOSurfacePool* surfacePool;
 #endif
@@ -64,7 +64,7 @@ public:
         UseCGDisplayListImageCache useCGDisplayListImageCache;
 #endif
 
-        CreationContext(HostWindow* window = nullptr
+        CreationContext(GraphicsClient* client = nullptr
 #if HAVE(IOSURFACE)
             , IOSurfacePool* pool = nullptr
 #endif
@@ -73,7 +73,7 @@ public:
             , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
 #endif
         )
-            : hostWindow(window)
+            : graphicsClient(client)
 #if HAVE(IOSURFACE)
             , surfacePool(pool)
 #endif

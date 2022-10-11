@@ -350,7 +350,7 @@ RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsign
     return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace.platformColorSpace(), configuration.bitmapInfo));
 }
 
-CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
+CGContextRef IOSurface::ensurePlatformContext(const GraphicsClient* client)
 {
     if (m_cgContext)
         return m_cgContext.get();
@@ -362,14 +362,14 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
-        if (hostWindow && hostWindow->displayID())
-            displayMask = displayMaskForDisplay(hostWindow->displayID());
+        if (client && client->displayID())
+            displayMask = displayMaskForDisplay(client->displayID());
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), displayMask);
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #else
-    UNUSED_PARAM(hostWindow);
+    UNUSED_PARAM(client);
 #endif
 #if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
     if (m_resourceOwner && CGContextSetOwnerIdentity)

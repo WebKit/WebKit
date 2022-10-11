@@ -1356,6 +1356,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/FileMonitor.h
     platform/FileStreamClient.h
     platform/FloatConversion.h
+    platform/GraphicsClient.h
     platform/HostWindow.h
     platform/KeyboardScrollingAnimator.h
     platform/KeyboardScroll.h

@@ -93,7 +93,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (!surface)
         return nullptr;
 
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(creationContext.hostWindow);
+    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(creationContext.graphicsClient);
     if (!cgContext)
         return nullptr;
 
