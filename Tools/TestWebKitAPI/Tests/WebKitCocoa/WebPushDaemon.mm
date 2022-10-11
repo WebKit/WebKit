@@ -29,6 +29,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestNotificationProvider.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
