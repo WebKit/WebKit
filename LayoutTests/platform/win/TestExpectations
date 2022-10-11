@@ -1805,7 +1805,6 @@ webkit.org/b/193371 accessibility/set-selected-editable.html [ Skip ]
 webkit.org/b/140798 accessibility/aria-expanded-supported-roles.html [ Skip ]
 
 # The following timeouts are caused by the same problem: [ Failure ]
-webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html [ Skip ]
 webkit.org/b/140798 accessibility/aria-hidden-false-works-in-subtrees.html [ Skip ]
 
 # The following fail because of missing numerical output support.
