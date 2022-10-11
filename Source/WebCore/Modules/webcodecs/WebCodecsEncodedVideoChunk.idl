@@ -48,5 +48,5 @@ typedef [EnforceRange] unsigned long long WebCodecsEncodedVideoChunkInitDuration
   required WebCodecsEncodedVideoChunkType type;
   WebCodecsEncodedVideoChunkInitTimestamp timestamp;
   WebCodecsEncodedVideoChunkInitDuration duration;
-  required BufferSource data;
+  required [AllowShared] BufferSource data;
 };
