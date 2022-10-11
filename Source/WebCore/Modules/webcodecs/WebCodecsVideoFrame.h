@@ -61,9 +61,11 @@ class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame> {
 public:
     ~WebCodecsVideoFrame();
 
+    enum class AlphaOption { Keep, Discard };
     struct Init {
         std::optional<uint64_t> duration;
         std::optional<int64_t> timestamp;
+        AlphaOption alpha { AlphaOption::Keep };
 
         DOMRectInit visibleRect;
 

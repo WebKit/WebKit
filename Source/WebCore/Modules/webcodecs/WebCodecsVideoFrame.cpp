@@ -182,9 +182,9 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&&
     RefPtr<VideoFrame> videoFrame;
     if (init.format == VideoPixelFormat::NV12)
         videoFrame = VideoFrame::createNV12({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1]);
-    else if (init.format == VideoPixelFormat::RGBA)
+    else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
         videoFrame = VideoFrame::createRGBA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
-    else if (init.format == VideoPixelFormat::BGRA)
+    else if (init.format == VideoPixelFormat::BGRA || init.format == VideoPixelFormat::BGRX)
         videoFrame = VideoFrame::createBGRA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
     else if (init.format == VideoPixelFormat::I420)
         videoFrame = VideoFrame::createI420({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2]);
@@ -225,15 +225,35 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&& videoFram
     return result;
 }
 
+static VideoPixelFormat computeVideoPixelFormat(VideoPixelFormat baseFormat, bool shouldDiscardAlpha)
+{
+    if (!shouldDiscardAlpha)
+        return baseFormat;
+    switch (baseFormat) {
+    case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I422:
+    case VideoPixelFormat::NV12:
+    case VideoPixelFormat::I444:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRX:
+        return baseFormat;
+    case VideoPixelFormat::RGBA:
+        return VideoPixelFormat::RGBX;
+    case VideoPixelFormat::BGRA:
+        return VideoPixelFormat::BGRX;
+    }
+    return baseFormat;
+}
+
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-from-other-frame
 Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init)
 {
     // FIXME: Call https://w3c.github.io/webcodecs/#validate-videoframeinit
-    // FIXME: Implement alpha discarding.
-
     auto result = adoptRef(*new WebCodecsVideoFrame);
     result->m_internalFrame = videoFrame->m_internalFrame;
-    result->m_format = videoFrame->m_format;
+    if (videoFrame->m_format)
+        result->m_format = computeVideoPixelFormat(*videoFrame->m_format, init.alpha == AlphaOption::Discard);
 
     result->m_codedWidth = videoFrame->m_codedWidth;
     result->m_codedHeight = videoFrame->m_codedHeight;
