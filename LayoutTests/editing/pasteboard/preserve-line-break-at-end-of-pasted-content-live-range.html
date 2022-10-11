@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<body>
+<p id="description">This tests for a bug where newlines would not be preserved during copy/paste. Below you should see two paragraphs containing "Hello World!" and an empty third paragraph with the caret in it.</p>
+<div id="root" contenteditable="true">Hello World!<div id="div"><br></div></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description(document.getElementById('description').textContent);
+
+root = document.getElementById("root");
+root.focus();
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+
+Markup.dump(root, 'Before copy and paste');
+
+selection = window.getSelection();
+div = document.getElementById("div");
+selection.setPosition(div, 0);
+document.execCommand("Paste");
+
+Markup.dump(root, 'After copy and paste');
+</script>
+</body>
+</html>
