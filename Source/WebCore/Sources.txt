@@ -1919,6 +1919,7 @@ page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
 page/scrolling/ScrollingTreeStickyNode.cpp
 page/scrolling/ThreadedScrollingCoordinator.cpp
 page/scrolling/ThreadedScrollingTree.cpp
+page/scrolling/ThreadedScrollingTreeScrollingNodeDelegate.cpp
 platform/CommonAtomStrings.cpp
 platform/ContentType.cpp
 platform/ContextMenu.cpp

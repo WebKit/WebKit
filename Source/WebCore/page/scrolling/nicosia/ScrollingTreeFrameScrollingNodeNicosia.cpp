@@ -89,18 +89,12 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
         m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
 
-    delegate().updateFromStateNode(scrollingStateNode);
+    m_delegate->updateFromStateNode(scrollingStateNode);
 }
 
 WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
     return delegate().handleWheelEvent(wheelEvent, eventTargeting);
-}
-
-FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const
-{
-    FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
-    return ScrollingTreeFrameScrollingNode::adjustedScrollPosition(scrollPosition, clamping);
 }
 
 void ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged(ScrollType scrollType, ScrollingLayerPositionAction action)

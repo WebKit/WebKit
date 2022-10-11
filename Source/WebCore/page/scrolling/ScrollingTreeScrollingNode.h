@@ -50,8 +50,8 @@ class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
 #if PLATFORM(MAC)
     friend class ScrollingTreeScrollingNodeDelegateMac;
 #endif
-#if USE(NICOSIA)
-    friend class ScrollingTreeScrollingNodeDelegateNicosia;
+#if ENABLE(SCROLLING_THREAD)
+    friend class ThreadedScrollingTreeScrollingNodeDelegate;
 #endif
     friend class ScrollingTree;
     friend class ThreadedScrollingTree;
@@ -134,7 +134,7 @@ protected:
     
     virtual void willDoProgrammaticScroll(const FloatPoint&) { }
     
-    virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
+    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
     
     virtual bool startAnimatedScrollToPosition(FloatPoint);
     virtual void stopAnimatedScroll();

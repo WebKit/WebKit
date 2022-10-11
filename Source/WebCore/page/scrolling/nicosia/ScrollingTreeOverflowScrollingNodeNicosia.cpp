@@ -33,6 +33,7 @@
 
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingTreeScrollingNodeDelegateNicosia.h"
+#include "ThreadedScrollingTree.h"
 
 namespace WebCore {
 
@@ -54,10 +55,10 @@ ScrollingTreeScrollingNodeDelegateNicosia& ScrollingTreeOverflowScrollingNodeNic
     return *static_cast<ScrollingTreeScrollingNodeDelegateNicosia*>(m_delegate.get());
 }
 
-FloatPoint ScrollingTreeOverflowScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const
+void ScrollingTreeOverflowScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
-    return ScrollingTreeOverflowScrollingNode::adjustedScrollPosition(scrollPosition, clamping);
+    ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
+    m_delegate->updateFromStateNode(downcast<ScrollingStateScrollingNode>(stateNode));
 }
 
 void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
