@@ -35,4 +35,5 @@ __attribute__((objc_runtime_name("WK_RTCVideoDecoderVTBVP9")))
 - (NSInteger)decodeData:(const uint8_t *)data
     size:(size_t)size
     timeStamp:(uint32_t)timeStamp;
+- (void)flush;
 @end

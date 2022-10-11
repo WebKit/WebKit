@@ -147,6 +147,18 @@ void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
 
+void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    auto decoder = m_decoders.get(identifier);
+    if (!decoder) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    webrtc::flushLocalDecoder(decoder);
+    m_connection->send(Messages::LibWebRTCCodecs::FlushDecoderCompleted { identifier }, 0);
+}
+
 void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     assertIsCurrent(workQueue());

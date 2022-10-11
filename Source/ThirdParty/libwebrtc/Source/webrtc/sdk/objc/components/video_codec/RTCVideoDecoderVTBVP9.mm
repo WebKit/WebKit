@@ -370,6 +370,11 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   }
 }
 
+- (void)flush {
+  if (_decompressionSession)
+    VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+}
+
 - (void)setVideoFormat:(CMVideoFormatDescriptionRef)videoFormat {
   if (_videoFormat == videoFormat) {
     return;

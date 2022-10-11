@@ -24,6 +24,7 @@
 
 messages -> LibWebRTCCodecs NotRefCounted {
     FailedDecoding(WebKit::VideoDecoderIdentifier identifier)
+    FlushDecoderCompleted(WebKit::VideoDecoderIdentifier identifier)
     CompletedDecoding(WebKit::VideoDecoderIdentifier identifier, uint32_t timeStamp, uint32_t timeStampNs, WebKit::RemoteVideoFrameProxy::Properties frame)
     CompletedDecodingCV(WebKit::VideoDecoderIdentifier identifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef> pixelBuffer)
     CompletedEncoding(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference data, struct webrtc::WebKitEncodedFrameInfo info);

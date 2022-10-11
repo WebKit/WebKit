@@ -191,8 +191,11 @@ void RemoteVideoDecoder::decode(EncodedFrame&& frame, DecodeCallback&& callback)
 
 void RemoteVideoDecoder::flush(Function<void()>&& callback)
 {
-    // FIXME: Implement this.
-    callback();
+    WebProcess::singleton().libWebRTCCodecs().flushDecoder(m_internalDecoder, [callback = WTFMove(callback), callbacks = m_callbacks]() mutable {
+        callbacks->postTask([callback = WTFMove(callback)]() mutable {
+            callback();
+        });
+    });
 }
 
 void RemoteVideoDecoder::reset()

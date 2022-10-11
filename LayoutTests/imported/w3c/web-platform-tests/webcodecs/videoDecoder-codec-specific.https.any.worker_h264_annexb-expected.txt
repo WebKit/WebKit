@@ -4,17 +4,17 @@ PASS Test isConfigSupported() with 1080p crop
 PASS Test that isConfigSupported() returns a parsed configuration
 PASS Test invalid configs
 PASS Test configure()
-FAIL Decode a key frame assert_equals: outputs expected 1 but got 0
+PASS Decode a key frame
 PASS Decode a non key frame first fails
-FAIL Verify reset() suppresses outputs assert_equals: expected 5 but got 1
+PASS Verify reset() suppresses outputs
 PASS Test unconfigured VideoDecoder operations
 PASS Test closed VideoDecoder operations
 FAIL Decode empty frame assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Decode corrupt frame assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Close while decoding corrupt frame
-FAIL Test decoding after flush assert_equals: outputs expected 1 but got 0
-FAIL Test decoding a with negative timestamp assert_equals: outputs expected 1 but got 0
-FAIL Test reset during flush assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test decoding after flush
+FAIL Test decoding a with negative timestamp assert_equals: timestamp expected -42 but got 4294967254
+PASS Test reset during flush
 PASS Test low-latency decoding
 PASS VideoDecoder decodeQueueSize test
 

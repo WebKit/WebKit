@@ -44,6 +44,7 @@
 - (instancetype)initH265DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
 - (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(uint32_t)timeStamp;
 - (NSInteger)releaseDecoder;
+- (void)flush;
 @end
 
 @implementation WK_RTCLocalVideoH264H265VP9Decoder {
@@ -108,6 +109,19 @@
         return [m_h265Decoder releaseDecoder];
     return [m_vp9Decoder releaseDecoder];
 }
+
+- (void)flush {
+    if (m_h264Decoder) {
+        [m_h264Decoder flush];
+        return;
+    }
+    if (m_h265Decoder) {
+        [m_h265Decoder flush];
+        return;
+    }
+    [m_vp9Decoder flush];
+}
+
 @end
 
 namespace webrtc {
@@ -283,6 +297,12 @@ void releaseLocalDecoder(LocalDecoder localDecoder)
 {
     auto* decoder = (__bridge_transfer WK_RTCLocalVideoH264H265VP9Decoder *)(localDecoder);
     [decoder releaseDecoder];
+}
+
+void flushLocalDecoder(LocalDecoder localDecoder)
+{
+    auto* decoder = (__bridge WK_RTCLocalVideoH264H265VP9Decoder *)(localDecoder);
+    [decoder flush];
 }
 
 int32_t decodeFrame(LocalDecoder localDecoder, uint32_t timeStamp, const uint8_t* data, size_t size)
