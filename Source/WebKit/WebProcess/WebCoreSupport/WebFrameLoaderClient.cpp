@@ -1945,15 +1945,6 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
         webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon.first, CallbackID::fromInteger(icon.second)));
 }
 
-void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
-{
-    auto* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    webPage->send(Messages::WebPageProxy::DidCreateWindow(m_frame->frameID(), window.identifier()));
-}
-
 #if ENABLE(SERVICE_WORKER)
 void WebFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool success)
 {

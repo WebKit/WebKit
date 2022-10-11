@@ -275,8 +275,6 @@ private:
 
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
 
-    void didCreateWindow(WebCore::DOMWindow&) final;
-
     inline bool hasPlugInView() const;
 
     Ref<WebFrame> m_frame;

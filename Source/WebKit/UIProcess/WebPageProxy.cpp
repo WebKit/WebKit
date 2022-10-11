@@ -4765,11 +4765,6 @@ void WebPageProxy::disconnectFramesFromPage()
         mainFrame->webProcessWillShutDown();
 }
 
-// FIXME: Remove this.
-void WebPageProxy::didCreateWindow(FrameIdentifier frameID, GlobalWindowIdentifier&& windowIdentifier)
-{
-}
-
 double WebPageProxy::estimatedProgress() const
 {
     return m_pageLoadState.estimatedProgress();

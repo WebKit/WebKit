@@ -119,8 +119,6 @@ messages -> WebPageProxy {
     DidCreateMainFrame(WebCore::FrameIdentifier frameID)
     DidCreateSubframe(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier parentFrameID)
 
-    DidCreateWindow(WebCore::FrameIdentifier frameID, struct WebCore::GlobalWindowIdentifier windowIdentifier)
-
     # Frame load messages
     DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
     DidReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebCore::ResourceRequest request, WebKit::UserData userData)
