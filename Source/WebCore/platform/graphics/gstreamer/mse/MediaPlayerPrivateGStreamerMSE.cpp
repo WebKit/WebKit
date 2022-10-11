@@ -56,20 +56,72 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+namespace {
+struct VideoDecodingLimits {
+    unsigned mediaMaxWidth = 0;
+    unsigned mediaMaxHeight = 0;
+    unsigned mediaMaxFrameRate = 0;
+    VideoDecodingLimits(unsigned mediaMaxWidth, unsigned mediaMaxHeight, unsigned mediaMaxFrameRate)
+        : mediaMaxWidth(mediaMaxWidth)
+        , mediaMaxHeight(mediaMaxHeight)
+        , mediaMaxFrameRate(mediaMaxFrameRate)
+        {
+        }
+};
+}
+
+#ifdef VIDEO_DECODING_LIMIT
+static std::optional<VideoDecodingLimits> videoDecoderLimitsDefaults()
+{
+    // VIDEO_DECODING_LIMIT should be in format: WIDTHxHEIGHT@FRAMERATE.
+    String videoDecodingLimit(String::fromUTF8(VIDEO_DECODING_LIMIT));
+
+    if (videoDecodingLimit.isEmpty())
+        return { };
+
+    Vector<String> entries;
+
+    // Extract frame rate part from the VIDEO_DECODING_LIMIT: WIDTHxHEIGHT@FRAMERATE.
+    videoDecodingLimit.split('@', [&entries](StringView item) {
+        entries.append(item.toString());
+    });
+
+    if (entries.size() != 2)
+        return { };
+
+    auto frameRate = parseIntegerAllowingTrailingJunk<unsigned>(entries[1]);
+
+    if (!frameRate.has_value())
+        return { };
+
+    String widthAndHeight = entries[0];
+    entries.clear();
+
+    // Extract WIDTH and HEIGHT from: WIDTHxHEIGHT.
+    widthAndHeight.split('x', [&entries](StringView item) {
+        entries.append(item.toString());
+    });
+
+    if (entries.size() != 2)
+        return { };
+
+    auto width = parseIntegerAllowingTrailingJunk<unsigned>(entries[0]);
+
+    if (!width.has_value())
+        return { };
+
+    auto height = parseIntegerAllowingTrailingJunk<unsigned>(entries[1]);
+
+    if (!height.has_value())
+        return { };
+
+    return { VideoDecodingLimits(width.value(), height.value(), frameRate.value()) };
+}
+#endif
+
 // We shouldn't accept media that the player can't actually play.
 // AAC supports up to 96 channels.
 #define MEDIA_MAX_AAC_CHANNELS 96
-#if USE(FULLHD_VIDEO_DECODING_LIMIT)
-// Raspberry Pi only supports up to 1080p@30fps hardware video decoding.
-#define MEDIA_MAX_WIDTH 1920.0f
-#define MEDIA_MAX_HEIGHT 1080.0f
-#define MEDIA_MAX_FRAMERATE 30.0f
-#else
-// Assume hardware video decoding acceleration up to 8K@60fps for the rest of the cases.
-#define MEDIA_MAX_WIDTH 7680.0f
-#define MEDIA_MAX_HEIGHT 4320.0f
-#define MEDIA_MAX_FRAMERATE 60.0f
-#endif
 
 static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {
@@ -376,6 +428,18 @@ void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICase
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
 {
+    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+#ifdef VIDEO_DECODING_LIMIT
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        videoDecodingLimits = videoDecoderLimitsDefaults();
+        if (!videoDecodingLimits) {
+            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
+            ASSERT_NOT_REACHED();
+        }
+    });
+#endif
+
     MediaPlayer::SupportsType result = MediaPlayer::SupportsType::IsNotSupported;
     if (!parameters.isMediaSource)
         return result;
@@ -401,11 +465,12 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     if (!ok)
         height = 0;
 
-    if (width > MEDIA_MAX_WIDTH || height > MEDIA_MAX_HEIGHT)
+    if (videoDecodingLimits && (width > videoDecodingLimits->mediaMaxWidth || height > videoDecodingLimits->mediaMaxHeight))
         return result;
 
-    float framerate = parameters.type.parameter("framerate"_s).toFloat(&ok);
-    if (ok && framerate > MEDIA_MAX_FRAMERATE)
+    float frameRate = parameters.type.parameter("framerate"_s).toFloat(&ok);
+    // Limit frameRate only in case of highest supported resolution.
+    if (ok && videoDecodingLimits && width == videoDecodingLimits->mediaMaxWidth && height == videoDecodingLimits->mediaMaxHeight && frameRate > videoDecodingLimits->mediaMaxFrameRate)
         return result;
 
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
