@@ -95,7 +95,6 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
     if (!_webView) {
         NSRect initialFrame = NSMakeRect(0, 0, WebKit::WebInspectorUIProxy::initialWindowWidth, WebKit::WebInspectorUIProxy::initialWindowHeight);
         _webView = adoptNS([[WKInspectorWKWebView alloc] initWithFrame:initialFrame configuration:self.webViewConfiguration]);
-        [_webView setInspectable:YES];
         [_webView setUIDelegate:self];
         [_webView setNavigationDelegate:self];
         [_webView setInspectorWKWebViewDelegate:self];

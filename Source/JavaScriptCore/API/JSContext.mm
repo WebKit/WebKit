@@ -273,24 +273,14 @@
     JSGlobalContextSetName(m_context, OpaqueJSString::tryCreate(name).get());
 }
 
-- (BOOL)inspectable
-{
-    return JSGlobalContextIsInspectable(m_context);
-}
-
-- (void)setInspectable:(BOOL)inspectable
-{
-    JSGlobalContextSetInspectable(m_context, inspectable);
-}
-
 - (BOOL)_remoteInspectionEnabled
 {
-    return self.inspectable;
+    return JSGlobalContextGetRemoteInspectionEnabled(m_context);
 }
 
 - (void)_setRemoteInspectionEnabled:(BOOL)enabled
 {
-    self.inspectable = enabled;
+    JSGlobalContextSetRemoteInspectionEnabled(m_context, enabled);
 }
 
 - (BOOL)_includesNativeCallStackWhenReportingExceptions

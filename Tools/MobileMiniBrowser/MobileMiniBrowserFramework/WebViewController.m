@@ -180,7 +180,6 @@ void* URLContext = &URLContext;
     configuration.preferences._mockCaptureDevicesEnabled = YES;
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
-    webView.inspectable = YES;
     webView.navigationDelegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:TitleContext];

@@ -158,7 +158,6 @@ public:
     RetainPtr<CFDataRef> parentProcessAuditData() const { return m_parentProcessAuditData; }
     void setParentProcessInformation(ProcessID, RetainPtr<CFDataRef> auditData);
     void setParentProcessInfomationIsDelayed();
-    std::optional<audit_token_t> parentProcessAuditToken();
 #endif
 
     void updateTargetListing(TargetID);

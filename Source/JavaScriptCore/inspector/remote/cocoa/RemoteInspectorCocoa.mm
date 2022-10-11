@@ -362,19 +362,6 @@ void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef
         receivedProxyApplicationSetupMessage(nil);
 }
 
-std::optional<audit_token_t> RemoteInspector::parentProcessAuditToken()
-{
-    Locker locker { m_mutex };
-
-    if (!m_parentProcessAuditData)
-        return std::nullopt;
-
-    if (CFDataGetLength(m_parentProcessAuditData.get()) != sizeof(audit_token_t))
-        return std::nullopt;
-
-    return *(const audit_token_t *)CFDataGetBytePtr(m_parentProcessAuditData.get());
-}
-
 #pragma mark - RemoteInspectorXPCConnection::Client
 
 void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo)
@@ -456,7 +443,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     // Must collect target information on the WebThread, Main, or Worker thread since RemoteTargets are
     // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
 
-    if (!target.inspectable())
+    if (!target.remoteDebuggingAllowed())
         return nil;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);

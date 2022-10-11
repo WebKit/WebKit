@@ -117,7 +117,7 @@ void RemoteInspector::stopInternal(StopSource)
 
 TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
 {
-    if (!target.inspectable())
+    if (!target.remoteDebuggingAllowed())
         return nullptr;
 
     // FIXME: Support remote debugging of a ServiceWorker.

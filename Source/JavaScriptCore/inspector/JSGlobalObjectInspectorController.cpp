@@ -211,7 +211,7 @@ bool JSGlobalObjectInspectorController::developerExtrasEnabled() const
     if (!RemoteInspector::singleton().enabled())
         return false;
 
-    if (!m_globalObject.inspectorDebuggable().inspectable())
+    if (!m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
         return false;
 #endif
 

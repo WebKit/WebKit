@@ -556,8 +556,8 @@ public:
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);
-    bool inspectable() const;
-    void setInspectable(bool);
+    bool allowsRemoteInspection() const;
+    void setAllowsRemoteInspection(bool);
     String remoteInspectionNameOverride() const;
     void setRemoteInspectionNameOverride(const String&);
     void remoteInspectorInformationDidChange();

@@ -268,7 +268,6 @@
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-#include <JavaScriptCore/JSRemoteInspector.h>
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
 
@@ -573,7 +572,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_inspectorDebuggable->setInspectable(JSRemoteInspectorGetInspectionEnabledByDefault());
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
     m_inspectorDebuggable->init();
 #endif
     m_inspectorController->init();
@@ -1994,14 +1993,14 @@ void WebPageProxy::setIndicating(bool indicating)
     send(Messages::WebPage::SetIndicating(indicating));
 }
 
-bool WebPageProxy::inspectable() const
+bool WebPageProxy::allowsRemoteInspection() const
 {
-    return m_inspectorDebuggable->inspectable();
+    return m_inspectorDebuggable->remoteDebuggingAllowed();
 }
 
-void WebPageProxy::setInspectable(bool inspectable)
+void WebPageProxy::setAllowsRemoteInspection(bool allow)
 {
-    m_inspectorDebuggable->setInspectable(inspectable);
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(allow);
 }
 
 String WebPageProxy::remoteInspectionNameOverride() const

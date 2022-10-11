@@ -2703,14 +2703,14 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-bool Page::inspectable() const
+bool Page::remoteInspectionAllowed() const
 {
-    return m_inspectorDebuggable->inspectable();
+    return m_inspectorDebuggable->remoteDebuggingAllowed();
 }
 
-void Page::setInspectable(bool inspectable)
+void Page::setRemoteInspectionAllowed(bool allowed)
 {
-    m_inspectorDebuggable->setInspectable(inspectable);
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(allowed);
 }
 
 String Page::remoteInspectionNameOverride() const
