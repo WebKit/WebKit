@@ -30,17 +30,41 @@
 #import "NSFontPanelTesting.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <cmath>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #endif
+
+@interface FontTextStyleUIDelegate : NSObject <WKUIDelegatePrivate> {
+@public
+    bool _willSetFont;
+    bool _done;
+}
+@end
+
+@implementation FontTextStyleUIDelegate
+
+- (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes
+{
+    NSString *fontTextStyle = [[[fontAttributes objectForKey:@"NSFont"] fontDescriptor] objectForKey:(__bridge NSString *)kCTFontDescriptorTextStyleAttribute];
+
+    if (_willSetFont) {
+        EXPECT_WK_STREQ("UICTFontTextStyleTitle1", fontTextStyle);
+        _done = YES;
+    }
+}
+
+@end
 
 @interface FontAttributesListener : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSDictionary *lastFontAttributes;
@@ -413,6 +437,35 @@ TEST(FontAttributes, NestedTextListsWithHorizontalAlignment)
         NSTextAlignmentNatural,
         { }
     });
+}
+
+TEST(FontAttributes, FontTextStyle)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto uiDelegate = adoptNS([[FontTextStyleUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable>"
+        "<span id='foo'>foo</span> <span id='bar'>bar</span> <span id='baz'>baz</span>"
+        "</body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _setEditable:YES];
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectWord" argument:nil];
+    [webView waitForNextPresentationUpdate];
+
+    uiDelegate->_willSetFont = YES;
+
+#if PLATFORM(MAC)
+    [webView _setFont:[NSFont preferredFontForTextStyle:NSFontTextStyleTitle1 options:@{ }] sender:nil];
+    EXPECT_WK_STREQ("22px", [webView stylePropertyAtSelectionStart:@"font-size"]);
+#else
+    [webView _setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleTitle1] sender:nil];
+    EXPECT_WK_STREQ("28px", [webView stylePropertyAtSelectionStart:@"font-size"]);
+#endif
+
+    EXPECT_WK_STREQ("UICTFontTextStyleTitle1", [webView stylePropertyAtSelectionStart:@"font-family"]);
+
+    TestWebKitAPI::Util::run(&uiDelegate->_done);
 }
 
 } // namespace TestWebKitAPI

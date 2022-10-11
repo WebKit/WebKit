@@ -1677,6 +1677,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->mouseMoved(event);
 }
 
+- (void)_setFont:(NSFont *)font sender:(id)sender
+{
+    _impl->setFontForWebView(font, sender);
+}
+
 @end // WKWebView (WKPrivateMac)
 
 #endif // PLATFORM(MAC)

@@ -336,6 +336,8 @@ public:
     void prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<void()>&& completionHandler);
     NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation.get(); }
 
+    void setFontForWebView(NSFont *, id);
+
     void updateSecureInputState();
     void resetSecureInputState();
     bool inSecureInputState() const { return m_inSecureInputState; }
