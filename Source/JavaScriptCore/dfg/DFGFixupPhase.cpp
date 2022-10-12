@@ -1437,16 +1437,7 @@ private:
             if (!elementCount)
                 node->setArrayMode(node->arrayMode().refine(m_graph, node, arrayEdge->prediction() & SpecCell, SpecInt32Only));
 
-            switch (node->arrayMode().type()) {
-            case Array::SlowPutArrayStorage: {
-                Edge unusedEdge;
-                blessArrayOperation(arrayEdge, Edge(), unusedEdge, neverNeedsStorage);
-                break;
-            }
-            default:
-                blessArrayOperation(arrayEdge, Edge(), storageEdge);
-                break;
-            }
+            blessArrayOperation(arrayEdge, Edge(), storageEdge);
             fixEdge<KnownCellUse>(arrayEdge);
 
             // Convert `array.push()` to GetArrayLength.

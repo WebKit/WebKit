@@ -6493,24 +6493,10 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue base = lowCell(m_graph.varArgChild(m_node, 1));
+        LValue storage = lowStorage(m_graph.varArgChild(m_node, 0));
+
         unsigned elementOffset = 2;
         unsigned elementCount = m_node->numChildren() - elementOffset;
-
-        if (m_node->arrayMode().type() == Array::SlowPutArrayStorage) {
-            size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
-            ASSERT(scratchSize);
-            ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
-            LValue buffer = m_out.constIntPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()));
-            for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
-                Edge& element = m_graph.varArgChild(m_node, elementIndex + elementOffset);
-                LValue value = lowJSValue(element);
-                m_out.store64(value, m_out.baseIndex(m_heaps.ArrayStorage_vector.atAnyIndex(), buffer, m_out.constIntPtr(elementIndex), ScaleEight));
-            }
-            setJSValue(vmCall(Int64, operationArrayPushMultipleSlow, weakPointer(globalObject), base, buffer, m_out.constInt32(elementCount)));
-            return;
-        }
-
-        LValue storage = lowStorage(m_graph.varArgChild(m_node, 0));
 
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
@@ -6719,6 +6705,20 @@ IGNORE_CLANG_WARNINGS_END
 
             m_out.appendTo(continuation, lastNext);
             setJSValue(m_out.phi(Int64, fastResult, slowResult));
+            return;
+        }
+
+        case Array::SlowPutArrayStorage: {
+            size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
+            ASSERT(scratchSize);
+            ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+            LValue buffer = m_out.constIntPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()));
+            for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+                Edge& element = m_graph.varArgChild(m_node, elementIndex + elementOffset);
+                LValue value = lowJSValue(element);
+                m_out.store64(value, m_out.baseIndex(m_heaps.ArrayStorage_vector.atAnyIndex(), buffer, m_out.constIntPtr(elementIndex), ScaleEight));
+            }
+            setJSValue(vmCall(Int64, operationArrayPushMultipleSlow, weakPointer(globalObject), base, buffer, m_out.constInt32(elementCount)));
             return;
         }
 
