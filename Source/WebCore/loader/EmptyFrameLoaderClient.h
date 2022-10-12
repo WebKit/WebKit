@@ -33,6 +33,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 private:
     Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) override;
 
+    std::optional<FrameIdentifier> frameID() const override;
     std::optional<PageIdentifier> pageID() const override;
 
     bool hasWebView() const final;

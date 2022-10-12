@@ -36,15 +36,15 @@ namespace WebCore {
 
 static std::optional<GlobalFrameIdentifier> createGlobalFrameIdentifier(const Document& document)
 {
-    auto* frame = document.frame();
-    if (!frame)
+    if (!document.frame())
         return std::nullopt;
 
-    auto pageID = frame->loader().pageID();
-    if (!pageID)
+    auto pageID = document.frame()->loader().pageID();
+    auto frameID = document.frame()->loader().frameID();
+    if (!pageID || !frameID)
         return std::nullopt;
 
-    return GlobalFrameIdentifier { *pageID, frame->frameID() };
+    return GlobalFrameIdentifier { *pageID, *frameID };
 }
 
 NavigationRequester NavigationRequester::from(Document& document)

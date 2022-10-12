@@ -766,11 +766,11 @@ void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const
     if (!m_client)
         return;
 
-    auto* frame = extensionFrameElement.contentFrame();
+    Frame* frame = extensionFrameElement.contentFrame();
     if (!frame)
         return;
 
-    m_client->didShowExtensionTab(extensionID, extensionTabID, frame->frameID());
+    m_client->didShowExtensionTab(extensionID, extensionTabID, valueOrDefault(frame->frameID()));
 }
 
 void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const String& extensionTabID)

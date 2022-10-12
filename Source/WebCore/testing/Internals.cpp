@@ -2868,7 +2868,7 @@ bool Internals::isElementAlive(uint64_t elementIdentifier) const
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
-        return page->mainFrame().loader().frameID().object().toUInt64();
+        return valueOrDefault(page->mainFrame().loader().frameID()).object().toUInt64();
     return 0;
 }
 

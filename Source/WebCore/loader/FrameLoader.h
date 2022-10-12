@@ -216,7 +216,7 @@ public:
     FrameLoaderClient& client() { return m_client.get(); }
 
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
-    WEBCORE_EXPORT FrameIdentifier frameID() const;
+    WEBCORE_EXPORT std::optional<FrameIdentifier> frameID() const;
 
     void setDefersLoading(bool);
 

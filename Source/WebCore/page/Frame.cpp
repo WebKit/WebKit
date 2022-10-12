@@ -164,7 +164,6 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
     , m_treeNode(*this, parentFromOwnerElement(ownerElement))
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
-    , m_frameID(FrameIdentifier::generate())
     , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
@@ -720,6 +719,11 @@ void Frame::injectUserScriptsAwaitingNotification()
 std::optional<PageIdentifier> Frame::pageID() const
 {
     return loader().pageID();
+}
+
+std::optional<FrameIdentifier> Frame::frameID() const
+{
+    return loader().frameID();
 }
 
 RenderView* Frame::contentRenderer() const

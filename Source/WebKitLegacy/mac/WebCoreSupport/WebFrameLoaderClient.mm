@@ -203,6 +203,11 @@ std::optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
     return std::nullopt;
 }
 
+std::optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
+{
+    return std::nullopt;
+}
+
 WebFrameLoaderClient::~WebFrameLoaderClient()
 {
     [m_webFrame.get() _clearCoreFrame];
