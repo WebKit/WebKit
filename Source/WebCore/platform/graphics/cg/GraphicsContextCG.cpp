@@ -816,8 +816,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
     bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
-        // Turn off CG shadows.
-        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+        clearCGShadow();
 
         ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
         contextShadow.drawRectShadow(*this, FloatRoundedRect(rect));
@@ -837,8 +836,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
     bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
-        // Turn off CG shadows.
-        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+        clearCGShadow();
 
         ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
         contextShadow.drawRectShadow(*this, FloatRoundedRect(rect));
@@ -864,8 +862,7 @@ void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const 
     bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
-        // Turn off CG shadows.
-        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+        clearCGShadow();
 
         ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
         contextShadow.drawRectShadow(*this, rect);
@@ -913,8 +910,7 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
     bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
-        // Turn off CG shadows.
-        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+        clearCGShadow();
 
         ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
         contextShadow.drawInsetShadow(*this, rect, roundedHoleRect);
@@ -1030,10 +1026,10 @@ static void applyShadowOffsetWorkaroundIfNeeded(CGContextRef context, CGFloat& x
 #endif
 }
 
-static void setCGShadow(CGContextRef context, RenderingMode renderingMode, const FloatSize& offset, float blur, const Color& color, bool shadowsIgnoreTransforms)
+void GraphicsContextCG::setCGShadow(RenderingMode renderingMode, const FloatSize& offset, float blur, const Color& color, bool shadowsIgnoreTransforms)
 {
     if (offset.isZero() && !blur) {
-        CGContextSetShadowWithColor(context, CGSizeZero, 0, 0);
+        clearCGShadow();
         return;
     }
 
@@ -1042,6 +1038,7 @@ static void setCGShadow(CGContextRef context, RenderingMode renderingMode, const
     CGFloat xOffset = offset.width();
     CGFloat yOffset = offset.height();
     CGFloat blurRadius = blur;
+    CGContextRef context = platformContext();
 
     if (!shadowsIgnoreTransforms) {
         CGAffineTransform userToBaseCTM = getUserToBaseCTM(context);
@@ -1075,6 +1072,11 @@ static void setCGShadow(CGContextRef context, RenderingMode renderingMode, const
         CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color).get());
 }
 
+void GraphicsContextCG::clearCGShadow()
+{
+    CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+}
+
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 {
     if (!state.changes())
@@ -1101,7 +1103,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::DropShadow:
-            setCGShadow(context, renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
+            setCGShadow(renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Alpha:

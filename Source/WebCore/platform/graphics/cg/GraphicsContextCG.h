@@ -135,8 +135,13 @@ public:
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
 #endif
 
+protected:
+    virtual void setCGShadow(RenderingMode, const FloatSize& offset, float blur, const Color&, bool shadowsIgnoreTransforms);
+
 private:
     void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);
+
+    void clearCGShadow();
 
     GraphicsContextPlatformPrivate* m_data { nullptr };
 };
