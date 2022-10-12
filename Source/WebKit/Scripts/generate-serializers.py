@@ -330,6 +330,17 @@ def generate_impl(serialized_types, serialized_enums, headers):
                 if 'ReturnEarlyIfTrue' in member.attributes:
                     result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
                     result.append('        return { ' + type.namespace_and_name() + ' { } };')
+            for attribute in member.attributes:
+                match = re.search(r'Validator=\'(.*)\'', attribute)
+                if match:
+                    validator, = match.groups()
+                    result.append('')
+                    result.append('    if (!(' + validator + '))')
+                    result.append('        return std::nullopt;')
+                    continue
+                else:
+                    match = re.search(r'Validator', attribute)
+                    assert not match
             if member.condition is not None:
                 result.append('#endif')
             result.append('')
@@ -573,8 +584,15 @@ def parse_serialized_types(file, file_name):
 
         match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
         if match:
-            attribute, member_type, member_name = match.groups()
-            members.append(MemberVariable(member_type, member_name, member_condition, [attribute]))
+            member_attributes_s, member_type, member_name = match.groups()
+            member_attributes = []
+            match = re.search(r"((, |^)+(Validator='.*?'))(, |$)?", member_attributes_s)
+            if match:
+                complete, _, validator, _ = match.groups()
+                member_attributes.append(validator)
+                member_attributes_s = member_attributes_s.replace(complete, "")
+            member_attributes += [member_attribute.strip() for member_attribute in member_attributes_s.split(",")]
+            members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))
         else:
             match = re.search(r'(.*) ([^;]*)', line)
             if match:

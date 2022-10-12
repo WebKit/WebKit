@@ -5873,6 +5873,7 @@
 		84120B2A28258B82002988E2 /* OSX.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OSX.modulemap; sourceTree = "<group>"; };
 		84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MacCatalyst.modulemap; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
+		861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ShareableBitmap.serialization.in; sourceTree = "<group>"; };
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
 		8644890C27B47045007A1C66 /* _WKSystemPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSystemPreferences.mm; sourceTree = "<group>"; };
 		8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferencesInternal.h; sourceTree = "<group>"; };
@@ -8195,6 +8196,7 @@
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,
 				1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */,
+				861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */,
 				F4A7B1C228E4FB050042C75A /* ShareableBitmapHandle.cpp */,
 				F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */,
 				5121745E164C20E30037A5C1 /* ShareableResource.cpp */,
