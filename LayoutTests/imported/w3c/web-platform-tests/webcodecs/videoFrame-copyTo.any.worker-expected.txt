@@ -8,7 +8,7 @@ PASS Test incorrect plane count.
 FAIL Test stride and offset work. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
 FAIL Test stride and offset with padding. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
 PASS Test invalid stride.
-FAIL Test address overflow. assert_throws_js: function "() => frame.allocationSize(options)" did not throw
+PASS Test address overflow.
 FAIL Test codedRect. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
 PASS Test empty rect.
 PASS Test unaligned rect.
