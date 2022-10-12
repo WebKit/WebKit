@@ -6013,6 +6013,8 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
     else
         processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), responseDomain, m_process->captivePortalMode());
 
+    websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processForNavigation->coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
+
     // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
     if (!m_provisionalPage)
         send(Messages::WebPage::StopLoadingDueToProcessSwap());
