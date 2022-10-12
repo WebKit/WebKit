@@ -68,6 +68,7 @@
 #include "JSWeakSet.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructorInlines.h"
+#include "ObjectPrototypeInlines.h"
 #include "Operations.h"
 #include "ParseInt.h"
 #include "RegExpGlobalDataInlines.h"
@@ -405,6 +406,24 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
 
     scope.release();
     objectAssignGeneric(globalObject, vm, target, source);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationObjectToStringUntyped, JSString*, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return objectPrototypeToString(globalObject, JSValue::decode(encodedValue));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobalObject* globalObject, JSObject* object))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return objectPrototypeToStringSlow(globalObject, object);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject* globalObject, JSObject* constructor, uint32_t inlineCapacity))

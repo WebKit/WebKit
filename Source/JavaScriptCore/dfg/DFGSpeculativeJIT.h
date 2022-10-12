@@ -1552,6 +1552,7 @@ public:
     void compileObjectKeysOrObjectGetOwnPropertyNames(Node*);
     void compileObjectAssign(Node*);
     void compileObjectCreate(Node*);
+    void compileObjectToString(Node*);
     void compileCreateThis(Node*);
     void compileCreatePromise(Node*);
     void compileCreateGenerator(Node*);

@@ -1136,6 +1136,9 @@ private:
         case ObjectGetOwnPropertyNames:
             compileObjectKeysOrObjectGetOwnPropertyNames();
             break;
+        case ObjectToString:
+            compileObjectToString();
+            break;
         case NewObject:
             compileNewObject();
             break;
@@ -7484,6 +7487,61 @@ IGNORE_CLANG_WARNINGS_END
         }
         case UntypedUse:
             setJSValue(vmCall(Int64, op == ObjectKeys ? operationObjectKeys : operationObjectGetOwnPropertyNames, weakPointer(globalObject), lowJSValue(m_node->child1())));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    void compileObjectToString()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        switch (m_node->child1().useKind()) {
+        case ObjectUse: {
+            LBasicBlock notNullCase = m_out.newBlock();
+            LBasicBlock rareDataCase = m_out.newBlock();
+            LBasicBlock useCacheCase = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue object = lowObject(m_node->child1());
+            LValue structure = loadStructure(object);
+            LValue previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
+            m_out.branch(m_out.notNull(previousOrRareData), unsure(notNullCase), unsure(slowCase));
+
+            LBasicBlock lastNext = m_out.appendTo(notNullCase, rareDataCase);
+            m_out.branch(
+                isCellWithType(previousOrRareData, StructureType, std::nullopt),
+                unsure(slowCase), unsure(rareDataCase));
+
+            m_out.appendTo(rareDataCase, useCacheCase);
+            LValue cache = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_specialPropertyCache);
+            m_out.branch(m_out.isNull(cache), unsure(slowCase), unsure(useCacheCase));
+
+            m_out.appendTo(useCacheCase, slowCase);
+            LValue string = m_out.loadPtr(cache, m_heaps.SpecialPropertyCache_cachedToStringTagValue);
+            ValueFromBlock fastResult = m_out.anchor(string);
+            ASSERT(bitwise_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects()) == 1);
+            m_out.branch(m_out.belowOrEqual(string, m_out.constIntPtr(bitwise_cast<void*>(JSCell::seenMultipleCalleeObjects()))), unsure(slowCase), unsure(continuation));
+
+            m_out.appendTo(slowCase, continuation);
+            VM& vm = this->vm();
+            LValue slowResultValue = lazySlowPath(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
+                        operationObjectToStringObjectSlow, locations[0].directGPR(), CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
+                },
+                object);
+            ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+            break;
+        }
+        case UntypedUse:
+            setJSValue(vmCall(pointerType(), operationObjectToStringUntyped, weakPointer(globalObject), lowJSValue(m_node->child1())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

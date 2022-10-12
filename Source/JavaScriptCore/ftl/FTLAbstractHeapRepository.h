@@ -150,6 +150,8 @@ namespace JSC { namespace FTL {
     macro(StructureRareData_cachedKeys, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Keys)) \
     macro(StructureRareData_cachedGetOwnPropertyNames, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::GetOwnPropertyNames)) \
     macro(StructureRareData_cachedPropertyNameEnumeratorAndFlag, StructureRareData::offsetOfCachedPropertyNameEnumeratorAndFlag()) \
+    macro(StructureRareData_specialPropertyCache, StructureRareData::offsetOfSpecialPropertyCache()) \
+    macro(SpecialPropertyCache_cachedToStringTagValue, SpecialPropertyCache::offsetOfCache(CachedSpecialPropertyKey::ToStringTag) + SpecialPropertyCacheEntry::offsetOfValue()) \
     macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \
     macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
     macro(HashMapImpl_head,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()) \

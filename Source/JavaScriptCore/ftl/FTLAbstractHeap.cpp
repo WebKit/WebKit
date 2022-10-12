@@ -33,6 +33,7 @@
 #include "FTLTypedPointer.h"
 #include "JSCJSValueInlines.h"
 #include "Options.h"
+#include "StructureRareDataInlines.h"
 
 namespace JSC { namespace FTL {
 

@@ -2978,6 +2978,12 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             return true;
         }
 
+        case ObjectToStringIntrinsic: {
+            insertChecks();
+            setResult(addToGraph(ObjectToString, get(virtualRegisterForArgumentIncludingThis(0, registerOffset))));
+            return true;
+        }
+
         case ReflectGetPrototypeOfIntrinsic: {
             if (argumentCountIncludingThis < 2)
                 return false;

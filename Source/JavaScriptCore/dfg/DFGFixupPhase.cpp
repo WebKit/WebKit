@@ -2072,6 +2072,14 @@ private:
             break;
         }
 
+        case ObjectToString: {
+#if USE(JSVALUE64)
+            if (node->child1()->shouldSpeculateObject())
+                fixEdge<ObjectUse>(node->child1());
+#endif
+            break;
+        }
+
         case CheckIdent: {
             if (node->uidOperand()->isSymbol())
                 fixEdge<SymbolUse>(node->child1());

@@ -15011,6 +15011,56 @@ void SpeculativeJIT::compileObjectCreate(Node* node)
     }
 }
 
+void SpeculativeJIT::compileObjectToString(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case UntypedUse: {
+        JSValueOperand argument(this, node->child1());
+        JSValueRegs argumentRegs = argument.jsValueRegs();
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationObjectToStringUntyped, resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), argumentRegs);
+        m_jit.exceptionCheck();
+
+        cellResult(resultGPR, node);
+        break;
+    }
+    case ObjectUse: {
+        SpeculateCellOperand argument(this, node->child1());
+        GPRTemporary result(this);
+
+        GPRReg argumentGPR = argument.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        speculateObject(node->child1(), argumentGPR);
+
+        CCallHelpers::JumpList slowCases;
+        m_jit.emitLoadStructure(vm(), argumentGPR, resultGPR);
+        m_jit.loadPtr(CCallHelpers::Address(resultGPR, Structure::previousOrRareDataOffset()), resultGPR);
+
+        slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, resultGPR));
+        slowCases.append(m_jit.branchIfStructure(resultGPR));
+
+        m_jit.loadPtr(CCallHelpers::Address(resultGPR, StructureRareData::offsetOfSpecialPropertyCache()), resultGPR);
+        slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, resultGPR));
+
+        m_jit.loadPtr(CCallHelpers::Address(resultGPR, SpecialPropertyCache::offsetOfCache(CachedSpecialPropertyKey::ToStringTag) + SpecialPropertyCacheEntry::offsetOfValue()), resultGPR);
+        ASSERT(bitwise_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects()) == 1);
+        slowCases.append(m_jit.branchPtr(CCallHelpers::BelowOrEqual, resultGPR, TrustedImmPtr(bitwise_cast<void*>(JSCell::seenMultipleCalleeObjects()))));
+
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectToStringObjectSlow, resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), argumentGPR));
+
+        cellResult(resultGPR, node);
+        break;
+    }
+    default:
+        DFG_CRASH(m_graph, node, "Bad UseKind");
+        break;
+    }
+}
+
 void SpeculativeJIT::compileCreateThis(Node* node)
 {
     // Note that there is not so much profit to speculate here. The only things we
