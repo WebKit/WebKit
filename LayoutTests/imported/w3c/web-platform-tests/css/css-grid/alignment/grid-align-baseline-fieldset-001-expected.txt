@@ -1,0 +1,25 @@
+
+
+
+
+FAIL .target > * 1 assert_equals:
+<div data-offset-y="20"><span></span></div>
+offsetTop expected 20 but got 0
+FAIL .target > * 2 assert_equals:
+<fieldset data-offset-y="0">
+    <legend><span></span></legend>
+    <span></span><br><span></span>
+
+</fieldset>
+offsetTop expected 0 but got 10
+FAIL .target > * 3 assert_equals:
+<div data-offset-y="40"><span></span></div>
+offsetTop expected 40 but got 0
+FAIL .target > * 4 assert_equals:
+<fieldset data-offset-y="0">
+    <span></span><br><span></span>
+    <legend><span></span></legend>
+
+</fieldset>
+offsetTop expected 0 but got 10
+

@@ -1,0 +1,86 @@
+
+PASS .target > * 1
+PASS .target > * 2
+PASS .target > * 3
+PASS .target > * 4
+FAIL .target > * 5 assert_equals:
+<div data-offset-x="30"><span></span></div>
+offsetLeft expected 30 but got 40
+PASS .target > * 6
+FAIL .target > * 7 assert_equals:
+<div data-offset-x="40"><span></span></div>
+offsetLeft expected 40 but got 30
+PASS .target > * 8
+PASS .target > * 9
+PASS .target > * 10
+PASS .target > * 11
+PASS .target > * 12
+FAIL .target > * 13 assert_equals:
+<div data-offset-x="40"><span></span></div>
+offsetLeft expected 40 but got 20
+PASS .target > * 14
+FAIL .target > * 15 assert_equals:
+<div data-offset-x="20"><span></span></div>
+offsetLeft expected 20 but got 40
+PASS .target > * 16
+PASS .target > * 17
+PASS .target > * 18
+FAIL .target > * 19 assert_equals:
+<div data-offset-x="33"><span></span></div>
+offsetLeft expected 33 but got 32
+PASS .target > * 20
+FAIL .target > * 21 assert_equals:
+<div data-offset-x="65"><span></span></div>
+offsetLeft expected 65 but got 70
+PASS .target > * 22
+FAIL .target > * 23 assert_equals:
+<div data-offset-x="45"><span></span></div>
+offsetLeft expected 45 but got 32
+PASS .target > * 24
+PASS .target > * 25
+PASS .target > * 26
+FAIL .target > * 27 assert_equals:
+<div data-offset-x="38"><span></span></div>
+offsetLeft expected 38 but got 37
+PASS .target > * 28
+FAIL .target > * 29 assert_equals:
+<div data-offset-x="50"><span></span></div>
+offsetLeft expected 50 but got 25
+PASS .target > * 30
+FAIL .target > * 31 assert_equals:
+<div data-offset-x="20"><span></span></div>
+offsetLeft expected 20 but got 42
+PASS .target > * 32
+FAIL .target > * 33 assert_equals:
+<div data-offset-x="75"><span></span></div>
+offsetLeft expected 75 but got 35
+PASS .target > * 34
+FAIL .target > * 35 assert_equals:
+<div data-offset-x="30"><span></span></div>
+offsetLeft expected 30 but got 62
+PASS .target > * 36
+FAIL .target > * 37 assert_equals:
+<div data-offset-x="63"><span></span></div>
+offsetLeft expected 63 but got 35
+PASS .target > * 38
+FAIL .target > * 39 assert_equals:
+<div data-offset-x="35"><span></span></div>
+offsetLeft expected 35 but got 62
+PASS .target > * 40
+FAIL .target > * 41 assert_equals:
+<div data-offset-x="60"><span></span></div>
+offsetLeft expected 60 but got 55
+PASS .target > * 42
+FAIL .target > * 43 assert_equals:
+<div data-offset-x="30"><span></span></div>
+offsetLeft expected 30 but got 37
+PASS .target > * 44
+FAIL .target > * 45 assert_equals:
+<div data-offset-x="43"><span></span></div>
+offsetLeft expected 43 but got 25
+PASS .target > * 46
+FAIL .target > * 47 assert_equals:
+<div data-offset-x="25"><span></span></div>
+offsetLeft expected 25 but got 42
+PASS .target > * 48
+
