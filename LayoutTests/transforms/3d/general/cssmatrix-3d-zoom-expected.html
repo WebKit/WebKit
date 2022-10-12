@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-10"/>
 <style>
 body {
     zoom: 1.2;
@@ -15,6 +14,7 @@ body {
     position: absolute;
     top: 60px;
     left: 40px;
+    transform: perspective(200px) translate3d(100px, 50px, 25px) rotateY(45deg);
 }
 </style>
 </head>
@@ -22,8 +22,5 @@ body {
 
 <div id='b'></div>
 
-<script>
-    document.getElementById('b').style.webkitTransform = new WebKitCSSMatrix('matrix3d(0.707107, 0, -0.707107, 0.00353553, 0, 1, 0, 0, 0.707107, 0, 0.707107, -0.00353553, 100, 50, 25, 0.875)');
-</script>
 </body>
 </html>
