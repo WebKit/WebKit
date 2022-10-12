@@ -1543,7 +1543,7 @@ dark
 #if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
 // color-scheme
 // normal
-only
+// only
 // light
 // dark
 #endif
@@ -1638,6 +1638,7 @@ sides
 and
 or
 not
+only
 
 // overflow-anchor
 // none

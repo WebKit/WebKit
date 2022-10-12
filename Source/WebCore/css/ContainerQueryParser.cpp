@@ -64,7 +64,7 @@ std::optional<CQ::QueryInParens> ContainerQueryParser::consumeQueryInParens(CSSP
         auto name = range.peek().value();
         auto functionRange = range.consumeBlock();
         // This is where we would support style() queries.
-        return CQ::UnknownQuery { name.toString(), functionRange.serialize() };
+        return MQ::GeneralEnclosed { name.toString(), functionRange.serialize() };
     }
 
     if (range.peek().type() == LeftParenthesisToken) {
@@ -81,7 +81,7 @@ std::optional<CQ::QueryInParens> ContainerQueryParser::consumeQueryInParens(CSSP
         if (auto sizeFeature = consumeSizeFeature(blockRange))
             return { *sizeFeature };
 
-        return CQ::UnknownQuery { { }, blockRange.serialize() };
+        return MQ::GeneralEnclosed { { }, blockRange.serialize() };
     }
 
     return { };

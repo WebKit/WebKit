@@ -45,4 +45,9 @@ struct Feature {
     std::optional<Comparison> rightComparison;
 };
 
+struct GeneralEnclosed {
+    String name;
+    String text;
+};
+
 }

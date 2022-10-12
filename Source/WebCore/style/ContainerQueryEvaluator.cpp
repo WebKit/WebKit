@@ -170,7 +170,7 @@ auto ContainerQueryEvaluator::evaluateQueryInParens(const CQ::QueryInParens& que
         return evaluateCondition(containerCondition, container);
     }, [&](const CQ::SizeFeature& sizeFeature) {
         return evaluateSizeFeature(sizeFeature, container);
-    }, [&](const CQ::UnknownQuery&) {
+    }, [&](const MQ::GeneralEnclosed&) {
         return MQ::EvaluationResult::Unknown;
     });
 }
