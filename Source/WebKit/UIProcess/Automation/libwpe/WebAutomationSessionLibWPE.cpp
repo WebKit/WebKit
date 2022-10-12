@@ -34,14 +34,14 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-static uint32_t modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
+static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
 {
     uint32_t state = 0;
-    if (modifiers.contains(WebEvent::Modifier::ControlKey))
+    if (modifiers.contains(WebEventModifier::ControlKey))
         state |= wpe_input_keyboard_modifier_control;
-    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
+    if (modifiers.contains(WebEventModifier::ShiftKey))
         state |= wpe_input_keyboard_modifier_shift;
-    if (modifiers.contains(WebEvent::Modifier::AltKey))
+    if (modifiers.contains(WebEventModifier::AltKey))
         state |= wpe_input_keyboard_modifier_alt;
     return state;
 }
@@ -93,7 +93,7 @@ static void doMotionEvent(struct wpe_view_backend* viewBackend, const WebCore::I
     wpe_view_backend_dispatch_pointer_event(viewBackend, &event);
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
 {
     UNUSED_PARAM(pointerType);
 
@@ -126,18 +126,18 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
 }
 
-OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
 {
-    OptionSet<WebEvent::Modifier> webModifiers;
+    OptionSet<WebEventModifier> webModifiers;
 
     if (modifiers & wpe_input_keyboard_modifier_alt)
-        webModifiers.add(WebEvent::Modifier::AltKey);
+        webModifiers.add(WebEventModifier::AltKey);
     if (modifiers & wpe_input_keyboard_modifier_meta)
-        webModifiers.add(WebEvent::Modifier::MetaKey);
+        webModifiers.add(WebEventModifier::MetaKey);
     if (modifiers & wpe_input_keyboard_modifier_control)
-        webModifiers.add(WebEvent::Modifier::ControlKey);
+        webModifiers.add(WebEventModifier::ControlKey);
     if (modifiers & wpe_input_keyboard_modifier_shift)
-        webModifiers.add(WebEvent::Modifier::ShiftKey);
+        webModifiers.add(WebEventModifier::ShiftKey);
     // WPE has no Caps Lock modifier.
 
     return webModifiers;

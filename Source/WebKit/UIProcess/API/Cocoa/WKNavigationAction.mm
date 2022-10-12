@@ -63,14 +63,14 @@ static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationTyp
 }
 
 #if PLATFORM(IOS_FAMILY)
-static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::SyntheticClickType syntheticClickType)
+static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheticClickType syntheticClickType)
 {
     switch (syntheticClickType) {
-    case WebKit::WebMouseEvent::NoTap:
+    case WebKit::WebMouseEventSyntheticClickType::NoTap:
         return WKSyntheticClickTypeNoTap;
-    case WebKit::WebMouseEvent::OneFingerTap:
+    case WebKit::WebMouseEventSyntheticClickType::OneFingerTap:
         return WKSyntheticClickTypeOneFingerTap;
-    case WebKit::WebMouseEvent::TwoFingerTap:
+    case WebKit::WebMouseEventSyntheticClickType::TwoFingerTap:
         return WKSyntheticClickTypeTwoFingerTap;
     }
     ASSERT_NOT_REACHED();

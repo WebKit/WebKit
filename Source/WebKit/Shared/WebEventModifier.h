@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebTouchEvent.h"
-
-#if ENABLE(TOUCH_EVENTS)
-
-#include "ArgumentCoders.h"
-#include "WebCoreArgumentCoders.h"
+#pragma once
 
 namespace WebKit {
 
-void WebTouchEvent::encode(IPC::Encoder& encoder) const
-{
-    WebEvent::encode(encoder);
-
-    encoder << m_touchPoints;
-    encoder << m_position;
-    encoder << m_canPreventNativeGestures;
-    encoder << m_isPotentialTap;
-    encoder << m_isGesture;
-    encoder << m_gestureScale;
-    encoder << m_gestureRotation;
-}
-
-bool WebTouchEvent::decode(IPC::Decoder& decoder, WebTouchEvent& result)
-{
-    if (!WebEvent::decode(decoder, result))
-        return false;
-
-    if (!decoder.decode(result.m_touchPoints))
-        return false;
-    if (!decoder.decode(result.m_position))
-        return false;
-    if (!decoder.decode(result.m_canPreventNativeGestures))
-        return false;
-    if (!decoder.decode(result.m_isPotentialTap))
-        return false;
-    if (!decoder.decode(result.m_isGesture))
-        return false;
-    if (!decoder.decode(result.m_gestureScale))
-        return false;
-    if (!decoder.decode(result.m_gestureRotation))
-        return false;
-
-    return true;
-}
+enum class WebEventModifier : uint8_t {
+    ShiftKey    = 1 << 0,
+    ControlKey  = 1 << 1,
+    AltKey      = 1 << 2,
+    MetaKey     = 1 << 3,
+    CapsLockKey = 1 << 4,
+};
 
 } // namespace WebKit
-
-#endif // ENABLE(TOUCH_EVENTS)

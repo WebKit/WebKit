@@ -290,37 +290,37 @@ inline WKTypeID toAPI(API::Object::Type type)
     return static_cast<WKTypeID>(type);
 }
 
-inline WKEventModifiers toAPI(OptionSet<WebEvent::Modifier> modifiers)
+inline WKEventModifiers toAPI(OptionSet<WebEventModifier> modifiers)
 {
     WKEventModifiers wkModifiers = 0;
-    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
+    if (modifiers.contains(WebEventModifier::ShiftKey))
         wkModifiers |= kWKEventModifiersShiftKey;
-    if (modifiers.contains(WebEvent::Modifier::ControlKey))
+    if (modifiers.contains(WebEventModifier::ControlKey))
         wkModifiers |= kWKEventModifiersControlKey;
-    if (modifiers.contains(WebEvent::Modifier::AltKey))
+    if (modifiers.contains(WebEventModifier::AltKey))
         wkModifiers |= kWKEventModifiersAltKey;
-    if (modifiers.contains(WebEvent::Modifier::MetaKey))
+    if (modifiers.contains(WebEventModifier::MetaKey))
         wkModifiers |= kWKEventModifiersMetaKey;
-    if (modifiers.contains(WebEvent::Modifier::CapsLockKey))
+    if (modifiers.contains(WebEventModifier::CapsLockKey))
         wkModifiers |= kWKEventModifiersCapsLockKey;
     return wkModifiers;
 }
 
-inline WKEventMouseButton toAPI(WebMouseEvent::Button mouseButton)
+inline WKEventMouseButton toAPI(WebMouseEventButton mouseButton)
 {
     WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
 
     switch (mouseButton) {
-    case WebMouseEvent::NoButton:
+    case WebMouseEventButton::NoButton:
         wkMouseButton = kWKEventMouseButtonNoButton;
         break;
-    case WebMouseEvent::LeftButton:
+    case WebMouseEventButton::LeftButton:
         wkMouseButton = kWKEventMouseButtonLeftButton;
         break;
-    case WebMouseEvent::MiddleButton:
+    case WebMouseEventButton::MiddleButton:
         wkMouseButton = kWKEventMouseButtonMiddleButton;
         break;
-    case WebMouseEvent::RightButton:
+    case WebMouseEventButton::RightButton:
         wkMouseButton = kWKEventMouseButtonRightButton;
         break;
     }

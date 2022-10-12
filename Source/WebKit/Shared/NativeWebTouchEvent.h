@@ -81,7 +81,7 @@ private:
 #endif // ENABLE(TOUCH_EVENTS)
 
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
-OptionSet<WebEvent::Modifier> webEventModifierFlags(UIKeyModifierFlags);
+OptionSet<WebEventModifier> webEventModifierFlags(UIKeyModifierFlags);
 #endif
 
 } // namespace WebKit

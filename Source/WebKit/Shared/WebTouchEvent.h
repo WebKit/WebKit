@@ -102,17 +102,17 @@ private:
 class WebTouchEvent : public WebEvent {
 public:
     WebTouchEvent() = default;
-    WebTouchEvent(WebEvent::Type type, OptionSet<Modifier> modifiers, WallTime timestamp, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation)
-        : WebEvent(type, modifiers, timestamp)
+    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
+        : WebEvent(WTFMove(event))
         , m_touchPoints(touchPoints)
         , m_position(position)
-        , m_canPreventNativeGestures(true)
+        , m_canPreventNativeGestures(canPreventNativeGestures)
         , m_isPotentialTap(isPotentialTap)
         , m_isGesture(isGesture)
         , m_gestureScale(gestureScale)
         , m_gestureRotation(gestureRotation)
     {
-        ASSERT(type == TouchStart || type == TouchMove || type == TouchEnd || type == TouchCancel);
+        ASSERT(type() == TouchStart || type() == TouchMove || type() == TouchEnd || type() == TouchCancel);
     }
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
@@ -190,14 +190,11 @@ private:
 class WebTouchEvent : public WebEvent {
 public:
     WebTouchEvent() { }
-    WebTouchEvent(Type, Vector<WebPlatformTouchPoint>&&, OptionSet<Modifier>, WallTime timestamp);
+    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
     bool allTouchPointsAreReleased() const;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebTouchEvent&);
 
 private:
     static bool isTouchEventType(Type);

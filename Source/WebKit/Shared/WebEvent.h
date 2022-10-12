@@ -29,6 +29,9 @@
 // FIXME: We should probably move to makeing the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
 
+#include "WebEvent.h"
+#include "WebEventModifier.h"
+
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/WallTime.h>
@@ -44,7 +47,7 @@ namespace WebKit {
 class WebEvent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Type {
+    enum Type : int8_t {
         NoType = -1,
         
         // WebMouseEvent
@@ -78,54 +81,31 @@ public:
         GestureEnd,
 #endif
     };
-
-    enum class Modifier : uint8_t {
-        ShiftKey    = 1 << 0,
-        ControlKey  = 1 << 1,
-        AltKey      = 1 << 2,
-        MetaKey     = 1 << 3,
-        CapsLockKey = 1 << 4,
-    };
-
+    
+    WebEvent(Type, OptionSet<WebEventModifier>, WallTime timestamp);
+    
     Type type() const { return static_cast<Type>(m_type); }
 
-    bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
-    bool controlKey() const { return m_modifiers.contains(Modifier::ControlKey); }
-    bool altKey() const { return m_modifiers.contains(Modifier::AltKey); }
-    bool metaKey() const { return m_modifiers.contains(Modifier::MetaKey); }
-    bool capsLockKey() const { return m_modifiers.contains(Modifier::CapsLockKey); }
+    bool shiftKey() const { return m_modifiers.contains(WebEventModifier::ShiftKey); }
+    bool controlKey() const { return m_modifiers.contains(WebEventModifier::ControlKey); }
+    bool altKey() const { return m_modifiers.contains(WebEventModifier::AltKey); }
+    bool metaKey() const { return m_modifiers.contains(WebEventModifier::MetaKey); }
+    bool capsLockKey() const { return m_modifiers.contains(WebEventModifier::CapsLockKey); }
 
-    OptionSet<Modifier> modifiers() const { return m_modifiers; }
+    OptionSet<WebEventModifier> modifiers() const { return m_modifiers; }
 
     WallTime timestamp() const { return m_timestamp; }
 
 protected:
     WebEvent();
 
-    WebEvent(Type, OptionSet<Modifier>, WallTime timestamp);
-
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebEvent&);
 
 private:
-    uint32_t m_type;
-    OptionSet<Modifier> m_modifiers;
+    Type m_type;
+    OptionSet<WebEventModifier> m_modifiers;
     WallTime m_timestamp;
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebEvent::Modifier> {
-    using values = EnumValues<
-        WebKit::WebEvent::Modifier,
-        WebKit::WebEvent::Modifier::ShiftKey,
-        WebKit::WebEvent::Modifier::ControlKey,
-        WebKit::WebEvent::Modifier::AltKey,
-        WebKit::WebEvent::Modifier::MetaKey,
-        WebKit::WebEvent::Modifier::CapsLockKey
-    >;
-};
-
-} // namespace WTF

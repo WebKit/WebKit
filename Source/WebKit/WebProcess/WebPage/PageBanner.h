@@ -55,7 +55,7 @@ public:
     
     public:
         virtual void pageBannerDestroyed(PageBanner*) = 0;
-        virtual bool mouseEvent(PageBanner*, WebEvent::Type, WebMouseEvent::Button, const WebCore::IntPoint&) = 0;
+        virtual bool mouseEvent(PageBanner*, WebEvent::Type, WebMouseEventButton, const WebCore::IntPoint&) = 0;
     };
 
 #if PLATFORM(MAC)

@@ -64,16 +64,18 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!decoder.decode(navigationType))
         return std::nullopt;
     
-    OptionSet<WebEvent::Modifier> modifiers;
+    OptionSet<WebEventModifier> modifiers;
     if (!decoder.decode(modifiers))
         return std::nullopt;
 
-    WebMouseEvent::Button mouseButton;
-    if (!decoder.decode(mouseButton))
+    std::optional<WebMouseEventButton> mouseButton;
+    decoder >> mouseButton;
+    if (!mouseButton)
         return std::nullopt;
     
-    WebMouseEvent::SyntheticClickType syntheticClickType;
-    if (!decoder.decode(syntheticClickType))
+    std::optional<WebMouseEventSyntheticClickType> syntheticClickType;
+    decoder >> syntheticClickType;
+    if (!syntheticClickType)
         return std::nullopt;
     
     std::optional<uint64_t> userGestureTokenIdentifier;
@@ -157,10 +159,10 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!privateClickMeasurement)
         return std::nullopt;
 
-    return {{ WTFMove(navigationType), modifiers, WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
+    return { { WTFMove(navigationType), modifiers, WTFMove(*mouseButton), WTFMove(*syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
         WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedByDOMWithOpener, WTFMove(*requesterOrigin),
-        WTFMove(*targetBackForwardItemIdentifier), WTFMove(*sourceBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory), *effectiveSandboxFlags, WTFMove(*privateClickMeasurement) }};
+        WTFMove(*targetBackForwardItemIdentifier), WTFMove(*sourceBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory), *effectiveSandboxFlags, WTFMove(*privateClickMeasurement) } };
 }
 
 } // namespace WebKit

@@ -46,17 +46,17 @@ class InjectedBundleNavigationAction : public API::ObjectImpl<API::Object::Type:
 public:
     static Ref<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, RefPtr<WebCore::FormState>&&);
 
-    static OptionSet<WebEvent::Modifier> modifiersForNavigationAction(const WebCore::NavigationAction&);
-    static WebMouseEvent::Button mouseButtonForNavigationAction(const WebCore::NavigationAction&);
-    static WebMouseEvent::SyntheticClickType syntheticClickTypeForNavigationAction(const WebCore::NavigationAction&);
+    static OptionSet<WebEventModifier> modifiersForNavigationAction(const WebCore::NavigationAction&);
+    static WebMouseEventButton mouseButtonForNavigationAction(const WebCore::NavigationAction&);
+    static WebMouseEventSyntheticClickType syntheticClickTypeForNavigationAction(const WebCore::NavigationAction&);
     static WebCore::FloatPoint clickLocationInRootViewCoordinatesForNavigationAction(const WebCore::NavigationAction&);
     
     WebCore::NavigationType navigationType() const { return m_navigationType; }
-    OptionSet<WebEvent::Modifier> modifiers() const { return m_modifiers; }
-    WebMouseEvent::Button mouseButton() const { return m_mouseButton; }
+    OptionSet<WebEventModifier> modifiers() const { return m_modifiers; }
+    WebMouseEventButton mouseButton() const { return m_mouseButton; }
     InjectedBundleHitTestResult* hitTestResult() const { return m_hitTestResult.get(); }
     InjectedBundleNodeHandle* formElement() const { return m_formElement.get(); }
-    WebMouseEvent::SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
+    WebMouseEventSyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
     WebCore::FloatPoint clickLocationInRootViewCoordinates() const { return m_clickLocationInRootViewCoordinates; }
 
     bool shouldOpenExternalURLs() const { return m_shouldOpenExternalURLs; }
@@ -67,9 +67,9 @@ private:
     InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, RefPtr<WebCore::FormState>&&);
 
     WebCore::NavigationType m_navigationType;
-    OptionSet<WebEvent::Modifier> m_modifiers;
-    WebMouseEvent::Button m_mouseButton;
-    WebMouseEvent::SyntheticClickType m_syntheticClickType { WebMouseEvent::NoTap };
+    OptionSet<WebEventModifier> m_modifiers;
+    WebMouseEventButton m_mouseButton;
+    WebMouseEventSyntheticClickType m_syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
     WebCore::FloatPoint m_clickLocationInRootViewCoordinates;
     RefPtr<InjectedBundleHitTestResult> m_hitTestResult;
     RefPtr<InjectedBundleNodeHandle> m_formElement;

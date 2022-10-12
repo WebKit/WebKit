@@ -44,22 +44,19 @@ namespace WebKit {
 class WebGestureEvent : public WebEvent {
 public:
     WebGestureEvent() { }
-    WebGestureEvent(WebEvent::Type type, OptionSet<WebEvent::Modifier> modifiers, WallTime timestamp, WebCore::IntPoint position, float gestureScale, float gestureRotation)
-        : WebEvent(type, modifiers, timestamp)
+    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
+        : WebEvent(WTFMove(event))
         , m_position(position)
         , m_gestureScale(gestureScale)
         , m_gestureRotation(gestureRotation)
     {
-        ASSERT(isGestureEventType(type));
+        ASSERT(isGestureEventType(type()));
     }
 
     WebCore::IntPoint position() const { return m_position; }
 
     float gestureScale() const { return m_gestureScale; }
     float gestureRotation() const { return m_gestureRotation; }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebGestureEvent&);
     
 private:
     bool isGestureEventType(Type) const;

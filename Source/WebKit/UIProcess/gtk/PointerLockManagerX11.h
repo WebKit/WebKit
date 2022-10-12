@@ -36,7 +36,7 @@ class WebPageProxy;
 class PointerLockManagerX11 final : public PointerLockManager {
     WTF_MAKE_NONCOPYABLE(PointerLockManagerX11); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PointerLockManagerX11(WebPageProxy&, const WebCore::FloatPoint&, const WebCore::FloatPoint&, WebMouseEvent::Button, unsigned short, OptionSet<WebEvent::Modifier>);
+    PointerLockManagerX11(WebPageProxy&, const WebCore::FloatPoint&, const WebCore::FloatPoint&, WebMouseEventButton, unsigned short, OptionSet<WebEventModifier>);
     ~PointerLockManagerX11() = default;
 
 private:
