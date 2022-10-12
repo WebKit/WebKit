@@ -72,7 +72,6 @@ enum ListType {
 
 struct EditorState {
     EditorStateIdentifier identifier;
-    String originIdentifierForPasteboard;
     bool shouldIgnoreSelectionChanges { false };
     bool selectionIsNone { true }; // This will be false when there is a caret selection.
     bool selectionIsRange { false };

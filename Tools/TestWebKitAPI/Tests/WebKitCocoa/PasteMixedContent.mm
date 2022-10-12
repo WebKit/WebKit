@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -32,6 +33,7 @@
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -299,6 +301,48 @@ TEST(PasteMixedContent, PasteOneOrMoreURLs)
 
 #endif // PLATFORM(MAC)
 
+#if PLATFORM(IOS_FAMILY)
+
+class PasteboardAccessChecker {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PasteboardAccessChecker);
+public:
+    PasteboardAccessChecker()
+    {
+        gDidAccessPasteboard = false;
+
+        auto pasteboardAccessSelectors = std::array {
+            @selector(dataForPasteboardType:),
+            @selector(dataForPasteboardType:inItemSet:),
+            @selector(items),
+            @selector(itemProviders),
+        };
+        auto pasteboardClass = UIPasteboard.generalPasteboard.class;
+        m_swizzlers.reserveInitialCapacity(pasteboardAccessSelectors.size());
+        for (SEL selector : pasteboardAccessSelectors)
+            m_swizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(pasteboardClass, selector, reinterpret_cast<IMP>(returnNil)));
+    }
+
+    bool didAccessPasteboard() const
+    {
+        return gDidAccessPasteboard;
+    }
+
+private:
+    static bool gDidAccessPasteboard;
+    static id returnNil(id, SEL)
+    {
+        gDidAccessPasteboard = true;
+        return nil;
+    }
+
+    Vector<std::unique_ptr<InstanceMethodSwizzler>> m_swizzlers;
+};
+
+bool PasteboardAccessChecker::gDidAccessPasteboard = false;
+
+#endif // PLATFORM(IOS_FAMILY)
+
 TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)
 {
     NSString *markupForSource = @"<body oncopy=\"event.preventDefault(); event.clipboardData.setData('foo', 'bar')\">hello</body>";
@@ -317,18 +361,26 @@ TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)
 
     auto destination = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [destination synchronouslyLoadHTMLString:markupForDestination baseURL:[NSURL URLWithString:@"same://"]];
+#if PLATFORM(IOS_FAMILY)
+    {
+        PasteboardAccessChecker checker;
+        EXPECT_TRUE([destination canPerformAction:@selector(paste:) withSender:nil]);
+        EXPECT_FALSE(checker.didAccessPasteboard());
+    }
+#endif
     [destination paste:nil];
     EXPECT_WK_STREQ("bar", [destination stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
-#if PLATFORM(IOS_FAMILY)
-    EXPECT_TRUE([destination canPerformAction:@selector(paste:) withSender:nil]);
-#endif
 
     [destination synchronouslyLoadHTMLString:markupForDestination baseURL:[NSURL URLWithString:@"different://"]];
+#if PLATFORM(IOS_FAMILY)
+    {
+        PasteboardAccessChecker checker;
+        EXPECT_TRUE([destination canPerformAction:@selector(paste:) withSender:nil]);
+        EXPECT_FALSE(checker.didAccessPasteboard());
+    }
+#endif
     [destination paste:nil];
     EXPECT_WK_STREQ("", [destination stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
-#if PLATFORM(IOS_FAMILY)
-    EXPECT_FALSE([destination canPerformAction:@selector(paste:) withSender:nil]);
-#endif
 }
 
 } // namespace TestWebKitAPI

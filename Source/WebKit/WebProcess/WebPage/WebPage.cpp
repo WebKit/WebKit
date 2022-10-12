@@ -1262,7 +1262,6 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     result.triggeredByAccessibilitySelectionChange = m_pendingEditorStateUpdateStatus == PendingEditorStateUpdateStatus::ScheduledDuringAccessibilitySelectionChange || m_isChangingSelectionForAccessibility;
 
     Ref<Document> document = *frame->document();
-    result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
 
     if (result.selectionIsRange) {
         auto selectionRange = selection.range();
