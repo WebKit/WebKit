@@ -787,7 +787,8 @@ void NetworkStorageManager::resume()
 void NetworkStorageManager::handleLowMemoryWarning()
 {
     ASSERT(RunLoop::isMain());
-
+    if (m_closed)
+        return;
     m_queue->dispatch([this, protectedThis = Ref { *this }] {
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto localStorageManager = manager->existingLocalStorageManager())
@@ -801,7 +802,10 @@ void NetworkStorageManager::handleLowMemoryWarning()
 void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-
+    if (m_closed) {
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+        return;
+    }
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto localStorageManager = manager->existingLocalStorageManager())
