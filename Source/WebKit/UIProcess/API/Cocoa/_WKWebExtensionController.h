@@ -27,10 +27,27 @@
 
 #import <Foundation/Foundation.h>
 
+@class _WKWebExtension;
+@class _WKWebExtensionContext;
+@protocol _WKWebExtensionControllerDelegate;
+
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebExtensionController : NSObject <NSSecureCoding>
+
+@property (nonatomic, weak) id <_WKWebExtensionControllerDelegate> delegate;
+
+- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_UNAVAILABLE("Use error version");
+- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error;
+
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_UNAVAILABLE("Use error version");
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error;
+
+- (nullable _WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension NS_SWIFT_NAME(extensionContext(for:));
+
+@property (nonatomic, readonly, copy) NSSet<_WKWebExtension *> *extensions;
+@property (nonatomic, readonly, copy) NSSet<_WKWebExtensionContext *> *extensionContexts;
 
 @end
 

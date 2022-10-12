@@ -257,20 +257,16 @@ const RenderStyle& RenderElement::firstLineStyle() const
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, OptionSet<StyleDifferenceContextSensitiveProperty> contextSensitiveProperties) const
 {
-    // If transform changed, and we are not composited, need to do a layout.
     if (contextSensitiveProperties & StyleDifferenceContextSensitiveProperty::Transform) {
-        // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
-        if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited()) {
-            if (!hasLayer())
-                diff = std::max(diff, StyleDifference::Layout);
-            else {
-                // We need to set at least SimplifiedLayout, but if PositionedMovementOnly is already set
-                // then we actually need SimplifiedLayoutAndPositionedMovement.
-                diff = std::max(diff, (diff == StyleDifference::LayoutPositionedMovementOnly) ? StyleDifference::SimplifiedLayoutAndPositionedMovement : StyleDifference::SimplifiedLayout);
-            }
-        
+        // Transform change requires at least SimplifiedLayout to re-compute scrollable overflow.
+        // e.g. translate a box outside of a scrollable containing block's content box should trigger scrollbars.
+        if (!hasLayer())
+            diff = std::max(diff, StyleDifference::Layout);
+        else if (diff == StyleDifference::LayoutPositionedMovementOnly) {
+            // Upgrading LayoutPositionedMovementOnly to SimplifiedLayout makes the positioning part of layout bits skipped (i.e. not an upgrade).
+            diff = StyleDifference::SimplifiedLayoutAndPositionedMovement;
         } else
-            diff = std::max(diff, StyleDifference::RecompositeLayer);
+            diff = std::max(diff, StyleDifference::SimplifiedLayout);
     }
 
     if (contextSensitiveProperties & StyleDifferenceContextSensitiveProperty::Opacity) {
@@ -528,9 +524,9 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
             setNeedsPositionedMovementLayout(&oldStyle);
         else if (updatedDiff == StyleDifference::SimplifiedLayoutAndPositionedMovement) {
             setNeedsPositionedMovementLayout(&oldStyle);
-            setNeedsSimplifiedNormalFlowLayout();
+            setNeedsSimplifiedNormalFlowLayout(&oldStyle);
         } else if (updatedDiff == StyleDifference::SimplifiedLayout)
-            setNeedsSimplifiedNormalFlowLayout();
+            setNeedsSimplifiedNormalFlowLayout(&oldStyle);
     }
 
     if (!didRepaint && (updatedDiff == StyleDifference::RepaintLayer || shouldRepaintForStyleDifference(updatedDiff))) {
@@ -949,10 +945,10 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         if (diff == StyleDifference::Layout)
             setNeedsLayoutAndPrefWidthsRecalc();
         else
-            setNeedsSimplifiedNormalFlowLayout();
+            setNeedsSimplifiedNormalFlowLayout(oldStyle);
     } else if (diff == StyleDifference::SimplifiedLayoutAndPositionedMovement) {
         setNeedsPositionedMovementLayout(oldStyle);
-        setNeedsSimplifiedNormalFlowLayout();
+        setNeedsSimplifiedNormalFlowLayout(oldStyle);
     } else if (diff == StyleDifference::LayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout(oldStyle);
 
@@ -1102,15 +1098,23 @@ void RenderElement::clearChildNeedsLayout()
     setNeedsPositionedMovementLayoutBit(false);
 }
 
-void RenderElement::setNeedsSimplifiedNormalFlowLayout()
+void RenderElement::setNeedsSimplifiedNormalFlowLayout(const RenderStyle* oldStyle)
 {
     ASSERT(!isSetNeedsLayoutForbidden());
     if (needsSimplifiedNormalFlowLayout())
         return;
     setNeedsSimplifiedNormalFlowLayoutBit(true);
     markContainingBlocksForLayout();
-    if (hasLayer())
-        setLayerNeedsFullRepaint();
+    auto needsLayerRepaint = [&] {
+        if (!hasLayer() || !oldStyle)
+            return false;
+        auto isComposited = downcast<RenderLayerModelObject>(*this).layer()->isComposited();
+        if (style().diffRequiresLayerRepaint(*oldStyle, isComposited))
+            return true;
+        return !isComposited && style().hasTransform() && oldStyle->hasTransform() && style().transform() != oldStyle->transform();
+    };
+    if (needsLayerRepaint())
+        return setLayerNeedsFullRepaint();
 }
 
 static inline void paintPhase(RenderElement& element, PaintPhase phase, PaintInfo& paintInfo, const LayoutPoint& childPoint)

@@ -533,7 +533,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
 LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_contentIsConstrainedByFloat);
-    auto& rootStyle = root().style();
+    auto& rootStyle = this->rootStyle();
     auto numberOfCommittedItems = committedContent.itemCount;
     auto trailingInlineItemIndex = needsLayoutRange.start + numberOfCommittedItems - 1;
     auto lineRange = InlineItemRange { needsLayoutRange.start, trailingInlineItemIndex + 1 };
@@ -588,7 +588,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         return !rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis;
     };
     if (needsTextOverflowAdjustment()) {
-        auto ellipsisWidth = isFirstLine() ? root().firstLineStyle().fontCascade().width(TextUtil::ellipsisTextRun()) : rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
+        auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
         auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
         m_line.truncate(logicalRightForContentWithoutEllipsis);
     }
@@ -1175,10 +1175,9 @@ bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, 
 TextDirection LineBuilder::inlineBaseDirectionForLineContent()
 {
     ASSERT(!m_line.runs().isEmpty());
-    auto& rootStyle = isFirstLine() ? root().firstLineStyle() : root().style();
-    auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
+    auto shouldUseBlockDirection = rootStyle().unicodeBidi() != UnicodeBidi::Plaintext;
     if (shouldUseBlockDirection)
-        return rootStyle.direction();
+        return rootStyle().direction();
     // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
     if (m_previousLine && !m_previousLine->endsWithLineBreak)
         return m_previousLine->inlineBaseDirection;
@@ -1193,6 +1192,11 @@ const ElementBox& LineBuilder::root() const
 const LayoutState& LineBuilder::layoutState() const
 {
     return formattingContext().layoutState();
+}
+
+const RenderStyle& LineBuilder::rootStyle() const
+{
+    return isFirstLine() ? root().firstLineStyle() : root().style();
 }
 
 }

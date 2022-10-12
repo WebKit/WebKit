@@ -149,33 +149,33 @@ static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint loca
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
-static WebMouseEvent::Button automationMouseButtonToPlatformMouseButton(MouseButton button)
+static WebMouseEventButton automationMouseButtonToPlatformMouseButton(MouseButton button)
 {
     switch (button) {
-    case MouseButton::Left:   return WebMouseEvent::LeftButton;
-    case MouseButton::Middle: return WebMouseEvent::MiddleButton;
-    case MouseButton::Right:  return WebMouseEvent::RightButton;
-    case MouseButton::None:   return WebMouseEvent::NoButton;
+    case MouseButton::Left:   return WebMouseEventButton::LeftButton;
+    case MouseButton::Middle: return WebMouseEventButton::MiddleButton;
+    case MouseButton::Right:  return WebMouseEventButton::RightButton;
+    case MouseButton::None:   return WebMouseEventButton::NoButton;
     default: ASSERT_NOT_REACHED();
     }
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
 {
     UNUSED_PARAM(pointerType);
 
     auto locationInWindow = viewportLocationToWindowLocation(locationInViewport, page);
 
     NSEventModifierFlags modifiers = 0;
-    if (keyModifiers.contains(WebEvent::Modifier::MetaKey))
+    if (keyModifiers.contains(WebEventModifier::MetaKey))
         modifiers |= NSEventModifierFlagCommand;
-    if (keyModifiers.contains(WebEvent::Modifier::AltKey))
+    if (keyModifiers.contains(WebEventModifier::AltKey))
         modifiers |= NSEventModifierFlagOption;
-    if (keyModifiers.contains(WebEvent::Modifier::ControlKey))
+    if (keyModifiers.contains(WebEventModifier::ControlKey))
         modifiers |= NSEventModifierFlagControl;
-    if (keyModifiers.contains(WebEvent::Modifier::ShiftKey))
+    if (keyModifiers.contains(WebEventModifier::ShiftKey))
         modifiers |= NSEventModifierFlagShift;
-    if (keyModifiers.contains(WebEvent::Modifier::CapsLockKey))
+    if (keyModifiers.contains(WebEventModifier::CapsLockKey))
         modifiers |= NSEventModifierFlagCapsLock;
 
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];
@@ -186,20 +186,20 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     NSEventType dragEventType = (NSEventType)0;
     NSEventType upEventType = (NSEventType)0;
     switch (automationMouseButtonToPlatformMouseButton(button)) {
-    case WebMouseEvent::NoButton:
+    case WebMouseEventButton::NoButton:
         downEventType = upEventType = dragEventType = NSEventTypeMouseMoved;
         break;
-    case WebMouseEvent::LeftButton:
+    case WebMouseEventButton::LeftButton:
         downEventType = NSEventTypeLeftMouseDown;
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeLeftMouseUp;
         break;
-    case WebMouseEvent::MiddleButton:
+    case WebMouseEventButton::MiddleButton:
         downEventType = NSEventTypeOtherMouseDown;
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeOtherMouseUp;
         break;
-    case WebMouseEvent::RightButton:
+    case WebMouseEventButton::RightButton:
         downEventType = NSEventTypeRightMouseDown;
         upEventType = NSEventTypeRightMouseUp;
         break;
@@ -251,20 +251,20 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
-OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
 {
-    OptionSet<WebEvent::Modifier> webModifiers;
+    OptionSet<WebEventModifier> webModifiers;
 
     if (modifiers & NSEventModifierFlagCommand)
-        webModifiers.add(WebEvent::Modifier::MetaKey);
+        webModifiers.add(WebEventModifier::MetaKey);
     if (modifiers & NSEventModifierFlagOption)
-        webModifiers.add(WebEvent::Modifier::AltKey);
+        webModifiers.add(WebEventModifier::AltKey);
     if (modifiers & NSEventModifierFlagControl)
-        webModifiers.add(WebEvent::Modifier::ControlKey);
+        webModifiers.add(WebEventModifier::ControlKey);
     if (modifiers & NSEventModifierFlagShift)
-        webModifiers.add(WebEvent::Modifier::ShiftKey);
+        webModifiers.add(WebEventModifier::ShiftKey);
     if (modifiers & NSEventModifierFlagCapsLock)
-        webModifiers.add(WebEvent::Modifier::CapsLockKey);
+        webModifiers.add(WebEventModifier::CapsLockKey);
 
     return webModifiers;
 }

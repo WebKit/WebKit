@@ -147,15 +147,16 @@ size_t videoPixelFormatToSampleByteSizePerPlane()
     return 1;
 }
 
-static inline size_t sampleCountPerPixel(VideoPixelFormat format)
+static inline size_t sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
     case VideoPixelFormat::I420:
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::I444:
     case VideoPixelFormat::I422:
-    case VideoPixelFormat::NV12:
         return 1;
+    case VideoPixelFormat::NV12:
+        return planeNumber ? 2 : 1;
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -190,11 +191,14 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
     if (layout && layout->size() != planeCount)
         return Exception { TypeError, "layout size is invalid"_s };
 
-    size_t pixelSampleCount = sampleCountPerPixel(format);
     size_t minAllocationSize = 0;
     Vector<ComputedPlaneLayout> computedLayouts;
     computedLayouts.reserveInitialCapacity(planeCount);
+    Vector<size_t> endOffsets;
+    endOffsets.reserveInitialCapacity(planeCount);
     for (size_t i = 0; i < planeCount; ++i) {
+        size_t pixelSampleCount = sampleCountPerPixel(format, i);
+
         auto sampleBytes = videoPixelFormatToSampleByteSizePerPlane();
         auto sampleWidth = videoPixelFormatToSubSampling(format, i);
         auto sampleHeight = videoPixelFormatToSubSampling(format, i);
@@ -216,13 +220,22 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
             computedLayout.destinationOffset = minAllocationSize;
             computedLayout.destinationStride = computedLayout.sourceWidthBytes;
         }
-        // FIXME: validate we do not get over max values.
-        auto planeSize = computedLayout.destinationStride * computedLayout.sourceHeight;
-        auto planeEnd = planeSize + computedLayout.destinationOffset;
 
+        size_t planeSize, planeEnd;
+        if (!WTF::safeMultiply(computedLayout.destinationStride, computedLayout.sourceHeight, planeSize) || planeSize > std::numeric_limits<uint32_t>::max())
+            return Exception { TypeError, "planeSize is too big"_s };
+
+        if (!WTF::safeAdd(planeSize, computedLayout.destinationOffset, planeEnd) || planeEnd > std::numeric_limits<uint32_t>::max())
+            return Exception { TypeError, "planeEnd is too big"_s };
+
+        endOffsets.uncheckedAppend(planeEnd);
         minAllocationSize = std::max(minAllocationSize, planeEnd);
 
-        // FIXME validate endOffsets.
+        for (size_t j = 1; j < i; ++j) {
+            if (planeEnd > computedLayouts[j].destinationOffset && endOffsets[j] > computedLayout.destinationOffset)
+                return Exception { TypeError, "planes are overlapping"_s };
+        }
+
         computedLayouts.uncheckedAppend(computedLayout);
     }
 

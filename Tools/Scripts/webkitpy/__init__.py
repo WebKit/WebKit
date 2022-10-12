@@ -34,11 +34,11 @@ if sys.platform == 'darwin':
 from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
-if sys.version_info >= (3, 5):
+if sys.version_info >= (3, 6):
     AutoInstall.register(Package('pylint', Version(2, 6, 0)))
     AutoInstall.register(Package('pytest_asyncio', Version(0, 14), pypi_name='pytest-asyncio'))
     AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pytest-timeout'))
-    AutoInstall.register(Package('pytest', Version(6, 1, 2), implicit_deps=['pytest_asyncio', 'pytest_timeout']))
+    AutoInstall.register(Package('pytest', Version(6, 2, 5), implicit_deps=['pytest_asyncio', 'pytest_timeout']))
     AutoInstall.register(Package('websockets', Version(8, 1)))
 elif sys.version_info >= (2, 7) and sys.version_info < (3,):
     AutoInstall.register(Package('pylint', Version(0, 28, 0)))

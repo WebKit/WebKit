@@ -523,6 +523,9 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ShareableBitmap.serialization.in
     Shared/TextFlags.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
+    Shared/WebEvent.serialization.in
+    Shared/WebPushDaemonConnectionConfiguration.serialization.in
+    Shared/WebPushMessage.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
 
     Shared/API/APIGeometry.serialization.in

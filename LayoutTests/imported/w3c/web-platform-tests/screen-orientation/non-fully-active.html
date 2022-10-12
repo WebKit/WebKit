@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script>
+  async function attachIFrame() {
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    await new Promise((resolve) => {
+      iframe.onload = resolve;
+      iframe.src = "about:blank";
+    });
+    return iframe;
+  }
+
+  promise_test(async (t) => {
+    const iframe = await attachIFrame();
+    const { orientation } = iframe.contentWindow.screen;
+    const opposite = orientation.type.startsWith("portrait")
+      ? "landscape"
+      : "portrait";
+
+    iframe.remove();
+
+    await promise_rejects_dom(
+      t,
+      "InvalidStateError",
+      orientation.lock(opposite)
+    );
+  }, "Attempting to lock non-fully active documents results in a InvalidStateError");
+
+  promise_test(async (t) => {
+    const iframe = await attachIFrame();
+    const { orientation } = iframe.contentWindow.screen;
+
+    iframe.remove();
+
+    assert_throws_dom(t, "InvalidStateError", () => { orientation.unlock() });
+  }, "Attempting to unlock non-fully active documents results in a InvalidStateError");
+
+  promise_test(async (t) => {
+    const iframe = await attachIFrame();
+    const { orientation } = iframe.contentWindow.screen;
+
+    const opposite = orientation.type.startsWith("portrait")
+      ? "landscape"
+      : "portrait";
+
+    await test_driver.bless("request full screen", null, iframe.contentWindow);
+    await iframe.contentDocument.documentElement.requestFullscreen();
+
+    const p = orientation.lock(opposite);
+
+    iframe.remove();
+
+    await promise_rejects_dom(t, "AbortError", p);
+    assert_throws_dom(t, "InvalidStateError", () => { orientation.unlock() });
+  }, "Making a document non-fully active while locking results in an AbortError");
+</script>

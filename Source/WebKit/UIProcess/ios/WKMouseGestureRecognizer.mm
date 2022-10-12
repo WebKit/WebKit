@@ -33,19 +33,19 @@
 #import <wtf/Compiler.h>
 #import <wtf/MonotonicTime.h>
 
-static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags flags)
+static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags flags)
 {
-    OptionSet<WebKit::WebEvent::Modifier> modifiers;
+    OptionSet<WebKit::WebEventModifier> modifiers;
     if (flags & UIKeyModifierShift)
-        modifiers.add(WebKit::WebEvent::Modifier::ShiftKey);
+        modifiers.add(WebKit::WebEventModifier::ShiftKey);
     if (flags & UIKeyModifierControl)
-        modifiers.add(WebKit::WebEvent::Modifier::ControlKey);
+        modifiers.add(WebKit::WebEventModifier::ControlKey);
     if (flags & UIKeyModifierAlternate)
-        modifiers.add(WebKit::WebEvent::Modifier::AltKey);
+        modifiers.add(WebKit::WebEventModifier::AltKey);
     if (flags & UIKeyModifierCommand)
-        modifiers.add(WebKit::WebEvent::Modifier::MetaKey);
+        modifiers.add(WebKit::WebEventModifier::MetaKey);
     if (flags & UIKeyModifierAlphaShift)
-        modifiers.add(WebKit::WebEvent::Modifier::CapsLockKey);
+        modifiers.add(WebKit::WebEventModifier::CapsLockKey);
     return modifiers;
 }
 
@@ -117,14 +117,14 @@ static String pointerTypeForUITouchType(UITouchType)
 - (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type wasCancelled:(BOOL)cancelled
 {
     auto modifiers = webEventModifiersForUIKeyModifierFlags(self.modifierFlags);
-    BOOL isRightButton = modifiers.contains(WebKit::WebEvent::Modifier::ControlKey) || (_pressedButtonMask && (*_pressedButtonMask & UIEventButtonMaskSecondary));
+    BOOL isRightButton = modifiers.contains(WebKit::WebEventModifier::ControlKey) || (_pressedButtonMask && (*_pressedButtonMask & UIEventButtonMaskSecondary));
 
     auto button = [&] {
         if (!_touching)
-            return WebKit::WebMouseEvent::NoButton;
+            return WebKit::WebMouseEventButton::NoButton;
         if (isRightButton)
-            return WebKit::WebMouseEvent::RightButton;
-        return WebKit::WebMouseEvent::LeftButton;
+            return WebKit::WebMouseEventButton::RightButton;
+        return WebKit::WebMouseEventButton::LeftButton;
     }();
 
     // FIXME: 'buttons' should report any buttons that are still down in the case when one button is released from a chord.

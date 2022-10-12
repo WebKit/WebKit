@@ -54,6 +54,7 @@ public:
         m_immutableBaseTransform.translate(0, -ceilf(parameters.logicalSize.height() * parameters.resolutionScale));
         m_immutableBaseTransform.scale(parameters.resolutionScale);
         m_inverseImmutableBaseTransform = *m_immutableBaseTransform.inverse();
+        m_resolutionScale = parameters.resolutionScale;
     }
 
     void setCTM(const WebCore::AffineTransform& transform) final
@@ -68,9 +69,19 @@ public:
 
     bool canUseShadowBlur() const final { return false; }
 
+protected:
+    void setCGShadow(WebCore::RenderingMode renderingMode, const WebCore::FloatSize& offset, float blur, const WebCore::Color& color, bool shadowsIgnoreTransforms) override
+    {
+        // This doesn't use `m_immutableBaseTransform.mapSize` because it doesn't output negative lengths.
+        WebCore::FloatSize scaledOffset = offset;
+        scaledOffset.scale(m_resolutionScale, -m_resolutionScale);
+        GraphicsContextCG::setCGShadow(renderingMode, scaledOffset, blur * m_resolutionScale, color, shadowsIgnoreTransforms);
+    }
+
 private:
     WebCore::AffineTransform m_immutableBaseTransform;
     WebCore::AffineTransform m_inverseImmutableBaseTransform;
+    float m_resolutionScale;
 };
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListImageBufferBackend);

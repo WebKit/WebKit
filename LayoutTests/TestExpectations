@@ -4215,7 +4215,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-004.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-005.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-animated-002.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/change-scale-wide-range.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/perspective-children-only-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/perspective-children-only-fixpos.html [ ImageOnlyFailure ]
@@ -6088,7 +6087,6 @@ js/ShadowRealm-importValue.html [ Pass Failure ]
 js/ShadowRealm-worker.html [ Pass Failure ]
 
 # We don't support screen orientation locking yet, making these tests flaky.
-imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Failure Pass ]
 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure Pass ]
 
 # Old SVG+currentcolor tests are incorrect https://bugs.webkit.org/show_bug.cgi?id=245400

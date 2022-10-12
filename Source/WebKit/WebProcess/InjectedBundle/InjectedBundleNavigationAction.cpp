@@ -37,18 +37,18 @@
 namespace WebKit {
 using namespace WebCore;
 
-static WebMouseEvent::Button mouseButtonForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
+static WebMouseEventButton mouseButtonForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
 {
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
-        return static_cast<WebMouseEvent::Button>(mouseEventData->button);
-    return WebMouseEvent::NoButton;
+        return static_cast<WebMouseEventButton>(mouseEventData->button);
+    return WebMouseEventButton::NoButton;
 }
 
-static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
+static WebMouseEventSyntheticClickType syntheticClickTypeForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
 {
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
-        return static_cast<WebMouseEvent::SyntheticClickType>(mouseEventData->syntheticClickType);
-    return WebMouseEvent::NoTap;
+        return static_cast<WebMouseEventSyntheticClickType>(mouseEventData->syntheticClickType);
+    return WebMouseEventSyntheticClickType::NoTap;
 }
     
 static FloatPoint clickLocationInRootViewCoordinatesForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
@@ -58,29 +58,29 @@ static FloatPoint clickLocationInRootViewCoordinatesForMouseEventData(const std:
     return { };
 }
 
-OptionSet<WebEvent::Modifier> InjectedBundleNavigationAction::modifiersForNavigationAction(const NavigationAction& navigationAction)
+OptionSet<WebEventModifier> InjectedBundleNavigationAction::modifiersForNavigationAction(const NavigationAction& navigationAction)
 {
-    OptionSet<WebEvent::Modifier> modifiers;
+    OptionSet<WebEventModifier> modifiers;
     auto keyStateEventData = navigationAction.keyStateEventData();
     if (keyStateEventData && keyStateEventData->isTrusted) {
         if (keyStateEventData->shiftKey)
-            modifiers.add(WebEvent::Modifier::ShiftKey);
+            modifiers.add(WebEventModifier::ShiftKey);
         if (keyStateEventData->ctrlKey)
-            modifiers.add(WebEvent::Modifier::ControlKey);
+            modifiers.add(WebEventModifier::ControlKey);
         if (keyStateEventData->altKey)
-            modifiers.add(WebEvent::Modifier::AltKey);
+            modifiers.add(WebEventModifier::AltKey);
         if (keyStateEventData->metaKey)
-            modifiers.add(WebEvent::Modifier::MetaKey);
+            modifiers.add(WebEventModifier::MetaKey);
     }
     return modifiers;
 }
 
-WebMouseEvent::Button InjectedBundleNavigationAction::mouseButtonForNavigationAction(const NavigationAction& navigationAction)
+WebMouseEventButton InjectedBundleNavigationAction::mouseButtonForNavigationAction(const NavigationAction& navigationAction)
 {
     return mouseButtonForMouseEventData(navigationAction.mouseEventData());
 }
 
-WebMouseEvent::SyntheticClickType InjectedBundleNavigationAction::syntheticClickTypeForNavigationAction(const NavigationAction& navigationAction)
+WebMouseEventSyntheticClickType InjectedBundleNavigationAction::syntheticClickTypeForNavigationAction(const NavigationAction& navigationAction)
 {
     return syntheticClickTypeForMouseEventData(navigationAction.mouseEventData());
 }
@@ -98,7 +98,7 @@ Ref<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFr
 InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, const NavigationAction& navigationAction, RefPtr<FormState>&& formState)
     : m_navigationType(navigationAction.type())
     , m_modifiers(modifiersForNavigationAction(navigationAction))
-    , m_mouseButton(WebMouseEvent::NoButton)
+    , m_mouseButton(WebMouseEventButton::NoButton)
     , m_downloadAttribute(navigationAction.downloadAttribute())
     , m_shouldOpenExternalURLs(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow || navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks)
     , m_shouldTryAppLinks(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow)

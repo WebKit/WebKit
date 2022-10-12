@@ -35,6 +35,7 @@
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionTab.h"
+#import <WebCore/LocalizedStrings.h>
 
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
@@ -50,6 +51,74 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     baseURLBuilder.append("webkit-extension://", uniqueIdentifier(), "/");
 
     m_baseURL = URL { baseURLBuilder.toString() };
+}
+
+NSError *WebExtensionContext::createError(Error error, NSString *customLocalizedDescription, NSError *underlyingError)
+{
+    _WKWebExtensionContextError errorCode;
+    NSString *localizedDescription;
+
+    switch (error) {
+    case Error::Unknown:
+        errorCode = _WKWebExtensionContextErrorUnknown;
+        localizedDescription = WEB_UI_STRING("An unknown error has occurred.", "WKWebExtensionContextErrorUnknown description");
+        break;
+
+    case Error::AlreadyLoaded:
+        errorCode = _WKWebExtensionContextErrorAlreadyLoaded;
+        localizedDescription = WEB_UI_STRING("Extension context is already loaded.", "WKWebExtensionContextErrorAlreadyLoaded description");
+        break;
+
+    case Error::NotLoaded:
+        errorCode = _WKWebExtensionContextErrorNotLoaded;
+        localizedDescription = WEB_UI_STRING("Extension context is not loaded.", "WKWebExtensionContextErrorNotLoaded description");
+        break;
+    }
+
+    if (customLocalizedDescription.length)
+        localizedDescription = customLocalizedDescription;
+
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey: localizedDescription };
+    if (underlyingError)
+        userInfo = @{ NSLocalizedDescriptionKey: localizedDescription, NSUnderlyingErrorKey: underlyingError };
+
+    return [[NSError alloc] initWithDomain:_WKWebExtensionContextErrorDomain code:errorCode userInfo:userInfo];
+}
+
+bool WebExtensionContext::load(WebExtensionController& controller, NSError **outError)
+{
+    if (outError)
+        *outError = nil;
+
+    if (isLoaded()) {
+        if (outError)
+            *outError = createError(Error::AlreadyLoaded);
+        return false;
+    }
+
+    m_extensionController = controller;
+
+    // FIXME: Load background page, inject content, etc.
+
+    return true;
+}
+
+bool WebExtensionContext::unload(NSError **outError)
+{
+    if (outError)
+        *outError = nil;
+
+    if (!isLoaded()) {
+        if (outError)
+            *outError = createError(Error::NotLoaded);
+        return false;
+    }
+
+    m_extensionController = nil;
+
+    // FIXME: Unload background page, remove injected content, etc.
+
+    return true;
 }
 
 void WebExtensionContext::setBaseURL(URL&& url)

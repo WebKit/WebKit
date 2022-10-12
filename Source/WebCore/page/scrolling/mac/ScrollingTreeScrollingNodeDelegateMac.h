@@ -54,10 +54,6 @@ public:
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();
 
-    bool activeScrollSnapIndexDidChange() const;
-    std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
-    bool isScrollSnapInProgress() const;
-
     bool isRubberBandInProgress() const;
 
     void updateScrollbarPainters();

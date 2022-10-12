@@ -29,12 +29,18 @@
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
+#include "WebExtensionContext.h"
+#include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerIdentifier.h"
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSError;
+#endif
 
 namespace WebKit {
 
+class WebExtensionContext;
 struct WebExtensionControllerParameters;
 
 class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
@@ -47,14 +53,31 @@ public:
     explicit WebExtensionController();
     ~WebExtensionController();
 
+    using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
+    using WebExtensionSet = HashSet<Ref<WebExtension>>;
+
     WebExtensionControllerIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerParameters parameters() const;
+
+#if PLATFORM(COCOA)
+    bool load(WebExtensionContext&, NSError ** = nullptr);
+    bool unload(WebExtensionContext&, NSError ** = nullptr);
+
+    std::optional<Ref<WebExtensionContext>> extensionContext(const WebExtension&) const;
+
+    const WebExtensionContextSet& extensionContexts() const { return m_extensionContexts; }
+    WebExtensionSet extensions() const;
+#endif
 
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebExtensionControllerIdentifier m_identifier;
+
+#if PLATFORM(COCOA)
+    WebExtensionContextSet m_extensionContexts;
+#endif
 };
 
 } // namespace WebKit

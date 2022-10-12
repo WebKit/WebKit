@@ -100,10 +100,11 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
     case StyleRuleType::Container:
         return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleContainer>(*this));
     case StyleRuleType::Margin:
-        RELEASE_ASSERT_NOT_REACHED();
+        break;
     case StyleRuleType::Unknown:
-        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(Visitor&& visitor) const

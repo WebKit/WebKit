@@ -463,8 +463,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/TextFlags.serialization.in \
+	Shared/WebPushDaemonConnectionConfiguration.serialization.in \
+	Shared/WebPushMessage.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebExtensionContextParameters.serialization.in \
+	Shared/WebEvent.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/WebsiteDataStoreParameters.serialization.in \

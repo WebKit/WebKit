@@ -83,6 +83,12 @@ public:
 
     enum class EqualityOnly : bool { No, Yes };
 
+    enum class Error : uint8_t {
+        Unknown = 1,
+        AlreadyLoaded,
+        NotLoaded,
+    };
+
     enum class PermissionState : int8_t {
         DeniedExplicitly    = -3,
         DeniedImplicitly    = -2,
@@ -102,6 +108,11 @@ public:
     WebExtensionContextParameters parameters() const;
 
 #if PLATFORM(COCOA)
+    NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+
+    bool load(WebExtensionController&, NSError ** = nullptr);
+    bool unload(NSError ** = nullptr);
+
     bool isLoaded() const { return !!m_extensionController; }
 
     WebExtension& extension() const { return *m_extension; }

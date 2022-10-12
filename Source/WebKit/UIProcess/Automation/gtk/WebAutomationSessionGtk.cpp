@@ -37,16 +37,16 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-static unsigned modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
+static unsigned modifiersToEventState(OptionSet<WebEventModifier> modifiers)
 {
     unsigned state = 0;
-    if (modifiers.contains(WebEvent::Modifier::ControlKey))
+    if (modifiers.contains(WebEventModifier::ControlKey))
         state |= GDK_CONTROL_MASK;
-    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
+    if (modifiers.contains(WebEventModifier::ShiftKey))
         state |= GDK_SHIFT_MASK;
-    if (modifiers.contains(WebEvent::Modifier::AltKey))
+    if (modifiers.contains(WebEventModifier::AltKey))
         state |= GDK_META_MASK;
-    if (modifiers.contains(WebEvent::Modifier::CapsLockKey))
+    if (modifiers.contains(WebEventModifier::CapsLockKey))
         state |= GDK_LOCK_MASK;
     return state;
 }
@@ -65,7 +65,7 @@ static unsigned mouseButtonToGdkButton(MouseButton button)
     return GDK_BUTTON_PRIMARY;
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
     auto modifier = stateModifierForGdkButton(gdkButton);
@@ -101,18 +101,18 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
 }
 
-OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
 {
-    OptionSet<WebEvent::Modifier> webModifiers;
+    OptionSet<WebEventModifier> webModifiers;
 
     if (modifiers & GDK_META_MASK)
-        webModifiers.add(WebEvent::Modifier::AltKey);
+        webModifiers.add(WebEventModifier::AltKey);
     if (modifiers & GDK_CONTROL_MASK)
-        webModifiers.add(WebEvent::Modifier::ControlKey);
+        webModifiers.add(WebEventModifier::ControlKey);
     if (modifiers & GDK_SHIFT_MASK)
-        webModifiers.add(WebEvent::Modifier::ShiftKey);
+        webModifiers.add(WebEventModifier::ShiftKey);
     if (modifiers & GDK_LOCK_MASK)
-        webModifiers.add(WebEvent::Modifier::CapsLockKey);
+        webModifiers.add(WebEventModifier::CapsLockKey);
 
     return webModifiers;
 }

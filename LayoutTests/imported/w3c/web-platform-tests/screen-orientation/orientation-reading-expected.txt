@@ -4,7 +4,7 @@ Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking 
 
 PASS Test screen.orientation properties
 FAIL Test screen.orientation default values. assert_true: expected true got false
-FAIL Test the orientations and associated angles promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+PASS Test the orientations and associated angles
 PASS Test that screen.orientation properties are not writable
 PASS Test that screen.orientation is always the same object
 TIMEOUT Test that screen.orientation values change if the orientation changes Test timed out
@@ -13,7 +13,7 @@ Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking 
 
 PASS Test screen.orientation properties
 FAIL Test screen.orientation default values. assert_true: expected true got false
-FAIL Test the orientations and associated angles promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+PASS Test the orientations and associated angles
 PASS Test that screen.orientation properties are not writable
 PASS Test that screen.orientation is always the same object
 TIMEOUT Test that screen.orientation values change if the orientation changes Test timed out

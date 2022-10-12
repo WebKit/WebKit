@@ -297,8 +297,6 @@ bool ScrollingEffectsController::processWheelEventForKineticScrolling(const Plat
     if (!event.isEndOfNonMomentumScroll() && !event.isTransitioningToMomentumScroll())
         return false;
 
-    m_inScrollGesture = false;
-
     if (m_currentAnimation && !is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
         m_currentAnimation->stop();
         m_currentAnimation = nullptr;
@@ -355,11 +353,18 @@ void ScrollingEffectsController::adjustDeltaForSnappingIfNeeded(float& deltaX, f
     }
 }
 
-bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+void ScrollingEffectsController::updateGestureInProgressState(const PlatformWheelEvent& wheelEvent)
 {
 #if ENABLE(KINETIC_SCROLLING)
     m_inScrollGesture = wheelEvent.hasPreciseScrollingDeltas() && !wheelEvent.isEndOfNonMomentumScroll() && !wheelEvent.isTransitioningToMomentumScroll();
+#else
+    UNUSED_PARAM(wheelEvent);
+#endif
+}
 
+bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+#if ENABLE(KINETIC_SCROLLING)
     if (processWheelEventForKineticScrolling(wheelEvent))
         return true;
 #endif

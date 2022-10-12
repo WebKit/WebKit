@@ -48,9 +48,9 @@ struct NavigationActionData {
     static std::optional<NavigationActionData> decode(IPC::Decoder&);
 
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
-    OptionSet<WebEvent::Modifier> modifiers;
-    WebMouseEvent::Button mouseButton { WebMouseEvent::NoButton };
-    WebMouseEvent::SyntheticClickType syntheticClickType { WebMouseEvent::NoTap };
+    OptionSet<WebEventModifier> modifiers;
+    WebMouseEventButton mouseButton { WebMouseEventButton::NoButton };
+    WebMouseEventSyntheticClickType syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
     uint64_t userGestureTokenIdentifier { 0 };
     bool canHandleRequest { false };
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };

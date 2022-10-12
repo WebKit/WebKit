@@ -36,6 +36,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+WK_EXTERN NSErrorDomain const _WKWebExtensionContextErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_ERROR_ENUM(_WKWebExtensionContextErrorDomain, _WKWebExtensionContextError) {
+    _WKWebExtensionContextErrorUnknown = 1,
+    _WKWebExtensionContextErrorAlreadyLoaded,
+    _WKWebExtensionContextErrorNotLoaded,
+} NS_SWIFT_NAME(_WKWebExtensionContext.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 typedef NS_ENUM(NSInteger, _WKWebExtensionContextPermissionState) {
     _WKWebExtensionContextPermissionStateDeniedExplicitly    = -3,
     _WKWebExtensionContextPermissionStateDeniedImplicitly    = -2,
@@ -91,6 +99,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @property (nonatomic, readonly, strong) _WKWebExtension *extension;
 @property (nonatomic, readonly, weak) _WKWebExtensionController *extensionController;
+
+@property (nonatomic, readonly, getter=isLoaded) BOOL loaded;
 
 @property (nonatomic, copy) NSURL *baseURL;
 @property (nonatomic, copy) NSString *uniqueIdentifier;

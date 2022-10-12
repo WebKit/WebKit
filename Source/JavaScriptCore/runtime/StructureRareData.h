@@ -116,6 +116,11 @@ public:
         return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNameEnumeratorAndFlag);
     }
 
+    static ptrdiff_t offsetOfSpecialPropertyCache()
+    {
+        return OBJECT_OFFSETOF(StructureRareData, m_specialPropertyCache);
+    }
+
     DECLARE_EXPORT_INFO;
 
     void finalizeUnconditionally(VM&);

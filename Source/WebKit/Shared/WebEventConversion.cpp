@@ -86,16 +86,16 @@ public:
 
         // PlatformMouseEvent
         switch (webEvent.button()) {
-        case WebMouseEvent::NoButton:
+        case WebMouseEventButton::NoButton:
             m_button = WebCore::NoButton;
             break;
-        case WebMouseEvent::LeftButton:
+        case WebMouseEventButton::LeftButton:
             m_button = WebCore::LeftButton;
             break;
-        case WebMouseEvent::MiddleButton:
+        case WebMouseEventButton::MiddleButton:
             m_button = WebCore::MiddleButton;
             break;
-        case WebMouseEvent::RightButton:
+        case WebMouseEventButton::RightButton:
             m_button = WebCore::RightButton;
             break;
         default:
@@ -116,13 +116,13 @@ public:
 #endif
         m_modifierFlags = 0;
         if (webEvent.shiftKey())
-            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::ShiftKey);
+            m_modifierFlags |= static_cast<unsigned>(WebEventModifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::ControlKey);
+            m_modifierFlags |= static_cast<unsigned>(WebEventModifier::ControlKey);
         if (webEvent.altKey())
-            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::AltKey);
+            m_modifierFlags |= static_cast<unsigned>(WebEventModifier::AltKey);
         if (webEvent.metaKey())
-            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::MetaKey);
+            m_modifierFlags |= static_cast<unsigned>(WebEventModifier::MetaKey);
 
         m_pointerId = webEvent.pointerId();
         m_pointerType = webEvent.pointerType();

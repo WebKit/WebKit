@@ -961,7 +961,6 @@ String AsyncScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTr
     return m_scrollingTree->scrollingTreeAsText(behavior);
 }
 
-#if PLATFORM(COCOA)
 void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex)
 {
     ASSERT(isMainThread());
@@ -978,8 +977,6 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
         scrollableArea->setCurrentVerticalSnapPointIndex(verticalIndex);
     }
 }
-
-#endif
 
 bool AsyncScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID nodeID) const
 {

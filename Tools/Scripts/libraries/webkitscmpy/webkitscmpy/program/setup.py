@@ -28,6 +28,7 @@ import time
 
 from .command import Command
 from requests.auth import HTTPBasicAuth
+from webkitbugspy import radar
 from webkitcorepy import arguments, run, Editor, OutputCapture, Terminal
 from webkitscmpy import log, local, remote
 
@@ -339,6 +340,7 @@ class Setup(Command):
                     contents = Template(f.read()).render(
                         location=source_path,
                         python=os.path.basename(sys.executable),
+                        prefer_radar=bool(radar.Tracker.radarclient()),
                     )
 
                 target = os.path.join(repository.common_directory, 'hooks', hook)

@@ -116,6 +116,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
+const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
+
 PlatformImagePtr iconForImageFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
@@ -124,6 +126,7 @@ PlatformImagePtr iconForImageFile(NSURL *file)
         (id)kCGImageSourceCreateThumbnailFromImageIfAbsent: @YES,
         (id)kCGImageSourceThumbnailMaxPixelSize: @(iconSideLength),
         (id)kCGImageSourceCreateThumbnailWithTransform: @YES,
+        (id)kCGImageSourceEnableRestrictedDecoding: @YES
     };
     RetainPtr<CGImageSource> imageSource = adoptCF(CGImageSourceCreateWithURL((CFURLRef)file, 0));
     RetainPtr<CGImageRef> thumbnail = adoptCF(CGImageSourceCreateThumbnailAtIndex(imageSource.get(), 0, (CFDictionaryRef)options));

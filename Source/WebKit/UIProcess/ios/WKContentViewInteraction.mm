@@ -3589,23 +3589,26 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (_page->editorState().selectionIsNone)
         return nil;
 
-    static NeverDestroyed plainTextTypes = [] {
-        auto plainTextTypes = adoptNS([[NSMutableArray alloc] init]);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [plainTextTypes addObject:(id)kUTTypeURL];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        [plainTextTypes addObjectsFromArray:UIPasteboardTypeListString];
-        return plainTextTypes;
+    static NeverDestroyed supportedTypes = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObject:@(WebCore::PasteboardCustomData::cocoaType().characters())];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [types addObject:(id)kUTTypeURL];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        [types addObjectsFromArray:UIPasteboardTypeListString];
+        return types;
     }();
-    static NeverDestroyed richTypes = [] {
-        auto richTypes = adoptNS([[NSMutableArray alloc] init]);
-        [richTypes addObject:WebCore::WebArchivePboardType];
-        [richTypes addObjectsFromArray:UIPasteboardTypeListImage];
-        [richTypes addObjectsFromArray:plainTextTypes.get().get()];
-        return richTypes;
+    static NeverDestroyed supportedTypesWithImageAndWebArchive = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObject:WebCore::WebArchivePboardType];
+        [types addObjectsFromArray:UIPasteboardTypeListImage];
+        [types addObjectsFromArray:supportedTypes.get().get()];
+        return types;
     }();
 
-    return (_page->editorState().isContentRichlyEditable) ? richTypes.get().get() : plainTextTypes.get().get();
+    if (_page->editorState().isContentRichlyEditable)
+        return supportedTypesWithImageAndWebArchive.get().get();
+    return supportedTypes.get().get();
 }
 
 #define FORWARD_ACTION_TO_WKWEBVIEW(_action) \
@@ -3999,18 +4002,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
             }
         }
 #endif // PLATFORM(IOS)
-
-        auto focusedDocumentOrigin = editorState.originIdentifierForPasteboard;
-        if (focusedDocumentOrigin.isEmpty())
-            return NO;
-
-        NSArray *allCustomPasteboardData = [pasteboard dataForPasteboardType:@(WebCore::PasteboardCustomData::cocoaType().characters()) inItemSet:indices];
-        for (NSData *data in allCustomPasteboardData) {
-            auto buffer = WebCore::SharedBuffer::create(data);
-            if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == focusedDocumentOrigin)
-                return YES;
-        }
-        return NO;
     }
 
     if (action == @selector(copy:)) {

@@ -71,12 +71,12 @@ static int verticalScrollLines()
     return scrollLines;
 }
 
-static inline int clickCount(WebEvent::Type type, WebMouseEvent::Button button, const POINT& position, double timeStampSeconds)
+static inline int clickCount(WebEvent::Type type, WebMouseEventButton button, const POINT& position, double timeStampSeconds)
 {
     static int gLastClickCount;
     static double gLastClickTime;
     static POINT lastClickPosition;
-    static WebMouseEvent::Button lastClickButton = WebMouseEvent::LeftButton;
+    static WebMouseEventButton lastClickButton = WebMouseEventButton::LeftButton;
 
     bool cancelPreviousClick = (std::abs(lastClickPosition.x - position.x) > (::GetSystemMetrics(SM_CXDOUBLECLK) / 2))
         || (std::abs(lastClickPosition.y - position.y) > (::GetSystemMetrics(SM_CYDOUBLECLK) / 2))
@@ -108,27 +108,27 @@ static inline bool IsKeyInDownState(int vk)
     return ::GetKeyState(vk) & 0x8000;
 }
 
-static inline OptionSet<WebEvent::Modifier> modifiersForEvent(WPARAM wparam)
+static inline OptionSet<WebEventModifier> modifiersForEvent(WPARAM wparam)
 {
-    OptionSet<WebEvent::Modifier> modifiers;
+    OptionSet<WebEventModifier> modifiers;
     if (wparam & MK_CONTROL)
-        modifiers.add(WebEvent::Modifier::ControlKey);
+        modifiers.add(WebEventModifier::ControlKey);
     if (wparam & MK_SHIFT)
-        modifiers.add(WebEvent::Modifier::ShiftKey);
+        modifiers.add(WebEventModifier::ShiftKey);
     if (IsKeyInDownState(VK_MENU))
-        modifiers.add(WebEvent::Modifier::AltKey);
+        modifiers.add(WebEventModifier::AltKey);
     return modifiers;
 }
 
-static inline OptionSet<WebEvent::Modifier> modifiersForCurrentKeyState()
+static inline OptionSet<WebEventModifier> modifiersForCurrentKeyState()
 {
-    OptionSet<WebEvent::Modifier> modifiers;
+    OptionSet<WebEventModifier> modifiers;
     if (IsKeyInDownState(VK_CONTROL))
-        modifiers.add(WebEvent::Modifier::ControlKey);
+        modifiers.add(WebEventModifier::ControlKey);
     if (IsKeyInDownState(VK_SHIFT))
-        modifiers.add(WebEvent::Modifier::ShiftKey);
+        modifiers.add(WebEventModifier::ShiftKey);
     if (IsKeyInDownState(VK_MENU))
-        modifiers.add(WebEvent::Modifier::AltKey);
+        modifiers.add(WebEventModifier::AltKey);
     return modifiers;
 }
 
@@ -334,25 +334,25 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEvent::Type type)
 WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
 {
     WebEvent::Type type;
-    WebMouseEvent::Button button = WebMouseEvent::NoButton;
+    WebMouseEventButton button = WebMouseEventButton::NoButton;
     switch (message) {
     case WM_MOUSEMOVE:
         type = WebEvent::MouseMove;
         if (wParam & MK_LBUTTON)
-            button = WebMouseEvent::LeftButton;
+            button = WebMouseEventButton::LeftButton;
         else if (wParam & MK_MBUTTON)
-            button = WebMouseEvent::MiddleButton;
+            button = WebMouseEventButton::MiddleButton;
         else if (wParam & MK_RBUTTON)
-            button = WebMouseEvent::RightButton;
+            button = WebMouseEventButton::RightButton;
         break;
     case WM_MOUSELEAVE:
         type = WebEvent::MouseMove;
         if (wParam & MK_LBUTTON)
-            button = WebMouseEvent::LeftButton;
+            button = WebMouseEventButton::LeftButton;
         else if (wParam & MK_MBUTTON)
-            button = WebMouseEvent::MiddleButton;
+            button = WebMouseEventButton::MiddleButton;
         else if (wParam & MK_RBUTTON)
-            button = WebMouseEvent::RightButton;
+            button = WebMouseEventButton::RightButton;
 
         // Set the current mouse position (relative to the client area of the
         // current window) since none is specified for this event.
@@ -361,29 +361,29 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
         type = WebEvent::MouseDown;
-        button = WebMouseEvent::LeftButton;
+        button = WebMouseEventButton::LeftButton;
         break;
     case WM_MBUTTONDOWN:
     case WM_MBUTTONDBLCLK:
         type = WebEvent::MouseDown;
-        button = WebMouseEvent::MiddleButton;
+        button = WebMouseEventButton::MiddleButton;
         break;
     case WM_RBUTTONDOWN:
     case WM_RBUTTONDBLCLK:
         type = WebEvent::MouseDown;
-        button = WebMouseEvent::RightButton;
+        button = WebMouseEventButton::RightButton;
         break;
     case WM_LBUTTONUP:
         type = WebEvent::MouseUp;
-        button = WebMouseEvent::LeftButton;
+        button = WebMouseEventButton::LeftButton;
         break;
     case WM_MBUTTONUP:
         type = WebEvent::MouseUp;
-        button = WebMouseEvent::MiddleButton;
+        button = WebMouseEventButton::MiddleButton;
         break;
     case WM_RBUTTONUP:
         type = WebEvent::MouseUp;
-        button = WebMouseEvent::RightButton;
+        button = WebMouseEventButton::RightButton;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -400,7 +400,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     auto modifiers = modifiersForEvent(wParam);
     auto buttons = buttonsForEvent(wParam);
 
-    return WebMouseEvent(type, button, buttons, position, globalPosition, 0, 0, 0, clickCount, modifiers, WallTime::now(), didActivateWebView);
+    return WebMouseEvent( { type, modifiers, WallTime::now() }, button, buttons, position, globalPosition, 0, 0, 0, clickCount, didActivateWebView);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -428,7 +428,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
         wheelTicksX = 0;
         wheelTicksY = delta;
     }
-    if (isMouseHWheel || (modifiers & WebEvent::Modifier::ShiftKey)) {
+    if (isMouseHWheel || (modifiers & WebEventModifier::ShiftKey)) {
         deltaX = delta * static_cast<float>(horizontalScrollChars()) * WebCore::cScrollbarPixelsPerLine;
         deltaY = 0;
         granularity = WebWheelEvent::ScrollByPixelWheelEvent;
@@ -444,7 +444,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
         }
     }
 
-    return WebWheelEvent(WebEvent::Wheel, position, globalPosition, FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, WallTime::now());
+    return WebWheelEvent( { WebEvent::Wheel, modifiers, WallTime::now() }, position, globalPosition, FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
 }
 
 static WindowsKeyNames& windowsKeyNames()
@@ -469,7 +469,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message
     bool isSystemKey = isSystemKeyEvent(message);
     auto modifiers = modifiersForCurrentKeyState();
 
-    return WebKeyboardEvent(type, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, WallTime::now());
+    return WebKeyboardEvent( { type, modifiers, WallTime::now() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey);
 }
 
 #if ENABLE(TOUCH_EVENTS)

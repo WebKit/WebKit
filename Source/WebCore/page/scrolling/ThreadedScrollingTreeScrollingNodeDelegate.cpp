@@ -56,6 +56,23 @@ void ThreadedScrollingTreeScrollingNodeDelegate::updateFromStateNode(const Scrol
         m_scrollController.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, scrollingStateNode.currentVerticalSnapPointIndex());
 }
 
+void ThreadedScrollingTreeScrollingNodeDelegate::updateSnapScrollState()
+{
+    scrollingNode().setScrollSnapInProgress(m_scrollController.isScrollSnapInProgress());
+
+    if (m_scrollController.activeScrollSnapIndexDidChange())
+        scrollingTree().setActiveScrollSnapIndices(scrollingNode().scrollingNodeID(), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
+}
+
+void ThreadedScrollingTreeScrollingNodeDelegate::updateUserScrollInProgressForEvent(const PlatformWheelEvent& wheelEvent)
+{
+    bool wasInUserScroll = m_scrollController.isUserScrollInProgress();
+    m_scrollController.updateGestureInProgressState(wheelEvent);
+    bool isInUserScroll = m_scrollController.isUserScrollInProgress();
+    if (isInUserScroll != wasInUserScroll)
+        scrollingNode().setUserScrollInProgress(isInUserScroll);
+}
+
 bool ThreadedScrollingTreeScrollingNodeDelegate::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
     auto currentOffset = ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), scrollOrigin());

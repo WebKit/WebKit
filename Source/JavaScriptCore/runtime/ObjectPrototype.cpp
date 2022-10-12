@@ -26,6 +26,7 @@
 #include "HasOwnPropertyCache.h"
 #include "IntegrityInlines.h"
 #include "JSCInlines.h"
+#include "ObjectPrototypeInlines.h"
 #include "PropertySlot.h"
 
 #if PLATFORM(IOS)
@@ -76,6 +77,16 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }
+
+#if PLATFORM(IOS)
+bool isPokerBros()
+{
+    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
+    return bundleID
+        && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
+        && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
+}
+#endif
 
 // ------------------------------ Functions --------------------------------
 
@@ -313,84 +324,6 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncToLocaleString, (JSGlobalObject* globalO
 
     // Return the result of calling the [[Call]] internal method of toString passing the this value and no arguments.
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, toString, callData, thisValue, *vm.emptyList)));
-}
-
-#if PLATFORM(IOS)
-inline static bool isPokerBros()
-{
-    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
-    return bundleID
-        && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
-        && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
-}
-#endif
-
-inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
-{
-    VM& vm = globalObject->vm();
-#if PLATFORM(IOS)
-    static bool needsOldBuiltinTag = isPokerBros();
-    if (UNLIKELY(needsOldBuiltinTag))
-        return object->className();
-#endif
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    bool objectIsArray = isArray(globalObject, object);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (objectIsArray)
-        return "Array"_s;
-    if (object->isCallable())
-        return "Function"_s;
-    JSType type = object->type();
-    if (TypeInfo::isArgumentsType(type)
-        || type == ErrorInstanceType
-        || type == BooleanObjectType
-        || type == NumberObjectType
-        || type == StringObjectType
-        || type == DerivedStringObjectType
-        || type == JSDateType
-        || type == RegExpObjectType)
-        return object->className();
-    return "Object"_s;
-}
-
-JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (thisValue.isUndefined())
-        return vm.smallStrings.undefinedObjectString();
-    if (thisValue.isNull())
-        return vm.smallStrings.nullObjectString();
-    JSObject* thisObject = thisValue.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-    Integrity::auditStructureID(thisObject->structureID());
-    auto result = thisObject->structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
-    if (result)
-        return asString(result);
-
-    ASCIILiteral tag = inferBuiltinTag(globalObject, thisObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    JSString* jsTag = nullptr;
-
-    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::Get);
-    bool hasProperty = thisObject->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue tagValue = slot.getValue(globalObject, vm.propertyNames->toStringTagSymbol);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        if (tagValue.isString())
-            jsTag = asString(tagValue);
-    }
-
-    if (!jsTag)
-        jsTag = jsString(vm, AtomStringImpl::add(tag));
-
-    JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    thisObject->structure()->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
-    return jsResult;
 }
 
 JSC_DEFINE_HOST_FUNCTION(objectProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))

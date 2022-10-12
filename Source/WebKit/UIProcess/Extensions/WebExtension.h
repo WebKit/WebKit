@@ -84,7 +84,7 @@ public:
     enum class SuppressNotification : bool { No, Yes };
 
     enum class Error : uint8_t {
-        Unknown,
+        Unknown = 1,
         ResourceNotFound,
         InvalidResourceCodeSignature,
         InvalidManifest,
@@ -139,6 +139,9 @@ public:
 
 #if PLATFORM(COCOA)
     static const PermissionsSet& supportedPermissions();
+
+    bool operator==(const WebExtension& other) const { return (this == &other); }
+    bool operator!=(const WebExtension& other) const { return !(*this == other); }
 
     bool manifestParsedSuccessfully();
     NSDictionary *manifest();

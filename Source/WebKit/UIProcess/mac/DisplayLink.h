@@ -41,21 +41,21 @@ class Connection;
 }
 
 namespace WebKit {
-    
+
 class DisplayLink {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DisplayLink(WebCore::PlatformDisplayID);
     ~DisplayLink();
     
-    void addObserver(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
-    void removeObserver(IPC::Connection&, DisplayLinkObserverID);
-    void removeObservers(IPC::Connection&);
+    void addObserver(IPC::Connection::UniqueID, DisplayLinkObserverID, WebCore::FramesPerSecond);
+    void removeObserver(IPC::Connection::UniqueID, DisplayLinkObserverID);
+    void removeObservers(IPC::Connection::UniqueID);
 
-    void incrementFullSpeedRequestClientCount(IPC::Connection&);
-    void decrementFullSpeedRequestClientCount(IPC::Connection&);
+    void incrementFullSpeedRequestClientCount(IPC::Connection::UniqueID);
+    void decrementFullSpeedRequestClientCount(IPC::Connection::UniqueID);
 
-    void setPreferredFramesPerSecond(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
+    void setPreferredFramesPerSecond(IPC::Connection::UniqueID, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     
@@ -69,7 +69,7 @@ private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     void notifyObserversDisplayWasRefreshed();
 
-    void removeInfoForConnectionIfPossible(IPC::Connection&) WTF_REQUIRES_LOCK(m_observersLock);
+    void removeInfoForConnectionIfPossible(IPC::Connection::UniqueID) WTF_REQUIRES_LOCK(m_observersLock);
 
     static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 
@@ -91,6 +91,18 @@ private:
     WebCore::DisplayUpdate m_currentUpdate;
     unsigned m_fireCountWithoutObservers { 0 };
     static bool shouldSendIPCOnBackgroundQueue;
+};
+
+class DisplayLinkCollection {
+public:
+    void add(std::unique_ptr<DisplayLink>&&);
+
+    DisplayLink* displayLinkForDisplay(WebCore::PlatformDisplayID) const;
+
+    const Vector<std::unique_ptr<DisplayLink>>& displayLinks() const { return m_displayLinks; }
+
+private:
+    Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
 };
 
 } // namespace WebKit

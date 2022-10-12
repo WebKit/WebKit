@@ -58,16 +58,13 @@ void ScrollingTreeScrollingNodeDelegateNicosia::updateVisibleLengths()
     m_scrollController.contentsSizeChanged();
 }
 
-WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
+bool ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    bool wasInUserScroll = m_scrollController.isUserScrollInProgress();
-    bool handled = scrollingNode().canHandleWheelEvent(wheelEvent, eventTargeting) && m_scrollController.handleWheelEvent(wheelEvent);
-    bool isInUserScroll = m_scrollController.isUserScrollInProgress();
+    auto deferrer = WheelEventTestMonitorCompletionDeferrer { scrollingTree().wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::HandlingWheelEvent };
 
-    if (isInUserScroll != wasInUserScroll)
-        scrollingNode().setUserScrollInProgress(isInUserScroll);
+    updateUserScrollInProgressForEvent(wheelEvent);
 
-    return handled ? WheelEventHandlingResult::handled() : WheelEventHandlingResult::unhandled();
+    return m_scrollController.handleWheelEvent(wheelEvent);
 }
 
 void ScrollingTreeScrollingNodeDelegateNicosia::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)

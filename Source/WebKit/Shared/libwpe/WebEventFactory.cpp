@@ -38,24 +38,24 @@ static inline bool isWPEKeyCodeFromKeyPad(unsigned keyCode)
     return keyCode >= WPE_KEY_KP_Space && keyCode <= WPE_KEY_KP_9;
 }
 
-static OptionSet<WebEvent::Modifier> modifiersForEventModifiers(unsigned eventModifiers)
+static OptionSet<WebEventModifier> modifiersForEventModifiers(unsigned eventModifiers)
 {
-    OptionSet<WebEvent::Modifier> modifiers;
+    OptionSet<WebEventModifier> modifiers;
     if (eventModifiers & wpe_input_keyboard_modifier_control)
-        modifiers.add(WebEvent::Modifier::ControlKey);
+        modifiers.add(WebEventModifier::ControlKey);
     if (eventModifiers & wpe_input_keyboard_modifier_shift)
-        modifiers.add(WebEvent::Modifier::ShiftKey);
+        modifiers.add(WebEventModifier::ShiftKey);
     if (eventModifiers & wpe_input_keyboard_modifier_alt)
-        modifiers.add(WebEvent::Modifier::AltKey);
+        modifiers.add(WebEventModifier::AltKey);
     if (eventModifiers & wpe_input_keyboard_modifier_meta)
-        modifiers.add(WebEvent::Modifier::MetaKey);
+        modifiers.add(WebEventModifier::MetaKey);
 
     return modifiers;
 }
 
-static OptionSet<WebEvent::Modifier> modifiersForKeyboardEvent(struct wpe_input_keyboard_event* event)
+static OptionSet<WebEventModifier> modifiersForKeyboardEvent(struct wpe_input_keyboard_event* event)
 {
-    OptionSet<WebEvent::Modifier> modifiers = modifiersForEventModifiers(event->modifiers);
+    OptionSet<WebEventModifier> modifiers = modifiersForEventModifiers(event->modifiers);
 
     if (!event->pressed)
         return modifiers;
@@ -66,22 +66,22 @@ static OptionSet<WebEvent::Modifier> modifiersForKeyboardEvent(struct wpe_input_
     switch (event->key_code) {
     case WPE_KEY_Control_L:
     case WPE_KEY_Control_R:
-        modifiers.add(WebEvent::Modifier::ControlKey);
+        modifiers.add(WebEventModifier::ControlKey);
         break;
     case WPE_KEY_Shift_L:
     case WPE_KEY_Shift_R:
-        modifiers.add(WebEvent::Modifier::ShiftKey);
+        modifiers.add(WebEventModifier::ShiftKey);
         break;
     case WPE_KEY_Alt_L:
     case WPE_KEY_Alt_R:
-        modifiers.add(WebEvent::Modifier::AltKey);
+        modifiers.add(WebEventModifier::AltKey);
         break;
     case WPE_KEY_Meta_L:
     case WPE_KEY_Meta_R:
-        modifiers.add(WebEvent::Modifier::MetaKey);
+        modifiers.add(WebEventModifier::MetaKey);
         break;
     case WPE_KEY_Caps_Lock:
-        modifiers.add(WebEvent::Modifier::CapsLockKey);
+        modifiers.add(WebEventModifier::CapsLockKey);
         break;
     }
 
@@ -115,7 +115,7 @@ WallTime wallTimeForEventTime(uint64_t msTimeStamp)
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
-    return WebKeyboardEvent(event->pressed ? WebEvent::KeyDown : WebEvent::KeyUp,
+    return WebKeyboardEvent({ event->pressed ? WebEvent::KeyDown : WebEvent::KeyUp, modifiersForKeyboardEvent(event), wallTimeForEventTime(event->time) },
         text.isNull() ? WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code) : text,
         WebCore::PlatformKeyboardEvent::keyValueForWPEKeyCode(event->key_code),
         WebCore::PlatformKeyboardEvent::keyCodeForHardwareKeyCode(event->hardware_key_code),
@@ -125,9 +125,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboa
         handledByInputMethod,
         WTFMove(preeditUnderlines),
         WTFMove(preeditSelectionRange),
-        isWPEKeyCodeFromKeyPad(event->key_code),
-        modifiersForKeyboardEvent(event),
-        wallTimeForEventTime(event->time));
+        isWPEKeyCodeFromKeyPad(event->key_code)
+        );
 }
 
 static inline short pressedMouseButtons(uint32_t modifiers)
@@ -169,16 +168,16 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
         ASSERT_NOT_REACHED();
     }
 
-    WebMouseEvent::Button button = WebMouseEvent::NoButton;
+    WebMouseEventButton button = WebMouseEventButton::NoButton;
     switch (event->type) {
     case wpe_input_pointer_event_type_motion:
     case wpe_input_pointer_event_type_button:
         if (event->button == 1)
-            button = WebMouseEvent::LeftButton;
+            button = WebMouseEventButton::LeftButton;
         else if (event->button == 2)
-            button = WebMouseEvent::RightButton;
+            button = WebMouseEventButton::RightButton;
         else if (event->button == 3)
-            button = WebMouseEvent::MiddleButton;
+            button = WebMouseEventButton::MiddleButton;
         break;
     case wpe_input_pointer_event_type_null:
         ASSERT_NOT_REACHED();
@@ -189,8 +188,8 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
     // FIXME: Proper button support. deltaX/Y/Z. Click count.
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
-    return WebMouseEvent(type, button, pressedMouseButtons(event->modifiers), position, position,
-        0, 0, 0, clickCount, modifiersForEventModifiers(event->modifiers), wallTimeForEventTime(event->time));
+    return WebMouseEvent({ type, modifiersForEventModifiers(event->modifiers), wallTimeForEventTime(event->time) }, button, pressedMouseButtons(event->modifiers), position, position,
+        0, 0, 0, clickCount);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
@@ -220,10 +219,9 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
             return WebWheelEvent();
         }
 
-        return WebWheelEvent(WebEvent::Wheel, position, position,
-            delta, wheelTicks, phase, momentumPhase,
-            WebWheelEvent::ScrollByPixelWheelEvent, hasPreciseScrollingDeltas,
-            OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
+        return WebWheelEvent({ WebEvent::Wheel, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, position, position,
+            delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, momentumPhase,
+            hasPreciseScrollingDeltas);
     }
 #endif
 
@@ -254,10 +252,9 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         return WebWheelEvent();
     };
 
-    return WebWheelEvent(WebEvent::Wheel, position, position,
-        delta, wheelTicks, phase, momentumPhase,
-        WebWheelEvent::ScrollByPixelWheelEvent, hasPreciseScrollingDeltas,
-        OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
+    return WebWheelEvent({ WebEvent::Wheel, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, position, position,
+        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, momentumPhase,
+        hasPreciseScrollingDeltas);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -313,7 +310,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
                 pointCoordinates, pointCoordinates));
     }
 
-    return WebTouchEvent(type, WTFMove(touchPoints), OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
+    return WebTouchEvent({ type, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, WTFMove(touchPoints));
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

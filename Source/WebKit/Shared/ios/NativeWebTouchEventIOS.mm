@@ -120,9 +120,7 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
 
 NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event, UIKeyModifierFlags flags)
     : WebTouchEvent(
-        webEventTypeForUIWebTouchEventType(event->type),
-        webEventModifierFlags(flags),
-        WallTime::fromRawSeconds(event->timestamp),
+        { webEventTypeForUIWebTouchEventType(event->type), webEventModifierFlags(flags), WallTime::fromRawSeconds(event->timestamp) },
         extractWebTouchPoint(event),
         positionForCGPoint(event->locationInDocumentCoordinates),
 #if defined UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP && UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP
@@ -138,19 +136,19 @@ NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event, UIKeyMod
 
 #endif // ENABLE(TOUCH_EVENTS)
 
-OptionSet<WebEvent::Modifier> webEventModifierFlags(UIKeyModifierFlags flags)
+OptionSet<WebEventModifier> webEventModifierFlags(UIKeyModifierFlags flags)
 {
-    OptionSet<WebEvent::Modifier> modifiers;
+    OptionSet<WebEventModifier> modifiers;
     if (flags & UIKeyModifierShift)
-        modifiers.add(WebEvent::Modifier::ShiftKey);
+        modifiers.add(WebEventModifier::ShiftKey);
     if (flags & UIKeyModifierControl)
-        modifiers.add(WebEvent::Modifier::ControlKey);
+        modifiers.add(WebEventModifier::ControlKey);
     if (flags & UIKeyModifierAlternate)
-        modifiers.add(WebEvent::Modifier::AltKey);
+        modifiers.add(WebEventModifier::AltKey);
     if (flags & UIKeyModifierCommand)
-        modifiers.add(WebEvent::Modifier::MetaKey);
+        modifiers.add(WebEventModifier::MetaKey);
     if (flags & UIKeyModifierAlphaShift)
-        modifiers.add(WebEvent::Modifier::CapsLockKey);
+        modifiers.add(WebEventModifier::CapsLockKey);
     return modifiers;
 }
 

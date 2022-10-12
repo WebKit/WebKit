@@ -1,0 +1,201 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[OptionSet] enum class WebKit::WebEventModifier : uint8_t {
+    ShiftKey,
+    ControlKey,
+    AltKey,
+    MetaKey,
+    CapsLockKey
+};
+
+class WebKit::WebEvent {
+    WebKit::WebEvent::Type type();
+    OptionSet<WebKit::WebEventModifier> modifiers();
+    WallTime timestamp();
+};
+
+[Nested] enum class WebKit::WebEvent::Type : int8_t {
+    NoType,
+    MouseDown,
+    MouseUp,
+    MouseMove,
+    MouseForceChanged,
+    MouseForceDown,
+    MouseForceUp,
+    Wheel,
+    KeyDown,
+    KeyUp,
+    RawKeyDown,
+    Char,
+#if ENABLE(TOUCH_EVENTS)
+    TouchStart,
+    TouchMove,
+    TouchEnd,
+    TouchCancel,
+#endif
+#if ENABLE(MAC_GESTURE_EVENTS)
+    GestureStart,
+    GestureChange,
+    GestureEnd,
+#endif
+};
+
+class WebKit::WebKeyboardEvent : WebKit::WebEvent {
+    String text();
+#if !PLATFORM(GTK) && !USE(LIBWPE)
+    String unmodifiedText();
+#endif
+    String key();
+    String code();
+    String keyIdentifier();
+    int32_t windowsVirtualKeyCode();
+    int32_t nativeVirtualKeyCode();
+#if !PLATFORM(GTK) && !USE(LIBWPE)
+    int32_t macCharCode();
+#endif
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+    bool handledByInputMethod();
+#endif
+#if PLATFORM(GTK) || USE(LIBWPE)
+    std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines();
+    std::optional<WebKit::EditingRange> preeditSelectionRange();
+#endif
+#if USE(APPKIT)
+    Vector<WebCore::KeypressCommand> commands();
+#endif
+#if !USE(APPKIT) && PLATFORM(GTK)
+    Vector<String> commands();
+#endif
+#if !PLATFORM(GTK) && !USE(LIBWPE)
+    bool isAutoRepeat();
+#endif
+    bool isKeypad();
+#if !PLATFORM(GTK) && !USE(LIBWPE)
+    bool isSystemKey();
+#endif
+};
+
+
+#if ENABLE(TOUCH_EVENTS)
+class WebKit::WebTouchEvent : WebKit::WebEvent {
+    Vector<WebKit::WebPlatformTouchPoint> touchPoints();
+#if PLATFORM(IOS_FAMILY)
+    WebCore::IntPoint position();
+    bool isPotentialTap();
+    bool isGesture();
+    float gestureScale();
+    float gestureRotation();
+    bool canPreventNativeGestures();
+#endif
+};
+#endif // ENABLE(TOUCH_EVENTS)
+
+[CustomHeader] enum class WebKit::WebMouseEventButton : int32_t {
+    LeftButton,
+    MiddleButton,
+    RightButton,
+    NoButton
+};
+
+[CustomHeader] enum class WebKit::WebMouseEventSyntheticClickType : uint32_t {
+    NoTap,
+    OneFingerTap,
+    TwoFingerTap
+};
+
+class WebKit::WebMouseEvent : WebKit::WebEvent {
+    WebKit::WebMouseEventButton button();
+    unsigned short buttons();
+    WebCore::IntPoint position();
+    WebCore::IntPoint globalPosition();
+    float deltaX();
+    float deltaY();
+    float deltaZ();
+    int32_t clickCount();
+    double force();
+    WebKit::WebMouseEventSyntheticClickType syntheticClickType();
+#if PLATFORM(MAC)
+    int32_t eventNumber();
+    int32_t menuTypeForEvent();;
+#endif
+#if !PLATFORM(MAC) && PLATFORM(GTK)
+    WebCore::PlatformMouseEvent::IsTouch isTouchEvent();
+#endif
+#if !PLATFORM(MAC)
+    WebCore::PointerID pointerId();
+    String pointerType();
+#endif
+    WebKit::GestureWasCancelled gestureWasCancelled();
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+class WebKit::WebGestureEvent : WebKit::WebEvent {
+    WebCore::IntPoint position();
+    float gestureScale();
+    float gestureRotation();
+};
+#endif
+
+[Nested] enum class WebKit::WebWheelEvent::Granularity : uint8_t {
+    ScrollByPageWheelEvent,
+    ScrollByPixelWheelEvent
+};
+
+[Nested] enum class WebKit::WebWheelEvent::Phase : uint32_t {
+    PhaseNone,
+    PhaseBegan,
+    PhaseStationary,
+    PhaseChanged,
+    PhaseEnded,
+    PhaseCancelled,
+    PhaseMayBegin,
+};
+
+[Nested] enum class WebKit::WebWheelEvent::MomentumEndType : uint8_t {
+    Unknown,
+    Interrupted,
+    Natural,
+};
+
+class WebKit::WebWheelEvent : WebKit::WebEvent {
+    WebCore::IntPoint position();
+    WebCore::IntPoint globalPosition();
+    WebCore::FloatSize delta();
+    WebCore::FloatSize wheelTicks();
+    WebKit::WebWheelEvent::Granularity granularity();
+#if PLATFORM(COCOA)
+    bool directionInvertedFromDevice();
+#endif
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+    WebKit::WebWheelEvent::Phase phase();
+    WebKit::WebWheelEvent::Phase momentumPhase();
+    bool hasPreciseScrollingDeltas();
+#endif
+#if PLATFORM(COCOA)
+    uint32_t scrollCount();
+    WebCore::FloatSize unacceleratedScrollingDelta();
+    WallTime ioHIDEventTimestamp();
+    std::optional<WebCore::FloatSize> rawPlatformDelta();
+    WebKit::WebWheelEvent::MomentumEndType momentumEndType();
+#endif
+};

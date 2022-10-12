@@ -184,7 +184,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPaintImageValue>(*this));
 #endif
     }
-    ASSERT_NOT_REACHED();
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visitor&& visitor) const

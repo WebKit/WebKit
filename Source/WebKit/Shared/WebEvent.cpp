@@ -33,33 +33,15 @@
 namespace WebKit {
 
 WebEvent::WebEvent()
-    : m_type(static_cast<uint32_t>(NoType))
+    : m_type(NoType)
 {
 }
 
-WebEvent::WebEvent(Type type, OptionSet<Modifier> modifiers, WallTime timestamp)
+WebEvent::WebEvent(Type type, OptionSet<WebEventModifier> modifiers, WallTime timestamp)
     : m_type(type)
     , m_modifiers(modifiers)
     , m_timestamp(timestamp)
 {
-}
-
-void WebEvent::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_type;
-    encoder << m_modifiers;
-    encoder << m_timestamp;
-}
-
-bool WebEvent::decode(IPC::Decoder& decoder, WebEvent& result)
-{
-    if (!decoder.decode(result.m_type))
-        return false;
-    if (!decoder.decode(result.m_modifiers))
-        return false;
-    if (!decoder.decode(result.m_timestamp))
-        return false;
-    return true;
 }
 
 } // namespace WebKit

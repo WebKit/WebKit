@@ -31,32 +31,32 @@
 #endif
 
 #if PLATFORM(GTK)
-unsigned toPlatformModifiers(OptionSet<WebKit::WebEvent::Modifier> wkModifiers)
+unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier> wkModifiers)
 {
     unsigned modifiers = 0;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::ShiftKey))
         modifiers |= GDK_SHIFT_MASK;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::ControlKey))
         modifiers |= GDK_CONTROL_MASK;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::AltKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::AltKey))
         modifiers |= GDK_MOD1_MASK;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::MetaKey))
         modifiers |= GDK_META_MASK;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::CapsLockKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::CapsLockKey))
         modifiers |= GDK_LOCK_MASK;
     return modifiers;
 }
 #elif PLATFORM(WPE)
-unsigned toPlatformModifiers(OptionSet<WebKit::WebEvent::Modifier> wkModifiers)
+unsigned toPlatformModifiers(OptionSet<WebKit::WebEventModifier> wkModifiers)
 {
     unsigned modifiers = 0;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::ShiftKey))
         modifiers |= wpe_input_keyboard_modifier_shift;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::ControlKey))
         modifiers |= wpe_input_keyboard_modifier_control;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::AltKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::AltKey))
         modifiers |= wpe_input_keyboard_modifier_alt;
-    if (wkModifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
+    if (wkModifiers.contains(WebKit::WebEventModifier::MetaKey))
         modifiers |= wpe_input_keyboard_modifier_meta;
     return modifiers;
 }
@@ -83,16 +83,16 @@ WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType type)
     }
 }
 
-unsigned toWebKitMouseButton(WebKit::WebMouseEvent::Button button)
+unsigned toWebKitMouseButton(WebKit::WebMouseEventButton button)
 {
     switch (button) {
-    case WebKit::WebMouseEvent::Button::NoButton:
+    case WebKit::WebMouseEventButton::NoButton:
         return 0;
-    case WebKit::WebMouseEvent::Button::LeftButton:
+    case WebKit::WebMouseEventButton::LeftButton:
         return 1;
-    case WebKit::WebMouseEvent::Button::MiddleButton:
+    case WebKit::WebMouseEventButton::MiddleButton:
         return 2;
-    case WebKit::WebMouseEvent::Button::RightButton:
+    case WebKit::WebMouseEventButton::RightButton:
         return 3;
     }
     ASSERT_NOT_REACHED();

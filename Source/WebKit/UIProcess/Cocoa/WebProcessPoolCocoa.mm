@@ -834,69 +834,55 @@ bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 #if HAVE(CVDISPLAYLINK)
 std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
 {
-    for (auto& displayLink : m_displayLinks) {
-        if (displayLink->displayID() == displayID)
-            return displayLink->nominalFramesPerSecond();
-    }
+    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
+        return displayLink->nominalFramesPerSecond();
 
     // Note that this creates a DisplayLink with no observers, but it's highly likely that we'll soon call startDisplayLink() for it.
     auto displayLink = makeUnique<DisplayLink>(displayID);
     auto frameRate = displayLink->nominalFramesPerSecond();
-    m_displayLinks.append(WTFMove(displayLink));
+    m_displayLinks.add(WTFMove(displayLink));
     return frameRate;
 }
 
 void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
-    for (auto& displayLink : m_displayLinks) {
-        if (displayLink->displayID() == displayID) {
-            displayLink->addObserver(connection, observerID, preferredFramesPerSecond);
-            return;
-        }
+    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
+        displayLink->addObserver(connection.uniqueID(), observerID, preferredFramesPerSecond);
+        return;
     }
+
     auto displayLink = makeUnique<DisplayLink>(displayID);
-    displayLink->addObserver(connection, observerID, preferredFramesPerSecond);
-    m_displayLinks.append(WTFMove(displayLink));
+    displayLink->addObserver(connection.uniqueID(), observerID, preferredFramesPerSecond);
+    m_displayLinks.add(WTFMove(displayLink));
 }
 
 void WebProcessPool::stopDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
 {
-    for (auto& displayLink : m_displayLinks) {
-        if (displayLink->displayID() == displayID) {
-            displayLink->removeObserver(connection, observerID);
-            return;
-        }
-    }
+    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
+        displayLink->removeObserver(connection.uniqueID(), observerID);
 }
 
 void WebProcessPool::stopDisplayLinks(IPC::Connection& connection)
 {
-    for (auto& displayLink : m_displayLinks)
-        displayLink->removeObservers(connection);
+    for (auto& displayLink : m_displayLinks.displayLinks())
+        displayLink->removeObservers(connection.uniqueID());
 }
 
 void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
 
-    for (auto& displayLink : m_displayLinks) {
-        if (displayLink->displayID() == displayID) {
-            displayLink->setPreferredFramesPerSecond(connection, observerID, preferredFramesPerSecond);
-            return;
-        }
-    }
+    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
+        displayLink->setPreferredFramesPerSecond(connection.uniqueID(), observerID, preferredFramesPerSecond);
 }
 
 void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(IPC::Connection& connection, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
 {
-    for (auto& displayLink : m_displayLinks) {
-        if (displayLink->displayID() == displayID) {
-            if (wantsFullSpeedUpdates)
-                displayLink->incrementFullSpeedRequestClientCount(connection);
-            else
-                displayLink->decrementFullSpeedRequestClientCount(connection);
-            return;
-        }
+    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
+        if (wantsFullSpeedUpdates)
+            displayLink->incrementFullSpeedRequestClientCount(connection.uniqueID());
+        else
+            displayLink->decrementFullSpeedRequestClientCount(connection.uniqueID());
     }
 }
 

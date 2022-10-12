@@ -24,7 +24,7 @@ import sys
 
 from .branch import Branch
 from .command import Command
-from webkitbugspy import Tracker
+from webkitbugspy import Tracker, radar
 from webkitcorepy import run
 from webkitscmpy import local
 
@@ -52,7 +52,7 @@ class CherryPick(Command):
             return 1
 
         try:
-            commit = repository.find(args.argument[0], include_log=False)
+            commit = repository.find(args.argument[0], include_log=True)
         except (local.Scm.Exception, TypeError, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error
@@ -60,6 +60,14 @@ class CherryPick(Command):
             return 1
 
         issue = Tracker.from_string(args.issue) if args.issue else None
+        if not issue and commit.issues:
+            issue = commit.issues[0]
+            if radar.Tracker.radarclient():
+                for candidate in commit.issues:
+                    if isinstance(candidate.tracker, radar.Tracker):
+                        issue = candidate
+                        break
+
         if str(commit) == commit.hash[:commit.HASH_LABEL_SIZE]:
             cherry_pick_string = str(commit)
         else:

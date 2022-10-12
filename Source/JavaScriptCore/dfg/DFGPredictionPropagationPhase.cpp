@@ -1138,6 +1138,10 @@ private:
             break;
         }
 
+        case ObjectToString:
+            setPrediction(SpecString);
+            break;
+
         case Spread:
             setPrediction(SpecCellOther);
             break;

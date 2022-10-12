@@ -54,6 +54,8 @@ localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
 localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (%s, %s)"] = "%s (%s, %s)";
+/* Label for case-insensitive match pattern of an event breakpoint. */
+localizedStrings["%s (Case Insensitive) @ EventBreakpoint"] = "%s (Case Insensitive)";
 /* Label for case-insensitive URL match pattern of a local override. */
 localizedStrings["%s (Case Insensitive) @ Local Override"] = "%s (Case Insensitive)";
 /* Label for case-insensitive match pattern of a symbolic breakpoint. */

@@ -801,3 +801,13 @@ TEST(WKHTTPCookieStore, CookiesForURL)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(WKHTTPCookieStore, CookieAccessAfterNetworkProcessTermination)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"start network process" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    kill([WKWebsiteDataStore.defaultDataStore _networkProcessIdentifier], SIGKILL);
+    TestWebKitAPI::Util::runFor(Seconds(0.1));
+    [webView stringByEvaluatingJavaScript:@"document.cookie = 'key=value'"];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "key=value");
+}

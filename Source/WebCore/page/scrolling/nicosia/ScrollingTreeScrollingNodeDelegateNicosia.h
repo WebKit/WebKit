@@ -41,7 +41,7 @@ public:
 
     std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> createUpdateScope();
     void updateVisibleLengths();
-    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting);
+    bool handleWheelEvent(const PlatformWheelEvent&);
 
 private:
     // ScrollingEffectsControllerClient.

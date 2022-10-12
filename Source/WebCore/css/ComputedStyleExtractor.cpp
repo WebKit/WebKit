@@ -370,11 +370,6 @@ Ref<CSSPrimitiveValue> ComputedStyleExtractor::zoomAdjustedPixelValue(double val
     return CSSValuePool::singleton().createValue(adjustFloatForAbsoluteZoom(value, style), CSSUnitType::CSS_PX);
 }
 
-static inline Ref<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const RenderStyle& style)
-{
-    return CSSValuePool::singleton().createValue(value / style.effectiveZoom(), CSSUnitType::CSS_NUMBER);
-}
-
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle& style)
 {
     if (length.isFixed())
@@ -686,6 +681,7 @@ static LayoutRect sizingBox(RenderObject& renderer)
 static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& transform, const RenderStyle& style)
 {
     RefPtr<CSSFunctionValue> transformValue;
+    auto zoom = style.effectiveZoom();
     auto& cssValuePool = CSSValuePool::singleton();
     if (transform.isAffine()) {
         transformValue = CSSFunctionValue::create(CSSValueMatrix);
@@ -694,29 +690,29 @@ static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& tr
         transformValue->append(cssValuePool.createValue(transform.b(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.c(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.d(), CSSUnitType::CSS_NUMBER));
-        transformValue->append(zoomAdjustedNumberValue(transform.e(), style));
-        transformValue->append(zoomAdjustedNumberValue(transform.f(), style));
+        transformValue->append(cssValuePool.createValue(transform.e() / zoom, CSSUnitType::CSS_NUMBER));
+        transformValue->append(cssValuePool.createValue(transform.f() / zoom, CSSUnitType::CSS_NUMBER));
     } else {
         transformValue = CSSFunctionValue::create(CSSValueMatrix3d);
 
         transformValue->append(cssValuePool.createValue(transform.m11(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m12(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m13(), CSSUnitType::CSS_NUMBER));
-        transformValue->append(cssValuePool.createValue(transform.m14(), CSSUnitType::CSS_NUMBER));
+        transformValue->append(cssValuePool.createValue(transform.m14() * zoom, CSSUnitType::CSS_NUMBER));
 
         transformValue->append(cssValuePool.createValue(transform.m21(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m22(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m23(), CSSUnitType::CSS_NUMBER));
-        transformValue->append(cssValuePool.createValue(transform.m24(), CSSUnitType::CSS_NUMBER));
+        transformValue->append(cssValuePool.createValue(transform.m24() * zoom, CSSUnitType::CSS_NUMBER));
 
         transformValue->append(cssValuePool.createValue(transform.m31(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m32(), CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m33(), CSSUnitType::CSS_NUMBER));
-        transformValue->append(cssValuePool.createValue(transform.m34(), CSSUnitType::CSS_NUMBER));
+        transformValue->append(cssValuePool.createValue(transform.m34() * zoom, CSSUnitType::CSS_NUMBER));
 
-        transformValue->append(zoomAdjustedNumberValue(transform.m41(), style));
-        transformValue->append(zoomAdjustedNumberValue(transform.m42(), style));
-        transformValue->append(zoomAdjustedNumberValue(transform.m43(), style));
+        transformValue->append(cssValuePool.createValue(transform.m41() / zoom, CSSUnitType::CSS_NUMBER));
+        transformValue->append(cssValuePool.createValue(transform.m42() / zoom, CSSUnitType::CSS_NUMBER));
+        transformValue->append(cssValuePool.createValue(transform.m43() / zoom, CSSUnitType::CSS_NUMBER));
         transformValue->append(cssValuePool.createValue(transform.m44(), CSSUnitType::CSS_NUMBER));
     }
 

@@ -7295,9 +7295,10 @@ TEST(ProcessSwap, ResponsePolicyDownloadAfterCOOPProcessSwap)
 TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCOOP)
 {
     using namespace TestWebKitAPI;
+    auto verifyCookieAccessDoesNotAssert = "<script>document.cookie='key=value'</script>"_s;
 
     HTTPServer server({
-        { "/source.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "foo"_s } },
+        { "/source.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin-allow-popups"_s }, { "cross-origin-embedder-policy"_s, "unsafe-none"_s } }, verifyCookieAccessDoesNotAssert } },
         { "/destination.html"_s, { "bar"_s } },
     }, HTTPServer::Protocol::Https);
 

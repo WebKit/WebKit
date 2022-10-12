@@ -42,6 +42,7 @@
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
 #include "StructureChain.h"
+#include "StructureRareDataInlines.h"
 
 namespace JSC { namespace FTL {
 

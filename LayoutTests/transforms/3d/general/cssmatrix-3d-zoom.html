@@ -1,66 +1,29 @@
+<!DOCTYPE html>
 <html>
 <head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-10"/>
 <style>
 body {
     zoom: 1.2;
     padding: 0;
     margin: 0;
 }
-
-.box {
+#b {
     width: 100px;
     height: 100px;
-    background-color: blue;
+    background-color: green;
     position: absolute;
     top: 60px;
     left: 40px;
 }
-
-.translate {
-    -webkit-transform: translate(100px, 50px);
-    background-color: red;
-}
-
-.matrix {
-    background-color: green;
-}
 </style>
-<script type="text/javascript">
-
-function runTest() {
-
-    if (!window.testRunner) {
-
-        var id1 = "a";
-        var id2 = "b";
-        var element1 = document.getElementById(id1);
-        var element2 = document.getElementById(id2);
-        var x1 = webkitConvertPointFromNodeToPage(element1, new WebKitPoint(0,0)).x;
-        var y1 = webkitConvertPointFromNodeToPage(element1, new WebKitPoint(0,0)).y;
-        var x2 = webkitConvertPointFromNodeToPage(element2, new WebKitPoint(0,0)).x;
-        var y2 = webkitConvertPointFromNodeToPage(element2, new WebKitPoint(0,0)).y;
-
-        var resultString = '';
-        if (x1 == x2 && y1 == y2) {
-            resultString += "PASS - Element " + id1 + " and Element " + id2 + " had identical positions";
-        } else {
-            resultString += "FAIL - Element " + id1 + " and Element " + id2 + " had different positions";
-        }
-
-        document.body.appendChild(document.createTextNode(resultString));
-    }
-}
-</script>
 </head>
-<body onload="runTest();">
+<body>
 
-<!-- You should see green box only. If you see red, the test has failed -->
-
-<div id='a' class="box translate"></div>
-<div id='b' class="box matrix"></div>
+<div id='b'></div>
 
 <script>
-    document.getElementById('b').style.webkitTransform = new WebKitCSSMatrix('matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 100, 50, 0, 1)');
+    document.getElementById('b').style.webkitTransform = new WebKitCSSMatrix('matrix3d(0.707107, 0, -0.707107, 0.00353553, 0, 1, 0, 0, 0.707107, 0, 0.707107, -0.00353553, 100, 50, 25, 0.875)');
 </script>
 </body>
 </html>

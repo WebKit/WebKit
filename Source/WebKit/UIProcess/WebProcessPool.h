@@ -770,7 +770,7 @@ private:
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
 #if HAVE(CVDISPLAYLINK)
-    Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
+    DisplayLinkCollection m_displayLinks;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

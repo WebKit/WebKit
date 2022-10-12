@@ -142,7 +142,7 @@ public:
     void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
     void clearChildNeedsLayout();
     void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
-    void setNeedsSimplifiedNormalFlowLayout();
+    void setNeedsSimplifiedNormalFlowLayout(const RenderStyle* oldStyle);
 
     virtual void paint(PaintInfo&, const LayoutPoint&) = 0;
 

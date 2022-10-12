@@ -132,8 +132,6 @@ RefPtr<VideoFrame> VideoFrame::createRGBA(Span<const uint8_t> span, size_t width
         destination += bytesPerRowDestination;
     }
 
-    copyToCVPixelBufferPlane(rawPixelBuffer, 0, span.data(), height, plane.sourceWidthBytes);
-
     return VideoFrameCV::create({ }, false, Rotation::None, WTFMove(pixelBuffer));
 }
 
@@ -163,7 +161,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(Span<const uint8_t> buffer, size_t wid
 {
 #if USE(LIBWEBRTC)
     size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * height;
-    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * (height + 1) /2;
+    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * ((height + 1) / 2);
     webrtc::I420BufferLayout layout {
         layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,
         offsetLayoutU, layoutU.sourceWidthBytes,
@@ -186,79 +184,158 @@ RefPtr<VideoFrame> VideoFrame::createI420(Span<const uint8_t> buffer, size_t wid
 #endif
 }
 
-void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<ComputedPlaneLayout>&&, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
+static Vector<PlaneLayout> copyRGBData(Span<uint8_t> span, const ComputedPlaneLayout& spanPlaneLayout, CVPixelBufferRef pixelBuffer, const Function<void(uint8_t*, const uint8_t*, size_t)>& copyRow)
 {
-    if (format == VideoPixelFormat::RGBA) {
+    auto result = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    if (result != kCVReturnSuccess) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo lock failed: %d", result);
+        return { };
+    }
+
+    auto scope = makeScopeExit([&pixelBuffer] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    });
+
+    auto* planeA = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+    if (!planeA) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane A is null");
+        return { };
+    }
+
+    auto height = CVPixelBufferGetHeight(pixelBuffer);
+    auto width = CVPixelBufferGetWidth(pixelBuffer);
+    auto bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+
+    PlaneLayout planeLayout { spanPlaneLayout.destinationOffset, spanPlaneLayout.destinationStride ? spanPlaneLayout.destinationStride : 4 * width };
+
+    auto* destination = span.data() + planeLayout.offset;
+    auto* source = planeA;
+    for (size_t cptr = 0; cptr < height; ++cptr) {
+        copyRow(destination, source, width);
+        destination += planeLayout.stride;
+        source += bytesPerRow;
+    }
+
+    Vector<PlaneLayout> planeLayouts;
+    planeLayouts.append(planeLayout);
+    return planeLayouts;
+}
+
+static Vector<PlaneLayout> copyNV12(Span<uint8_t> span, const ComputedPlaneLayout& spanPlaneLayoutY, const ComputedPlaneLayout& spanPlaneLayoutUV, CVPixelBufferRef pixelBuffer)
+{
+    auto result = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    if (result != kCVReturnSuccess) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo lock failed: %d", result);
+        return { };
+    }
+
+    auto scope = makeScopeExit([&pixelBuffer] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    });
+
+    auto* planeY = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+    if (!planeY) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane Y is null");
+        return { };
+    }
+    auto* planeUV = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+    if (!planeUV) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane UV is null");
+        return { };
+    }
+
+    auto widthY = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0);
+    auto heightY = CVPixelBufferGetHeightOfPlane(pixelBuffer, 0);
+    auto bytesPerRowY = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
+
+    auto* destination = span.data() + planeLayoutY.offset;
+    auto* source = planeY;
+    size_t size = bytesPerRowY < planeLayoutY.stride ? bytesPerRowY : planeLayoutY.stride;
+    for (size_t cptr = 0; cptr < heightY; ++cptr) {
+        std::memcpy(destination, source, size);
+        destination += planeLayoutY.stride;
+        source += bytesPerRowY;
+    }
+
+    auto widthUV = CVPixelBufferGetWidthOfPlane(pixelBuffer, 1);
+    auto heightUV = CVPixelBufferGetHeightOfPlane(pixelBuffer, 1);
+    auto bytesPerRowUV = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+    PlaneLayout planeLayoutUV { spanPlaneLayoutUV.destinationOffset, spanPlaneLayoutUV.destinationStride ? spanPlaneLayoutUV.destinationStride : widthUV };
+
+    destination = span.data() + planeLayoutUV.offset;
+    source = planeUV;
+    size = bytesPerRowUV < planeLayoutUV.stride ? bytesPerRowUV : planeLayoutUV.stride;
+    for (size_t cptr = 0; cptr < heightUV; ++cptr) {
+        std::memcpy(destination, source, size);
+        destination += planeLayoutUV.stride;
+        source += bytesPerRowUV;
+    }
+
+    Vector<PlaneLayout> planeLayouts;
+    planeLayouts.append(planeLayoutY);
+    planeLayouts.append(planeLayoutUV);
+    return planeLayouts;
+}
+
+void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
+{
+    if (format == VideoPixelFormat::NV12) {
         // FIXME: We should get the pixel buffer asynchronously if possible.
-        auto pixelBuffer = this->pixelBuffer();
-        auto result = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-        if (result != kCVReturnSuccess) {
-            RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo lock failed");
+        callback(copyNV12(span, computedPlaneLayout[0], computedPlaneLayout[1], this->pixelBuffer()));
+        return;
+    }
+
+    if (format == VideoPixelFormat::I420) {
+#if USE(LIBWEBRTC)
+        webrtc::I420BufferLayout layout {
+            computedPlaneLayout[0].destinationOffset, computedPlaneLayout[0].destinationStride,
+            computedPlaneLayout[1].destinationOffset, computedPlaneLayout[1].destinationStride,
+            computedPlaneLayout[2].destinationOffset, computedPlaneLayout[2].destinationStride
+        };
+        // FIXME: We should get the pixel buffer asynchronously if possible.
+        if (!webrtc::copyPixelBufferInI420Buffer(span.data(), span.size(), this->pixelBuffer(), layout)) {
             callback({ });
             return;
-        }
-
-        auto scope = makeScopeExit([&pixelBuffer] {
-            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-        });
-
-        auto* planeA = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
-        if (!planeA) {
-            RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane A is null");
-            callback({ });
-            return;
-        }
-
-        auto height = CVPixelBufferGetHeight(pixelBuffer);
-        auto bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-        size_t planeASize = height * bytesPerRow;
-
-        size_t i = 0;
-        while (i < planeASize) {
-            // RGBA -> ARGB.
-            span.data()[i] = planeA[i + 3];
-            span.data()[i + 1] = planeA[i];
-            span.data()[i + 2] = planeA[i + 1];
-            span.data()[i + 3] = planeA[i + 2];
-            i += 4;
         }
 
         Vector<PlaneLayout> planeLayouts;
-        // FIXME: Fill PlaneLayout
-        planeLayouts.append(PlaneLayout { });
+        planeLayouts.append({ layout.offsetY, layout.strideY });
+        planeLayouts.append({ layout.offsetU, layout.strideU });
+        planeLayouts.append({ layout.offsetV, layout.strideV });
+        callback(WTFMove(planeLayouts));
+        return;
+#endif
+    }
+
+    if (format == VideoPixelFormat::RGBA) {
+        ComputedPlaneLayout planeLayout;
+        if (!computedPlaneLayout.isEmpty())
+            planeLayout = computedPlaneLayout[0];
+        // FIXME: We should get the pixel buffer asynchronously if possible.
+        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
+            size_t i = 0;
+            while (pixelCount-- > 0) {
+                // ARGB -> RGBA.
+                destination[i] = source[i + 1];
+                destination[i + 1] = source[i + 2];
+                destination[i + 2] = source[i + 3];
+                destination[i + 3] = source[i];
+                i += 4;
+            }
+        });
         callback(WTFMove(planeLayouts));
         return;
     }
 
     if (format == VideoPixelFormat::BGRA) {
+        ComputedPlaneLayout planeLayout;
+        if (!computedPlaneLayout.isEmpty())
+            planeLayout = computedPlaneLayout[0];
         // FIXME: We should get the pixel buffer asynchronously if possible.
-        auto pixelBuffer = this->pixelBuffer();
-        auto result = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-        if (result != kCVReturnSuccess) {
-            RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo lock failed");
-            callback({ });
-            return;
-        }
-
-        auto scope = makeScopeExit([&pixelBuffer] {
-            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
+            std::memcpy(destination, source, pixelCount * 4);
         });
-
-        auto* planeA = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
-        if (!planeA) {
-            RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane A is null");
-            callback({ });
-            return;
-        }
-
-        auto height = CVPixelBufferGetHeight(pixelBuffer);
-        auto bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-        size_t planeASize = height * bytesPerRow;
-        std::memcpy(span.data(), planeA, planeASize);
-
-        Vector<PlaneLayout> planeLayouts;
-        // FIXME: Fill PlaneLayout
-        planeLayouts.append(PlaneLayout { });
         callback(WTFMove(planeLayouts));
         return;
     }

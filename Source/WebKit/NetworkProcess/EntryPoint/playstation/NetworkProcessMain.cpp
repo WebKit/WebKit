@@ -47,10 +47,7 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    if (!((dlopen("libcrypto", RTLD_NOW) && dlopen("libssl", RTLD_NOW)) || dlopen("LibreSSL", RTLD_NOW))) {
-        fprintf(stderr, "Failed to load SSL library.\n");
-        exit(EXIT_FAILURE);
-    }
+    loadLibraryOrExit(OpenSSL_LOAD_AT);
     loadLibraryOrExit(CURL_LOAD_AT);
     loadLibraryOrExit(ICU_LOAD_AT);
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);

@@ -43,6 +43,14 @@ public:
         uint64_t height { 0 };
         bool useAnnexB { false };
     };
+    struct ActiveConfiguration {
+        String codec;
+        std::optional<size_t> visibleWidth;
+        std::optional<size_t> visibleHeight;
+        std::optional<size_t> displayWidth;
+        std::optional<size_t> displayHeight;
+        std::optional<Vector<uint8_t>> description;
+    };
     struct EncodedFrame {
         Vector<uint8_t> data;
         bool isKeyFrame { false };
@@ -57,14 +65,15 @@ public:
     using CreateResult = Expected<UniqueRef<VideoEncoder>, String>;
 
     using PostTaskCallback = Function<void(Function<void()>&&)>;
+    using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = CompletionHandler<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
-    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
     using EncodeCallback = Function<void(String&&)>;
     virtual void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) = 0;

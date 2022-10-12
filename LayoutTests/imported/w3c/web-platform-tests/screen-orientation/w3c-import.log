@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation/non-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/onchange-event.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html

@@ -66,16 +66,6 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
     ThreadedScrollingTreeScrollingNodeDelegate::updateFromStateNode(scrollingStateNode);
 }
 
-std::optional<unsigned> ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
-{
-    return m_scrollController.activeScrollSnapIndexForAxis(axis);
-}
-
-bool ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexDidChange() const
-{
-    return m_scrollController.activeScrollSnapIndexDidChange();
-}
-
 bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     bool wasInMomentumPhase = m_inMomentumPhase;
@@ -92,11 +82,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
 
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { scrollingTree().wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::HandlingWheelEvent };
 
-    bool wasInUserScroll = m_scrollController.isUserScrollInProgress();
-    m_scrollController.updateGestureInProgressState(wheelEvent);
-    bool isInUserScroll = m_scrollController.isUserScrollInProgress();
-    if (isInUserScroll != wasInUserScroll)
-        scrollingNode().setUserScrollInProgress(isInUserScroll);
+    updateUserScrollInProgressForEvent(wheelEvent);
 
     // PlatformWheelEventPhase::MayBegin fires when two fingers touch the trackpad, and is used to flash overlay scrollbars.
     // We know we're scrollable at this point, so handle the event.
@@ -158,11 +144,6 @@ void ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged()
 bool ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress() const
 {
     return m_scrollController.isRubberBandInProgress();
-}
-
-bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
-{
-    return m_scrollController.isScrollSnapInProgress();
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const

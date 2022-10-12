@@ -1,0 +1,20 @@
+Before
+
+
+After
+
+End of test
+
+This tests that if an iframe loads new content after its accessibility object has already been accessed, the iframe accessibility object's descendants are the new scroll area and web area, not the old deleted ones.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+iframe.isEqual(newIframe): true
+scrollarea.isEqual(newScrollarea): false
+subwebarea.isEqual(newSubwebarea): false
+PASS newSubwebarea.childrenCount > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
