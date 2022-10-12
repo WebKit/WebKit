@@ -1080,7 +1080,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
     NSString *uti = firstUTIThatConformsTo(result.itemProvider.registeredTypeIdentifiers, UTTypeImage);
 
     if (!uti) {
-        LOG_ERROR("WKFileUploadPanel: Unexpected media type. Expected image or video, got: %@", mediaType);
+        LOG_ERROR("WKFileUploadPanel: Unexpected media type. Expected image or video");
         ASSERT_NOT_REACHED();
         failureBlock();
         return;
