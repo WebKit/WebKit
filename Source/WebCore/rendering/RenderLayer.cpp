@@ -5492,6 +5492,7 @@ void RenderLayer::updateFilterPaintingStrategy()
     }
     
     ensureLayerFilters();
+    renderer().view().setHasSoftwareFilters(!renderer().page().acceleratedFiltersEnabled());
     m_filters->setRenderingMode(renderer().page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated);
     m_filters->setFilterScale({ page().deviceScaleFactor(), page().deviceScaleFactor() });
 }
