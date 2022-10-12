@@ -39,7 +39,7 @@ ProcessID ProcessProviderLibWPE::launchProcess(const ProcessLauncher::LaunchOpti
     if (!m_provider)
         return -1;
 
-    if (wpe_process_launch(m_provider.get(), wpeProcessType(launchOptions.processType), argv) > -1)
+    if (wpe_process_launch(m_provider.get(), static_cast<wpe_process_type>(wpeProcessType(launchOptions.processType)), argv) > -1)
         return launchOptions.processIdentifier.toUInt64();
     return -1;
 #else
