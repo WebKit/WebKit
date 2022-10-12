@@ -150,6 +150,8 @@ $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionControllerParameters.serialization.in
+$(PROJECT_DIR)/Shared/WebPushDaemonConnectionConfiguration.serialization.in
+$(PROJECT_DIR)/Shared/WebPushMessage.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBlendComponent.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBlendState.serialization.in

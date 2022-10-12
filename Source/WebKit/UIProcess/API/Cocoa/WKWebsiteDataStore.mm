@@ -448,7 +448,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     
     webPageProxy->getLoadedSubresourceDomains([completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::RegistrableDomain>&& loadedSubresourceDomains) {
         Vector<RefPtr<API::Object>> apiDomains = WTF::map(loadedSubresourceDomains, [](auto& domain) {
-            return RefPtr<API::Object>(API::String::create(WTFMove(domain.string())));
+            return RefPtr<API::Object>(API::String::create(String(domain.string())));
         });
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
     });

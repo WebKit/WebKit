@@ -957,3 +957,7 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
 #endif // ENABLE(WEB_AUTHN)
 };
+
+[CreateUsing=fromRawString] class WebCore::RegistrableDomain {
+    String string()
+}

@@ -45,19 +45,6 @@
 
 namespace WebKit::Daemon {
 
-#define IMPLEMENT_CODER(class) \
-void Coder<class>::encode(Encoder& encoder, const class& instance) { instance.encode(encoder); } \
-std::optional<class> Coder<class>::decode(Decoder& decoder) { return class::decode(decoder); }
-
-IMPLEMENT_CODER(WebCore::ExceptionData);
-IMPLEMENT_CODER(WebCore::PushSubscriptionIdentifier);
-IMPLEMENT_CODER(WebCore::RegistrableDomain);
-IMPLEMENT_CODER(WebCore::SecurityOriginData);
-IMPLEMENT_CODER(WebKit::WebPushMessage);
-IMPLEMENT_CODER(WebPushD::WebPushDaemonConnectionConfiguration);
-
-#undef IMPLEMENT_CODER
-
 #if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::PushSubscriptionData>::encode(Encoder& encoder, const WebCore::PushSubscriptionData& instance)
 {
@@ -364,6 +351,129 @@ std::optional<WebCore::PCM::AttributionTriggerData> Coder<WebCore::PCM::Attribut
         WTFMove(*destinationSite),
         // destinationUnlinkableToken and destinationSecretToken are not serialized.
     } };
+}
+
+void Coder<WebPushD::WebPushDaemonConnectionConfiguration, void>::encode(Encoder& encoder, const WebPushD::WebPushDaemonConnectionConfiguration& instance)
+{
+    encoder << instance.useMockBundlesForTesting << instance.hostAppAuditTokenData;
+}
+
+std::optional<WebPushD::WebPushDaemonConnectionConfiguration> Coder<WebPushD::WebPushDaemonConnectionConfiguration, void>::decode(Decoder& decoder)
+{
+    std::optional<bool> useMockBundlesForTesting;
+    decoder >> useMockBundlesForTesting;
+    if (!useMockBundlesForTesting)
+        return std::nullopt;
+
+    std::optional<std::optional<Vector<uint8_t>>> hostAppAuditTokenData;
+    decoder >> hostAppAuditTokenData;
+    if (!hostAppAuditTokenData)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*useMockBundlesForTesting),
+        WTFMove(*hostAppAuditTokenData)
+    } };
+}
+
+void Coder<WebPushMessage, void>::encode(Encoder& encoder, const WebPushMessage& instance)
+{
+    encoder << instance.pushData << instance.registrationURL;
+}
+
+std::optional<WebPushMessage> Coder<WebPushMessage, void>::decode(Decoder& decoder)
+{
+    std::optional<std::optional<Vector<uint8_t>>> pushData;
+    decoder >> pushData;
+    if (!pushData)
+        return std::nullopt;
+
+    std::optional<URL> registrationURL;
+    decoder >> registrationURL;
+    if (!registrationURL)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*pushData),
+        WTFMove(*registrationURL)
+    } };
+}
+
+void Coder<WebCore::ExceptionData, void>::encode(Encoder& encoder, const WebCore::ExceptionData& instance)
+{
+    encoder << instance.code;
+    encoder << instance.message;
+}
+
+std::optional<WebCore::ExceptionData> Coder<WebCore::ExceptionData, void>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::ExceptionCode> code;
+    decoder >> code;
+    if (!code)
+        return std::nullopt;
+
+    std::optional<String> message;
+    decoder >> message;
+    if (!message)
+        return std::nullopt;
+
+    return WebCore::ExceptionData { WTFMove(*code), WTFMove(*message) };
+}
+
+void Coder<WebCore::SecurityOriginData, void>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
+{
+    encoder << instance.protocol;
+    encoder << instance.host;
+    encoder << instance.port;
+}
+
+std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData, void>::decode(Decoder& decoder)
+{
+    std::optional<String> protocol;
+    decoder >> protocol;
+    if (!protocol)
+        return std::nullopt;
+    
+    std::optional<String> host;
+    decoder >> host;
+    if (!host)
+        return std::nullopt;
+    
+    std::optional<std::optional<uint16_t>> port;
+    decoder >> port;
+    if (!port)
+        return std::nullopt;
+    
+    WebCore::SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(*port) };
+    if (data.isHashTableDeletedValue())
+        return std::nullopt;
+
+    return data;
+}
+
+void Coder<WebCore::RegistrableDomain, void>::encode(Encoder& encoder, const WebCore::RegistrableDomain& instance)
+{
+    encoder << instance.string();
+}
+
+std::optional<WebCore::RegistrableDomain> Coder<WebCore::RegistrableDomain, void>::decode(Decoder& decoder)
+{
+    std::optional<String> host;
+    decoder >> host;
+    if (!host)
+        return std::nullopt;
+
+    return { WebCore::RegistrableDomain::fromRawString(WTFMove(*host)) };
+}
+
+void Coder<WebCore::PushSubscriptionIdentifier>::encode(Encoder& encoder, const WebCore::PushSubscriptionIdentifier& instance)
+{
+    instance.encode(encoder);
+}
+
+std::optional<WebCore::PushSubscriptionIdentifier> Coder<WebCore::PushSubscriptionIdentifier>::decode(Decoder& decoder)
+{
+    return WebCore::PushSubscriptionIdentifier::decode(decoder);
 }
 
 }

@@ -3170,7 +3170,7 @@ void WKPageLoadedSubresourceDomains(WKPageRef pageRef, WKPageLoadedSubresourceDo
 #if ENABLE(TRACKING_PREVENTION)
     toImpl(pageRef)->getLoadedSubresourceDomains([callbackContext, callback](Vector<RegistrableDomain>&& domains) {
         Vector<RefPtr<API::Object>> apiDomains = WTF::map(domains, [](auto& domain) {
-            return RefPtr<API::Object>(API::String::create(WTFMove(domain.string())));
+            return RefPtr<API::Object>(API::String::create(String(domain.string())));
         });
         callback(toAPI(API::Array::create(WTFMove(apiDomains)).ptr()), callbackContext);
     });
