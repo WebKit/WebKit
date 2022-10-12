@@ -48,6 +48,7 @@ typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
 - (NSMenu *)menu;
 - (void)getMenuWithCompletion:(void(^)(NSMenu *))completion;
 - (void)hide;
+- (void)showPopoverRelativeToRect:(NSRect)rect ofView:(NSView *)view preferredEdge:(NSRectEdge)preferredEdge completion:(void (^)(NSSharingService *))completion;
 @end
 
 #endif

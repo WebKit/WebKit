@@ -71,6 +71,14 @@
 #endif
 #endif
 
+#if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKPaymentRequestStatus.h>
+#else
+#import <PassKit/PKPaymentRequestStatus.h>
+#endif
+#endif
+
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 // FIXME: PassKit does not declare its NSString constant symbols with C linkage, so we end up with
@@ -110,7 +118,6 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentSetupRequest.h>
 #endif
 
-#import <PassKitCore/PKPaymentRequestStatus.h>
 #import <PassKitCore/PKPaymentRequest_WebKit.h>
 
 #if !HAVE(PASSKIT_INSTALLMENTS)
@@ -156,6 +163,7 @@ WTF_EXTERN_C_END
 #else // USE(APPLE_INTERNAL_SDK)
 
 #import <Foundation/Foundation.h>
+#import <PassKit/PassKit.h>
 
 typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
     PKPaymentRequestAPITypeInApp = 0,
@@ -164,8 +172,6 @@ typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
 };
 
 #if PLATFORM(IOS_FAMILY)
-
-#import <PassKit/PassKit.h>
 
 @protocol PKPaymentAuthorizationControllerPrivateDelegate;
 
@@ -199,213 +205,8 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PKPaymentAuthorizationResult;
-@class PKPaymentRequestUpdate;
-@class PKPaymentRequestPaymentMethodUpdate;
-@class PKPaymentRequestShippingMethodUpdate;
-@class PKPaymentRequestShippingContactUpdate;
-
-typedef NSString *PKContactField;
-typedef NSString *PKPaymentErrorKey;
-
-extern NSString * const PKPaymentErrorDomain;
-typedef NS_ERROR_ENUM(PKPaymentErrorDomain, PKPaymentErrorCode) {
-    PKPaymentUnknownError = -1,
-    PKPaymentShippingContactInvalidError = 1,
-    PKPaymentBillingContactInvalidError,
-    PKPaymentShippingAddressUnserviceableError,
-#if HAVE(PASSKIT_COUPON_CODE)
-    PKPaymentCouponCodeInvalidError,
-    PKPaymentCouponCodeExpiredError,
-#endif
-};
-
-typedef NS_OPTIONS(NSUInteger, PKAddressField) {
-    PKAddressFieldNone = 0UL,
-    PKAddressFieldPostalAddress = 1UL << 0,
-    PKAddressFieldPhone = 1UL << 1,
-    PKAddressFieldEmail = 1UL << 2,
-    PKAddressFieldName = 1UL << 3,
-    PKAddressFieldAll = (PKAddressFieldPostalAddress | PKAddressFieldPhone | PKAddressFieldEmail | PKAddressFieldName)
-};
-
-typedef NS_OPTIONS(NSUInteger, PKMerchantCapability) {
-    PKMerchantCapability3DS = 1UL << 0,
-    PKMerchantCapabilityEMV = 1UL << 1,
-    PKMerchantCapabilityCredit = 1UL << 2,
-    PKMerchantCapabilityDebit = 1UL << 3
-};
-
-#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-typedef NS_ENUM(NSInteger, PKPaymentAuthorizationStatus) {
-    PKPaymentAuthorizationStatusSuccess,
-    PKPaymentAuthorizationStatusFailure,
-    PKPaymentAuthorizationStatusInvalidBillingPostalAddress,
-    PKPaymentAuthorizationStatusInvalidShippingPostalAddress,
-    PKPaymentAuthorizationStatusInvalidShippingContact,
-    PKPaymentAuthorizationStatusPINRequired,
-    PKPaymentAuthorizationStatusPINIncorrect,
-    PKPaymentAuthorizationStatusPINLockout,
-};
-#endif
-
-typedef NS_ENUM(NSUInteger, PKPaymentMethodType) {
-    PKPaymentMethodTypeUnknown = 0,
-    PKPaymentMethodTypeDebit,
-    PKPaymentMethodTypeCredit,
-    PKPaymentMethodTypePrepaid,
-    PKPaymentMethodTypeStore
-};
-
-typedef NS_ENUM(NSUInteger, PKPaymentPassActivationState) {
-    PKPaymentPassActivationStateActivated,
-    PKPaymentPassActivationStateRequiresActivation,
-    PKPaymentPassActivationStateActivating,
-    PKPaymentPassActivationStateSuspended,
-    PKPaymentPassActivationStateDeactivated
-};
-
-#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-typedef NS_ENUM(NSUInteger, PKPaymentSummaryItemType) {
-    PKPaymentSummaryItemTypeFinal,
-    PKPaymentSummaryItemTypePending
-};
-#endif
-
-typedef NS_ENUM(NSUInteger, PKShippingType) {
-    PKShippingTypeShipping,
-    PKShippingTypeDelivery,
-    PKShippingTypeStorePickup,
-    PKShippingTypeServicePickup
-};
-
-typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
-
-@protocol PKPaymentAuthorizationViewControllerDelegate;
-
-@interface PKObject : NSObject
-@end
-
-@interface PKPass : PKObject
-@end
-
-@interface PKPaymentPass : PKPass
-@property (nonatomic, copy, readonly) NSString *primaryAccountIdentifier;
-@property (nonatomic, copy, readonly) NSString *primaryAccountNumberSuffix;
-@property (weak, readonly) NSString *deviceAccountIdentifier;
-@property (weak, readonly) NSString *deviceAccountNumberSuffix;
-@property (nonatomic, readonly) PKPaymentPassActivationState activationState;
-@end
-
-@interface PKPaymentMethod : NSObject
-@property (nonatomic, copy, readonly, nullable) NSString *displayName;
-@property (nonatomic, copy, readonly, nullable) PKPaymentNetwork network;
-@property (nonatomic, readonly) PKPaymentMethodType type;
-@property (nonatomic, copy, readonly, nullable) PKPaymentPass *paymentPass;
-@property (nonatomic, copy, readonly, nullable) CNContact *billingAddress;
-@end
-
-@interface PKPaymentToken : NSObject
-@property (nonatomic, strong, readonly) PKPaymentMethod *paymentMethod;
-@property (nonatomic, copy, readonly) NSString *transactionIdentifier;
-@property (nonatomic, copy, readonly) NSData *paymentData;
-@end
-
-@interface PKContact : NSObject
-@property (nonatomic, strong, nullable) NSPersonNameComponents *name;
-@property (nonatomic, strong, nullable) CNPostalAddress *postalAddress;
-@property (nonatomic, strong, nullable) NSString *emailAddress;
-@property (nonatomic, strong, nullable) CNPhoneNumber *phoneNumber;
-@property (nonatomic, retain, nullable) NSString *supplementarySubLocality;
-@end
-
-@interface PKPayment : NSObject
-@property (nonatomic, strong, readonly, nonnull) PKPaymentToken *token;
-@property (nonatomic, strong, readonly, nullable) PKContact *billingContact;
-@property (nonatomic, strong, readonly, nullable) PKContact *shippingContact;
-@end
-
-#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-@interface PKPaymentSummaryItem : NSObject
-+ (instancetype)summaryItemWithLabel:(NSString *)label amount:(NSDecimalNumber *)amount;
-+ (instancetype)summaryItemWithLabel:(NSString *)label amount:(NSDecimalNumber *)amount type:(PKPaymentSummaryItemType)type;
-@property (nonatomic, copy) NSString *label;
-@property (nonatomic, copy) NSDecimalNumber *amount;
-@end
-#endif
-
-#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
-@interface PKDateComponentsRange : NSObject <NSCopying, NSSecureCoding>
-- (nullable instancetype)initWithStartDateComponents:(NSDateComponents *)startDateComponents endDateComponents:(NSDateComponents *)endDateComponents;
-@property (copy, readonly, nonatomic) NSDateComponents *startDateComponents;
-@property (copy, readonly, nonatomic) NSDateComponents *endDateComponents;
-@end
-#endif
-
-@interface PKShippingMethod : PKPaymentSummaryItem
-@property (nonatomic, copy, nullable) NSString *identifier;
-@property (nonatomic, copy, nullable) NSString *detail;
-#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
-@property (nonatomic, copy, nullable) PKDateComponentsRange *dateComponentsRange;
-#endif
-@end
-
-#if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
-typedef NS_ENUM(NSUInteger, PKShippingContactEditingMode) {
-    PKShippingContactEditingModeEnabled = 1,
-    PKShippingContactEditingModeStorePickup
-};
-#endif
-
-@interface PKPaymentRequest : NSObject
-+ (NSArray<PKPaymentNetwork> *)availableNetworks;
-@property (nonatomic, copy) NSString *countryCode;
-@property (nonatomic, copy) NSArray<PKPaymentNetwork> *supportedNetworks;
-@property (nonatomic, assign) PKMerchantCapability merchantCapabilities;
-@property (nonatomic, copy) NSArray<PKPaymentSummaryItem *> *paymentSummaryItems;
-@property (nonatomic, copy) NSString *currencyCode;
-@property (nonatomic, assign) PKAddressField requiredBillingAddressFields;
-@property (nonatomic, strong, nullable) PKContact *billingContact;
-@property (nonatomic, assign) PKAddressField requiredShippingAddressFields;
-@property (nonatomic, strong, nullable) PKContact *shippingContact;
-@property (nonatomic, copy, nullable) NSArray<PKShippingMethod *> *shippingMethods;
-@property (nonatomic, assign) PKShippingType shippingType;
-@property (nonatomic, copy, nullable) NSData *applicationData;
-@property (nonatomic, copy, nullable) NSSet<NSString *> *supportedCountries;
-@property (nonatomic, strong) NSSet<PKContactField> *requiredShippingContactFields;
-@property (nonatomic, strong) NSSet<PKContactField> *requiredBillingContactFields;
-
-#if HAVE(PASSKIT_COUPON_CODE)
-@property (nonatomic, assign) BOOL supportsCouponCode;
-@property (nonatomic, copy, nullable) NSString *couponCode;
-#endif
-
-#if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
-@property (nonatomic, assign) PKShippingContactEditingMode shippingContactEditingMode;
-#endif
-
-@end
-
-@interface PKPaymentAuthorizationViewController : NSViewController
+@interface PKPaymentAuthorizationViewController ()
 + (void)requestViewControllerWithPaymentRequest:(PKPaymentRequest *)paymentRequest completion:(void(^)(PKPaymentAuthorizationViewController *viewController, NSError *error))completion;
-+ (BOOL)canMakePayments;
-@property (nonatomic, assign, nullable) id<PKPaymentAuthorizationViewControllerDelegate> delegate;
-@end
-
-@protocol PKPaymentAuthorizationViewControllerDelegate <NSObject>
-@required
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion;
-
-- (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller;
-
-@optional
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod completion:(void (^)(PKPaymentAuthorizationStatus status, NSArray<PKPaymentSummaryItem *> *summaryItems))completion;
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact completion:(void (^)(PKPaymentAuthorizationStatus status, NSArray<PKShippingMethod *> *shippingMethods, NSArray<PKPaymentSummaryItem *> *summaryItems))completion;
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(void (^)(NSArray<PKPaymentSummaryItem *> *summaryItems))completion;
-@end
-
-@interface PKPassLibrary : NSObject
 @end
 
 NS_ASSUME_NONNULL_END
@@ -458,16 +259,6 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @property (nonatomic, strong) NSArray <PKPaymentSetupFeature *> *paymentSetupFeatures;
 @end
 
-#if PLATFORM(MAC) \
-    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000) \
-    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED < 70000)
-
-@interface PKPaymentMerchantSession : NSObject <NSSecureCoding, NSCopying>
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
-@end
-
-#endif
-
 @interface PKPaymentAuthorizationViewController ()
 + (void)paymentServicesMerchantURL:(void(^)(NSURL *merchantURL, NSError *error))completion;
 + (void)paymentServicesMerchantURLForAPIType:(PKPaymentRequestAPIType)APIType completion:(void(^)(NSURL *merchantURL, NSError *error))completion;
@@ -500,71 +291,6 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
-#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-typedef NS_ENUM(NSInteger, PKPaymentButtonStyle) {
-    PKPaymentButtonStyleWhite = 0,
-    PKPaymentButtonStyleWhiteOutline,
-    PKPaymentButtonStyleBlack
-};
-
-typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
-    PKPaymentButtonTypePlain = 0,
-    PKPaymentButtonTypeBuy,
-    PKPaymentButtonTypeSetUp,
-    PKPaymentButtonTypeInStore,
-    PKPaymentButtonTypeDonate,
-    PKPaymentButtonTypeCheckout,
-    PKPaymentButtonTypeBook,
-    PKPaymentButtonTypeSubscribe,
-    PKPaymentButtonTypeReload,
-    PKPaymentButtonTypeAddMoney,
-    PKPaymentButtonTypeTopUp,
-    PKPaymentButtonTypeOrder,
-    PKPaymentButtonTypeRent,
-    PKPaymentButtonTypeSupport,
-    PKPaymentButtonTypeContribute,
-    PKPaymentButtonTypeTip,
-};
-#endif // !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface PKPaymentAuthorizationResult : NSObject
-- (instancetype)initWithStatus:(PKPaymentAuthorizationStatus)status errors:(nullable NSArray<NSError *> *)errors;
-@property (nonatomic, assign) PKPaymentAuthorizationStatus status;
-@end
-
-@interface PKPaymentRequestUpdate : NSObject
-- (instancetype)initWithPaymentSummaryItems:(NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems;
-@property (nonatomic, copy) NSArray<PKPaymentSummaryItem *> *paymentSummaryItems;
-#if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
-@property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
-#endif
-@end
-
-@interface PKPaymentRequestPaymentMethodUpdate : PKPaymentRequestUpdate
-@property (null_resettable, nonatomic, copy) NSArray<NSError *> *errors;
-@end
-
-@interface PKPaymentRequestShippingContactUpdate : PKPaymentRequestUpdate
-@property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
-@property (nonatomic, copy, null_resettable) NSArray<NSError *> *errors;
-@end
-
-@interface PKPaymentRequestShippingMethodUpdate : PKPaymentRequestUpdate
-@end
-
-#if HAVE(PASSKIT_COUPON_CODE)
-@interface PKPaymentRequestCouponCodeUpdate : PKPaymentRequestUpdate
-@property (nonatomic, copy, null_resettable) NSArray<NSError *> *errors;
-@end
-#endif
-
-NS_ASSUME_NONNULL_END
-
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

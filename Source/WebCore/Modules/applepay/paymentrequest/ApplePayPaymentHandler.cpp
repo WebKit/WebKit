@@ -888,7 +888,9 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
     if (errors.isEmpty())
         errors.append(ApplePayError::create(ApplePayErrorCode::Unknown, std::nullopt, nullString()));
 
-    ApplePayPaymentAuthorizationResult authorizationResult { ApplePayPaymentAuthorizationResult::Failure, WTFMove(errors) };
+    ApplePayPaymentAuthorizationResult authorizationResult;
+    authorizationResult.status = ApplePayPaymentAuthorizationResult::Failure;
+    authorizationResult.errors = WTFMove(errors);
     ASSERT(!authorizationResult.isFinalState());
     paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
     return { };
