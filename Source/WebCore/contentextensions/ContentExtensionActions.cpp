@@ -140,10 +140,9 @@ bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
 
 void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 {
-    append(vector, priority);
-
     auto beginIndex = vector.size();
     append(vector, 0);
+    append(vector, priority);
     auto requestHeadersLengthIndex = vector.size();
     append(vector, 0);
     for (auto& headerInfo : requestHeaders)
@@ -156,8 +155,8 @@ void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 
 ModifyHeadersAction ModifyHeadersAction::deserialize(Span<const uint8_t> span)
 {
-    uint32_t priority = deserializeLength(span, 0);
-    auto serializedLength = deserializeLength(span, sizeof(uint32_t));
+    auto serializedLength = deserializeLength(span, 0);
+    uint32_t priority = deserializeLength(span, sizeof(uint32_t));
     auto requestHeadersLength = deserializeLength(span, sizeof(uint32_t) * 2);
     size_t progress = sizeof(uint32_t) * 3;
     Vector<ModifyHeaderInfo> requestHeaders;
@@ -166,10 +165,9 @@ ModifyHeadersAction ModifyHeadersAction::deserialize(Span<const uint8_t> span)
         progress += ModifyHeaderInfo::serializedLength(subspan);
         requestHeaders.append(ModifyHeaderInfo::deserialize(subspan));
     }
-
     RELEASE_ASSERT(progress == requestHeadersLength + sizeof(uint32_t) * 2);
     Vector<ModifyHeaderInfo> responseHeaders;
-    while (progress < serializedLength + sizeof(uint32_t)) {
+    while (progress < serializedLength) {
         auto subspan = span.subspan(progress);
         progress += ModifyHeaderInfo::serializedLength(subspan);
         responseHeaders.append(ModifyHeaderInfo::deserialize(subspan));
