@@ -440,6 +440,15 @@ static void overrideDefaults()
     Options::numberOfFTLCompilerThreads() = 3;
 #endif
 
+#if OS(LINUX) && CPU(ARM)
+    Options::maximumFunctionForCallInlineCandidateBytecodeCost() = 77;
+    Options::maximumOptimizationCandidateBytecodeCost() = 42403;
+    Options::maximumFunctionForClosureCallInlineCandidateBytecodeCost() = 68;
+    Options::maximumInliningCallerBytecodeCost() = 9912;
+    Options::maximumInliningDepth() = 8;
+    Options::maximumInliningRecursion() = 3;
+#endif
+
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
