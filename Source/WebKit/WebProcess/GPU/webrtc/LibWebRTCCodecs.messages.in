@@ -28,6 +28,7 @@ messages -> LibWebRTCCodecs NotRefCounted {
     CompletedDecoding(WebKit::VideoDecoderIdentifier identifier, uint32_t timeStamp, uint32_t timeStampNs, WebKit::RemoteVideoFrameProxy::Properties frame)
     CompletedDecodingCV(WebKit::VideoDecoderIdentifier identifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef> pixelBuffer)
     CompletedEncoding(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference data, struct webrtc::WebKitEncodedFrameInfo info);
+    SetEncodingDescription(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference data);
 }
 
 #endif // USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)

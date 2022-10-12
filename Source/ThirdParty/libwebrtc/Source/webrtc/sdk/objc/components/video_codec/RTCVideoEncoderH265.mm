@@ -174,8 +174,9 @@ void compressionOutputCallback(void* encoder,
   VTCompressionSessionRef _compressionSession;
   RTCVideoCodecMode _mode;
   int framesLeft;
-
   std::vector<uint8_t> _nv12ScaleBuffer;
+  bool _useAnnexB;
+  RTCVideoEncoderDescriptionCallback _descriptionCallback;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -189,6 +190,7 @@ void compressionOutputCallback(void* encoder,
   if (self = [super init]) {
     _codecInfo = codecInfo;
     _bitrateAdjuster.reset(new webrtc::BitrateAdjuster(.5, .95));
+    _useAnnexB = true;
     RTC_CHECK([codecInfo.name isEqualToString:@"H265"]);
   }
   return self;
@@ -212,6 +214,16 @@ void compressionOutputCallback(void* encoder,
   _bitrateAdjuster->SetTargetBitrateBps(_targetBitrateBps);
 
   return [self resetCompressionSession];
+}
+
+- (void)setUseAnnexB:(bool)useAnnexB
+{
+    _useAnnexB = useAnnexB;
+}
+
+- (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback
+{
+    _descriptionCallback = callback;
 }
 
 - (NSInteger)encode:(RTCVideoFrame*)frame
@@ -541,8 +553,29 @@ void compressionOutputCallback(void* encoder,
   }
 
   std::unique_ptr<rtc::Buffer> buffer(new rtc::Buffer());
-  if (!webrtc::H265CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
-    RTC_LOG(LS_INFO) << "Unable to parse H265 encoded buffer";
+  if (_useAnnexB) {
+    if (!webrtc::H265CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
+      RTC_LOG(LS_WARNING) << "Unable to parse H265 encoded buffer";
+      return;
+    }
+  } else {
+    if (_descriptionCallback) {
+      buffer->SetSize(0);
+      CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+      size_t currentStart = 0;
+      size_t size = CMBlockBufferGetDataLength(blockBuffer);
+      while (currentStart < size) {
+        char* data = nullptr;
+        size_t length;
+        if (auto error = CMBlockBufferGetDataPointer(blockBuffer, currentStart, &length, nullptr, &data)) {
+          RTC_LOG(LS_ERROR) << "H264 decoder: CMBlockBufferGetDataPointer failed with error " << error;
+          return;
+        }
+        buffer->AppendData(data, size);
+        currentStart += size;
+      }
+      _descriptionCallback(buffer->data(), buffer->size());
+    }
   }
 
   RTCEncodedImage* frame = [[RTCEncodedImage alloc] init];

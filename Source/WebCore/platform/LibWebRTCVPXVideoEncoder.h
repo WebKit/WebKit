@@ -39,7 +39,7 @@ class LibWebRTCVPXVideoEncoder : public VideoEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type { VP8, VP9 };
-    LibWebRTCVPXVideoEncoder(Type, const Config&, OutputCallback&&, PostTaskCallback&&);
+    LibWebRTCVPXVideoEncoder(Type, const Config&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     ~LibWebRTCVPXVideoEncoder();
 
 private:

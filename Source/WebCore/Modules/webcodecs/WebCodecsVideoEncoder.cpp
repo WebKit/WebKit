@@ -30,6 +30,7 @@
 
 #include "DOMException.h"
 #include "JSWebCodecsVideoEncoderSupport.h"
+#include "Logging.h"
 #include "WebCodecsEncodedVideoChunkMetadata.h"
 #include "WebCodecsEncodedVideoChunkOutputCallback.h"
 #include "WebCodecsErrorCallback.h"
@@ -101,8 +102,8 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
             };
         }
         bool useAnnexB = config.avc && config.avc->format == AvcBitstreamFormat::Annexb;
-        VideoEncoder::create(config.codec, { config.width, config.height, useAnnexB }, [this, weakedThis = WeakPtr { *this }](auto&& result) {
-            if (!weakedThis)
+        VideoEncoder::create(config.codec, { config.width, config.height, useAnnexB }, [this, weakThis = WeakPtr { *this }](auto&& result) {
+            if (!weakThis)
                 return;
 
             if (!result.has_value()) {
@@ -112,8 +113,14 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
             setInternalEncoder(WTFMove(result.value()));
             m_isMessageQueueBlocked = false;
             processControlMessageQueue();
-        }, [this, weakedThis = WeakPtr { *this }](auto&& result) {
-            if (!weakedThis || m_state != WebCodecsCodecState::Configured)
+        }, [this, weakThis = WeakPtr { *this }](auto&& configuration) {
+            if (!weakThis)
+                return;
+
+            m_activeConfiguration = WTFMove(configuration);
+            m_hasNewActiveConfiguration = true;
+        }, [this, weakThis = WeakPtr { *this }](auto&& result) {
+            if (!weakThis || m_state != WebCodecsCodecState::Configured)
                 return;
 
             RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data.data(), result.data.size());
@@ -123,11 +130,41 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
                 result.duration,
                 BufferSource { WTFMove(buffer) }
             });
-            // FIXME: Implement metadata.
-            m_output->handleEvent(WTFMove(chunk), { });
+            m_output->handleEvent(WTFMove(chunk), createEncodedChunkMetadata());
         }, WTFMove(postTaskCallback));
     });
     return { };
+}
+
+WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMetadata()
+{
+    WebCodecsVideoDecoderConfig decoderConfig;
+    if (!m_hasNewActiveConfiguration)
+        return { };
+
+    m_hasNewActiveConfiguration = false;
+    // FIXME: Provide more accurate decoder confgiuration
+    WebCodecsVideoDecoderConfig config {
+        WTFMove(m_activeConfiguration.codec),
+        { },
+        m_activeConfiguration.visibleWidth,
+        m_activeConfiguration.visibleHeight,
+        m_activeConfiguration.displayWidth,
+        m_activeConfiguration.displayHeight,
+        { },
+        HardwareAcceleration::NoPreference,
+        { }
+    };
+    if (m_activeConfiguration.description) {
+        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(m_activeConfiguration.description->size(), 0);
+        RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
+        if (arrayBuffer) {
+            memcpy(static_cast<uint8_t*>(arrayBuffer->data()), m_activeConfiguration.description->data(), m_activeConfiguration.description->size());
+            config.description = WTFMove(arrayBuffer);
+        }
+    }
+
+    return WebCodecsEncodedVideoChunkMetadata { WTFMove(config) };
 }
 
 ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame, WebCodecsVideoEncoderEncodeOptions&& options)

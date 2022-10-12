@@ -39,25 +39,25 @@ void VideoEncoder::setCreatorCallback(CreatorFunction&& function)
     s_customCreator = WTFMove(function);
 }
 
-void VideoEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+void VideoEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
 {
     if (s_customCreator) {
-        s_customCreator(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        s_customCreator(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
-    createLocalEncoder(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+    createLocalEncoder(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
 }
 
-void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
 {
 #if USE(LIBWEBRTC)
     if (codecName == "vp8"_s) {
-        UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(outputCallback), WTFMove(postCallback));
+        UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         callback(WTFMove(encoder));
         return;
     }
     if (codecName.startsWith("vp09.00"_s)) {
-        UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(outputCallback), WTFMove(postCallback));
+        UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         callback(WTFMove(encoder));
         return;
     }

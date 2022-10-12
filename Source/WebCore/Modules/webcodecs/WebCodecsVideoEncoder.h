@@ -40,6 +40,7 @@ class WebCodecsEncodedVideoChunk;
 class WebCodecsErrorCallback;
 class WebCodecsEncodedVideoChunkOutputCallback;
 class WebCodecsVideoFrame;
+struct WebCodecsEncodedVideoChunkMetadata;
 struct WebCodecsVideoEncoderConfig;
 struct WebCodecsVideoEncoderEncodeOptions;
 
@@ -94,6 +95,7 @@ private:
 
     void queueControlMessageAndProcess(Function<void()>&&);
     void processControlMessageQueue();
+    WebCodecsEncodedVideoChunkMetadata createEncodedChunkMetadata();
 
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_encodeQueueSize { 0 };
@@ -106,6 +108,8 @@ private:
     bool m_isKeyChunkRequired { false };
     Deque<Function<void()>> m_controlMessageQueue;
     bool m_isMessageQueueBlocked { false };
+    VideoEncoder::ActiveConfiguration m_activeConfiguration;
+    bool m_hasNewActiveConfiguration { false };
 };
 
 }
