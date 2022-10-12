@@ -146,6 +146,7 @@ private:
     const FloatingState* floatingState() const { return m_floatingState; }
     const ElementBox& root() const;
     const LayoutState& layoutState() const;
+    const RenderStyle& rootStyle() const;
 
 private:
     std::optional<PreviousLine> m_previousLine { };
