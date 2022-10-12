@@ -106,8 +106,8 @@ public:
     static const MediaTime& negativeInfiniteTime();
     static const MediaTime& indefiniteTime();
 
-    const int64_t& timeValue() const { return m_timeValue; }
-    const uint32_t& timeScale() const { return m_timeScale; }
+    int64_t timeValue() const { ASSERT(!hasDoubleValue()); return m_timeValue; }
+    uint32_t timeScale() const { ASSERT(!hasDoubleValue()); return m_timeScale; }
 
     void dump(PrintStream& out) const;
     String toString() const;
