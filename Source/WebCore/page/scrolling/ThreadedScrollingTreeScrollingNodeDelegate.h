@@ -41,9 +41,14 @@ class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
 class ThreadedScrollingTreeScrollingNodeDelegate : public ScrollingTreeScrollingNodeDelegate, private ScrollingEffectsControllerClient {
+public:
+    void updateSnapScrollState();
+
 protected:
     explicit ThreadedScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode&);
     virtual ~ThreadedScrollingTreeScrollingNodeDelegate();
+
+    void updateUserScrollInProgressForEvent(const PlatformWheelEvent&);
 
     void updateFromStateNode(const ScrollingStateScrollingNode&) override;
 

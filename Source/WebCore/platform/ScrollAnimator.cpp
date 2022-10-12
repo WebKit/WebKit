@@ -160,6 +160,10 @@ void ScrollAnimator::resnapAfterLayout()
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+#if !PLATFORM(MAC)
+    m_scrollController.updateGestureInProgressState(wheelEvent);
+#endif
+
     if (processWheelEventForScrollSnap(wheelEvent))
         return false;
 

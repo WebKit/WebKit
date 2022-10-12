@@ -81,7 +81,10 @@ void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
-    return delegate().handleWheelEvent(wheelEvent, eventTargeting);
+    if (!canHandleWheelEvent(wheelEvent, eventTargeting))
+        return WheelEventHandlingResult::unhandled();
+
+    return WheelEventHandlingResult::result(delegate().handleWheelEvent(wheelEvent));
 }
 
 } // namespace WebCore
