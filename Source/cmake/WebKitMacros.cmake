@@ -139,6 +139,17 @@ macro(_WEBKIT_TARGET _target_logical_name _target_cmake_name)
         ${${_target_logical_name}_HEADERS}
         ${${_target_logical_name}_SOURCES}
     )
+
+    if (PLAYSTATION AND CMAKE_GENERATOR MATCHES "Visual Studio")
+        set(${_target_logical_name}_SOURCES_C ${${_target_logical_name}_SOURCES})
+        list(FILTER ${_target_logical_name}_SOURCES_C INCLUDE REGEX "\\.c$")
+        set_source_files_properties(
+            ${${_target_logical_name}_SOURCES_C}
+            PROPERTIES LANGUAGE C
+            COMPILE_OPTIONS --std=gnu17
+        )
+    endif ()
+
     target_include_directories(${_target_cmake_name} PUBLIC "$<BUILD_INTERFACE:${${_target_logical_name}_INCLUDE_DIRECTORIES}>")
     target_include_directories(${_target_cmake_name} SYSTEM PRIVATE "$<BUILD_INTERFACE:${${_target_logical_name}_SYSTEM_INCLUDE_DIRECTORIES}>")
     target_include_directories(${_target_cmake_name} PRIVATE "$<BUILD_INTERFACE:${${_target_logical_name}_PRIVATE_INCLUDE_DIRECTORIES}>")
