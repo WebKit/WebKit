@@ -43,6 +43,8 @@ VideoPixelFormat convertVideoFramePixelFormat(uint32_t format)
     if (format == kCVPixelFormatType_32ARGB)
         return VideoPixelFormat::RGBA;
     ASSERT_NOT_REACHED();
+#else
+    UNUSED_PARAM(format);
 #endif
     return VideoPixelFormat::I420;
 }

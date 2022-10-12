@@ -149,6 +149,8 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
             return addColorComponents<AlphaPremultiplication::Premultiplied>(InterpolationColorSpace { }, fromComponents, toComponents);
         }
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, const BlendingContext& context)
