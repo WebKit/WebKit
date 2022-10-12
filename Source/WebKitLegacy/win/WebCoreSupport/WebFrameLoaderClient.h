@@ -45,7 +45,6 @@ public:
     WebFrame* webFrame() const { return m_webFrame; }
 
     std::optional<WebCore::PageIdentifier> pageID() const final;
-    std::optional<WebCore::FrameIdentifier> frameID() const final;
 
     bool hasWebView() const override;
 

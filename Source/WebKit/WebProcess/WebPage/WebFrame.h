@@ -85,7 +85,7 @@ public:
     WebCore::Frame* coreFrame() const;
 
     FrameInfoData info() const;
-    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+    WebCore::FrameIdentifier frameID() const;
 
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
@@ -216,7 +216,7 @@ private:
     std::optional<DownloadID> m_policyDownloadID;
 
     WeakPtr<LoadListener> m_loadListener;
-    
+
     WebCore::FrameIdentifier m_frameID;
 
 #if PLATFORM(IOS_FAMILY)

@@ -33,7 +33,7 @@ namespace WebKit {
 
 class RemoteWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {
 public:
-    RemoteWorkerFrameLoaderClient(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+    RemoteWorkerFrameLoaderClient(WebPageProxyIdentifier, WebCore::PageIdentifier, const String& userAgent);
 
     WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
 
@@ -46,7 +46,6 @@ private:
     Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) final;
 
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
-    std::optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
 
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final { return true; }
     bool isRemoteWorkerFrameLoaderClient() const final { return true; }
@@ -55,7 +54,6 @@ private:
 
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
-    WebCore::FrameIdentifier m_frameID;
     String m_userAgent;
     std::optional<WebCore::ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
 };

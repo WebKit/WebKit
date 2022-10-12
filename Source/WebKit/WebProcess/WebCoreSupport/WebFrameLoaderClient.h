@@ -27,6 +27,7 @@
 
 #include "SameDocumentNavigationType.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <pal/SessionID.h>
 
@@ -51,7 +52,6 @@ public:
 
     std::optional<WebPageProxyIdentifier> webPageProxyID() const;
     std::optional<WebCore::PageIdentifier> pageID() const final;
-    std::optional<WebCore::FrameIdentifier> frameID() const final;
 
 #if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final { return !!m_frameSpecificStorageAccessIdentifier; }
