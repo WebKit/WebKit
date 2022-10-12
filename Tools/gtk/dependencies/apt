@@ -29,6 +29,8 @@ PACKAGES+=(
     libupower-glib-dev
     libvorbis-dev
     libvpx-dev
+    libwpe-1.0-dev
+    libwpebackend-fdo-1.0-dev
     libxcomposite-dev
     libxt-dev
     libxtst-dev
