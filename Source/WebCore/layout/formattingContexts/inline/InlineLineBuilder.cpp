@@ -987,7 +987,6 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     
         if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep) {
             // This continuous content can be fully placed on the current line.
-            m_lineLogicalRect = adjustedLineForCandidateContent;
             for (auto& run : candidateRuns)
                 m_line.append(run.inlineItem, run.style, run.logicalWidth);
             // We are keeping this content on the line but we need to check if we could have wrapped here
@@ -1073,6 +1072,13 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     };
 
     auto lineBreakingResult = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
+    auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 
+    if (lineGainsNewContent) {
+        // Sometimes in order to put this content on the line, we have to avoid additonal float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
+        // which means we need to adjust the line rect to accomodate such new constraints.
+        m_contentIsConstrainedByFloat = m_contentIsConstrainedByFloat || m_lineLogicalRect != adjustedLineForCandidateContent;
+        m_lineLogicalRect = adjustedLineForCandidateContent;
+    }
     return toLineBuilderResult(lineBreakingResult);
 }
 
