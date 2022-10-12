@@ -23,6 +23,7 @@
 
 #if USE(GSTREAMER)
 
+#include "AppSinkWorkaround.h"
 #include "ApplicationGLib.h"
 #include "DMABufVideoSinkGStreamer.h"
 #include "GLVideoSinkGStreamer.h"
@@ -304,6 +305,9 @@ bool ensureGStreamerInitialized()
         if (isGStreamerInitialized)
             gst_mpegts_initialize();
 #endif
+
+        // Workaround for https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2413
+        registerAppsinkWorkaroundIfNeeded();
 #endif
     });
     return isGStreamerInitialized;
