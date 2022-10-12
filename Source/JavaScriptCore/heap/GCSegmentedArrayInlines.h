@@ -177,9 +177,6 @@ template <typename T>
 #if ASSERT_ENABLED
 inline void GCSegmentedArray<T>::validatePrevious()
 {
-    unsigned count = 0;
-    for (GCArraySegment<T>* current = m_segments.head(); current; current = current->next())
-        count++;
     ASSERT(m_segments.size() == m_numberOfSegments);
 }
 #else

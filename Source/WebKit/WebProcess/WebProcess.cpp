@@ -483,6 +483,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         });
     }
 
+#if !RELEASE_LOG_DISABLED
     PAL::registerNotifyCallback("com.apple.WebKit.logPageState"_s, [this] {
         for (auto& page : m_pageMap.values()) {
             int64_t loadCommitTime = 0;
@@ -496,6 +497,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             RELEASE_LOG(ActivityState, "WebPage %p - load_time: %lld, visible: %d, throttleable: %d , suspended: %d , websam_state: %" PUBLIC_LOG_STRING ", activity_state: %" PUBLIC_LOG_STRING ", url: %" PRIVATE_LOG_STRING, page.get(), loadCommitTime, page->isVisible(), page->isThrottleable(), page->isSuspended(), MemoryPressureHandler::processStateDescription().characters(), activityStateStream.release().utf8().data(), page->mainWebFrame().url().string().utf8().data());
         }
     });
+#endif
 
     SandboxExtension::consumePermanently(parameters.additionalSandboxExtensionHandles);
 
