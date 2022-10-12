@@ -142,11 +142,17 @@ void RenderSVGInline::willBeDestroyed()
 void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (!document().settings().layerBasedSVGEngineEnabled() && diff == StyleDifference::Layout)
+    if (!document().settings().layerBasedSVGEngineEnabled() && diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
+        if (style().hasTransform())
+            setNeedsTransformUpdate();
+    }
 #else
-    if (diff == StyleDifference::Layout)
+    if (diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
+        if (style().hasTransform())
+            setNeedsTransformUpdate();
+    }
 #endif
 
     RenderInline::styleDidChange(diff, oldStyle);
