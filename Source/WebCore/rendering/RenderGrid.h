@@ -206,6 +206,8 @@ private:
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     std::optional<LayoutUnit> firstLineBaseline() const final;
+    std::optional<LayoutUnit> lastLineBaseline() const final;
+    WeakPtr<RenderBox> getBaselineChild(ItemPosition alignment) const;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const final;
     bool isInlineBaselineAlignedChild(const RenderBox&) const;
 
