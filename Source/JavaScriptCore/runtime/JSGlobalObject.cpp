@@ -2693,6 +2693,19 @@ void JSGlobalObject::installSaneChainWatchpoints()
         m_arrayPrototypeAbsenceOfIndexedPropertiesWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, result, m_arrayPrototypeChainIsSaneWatchpointSet);
         m_arrayPrototypeAbsenceOfIndexedPropertiesWatchpoint->install(*m_vm);
     }
+
+    ASSERT(!stringPrototype()->structure()->mayInterceptIndexedAccesses());
+    ASSERT(!stringPrototype()->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero());
+    ASSERT(!stringPrototype()->structure()->hasPolyProto());
+    ASSERT(stringPrototype()->structure()->storedPrototype() == objectPrototype());
+    ASSERT(!hasIndexedProperties(stringPrototype()->structure()->indexingType()));
+    {
+        auto result = ObjectPropertyCondition::absenceOfIndexedProperties(*m_vm, this, stringPrototype(), objectPrototype());
+        ASSERT(result.isWatchable(PropertyCondition::MakeNoChanges));
+        m_stringPrototypeAbsenceOfIndexedPropertiesWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, result, m_stringPrototypeChainIsSaneWatchpointSet);
+        m_stringPrototypeAbsenceOfIndexedPropertiesWatchpoint->install(*m_vm);
+    }
+
     ASSERT(!objectPrototype()->structure()->mayInterceptIndexedAccesses());
     ASSERT(!objectPrototype()->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero());
     ASSERT(!objectPrototype()->structure()->hasPolyProto());
@@ -2706,6 +2719,8 @@ void JSGlobalObject::installSaneChainWatchpoints()
     }
     m_objectPrototypeAbsenceOfIndexedPropertiesWatchpointForArray = makeUnique<ChainedWatchpoint>(this, m_arrayPrototypeChainIsSaneWatchpointSet);
     m_objectPrototypeAbsenceOfIndexedPropertiesWatchpointForArray->install(m_objectPrototypeChainIsSaneWatchpointSet, *m_vm);
+    m_objectPrototypeAbsenceOfIndexedPropertiesWatchpointForString = makeUnique<ChainedWatchpoint>(this, m_stringPrototypeChainIsSaneWatchpointSet);
+    m_objectPrototypeAbsenceOfIndexedPropertiesWatchpointForString->install(m_objectPrototypeChainIsSaneWatchpointSet, *m_vm);
 }
 
 void JSGlobalObject::tryInstallArrayBufferSpeciesWatchpoint(ArrayBufferSharingMode sharingMode)

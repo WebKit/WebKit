@@ -3014,21 +3014,14 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
 #endif
 
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-        Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure();
-        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
-        WTF::dependentLoadLoadFence();
-
-        if (globalObject->stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure)) {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        if (m_graph.isWatchingStringPrototypeIsSaneChainWatchpoint(node)) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
             // loads return a trivial value". Something like OutOfBoundsSaneChain. This should
             // speculate that we don't take negative out-of-bounds, or better yet, it should rely
             // on a stringPrototypeChainIsSaneConcurrently() guaranteeing that the prototypes have no negative
             // indexed properties either.
             // https://bugs.webkit.org/show_bug.cgi?id=144668
-            m_graph.registerAndWatchStructureTransition(stringPrototypeStructure);
-            m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-
             addSlowPathGenerator(makeUnique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, resultRegs, JITCompiler::LinkableConstant(m_jit, globalObject), baseReg, propertyReg));
         } else {

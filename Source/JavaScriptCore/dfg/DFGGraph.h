@@ -897,6 +897,16 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
+    bool isWatchingStringPrototypeIsSaneChainWatchpoint(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->stringPrototypeChainIsSaneWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
     bool isWatchingObjectPrototypeIsSaneChainWatchpoint(Node* node)
     {
         if (m_plan.isUnlinked())
