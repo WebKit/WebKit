@@ -139,14 +139,7 @@ using namespace WebKit;
 #define DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(Type) \
     template<typename Encoder> \
     void ArgumentCoder<Type>::encode(Encoder& encoder, const Type& value) { SimpleArgumentCoder<Type>::encode(encoder, value); } \
-    bool ArgumentCoder<Type>::decode(Decoder& decoder, Type& value) { return SimpleArgumentCoder<Type>::decode(decoder, value); } \
-    std::optional<Type> ArgumentCoder<Type>::decode(Decoder& decoder) \
-    { \
-        Type value; \
-        if (!decode(decoder, value)) \
-            return std::nullopt; \
-        return value; \
-    } \
+    std::optional<Type> ArgumentCoder<Type>::decode(Decoder& decoder) { return SimpleArgumentCoder<Type>::decode(decoder); } \
     template void ArgumentCoder<Type>::encode<Encoder>(Encoder&, const Type&); \
     template void ArgumentCoder<Type>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Type&);
 
@@ -272,10 +265,10 @@ void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bo
 {
     SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
 }
-    
-bool ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder, RectEdges<bool>& boxEdges)
+
+std::optional<RectEdges<bool>> ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder)
 {
-    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder, boxEdges);
+    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder);
 }
 
 #if ENABLE(META_VIEWPORT)
@@ -284,17 +277,9 @@ void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportAr
     SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
 }
 
-bool ArgumentCoder<ViewportArguments>::decode(Decoder& decoder, ViewportArguments& viewportArguments)
-{
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
-}
-
 std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
 {
-    ViewportArguments viewportArguments;
-    if (!SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments))
-        return std::nullopt;
-    return viewportArguments;
+    return SimpleArgumentCoder<ViewportArguments>::decode(decoder);
 }
 
 #endif // ENABLE(META_VIEWPORT)

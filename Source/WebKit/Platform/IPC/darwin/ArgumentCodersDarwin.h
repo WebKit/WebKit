@@ -46,7 +46,7 @@ template<> struct ArgumentCoder<WTF::MachSendRight> {
 #if HAVE(AUDIT_TOKEN)
 template<> struct ArgumentCoder<audit_token_t> {
     static void encode(Encoder&, const audit_token_t&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, audit_token_t&);
+    static std::optional<audit_token_t> decode(Decoder&);
 };
 #endif
 
