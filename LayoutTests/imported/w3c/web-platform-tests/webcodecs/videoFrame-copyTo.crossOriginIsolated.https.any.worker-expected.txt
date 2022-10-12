@@ -1,4 +1,4 @@
 
-FAIL Test copying I420 frame to SharedArrayBuffer. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
-FAIL Test copying I420 frame to shared ArrayBufferView. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+PASS Test copying I420 frame to SharedArrayBuffer.
+PASS Test copying I420 frame to shared ArrayBufferView.
 

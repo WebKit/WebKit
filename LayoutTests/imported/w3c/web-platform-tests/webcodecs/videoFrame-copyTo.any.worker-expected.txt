@@ -1,17 +1,18 @@
 
 PASS Test closed frame.
-FAIL Test copying I420 frame to a non-shared ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
-FAIL Test copying I420 frame to a non-shared ArrayBufferView promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
-FAIL Test RGBA frame. assert_object_equals: plane 0 layout property "stride" expected 8 got 0
+PASS Test copying I420 frame to a non-shared ArrayBuffer
+PASS Test copying I420 frame to a non-shared ArrayBufferView
+PASS Test RGBA frame.
+PASS Test NV12 frame.
 PASS Test undersized buffer.
 PASS Test incorrect plane count.
-FAIL Test stride and offset work. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
-FAIL Test stride and offset with padding. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+PASS Test stride and offset work.
+PASS Test stride and offset with padding.
 PASS Test invalid stride.
 PASS Test address overflow.
-FAIL Test codedRect. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+PASS Test codedRect.
 PASS Test empty rect.
 PASS Test unaligned rect.
-FAIL Test left crop. promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL Test left crop. assert_equals: buffer contents at index 0 expected 3 but got 1
 PASS Test invalid rect.
 

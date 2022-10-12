@@ -147,15 +147,16 @@ size_t videoPixelFormatToSampleByteSizePerPlane()
     return 1;
 }
 
-static inline size_t sampleCountPerPixel(VideoPixelFormat format)
+static inline size_t sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
     case VideoPixelFormat::I420:
     case VideoPixelFormat::I420A:
     case VideoPixelFormat::I444:
     case VideoPixelFormat::I422:
-    case VideoPixelFormat::NV12:
         return 1;
+    case VideoPixelFormat::NV12:
+        return planeNumber ? 2 : 1;
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -190,13 +191,14 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
     if (layout && layout->size() != planeCount)
         return Exception { TypeError, "layout size is invalid"_s };
 
-    size_t pixelSampleCount = sampleCountPerPixel(format);
     size_t minAllocationSize = 0;
     Vector<ComputedPlaneLayout> computedLayouts;
     computedLayouts.reserveInitialCapacity(planeCount);
     Vector<size_t> endOffsets;
     endOffsets.reserveInitialCapacity(planeCount);
     for (size_t i = 0; i < planeCount; ++i) {
+        size_t pixelSampleCount = sampleCountPerPixel(format, i);
+
         auto sampleBytes = videoPixelFormatToSampleByteSizePerPlane();
         auto sampleWidth = videoPixelFormatToSubSampling(format, i);
         auto sampleHeight = videoPixelFormatToSubSampling(format, i);
