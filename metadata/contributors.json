@@ -6205,6 +6205,19 @@
    },
    {
       "emails" : [
+         "sammy.gill@apple.com",
+         "sgill26@apple.com"
+      ],
+      "github" : "sgill26",
+      "name" : "Sammy Gill",
+      "nicks" : [
+         "sgill26",
+         "sammy.gill"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "samuel_white@apple.com"
       ],
       "expertise" : "Accessibility",
