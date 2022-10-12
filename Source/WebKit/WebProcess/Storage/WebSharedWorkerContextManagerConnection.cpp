@@ -104,7 +104,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
 
-    pageConfiguration.loaderClientForMainFrame = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, WebCore::FrameIdentifier::generate(), m_userAgent);
+    pageConfiguration.loaderClientForMainFrame = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent);
 
     auto page = makeUniqueRef<WebCore::Page>(WTFMove(pageConfiguration));
     if (m_preferencesStore) {

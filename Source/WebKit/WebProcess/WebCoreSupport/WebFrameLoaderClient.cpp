@@ -137,11 +137,6 @@ std::optional<PageIdentifier> WebFrameLoaderClient::pageID() const
     return std::nullopt;
 }
 
-std::optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
-{
-    return m_frame->frameID();
-}
-
 #if ENABLE(TRACKING_PREVENTION)
 void WebFrameLoaderClient::setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&& frameSpecificStorageAccessIdentifier )
 {

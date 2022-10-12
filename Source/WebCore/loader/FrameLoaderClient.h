@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "FrameIdentifier.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
@@ -125,7 +124,6 @@ public:
     virtual void makeRepresentation(DocumentLoader*) = 0;
 
     virtual std::optional<PageIdentifier> pageID() const = 0;
-    virtual std::optional<FrameIdentifier> frameID() const = 0;
 
 #if PLATFORM(IOS_FAMILY)
     // Returns true if the client forced the layout.

@@ -167,7 +167,7 @@ public:
     void resetScript();
 
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
-    WEBCORE_EXPORT std::optional<FrameIdentifier> frameID() const;
+    FrameIdentifier frameID() const { return m_frameID; }
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
@@ -326,6 +326,7 @@ private:
     mutable FrameTree m_treeNode;
     UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
+    const FrameIdentifier m_frameID;
 
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
     RefPtr<FrameView> m_view;

@@ -108,6 +108,10 @@ static uint64_t generateListenerID()
 
 void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
+    ASSERT(!m_frameID);
+    m_frameID = coreFrame.frameID();
+    WebProcess::singleton().addWebFrame(frameID(), this);
+
     page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
     m_coreFrame = coreFrame;
@@ -118,10 +122,13 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     auto frame = create(page);
-    page.send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID(), parent.frameID()));
-
     auto coreFrame = Frame::create(page.corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
     frame->m_coreFrame = coreFrame;
+
+    ASSERT(!frame->m_frameID);
+    frame->m_frameID = coreFrame->frameID();
+    WebProcess::singleton().addWebFrame(coreFrame->frameID(), frame.ptr());
+    page.send(Messages::WebPageProxy::DidCreateSubframe(coreFrame->frameID(), parent.frameID()));
 
     coreFrame->tree().setName(frameName);
     if (ownerElement) {
@@ -135,10 +142,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 
 WebFrame::WebFrame(WebPage& page)
     : m_page(page)
-    , m_frameID(FrameIdentifier::generate())
 {
-    WebProcess::singleton().addWebFrame(m_frameID, this);
-
 #ifndef NDEBUG
     webFrameCounter.increment();
 #endif
@@ -197,16 +201,22 @@ FrameInfoData WebFrame::info() const
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(m_coreFrame.get()),
         m_coreFrame ? m_coreFrame->tree().name().string() : String(),
-        m_frameID,
+        frameID(),
         parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
     };
 
     return info;
 }
 
+WebCore::FrameIdentifier WebFrame::frameID() const
+{
+    ASSERT(m_frameID);
+    return m_frameID;
+}
+
 void WebFrame::invalidate()
 {
-    WebProcess::singleton().removeWebFrame(m_frameID, m_page ? std::optional<WebPageProxyIdentifier>(m_page->webPageProxyIdentifier()) : std::nullopt);
+    WebProcess::singleton().removeWebFrame(frameID(), m_page ? std::optional<WebPageProxyIdentifier>(m_page->webPageProxyIdentifier()) : std::nullopt);
     m_coreFrame = 0;
 }
 
