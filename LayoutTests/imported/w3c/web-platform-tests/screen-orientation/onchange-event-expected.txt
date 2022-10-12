@@ -1,12 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Screen orientation locking is not supported
-
-Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking is not supported
 
 FAIL Test that orientationchange event is not fired when the orientation does not change. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
-TIMEOUT Test that orientationchange event is fired when the orientation changes. Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking is not supported
-
-FAIL Test that orientationchange event is not fired when the orientation does not change. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
-TIMEOUT Test that orientationchange event is fired when the orientation changes. Test timed out
+FAIL Test that orientationchange event is fired when the orientation changes. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
 

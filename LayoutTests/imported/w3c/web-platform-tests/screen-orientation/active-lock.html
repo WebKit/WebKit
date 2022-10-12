@@ -14,7 +14,7 @@
     document.body.appendChild(fragment);
     const { type: preType } = screen.orientation;
     const isPortrait = preType.startsWith("portrait");
-    const newType = `${isPortrait ? "landscape" : "portrait"}-primary`;
+    const newType = `${isPortrait ? "landscape" : "portrait"}`;
     const p = screen.orientation.lock(newType);
     screen.orientation.onchange = t.unreached_func(
       "change event must not fire"
