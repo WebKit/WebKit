@@ -320,6 +320,16 @@ void LibWebRTCCodecs::flushDecoder(Decoder& decoder, Function<void()>&& callback
     decoder.flushCallbacks.append(WTFMove(callback));
 }
 
+void LibWebRTCCodecs::setDecoderFormatDescription(Decoder& decoder, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+{
+    Locker locker { m_connectionLock };
+    ASSERT(decoder.connection);
+    if (!decoder.connection)
+        return;
+
+    decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetDecoderFormatDescription { decoder.identifier, IPC::DataReference { data, size }, width, height }, 0);
+}
+
 int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };

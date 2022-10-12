@@ -83,6 +83,7 @@ private:
     void createDecoder(VideoDecoderIdentifier, VideoCodecType, bool useRemoteFrames);
     void releaseDecoder(VideoDecoderIdentifier);
     void flushDecoder(VideoDecoderIdentifier);
+    void setDecoderFormatDescription(VideoDecoderIdentifier, const IPC::DataReference&, uint16_t width, uint16_t height);
     void decodeFrame(VideoDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 

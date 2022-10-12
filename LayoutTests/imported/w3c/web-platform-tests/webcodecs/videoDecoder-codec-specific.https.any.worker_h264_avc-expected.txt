@@ -3,18 +3,18 @@ PASS Test isConfigSupported()
 PASS Test isConfigSupported() with 1080p crop
 PASS Test that isConfigSupported() returns a parsed configuration
 PASS Test invalid configs
-FAIL Test configure() assert_equals: state expected "configured" but got "closed"
-FAIL Decode a key frame promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Decode a non key frame first fails assert_throws_dom: function "() => decoder.decode(CHUNKS[1], 'decode')" threw object "InvalidStateError: VideoDecoder is not configured" that is not a DOMException DataError: property "code" is equal to 11, expected 0
-FAIL Verify reset() suppresses outputs promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
+PASS Test configure()
+PASS Decode a key frame
+PASS Decode a non key frame first fails
+PASS Verify reset() suppresses outputs
 PASS Test unconfigured VideoDecoder operations
 PASS Test closed VideoDecoder operations
-FAIL Decode empty frame promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Decode corrupt frame promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Close while decoding corrupt frame promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Test decoding after flush promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Test decoding a with negative timestamp promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Test reset during flush promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL Test low-latency decoding promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
-FAIL VideoDecoder decodeQueueSize test promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
+FAIL Decode empty frame assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Decode corrupt frame assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Close while decoding corrupt frame
+PASS Test decoding after flush
+FAIL Test decoding a with negative timestamp assert_equals: timestamp expected -42 but got 4294967254
+PASS Test reset during flush
+PASS Test low-latency decoding
+PASS VideoDecoder decodeQueueSize test
 

@@ -159,6 +159,17 @@ void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier)
     m_connection->send(Messages::LibWebRTCCodecs::FlushDecoderCompleted { identifier }, 0);
 }
 
+void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, const IPC::DataReference& data, uint16_t width, uint16_t height)
+{
+    assertIsCurrent(workQueue());
+    auto decoder = m_decoders.get(identifier);
+    if (!decoder) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    webrtc::setDecodingFormat(decoder, data.data(), data.size(), width, height);
+}
+
 void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     assertIsCurrent(workQueue());

@@ -42,6 +42,7 @@
 @interface WK_RTCLocalVideoH264H265VP9Decoder : NSObject
 - (instancetype)initH264DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
 - (instancetype)initH265DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
+- (NSInteger)setFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height;
 - (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(uint32_t)timeStamp;
 - (NSInteger)releaseDecoder;
 - (void)flush;
@@ -84,6 +85,14 @@
         }];
     }
     return self;
+}
+
+- (NSInteger)setFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height {
+    if (m_h264Decoder)
+        return [m_h264Decoder setAVCFormat:data size:size width:width height:height];
+    if (m_h265Decoder)
+        return [m_h265Decoder setAVCFormat:data size:size width:width height:height];
+    return 0;
 }
 
 - (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(uint32_t)timeStamp {
@@ -303,6 +312,12 @@ void flushLocalDecoder(LocalDecoder localDecoder)
 {
     auto* decoder = (__bridge WK_RTCLocalVideoH264H265VP9Decoder *)(localDecoder);
     [decoder flush];
+}
+
+int32_t setDecodingFormat(LocalDecoder localDecoder, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+{
+    auto* decoder = (__bridge WK_RTCLocalVideoH264H265VP9Decoder *)(localDecoder);
+    return [decoder setFormat:data size:size width:width height:height];
 }
 
 int32_t decodeFrame(LocalDecoder localDecoder, uint32_t timeStamp, const uint8_t* data, size_t size)
