@@ -253,11 +253,17 @@ private:
 
 inline void CSSValue::deref() const
 {
+IGNORE_GCC_WARNINGS_BEGIN("use-after-free")
     unsigned tempRefCount = m_refCount - refCountIncrement;
+IGNORE_GCC_WARNINGS_END
+
     if (!tempRefCount) {
+IGNORE_GCC_WARNINGS_BEGIN("free-nonheap-object")
         delete this;
+IGNORE_GCC_WARNINGS_END
         return;
     }
+
     m_refCount = tempRefCount;
 }
 
