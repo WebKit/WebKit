@@ -123,6 +123,8 @@ if (ENABLE_WEBCORE)
     endif ()
 
     if (NOT TARGET WebP::libwebp)
+        set(WebP_NAMES SceVshWebP)
+        set(WebP_DEMUX_NAMES ${WebP_NAMES})
         find_package(WebP REQUIRED COMPONENTS demux)
         list(APPEND PlayStationModule_TARGETS WebP::libwebp)
     endif ()
