@@ -1749,15 +1749,15 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     [webView2 loadRequest:server.request()];
 
     auto webViewToUpdate = useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes ? webView : webView2;
-    [webViewToUpdate _setAssertionTypeForTesting: 1];
+    [webViewToUpdate _setThrottleStateForTesting: 1];
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
-    [webViewToUpdate _setAssertionTypeForTesting: 3];
+    [webViewToUpdate _setThrottleStateForTesting: 2];
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
-    [webViewToUpdate _setAssertionTypeForTesting: 0];
+    [webViewToUpdate _setThrottleStateForTesting: 0];
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
@@ -1765,19 +1765,19 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     webView = nullptr;
 
     // The service worker process should take activity based on webView2 process.
-    [webView2 _setAssertionTypeForTesting: 1];
+    [webView2 _setThrottleStateForTesting: 1];
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
-        [webView2 _setAssertionTypeForTesting:1];
+        [webView2 _setThrottleStateForTesting:1];
         return ![webView2 _hasServiceWorkerForegroundActivityForTesting] && [webView2 _hasServiceWorkerBackgroundActivityForTesting];
     }));
 
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
-        [webView2 _setAssertionTypeForTesting:3];
+        [webView2 _setThrottleStateForTesting:2];
         return [webView2 _hasServiceWorkerForegroundActivityForTesting] && ![webView2 _hasServiceWorkerBackgroundActivityForTesting];
     }));
 
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
-        [webView2 _setAssertionTypeForTesting:0];
+        [webView2 _setThrottleStateForTesting:0];
         return ![webView2 _hasServiceWorkerForegroundActivityForTesting] && ![webView2 _hasServiceWorkerBackgroundActivityForTesting];
     }));
 }

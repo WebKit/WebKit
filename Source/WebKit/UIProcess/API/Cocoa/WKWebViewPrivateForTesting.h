@@ -88,7 +88,7 @@ struct WKAppPrivacyReportTestingData {
 - (void)_processDidResumeForTesting;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerBackgroundActivityForTesting;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerForegroundActivityForTesting;
-- (void)_setAssertionTypeForTesting:(int)type;
+- (void)_setThrottleStateForTesting:(int)type;
 
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action;
 

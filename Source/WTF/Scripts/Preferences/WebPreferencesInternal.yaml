@@ -912,6 +912,18 @@ ServiceWorkersUserGestureEnabled:
     WebCore:
       default: true
 
+ShouldTakeSuspendedAssertions:
+  type: bool
+  humanReadableName: "Take WebKit:Suspended assertions on background web content processes"
+  humanReadableDescription: "Take WebKit:Suspended assertions on background web content processes"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 ShowModalDialogEnabled:
   type: bool
   humanReadableName: "Legacy showModalDialog() API"

@@ -220,12 +220,12 @@
         _page->process().sendProcessDidResume(WebKit::ProcessThrottlerClient::ResumeReason::ForegroundActivity);
 }
 
-- (void)_setAssertionTypeForTesting:(int)value
+- (void)_setThrottleStateForTesting:(int)value
 {
     if (!_page)
         return;
 
-    _page->process().setAssertionTypeForTesting(static_cast<WebKit::ProcessAssertionType>(value));
+    _page->process().setThrottleStateForTesting(static_cast<WebKit::ProcessThrottleState>(value));
 }
 
 - (BOOL)_hasServiceWorkerBackgroundActivityForTesting

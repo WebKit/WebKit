@@ -1405,12 +1405,12 @@ void WebProcessProxy::sendProcessDidResume(ResumeReason)
         send(Messages::WebProcess::ProcessDidResume(), 0);
 }
 
-void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
+void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didSetAssertionType: type=%u", type);
+    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState: type=%u", (unsigned)type);
 
     if (isStandaloneServiceWorkerProcess()) {
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didSetAssertionType: Release all assertions for network process because this is a service worker process without page");
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState: Release all assertions for network process because this is a service worker process without page");
         m_foregroundToken = nullptr;
         m_backgroundToken = nullptr;
         return;
@@ -1419,8 +1419,8 @@ void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
     ASSERT(!m_backgroundToken || !m_foregroundToken);
 
     switch (type) {
-    case ProcessAssertionType::Suspended:
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didSetAssertionType(Suspended) Release all assertions for network process");
+    case ProcessThrottleState::Suspended:
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState(Suspended) Release all assertions for network process");
         m_foregroundToken = nullptr;
         m_backgroundToken = nullptr;
 #if PLATFORM(IOS_FAMILY)
@@ -1429,14 +1429,14 @@ void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
 #endif
         break;
 
-    case ProcessAssertionType::Background:
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didSetAssertionType(Background) Taking background assertion for network process");
+    case ProcessThrottleState::Background:
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState(Background) Taking background assertion for network process");
         m_backgroundToken = processPool().backgroundWebProcessToken();
         m_foregroundToken = nullptr;
         break;
     
-    case ProcessAssertionType::Foreground:
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didSetAssertionType(Foreground) Taking foreground assertion for network process");
+    case ProcessThrottleState::Foreground:
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState(Foreground) Taking foreground assertion for network process");
         m_foregroundToken = processPool().foregroundWebProcessToken();
         m_backgroundToken = nullptr;
 #if PLATFORM(IOS_FAMILY)
@@ -1444,11 +1444,6 @@ void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
             page->processWillBecomeForeground();
 #endif
         break;
-    
-    case ProcessAssertionType::MediaPlayback:
-    case ProcessAssertionType::UnboundedNetworking:
-    case ProcessAssertionType::FinishTaskInterruptable:
-        ASSERT_NOT_REACHED();
     }
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
