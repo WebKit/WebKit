@@ -143,6 +143,7 @@ class ResourceRequest;
 class ResourceResponse;
 class ScriptBuffer;
 class SecurityOrigin;
+class SerializedScriptValue;
 class FragmentedSharedBuffer;
 class StickyPositionViewportConstraints;
 class SystemImage;
@@ -312,6 +313,10 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
 };
 
+template<> struct ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>> {
+    static void encode(Encoder&, const RefPtr<WebCore::SerializedScriptValue>&);
+    static std::optional<RefPtr<WebCore::SerializedScriptValue>> decode(Decoder&);
+};
 
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);

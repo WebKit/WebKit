@@ -144,6 +144,7 @@ $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
+$(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/WTFArgumentCoders.serialization.in
