@@ -1782,5 +1782,3 @@ webkit.org/b/245802 imported/w3c/web-platform-tests/permissions/permissions-cg.h
 
 webkit.org/b/246278 [ arm64 ] imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Skip ]
 webkit.org/b/246278 [ arm64 ] imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h264_annexb [ Skip ]
-
-webkit.org/b/246427 [ Debug ] imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
