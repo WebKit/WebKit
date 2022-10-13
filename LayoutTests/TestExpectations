@@ -6066,8 +6066,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/cors-crossorigin-requests.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
 
-webkit.org/b/245164 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure Pass ]
-
 # Disable ShadowRealm (while running to ensure we do not crash)
 webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]
 inspector/shadow-realm-console.html [ Pass Failure ]
