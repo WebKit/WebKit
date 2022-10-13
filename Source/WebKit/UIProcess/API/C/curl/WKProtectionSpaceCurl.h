@@ -32,7 +32,10 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKCertificateInfoRef WKProtectionSpaceCopyCertificateInfo(WKProtectionSpaceRef) WK_C_API_DEPRECATED;
+WK_EXPORT WKCertificateInfoRef WKProtectionSpaceCopyCertificateInfo(WKProtectionSpaceRef protectionSpace) WK_C_API_DEPRECATED;
+WK_EXPORT WKArrayRef WKProtectionSpaceCopyCertificateChain(WKProtectionSpaceRef protectionSpace);
+WK_EXPORT int WKProtectionSpaceGetCertificateVerificationError(WKProtectionSpaceRef protectionSpace);
+WK_EXPORT WKStringRef WKProtectionSpaceCopyCertificateVerificationErrorDescription(WKProtectionSpaceRef protectionSpace);
 
 #ifdef __cplusplus
 }
