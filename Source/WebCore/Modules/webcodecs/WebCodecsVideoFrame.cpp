@@ -265,7 +265,7 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<
     auto result = adoptRef(*new WebCodecsVideoFrame);
     result->m_internalFrame = videoFrame->m_internalFrame;
     if (videoFrame->m_format)
-        result->m_format = computeVideoPixelFormat(*videoFrame->m_format, init.alpha == AlphaOption::Discard);
+        result->m_format = computeVideoPixelFormat(*videoFrame->m_format, init.alpha == WebCodecsAlphaOption::Discard);
 
     result->m_codedWidth = videoFrame->m_codedWidth;
     result->m_codedHeight = videoFrame->m_codedHeight;

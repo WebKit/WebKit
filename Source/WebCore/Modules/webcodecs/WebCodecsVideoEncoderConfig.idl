@@ -39,7 +39,7 @@ typedef [EnforceRange] unsigned long long WebCodecsVideoEncoderConfigBitrate;
     WebCodecsVideoEncoderConfigBitrate bitrate;
     double framerate;
     HardwareAcceleration hardwareAcceleration = "no-preference";
-    // FIXME: Add AlphaOption alpha = "discard";
+    WebCodecsAlphaOption alpha = "discard";
     DOMString scalabilityMode;
     BitrateMode bitrateMode = "variable";
     LatencyMode latencyMode = "quality";

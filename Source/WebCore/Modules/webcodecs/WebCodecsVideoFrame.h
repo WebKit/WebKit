@@ -33,6 +33,7 @@
 #include "VideoColorSpace.h"
 #include "VideoFrame.h"
 #include "VideoPixelFormat.h"
+#include "WebCodecsAlphaOption.h"
 
 namespace WebCore {
 
@@ -61,11 +62,10 @@ class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame> {
 public:
     ~WebCodecsVideoFrame();
 
-    enum class AlphaOption { Keep, Discard };
     struct Init {
         std::optional<uint64_t> duration;
         std::optional<int64_t> timestamp;
-        AlphaOption alpha { AlphaOption::Keep };
+        WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Keep };
 
         DOMRectInit visibleRect;
 
