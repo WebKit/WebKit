@@ -77,6 +77,7 @@ typedef enum {
     UIFontTraitUltraLight  = (1 << 4)
 } UIFontTrait;
 
+#if !HAVE(NSTEXTLIST_MARKER_FORMATS)
 @interface NSParagraphStyle ()
 - (NSArray *)textLists;
 @end
@@ -85,15 +86,16 @@ typedef enum {
 - (void)setTextLists:(NSArray *)textLists;
 @end
 
-@interface NSTextAttachment ()
-- (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
-@end
-
 @interface NSTextList : NSObject
 - (instancetype)initWithMarkerFormat:(NSString *)format options:(NSUInteger)mask;
 @property (readonly, copy) NSString *markerFormat;
 @property NSInteger startingItemNumber;
 - (NSString *)markerForItemNumber:(NSInteger)itemNum;
+@end
+#endif
+
+@interface NSTextAttachment ()
+- (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
 @end
 
 @interface NSTextAlternatives : NSObject

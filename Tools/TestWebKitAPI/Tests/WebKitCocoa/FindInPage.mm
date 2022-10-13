@@ -335,6 +335,8 @@ TEST(WebKit, FindTextInImageOverlay)
 
 // FIXME: (rdar://95125552) Remove conformance to _UITextSearching.
 @interface WKWebView () <UITextSearching>
+- (void)didBeginTextSearchOperation;
+- (void)didEndTextSearchOperation;
 @end
 
 @interface TestScrollViewDelegate : NSObject<UIScrollViewDelegate>  {

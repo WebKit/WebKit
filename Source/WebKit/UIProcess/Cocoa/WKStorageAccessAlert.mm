@@ -26,6 +26,10 @@
 #import "config.h"
 #import "WKStorageAccessAlert.h"
 
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
+#endif
+
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #import "WKWebViewInternal.h"

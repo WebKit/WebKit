@@ -85,7 +85,7 @@
 // linkage mismatches in the SOFT_LINK_CONSTANT macros used in PassKitSoftLink.mm unless we wrap
 // these includes in an extern "C" block.
 WTF_EXTERN_C_BEGIN
-#if HAVE(PASSKIT_MODULARIZATION)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
 #import <PassKitCore/PKConstants.h>
 #import <PassKitCore/PKError.h>
 #else
