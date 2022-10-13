@@ -50,7 +50,14 @@ enum class StyleColorOptions : uint8_t {
 };
 
 struct CurrentColor {
-    bool operator==(const CurrentColor&) const = default;
+    bool operator==(const CurrentColor&) const
+    {
+        return true;
+    }
+    bool operator!=(const CurrentColor& other) const
+    {
+        return !(*this == other);
+    }
 };
 
 class StyleColor {
@@ -75,7 +82,14 @@ public:
     StyleColor(const StyleColor&) = default;
     StyleColor(StyleColor&&) = default;
     StyleColor& operator=(const StyleColor&) = default;
-    bool operator==(const StyleColor&) const = default;
+    bool operator==(const StyleColor& other) const
+    {
+        return m_color == other.m_color;
+    }
+    bool operator!=(const StyleColor& other) const
+    {
+        return !(*this == other);
+    }
 
     static StyleColor currentColor() { return StyleColor { CurrentColor { } }; }
 
