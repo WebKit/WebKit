@@ -163,11 +163,20 @@ enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
 
 struct FontVariantAlternatesNormal {
-    bool operator==(const FontVariantAlternatesNormal&) const = default;
+    bool operator==(const FontVariantAlternatesNormal&) const { return true; }
 };
 
 struct FontVariantAlternatesValues {
-    bool operator==(const FontVariantAlternatesValues&) const = default;
+    bool operator==(const FontVariantAlternatesValues& other) const
+    {
+        return stylistic == other.styleset
+            && styleset == other.styleset
+            && characterVariant == other.characterVariant
+            && swash == other.swash
+            && ornaments == other.ornaments
+            && annotation == other.annotation
+            && historicalForms == other.historicalForms;
+    }
 
     std::optional<String> stylistic;
     std::optional<String> styleset;
@@ -184,7 +193,7 @@ class FontVariantAlternates {
     using Values = FontVariantAlternatesValues;
 
 public:
-    bool operator==(const FontVariantAlternates&) const = default;
+    bool operator==(const FontVariantAlternates& other) const { return m_val == other.m_val; }
 
     bool isNormal() const
     {
