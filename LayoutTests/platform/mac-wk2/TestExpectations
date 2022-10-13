@@ -1773,6 +1773,9 @@ webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/245140 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Pass Failure ]
 
+# Mac does not support screen orientation locking, making this test flaky.
+imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure Pass ]
+
 webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Failure ]
 
 webkit.org/b/245802 imported/w3c/web-platform-tests/permissions/permissions-cg.https.html [ Pass Failure ]

@@ -26,10 +26,12 @@
 #include "config.h"
 #include "ScreenOrientation.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
+#include "FullscreenManager.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
@@ -74,25 +76,86 @@ ScreenOrientationManager* ScreenOrientation::manager() const
     return page ? page->screenOrientationManager() : nullptr;
 }
 
+static bool isSupportedLockType(ScreenOrientationLockType lockType)
+{
+    switch (lockType) {
+    case ScreenOrientationLockType::Any:
+    case ScreenOrientationLockType::Natural:
+    case ScreenOrientationLockType::Portrait:
+    case ScreenOrientationLockType::Landscape:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
 {
+    auto* document = this->document();
+    if (!document || !document->isFullyActive()) {
+        promise->reject(Exception { InvalidStateError, "Document is not fully active."_s });
+        return;
+    }
+
     auto* manager = this->manager();
     if (!manager) {
         promise->reject(Exception { InvalidStateError, "No browsing context"_s });
         return;
     }
-    manager->lock(lockType, [promise = WTFMove(promise)](std::optional<Exception>&& exception) {
-        if (exception)
-            promise->reject(WTFMove(*exception));
-        else
-            promise->resolve();
+
+    // FIXME: Add support for the sandboxed orientation lock browsing context flag.
+    if (!document->isSameOriginAsTopDocument()) {
+        promise->reject(Exception { SecurityError, "Only first party documents can lock the screen orientation"_s });
+        return;
+    }
+#if ENABLE(FULLSCREEN_API)
+    if (!document->fullscreenManager().isFullscreen()) {
+#else
+    if (true) {
+#endif
+        promise->reject(Exception { SecurityError, "Locking the screen orientation is only allowed when in fullscreen"_s });
+        return;
+    }
+    if (!isSupportedLockType(lockType)) {
+        promise->reject(Exception { NotSupportedError, "Lock type should be one of { \"any\", \"natural\", \"portrait\", \"landscape\" }"_s });
+        return;
+    }
+    if (auto previousPromise = manager->takeLockPromise()) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [previousPromise = WTFMove(previousPromise)]() mutable {
+            previousPromise->reject(Exception { AbortError, "A new lock request was started"_s });
+        });
+    }
+    manager->setLockPromise(*this, WTFMove(promise));
+    manager->lock(lockType, [this, protectedThis = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, exception = WTFMove(exception)]() mutable {
+            auto* manager = this->manager();
+            if (!manager)
+                return;
+
+            auto promise = manager->takeLockPromise();
+            if (!promise)
+                return;
+
+            if (exception)
+                promise->reject(WTFMove(*exception));
+            else
+                promise->resolve();
+        });
     });
 }
 
-void ScreenOrientation::unlock()
+ExceptionOr<void> ScreenOrientation::unlock()
 {
+    auto* document = this->document();
+    if (!document || !document->isFullyActive())
+        return Exception { InvalidStateError, "Document is not fully active."_s };
+
+    if (!document->isSameOriginAsTopDocument())
+        return { };
+
     if (auto* manager = this->manager())
         manager->unlock();
+    return { };
 }
 
 auto ScreenOrientation::type() const -> Type
@@ -150,7 +213,7 @@ bool ScreenOrientation::shouldListenForChangeNotification() const
 
 void ScreenOrientation::screenOrientationDidChange(ScreenOrientationType)
 {
-    dispatchEvent(Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 const char* ScreenOrientation::activeDOMObjectName() const
@@ -174,8 +237,13 @@ void ScreenOrientation::resume()
 
 void ScreenOrientation::stop()
 {
-    if (auto* manager = this->manager())
-        manager->removeObserver(*this);
+    auto* manager = this->manager();
+    if (!manager)
+        return;
+
+    manager->removeObserver(*this);
+    if (manager->lockRequester() == this)
+        manager->takeLockPromise()->reject(Exception { AbortError, "Document is no longer fully active"_s });
 }
 
 bool ScreenOrientation::virtualHasPendingActivity() const

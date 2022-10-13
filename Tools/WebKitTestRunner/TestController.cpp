@@ -404,6 +404,18 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
     WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
 }
 
+#if PLATFORM(IOS)
+static void lockScreenOrientationCallback(WKPageRef, WKScreenOrientationType orientation)
+{
+    TestController::singleton().lockScreenOrientation(orientation);
+}
+
+static void unlockScreenOrientationCallback(WKPageRef)
+{
+    TestController::singleton().unlockScreenOrientation();
+}
+#endif
+
 void TestController::closeOtherPage(WKPageRef page, PlatformWebView* view)
 {
     WKPageClose(page);
@@ -859,8 +871,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV18 pageUIClient = {
-        { 18, m_mainWebView.get() },
+    WKPageUIClientV19 pageUIClient = {
+        { 19, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -937,7 +949,14 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         decidePolicyForSpeechRecognitionPermissionRequest,
         decidePolicyForMediaKeySystemPermissionRequest,
         nullptr, // requestWebAuthenticationNoGesture
-        queryPermission
+        queryPermission,
+#if PLATFORM(IOS)
+        lockScreenOrientationCallback,
+        unlockScreenOrientationCallback
+#else
+        0, // lockScreenOrientation
+        0 // unlockScreenOrientation
+#endif
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

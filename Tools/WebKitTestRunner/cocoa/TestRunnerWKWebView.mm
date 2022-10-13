@@ -71,6 +71,7 @@ struct CustomMenuActionInfo {
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UITapGestureRecognizer> _windowTapGestureRecognizer;
     BlockPtr<void()> _windowTapRecognizedCallback;
+    UIInterfaceOrientationMask _supportedInterfaceOrientations;
 #endif
 }
 
@@ -119,6 +120,7 @@ IGNORE_WARNINGS_END
         self.UIDelegate = self;
         self._inputDelegate = self;
         self.focusStartsInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
+        self.supportedInterfaceOrientations = UIInterfaceOrientationMaskAll;
 #endif
     }
     return self;
@@ -462,6 +464,16 @@ IGNORE_WARNINGS_END
 - (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
 {
     return _overrideSafeAreaInsets;
+}
+
+- (void)setSupportedInterfaceOrientations:(UIInterfaceOrientationMask)orientations
+{
+    _supportedInterfaceOrientations = orientations;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return _supportedInterfaceOrientations;
 }
 
 - (UIView *)contentView

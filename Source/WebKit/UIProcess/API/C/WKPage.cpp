@@ -130,7 +130,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18, WKPageUIClientV19> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2189,6 +2189,37 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return;
             }
             m_client.queryPermission(toAPI(API::String::create(permissionName).ptr()), toAPI(&origin), toAPI(QueryPermissionResultCallback::create(WTFMove(completionHandler)).ptr()));
+        }
+
+        static WKScreenOrientationType toWKScreenOrientationType(WebCore::ScreenOrientationType orientation)
+        {
+            switch (orientation) {
+            case WebCore::ScreenOrientationType::LandscapePrimary:
+                return kWKScreenOrientationTypeLandscapePrimary;
+            case WebCore::ScreenOrientationType::LandscapeSecondary:
+                return kWKScreenOrientationTypeLandscapeSecondary;
+            case WebCore::ScreenOrientationType::PortraitSecondary:
+                return kWKScreenOrientationTypePortraitSecondary;
+            case WebCore::ScreenOrientationType::PortraitPrimary:
+                return kWKScreenOrientationTypePortraitPrimary;
+            }
+            ASSERT_NOT_REACHED();
+            return kWKScreenOrientationTypePortraitPrimary;
+        }
+
+        bool lockScreenOrientation(WebPageProxy& page, WebCore::ScreenOrientationType orientation) final
+        {
+            if (!m_client.lockScreenOrientation)
+                return false;
+
+            m_client.lockScreenOrientation(toAPI(&page), toWKScreenOrientationType(orientation));
+            return true;
+        }
+
+        void unlockScreenOrientation(WebPageProxy& page) final
+        {
+            if (m_client.unlockScreenOrientation)
+                m_client.unlockScreenOrientation(toAPI(&page));
         }
     };
 

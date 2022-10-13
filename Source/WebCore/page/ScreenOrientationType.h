@@ -36,6 +36,16 @@ enum class ScreenOrientationType : uint8_t {
     LandscapeSecondary
 };
 
+constexpr bool isPortait(ScreenOrientationType type)
+{
+    return type == ScreenOrientationType::PortraitPrimary || type == ScreenOrientationType::PortraitSecondary;
+}
+
+constexpr bool isLandscape(ScreenOrientationType type)
+{
+    return type == ScreenOrientationType::LandscapePrimary || type == ScreenOrientationType::LandscapeSecondary;
+}
+
 } // namespace WebCore
 
 namespace WTF {

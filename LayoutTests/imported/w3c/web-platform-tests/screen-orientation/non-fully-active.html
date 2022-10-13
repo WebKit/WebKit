@@ -3,6 +3,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/testdriver.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
+<body>
 <script>
   async function attachIFrame() {
     const iframe = document.createElement("iframe");
@@ -21,11 +22,13 @@
       ? "landscape"
       : "portrait";
 
+    const frameDOMException = iframe.contentWindow.DOMException;
     iframe.remove();
 
     await promise_rejects_dom(
       t,
       "InvalidStateError",
+      frameDOMException,
       orientation.lock(opposite)
     );
   }, "Attempting to lock non-fully active documents results in a InvalidStateError");
@@ -34,9 +37,10 @@
     const iframe = await attachIFrame();
     const { orientation } = iframe.contentWindow.screen;
 
+    const frameDOMException = iframe.contentWindow.DOMException;
     iframe.remove();
 
-    assert_throws_dom(t, "InvalidStateError", () => { orientation.unlock() });
+    assert_throws_dom("InvalidStateError", frameDOMException, () => { orientation.unlock() });
   }, "Attempting to unlock non-fully active documents results in a InvalidStateError");
 
   promise_test(async (t) => {
@@ -52,9 +56,11 @@
 
     const p = orientation.lock(opposite);
 
+    const frameDOMException = iframe.contentWindow.DOMException;
     iframe.remove();
 
-    await promise_rejects_dom(t, "AbortError", p);
-    assert_throws_dom(t, "InvalidStateError", () => { orientation.unlock() });
+    await promise_rejects_dom(t, "AbortError", frameDOMException, p);
+    assert_throws_dom("InvalidStateError", frameDOMException, () => { orientation.unlock() });
   }, "Making a document non-fully active while locking results in an AbortError");
 </script>
+</body>

@@ -250,6 +250,7 @@ struct PerWebProcessState {
     BOOL _haveSetUnobscuredSafeAreaInsets;
     BOOL _needsToPresentLockdownModeMessage;
     UIRectEdge _obscuredInsetEdgesAffectedBySafeArea;
+    UIInterfaceOrientationMask _supportedInterfaceOrientations;
 
     UIInterfaceOrientation _interfaceOrientationOverride;
     BOOL _overridesInterfaceOrientation;

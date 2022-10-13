@@ -62,6 +62,8 @@ public:
     void setWindow(UIWindow *);
 #endif
 
+    void unlockIfNecessary();
+
 private:
     void platformInitialize();
     void platformDestroy();
@@ -82,6 +84,8 @@ private:
 
     WebPageProxy& m_page;
     Ref<WebCore::ScreenOrientationProvider> m_provider;
+    std::optional<WebCore::ScreenOrientationType> m_currentlyLockedOrientation;
+    CompletionHandler<void(std::optional<WebCore::Exception>&&)> m_currentLockRequest;
 };
 
 } // namespace WebKit

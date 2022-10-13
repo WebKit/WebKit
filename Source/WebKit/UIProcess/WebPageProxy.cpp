@@ -5171,6 +5171,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             if (privateClickMeasurement->destinationSite().matches(frame->url()) || privateClickMeasurement->isSKAdNetworkAttribution())
                 websiteDataStore().storePrivateClickMeasurement(*privateClickMeasurement);
         }
+        if (m_screenOrientationManager)
+            m_screenOrientationManager->unlockIfNecessary();
     }
     m_privateClickMeasurement.reset();
 
@@ -6253,6 +6255,9 @@ void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifie
 
 void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
 {
+    if (m_screenOrientationManager)
+        m_screenOrientationManager->unlockIfNecessary();
+
     m_uiClient->didExitFullscreen(this);
 
     if (m_currentFullscreenVideoSessionIdentifier == identifier) {
@@ -6274,6 +6279,9 @@ void WebPageProxy::didEnterFullscreen()
 
 void WebPageProxy::didExitFullscreen()
 {
+    if (m_screenOrientationManager)
+        m_screenOrientationManager->unlockIfNecessary();
+
     m_uiClient->didExitFullscreen(this);
 }
 

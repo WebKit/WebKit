@@ -148,6 +148,13 @@ static CGRect viewRectForWindowRect(CGRect, PlatformWebView::WebViewSizingMode);
     return layoutMargins;
 }
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    if (TestRunnerWKWebView *view = WTR::TestController::singleton().mainWebView() ? WTR::TestController::singleton().mainWebView()->platformView() : nullptr)
+        return view.supportedInterfaceOrientations;
+    return UIInterfaceOrientationMaskAll;
+}
+
 - (void)viewWillTransitionToSize:(CGSize)toSize withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:toSize withTransitionCoordinator:coordinator];

@@ -585,30 +585,23 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
 }
 
 #if PLATFORM(IOS)
-static _WKScreenOrientationLockType toWKScreenOrientationLockType(WebCore::ScreenOrientationLockType lockType)
+static _WKScreenOrientationType toWKScreenOrientationType(WebCore::ScreenOrientationType lockType)
 {
     switch (lockType) {
-    case WebCore::ScreenOrientationLockType::Natural:
-    case WebCore::ScreenOrientationLockType::Portrait:
+    case WebCore::ScreenOrientationType::PortraitSecondary:
+        return _WKScreenOrientationTypePortraitSecondary;
+    case WebCore::ScreenOrientationType::LandscapePrimary:
+        return _WKScreenOrientationTypeLandscapePrimary;
+    case WebCore::ScreenOrientationType::LandscapeSecondary:
+        return _WKScreenOrientationTypeLandscapeSecondary;
+    case WebCore::ScreenOrientationType::PortraitPrimary:
         break;
-    case WebCore::ScreenOrientationLockType::Any:
-        return _WKScreenOrientationLockTypeAny;
-    case WebCore::ScreenOrientationLockType::Landscape:
-        return _WKScreenOrientationLockTypeLandscape;
-    case WebCore::ScreenOrientationLockType::PortraitPrimary:
-        return _WKScreenOrientationLockTypePortraitPrimary;
-    case WebCore::ScreenOrientationLockType::PortraitSecondary:
-        return _WKScreenOrientationLockTypePortraitSecondary;
-    case WebCore::ScreenOrientationLockType::LandscapePrimary:
-        return _WKScreenOrientationLockTypeLandscapePrimary;
-    case WebCore::ScreenOrientationLockType::LandscapeSecondary:
-        return _WKScreenOrientationLockTypeLandscapeSecondary;
     }
-    return _WKScreenOrientationLockTypePortrait;
+    return _WKScreenOrientationTypePortraitPrimary;
 }
 #endif
 
-bool UIDelegate::UIClient::lockScreenOrientation(WebCore::ScreenOrientationLockType lockType)
+bool UIDelegate::UIClient::lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType orientation)
 {
 #if PLATFORM(IOS)
     if (!m_uiDelegate)
@@ -619,15 +612,15 @@ bool UIDelegate::UIClient::lockScreenOrientation(WebCore::ScreenOrientationLockT
     if (!delegate)
         return false;
 
-    [(id<WKUIDelegatePrivate>)delegate _webViewLockScreenOrientation:m_uiDelegate->m_webView.get().get() lockType:toWKScreenOrientationLockType(lockType)];
+    [(id<WKUIDelegatePrivate>)delegate _webViewLockScreenOrientation:m_uiDelegate->m_webView.get().get() lockType:toWKScreenOrientationType(orientation)];
     return true;
 #else
-    UNUSED_PARAM(lockType);
+    UNUSED_PARAM(orientation);
     return false;
 #endif
 }
 
-void UIDelegate::UIClient::unlockScreenOrientation()
+void UIDelegate::UIClient::unlockScreenOrientation(WebPageProxy&)
 {
 #if PLATFORM(IOS)
     if (!m_uiDelegate)
