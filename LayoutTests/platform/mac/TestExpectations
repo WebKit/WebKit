@@ -2380,3 +2380,5 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
 
 webkit.org/b/246464 fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
+
+webkit.org/b/246467 [ Debug ] compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Pass Failure ]
