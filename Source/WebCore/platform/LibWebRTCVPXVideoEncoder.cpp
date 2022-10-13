@@ -147,6 +147,11 @@ LibWebRTCVPXInternalVideoEncoder::LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXV
     , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_internalEncoder(createInternalEncoder(type))
 {
+    if (config.bitRate) {
+        webrtc::VideoBitrateAllocation allocation;
+        allocation.SetBitrate(0, 0, config.bitRate);
+        m_internalEncoder->SetRates({ allocation, config.frameRate });
+    }
     m_internalEncoder->RegisterEncodeCompleteCallback(this);
 
     // FIXME: Check InitEncode result.
