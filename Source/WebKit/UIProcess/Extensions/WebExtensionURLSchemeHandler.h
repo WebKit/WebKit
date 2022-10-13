@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,36 @@
 
 #pragma once
 
-#include "WebURLSchemeHandler.h"
-#include <wtf/RetainPtr.h>
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-@protocol WKURLSchemeHandler;
+#include "WebURLSchemeHandler.h"
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
+
+OBJC_CLASS NSBlockOperation;
 
 namespace WebKit {
 
-class WebURLSchemeTask;
+class WebExtensionController;
 
-class WebURLSchemeHandlerCocoa : public WebURLSchemeHandler {
+class WebExtensionURLSchemeHandler : public WebURLSchemeHandler {
 public:
-    static Ref<WebURLSchemeHandlerCocoa> create(id <WKURLSchemeHandler>);
-
-    id <WKURLSchemeHandler> apiHandler() const { return m_apiHandler.get(); }
-
-    bool isAPIHandler() final { return true; }
+    static Ref<WebExtensionURLSchemeHandler> create(WebExtensionController& controller)
+    {
+        return adoptRef(*new WebExtensionURLSchemeHandler(controller));
+    }
 
 private:
-    WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler>);
+    WebExtensionURLSchemeHandler(WebExtensionController&);
 
     void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final;
 
-    RetainPtr<id <WKURLSchemeHandler>> m_apiHandler;
-
-}; // class WebURLSchemeHandler
+    WeakPtr<WebExtensionController> m_webExtensionController;
+    HashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;
+}; // class WebExtensionURLSchemeHandler
 
 } // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

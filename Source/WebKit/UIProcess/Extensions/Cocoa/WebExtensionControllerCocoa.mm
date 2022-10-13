@@ -33,6 +33,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WebPageProxy.h"
+#import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
@@ -44,10 +46,34 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
     if (outError)
         *outError = nil;
 
-    if (!extensionContext.load(*this, outError))
+    if (!m_extensionContexts.add(extensionContext)) {
+        if (outError)
+            *outError = extensionContext.createError(WebExtensionContext::Error::AlreadyLoaded);
         return false;
+    }
 
-    m_extensionContexts.addVoid(extensionContext);
+    if (!m_extensionContextBaseURLMap.add(extensionContext.baseURL(), extensionContext)) {
+        m_extensionContexts.remove(extensionContext);
+        if (outError)
+            *outError = extensionContext.createError(WebExtensionContext::Error::BaseURLTaken);
+        return false;
+    }
+
+    if (!extensionContext.load(*this, outError)) {
+        m_extensionContexts.remove(extensionContext);
+        m_extensionContextBaseURLMap.remove(extensionContext.baseURL());
+        return false;
+    }
+
+    auto scheme = extensionContext.baseURL().protocol().toString();
+    m_registeredSchemeHandlers.ensure(scheme, [&]() {
+        auto handler = WebExtensionURLSchemeHandler::create(*this);
+
+        for (auto& page : m_pages)
+            page.setURLSchemeHandlerForScheme(handler.copyRef(), scheme);
+
+        return handler;
+    });
 
     return true;
 }
@@ -63,20 +89,45 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
         return false;
     }
 
+    ASSERT(m_extensionContextBaseURLMap.contains(extensionContext.baseURL()));
+    m_extensionContextBaseURLMap.remove(extensionContext.baseURL());
+
     if (!extensionContext.unload(outError))
         return false;
 
     return true;
 }
 
-std::optional<Ref<WebExtensionContext>> WebExtensionController::extensionContext(const WebExtension& extension) const
+void WebExtensionController::addPage(WebPageProxy& page)
+{
+    ASSERT(!m_pages.contains(page));
+
+    m_pages.add(page);
+
+    for (auto& entry : m_registeredSchemeHandlers)
+        page.setURLSchemeHandlerForScheme(entry.value.copyRef(), entry.key);
+}
+
+void WebExtensionController::removePage(WebPageProxy& page)
+{
+    ASSERT(m_pages.contains(page));
+
+    m_pages.remove(page);
+}
+
+RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebExtension& extension) const
 {
     for (auto& extensionContext : m_extensionContexts) {
         if (extensionContext->extension() == extension)
-            return extensionContext;
+            return extensionContext.ptr();
     }
 
-    return std::nullopt;
+    return nullptr;
+}
+
+RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const URL& url) const
+{
+    return m_extensionContextBaseURLMap.get(url.truncatedForUseAsBase());
 }
 
 WebExtensionController::WebExtensionSet WebExtensionController::extensions() const
