@@ -3325,6 +3325,9 @@ static bool isLockdownModeWarningNeeded()
 
 - (void)_setInterfaceOrientationOverride:(UIInterfaceOrientation)interfaceOrientation
 {
+    if (_overridesInterfaceOrientation && interfaceOrientation == _interfaceOrientationOverride)
+        return;
+
     _overridesInterfaceOrientation = YES;
     _interfaceOrientationOverride = interfaceOrientation;
 
