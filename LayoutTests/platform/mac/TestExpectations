@@ -2378,3 +2378,5 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ Release ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
+
+webkit.org/b/246464 fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
