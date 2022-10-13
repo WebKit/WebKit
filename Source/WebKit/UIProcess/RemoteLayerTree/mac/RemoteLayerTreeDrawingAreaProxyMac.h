@@ -42,6 +42,8 @@ public:
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
+
+    void didChangeViewExposedRect() override;
 };
 
 } // namespace WebKit

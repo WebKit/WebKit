@@ -3000,6 +3000,8 @@
 		0F2E0DF728F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorProxyMac.h; sourceTree = "<group>"; };
 		0F2E0DF828F0D04D006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaProxyMac.mm; sourceTree = "<group>"; };
 		0F2E0DF928F0D04E006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMac.h; sourceTree = "<group>"; };
+		0F3157A828F4EDD800D79D05 /* RemoteLayerTreeDrawingAreaProxyIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyIOS.h; sourceTree = "<group>"; };
+		0F3157A928F4EDD800D79D05 /* RemoteLayerTreeDrawingAreaProxyIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaProxyIOS.mm; sourceTree = "<group>"; };
 		0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorHighlightView.mm; sourceTree = "<group>"; };
 		0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorHighlightView.h; sourceTree = "<group>"; };
 		0F4000FD2527D69D00E91DA7 /* WebWheelEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebWheelEvent.h; sourceTree = "<group>"; };
@@ -9078,6 +9080,8 @@
 		2D1551AA1F5A9BA70006E3FE /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				0F3157A828F4EDD800D79D05 /* RemoteLayerTreeDrawingAreaProxyIOS.h */,
+				0F3157A928F4EDD800D79D05 /* RemoteLayerTreeDrawingAreaProxyIOS.mm */,
 				0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */,
 				2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */,
 				2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */,

@@ -23,38 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RemoteLayerTreeDrawingAreaProxyMac.h"
+#pragma once
 
-#if PLATFORM(MAC)
+#include "RemoteLayerTreeDrawingAreaProxy.h"
 
-#import "RemoteScrollingCoordinatorProxyMac.h"
-#import <WebCore/ScrollView.h>
+#if PLATFORM(IOS_FAMILY)
+
+OBJC_CLASS WKOneShotDisplayLinkHandler;
 
 namespace WebKit {
-using namespace WebCore;
 
-RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& processProxy)
-    : RemoteLayerTreeDrawingAreaProxy(pageProxy, processProxy)
-{
-}
+class RemoteLayerTreeDrawingAreaProxyIOS final : public RemoteLayerTreeDrawingAreaProxy {
+public:
+    RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);
+    virtual ~RemoteLayerTreeDrawingAreaProxyIOS();
 
-DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyMac::delegatedScrollingMode() const
-{
-    return DelegatedScrollingMode::DelegatedToWebKit;
-}
+private:
+    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
-std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyMac::createScrollingCoordinatorProxy() const
-{
-    return makeUnique<RemoteScrollingCoordinatorProxyMac>(m_webPageProxy);
-}
+    void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
+    void scheduleDisplayLink() override;
+    void pauseDisplayLink() override;
 
-void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
-{
-    RemoteLayerTreeDrawingAreaProxy::didChangeViewExposedRect();
-    updateDebugIndicatorPosition();
-}
+    WKOneShotDisplayLinkHandler *displayLinkHandler();
+
+    RetainPtr<WKOneShotDisplayLinkHandler> m_displayLinkHandler;
+};
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(IOS_FAMILY)
