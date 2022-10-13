@@ -99,7 +99,7 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     RefPtr<RemoteVideoFrameObjectHeap> videoFrameObjectHeap;
     if (useRemoteFrames)
         videoFrameObjectHeap = m_videoFrameObjectHeap.ptr();
-    return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) mutable {
+    return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
         auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::VideoFrame::Rotation::None, pixelBuffer);
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);
@@ -170,7 +170,7 @@ void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier id
     webrtc::setDecodingFormat(decoder, data.data(), data.size(), width, height);
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     assertIsCurrent(workQueue());
     auto decoder = m_decoders.get(identifier);

@@ -330,7 +330,7 @@ void LibWebRTCCodecs::setDecoderFormatDescription(Decoder& decoder, const uint8_
     decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetDecoderFormatDescription { decoder.identifier, IPC::DataReference { data, size }, width, height }, 0);
 }
 
-int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };
     if (!decoder.connection || decoder.hasError) {
@@ -383,7 +383,7 @@ void LibWebRTCCodecs::flushDecoderCompleted(VideoDecoderIdentifier decoderIdenti
         decoder->flushCallbacks.takeFirst()();
 }
 
-void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
+void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
 {
     assertIsCurrent(workQueue());
 
@@ -415,7 +415,7 @@ void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier
         frame.size().width(), frame.size().height());
 }
 
-void LibWebRTCCodecs::completedDecodingCV(VideoDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+void LibWebRTCCodecs::completedDecodingCV(VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
 {
     assertIsCurrent(workQueue());
 

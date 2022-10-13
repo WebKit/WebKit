@@ -84,7 +84,7 @@ private:
     void releaseDecoder(VideoDecoderIdentifier);
     void flushDecoder(VideoDecoderIdentifier);
     void setDecoderFormatDescription(VideoDecoderIdentifier, const IPC::DataReference&, uint16_t width, uint16_t height);
-    void decodeFrame(VideoDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
+    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, const IPC::DataReference&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
     void createEncoder(VideoEncoderIdentifier, VideoCodecType, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB);
