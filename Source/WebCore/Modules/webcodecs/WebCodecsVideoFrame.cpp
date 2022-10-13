@@ -218,6 +218,10 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&& videoFram
         result->m_visibleWidth = result->m_codedWidth;
         result->m_visibleHeight = result->m_codedHeight;
     }
+
+    result->m_displayWidth = init.displayWidth.value_or(result->m_visibleWidth);
+    result->m_displayHeight = init.displayHeight.value_or(result->m_visibleHeight);
+
     result->m_duration = init.duration;
     result->m_timestamp = init.timestamp;
     result->m_colorSpace = videoFramePickColorSpace(init.colorSpace, *result->m_format);
@@ -257,8 +261,9 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<
 
     result->m_codedWidth = videoFrame->m_codedWidth;
     result->m_codedHeight = videoFrame->m_codedHeight;
+    result->m_colorSpace = videoFrame->m_colorSpace;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_visibleLeft), static_cast<double>(videoFrame->m_visibleTop), static_cast<double>(videoFrame->m_visibleWidth), static_cast<double>(videoFrame->m_visibleHeight) }, result->m_codedWidth, result->m_codedHeight);
+    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_visibleLeft), static_cast<double>(videoFrame->m_visibleTop), static_cast<double>(videoFrame->m_visibleWidth), static_cast<double>(videoFrame->m_visibleHeight) }, videoFrame->m_displayWidth, videoFrame->m_displayHeight);
 
     result->m_duration = init.duration ? init.duration : videoFrame->m_duration;
     result->m_timestamp = init.timestamp.value_or(videoFrame->m_timestamp);

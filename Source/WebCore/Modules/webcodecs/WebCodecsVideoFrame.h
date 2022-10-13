@@ -77,14 +77,14 @@ public:
         size_t codedWidth { 0 };
         size_t codedHeight { 0 };
         int64_t timestamp { 0 };
-        std::optional<uint64_t> duration { 0 };
+        std::optional<uint64_t> duration;
 
         std::optional<Vector<PlaneLayout>> layout;
 
         std::optional<DOMRectInit> visibleRect;
 
-        std::optional<size_t> displayWidth { 0 };
-        std::optional<size_t> displayHeight { 0 };
+        std::optional<size_t> displayWidth;
+        std::optional<size_t> displayHeight;
 
         std::optional<VideoColorSpaceInit> colorSpace;
     };

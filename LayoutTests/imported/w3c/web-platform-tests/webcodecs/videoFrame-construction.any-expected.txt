@@ -12,8 +12,8 @@ FAIL Test constructing w/ unusable image argument throws: closed ImageBitmap. Ca
 FAIL Test constructing w/ unusable image argument throws: closed VideoFrame. Can't find variable: OffscreenCanvas
 FAIL Test invalid CanvasImageSource constructed VideoFrames Can't find variable: OffscreenCanvas
 PASS Test visibleRect metadata override where source display size = visible size
-FAIL Test visibleRect metadata override where source display width = 2 * visible width (anamorphic) assert_equals: cropRightFrame.displayWidth expected 4 but got 2
-FAIL Test visibleRect metadata override where source display size = 2 * visible size for both width and height assert_equals: cropRightFrame.displayWidth expected 4 but got 2
+PASS Test visibleRect metadata override where source display width = 2 * visible width (anamorphic)
+PASS Test visibleRect metadata override where source display size = 2 * visible size for both width and height
 FAIL Test visibleRect + display size metadata override Can't find variable: OffscreenCanvas
 FAIL Test display size metadata override Can't find variable: OffscreenCanvas
 FAIL Test invalid buffer constructed VideoFrames assert_throws_js: odd coded height function "() => constructFrame({timestamp: 1234, codedWidth: 4, codedHeight: 1})" did not throw
