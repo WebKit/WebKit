@@ -28,6 +28,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSStyleSheet.h"
+#include "GenericMediaQuerySerialization.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -66,7 +67,7 @@ String CSSContainerRule::cssText() const
 String CSSContainerRule::conditionText() const
 {
     StringBuilder builder;
-    CQ::serialize(builder, styleRuleContainer().containerQuery().condition);
+    MQ::serialize(builder, styleRuleContainer().containerQuery().condition);
     return builder.toString();
 }
 

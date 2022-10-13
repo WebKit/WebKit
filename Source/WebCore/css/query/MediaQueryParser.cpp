@@ -30,6 +30,11 @@
 namespace WebCore {
 namespace MQ {
 
+MediaQueryParser::MediaQueryParser(const CSSParserContext& context)
+    : GenericMediaQueryParser(context)
+{
+}
+
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)
 {
     MediaQueryList list;
@@ -62,7 +67,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     // <media-condition>
 
     auto rangeCopy = range;
-    if (auto condition = consumeCondition<MediaCondition>(range))
+    if (auto condition = consumeCondition(range))
         return MediaQuery { { }, { }, condition };
 
     range = rangeCopy;
@@ -110,7 +115,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
 
     range.consumeIncludingWhitespace();
 
-    auto condition = consumeCondition<MediaCondition>(range);
+    auto condition = consumeCondition(range);
     if (!condition)
         return { };
 
@@ -120,36 +125,36 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     return MediaQuery { prefix, mediaType, condition };
 }
 
-std::optional<MediaInParens> MediaQueryParser::consumeQueryInParens(CSSParserTokenRange& range)
+void serialize(StringBuilder& builder, const MediaQueryList& list)
 {
-    if (range.peek().type() == FunctionToken) {
-        auto name = range.peek().value();
-        auto functionRange = range.consumeBlock();
-        return GeneralEnclosed { name.toString(), functionRange.serialize() };
+    for (auto& query : list) {
+        if (&query != &list.first())
+            builder.append(", ");
+        serialize(builder, query);
     }
-
-    if (range.peek().type() == LeftParenthesisToken) {
-        auto blockRange = range.consumeBlock();
-        range.consumeWhitespace();
-
-        blockRange.consumeWhitespace();
-
-        auto conditionRange = blockRange;
-        if (auto condition = consumeCondition<MediaCondition>(conditionRange))
-            return { condition };
-
-        if (auto feature = consumeMediaFeature(blockRange))
-            return { *feature };
-
-        return GeneralEnclosed { { }, blockRange.serialize() };
-    }
-
-    return { };
 }
 
-std::optional<MediaFeature> MediaQueryParser::consumeMediaFeature(CSSParserTokenRange& range)
+void serialize(StringBuilder& builder, const MediaQuery& query)
 {
-    return consumeFeature(range);
+    if (query.prefix) {
+        switch (*query.prefix) {
+        case Prefix::Not:
+            builder.append("not ");
+            break;
+        case Prefix::Only:
+            builder.append("only ");
+            break;
+        }
+    }
+
+    if (!query.mediaType.isEmpty()) {
+        serializeIdentifier(query.mediaType, builder);
+        if (query.condition)
+            builder.append(" and ");
+    }
+
+    if (query.condition)
+        serialize(builder, *query.condition);
 }
 
 }

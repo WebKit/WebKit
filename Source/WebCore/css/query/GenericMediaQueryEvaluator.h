@@ -46,15 +46,29 @@ public:
 template<typename ConcreteEvaluator>
 class GenericMediaQueryEvaluator : public GenericMediaQueryEvaluatorBase {
 public:
-    template<typename ConditionType, typename Context> EvaluationResult evaluateCondition(const ConditionType&, const Context&) const;
+    template<typename Context> EvaluationResult evaluateQueryInParens(const QueryInParens&, const Context&) const;
+    template<typename Context> EvaluationResult evaluateCondition(const Condition&, const Context&) const;
 
 private:
     const ConcreteEvaluator& concreteEvaluator() const { return static_cast<const ConcreteEvaluator&>(*this); }
 };
 
 template<typename ConcreteEvaluator>
-template<typename ConditionType, typename Context>
-EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateCondition(const ConditionType& condition,  const Context& context) const
+template<typename Context>
+EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateQueryInParens(const QueryInParens& queryInParens, const Context& context) const
+{
+    return WTF::switchOn(queryInParens, [&](const Condition& condition) {
+        return evaluateCondition(condition, context);
+    }, [&](const MQ::Feature& feature) {
+        return concreteEvaluator().evaluateFeature(feature, context);
+    }, [&](const MQ::GeneralEnclosed&) {
+        return MQ::EvaluationResult::Unknown;
+    });
+}
+
+template<typename ConcreteEvaluator>
+template<typename Context>
+EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateCondition(const Condition& condition, const Context& context) const
 {
     if (condition.queries.isEmpty())
         return EvaluationResult::Unknown;

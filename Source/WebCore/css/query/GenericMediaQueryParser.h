@@ -54,26 +54,26 @@ public:
         : GenericMediaQueryParserBase(context)
     { }
 
-    template<typename ConditionType> std::optional<ConditionType> consumeCondition(CSSParserTokenRange&);
+    std::optional<Condition> consumeCondition(CSSParserTokenRange&);
+    std::optional<QueryInParens> consumeQueryInParens(CSSParserTokenRange&);
 
 private:
     ConcreteParser& concreteParser() { return static_cast<ConcreteParser&>(*this); }
 };
 
 template<typename ConcreteParser>
-template<typename ConditionType>
-std::optional<ConditionType> GenericMediaQueryParser<ConcreteParser>::consumeCondition(CSSParserTokenRange& range)
+std::optional<Condition> GenericMediaQueryParser<ConcreteParser>::consumeCondition(CSSParserTokenRange& range)
 {
     if (range.peek().type() == IdentToken) {
         if (range.peek().id() == CSSValueNot) {
             range.consumeIncludingWhitespace();
             if (auto query = concreteParser().consumeQueryInParens(range))
-                return ConditionType { LogicalOperator::Not, { *query } };
+                return Condition { LogicalOperator::Not, { *query } };
             return { };
         }
     }
 
-    ConditionType condition;
+    Condition condition;
 
     auto query = concreteParser().consumeQueryInParens(range);
     if (!query)
@@ -111,6 +111,34 @@ std::optional<ConditionType> GenericMediaQueryParser<ConcreteParser>::consumeCon
     }
 
     return condition;
+}
+
+template<typename ConcreteParser>
+std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQueryInParens(CSSParserTokenRange& range)
+{
+    if (range.peek().type() == FunctionToken) {
+        auto name = range.peek().value();
+        auto functionRange = range.consumeBlock();
+        return GeneralEnclosed { name.toString(), functionRange.serialize() };
+    }
+
+    if (range.peek().type() == LeftParenthesisToken) {
+        auto blockRange = range.consumeBlock();
+        range.consumeWhitespace();
+
+        blockRange.consumeWhitespace();
+
+        auto conditionRange = blockRange;
+        if (auto condition = consumeCondition(conditionRange))
+            return { condition };
+
+        if (auto feature = concreteParser().consumeFeature(blockRange))
+            return { *feature };
+
+        return GeneralEnclosed { { }, blockRange.serialize() };
+    }
+
+    return { };
 }
 
 }

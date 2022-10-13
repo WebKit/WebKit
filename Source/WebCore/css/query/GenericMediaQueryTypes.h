@@ -33,6 +33,8 @@ enum class LogicalOperator : uint8_t { And, Or, Not };
 enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
 enum class Syntax : uint8_t { Boolean, Plain, Range };
 
+struct Condition;
+
 struct Comparison {
     ComparisonOperator op;
     RefPtr<CSSValue> value;
@@ -48,6 +50,13 @@ struct Feature {
 struct GeneralEnclosed {
     String name;
     String text;
+};
+
+using QueryInParens = std::variant<Condition, Feature, GeneralEnclosed>;
+
+struct Condition {
+    LogicalOperator logicalOperator { LogicalOperator::And };
+    Vector<QueryInParens> queries;
 };
 
 }
