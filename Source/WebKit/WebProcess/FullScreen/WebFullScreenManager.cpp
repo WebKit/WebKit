@@ -171,12 +171,13 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 
     setElement(*element);
 
-    bool isVideoElement = false;
+    bool isVideoElementWithControls = false;
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement()) {
+    if (auto* videoElement = dynamicDowncast<HTMLVideoElement>(element))
+        isVideoElementWithControls = videoElement->controls();
+
+    if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement())
         currentPlaybackControlsElement->prepareForVideoFullscreenStandby();
-        isVideoElement = currentPlaybackControlsElement->controls();
-    }
 #endif
 
     m_initialFrame = screenRectOfContents(m_element.get());
@@ -186,7 +187,7 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 #else
     FloatSize videoDimensions;
 #endif
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement, videoDimensions);
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElementWithControls, videoDimensions);
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)

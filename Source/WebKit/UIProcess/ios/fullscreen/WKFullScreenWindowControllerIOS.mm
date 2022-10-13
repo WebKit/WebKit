@@ -571,7 +571,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_fullscreenViewController setExitFullScreenAction:@selector(requestExitFullScreen)];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    [_fullscreenViewController hideMediaControls:manager->isVideoElement()];
+    [_fullscreenViewController hideMediaControls:manager->isVideoElementWithControls()];
 #endif
     [self _updateLocationInfo];
 

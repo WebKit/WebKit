@@ -51,7 +51,7 @@ class WebPage;
 class InjectedBundlePageFullScreenClient : public API::Client<WKBundlePageFullScreenClientBase> {
 public:
     bool supportsFullScreen(WebPage*, bool withKeyboard);
-    void enterFullScreenForElement(WebPage*, WebCore::Element*, bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, WebCore::FloatSize videoDimensions);
+    void enterFullScreenForElement(WebPage*, WebCore::Element*, bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElementWithControls, WebCore::FloatSize videoDimensions);
     void exitFullScreenForElement(WebPage*, WebCore::Element*);
     void beganEnterFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
     void beganExitFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
