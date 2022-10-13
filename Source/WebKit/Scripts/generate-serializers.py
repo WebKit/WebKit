@@ -61,6 +61,11 @@ class SerializedType(object):
             return self.name
         return self.namespace + '::' + self.name
 
+    def namespace_unless_wtf_and_name(self):
+        if self.namespace == 'WTF':
+            return self.name
+        return self.namespace_and_name()
+
 
 class SerializedEnum(object):
     def __init__(self, namespace, name, underlying_type, valid_values, condition, attributes):
@@ -444,7 +449,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
     result.append('{')
     result.append('    return {')
     for type in serialized_types:
-        result.append('        { "' + type.namespace_and_name() + '"_s, {')
+        result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
         for member in type.members:
             result.append('            "' + member.type + '"_s,')
         result.append('        } },')
@@ -518,6 +523,8 @@ def parse_serialized_types(file, file_name):
                 if namespace is not None and (attributes is None or 'CustomHeader' not in attributes and 'Nested' not in attributes):
                     if namespace == 'WebKit':
                         headers.append(ConditionalHeader('"' + name + '.h"', type_condition))
+                    elif namespace == 'WTF':
+                        headers.append(ConditionalHeader('<wtf/' + name + '.h>', type_condition))
                     elif namespace == 'WebKit::WebGPU':
                         headers.append(ConditionalHeader('"WebGPU' + name + '.h"', type_condition))
                     else:

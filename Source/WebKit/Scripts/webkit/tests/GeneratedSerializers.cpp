@@ -39,6 +39,7 @@
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/InheritsFrom.h>
+#include <wtf/Seconds.h>
 
 namespace IPC {
 
@@ -327,6 +328,24 @@ std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decod
             WTFMove(*a),
         },
         WTFMove(*b)
+    } };
+}
+
+
+void ArgumentCoder<WTF::Seconds>::encode(Encoder& encoder, const WTF::Seconds& instance)
+{
+    encoder << instance.value();
+}
+
+std::optional<WTF::Seconds> ArgumentCoder<WTF::Seconds>::decode(Decoder& decoder)
+{
+    std::optional<double> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+
+    return { WTF::Seconds {
+        WTFMove(*value)
     } };
 }
 

@@ -119,33 +119,6 @@ public:
         return *static_cast<const DerivedTime*>(this);
     }
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_value;
-    }
-
-    template<class Decoder>
-    static std::optional<DerivedTime> decode(Decoder& decoder)
-    {
-        std::optional<double> time;
-        decoder >> time;
-        if (!time)
-            return std::nullopt;
-        return DerivedTime::fromRawSeconds(*time);
-    }
-
-    template<class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, DerivedTime& time)
-    {
-        double value;
-        if (!decoder.decode(value))
-            return false;
-
-        time = DerivedTime::fromRawSeconds(value);
-        return true;
-    }
-
 protected:
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - DerivedTime().
     constexpr GenericTimeMixin() = default;

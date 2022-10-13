@@ -137,9 +137,19 @@ template<> struct Coder<WebPushD::PushMessageForTesting> {
 
 template<> struct Coder<WTF::URL> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::URL& instance) { instance.encode(encoder); }
+    static void encode(Encoder& encoder, const WTF::URL& instance)
+    {
+        encoder << instance.string();
+    }
     template<typename Decoder>
-    static std::optional<WTF::URL> decode(Decoder& decoder) { return WTF::URL::decode(decoder); }
+    static std::optional<WTF::URL> decode(Decoder& decoder)
+    {
+        std::optional<String> string;
+        decoder >> string;
+        if (!string)
+            return std::nullopt;
+        return { WTF::URL(WTFMove(*string)) };
+    }
 };
 
 template<> struct Coder<WTF::String> {

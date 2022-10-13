@@ -225,33 +225,6 @@ public:
         return *this;
     }
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_value;
-    }
-
-    template<class Decoder>
-    static std::optional<Seconds> decode(Decoder& decoder)
-    {
-        std::optional<double> seconds;
-        decoder >> seconds;
-        if (!seconds)
-            return std::nullopt;
-        return Seconds(*seconds);
-    }
-
-    template<class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Seconds& seconds)
-    {
-        double value;
-        if (!decoder.decode(value))
-            return false;
-
-        seconds = Seconds(value);
-        return true;
-    }
-
     struct MarkableTraits;
 
 private:

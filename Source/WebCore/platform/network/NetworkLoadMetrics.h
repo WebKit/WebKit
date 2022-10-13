@@ -192,21 +192,85 @@ std::optional<NetworkLoadMetrics> NetworkLoadMetrics::decode(Decoder& decoder)
     static_assert(Decoder::isIPCDecoder, "NetworkLoadMetrics should not be stored by the WTF::Persistence::Encoder");
 
     NetworkLoadMetrics metrics;
-    if (!(decoder.decode(metrics.redirectStart)
-        && decoder.decode(metrics.fetchStart)
-        && decoder.decode(metrics.domainLookupStart)
-        && decoder.decode(metrics.domainLookupEnd)
-        && decoder.decode(metrics.connectStart)
-        && decoder.decode(metrics.secureConnectionStart)
-        && decoder.decode(metrics.connectEnd)
-        && decoder.decode(metrics.requestStart)
-        && decoder.decode(metrics.responseStart)
-        && decoder.decode(metrics.responseEnd)
-        && decoder.decode(metrics.workerStart)
-        && decoder.decode(metrics.protocol)
-        && decoder.decode(metrics.redirectCount)))
+
+    std::optional<MonotonicTime> redirectStart;
+    decoder >> redirectStart;
+    if (!redirectStart)
         return std::nullopt;
-    
+    metrics.redirectStart = WTFMove(*redirectStart);
+
+    std::optional<MonotonicTime> fetchStart;
+    decoder >> fetchStart;
+    if (!fetchStart)
+        return std::nullopt;
+    metrics.fetchStart = WTFMove(*fetchStart);
+
+    std::optional<MonotonicTime> domainLookupStart;
+    decoder >> domainLookupStart;
+    if (!domainLookupStart)
+        return std::nullopt;
+    metrics.domainLookupStart = WTFMove(*domainLookupStart);
+
+    std::optional<MonotonicTime> domainLookupEnd;
+    decoder >> domainLookupEnd;
+    if (!domainLookupEnd)
+        return std::nullopt;
+    metrics.domainLookupEnd = WTFMove(*domainLookupEnd);
+
+    std::optional<MonotonicTime> connectStart;
+    decoder >> connectStart;
+    if (!connectStart)
+        return std::nullopt;
+    metrics.connectStart = WTFMove(*connectStart);
+
+    std::optional<MonotonicTime> secureConnectionStart;
+    decoder >> secureConnectionStart;
+    if (!secureConnectionStart)
+        return std::nullopt;
+    metrics.secureConnectionStart = WTFMove(*secureConnectionStart);
+
+    std::optional<MonotonicTime> connectEnd;
+    decoder >> connectEnd;
+    if (!connectEnd)
+        return std::nullopt;
+    metrics.connectEnd = WTFMove(*connectEnd);
+
+    std::optional<MonotonicTime> requestStart;
+    decoder >> requestStart;
+    if (!requestStart)
+        return std::nullopt;
+    metrics.requestStart = WTFMove(*requestStart);
+
+    std::optional<MonotonicTime> responseStart;
+    decoder >> responseStart;
+    if (!responseStart)
+        return std::nullopt;
+    metrics.responseStart = WTFMove(*responseStart);
+
+    std::optional<MonotonicTime> responseEnd;
+    decoder >> responseEnd;
+    if (!responseEnd)
+        return std::nullopt;
+    metrics.responseEnd = WTFMove(*responseEnd);
+
+    std::optional<MonotonicTime> workerStart;
+    decoder >> workerStart;
+    if (!workerStart)
+        return std::nullopt;
+    metrics.workerStart = WTFMove(*workerStart);
+
+    std::optional<String> protocol;
+    decoder >> protocol;
+    if (!protocol)
+        return std::nullopt;
+    metrics.protocol = WTFMove(*protocol);
+
+    std::optional<uint16_t> redirectCount;
+    decoder >> redirectCount;
+    if (!redirectCount)
+        return std::nullopt;
+    metrics.redirectCount = WTFMove(*redirectCount);
+
     std::optional<bool> complete;
     decoder >> complete;
     if (!complete)

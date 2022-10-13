@@ -522,6 +522,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/LayerTreeContext.serialization.in
     Shared/ShareableBitmap.serialization.in
     Shared/TextFlags.serialization.in
+    Shared/WTFArgumentCoders.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
