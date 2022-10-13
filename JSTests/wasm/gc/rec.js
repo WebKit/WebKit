@@ -13,6 +13,61 @@ function module(bytes, valid = true) {
 }
 
 function testRecDeclaration() {
+  /*
+   * This test needs to be in binary format, as it tests the specific encoding
+   * of the recursion group. This one omits the explicit `rec`.
+   *
+   *  (module
+   *    (rec (type (array (ref 0))))
+   *    (func (result (ref null 0)) (ref.null 0)))
+   */
+  new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x02\x5e\x6b\x00\x00\x60\x00\x01\x6c\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"))
+
+  // Same test as above but using a non-shorthand encoding.
+  new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8c\x80\x80\x80\x00\x02\x4f\x01\x5e\x6b\x00\x00\x60\x00\x01\x6c\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"))
+
+  // Test invalid reference type index in a recursion group.
+  assert.throws(
+    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x02\x5e\x6b\x01\x00\x60\x00\x01\x6c\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 18: can't get array's element Type"
+  );
+
+  assert.throws(
+    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8c\x80\x80\x80\x00\x02\x4f\x01\x5e\x6b\x01\x00\x60\x00\x01\x6c\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type"
+  );
+
+  /*
+   *  Test invalid index in a recursion group with more than one type.
+   *
+   *  (module (rec (type (array (ref 2))) (type (array (ref 1)))))
+   */
+  assert.throws(
+    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8b\x80\x80\x80\x00\x01\x4f\x02\x5e\x6b\x02\x00\x5e\x6b\x01\x00"),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type"
+  );
+
+  instantiate(`
+     (module
+       (type (struct (field (ref 0))))
+       (func (result (ref null 0)) (ref.null 0)))
+  `);
+
+  instantiate(`
+     (module
+       (type (array (ref 0)))
+       (func (result (ref null array)) (ref.null 0)))
+  `);
+
+  instantiate(`
+     (module
+       (type (func (param (ref 0))))
+       (func (result (ref null func)) (ref.null 0)))
+  `);
+
   instantiate(`
     (module
       (rec (type (func)) (type (struct)))

@@ -284,10 +284,13 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
 // functions below are used to implement this substitution.
 Type TypeDefinition::substitute(Type type, TypeIndex projectee)
 {
-    if (type.kind == TypeKind::Rec) {
-        RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(projectee, static_cast<ProjectionIndex>(type.index));
-        TypeKind kind = type.isNullable() ? TypeKind::RefNull : TypeKind::Ref;
-        return Type { kind, projection->index() };
+    if (isRefWithTypeIndex(type) && TypeInformation::get(type.index).is<Projection>()) {
+        const Projection* projection = TypeInformation::get(type.index).as<Projection>();
+        if (projection->isPlaceholder()) {
+            RefPtr<TypeDefinition> newProjection = TypeInformation::typeDefinitionForProjection(projectee, projection->index());
+            TypeKind kind = type.isNullable() ? TypeKind::RefNull : TypeKind::Ref;
+            return Type { kind, newProjection->index() };
+        }
     }
 
     return type;
@@ -413,12 +416,19 @@ struct FunctionParameterTypes {
     {
         RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateFunctionSignature(params.returnTypes.size(), params.argumentTypes.size());
         RELEASE_ASSERT(signature);
+        bool hasRecursiveReference = false;
 
-        for (unsigned i = 0; i < params.returnTypes.size(); ++i)
+        for (unsigned i = 0; i < params.returnTypes.size(); ++i) {
             signature->as<FunctionSignature>()->getReturnType(i) = params.returnTypes[i];
+            hasRecursiveReference |= isRefWithRecursiveReference(params.returnTypes[i]);
+        }
 
-        for (unsigned i = 0; i < params.argumentTypes.size(); ++i)
+        for (unsigned i = 0; i < params.argumentTypes.size(); ++i) {
             signature->as<FunctionSignature>()->getArgumentType(i) = params.argumentTypes[i];
+            hasRecursiveReference |= isRefWithRecursiveReference(params.argumentTypes[i]);
+        }
+
+        signature->as<FunctionSignature>()->setHasRecursiveReference(hasRecursiveReference);
 
         entry.key = WTFMove(signature);
     }
@@ -453,10 +463,15 @@ struct StructParameterTypes {
     {
         RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateStructType(params.fields.size());
         RELEASE_ASSERT(signature);
+        bool hasRecursiveReference = false;
 
         StructType* structType = signature->as<StructType>();
-        for (unsigned i = 0; i < params.fields.size(); ++i)
+        for (unsigned i = 0; i < params.fields.size(); ++i) {
             structType->getField(i) = params.fields[i];
+            hasRecursiveReference |= isRefWithRecursiveReference(params.fields[i].type);
+        }
+
+        signature->as<StructType>()->setHasRecursiveReference(hasRecursiveReference);
 
         entry.key = WTFMove(signature);
     }
@@ -490,6 +505,7 @@ struct ArrayParameterTypes {
 
         ArrayType* arrayType = signature->as<ArrayType>();
         arrayType->getElementType() = params.elementType;
+        arrayType->setHasRecursiveReference(isRefWithRecursiveReference(params.elementType.type));
 
         entry.key = WTFMove(signature);
     }
