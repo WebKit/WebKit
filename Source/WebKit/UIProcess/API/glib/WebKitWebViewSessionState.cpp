@@ -106,18 +106,32 @@ enum HTMLBodyElementType {
     Blob
 };
 
-static inline unsigned toHTMLBodyElementType(size_t index)
+static inline unsigned toHTMLBodyElementType(HTTPBody::Element::Type type)
 {
     switch (type) {
-    case WTF::alternativeIndexV<Vector<uint8_t>, HTTPBody::Element::Data>:
+    case HTTPBody::Element::Type::Data:
         return HTMLBodyElementType::Data;
-    case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>:
+    case HTTPBody::Element::Type::File:
         return HTMLBodyElementType::File;
-    case WTF::alternativeIndexV<String, HTTPBody::Element::Data>:
+    case HTTPBody::Element::Type::Blob:
         return HTMLBodyElementType::Blob;
     }
 
     return HTMLBodyElementType::Data;
+}
+
+static inline HTTPBody::Element::Type toHTTPBodyElementType(unsigned type)
+{
+    switch (type) {
+    case HTMLBodyElementType::Data:
+        return HTTPBody::Element::Type::Data;
+    case HTMLBodyElementType::File:
+        return HTTPBody::Element::Type::File;
+    case HTMLBodyElementType::Blob:
+        return HTTPBody::Element::Type::Blob;
+    }
+
+    return HTTPBody::Element::Type::Data;
 }
 
 static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBody& httpBody)
@@ -127,38 +141,22 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("a" HTTP_BODY_ELEMENT_TYPE_STRING_V1));
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(HTTP_BODY_ELEMENT_TYPE_STRING_V1));
     for (const auto& element : httpBody.elements) {
-        g_variant_builder_add(sessionBuilder, "u", toHTMLBodyElementType(element.data.index()));
-
+        g_variant_builder_add(sessionBuilder, "u", toHTMLBodyElementType(element.type));
         g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("ay"));
-        if (auto* vector = std::get_if<Vector<uint8_t>>(&element.data)) {
-            for (auto item : vector)
-                g_variant_builder_add(sessionBuilder, "y", item);
-        }
+        for (auto item : element.data)
+            g_variant_builder_add(sessionBuilder, "y", item);
         g_variant_builder_close(sessionBuilder);
-
-        if (auto* fileData = std::get_if<Vector<uint8_t>>(&element.data)) {
-            g_variant_builder_add(sessionBuilder, "s", fileData->filePath.utf8().data());
-            g_variant_builder_add(sessionBuilder, "x", fileData->fileStart);
-            if (fileData->fileLength)
-                g_variant_builder_add(sessionBuilder, "mx", TRUE, fileData->fileLength.value());
-            else
-                g_variant_builder_add(sessionBuilder, "mx", FALSE);
-            if (fileData->expectedFileModificationTime)
-                g_variant_builder_add(sessionBuilder, "md", TRUE, fileData->expectedFileModificationTime.value());
-            else
-                g_variant_builder_add(sessionBuilder, "md", FALSE);
-        } else {
-            g_variant_builder_add(sessionBuilder, "s", "");
-            int64_t fileStart { 0 };
-            g_variant_builder_add(sessionBuilder, "x", fileStart);
-            g_variant_builder_add(sessionBuilder, "mx", FALSE);
-            g_variant_builder_add(sessionBuilder, "md", FALSE);
-        }
-
-        if (auto* blobURLString = std::get_if<String>(&element.data))
-            g_variant_builder_add(sessionBuilder, "s", blobURLString->utf8().data());
+        g_variant_builder_add(sessionBuilder, "s", element.filePath.utf8().data());
+        g_variant_builder_add(sessionBuilder, "x", element.fileStart);
+        if (element.fileLength)
+            g_variant_builder_add(sessionBuilder, "mx", TRUE, element.fileLength.value());
         else
-            g_variant_builder_add(sessionBuilder, "s", "");
+            g_variant_builder_add(sessionBuilder, "mx", FALSE);
+        if (element.expectedFileModificationTime)
+            g_variant_builder_add(sessionBuilder, "md", TRUE, element.expectedFileModificationTime.value());
+        else
+            g_variant_builder_add(sessionBuilder, "md", FALSE);
+        g_variant_builder_add(sessionBuilder, "s", element.blobURLString.utf8().data());
     }
     g_variant_builder_close(sessionBuilder);
     g_variant_builder_close(sessionBuilder);
@@ -269,29 +267,22 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
     const char* blobURLString;
     while (g_variant_iter_loop(elementsIter.get(), HTTP_BODY_ELEMENT_FORMAT_STRING_V1, &type, &dataIter, &filePath, &fileStart, &hasFileLength, &fileLength, &hasFileModificationTime, &fileModificationTime, &blobURLString)) {
         HTTPBody::Element element;
-        switch (type) {
-        case WTF::alternativeIndexV<Vector<uint8_t>, HTTPBody::Element::Data>:
-            if (gsize dataLength = g_variant_iter_n_children(dataIter)) {
-                Vector<uint8_t> data;
-                data.reserveInitialCapacity(dataLength);
-                guchar dataValue;
-                while (g_variant_iter_next(dataIter, "y", &dataValue))
-                    data.uncheckedAppend(dataValue);
-                httpBody.elements.uncheckedAppend({ WTFMove(data) });
-            }
-        case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>: {
-            FileData fileData;
-            fileData.filePath = String::fromUTF8(filePath);
-            fileData.fileStart = fileStart;
-            if (hasFileLength)
-                fileData.fileLength = fileLength;
-            if (hasFileModificationTime)
-                fileData.expectedFileModificationTime = WallTime::fromRawSeconds(fileModificationTime);
-            httpBody.elements.uncheckedAppend({ WTFMove(fileData) });
+        element.type = toHTTPBodyElementType(type);
+        if (gsize dataLength = g_variant_iter_n_children(dataIter)) {
+            element.data.reserveInitialCapacity(dataLength);
+            guchar dataValue;
+            while (g_variant_iter_next(dataIter, "y", &dataValue))
+                element.data.uncheckedAppend(dataValue);
         }
-        case WTF::alternativeIndexV<String, HTTPBody::Element::Data>:
-            httpBody.elements.uncheckedAppend({ String::fromUTF8(blobURLString) });
-        }
+        element.filePath = String::fromUTF8(filePath);
+        element.fileStart = fileStart;
+        if (hasFileLength)
+            element.fileLength = fileLength;
+        if (hasFileModificationTime)
+            element.expectedFileModificationTime = WallTime::fromRawSeconds(fileModificationTime);
+        element.blobURLString = String::fromUTF8(blobURLString);
+
+        httpBody.elements.uncheckedAppend(WTFMove(element));
     }
 
     return true;

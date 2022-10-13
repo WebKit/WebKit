@@ -92,7 +92,6 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
-#include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
@@ -2067,31 +2066,6 @@ bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
         keyPath = vector;
     }
     return true;
-}
-
-void ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::encode(Encoder& encoder, const RefPtr<WebCore::SerializedScriptValue>& instance)
-{
-    encoder << !!instance;
-    if (instance)
-        encoder << instance->wireBytes();
-}
-
-std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::decode(Decoder& decoder)
-{
-    std::optional<bool> nonEmpty;
-    decoder >> nonEmpty;
-    if (!nonEmpty)
-        return std::nullopt;
-
-    if (!*nonEmpty)
-        return nullptr;
-
-    std::optional<Vector<uint8_t>> wireBytes;
-    decoder >> wireBytes;
-    if (!wireBytes)
-        return std::nullopt;
-
-    return SerializedScriptValue::createFromWireBytes(WTFMove(*wireBytes));
 }
 
 #if ENABLE(SERVICE_WORKER)
