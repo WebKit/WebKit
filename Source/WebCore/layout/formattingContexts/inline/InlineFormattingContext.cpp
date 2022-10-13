@@ -231,14 +231,14 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
         auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent);
         if (lineContent.isLastLineWithInlineContent)
-            formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineInitialRect, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+            formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
         firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
         auto isAtEnd = firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty();
         if (isAtEnd)
             break;
 
-        lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineInitialRect, lineLogicalRect, floatingContext);
+        lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext);
         previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };
         previousLineLastInlineItemIndex = lineContent.inlineItemRange.end;
     }

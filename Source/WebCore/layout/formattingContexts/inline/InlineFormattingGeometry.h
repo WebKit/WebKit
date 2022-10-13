@@ -39,7 +39,7 @@ class InlineFormattingGeometry : public FormattingGeometry {
 public:
     InlineFormattingGeometry(const InlineFormattingContext&);
 
-    InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, const InlineRect& lineInitialRect, const InlineRect& lineLogicalRect, const FloatingContext&) const;
+    InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, const InlineRect& lineLogicalRect, const FloatingContext&) const;
 
     ContentHeightAndMargin inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
     ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;

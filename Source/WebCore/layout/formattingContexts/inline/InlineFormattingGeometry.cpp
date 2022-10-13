@@ -44,7 +44,7 @@ InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext
 {
 }
 
-InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, const InlineRect& lineInitialRect, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
+InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
 {
     if (!lineContent.inlineItemRange.isEmpty()) {
         // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
@@ -59,11 +59,14 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
             return lineLogicalRect.bottom();
         return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(positionWithClearance->position));
     }
+    // Floats must have prevented us placing any content on the line.
     // Move the next line below the intrusive float(s).
     ASSERT(lineContent.runs.isEmpty() || lineContent.runs[0].isLineSpanningInlineBoxStart());
     ASSERT(lineContent.hasIntrusiveFloat);
-    auto lineBottomWithNoInlineContent = std::max(lineLogicalRect.bottom(), lineInitialRect.bottom());
-    auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineInitialRect.top()), toLayoutUnit(lineBottomWithNoInlineContent), FloatingContext::MayBeAboveLastFloat::Yes);
+    // FIXME: Moving the bottom position by the initial line height may be too much meaning that we miss vertical positions where atomic inline content could very well fit.
+    // The spec is unclear of how much we should move down at this point and while 1px should be the most precise it's also rather expensive. 
+    auto inflatedLineRectBottom = lineLogicalRect.top() + formattingContext().root().style().computedLineHeight();
+    auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(inflatedLineRectBottom), FloatingContext::MayBeAboveLastFloat::Yes);
     ASSERT(floatConstraints.left || floatConstraints.right);
     if (floatConstraints.left && floatConstraints.right) {
         // In case of left and right constraints, we need to pick the one that's closer to the current line.
@@ -74,7 +77,8 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
     if (floatConstraints.right)
         return floatConstraints.right->y;
     ASSERT_NOT_REACHED();
-    return lineBottomWithNoInlineContent;
+    // Do not get stuck on the same vertical position.
+    return lineLogicalRect.bottom() + 1.0f;
 }
 
 ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
