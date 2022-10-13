@@ -368,6 +368,91 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
     JSObject* target = targetValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    if (!target->staticPropertiesReified()) {
+        target->reifyAllStaticProperties(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (canPerformFastPropertyEnumerationForObjectEntries(target->structure())) {
+        Vector<RefPtr<UniquedStringImpl>, 8> properties;
+        MarkedArgumentBuffer values;
+        target->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+            if (entry.attributes() & PropertyAttribute::DontEnum)
+                return true;
+
+            if (entry.key()->isSymbol())
+                return true;
+
+            properties.append(entry.key());
+            values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+
+            return true;
+        });
+
+        Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+        JSArray* entries = JSArray::tryCreate(vm, arrayStructure, properties.size());
+        if (UNLIKELY(!entries)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+
+        Structure* targetStructure = target->structure();
+        JSImmutableButterfly* cachedButterfly = nullptr;
+        if (LIKELY(!globalObject->isHavingABadTime())) {
+            auto* butterfly = targetStructure->cachedPropertyNames(CachedPropertyNamesKind::Keys);
+            if (butterfly) {
+                ASSERT(butterfly->length() == properties.size());
+                if (butterfly->length() == properties.size())
+                    cachedButterfly = butterfly;
+            }
+        }
+
+        if (!cachedButterfly && properties.size() < MIN_SPARSE_ARRAY_INDEX && !globalObject->isHavingABadTime() && targetStructure->canCacheOwnPropertyNames()) {
+            auto* canSentinel = targetStructure->cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind::Keys);
+            if (canSentinel == StructureRareData::cachedPropertyNamesSentinel()) {
+                size_t numProperties = properties.size();
+                auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                for (size_t i = 0; i < numProperties; i++) {
+                    const auto& identifier = properties[i];
+                    newButterfly->setIndex(vm, i, jsOwnedString(vm, identifier.get()));
+                }
+
+                targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::Keys, newButterfly);
+                cachedButterfly = newButterfly;
+            } else
+                targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::Keys, StructureRareData::cachedPropertyNamesSentinel());
+        }
+
+        for (size_t i = 0; i < properties.size(); ++i) {
+            JSString* key = nullptr;
+            if (cachedButterfly) {
+                auto* cachedKey = asString(cachedButterfly->get(i));
+                if (cachedKey->tryGetValueImpl() == properties[i].get())
+                    key = cachedKey;
+            }
+
+            if (!key)
+                key = jsOwnedString(vm, properties[i].get());
+
+            JSArray* entry = nullptr;
+            {
+                ObjectInitializationScope initializationScope(vm);
+                if (LIKELY(entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) {
+                    entry->initializeIndex(initializationScope, 0, key);
+                    entry->initializeIndex(initializationScope, 1, values.at(i));
+                }
+            }
+            if (UNLIKELY(!entry)) {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+            entries->putDirectIndex(globalObject, i, entry);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        return JSValue::encode(entries);
+    }
+
     JSArray* entries = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -396,12 +481,12 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
         JSArray* entry = nullptr;
         {
             ObjectInitializationScope initializationScope(vm);
-            if ((entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) {
+            if (LIKELY(entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) {
                 entry->initializeIndex(initializationScope, 0, key);
                 entry->initializeIndex(initializationScope, 1, value);
             }
         }
-        if (!entry) {
+        if (UNLIKELY(!entry)) {
             throwOutOfMemoryError(globalObject, scope);
             return;
         }

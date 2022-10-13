@@ -58,6 +58,11 @@ ALWAYS_INLINE bool canPerformFastPropertyEnumerationForJSONStringify(Structure* 
     return canPerformFastPropertyEnumerationForObjectAssign(structure);
 }
 
+ALWAYS_INLINE bool canPerformFastPropertyEnumerationForObjectEntries(Structure* structure)
+{
+    return canPerformFastPropertyEnumerationForObjectAssign(structure);
+}
+
 ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
 {
     // |source| Structure does not have any getters. And target can perform fast put.
