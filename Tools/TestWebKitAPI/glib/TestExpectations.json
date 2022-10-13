@@ -34,6 +34,19 @@
             }
         }
     },
+    "TestWebKitAccessibility": {
+        "subtests": {
+            "/webkit/WebKitAccessibility/accessible/attributes": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/246471"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/children-changed": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/246471"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/basic-hierarchy": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/246471"}}
+            }
+        }
+    },
     "TestWebKitSettings": {
         "subtests": {
             "/webkit/WebKitSettings/javascript-markup": {
@@ -226,6 +239,12 @@
             "WTF_Condition.OneProducerTenConsumersOneSlot": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
+            "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyAll": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
+            },
+            "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyAll": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
+            },
             "WTF_DateMath.calculateLocalTimeOffset": {
                 "expected": {"wpe": {"status": ["FAIL", "PASS"]}}
             },
@@ -258,6 +277,9 @@
             },
             "WTF_ParkingLot.UnparkOneHundredFast": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_RunLoop.ManyTimes": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
             },
             "WTF_WordLock.ContendedShortSection": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
