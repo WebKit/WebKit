@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation/resources/empty.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/resources/iframe-listen-orientation-change.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/resources/orientation-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/resources/sandboxed-iframe-locking.html
