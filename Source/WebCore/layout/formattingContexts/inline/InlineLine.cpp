@@ -266,6 +266,7 @@ void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
         return;
     // UAX#9 L1: trailing whitespace should use paragraph direction.
     // see https://unicode.org/reports/tr9/#L1
+    auto trailingNonWhitespaceOnlyRunIndex = std::optional<size_t> { };
     for (auto index = m_runs.size(); index--;) {
         auto& run = m_runs[index];
         if (run.isBox() || run.isLineBreak() || (run.isText() && !run.hasTrailingWhitespace()))
@@ -275,31 +276,33 @@ void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
             // Skip non-content type of runs e.g. <span>
             continue;
         }
-
-        auto adjustBidiLevelIfNeeded = [&] {
-            // No need to adjust the bidi level unless the directionality is different.
-            // e.g. rtl root dir with trailing whitespace attached to an rtl run.
-            auto sameInlineDirection = run.bidiLevel() % 2 == rootBidiLevel % 2;
-            if (sameInlineDirection)
-                return;
-            if (run.isWhitespaceOnly()) {
-                run.setBidiLevel(rootBidiLevel);
-                return;
-            }
-            auto detachedTrailingRun = *run.detachTrailingWhitespace();
-            detachedTrailingRun.setBidiLevel(rootBidiLevel);
-            if (index == m_runs.size() - 1) {
-                m_runs.append(detachedTrailingRun);
-                return;
-            }
-            m_runs.insert(index + 1, detachedTrailingRun);
-        };
-        adjustBidiLevelIfNeeded();
+        // No need to adjust the bidi level unless the directionality is different.
+        // e.g. rtl root dir with trailing whitespace attached to an rtl run.
+        auto sameInlineDirection = run.bidiLevel() % 2 == rootBidiLevel % 2;
         if (!run.isWhitespaceOnly()) {
+            trailingNonWhitespaceOnlyRunIndex = !sameInlineDirection ? std::make_optional(index) : std::nullopt;
             // There can't be any trailing whitespace in front of this non-whitespace/whitespace content.
             break;
         }
+        // Whitespace only runs just need simple bidi level reset.
+        if (!sameInlineDirection)
+            run.setBidiLevel(rootBidiLevel);
     }
+
+    auto detachTrailingWhitespaceIfNeeded = [&] {
+        if (!trailingNonWhitespaceOnlyRunIndex)
+            return;
+        auto runIndex = *trailingNonWhitespaceOnlyRunIndex;
+        auto& run = m_runs[runIndex];
+        auto detachedTrailingRun = *run.detachTrailingWhitespace();
+        detachedTrailingRun.setBidiLevel(rootBidiLevel);
+        if (runIndex == m_runs.size() - 1) {
+            m_runs.append(detachedTrailingRun);
+            return;
+        }
+        m_runs.insert(runIndex + 1, detachedTrailingRun);
+    };
+    detachTrailingWhitespaceIfNeeded();
 }
 
 void Line::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
