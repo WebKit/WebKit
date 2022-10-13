@@ -1,0 +1,8 @@
+The span style should be preserved when merging a pragraph.
+The test passes if the "bar" has underline, overline and line through.
+| "\n"
+| <p>
+|   "foo<#selection-caret>"
+|   <span>
+|     style="text-decoration: underline overline line-through;"
+|     "bar"

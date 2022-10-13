@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<body>
+<p id="description">This tests deleting line break before p.
+WebKit preserves the inline style of the merged paragraph, and "world" should be in green.</p>
+<div id="test" style="color:red;" contenteditable>
+<h1>hello</h1>
+<p><font color="red"><span style="color: green;">world</span></i></p>
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

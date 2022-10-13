@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html> 
+<body>
+<p id="description">This tests deleting line break before h6.
+WebKit should not cancel styles added by h6 by those of document's default style but still keep "hello" italicized and "world" in red.</p>
+<div id="test" contenteditable>
+<em>hello</em>
+<h6><font color="red">world</font></h6>
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+</style>
+
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src="../../resources/dump-as-markup.js"></script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+First
+<table border="1">
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+</tr>
+</table>
+Second
+</div>
+</div>
+
+<script>
+    Markup.description('For this test Select and delete a table. Expected Results: Only table should get deleted.Surrounding content that is not selected should (obviously) not be affected.')
+
+    var element = document.getElementById("test");
+    getSelection().collapse(element, 0);
+    moveSelectionForwardByLineCommand();
+    for (i = 0; i < 18; i++)
+        extendSelectionForwardByCharacterCommand();
+    Markup.dump('root', 'BeforeDeletion');
+
+    deleteCommand();
+    Markup.dump('root', 'AfterDeletion');
+</script>
+
+</body>
+</html>
