@@ -180,17 +180,25 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&&
         return Exception { TypeError, makeString("Data is too small ", data.length(), " / ", layout.allocationSize) };
     
     RefPtr<VideoFrame> videoFrame;
-    if (init.format == VideoPixelFormat::NV12)
+    if (init.format == VideoPixelFormat::NV12) {
+        if (init.codedWidth % 2 || init.codedHeight % 2)
+            return Exception { TypeError, "coded width or height is odd"_s };
+        if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
+            return Exception { TypeError, "visible x or y is odd"_s };
         videoFrame = VideoFrame::createNV12({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1]);
-    else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
+    } else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
         videoFrame = VideoFrame::createRGBA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
     else if (init.format == VideoPixelFormat::BGRA || init.format == VideoPixelFormat::BGRX)
         videoFrame = VideoFrame::createBGRA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
-    else if (init.format == VideoPixelFormat::I420)
+    else if (init.format == VideoPixelFormat::I420) {
+        if (init.codedWidth % 2 || init.codedHeight % 2)
+            return Exception { TypeError, "coded width or height is odd"_s };
+        if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
+            return Exception { TypeError, "visible x or y is odd"_s };
         videoFrame = VideoFrame::createI420({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2]);
-    else
+    } else
         return Exception { NotSupportedError, "VideoPixelFormat is not supported"_s };
-    
+
     if (!videoFrame)
         return Exception { TypeError, "Unable to create internal resource from data"_s };
     
