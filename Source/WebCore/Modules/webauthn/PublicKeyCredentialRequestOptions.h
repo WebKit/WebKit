@@ -43,8 +43,8 @@ struct PublicKeyCredentialRequestOptions {
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
-    std::optional<AuthenticatorAttachment> authenticatorAttachment;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
+    std::optional<AuthenticatorAttachment> authenticatorAttachment { }; // Not serialized over IPC.
 #endif // ENABLE(WEB_AUTHN)
 };
 
