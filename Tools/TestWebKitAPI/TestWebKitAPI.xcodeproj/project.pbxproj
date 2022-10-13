@@ -1041,6 +1041,7 @@
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
 		E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */; };
 		E302BDAA2404B92400865277 /* CompactRefPtrTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */; };
+		E30F393428F4973800113EE7 /* SyscallUnixSandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */; };
 		E316D42027647A0200287B16 /* RefCountedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E316D41F27647A0200287B16 /* RefCountedFixedVector.cpp */; };
 		E3210519261979F300157C67 /* FixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3210518261979F300157C67 /* FixedVector.cpp */; };
 		E324A6F02041C82000A76593 /* UniqueArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E398BC0F2041C76300387136 /* UniqueArray.cpp */; };
@@ -3232,6 +3233,7 @@
 		E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StopLoadingFromDidReceiveResponse.mm; sourceTree = "<group>"; };
 		E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StopLoadingFromDidReceiveResponse.html; sourceTree = "<group>"; };
 		E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtrTuple.cpp; sourceTree = "<group>"; };
+		E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SyscallUnixSandboxCheck.mm; sourceTree = "<group>"; };
 		E316D41F27647A0200287B16 /* RefCountedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedFixedVector.cpp; sourceTree = "<group>"; };
 		E3210518261979F300157C67 /* FixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedVector.cpp; sourceTree = "<group>"; };
 		E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureSupport.mm; sourceTree = "<group>"; };
@@ -3703,6 +3705,7 @@
 				E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */,
 				C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */,
 				C149D54F242E9844003EBB12 /* SleepDisabler.mm */,
+				E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */,
 				E3EFB02E25506503003C2F96 /* SystemBeep.mm */,
 				0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */,
 				C1FF9EDA244644F000839AE4 /* WebFilter.mm */,
@@ -6369,6 +6372,7 @@
 				1C9DD9232697655B00274DB2 /* SVGImageCasts.cpp in Sources */,
 				4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */,
 				7CCE7EA81A411A1900447C4C /* SyntheticBackingScaleFactorWindow.m in Sources */,
+				E30F393428F4973800113EE7 /* SyscallUnixSandboxCheck.mm in Sources */,
 				E3EFB02F25506503003C2F96 /* SystemBeep.mm in Sources */,
 				7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */,
 				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,

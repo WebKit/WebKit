@@ -1103,6 +1103,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
     boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);
     boolean hasSandboxIOKitOpenAccessToClass(DOMString process, DOMString ioKitClass);
+    boolean hasSandboxUnixSyscallAccess(DOMString process, unsigned long syscall);
 
     DOMString systemColorForCSSValue(DOMString cssValue, boolean useDarkModeAppearance, boolean useElevatedUserInterfaceLevel);
     DOMString focusRingColor();

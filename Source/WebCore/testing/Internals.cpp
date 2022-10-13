@@ -6413,6 +6413,19 @@ bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process
 #endif
 }
 
+bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned syscall) const
+{
+#if PLATFORM(COCOA)
+    RELEASE_ASSERT(process == "com.apple.WebKit.WebContent"_s);
+    auto pid = getpid();
+    return !sandbox_check(pid, "syscall-unix", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_SYSCALL_NUMBER | SANDBOX_CHECK_NO_REPORT), syscall);
+#else
+    UNUSED_PARAM(process);
+    UNUSED_PARAM(syscall);
+    return false;
+#endif
+}
+
 String Internals::windowLocationHost(DOMWindow& window)
 {
     return window.location().host();

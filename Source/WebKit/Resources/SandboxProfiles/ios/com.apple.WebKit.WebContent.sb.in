@@ -1185,7 +1185,9 @@
         SYS_setrlimit
         SYS_sigaltstack
         SYS_sigprocmask
+#if PLATFORM(WATCHOS)
         SYS_sigreturn
+#endif
         SYS_thread_selfusage
         SYS_umask
         SYS_unlink
@@ -1227,6 +1229,9 @@
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
+#if !PLATFORM(WATCHOS)
+    SYS_sigreturn
+#endif
     SYS_socket))
 
 (when (defined? 'SYS_map_with_linking_np)
