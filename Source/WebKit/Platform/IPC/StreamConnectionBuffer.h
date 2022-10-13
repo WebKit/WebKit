@@ -125,8 +125,12 @@ private:
         Atomic<ServerOffset> serverOffset;
         // Padding so that the variables mostly accessed by different processes do not share a cache line.
         // This is an attempt to avoid cache-line induced reduction of parallel access.
-        alignas(sizeof(uint64_t[2])) Atomic<ClientOffset> clientOffset;
+        // Use 128 bytes since that's the cache line size on ARM64, and enough to cover other platforms where 64 bytes is common.
+        alignas(128) Atomic<ClientOffset> clientOffset;
     };
+
+#undef HEADER_POINTER_ALIGNMENT
+
     Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->data()); }
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
 
