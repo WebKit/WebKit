@@ -106,6 +106,7 @@ class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
+class NetworkStorageManager;
 class ProcessAssertion;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
@@ -488,6 +489,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void setIsHoldingLockedFiles(bool);
 #endif
+    void stopRunLoopIfNecessary();
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
@@ -535,10 +537,12 @@ private:
     Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
 
     HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
+    HashSet<RefPtr<NetworkStorageManager>> m_closingStorageManagers;
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
     bool m_isSuspended { false };
+    bool m_didSyncCookiesForClose { false };
 };
 
 #if !PLATFORM(COCOA)

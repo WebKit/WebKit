@@ -254,21 +254,25 @@ bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Dec
     return didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
 }
 
+void NetworkProcess::stopRunLoopIfNecessary()
+{
+    if (m_didSyncCookiesForClose && m_closingStorageManagers.isEmpty())
+        stopRunLoop();
+}
+
 void NetworkProcess::didClose(IPC::Connection&)
 {
     ASSERT(RunLoop::isMain());
 
     auto callbackAggregator = CallbackAggregator::create([this] {
         ASSERT(RunLoop::isMain());
-        stopRunLoop();
+        m_didSyncCookiesForClose = true;
+        stopRunLoopIfNecessary();
     });
 
     forEachNetworkSession([&](auto& session) {
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
-    });
-
-    NetworkStorageManager::forEach([&](auto& manager) {
-        manager.syncLocalStorage([callbackAggregator] { });
+        session.storageManager().syncLocalStorage([callbackAggregator] { });
     });
 }
 
@@ -523,8 +527,15 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
 #endif
 
-    if (auto session = m_networkSessions.take(sessionID))
+    if (auto session = m_networkSessions.take(sessionID)) {
         session->invalidateAndCancel();
+        auto& storageManager = session->storageManager();
+        m_closingStorageManagers.add(&storageManager);
+        storageManager.close([this, protectedThis = Ref { *this }, storageManager = &storageManager]() {
+            m_closingStorageManagers.remove(storageManager);
+            stopRunLoopIfNecessary();
+        });
+    }
     m_networkStorageSessions.remove(sessionID);
     m_sessionsControlledByAutomation.remove(sessionID);
 }

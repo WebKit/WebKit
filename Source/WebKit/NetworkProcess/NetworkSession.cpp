@@ -231,7 +231,6 @@ void NetworkSession::invalidateAndCancel()
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
 #endif
-    m_storageManager->close();
     m_cacheEngine = nullptr;
 #if ASSERT_ENABLED
     m_isInvalidated = true;
