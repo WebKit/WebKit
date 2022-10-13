@@ -882,10 +882,9 @@ struct WebCore::WebLockManagerSnapshot {
 };
 
 #if ENABLE(WEB_AUTHN)
-struct WebCore::AuthenticationExtensionsClientInputs {
+[LegacyPopulateFrom=EmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
     bool googleLegacyAppidSupport;
-    bool credProps;
 }
 
 [Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
@@ -953,7 +952,6 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     String rpId;
     Vector<WebCore::PublicKeyCredentialDescriptor> allowCredentials;
     WebCore::UserVerificationRequirement userVerification;
-    std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
 #endif // ENABLE(WEB_AUTHN)
 };

@@ -34,7 +34,7 @@ namespace WebCore {
 struct AuthenticationExtensionsClientInputs {
     String appid;
     bool googleLegacyAppidSupport;
-    bool credProps;
+    bool credProps; // Not serialized but probably should be. Don't re-introduce rdar://101057340 though.
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(Span<const uint8_t>);
