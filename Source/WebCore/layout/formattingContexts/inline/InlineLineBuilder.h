@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatingContext.h"
 #include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
@@ -33,7 +34,6 @@
 namespace WebCore {
 namespace Layout {
 
-class FloatingContext;
 struct LineCandidate;
 
 class LineBuilder {

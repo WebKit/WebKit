@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InlineLineBuilder.h"
 
-#include "FloatingContext.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
