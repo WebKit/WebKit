@@ -2381,8 +2381,6 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 
 webkit.org/b/246427 [ Debug ] imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
 
-webkit.org/b/246464 fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
-
 webkit.org/b/246467 [ Debug ] compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Pass Failure ]
 
 # webkit.org/b/243681  Newly imported tests that fail on BigSur+
