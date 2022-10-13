@@ -495,8 +495,7 @@ template<typename T> struct ArgumentCoder<Ref<T>> {
     }
 };
 
-template<typename... Elements>
-struct TupleEncoder {
+template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
@@ -509,48 +508,29 @@ struct TupleEncoder {
         if constexpr (sizeof...(Indices) > 0)
             (encoder << ... << std::get<Indices>(tuple));
     }
-};
-
-template<typename... Elements> struct TupleDecoder;
-
-template<typename Type, typename... Types>
-struct TupleDecoder<Type, Types...> {
-    template<typename Decoder>
-    static std::optional<std::tuple<Type, Types...>> decode(Decoder& decoder)
-    {
-        std::optional<Type> optional;
-        decoder >> optional;
-        if (!optional)
-            return std::nullopt;
-
-        std::optional<std::tuple<Types...>> remainder = TupleDecoder<Types...>::decode(decoder);
-        if (!remainder)
-            return std::nullopt;
-
-        return std::tuple_cat(std::make_tuple(WTFMove(*optional)), WTFMove(*remainder));
-    }
-};
-
-template<>
-struct TupleDecoder<> {
-    template<typename Decoder>
-    static std::optional<std::tuple<>> decode(Decoder&)
-    {
-        return std::make_tuple();
-    }
-};
-
-template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
-    {
-        TupleEncoder<Elements...>::encode(encoder, tuple);
-    }
 
     template<typename Decoder>
     static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
     {
-        return TupleDecoder<Elements...>::decode(decoder);
+        return decode(decoder, std::tuple<> { }, std::index_sequence_for<> { });
+    }
+
+    template<typename Decoder, typename OptionalTuple, size_t... Indices>
+    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder, OptionalTuple&& optionalTuple, std::index_sequence<Indices...>)
+    {
+        constexpr size_t Index = sizeof...(Indices);
+        static_assert(Index == std::tuple_size_v<OptionalTuple>);
+
+        if constexpr (Index < sizeof...(Elements)) {
+            std::optional<std::tuple_element_t<Index, std::tuple<Elements...>>> optional;
+            decoder >> optional;
+            if (!optional)
+                return std::nullopt;
+            return decode(decoder, std::forward_as_tuple(std::get<Indices>(WTFMove(optionalTuple))..., WTFMove(optional)), std::make_index_sequence<Index + 1> { });
+        } else {
+            static_assert(Index == sizeof...(Elements));
+            return std::make_tuple(*std::get<Indices>(WTFMove(optionalTuple))...);
+        }
     }
 };
 
