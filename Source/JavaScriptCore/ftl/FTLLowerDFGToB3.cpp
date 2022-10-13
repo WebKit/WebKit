@@ -3010,7 +3010,7 @@ private:
             ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
             LValue buffer = m_out.constIntPtr(static_cast<const double*>(scratchBuffer->dataBuffer()));
 
-            for (unsigned index = 1; index < m_node->numChildren(); ++index) {
+            for (unsigned index = 0; index < m_node->numChildren(); ++index) {
                 LValue value = lowDouble(m_graph.child(m_node, index));
                 m_out.storeDouble(value, m_out.baseIndex(m_heaps.indexedDoubleProperties, buffer, m_out.constInt32(index), jsNumber(index)));
             }

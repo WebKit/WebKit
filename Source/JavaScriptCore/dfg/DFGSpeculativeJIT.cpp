@@ -7146,8 +7146,32 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
 {
     switch (m_graph.child(node, 0).useKind()) {
     case Int32Use: {
+        if (node->numChildren() == 2) {
+            // Optimize this pattern since it is the most common one.
+            SpeculateStrictInt32Operand op1(this, m_graph.child(node, 0));
+            SpeculateStrictInt32Operand op2(this, m_graph.child(node, 1));
+            GPRTemporary result(this, Reuse, op1);
+
+            GPRReg op1GPR = op1.gpr();
+            GPRReg op2GPR = op2.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            m_jit.move(op1GPR, resultGPR);
+
+#if CPU(ARM64) || CPU(X86_64)
+            m_jit.moveConditionally32(node->op() == ArithMin ? MacroAssembler::GreaterThan : MacroAssembler::LessThan, resultGPR, op2GPR, op2GPR, resultGPR);
+#else
+            auto resultLess = m_jit.branch32(node->op() == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, resultGPR, op2GPR);
+            m_jit.move(op2GPR, resultGPR);
+            resultLess.link(&m_jit);
+#endif
+
+            strictInt32Result(resultGPR, node);
+            break;
+        }
+
         SpeculateStrictInt32Operand op1(this, m_graph.child(node, 0));
-        GPRTemporary result(this, Reuse, op1);
+        GPRTemporary result(this); // Do not use Reuse because Int32Use speculation can fail in the following loop.
 
         GPRReg op1GPR = op1.gpr();
         GPRReg resultGPR = result.gpr();
