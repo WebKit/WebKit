@@ -203,14 +203,14 @@
       "factory": "macOSBuildFactory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["x86_64"],
       "triggers": ["macos-bigsur-debug-wk1-tests-ews"],
-      "workernames": ["ews102", "ews105", "ews112", "ews117", "ews129", "ews153", "ews169"]
+      "workernames": ["ews117", "ews129", "ews153", "ews169"]
     },
     {
       "name": "macOS-BigSur-Debug-WK1-Tests-EWS", "shortname": "mac-debug-wk1", "icon": "testOnly",
       "factory": "macOSWK1Factory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-debug-build-ews"],
-      "workernames": ["ews112"]
+      "workernames": ["ews112", "ews105", "ews102" ]
     },
     {
       "name": "watchOS-8-Build-EWS", "shortname": "watch", "icon": "buildOnly",
