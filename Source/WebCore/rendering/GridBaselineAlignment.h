@@ -160,8 +160,8 @@ private:
     const BaselineGroup& baselineGroupForChild(ItemPosition, unsigned sharedContext, const RenderBox&, GridAxis) const;
     LayoutUnit marginOverForChild(const RenderBox&, GridAxis) const;
     LayoutUnit marginUnderForChild(const RenderBox&, GridAxis) const;
-    LayoutUnit logicalAscentForChild(const RenderBox&, GridAxis) const;
-    LayoutUnit ascentForChild(const RenderBox&, GridAxis) const;
+    LayoutUnit logicalAscentForChild(const RenderBox&, GridAxis, ItemPosition) const;
+    LayoutUnit ascentForChild(const RenderBox&, GridAxis, ItemPosition) const;
     LayoutUnit descentForChild(const RenderBox&, LayoutUnit, GridAxis) const;
     bool isDescentBaselineForChild(const RenderBox&, GridAxis) const;
     bool isHorizontalBaselineAxis(GridAxis) const;

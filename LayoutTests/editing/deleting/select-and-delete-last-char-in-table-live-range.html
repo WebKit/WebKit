@@ -1,0 +1,15 @@
+<!doctype html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<script src=../editing.js ></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<div contenteditable id="root">First<table border="1"><tr><td id="test">1</td></tr></table>Second</div>
+<script>
+Markup.description("In this test the last character of a single-cell table is selected and then deleted using the backspace key. The whole table is deleted.")
+
+const element = document.getElementById("test");
+getSelection().collapse(element, 0);
+extendSelectionForwardByCharacterCommand();
+Markup.dump('root', 'BeforeDeletion');
+
+deleteCommand();
+Markup.dump('root', 'AfterDeletion');
+</script>

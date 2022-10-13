@@ -3014,21 +3014,14 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
 #endif
 
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-        Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure();
-        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
-        WTF::dependentLoadLoadFence();
-
-        if (globalObject->stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure)) {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        if (m_graph.isWatchingStringPrototypeIsSaneChainWatchpoint(node)) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
             // loads return a trivial value". Something like OutOfBoundsSaneChain. This should
             // speculate that we don't take negative out-of-bounds, or better yet, it should rely
             // on a stringPrototypeChainIsSaneConcurrently() guaranteeing that the prototypes have no negative
             // indexed properties either.
             // https://bugs.webkit.org/show_bug.cgi?id=144668
-            m_graph.registerAndWatchStructureTransition(stringPrototypeStructure);
-            m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-
             addSlowPathGenerator(makeUnique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, resultRegs, JITCompiler::LinkableConstant(m_jit, globalObject), baseReg, propertyReg));
         } else {
@@ -7151,74 +7144,123 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
 
 void SpeculativeJIT::compileArithMinMax(Node* node)
 {
-    switch (node->binaryUseKind()) {
+    switch (m_graph.child(node, 0).useKind()) {
     case Int32Use: {
-        SpeculateStrictInt32Operand op1(this, node->child1());
-        SpeculateStrictInt32Operand op2(this, node->child2());
-        GPRTemporary result(this, Reuse, op1);
+        if (node->numChildren() == 2) {
+            // Optimize this pattern since it is the most common one.
+            SpeculateStrictInt32Operand op1(this, m_graph.child(node, 0));
+            SpeculateStrictInt32Operand op2(this, m_graph.child(node, 1));
+            GPRTemporary result(this, Reuse, op1);
+
+            GPRReg op1GPR = op1.gpr();
+            GPRReg op2GPR = op2.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            m_jit.move(op1GPR, resultGPR);
+
+#if CPU(ARM64) || CPU(X86_64)
+            m_jit.moveConditionally32(node->op() == ArithMin ? MacroAssembler::GreaterThan : MacroAssembler::LessThan, resultGPR, op2GPR, op2GPR, resultGPR);
+#else
+            auto resultLess = m_jit.branch32(node->op() == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, resultGPR, op2GPR);
+            m_jit.move(op2GPR, resultGPR);
+            resultLess.link(&m_jit);
+#endif
+
+            strictInt32Result(resultGPR, node);
+            break;
+        }
+
+        SpeculateStrictInt32Operand op1(this, m_graph.child(node, 0));
+        GPRTemporary result(this); // Do not use Reuse because Int32Use speculation can fail in the following loop.
 
         GPRReg op1GPR = op1.gpr();
-        GPRReg op2GPR = op2.gpr();
         GPRReg resultGPR = result.gpr();
 
-        MacroAssembler::Jump op1Less = m_jit.branch32(node->op() == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1GPR, op2GPR);
-        m_jit.move(op2GPR, resultGPR);
-        if (op1GPR != resultGPR) {
-            MacroAssembler::Jump done = m_jit.jump();
-            op1Less.link(&m_jit);
-            m_jit.move(op1GPR, resultGPR);
-            done.link(&m_jit);
-        } else
-            op1Less.link(&m_jit);
+        m_jit.move(op1GPR, resultGPR);
+
+        for (unsigned index = 1; index < node->numChildren(); ++index) {
+            SpeculateStrictInt32Operand op2(this, m_graph.child(node, index));
+            GPRReg op2GPR = op2.gpr();
+#if CPU(ARM64) || CPU(X86_64)
+            m_jit.moveConditionally32(node->op() == ArithMin ? MacroAssembler::GreaterThan : MacroAssembler::LessThan, resultGPR, op2GPR, op2GPR, resultGPR);
+#else
+            auto resultLess = m_jit.branch32(node->op() == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, resultGPR, op2GPR);
+            m_jit.move(op2GPR, resultGPR);
+            resultLess.link(&m_jit);
+#endif
+        }
 
         strictInt32Result(resultGPR, node);
         break;
     }
 
     case DoubleRepUse: {
-        SpeculateDoubleOperand op1(this, node->child1());
-        SpeculateDoubleOperand op2(this, node->child2());
-        FPRTemporary result(this, op1);
+        if (node->numChildren() == 2) {
+            SpeculateDoubleOperand op1(this, m_graph.child(node, 0));
+            SpeculateDoubleOperand op2(this, m_graph.child(node, 1));
+            FPRTemporary result(this, op1);
 
-        FPRReg op1FPR = op1.fpr();
-        FPRReg op2FPR = op2.fpr();
-        FPRReg resultFPR = result.fpr();
+            FPRReg op1FPR = op1.fpr();
+            FPRReg op2FPR = op2.fpr();
+            FPRReg resultFPR = result.fpr();
 
-        MacroAssembler::JumpList done;
+            MacroAssembler::JumpList done;
 
-        MacroAssembler::Jump op1Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleLessThanAndOrdered : MacroAssembler::DoubleGreaterThanAndOrdered, op1FPR, op2FPR);
-        MacroAssembler::Jump opNotEqualOrUnordered = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, op1FPR, op2FPR);
+            MacroAssembler::Jump op1Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleLessThanAndOrdered : MacroAssembler::DoubleGreaterThanAndOrdered, op1FPR, op2FPR);
+            MacroAssembler::Jump opNotEqualOrUnordered = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, op1FPR, op2FPR);
 
-        // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
-        if (node->op() == ArithMin)
-            m_jit.orDouble(op1FPR, op2FPR, resultFPR);
-        else
-            m_jit.andDouble(op1FPR, op2FPR, resultFPR);
+            // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
+            if (node->op() == ArithMin)
+                m_jit.orDouble(op1FPR, op2FPR, resultFPR);
+            else
+                m_jit.andDouble(op1FPR, op2FPR, resultFPR);
 
-        done.append(m_jit.jump());
-
-        opNotEqualOrUnordered.link(&m_jit);
-        // op2 is either the lesser one or one of then is NaN
-        MacroAssembler::Jump op2Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleGreaterThanAndOrdered : MacroAssembler::DoubleLessThanAndOrdered, op1FPR, op2FPR);
-
-        // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding
-        // op1 + op2 and putting it into result.
-        m_jit.addDouble(op1FPR, op2FPR, resultFPR);
-        done.append(m_jit.jump());
-
-        op2Less.link(&m_jit);
-        m_jit.moveDouble(op2FPR, resultFPR);
-
-        if (op1FPR != resultFPR) {
             done.append(m_jit.jump());
 
-            op1Less.link(&m_jit);
-            m_jit.moveDouble(op1FPR, resultFPR);
-        } else
-            op1Less.link(&m_jit);
+            opNotEqualOrUnordered.link(&m_jit);
+            // op2 is either the lesser one or one of then is NaN
+            MacroAssembler::Jump op2Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleGreaterThanAndOrdered : MacroAssembler::DoubleLessThanAndOrdered, op1FPR, op2FPR);
 
-        done.link(&m_jit);
+            // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding
+            // op1 + op2 and putting it into result.
+            m_jit.addDouble(op1FPR, op2FPR, resultFPR);
+            done.append(m_jit.jump());
 
+            op2Less.link(&m_jit);
+            m_jit.moveDouble(op2FPR, resultFPR);
+
+            if (op1FPR != resultFPR) {
+                done.append(m_jit.jump());
+
+                op1Less.link(&m_jit);
+                m_jit.moveDouble(op1FPR, resultFPR);
+            } else
+                op1Less.link(&m_jit);
+
+            done.link(&m_jit);
+
+            doubleResult(resultFPR, node);
+            break;
+        }
+
+        GPRTemporary buffer(this);
+
+        GPRReg bufferGPR = buffer.gpr();
+
+        size_t scratchSize = sizeof(double) * node->numChildren();
+        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+        m_jit.move(TrustedImmPtr(bitwise_cast<const double*>(scratchBuffer->dataBuffer())), bufferGPR);
+
+        for (unsigned index = 0; index < node->numChildren(); ++index) {
+            SpeculateDoubleOperand op(this, m_graph.child(node, index));
+            FPRReg opFPR = op.fpr();
+            m_jit.storeDouble(opFPR, CCallHelpers::Address(bufferGPR, sizeof(double) * index));
+        }
+
+        flushRegisters();
+        FPRResult result(this);
+        FPRReg resultFPR = result.fpr();
+        callOperation(node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, resultFPR, bufferGPR, TrustedImm32(node->numChildren()));
         doubleResult(resultFPR, node);
         break;
     }
@@ -10302,44 +10344,13 @@ void SpeculativeJIT::compileArrayPush(Node* node)
     unsigned elementOffset = 2;
     unsigned elementCount = node->numChildren() - elementOffset;
 
-    if (node->arrayMode().type() == Array::SlowPutArrayStorage) {
-        SpeculateCellOperand base(this, arrayEdge);
-        GPRTemporary buffer(this);
-        ASSERT(!storageEdge.node());
-
-        GPRReg baseGPR = base.gpr();
-        GPRReg bufferGPR = buffer.gpr();
-
-        size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
-        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
-        m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
-
-        for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
-            Edge& element = m_graph.varArgChild(node, elementIndex + elementOffset);
-            JSValueOperand value(this, element);
-            JSValueRegs valueRegs = value.jsValueRegs();
-            m_jit.storeValue(valueRegs, MacroAssembler::Address(bufferGPR, sizeof(EncodedJSValue) * elementIndex));
-            value.use();
-        }
-        base.use();
-
-        flushRegisters();
-        JSValueRegsFlushedCallResult result(this);
-        JSValueRegs resultRegs = result.regs();
-        callOperation(operationArrayPushMultipleSlow, resultRegs, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, bufferGPR, CCallHelpers::TrustedImm32(elementCount));
-
-        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
-        return;
-    }
-
     SpeculateCellOperand base(this, arrayEdge);
+    StorageOperand storage(this, storageEdge);
     GPRTemporary storageLength(this);
 
     GPRReg baseGPR = base.gpr();
-    GPRReg storageLengthGPR = storageLength.gpr();
-
-    StorageOperand storage(this, storageEdge);
     GPRReg storageGPR = storage.gpr();
+    GPRReg storageLengthGPR = storageLength.gpr();
 
 #if USE(JSVALUE32_64)
     GPRTemporary tag(this);
@@ -10576,8 +10587,32 @@ void SpeculativeJIT::compileArrayPush(Node* node)
         return;
     }
 
+    case Array::SlowPutArrayStorage: {
+        GPRTemporary buffer(this);
+        GPRReg bufferGPR = buffer.gpr();
+
+        size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
+        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+        m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
+
+        for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+            Edge& element = m_graph.varArgChild(node, elementIndex + elementOffset);
+            JSValueOperand value(this, element);
+            JSValueRegs valueRegs = value.jsValueRegs();
+            m_jit.storeValue(valueRegs, MacroAssembler::Address(bufferGPR, sizeof(EncodedJSValue) * elementIndex));
+            value.use();
+        }
+        base.use();
+        storage.use();
+
+        flushRegisters();
+        callOperation(operationArrayPushMultipleSlow, resultRegs, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, bufferGPR, CCallHelpers::TrustedImm32(elementCount));
+
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        return;
+    }
+
     case Array::ForceExit:
-    case Array::SlowPutArrayStorage:
         DFG_CRASH(m_graph, node, "Bad array mode type");
         break;
 

@@ -10124,7 +10124,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     interactionInformationRequest.includeCaretContext = true;
     interactionInformationRequest.includeHasDoubleClickHandler = false;
 
-    BOOL didSynchronouslyReplyWithApproximation = false;
+    __block BOOL didSynchronouslyReplyWithApproximation = false;
     if (![self _currentPositionInformationIsValidForRequest:interactionInformationRequest] && self.webView._editable && !_positionInformation.shouldNotUseIBeamInEditableContent) {
         didSynchronouslyReplyWithApproximation = true;
         completion([UIPointerRegion regionWithRect:self.bounds identifier:editablePointerRegionIdentifier]);
@@ -10144,14 +10144,14 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         if (!_deferredPointerInteractionRequest)
             _hasOutstandingPointerInteractionRequest = NO;
 
-        if (didSynchronouslyReplyWithApproximation) {
+        if (didSynchronouslyReplyWithApproximation)
             [interaction invalidate];
-            return;
-        }
-
-        completion([self pointerRegionForPositionInformation:interactionInformation point:request.location]);
+        else
+            completion([self pointerRegionForPositionInformation:interactionInformation point:request.location]);
 
         if (_deferredPointerInteractionRequest) {
+            didSynchronouslyReplyWithApproximation = false;
+
             auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, std::nullopt);
             [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
                 replyHandler(interactionInformation, deferredRequest->second.get());

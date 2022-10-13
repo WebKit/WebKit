@@ -45,10 +45,20 @@ template<> struct WTF::CFTypeTrait<CAMachPortRef> {
 
 namespace WebKit {
 
+static CFDictionaryRef makeContextOptions(const CGDisplayListImageBufferBackend::Parameters& parameters)
+{
+    RetainPtr colorSpace = parameters.colorSpace.platformColorSpace();
+    if (!colorSpace)
+        return nil;
+    return (CFDictionaryRef)@{
+        @"colorspace" : (id)colorSpace.get()
+    };
+}
+
 class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
 public:
     GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters)
-        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, nullptr)).autorelease())
+        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, makeContextOptions(parameters))).autorelease())
     {
         m_immutableBaseTransform.scale(1, -1);
         m_immutableBaseTransform.translate(0, -ceilf(parameters.logicalSize.height() * parameters.resolutionScale));

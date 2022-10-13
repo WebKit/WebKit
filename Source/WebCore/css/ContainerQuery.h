@@ -41,12 +41,7 @@ using SizeFeature = MQ::Feature;
 struct ContainerCondition;
 struct SizeCondition;
 
-struct UnknownQuery {
-    String name;
-    String text;
-};
-
-using QueryInParens = std::variant<ContainerCondition, SizeFeature, UnknownQuery>;
+using QueryInParens = std::variant<ContainerCondition, SizeFeature, MQ::GeneralEnclosed>;
 
 struct ContainerCondition {
     MQ::LogicalOperator logicalOperator { MQ::LogicalOperator::And };

@@ -30,6 +30,7 @@
 #if ENABLE(CSS_PAINTING_API)
 
 #include "CSSPaintImageValue.h"
+#include "CSSVariableData.h"
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {

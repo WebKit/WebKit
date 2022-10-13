@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html> 
+<body>
+<p id="description">This tests deleting line break after h1.
+WebKit should not cancel styles added by h1 by those of document's default style but keep "world" italicized.</p>
+<div id="test" contenteditable>
+<h1>hello</h1>
+<em>world</em>
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

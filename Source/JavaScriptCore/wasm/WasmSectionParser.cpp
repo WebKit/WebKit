@@ -52,6 +52,10 @@ auto SectionParser::parseType() -> PartialResult
         int8_t typeKind;
         WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get ", i, "th Type's type");
         RefPtr<TypeDefinition> signature;
+
+        // When GC is enabled, recursive references can show up in any of these cases.
+        SetForScope<RecursionGroupInformation> recursionGroupInfo(m_recursionGroupInformation, Options::useWebAssemblyGC() ? RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + 1 } : RecursionGroupInformation { false, 0, 0 });
+
         switch (static_cast<TypeKind>(typeKind)) {
         case TypeKind::Func: {
             WASM_FAIL_IF_HELPER_FAILS(parseFunctionType(i, signature));
@@ -83,10 +87,33 @@ auto SectionParser::parseType() -> PartialResult
         }
 
         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
-        // Recursion group parsing will append the entries itself, as there may
-        // be multiple entries that need to be added to the type section for
-        // each recursion group.
-        if (!signature->is<RecursionGroup>())
+
+        // When GC is enabled, type definitions that appear on their own are shorthand
+        // notations for recursion groups with one type. Here we ensure that if such a
+        // shorthand type is actually recursive, it is represented with a recursion group.
+        if (Options::useWebAssemblyGC()) {
+            bool hasRecursiveReference = false;
+            if (signature->is<FunctionSignature>())
+                hasRecursiveReference = signature->as<FunctionSignature>()->hasRecursiveReference();
+            else if (signature->is<StructType>())
+                hasRecursiveReference = signature->as<StructType>()->hasRecursiveReference();
+            else if (signature->is<ArrayType>())
+                hasRecursiveReference = signature->as<ArrayType>()->hasRecursiveReference();
+
+            if (hasRecursiveReference) {
+                Vector<TypeIndex> types;
+                bool result = types.tryAppend(signature->index());
+                WASM_PARSER_FAIL_IF(!result, "can't allocate enough memory for Type section's ", i, "th signature");
+                RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
+                RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
+                m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
+            } else if (!signature->is<RecursionGroup>()) {
+                // Recursion group parsing will append the entries itself, as there may
+                // be multiple entries that need to be added to the type section for
+                // each recursion group.
+                m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
+            }
+        } else
             m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
     }
     return { };

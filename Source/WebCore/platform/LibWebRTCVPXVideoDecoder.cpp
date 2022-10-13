@@ -73,6 +73,17 @@ private:
     bool m_isClosed { false };
 };
 
+void LibWebRTCVPXVideoDecoder::create(Type type, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+{
+    auto decoder = makeUniqueRef<LibWebRTCVPXVideoDecoder>(type, WTFMove(outputCallback), WTFMove(postTaskCallback));
+    vpxQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
+        auto internalDecoder = decoder->m_internalDecoder;
+        internalDecoder->postTask([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
+            callback(UniqueRef<VideoDecoder> { WTFMove(decoder) });
+        });
+    });
+}
+
 LibWebRTCVPXVideoDecoder::LibWebRTCVPXVideoDecoder(Type type, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
     : m_internalDecoder(LibWebRTCVPXInternalVideoDecoder::create(type, WTFMove(outputCallback), WTFMove(postTaskCallback)))
 {

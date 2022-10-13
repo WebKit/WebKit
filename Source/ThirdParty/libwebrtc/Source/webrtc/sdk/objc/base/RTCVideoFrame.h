@@ -40,7 +40,7 @@ __attribute__((objc_runtime_name("WK_RTCVideoFrame")))
 @property(nonatomic, readonly) int64_t timeStampNs;
 
 /** Timestamp 90 kHz. */
-@property(nonatomic, assign) int32_t timeStamp;
+@property(nonatomic, assign) int64_t timeStamp;
 
 @property(nonatomic, readonly) id<RTCVideoFrameBuffer> buffer;
 

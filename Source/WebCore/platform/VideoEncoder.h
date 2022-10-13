@@ -42,6 +42,9 @@ public:
         uint64_t width { 0 };
         uint64_t height { 0 };
         bool useAnnexB { false };
+        uint64_t bitRate { 0 };
+        double frameRate { 0 };
+        bool isRealtime { true };
     };
     struct ActiveConfiguration {
         String codec;

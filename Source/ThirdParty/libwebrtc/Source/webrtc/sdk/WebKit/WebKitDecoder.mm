@@ -43,7 +43,7 @@
 - (instancetype)initH264DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
 - (instancetype)initH265DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
 - (NSInteger)setFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height;
-- (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(uint32_t)timeStamp;
+- (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(int64_t)timeStamp;
 - (NSInteger)releaseDecoder;
 - (void)flush;
 @end
@@ -59,7 +59,7 @@
         m_h264Decoder = [[RTCVideoDecoderH264 alloc] init];
         [m_h264Decoder setCallback:^(RTCVideoFrame *frame) {
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStampNs, frame.timeStamp);
+            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
         }];
     }
     return self;
@@ -70,7 +70,7 @@
         m_h265Decoder = [[RTCVideoDecoderH265 alloc] init];
         [m_h265Decoder setCallback:^(RTCVideoFrame *frame) {
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStampNs, frame.timeStamp);
+            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
         }];
     }
     return self;
@@ -81,7 +81,7 @@
         m_vp9Decoder = [[RTCVideoDecoderVTBVP9 alloc] init];
         [m_vp9Decoder setCallback:^(RTCVideoFrame *frame) {
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStampNs, frame.timeStamp);
+            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
         }];
     }
     return self;
@@ -95,7 +95,7 @@
     return 0;
 }
 
-- (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(uint32_t)timeStamp {
+- (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(int64_t)timeStamp {
     if (m_h264Decoder)
         return [m_h264Decoder decodeData:data size:size timeStamp:timeStamp];
     if (m_h265Decoder)
@@ -320,7 +320,7 @@ int32_t setDecodingFormat(LocalDecoder localDecoder, const uint8_t* data, size_t
     return [decoder setFormat:data size:size width:width height:height];
 }
 
-int32_t decodeFrame(LocalDecoder localDecoder, uint32_t timeStamp, const uint8_t* data, size_t size)
+int32_t decodeFrame(LocalDecoder localDecoder, int64_t timeStamp, const uint8_t* data, size_t size)
 {
     auto* decoder = (__bridge WK_RTCLocalVideoH264H265VP9Decoder *)(localDecoder);
     return [decoder decodeData:data size:size timeStamp:timeStamp];

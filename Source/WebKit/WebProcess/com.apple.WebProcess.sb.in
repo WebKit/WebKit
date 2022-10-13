@@ -2029,7 +2029,6 @@
         SYS_setsockopt ;; <rdar://90249455>
         SYS_shm_open
         SYS_sigaction
-        SYS_sigreturn
         SYS_sysctl
         SYS_unlink
         SYS_write
@@ -2047,7 +2046,7 @@
 ))
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with send-signal SIGKILL))
+    (deny syscall-unix)
     (allow syscall-unix
         (syscall-unix-common))
 
@@ -2066,10 +2065,6 @@
     (when (defined? 'SYS_map_with_linking_np)
         (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 )
-
-(deny syscall-unix (syscall-number
-    SYS_connect
-    SYS_socket))
 
 (with-filter (uid 0)
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>

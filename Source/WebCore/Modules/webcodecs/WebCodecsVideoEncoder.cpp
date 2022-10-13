@@ -102,7 +102,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
             };
         }
         bool useAnnexB = config.avc && config.avc->format == AvcBitstreamFormat::Annexb;
-        VideoEncoder::create(config.codec, { config.width, config.height, useAnnexB }, [this, weakThis = WeakPtr { *this }](auto&& result) {
+        VideoEncoder::create(config.codec, { config.width, config.height, useAnnexB, config.bitrate.value_or(0), config.framerate.value_or(0), config.latencyMode == LatencyMode::Realtime }, [this, weakThis = WeakPtr { *this }](auto&& result) {
             if (!weakThis)
                 return;
 

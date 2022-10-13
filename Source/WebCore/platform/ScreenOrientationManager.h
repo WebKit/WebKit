@@ -33,11 +33,13 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class Exception;
+class ScreenOrientation;
 
 class ScreenOrientationManager : public CanMakeWeakPtr<ScreenOrientationManager> {
 public:
-    virtual ~ScreenOrientationManager() { }
+    WEBCORE_EXPORT virtual ~ScreenOrientationManager();
 
     class Observer : public CanMakeWeakPtr<Observer> {
     public:
@@ -51,8 +53,16 @@ public:
     virtual void addObserver(Observer&) = 0;
     virtual void removeObserver(Observer&) = 0;
 
+    void setLockPromise(ScreenOrientation&, Ref<DeferredPromise>&&);
+    ScreenOrientation* lockRequester() const;
+    RefPtr<DeferredPromise> takeLockPromise();
+
 protected:
-    ScreenOrientationManager() = default;
+    WEBCORE_EXPORT ScreenOrientationManager();
+
+private:
+    RefPtr<DeferredPromise> m_lockPromise;
+    WeakPtr<ScreenOrientation> m_lockRequester;
 };
 
 } // namespace WebCore

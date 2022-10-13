@@ -1,0 +1,3 @@
+
+PASS When performing a fragment navigation, the change must not abort
+

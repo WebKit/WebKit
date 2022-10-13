@@ -15,7 +15,7 @@ if (window.IPC) {
     let dataWriteSuccess = false;
 
     const testBytes = Uint8Array.from({length: 16}, (x, i) => i + 0x41);
-    const bufferSize = 48;
+    const bufferSize = 272;
     const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);
 
     let streamBuffer = streamConnection.streamBuffer();

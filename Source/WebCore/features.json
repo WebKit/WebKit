@@ -420,7 +420,7 @@
     {
         "name": "Compression Streams",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://wicg.github.io/compression/",
         "keywords": ["compression", "streams", "compression streams"],

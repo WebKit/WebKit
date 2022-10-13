@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<body>
+<div id="test" contenteditable>
+<div><font class="Apple-style-span" face="monospace">hello world</font></div><div><font class="Apple-style-span" face="monospace">WebKit</font></div>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('This tests deleting a line break between paragraphs with the same inline style.'
++ ' Inline style should be preserved after the merge.');
+
+document.getElementById('test').focus();
+window.getSelection().modify('move', 'forward', 'line');
+document.execCommand('Delete');
+
+Markup.dump('test');
+
+</script>
+</body>
+</html>

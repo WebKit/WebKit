@@ -58,6 +58,7 @@ from webkitpy.style.checkers.test_expectations import TestExpectationsChecker
 from webkitpy.style.checkers.text import TextChecker
 from webkitpy.style.checkers.watchlist import WatchListChecker
 from webkitpy.style.checkers.xcodeproj import XcodeProjectFileChecker
+from webkitpy.style.checkers.xcscheme import XcodeSchemeChecker
 from webkitpy.style.checkers.xml import XMLChecker
 from webkitpy.style.error_handlers import DefaultStyleErrorHandler
 from webkitpy.style.filter import FilterConfiguration
@@ -363,6 +364,8 @@ _TEXT_FILE_EXTENSIONS = [
 
 _XCODEPROJ_FILE_EXTENSION = 'pbxproj'
 
+_XCSCHEME_FILE_EXTENSION = 'xcscheme'
+
 _XML_FILE_EXTENSIONS = [
     'vcproj',
     'vsprops',
@@ -470,6 +473,7 @@ def _all_categories():
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
+    categories = categories.union(XcodeSchemeChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for
@@ -624,6 +628,7 @@ class FileType:
     CMAKE = 11
     FEATUREDEFINES = 12
     SDKVARIANT = 13
+    XCSCHEME = 14
 
 
 class CheckerDispatcher(object):
@@ -709,6 +714,8 @@ class CheckerDispatcher(object):
             return FileType.WATCHLIST
         elif file_extension == _XCODEPROJ_FILE_EXTENSION:
             return FileType.XCODEPROJ
+        elif file_extension == _XCSCHEME_FILE_EXTENSION:
+            return FileType.XCSCHEME
         elif file_extension == _PNG_FILE_EXTENSION:
             return FileType.PNG
         elif ((file_extension == _CMAKE_FILE_EXTENSION) or os.path.basename(file_path) == 'CMakeLists.txt'):
@@ -768,6 +775,11 @@ class CheckerDispatcher(object):
                 checker = PythonChecker(file_path, handle_style_error)
         elif file_type == FileType.XML:
             checker = XMLChecker(file_path, handle_style_error)
+        elif file_type == FileType.XCSCHEME:
+            if apple_additions():
+                checker = apple_additions().xcscheme_checker(file_path, handle_style_error)
+            else:
+                checker = XcodeSchemeChecker(file_path, handle_style_error)
         elif file_type == FileType.XCODEPROJ:
             checker = XcodeProjectFileChecker(file_path, handle_style_error)
         elif file_type == FileType.PNG:

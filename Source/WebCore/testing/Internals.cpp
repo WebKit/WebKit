@@ -2868,7 +2868,7 @@ bool Internals::isElementAlive(uint64_t elementIdentifier) const
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
-        return valueOrDefault(page->mainFrame().loader().frameID()).object().toUInt64();
+        return page->mainFrame().loader().frameID().object().toUInt64();
     return 0;
 }
 
@@ -6409,6 +6409,19 @@ bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process
 #else
     UNUSED_PARAM(process);
     UNUSED_PARAM(service);
+    return false;
+#endif
+}
+
+bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned syscall) const
+{
+#if PLATFORM(COCOA)
+    RELEASE_ASSERT(process == "com.apple.WebKit.WebContent"_s);
+    auto pid = getpid();
+    return !sandbox_check(pid, "syscall-unix", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_SYSCALL_NUMBER | SANDBOX_CHECK_NO_REPORT), syscall);
+#else
+    UNUSED_PARAM(process);
+    UNUSED_PARAM(syscall);
     return false;
 #endif
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<head>
+<style type="text/css">
+.styleToMerge {
+color: red;
+font-size: 10px;
+}
+</style>
+</head>
+<body>
+<div id="test" contenteditable="true">
+<div>foo</div>
+<div id="divToMerge" class="styleToMerge" style="color:blue;font-size:20px">bar</div>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+Markup.description('The inline style should be applied when merging div element.\n'
+    + 'The test passes if "bar" has the blue color and 20px font-size.');
+
+var divToMerge = document.getElementById("divToMerge");
+divToMerge.focus();
+getSelection().collapse(divToMerge, 0);
+document.execCommand("Delete");
+Markup.dump(document.getElementById("test"));
+</script>
+ </body>
+</html>

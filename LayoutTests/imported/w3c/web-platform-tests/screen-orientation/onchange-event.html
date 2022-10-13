@@ -14,10 +14,10 @@ promise_test(async t => {
   await test_driver.bless("request full screen", () => {
     return document.documentElement.requestFullscreen();
   });
-  const type = screen.orientation.type.startsWith("portrait") ? "landscape" : "portrait";
+  const type = screen.orientation.type.startsWith("portrait") ? "portrait" : "landscape";
   screen.orientation.onchange = t.unreached_func("change event should not be fired");
   await screen.orientation.lock(type);
-  assert_equals(screen.orientation.type, type);
+  assert_true(screen.orientation.type.startsWith(type));
 }, "Test that orientationchange event is not fired when the orientation does not change.");
 
 promise_test(async t => {
@@ -41,12 +41,14 @@ promise_test(async t => {
 
   for (const orientation of orientations) {
     // change event is fired before resolving promise by lock.
+    let lockPromise = screen.orientation.lock(orientation);
     const result = await Promise.race([
-      screen.orientation.lock(orientation),
+      lockPromise,
       orientationWatcher.wait_for('change'),
     ]);
-    assert_equals(result instanceof Event, "The event must be fired first.");
-    assert_equals(screen.orientation.type, orientation);
+    assert_true(result instanceof Event, "The event must be fired first.");
+    assert_true(screen.orientation.type.startsWith(orientation), "The orientation must match");
+    await lockPromise;
   }
 }, "Test that orientationchange event is fired when the orientation changes.");
 </script>

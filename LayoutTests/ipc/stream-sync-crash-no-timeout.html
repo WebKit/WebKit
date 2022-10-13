@@ -7,7 +7,7 @@
 setup({ single_test: true });
 if (window.IPC) { // For compiles with !ENABLE(IPC_TESTING_API)
     const defaultTimeout = 10;
-    const bufferSize = 100;
+    const bufferSize = 400;
     const streamTesterID = 4557;
     for (const processTarget of IPC.processTargets) {
         if (processTarget == "UI")

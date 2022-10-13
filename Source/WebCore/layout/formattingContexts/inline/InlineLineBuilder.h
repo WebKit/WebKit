@@ -102,7 +102,7 @@ private:
         bool isConstrainedByFloat { false };
     };
     UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const;
-    std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
+    FloatingContext::Constraints floatConstraints(const InlineRect& lineLogicalRect) const;
 
     struct Result {
         InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };

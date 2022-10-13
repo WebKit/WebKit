@@ -164,32 +164,25 @@ static _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy(const Test
     return _WKFocusStartsInputSessionPolicyAuto;
 }
 
-static void restorePortraitOrientationIfNeeded(PlatformWebView* platformWebView, Seconds timeoutDuration)
+void TestController::restorePortraitOrientationIfNeeded()
 {
-#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
-    if (!platformWebView)
+#if PLATFORM(IOS)
+    auto *scene = mainWebView()->platformView().window.windowScene;
+    if (scene.interfaceOrientation == UIInterfaceOrientationPortrait)
         return;
 
-    auto *scene = platformWebView->platformView().window.windowScene;
-    if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
-        return;
-
-    auto geometryPreferences = adoptNS([[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:UIInterfaceOrientationMaskPortrait]);
-    [scene requestGeometryUpdateWithPreferences:geometryPreferences.get() errorHandler:^(NSError *error) {
-        NSLog(@"Failed to restore portrait orientation with error: %@.", error);
-    }];
+    lockScreenOrientation(kWKScreenOrientationTypePortraitPrimary);
 
     auto startTime = MonotonicTime::now();
     while ([NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:NSDate.distantPast]) {
-        if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
+        if (scene.interfaceOrientation == UIInterfaceOrientationPortrait)
             break;
 
-        if (MonotonicTime::now() - startTime >= timeoutDuration)
+        if (MonotonicTime::now() - startTime >= m_currentInvocation->shortTimeout())
             break;
     }
+    unlockScreenOrientation();
 #else
-    UNUSED_PARAM(platformWebView);
-    UNUSED_PARAM(timeoutDuration);
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
 #endif
 }
@@ -204,7 +197,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     [[UIScreen mainScreen] _setScale:2.0];
     [[HIDEventGenerator sharedHIDEventGenerator] resetActiveModifiers];
 
-    restorePortraitOrientationIfNeeded(mainWebView(), m_currentInvocation->shortTimeout());
+    restorePortraitOrientationIfNeeded();
 
     // Ensures that only the UCB is on-screen when showing the keyboard, if the hardware keyboard is attached.
     TIPreferencesController *textInputPreferences = [getTIPreferencesControllerClass() sharedPreferencesController];
@@ -446,5 +439,38 @@ UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
         m_pasteboardConsistencyEnforcer = adoptNS([[UIPasteboardConsistencyEnforcer alloc] initWithPasteboardName:UIPasteboardNameGeneral]);
     return m_pasteboardConsistencyEnforcer.get();
 }
+
+#if PLATFORM(IOS)
+void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
+{
+    TestRunnerWKWebView *webView = mainWebView()->platformView();
+    switch (orientation) {
+    case kWKScreenOrientationTypePortraitPrimary:
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskPortrait;
+        break;
+    case kWKScreenOrientationTypePortraitSecondary:
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskPortraitUpsideDown;
+        break;
+    case kWKScreenOrientationTypeLandscapePrimary:
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeLeft;
+        break;
+    case kWKScreenOrientationTypeLandscapeSecondary:
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeRight;
+        break;
+    }
+    [UIView performWithoutAnimation:^{
+        [webView.window.rootViewController setNeedsUpdateOfSupportedInterfaceOrientations];
+    }];
+}
+
+void TestController::unlockScreenOrientation()
+{
+    TestRunnerWKWebView *webView = mainWebView()->platformView();
+    webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskAll;
+    [UIView performWithoutAnimation:^{
+        [webView.window.rootViewController setNeedsUpdateOfSupportedInterfaceOrientations];
+    }];
+}
+#endif
 
 } // namespace WTR

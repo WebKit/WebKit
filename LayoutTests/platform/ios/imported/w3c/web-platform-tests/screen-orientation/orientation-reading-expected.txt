@@ -1,11 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Screen orientation locking is not supported
-
-Harness Error (TIMEOUT), message = null
 
 PASS Test screen.orientation properties
 PASS Test screen.orientation default values.
-FAIL Test the orientations and associated angles promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+PASS Test the orientations and associated angles
 PASS Test that screen.orientation properties are not writable
 PASS Test that screen.orientation is always the same object
-TIMEOUT Test that screen.orientation values change if the orientation changes Test timed out
+PASS Test that screen.orientation values change if the orientation changes
 

@@ -390,6 +390,11 @@ public:
 
     void handleQueryPermission(WKStringRef, WKSecurityOriginRef, WKQueryPermissionResultCallbackRef);
 
+#if PLATFORM(IOS)
+    void lockScreenOrientation(WKScreenOrientationType);
+    void unlockScreenOrientation();
+#endif
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -451,6 +456,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     UIPasteboardConsistencyEnforcer *pasteboardConsistencyEnforcer();
+    void restorePortraitOrientationIfNeeded();
 #endif
 
     // WKContextInjectedBundleClient

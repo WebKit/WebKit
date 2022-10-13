@@ -6,7 +6,7 @@ PASS Test invalid configs
 PASS Test configure()
 PASS Decode a key frame
 PASS Decode a non key frame first fails
-FAIL Verify reset() suppresses outputs assert_greater_than: expected a number greater than 0 but got 0
+PASS Verify reset() suppresses outputs
 PASS Test unconfigured VideoDecoder operations
 PASS Test closed VideoDecoder operations
 FAIL Decode empty frame promise_rejects_dom: function "function () { throw e }" threw object "EncodingError: VPx decoding failed with error 1" that is not a DOMException AbortError: property "code" is equal to 0, expected 20

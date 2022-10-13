@@ -44,11 +44,15 @@ public:
     static Ref<ScreenOrientation> create(Document*);
     ~ScreenOrientation();
 
+    using ScreenOrientationManager::Observer::weakPtrFactory;
+    using ScreenOrientationManager::Observer::WeakValueType;
+    using ScreenOrientationManager::Observer::WeakPtrImplType;
+
     using LockType = ScreenOrientationLockType;
     using Type = ScreenOrientationType;
 
     void lock(LockType, Ref<DeferredPromise>&&);
-    void unlock();
+    ExceptionOr<void> unlock();
     Type type() const;
     uint16_t angle() const;
 

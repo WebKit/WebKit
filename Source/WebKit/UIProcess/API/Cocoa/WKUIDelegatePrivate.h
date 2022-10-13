@@ -56,14 +56,11 @@
 @protocol UIDropSession;
 @protocol UIEditMenuInteractionAnimating;
 
-typedef NS_ENUM(NSInteger, _WKScreenOrientationLockType) {
-    _WKScreenOrientationLockTypeAny,
-    _WKScreenOrientationLockTypeLandscape,
-    _WKScreenOrientationLockTypeLandscapePrimary,
-    _WKScreenOrientationLockTypeLandscapeSecondary,
-    _WKScreenOrientationLockTypePortrait,
-    _WKScreenOrientationLockTypePortraitPrimary,
-    _WKScreenOrientationLockTypePortraitSecondary
+typedef NS_ENUM(NSInteger, _WKScreenOrientationType) {
+    _WKScreenOrientationTypePortraitPrimary,
+    _WKScreenOrientationTypePortraitSecondary,
+    _WKScreenOrientationTypeLandscapePrimary,
+    _WKScreenOrientationTypeLandscapeSecondary
 } WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #else
@@ -268,7 +265,7 @@ struct UIEdgeInsets;
 - (NSInteger)_webView:(WKWebView *)webView dataOwnerForDropSession:(id <UIDropSession>)session WK_API_AVAILABLE(ios(11.0));
 - (NSInteger)_webView:(WKWebView *)webView dataOwnerForDragSession:(id <UIDragSession>)session WK_API_AVAILABLE(ios(11.0));
 
-- (void)_webViewLockScreenOrientation:(WKWebView *)webView lockType:(_WKScreenOrientationLockType)lockType WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_webViewLockScreenOrientation:(WKWebView *)webView lockType:(_WKScreenOrientationType)lockType WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webViewUnlockScreenOrientation:(WKWebView *)webView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 

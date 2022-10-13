@@ -39,6 +39,7 @@
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/InheritsFrom.h>
+#include <wtf/Seconds.h>
 
 #if ENABLE(IPC_TESTING_API)
 
@@ -80,6 +81,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         { "WebCore::InheritsFrom"_s, {
             "int"_s,
             "int"_s,
+        } },
+        { "Seconds"_s, {
+            "double"_s,
         } },
     };
 }

@@ -117,11 +117,6 @@ std::optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
     return std::nullopt;
 }
 
-std::optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
-{
-    return std::nullopt;
-}
-
 bool WebFrameLoaderClient::hasWebView() const
 {
     return m_webFrame->webView();

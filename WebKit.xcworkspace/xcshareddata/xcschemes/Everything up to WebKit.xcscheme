@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "14F271BD18EA3963008C152F"
-               BuildableName = "libbmalloc.a"
-               BlueprintName = "bmalloc"
+               BlueprintIdentifier = "0F7EB8501F95504B00F1ABCB"
+               BuildableName = "All"
+               BlueprintName = "All"
                ReferencedContainer = "container:Source/bmalloc/bmalloc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -162,10 +162,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "14F271BD18EA3963008C152F"
-            BuildableName = "libbmalloc.a"
-            BlueprintName = "bmalloc"
-            ReferencedContainer = "container:Source/bmalloc/bmalloc.xcodeproj">
+            BlueprintIdentifier = "5D247B6114689B8600E78B76"
+            BuildableName = "libWTF.a"
+            BlueprintName = "WTF"
+            ReferencedContainer = "container:Source/WTF/WTF.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

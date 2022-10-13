@@ -1056,6 +1056,7 @@ imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-
 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-import.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/generic/filesystem-urls-do-not-match-self.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/img-src/icon-blocked.sub.html [ Skip ]
+webkit.org/b/246421 imported/w3c/web-platform-tests/content-security-policy/inheritance/javascript-url-open-in-main-window.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-connect-src.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-connect-src.https.sub.html [ Skip ]
@@ -1096,15 +1097,19 @@ imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-erro
 imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker.html [ Skip ]
+webkit.org/b/246442 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-service-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/script-sample-no-opt-in.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image-from-script.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/targeting.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/upgrade-insecure-requests-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.worker.html [ Skip ]
+webkit.org/b/246431 imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-blocked-in-about-blank-iframe.html [ Skip ]
+webkit.org/b/246441 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/postMessage-wasm-module.html [ Skip ]
+webkit.org/b/246440 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.html [ Skip ]
+webkit.org/b/246440 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.serviceworker.html [ Skip ]
+webkit.org/b/246440 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.sharedworker.html [ Skip ]
+webkit.org/b/246440 imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.worker.html [ Skip ]
 
 # FIXME: Skip Content Security Policy tests whose output is non-deterministic
 imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html [ Skip ]
@@ -1493,20 +1498,14 @@ webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-within-fle
   
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-001.html [ ImageOnlyFailure ]
@@ -1588,7 +1587,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-order-001
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/236959 imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-001.html [ ImageOnlyFailure ]
 webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
 
 # CSS Grid Baseline tests
@@ -4539,16 +4537,11 @@ webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-002.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-003.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-004.html [ ImageOnlyFailure ]
-webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-001.html [ ImageOnlyFailure ]
-webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-002.html [ ImageOnlyFailure ]
-webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-003.html [ ImageOnlyFailure ]
-webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-004.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-002.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-002.html [ ImageOnlyFailure ]
-webkit.org/b/212267 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-self-baseline-001.html [ Skip ]
 
 # Only Cocoa ports support the -apple-system font keywords
 fast/text/text-styles/-apple-system [ ImageOnlyFailure ]
@@ -6085,9 +6078,6 @@ js/ShadowRealm-iframe-detach.html [ Pass Failure ]
 js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
 js/ShadowRealm-importValue.html [ Pass Failure ]
 js/ShadowRealm-worker.html [ Pass Failure ]
-
-# We don't support screen orientation locking yet, making these tests flaky.
-imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure Pass ]
 
 # Old SVG+currentcolor tests are incorrect https://bugs.webkit.org/show_bug.cgi?id=245400
 imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual.svg [ Skip ]

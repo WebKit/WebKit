@@ -8,7 +8,7 @@ promise_test(async t => {
     if (!window.IPC)
         return;
     const defaultTimeout = 1000;
-    const bufferSize = 100;
+    const bufferSize = 400;
     const streamTesterID = 447;
     for (const processTarget of IPC.processTargets) {
         const streamConnection = IPC.createStreamClientConnection(processTarget, bufferSize);

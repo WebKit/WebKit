@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<style>
+div p { color:red; }
+</style>
+<body>
+<p id="description">This tests deleting line break before p.
+WebKit should not keep the style of p added by a style rule, and "world" should be italic and not be in red.</p>
+<div id="test" style="color:red;" contenteditable>
+<h1>hello</h1>
+<p><i>world</i></p>
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

@@ -323,7 +323,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseHeapType(const ModuleInformation& i
         return false;
     }
 
-    if (static_cast<size_t>(heapType) >= info.typeCount() && (!m_recursionGroupInformation.inRecursionGroup || !(static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start && static_cast<uint32_t>(heapType) <= m_recursionGroupInformation.end)))
+    if (static_cast<size_t>(heapType) >= info.typeCount() && (!m_recursionGroupInformation.inRecursionGroup || !(static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end)))
         return false;
 
     result = heapType;
@@ -351,15 +351,18 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
         if (heapType < 0)
             typeIndex = static_cast<TypeIndex>(heapType);
         else {
-            // For recursive references inside recursion groups, we re-use the
-            // `rec` type code to be the internal representation of `rec.<i>`
-            // in the formal semantics. These should not leak out, as they are
-            // replaced with real type indices during type unrolling/expansion.
+            // For recursive references inside recursion groups, we construct a
+            // placeholder projection with an invalid group index. These should
+            // be replaced with a real type index in expand() before use.
             if (m_recursionGroupInformation.inRecursionGroup && static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start) {
-                typeKind = TypeKind::Rec;
-                typeIndex = static_cast<TypeIndex>(heapType - m_recursionGroupInformation.start);
-            } else
+                ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end);
+                ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_recursionGroupInformation.start);
+                RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForProjection(Projection::PlaceholderGroup, groupIndex);
+                typeIndex = def->index();
+            } else {
+                ASSERT(static_cast<uint32_t>(heapType) < info.typeCount());
                 typeIndex = TypeInformation::get(info.typeSignatures[heapType].get());
+            }
         }
     }
 

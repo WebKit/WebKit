@@ -1239,7 +1239,8 @@ public:
     bool hasSandboxMachLookupAccessToGlobalName(const String& process, const String& service);
     bool hasSandboxMachLookupAccessToXPCServiceName(const String& process, const String& service);
     bool hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass);
-
+    bool hasSandboxUnixSyscallAccess(const String& process, unsigned syscall) const;
+        
     String highlightPseudoElementColor(const AtomString& highlightName, Element&);
 
     String windowLocationHost(DOMWindow&);

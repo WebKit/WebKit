@@ -70,3 +70,7 @@ enum class EnumNamespace::EnumType : uint16_t {
 #endif
     OptionSetThirdValue
 }
+
+class WTF::Seconds {
+    double value()
+}

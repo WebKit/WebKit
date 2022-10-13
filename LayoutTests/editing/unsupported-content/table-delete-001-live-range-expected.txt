@@ -1,0 +1,61 @@
+For this test Select and delete a table. Expected Results: Only table should get deleted.Surrounding content that is not selected should (obviously) not be affected.
+
+BeforeDeletion:
+| "\n"
+| <div>
+|   class="editing"
+|   id="test"
+|   "\nFirst\n"
+|   <table>
+|     border="1"
+|     "\n"
+|     <tbody>
+|       <tr>
+|         "\n"
+|         <td>
+|           "<#selection-anchor>1"
+|         "\n"
+|         <td>
+|           "2"
+|         "\n"
+|         <td>
+|           "3"
+|         "\n"
+|       "\n"
+|       <tr>
+|         "\n"
+|         <td>
+|           "4"
+|         "\n"
+|         <td>
+|           "5"
+|         "\n"
+|         <td>
+|           "6"
+|         "\n"
+|       "\n"
+|       <tr>
+|         "\n"
+|         <td>
+|           "7"
+|         "\n"
+|         <td>
+|           "8"
+|         "\n"
+|         <td>
+|           "9"
+|         "\n"
+|       "\n"
+|   <#selection-focus>
+|   "\nSecond\n"
+| "\n"
+
+AfterDeletion:
+| "\n"
+| <div>
+|   class="editing"
+|   id="test"
+|   "\nFirst<#selection-caret>"
+|   <br>
+|   "Second\n"
+| "\n"

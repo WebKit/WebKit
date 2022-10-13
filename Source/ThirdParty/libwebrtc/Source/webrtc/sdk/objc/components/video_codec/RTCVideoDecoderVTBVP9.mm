@@ -213,7 +213,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
 
 - (NSInteger)decodeData:(const uint8_t *)data
         size:(size_t)size
-        timeStamp:(uint32_t)timeStamp {
+        timeStamp:(int64_t)timeStamp {
 
   if (_error != noErr) {
     RTC_LOG(LS_WARNING) << "Last frame decode failed.";

@@ -96,10 +96,10 @@ static void serialize(StringBuilder& builder, const QueryInParens& query)
         builder.append('(');
         serialize(builder, node);
         builder.append(')');
-    }, [&](const CQ::UnknownQuery& unknownQuery) {
-        builder.append(unknownQuery.name);
+    }, [&](const MQ::GeneralEnclosed& generalEnclosed) {
+        builder.append(generalEnclosed.name);
         builder.append('(');
-        builder.append(unknownQuery.text);
+        builder.append(generalEnclosed.text);
         builder.append(')');
     });
 }

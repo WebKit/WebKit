@@ -40,6 +40,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSPaintImageValue.h"
 #include "CSSShadowValue.h"
 #include "Document.h"
 #include "ElementInlines.h"

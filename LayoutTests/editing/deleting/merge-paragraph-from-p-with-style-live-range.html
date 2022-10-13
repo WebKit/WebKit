@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<head>
+<style type="text/css">
+p {color: red;}
+</style>
+</head>
+<body>
+<p id="description">This tests deleting line break before p.
+"world" in "helloworld" should be italicized in red.</p>
+<div id="test" contenteditable>
+hello
+<p style="font-style: italic;">world</p>
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

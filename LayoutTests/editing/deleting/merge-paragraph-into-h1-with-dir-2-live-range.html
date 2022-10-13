@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html> 
+<body>
+<p id="description">This tests deleting line break after h1 inside a block with dir attribute.
+WebKit should not add direction or unicode-bidi properties while merging paragraphs.</p>
+<div id="test" dir="ltr" contenteditable>
+<h1>hello</h1>
+<p><b>worl</b>d</p>
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

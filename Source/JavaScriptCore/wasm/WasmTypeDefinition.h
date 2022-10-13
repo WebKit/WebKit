@@ -53,11 +53,14 @@ public:
         : m_payload(payload)
         , m_argCount(argumentCount)
         , m_retCount(returnCount)
+        , m_hasRecursiveReference(false)
     {
     }
 
     FunctionArgCount argumentCount() const { return m_argCount; }
     FunctionArgCount returnCount() const { return m_retCount; }
+    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
+    void setHasRecursiveReference(bool value) { m_hasRecursiveReference = value; }
     Type returnType(FunctionArgCount i) const { ASSERT(i < returnCount()); return const_cast<FunctionSignature*>(this)->getReturnType(i); }
     bool returnsVoid() const { return !returnCount(); }
     Type argumentType(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->getArgumentType(i); }
@@ -86,6 +89,7 @@ private:
     Type* m_payload;
     FunctionArgCount m_argCount;
     FunctionArgCount m_retCount;
+    bool m_hasRecursiveReference;
 };
 
 // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
@@ -107,10 +111,13 @@ public:
     StructType(FieldType* payload, StructFieldCount fieldCount)
         : m_payload(payload)
         , m_fieldCount(fieldCount)
+        , m_hasRecursiveReference(false)
     {
     }
 
     StructFieldCount fieldCount() const { return m_fieldCount; }
+    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
+    void setHasRecursiveReference(bool value) { m_hasRecursiveReference = value; }
     FieldType field(StructFieldCount i) const { return const_cast<StructType*>(this)->getField(i); }
 
     WTF::String toString() const;
@@ -123,16 +130,20 @@ public:
 private:
     FieldType* m_payload;
     StructFieldCount m_fieldCount;
+    bool m_hasRecursiveReference;
 };
 
 class ArrayType {
 public:
     ArrayType(FieldType* payload)
         : m_payload(payload)
+        , m_hasRecursiveReference(false)
     {
     }
 
     FieldType elementType() const { return const_cast<ArrayType*>(this)->getElementType(); }
+    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
+    void setHasRecursiveReference(bool value) { m_hasRecursiveReference = value; }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
@@ -143,6 +154,7 @@ public:
 
 private:
     FieldType* m_payload;
+    bool m_hasRecursiveReference;
 };
 
 class RecursionGroup {
@@ -177,6 +189,9 @@ private:
 // We store projections rather than the implied unfolding because the actual type being
 // represented may be recursive and infinite. Projections are unfolded into a concrete type
 // when operations on the type require a specific concrete type.
+//
+// A projection with an invalid PlaceholderGroup index represents a recursive reference
+// that has not yet been resolved. The expand() function on type definitions resolves it.
 class Projection {
 public:
     Projection(TypeIndex* payload)
@@ -194,6 +209,9 @@ public:
     ProjectionIndex& getIndex() { return *reinterpret_cast<ProjectionIndex*>(storage(1)); }
     TypeIndex* storage(uint32_t i) { ASSERT(i <= 1); return i + m_payload; }
     const TypeIndex* storage(uint32_t i) const { return const_cast<Projection*>(this)->storage(i); }
+
+    static constexpr TypeIndex PlaceholderGroup = 0;
+    bool isPlaceholder() const { return recursionGroup() == PlaceholderGroup; }
 
 private:
     TypeIndex* m_payload;
