@@ -92,7 +92,7 @@ public:
     const String& sourceApplicationBundleID() const { return m_sourceApplicationBundleID; }
     WEBCORE_EXPORT void setSourceApplicationBundleIDForTesting(const String&);
 
-    bool isEphemeral() const { return m_isEphemeral == PCM::AttributionEphemeral::Yes; }
+    PCM::AttributionEphemeral isEphemeral() const { return m_isEphemeral; }
     void setEphemeral(PCM::AttributionEphemeral isEphemeral) { m_isEphemeral = isEphemeral; }
 
     // MARK: - Fraud Prevention

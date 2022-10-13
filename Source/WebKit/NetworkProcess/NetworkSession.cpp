@@ -361,7 +361,7 @@ void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasureme
 {
     if (m_isRunningEphemeralMeasurementTest)
         unattributedPrivateClickMeasurement.setEphemeral(WebCore::PCM::AttributionEphemeral::Yes);
-    if (unattributedPrivateClickMeasurement.isEphemeral()) {
+    if (unattributedPrivateClickMeasurement.isEphemeral() == WebCore::PCM::AttributionEphemeral::Yes) {
         m_ephemeralMeasurement = WTFMove(unattributedPrivateClickMeasurement);
         return;
     }

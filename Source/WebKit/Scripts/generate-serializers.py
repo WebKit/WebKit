@@ -278,6 +278,12 @@ def generate_impl(serialized_types, serialized_enums, headers):
             for member in type.members:
                 if member.condition is not None:
                     result.append('#if ' + member.condition)
+                result.append('    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.' + member.name + ')>>, ' + member.type + '>);')
+                if member.condition is not None:
+                    result.append('#endif')
+            for member in type.members:
+                if member.condition is not None:
+                    result.append('#if ' + member.condition)
                 if 'Nullable' in member.attributes:
                     result.append('    encoder << !!instance.' + member.name + ';')
                     result.append('    if (!!instance.' + member.name + ')')
