@@ -856,14 +856,17 @@ InlineRect LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& l
 {
     auto& inlineContent = lineCandidate.inlineContent;
     // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
-    if (isInIntrinsicWidthMode() || !inlineContent.hasInlineLevelBox())
+    if (isInIntrinsicWidthMode())
         return m_lineLogicalRect;
     auto maximumLineLogicalHeight = m_lineLogicalRect.height();
     for (auto& run : inlineContent.continuousContent().runs()) {
-        // FIXME: Add support for inline boxes too.
-        if (!run.inlineItem.isBox())
-            continue;
-        maximumLineLogicalHeight = std::max(maximumLineLogicalHeight, InlineLayoutUnit { formattingContext().geometryForBox(run.inlineItem.layoutBox()).marginBoxHeight() });
+        auto& inlineItem = run.inlineItem;
+        if (inlineItem.isBox())
+            maximumLineLogicalHeight = std::max(maximumLineLogicalHeight, InlineLayoutUnit { formattingContext().geometryForBox(run.inlineItem.layoutBox()).marginBoxHeight() });
+        else if (inlineItem.isText()) {
+            auto& styleToUse = isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
+            maximumLineLogicalHeight = std::max<InlineLayoutUnit>(maximumLineLogicalHeight, styleToUse.computedLineHeight());
+        }
     }
     if (maximumLineLogicalHeight == m_lineLogicalRect.height())
         return m_lineLogicalRect;
