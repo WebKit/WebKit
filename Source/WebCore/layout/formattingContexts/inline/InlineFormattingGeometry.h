@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatingContext.h"
 #include "FormattingGeometry.h"
 #include "InlineLineBuilder.h"
 
@@ -50,7 +51,7 @@ public:
 
     InlineLayoutUnit initialLineHeight(bool isFirstLine) const;
 
-    std::optional<HorizontalConstraints> floatConstraintsForLine(const InlineRect& lineLogicalRect, const FloatingContext&) const;
+    FloatingContext::Constraints floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext&) const;
 
     static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
 
