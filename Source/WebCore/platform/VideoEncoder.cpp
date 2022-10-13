@@ -52,13 +52,11 @@ void VideoEncoder::createLocalEncoder(const String& codecName, const Config& con
 {
 #if USE(LIBWEBRTC)
     if (codecName == "vp8"_s) {
-        UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
-        callback(WTFMove(encoder));
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
     if (codecName.startsWith("vp09.00"_s)) {
-        UniqueRef<VideoEncoder> encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
-        callback(WTFMove(encoder));
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
 #else

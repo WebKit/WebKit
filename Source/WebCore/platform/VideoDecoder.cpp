@@ -53,13 +53,11 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config&, Cr
 {
 #if USE(LIBWEBRTC)
     if (codecName == "vp8"_s) {
-        UniqueRef<VideoDecoder> decoder = makeUniqueRef<LibWebRTCVPXVideoDecoder>(LibWebRTCVPXVideoDecoder::Type::VP8, WTFMove(outputCallback), WTFMove(postCallback));
-        callback(WTFMove(decoder));
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
     if (codecName.startsWith("vp09.00"_s)) {
-        UniqueRef<VideoDecoder> decoder = makeUniqueRef<LibWebRTCVPXVideoDecoder>(LibWebRTCVPXVideoDecoder::Type::VP9, WTFMove(outputCallback), WTFMove(postCallback));
-        callback(WTFMove(decoder));
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
 #else

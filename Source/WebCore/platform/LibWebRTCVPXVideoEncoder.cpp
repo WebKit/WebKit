@@ -74,6 +74,17 @@ private:
     bool m_isClosed { false };
 };
 
+void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+{
+    auto encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(type, config, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
+    vpxQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
+        auto internalEncoder = encoder->m_internalEncoder;
+        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
+            callback(UniqueRef<VideoEncoder> { WTFMove(encoder) });
+        });
+    });
+}
+
 LibWebRTCVPXVideoEncoder::LibWebRTCVPXVideoEncoder(Type type, const VideoEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
     : m_internalEncoder(LibWebRTCVPXInternalVideoEncoder::create(type, config, WTFMove(outputCallback), WTFMove(postTaskCallback)))
 {
