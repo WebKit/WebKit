@@ -133,8 +133,6 @@ model-element/model-element-ready.html [ Skip ]
 
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
 
-webkit.org/b/227369 [ Release ] http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Pass Failure ]
-
 webkit.org/b/242800 fast/css/counters/element-removal-crash.xhtml [ Pass Failure ]
 
 # FairPlay is not supported in the iOS Simulator
