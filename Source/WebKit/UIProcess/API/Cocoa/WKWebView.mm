@@ -1422,6 +1422,25 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     _page->restoreFromSessionState(sessionState, true);
 }
 
+- (BOOL)inspectable
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    return _page->inspectable();
+#else
+    return NO;
+#endif
+}
+
+- (void)setInspectable:(BOOL)inspectable
+{
+    THROW_IF_SUSPENDED;
+#if ENABLE(REMOTE_INSPECTOR)
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    _page->setInspectable(inspectable);
+#endif
+}
+
 #pragma mark - iOS API
 
 #if PLATFORM(IOS_FAMILY)
@@ -3039,19 +3058,12 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (BOOL)_allowsRemoteInspection
 {
-#if ENABLE(REMOTE_INSPECTOR)
-    return _page->allowsRemoteInspection();
-#else
-    return NO;
-#endif
+    return self.inspectable;
 }
 
 - (void)_setAllowsRemoteInspection:(BOOL)allow
 {
-    THROW_IF_SUSPENDED;
-#if ENABLE(REMOTE_INSPECTOR)
-    _page->setAllowsRemoteInspection(allow);
-#endif
+    self.inspectable = allow;
 }
 
 - (NSString *)_remoteInspectionNameOverride

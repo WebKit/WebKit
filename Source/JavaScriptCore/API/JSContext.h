@@ -171,9 +171,16 @@ JSC_CLASS_AVAILABLE(macos(10.9), ios(7.0))
 
 /*!
 @property
-@discussion Name of the JSContext. Exposed when remote debugging the context.
+@discussion Name of the JSContext. Exposed when inspecting the context.
 */
 @property (copy) NSString *name JSC_API_AVAILABLE(macos(10.10), ios(8.0));
+
+/*!
+@property
+@discussion Controls whether this @link JSContext @/link is inspectable in Web Inspector. The default value is NO.
+*/
+@property (nonatomic, setter=setInspectable:) BOOL inspectable JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA)) NS_SWIFT_NAME(isInspectable);
+
 @end
 
 /*!

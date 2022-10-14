@@ -101,7 +101,7 @@ JS_EXPORT void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group) JS
 @result The value of the setting, true if remote inspection is enabled, otherwise false.
 @discussion Remote inspection is true by default.
 */
-JS_EXPORT bool JSGlobalContextGetRemoteInspectionEnabled(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
+JS_EXPORT bool JSGlobalContextGetRemoteInspectionEnabled(JSGlobalContextRef ctx) JSC_API_DEPRECATED_WITH_REPLACEMENT("JSGlobalContextIsInspectable", macos(10.10, JSC_MAC_TBA), ios(8.0, JSC_IOS_TBA));
 
 /*!
 @function
@@ -109,7 +109,7 @@ JS_EXPORT bool JSGlobalContextGetRemoteInspectionEnabled(JSGlobalContextRef ctx)
 @param ctx The JSGlobalContext that you want to change.
 @param enabled The new remote inspection enabled setting for the context.
 */
-JS_EXPORT void JSGlobalContextSetRemoteInspectionEnabled(JSGlobalContextRef ctx, bool enabled) JSC_API_AVAILABLE(macos(10.10), ios(8.0));    
+JS_EXPORT void JSGlobalContextSetRemoteInspectionEnabled(JSGlobalContextRef ctx, bool enabled) JSC_API_DEPRECATED_WITH_REPLACEMENT("JSGlobalContextSetInspectable", macos(10.10, JSC_MAC_TBA), ios(8.0, JSC_IOS_TBA));
 
 /*!
 @function

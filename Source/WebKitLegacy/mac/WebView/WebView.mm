@@ -1585,7 +1585,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-    _private->page->setRemoteInspectionAllowed(true);
+    _private->page->setInspectable(true);
 #endif
 
     _private->page->setCanStartMedia([self window]);
@@ -1870,7 +1870,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->setGroupName(groupName);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    _private->page->setRemoteInspectionAllowed(isInternalInstall());
+    _private->page->setInspectable(isInternalInstall());
 #endif
 
     [self _updateScreenScaleFromWindow];
@@ -2687,12 +2687,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)allowsRemoteInspection
 {
-    return _private->page->remoteInspectionAllowed();
+    return _private->page->inspectable();
 }
 
 - (void)setAllowsRemoteInspection:(BOOL)allow
 {
-    _private->page->setRemoteInspectionAllowed(allow);
+    _private->page->setInspectable(allow);
 }
 
 - (void)setShowingInspectorIndication:(BOOL)showing

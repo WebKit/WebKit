@@ -158,6 +158,8 @@ public:
     RetainPtr<CFDataRef> parentProcessAuditData() const { return m_parentProcessAuditData; }
     void setParentProcessInformation(ProcessID, RetainPtr<CFDataRef> auditData);
     void setParentProcessInfomationIsDelayed();
+    std::optional<audit_token_t> parentProcessAuditToken();
+    bool isSimulatingCustomerInstall() const { return m_simulateCustomerInstall; }
 #endif
 
     void updateTargetListing(TargetID);
@@ -190,6 +192,7 @@ private:
     void initialize();
     void setPendingMainThreadInitialization(bool pendingInitialization);
     void setupXPCConnectionIfNeeded();
+    void updateFromGlobalNotifyState() WTF_REQUIRES_LOCK(m_mutex);
 #endif
 #if USE(GLIB)
     void setupConnection(Ref<SocketConnection>&&);
@@ -304,6 +307,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> m_parentProcessAuditData;
     bool m_messageDataTypeChunkSupported { false };
+    bool m_simulateCustomerInstall { false };
 #endif
     bool m_shouldSendParentProcessInformation { false };
     bool m_automaticInspectionEnabled WTF_GUARDED_BY_LOCK(m_mutex) { false };

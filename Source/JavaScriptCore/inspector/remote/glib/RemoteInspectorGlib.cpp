@@ -170,7 +170,7 @@ static const char* targetDebuggableType(RemoteInspectionTarget::Type type)
 
 TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
 {
-    if (!target.remoteDebuggingAllowed())
+    if (!target.inspectable())
         return nullptr;
 
     return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),

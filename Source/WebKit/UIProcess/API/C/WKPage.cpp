@@ -2800,7 +2800,7 @@ void WKPageSetControlledByAutomation(WKPageRef pageRef, bool controlled)
 bool WKPageGetAllowsRemoteInspection(WKPageRef page)
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    return toImpl(page)->allowsRemoteInspection();
+    return toImpl(page)->inspectable();
 #else
     UNUSED_PARAM(page);
     return false;
@@ -2811,7 +2811,7 @@ void WKPageSetAllowsRemoteInspection(WKPageRef pageRef, bool allow)
 {
     CRASH_IF_SUSPENDED;
 #if ENABLE(REMOTE_INSPECTOR)
-    toImpl(pageRef)->setAllowsRemoteInspection(allow);
+    toImpl(pageRef)->setInspectable(allow);
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(allow);

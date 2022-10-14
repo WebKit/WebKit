@@ -403,6 +403,7 @@ void InspectorController::inspect(Node* node)
 
 bool InspectorController::enabled() const
 {
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
     return developerExtrasEnabled();
 }
 

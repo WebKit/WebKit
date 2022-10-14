@@ -451,7 +451,7 @@ public:
     bool m_dumpMemoryFootprint { false };
     bool m_dumpLinkBufferStats { false };
     bool m_dumpSamplingProfilerData { false };
-    bool m_enableRemoteDebugging { false };
+    bool m_inspectable { false };
     bool m_canBlockIsFalse { false };
 
     void parseArguments(int, char**);
@@ -3674,8 +3674,8 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
 
-        if (!strcmp(arg, "--remote-debug")) {
-            m_enableRemoteDebugging = true;
+        if (!strcmp(arg, "--inspectable") || !strcmp(arg, "--remote-debug")) {
+            m_inspectable = true;
             continue;
         }
 
@@ -3774,7 +3774,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 
         startTimeoutThreadIfNeeded(vm);
         globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
-        globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
+        globalObject->setInspectable(options.m_inspectable);
         func(vm, globalObject, success);
         vm.drainMicrotasks();
     }

@@ -69,7 +69,7 @@
 @property
 @discussion Remote inspection setting of the JSContext. Default value is YES.
 */
-@property (setter=_setRemoteInspectionEnabled:) BOOL _remoteInspectionEnabled JSC_API_AVAILABLE(macos(10.10), ios(8.0));
+@property (setter=_setRemoteInspectionEnabled:) BOOL _remoteInspectionEnabled JSC_API_DEPRECATED_WITH_REPLACEMENT("inspectable", macos(10.10, JSC_MAC_TBA), ios(8.0, JSC_IOS_TBA));
 
 /*!
 @property

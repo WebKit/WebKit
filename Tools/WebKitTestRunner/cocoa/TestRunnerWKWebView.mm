@@ -117,6 +117,7 @@ IGNORE_WARNINGS_END
         ALLOW_DEPRECATED_DECLARATIONS_END
         [center addObserver:self selector:@selector(_willPresentPopover) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
         [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
+        self.inspectable = YES;
         self.UIDelegate = self;
         self._inputDelegate = self;
         self.focusStartsInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;

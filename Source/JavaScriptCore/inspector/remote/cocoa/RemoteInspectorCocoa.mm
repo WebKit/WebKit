@@ -72,15 +72,17 @@ static bool canAccessWebInspectorMachPort()
     return !sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), WIRXPCMachPortName);
 }
 
-static bool globalAutomaticInspectionState()
+void RemoteInspector::updateFromGlobalNotifyState()
 {
     int token = 0;
-    if (notify_register_check(WIRAutomaticInspectionEnabledState, &token) != NOTIFY_STATUS_OK)
-        return false;
+    if (notify_register_check(WIRGlobalNotifyStateName, &token) != NOTIFY_STATUS_OK)
+        return;
 
-    uint64_t automaticInspectionEnabled = 0;
-    notify_get_state(token, &automaticInspectionEnabled);
-    return automaticInspectionEnabled == 1;
+    uint64_t state = 0;
+    notify_get_state(token, &state);
+
+    m_automaticInspectionEnabled = state & WIRGlobalNotifyStateAutomaticInspection;
+    m_simulateCustomerInstall = state & WIRGlobalNotifyStateSimulateCustomerInstall;
 }
 
 RemoteInspector& RemoteInspector::singleton()
@@ -102,9 +104,9 @@ RemoteInspector& RemoteInspector::singleton()
             {
                 Locker locker { shared->m_mutex };
 
-                // Acquire the global automatic inspection state so we can determine if we should actually be pausing
-                // targets to wait for an eventual connection to webinspectord.
-                shared->m_automaticInspectionEnabled = globalAutomaticInspectionState();
+                // Acquire global state so we can determine inspectability and automatic inspection state before
+                // connecting to `webinspectord`.
+                shared->updateFromGlobalNotifyState();
             }
 
             shared->setPendingMainThreadInitialization(true);
@@ -362,6 +364,19 @@ void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef
         receivedProxyApplicationSetupMessage(nil);
 }
 
+std::optional<audit_token_t> RemoteInspector::parentProcessAuditToken()
+{
+    Locker locker { m_mutex };
+
+    if (!m_parentProcessAuditData)
+        return std::nullopt;
+
+    if (CFDataGetLength(m_parentProcessAuditData.get()) != sizeof(audit_token_t))
+        return std::nullopt;
+
+    return *(const audit_token_t *)CFDataGetBytePtr(m_parentProcessAuditData.get());
+}
+
 #pragma mark - RemoteInspectorXPCConnection::Client
 
 void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo)
@@ -443,7 +458,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     // Must collect target information on the WebThread, Main, or Worker thread since RemoteTargets are
     // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
 
-    if (!target.remoteDebuggingAllowed())
+    if (!target.inspectable())
         return nil;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
