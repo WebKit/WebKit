@@ -43,6 +43,10 @@
 #include "StorageAreaMapMessages.h"
 #include "StorageAreaRegistry.h"
 #include "WebsiteDataType.h"
+#include "wtf/CrossThreadCopier.h"
+#include "wtf/RunLoop.h"
+#include "wtf/StdLibExtras.h"
+#include "wtf/WorkQueue.h"
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
@@ -809,6 +813,18 @@ void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& complet
         }
 
         RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
+void NetworkStorageManager::registerTemporaryBlobDataByConnection(IPC::Connection& connection, Vector<WebCore::BlobRegistryImpl::BlobForFileWriting>& blobs)
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectThis = Ref { *this }, connectionID = connection.uniqueID(), blobs = crossThreadCopy(blobs)] {
+        assertIsCurrent(workQueue());
+
+        m_temporaryBlobDataByConnection.add(connectionID, blobs);
+
     });
 }
 

@@ -71,6 +71,7 @@ public:
 
     virtual unsigned long long blobSize(const URL&) = 0;
 
+    virtual void writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool)>&&) = 0;
     virtual void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;
 
     virtual BlobRegistryImpl* blobRegistryImpl() { return nullptr; }

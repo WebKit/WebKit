@@ -38,7 +38,10 @@ public:
     void unregisterBlobURL(const URL&) final;
     void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final;
     unsigned long long blobSize(const URL&) final;
+
+    void writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool result)>&&) final;
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
+
     void registerBlobURLHandle(const URL&) final;
     void unregisterBlobURLHandle(const URL&) final;
 };

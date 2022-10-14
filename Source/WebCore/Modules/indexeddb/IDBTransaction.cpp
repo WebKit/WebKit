@@ -48,6 +48,7 @@
 #include "IDBValue.h"
 #include "JSDOMWindowBase.h"
 #include "Logging.h"
+#include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
@@ -1260,13 +1261,20 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         return;
     }
 
-    // Due to current limitations on our ability to post tasks back to a worker thread,
-    // workers currently write blobs to disk synchronously.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=157958 - Make this asynchronous after refactoring allows it.
-    if (!isMainThread()) {
+    bool privateBrowsingEnabled = false;
+    auto context = scriptExecutionContext();
+    if (is<Document>(*context)) {
+        if (auto* page = downcast<Document>(*context).page())
+            privateBrowsingEnabled = page->sessionID().isEphemeral();
+    }
+
+
+    if (privateBrowsingEnabled) {
+        LOG(IndexedDB, "In Private Blob Browsing Transaction");
+
         auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously();
         if (idbValue.data().data())
-            m_database->connectionProxy().putOrAdd(operation, key.get(), idbValue, overwriteMode);
+                m_database->connectionProxy().putOrAdd(operation, key.get(), idbValue, overwriteMode);
         else {
             // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
             // In that case, we cannot successfully store this record, so we callback with an error.
@@ -1277,27 +1285,50 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
             });
         }
         return;
-    }
 
-    // Since this request won't actually go to the server until the blob writes are complete,
-    // stop future requests from going to the server ahead of it.
-    operation.setNextRequestCanGoToServer(false);
 
-    value->writeBlobsToDiskForIndexedDB([protectedThis = Ref { *this }, this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](IDBValue&& idbValue) mutable {
-        ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-        ASSERT(isMainThread());
-        if (idbValue.data().data()) {
-            m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTFMove(keyData), idbValue, overwriteMode);
+    } else {
+        // Due to current limitations on our ability to post tasks back to a worker thread,
+        // workers currently write blobs to disk synchronously.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=157958 - Make this asynchronous after refactoring allows it.
+        if (!isMainThread()) {
+            auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously();
+            if (idbValue.data().data())
+                m_database->connectionProxy().putOrAdd(operation, key.get(), idbValue, overwriteMode);
+            else {
+                // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
+                // In that case, we cannot successfully store this record, so we callback with an error.
+                RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
+                auto result = IDBResultData::error(operation.identifier(), IDBError { UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
+                scriptExecutionContext()->postTask([protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)](ScriptExecutionContext&) {
+                    protectedOperation->doComplete(result);
+                });
+            }
             return;
         }
 
-        // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
-        // In that case, we cannot successfully store this record, so we callback with an error.
-        auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
-        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() mutable {
-            protectedOperation->doComplete(result);
+        // Since this request won't actually go to the server until the blob writes are complete,
+        // stop future requests from going to the server ahead of it.
+        operation.setNextRequestCanGoToServer(false);
+
+        value->writeBlobsToDiskForIndexedDB([protectedThis = Ref { *this }, this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](IDBValue&& idbValue) mutable {
+            ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+            ASSERT(isMainThread());
+            if (idbValue.data().data()) {
+                m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTFMove(keyData), idbValue, overwriteMode);
+                return;
+            }
+
+            // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
+            // In that case, we cannot successfully store this record, so we callback with an error.
+            auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
+            callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() mutable {
+                protectedOperation->doComplete(result);
+            });
         });
-    });
+    }
+
+  
 }
 
 void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultData& resultData)

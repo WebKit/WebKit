@@ -67,6 +67,8 @@ public:
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
 
+
+    void writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool result)>&&);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
     WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };

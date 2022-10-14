@@ -33,6 +33,7 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
+#include "wtf/CrossThreadCopier.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
@@ -72,11 +73,13 @@ public:
 
     unsigned long long blobSize(const URL&);
 
+    void writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool result)>&&);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
     struct BlobForFileWriting {
         String blobURL;
         Vector<std::pair<String, RefPtr<DataSegment>>> filePathsOrDataBuffers;
+        BlobForFileWriting isolatedCopy() const { return { blobURL.isolatedCopy(), crossThreadCopy(filePathsOrDataBuffers) }; }
     };
 
     bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);

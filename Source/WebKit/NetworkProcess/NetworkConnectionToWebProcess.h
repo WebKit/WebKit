@@ -254,6 +254,8 @@ private:
     void registerBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end, const String& contentType);
     void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
     void unregisterBlobURL(const URL&);
+
+    void writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool)>&&);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 
     void registerBlobURLHandle(const URL&);

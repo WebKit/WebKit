@@ -73,6 +73,7 @@
 #include "WebSharedWorkerServerToContextConnection.h"
 #include "WebSharedWorkerServerToContextConnectionMessages.h"
 #include "WebsiteDataStoreParameters.h"
+#include "wtf/Compiler.h"
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -979,6 +980,21 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<v
 {
     auto* session = networkSession();
     completionHandler(session ? session->blobRegistry().blobSize(url) : 0);
+}
+
+void NetworkConnectionToWebProcess::writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* session = networkSession();
+    if(!session)
+        return completionHandler(false);
+
+    
+    // session->blobRegistry().writeBlobsToMemoryForIndexedDB(blobURLs, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    // // if (auto* session = networkSession())
+    // //   session->storageManager().registerTemporaryBlobFilePaths(m_connection, &success);
+    //      completionHandler(success);
+    // });
+    
 }
 
 void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)

@@ -241,6 +241,12 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::M
 {
 }
 
+
+void NetworkProcessConnection::writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool result)>&& completionHandler)
+{
+    connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToMemoryForIndexedDB(blobURLs), WTFMove(completionHandler));
+}
+
 void NetworkProcessConnection::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFilesForIndexedDB(blobURLs), WTFMove(completionHandler));

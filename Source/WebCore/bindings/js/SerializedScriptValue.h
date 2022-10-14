@@ -94,8 +94,13 @@ public:
 
     Vector<String> blobURLs() const;
     Vector<URLKeepingBlobAlive> blobHandles() const { return crossThreadCopy(m_blobHandles); }
+
     void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
+
+    void writeBlobsToMemoryForPrivateBrowsingIndexedDB(CompletionHandler<void(bool)>&& completionHandler);
+    bool writeBlobsToMemoryForPrivateBrowsingIndexedDBSynchronously();
+    
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
     {
         return adoptRef(*new SerializedScriptValue(WTFMove(data)));

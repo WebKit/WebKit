@@ -40,6 +40,8 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "wtf/Compiler.h"
+#include "wtf/Forward.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -343,6 +345,17 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Ref
     }
     return true;
 }
+
+void BlobRegistryImpl::writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool result)>&& completionHandler)
+{
+    UNUSED_PARAM(completionHandler);
+    Vector<BlobForFileWriting> blobs;
+    if (!populateBlobsForFileWriting(blobURLs, blobs)) {
+                return;
+    }
+
+}
+
 
 void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {

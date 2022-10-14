@@ -35,7 +35,9 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteData.h"
 #include "WorkQueueMessageReceiver.h"
+#include "wtf/ThreadSafetyAnalysis.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
@@ -95,7 +97,10 @@ public:
     void resume();
     void handleLowMemoryWarning();
     void syncLocalStorage(CompletionHandler<void()>&&);
+
+    void registerTemporaryBlobDataByConnection(IPC::Connection& connection, Vector<WebCore::BlobRegistryImpl::BlobForFileWriting>& blobs);
     void registerTemporaryBlobFilePaths(IPC::Connection&, const Vector<String>&);
+
     void requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&);
     void resetQuotaForTesting(CompletionHandler<void()>&&);
     void resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&&);
@@ -199,6 +204,8 @@ private:
     bool m_shouldUseCustomPaths;
     IPC::Connection::UniqueID m_parentConnection;
     HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<IPC::Connection::UniqueID, Vector<WebCore::BlobRegistryImpl::BlobForFileWriting>> m_temporaryBlobDataByConnection WTF_GUARDED_BY_CAPABILITY(workQueue());
+
 #if PLATFORM(IOS_FAMILY)
     Seconds m_backupExclusionPeriod;
 #endif

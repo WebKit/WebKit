@@ -60,6 +60,8 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"
+#include "wtf/Assertions.h"
+#include "wtf/Compiler.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/BigIntObject.h>
 #include <JavaScriptCore/BooleanObject.h>
@@ -4577,14 +4579,40 @@ IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously()
     IDBValue value;
     callOnMainThread([this, &semaphore, &value] {
         writeBlobsToDiskForIndexedDB([&semaphore, &value](IDBValue&& result) {
-            ASSERT(isMainThread());
+            RELEASE_ASSERT(isMainThread());
             value.setAsIsolatedCopy(result);
 
             semaphore.signal();
         });
     });
-    semaphore.wait();
 
+    semaphore.wait();
+    return value;
+}
+
+void SerializedScriptValue::writeBlobsToMemoryForPrivateBrowsingIndexedDB(CompletionHandler<void(bool)>&& completionHandler) 
+{
+    RELEASE_ASSERT(isMainThread());
+    RELEASE_ASSERT(hasBlobURLs());
+
+    UNUSED_PARAM(completionHandler);
+
+}
+
+bool SerializedScriptValue::writeBlobsToMemoryForPrivateBrowsingIndexedDBSynchronously()
+{
+    BinarySemaphore semaphore;
+    bool value;
+
+    callOnMainThread([this, &semaphore, &value] {
+        writeBlobsToMemoryForPrivateBrowsingIndexedDB([&semaphore, &value](bool result) {
+            RELEASE_ASSERT(isMainThread());
+            value = result;
+            semaphore.signal();
+        });
+    });
+
+    semaphore.wait();
     return value;
 }
 

@@ -90,6 +90,8 @@ private:
     void registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType) final { m_blobRegistry.registerBlobURLForSlice(url, srcURL, start, end, contentType); }
     void unregisterBlobURL(const URL& url) final { m_blobRegistry.unregisterBlobURL(url); }
     unsigned long long blobSize(const URL& url) final { return m_blobRegistry.blobSize(url); }
+
+    void writeBlobsToMemoryForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(bool result)>&& completionHandler) final { m_blobRegistry.writeBlobsToMemoryForIndexedDB(blobURLs, WTFMove(completionHandler)); }
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler) final { m_blobRegistry.writeBlobsToTemporaryFilesForIndexedDB(blobURLs, WTFMove(completionHandler)); }
     void registerBlobURLHandle(const URL& url) final { m_blobRegistry.registerBlobURLHandle(url); }
     void unregisterBlobURLHandle(const URL& url) final { m_blobRegistry.unregisterBlobURLHandle(url); }
