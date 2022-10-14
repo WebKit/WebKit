@@ -49,10 +49,6 @@ class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-class WebExtensionController;
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 enum class AttributionOverrideTesting : uint8_t {
     NoOverride,
@@ -85,11 +81,6 @@ public:
 
     WebKit::WebUserContentControllerProxy* userContentController();
     void setUserContentController(WebKit::WebUserContentControllerProxy*);
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    WebKit::WebExtensionController* webExtensionController();
-    void setWebExtensionController(WebKit::WebExtensionController*);
-#endif
 
     WebKit::WebPageGroup* pageGroup();
     void setPageGroup(WebKit::WebPageGroup*);
@@ -212,9 +203,6 @@ private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
-#if ENABLE(WK_WEB_EXTENSIONS)
-    RefPtr<WebKit::WebExtensionController> m_webExtensionController;
-#endif
     RefPtr<WebKit::WebPageGroup> m_pageGroup;
     RefPtr<WebKit::WebPreferences> m_preferences;
     RefPtr<WebKit::WebPageProxy> m_relatedPage;

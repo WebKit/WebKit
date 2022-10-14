@@ -324,10 +324,6 @@
 #include <WebCore/PreviewConverter.h>
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-#include "WebExtensionController.h"
-#endif
-
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
@@ -490,9 +486,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_pageGroup(*m_configuration->pageGroup())
     , m_preferences(*m_configuration->preferences())
     , m_userContentController(*m_configuration->userContentController())
-#if ENABLE(WK_WEB_EXTENSIONS)
-    , m_webExtensionController(*m_configuration->webExtensionController())
-#endif
     , m_visitedLinkStore(*m_configuration->visitedLinkStore())
     , m_websiteDataStore(*m_configuration->websiteDataStore())
     , m_userAgent(standardUserAgent())
@@ -557,10 +550,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 
     m_preferences->addPage(*this);
     m_pageGroup->addPage(*this);
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    m_webExtensionController->addPage(*this);
-#endif
 
     m_inspector = WebInspectorUIProxy::create(*this);
 
@@ -1212,10 +1201,6 @@ void WebPageProxy::close()
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willClosePage(*this);
     }
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    m_webExtensionController->removePage(*this);
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
     m_activeContextMenu = nullptr;
@@ -8713,10 +8698,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         userContentController = *userContentControllerFromWebsitePolicies;
     process.addWebUserContentControllerProxy(userContentController);
     parameters.userContentControllerParameters = userContentController.get().parameters();
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    parameters.webExtensionControllerParameters = m_webExtensionController.get().parameters();
-#endif
 
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureAudioInUIProcess = preferences().captureAudioInUIProcessEnabled();

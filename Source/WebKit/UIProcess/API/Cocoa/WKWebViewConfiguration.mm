@@ -120,9 +120,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     LazyInitialized<RetainPtr<WKProcessPool>> _processPool;
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
-#if ENABLE(WK_WEB_EXTENSIONS)
-    LazyInitialized<RetainPtr<_WKWebExtensionController>> _webExtensionController;
-#endif
     LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
     LazyInitialized<RetainPtr<WKWebpagePreferences>> _defaultWebpagePreferences;
@@ -300,11 +297,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     [coder encodeObject:self.userContentController forKey:@"userContentController"];
     [coder encodeObject:self.websiteDataStore forKey:@"websiteDataStore"];
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto *controller = _webExtensionController.peek())
-        [coder encodeObject:controller forKey:@"webExtensionController"];
-#endif
-
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
 
     if (_applicationNameForUserAgent)
@@ -343,11 +335,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     self.preferences = [coder decodeObjectOfClass:[WKPreferences class] forKey:@"preferences"];
     self.userContentController = [coder decodeObjectOfClass:[WKUserContentController class] forKey:@"userContentController"];
     self.websiteDataStore = [coder decodeObjectOfClass:[WKWebsiteDataStore class] forKey:@"websiteDataStore"];
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    if ([coder containsValueForKey:@"webExtensionController"])
-        self._webExtensionController = [coder decodeObjectOfClass:[_WKWebExtensionController class] forKey:@"webExtensionController"];
-#endif
 
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
 
@@ -399,10 +386,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
 #if PLATFORM(IOS_FAMILY)
     configuration._contentProviderRegistry = self._contentProviderRegistry;
-#endif
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    configuration._webExtensionController = self._webExtensionController;
 #endif
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
@@ -508,22 +491,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _userContentController.set(userContentController);
 }
 
-- (_WKWebExtensionController *)_webExtensionController
-{
-#if ENABLE(WK_WEB_EXTENSIONS)
-    return _webExtensionController.get([] { return adoptNS([[_WKWebExtensionController alloc] init]); });
-#else
-    return nullptr;
-#endif
-}
-
-- (void)_setWebExtensionController:(_WKWebExtensionController *)webExtensionController
-{
-#if ENABLE(WK_WEB_EXTENSIONS)
-    _webExtensionController.set(webExtensionController);
-#endif
-}
-
 - (BOOL)upgradeKnownHostsToHTTPS
 {
     return _pageConfiguration->httpsUpgradeEnabled();
@@ -612,10 +579,7 @@ static NSString *defaultApplicationNameForUserAgent()
         return nil;
 
     auto handler = _pageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme);
-    if (!handler || !handler->isAPIHandler())
-        return nil;
-
-    return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
+    return handler ? static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler() : nil;
 }
 
 #if PLATFORM(IOS_FAMILY)

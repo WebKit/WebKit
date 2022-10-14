@@ -40,7 +40,6 @@
 #import <UniformTypeIdentifiers/UTCoreTypes.h>
 #import <UniformTypeIdentifiers/UTType.h>
 #import <WebCore/LocalizedStrings.h>
-#import <wtf/BlockPtr.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
@@ -168,7 +167,7 @@ NSDictionary *WebExtension::manifest()
     if (!parseManifest(manifestData))
         return nil;
 
-    // FIXME: <https://webkit.org/b/246488> Handle manifest localization.
+    // FIXME: Handle manifest localization.
     // FIXME: Handle Safari version compatibility check.
     // Likely do this version checking when the extension is added to the WKWebExtensionController,
     // since that will need delegated to the app.
@@ -241,12 +240,6 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 
 #endif // PLATFORM(MAC)
 
-bool WebExtension::isAccessibleResourcePath(NSString *, NSURL *pageURL)
-{
-    // FIXME: <https://webkit.org/b/246489> Implement web accessible resources.
-    return true;
-}
-
 NSURL *WebExtension::resourceFileURLForPath(NSString *path)
 {
     ASSERT(path);
@@ -266,10 +259,6 @@ NSURL *WebExtension::resourceFileURLForPath(NSString *path)
 NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResult)
 {
     ASSERT(path);
-
-    // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
-    if ([path hasPrefix:@"/"])
-        path = [path substringFromIndex:1];
 
     if (NSData *cachedData = objectForKey<NSData>(m_resources, path))
         return cachedData;
@@ -323,65 +312,24 @@ bool WebExtension::hasRequestedPermission(NSString *permission) const
     return m_permissions.contains(permission);
 }
 
-static _WKWebExtensionError toAPI(WebExtension::Error error)
-{
-    switch (error) {
-    case WebExtension::Error::Unknown:
-        return _WKWebExtensionErrorUnknown;
-    case WebExtension::Error::ResourceNotFound:
-        return _WKWebExtensionErrorResourceNotFound;
-    case WebExtension::Error::InvalidManifest:
-        return _WKWebExtensionErrorInvalidManifest;
-    case WebExtension::Error::UnsupportedManifestVersion:
-        return _WKWebExtensionErrorUnsupportedManifestVersion;
-    case WebExtension::Error::InvalidAction:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidActionIcon:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidBackgroundContent:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidContentScripts:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidDeclarativeNetRequest:
-        return _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry;
-    case WebExtension::Error::InvalidDescription:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidExternallyConnectable:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidIcon:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidName:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidURLOverrides:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidVersion:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidWebAccessibleResources:
-        return _WKWebExtensionErrorInvalidManifestEntry;
-    case WebExtension::Error::InvalidBackgroundPersistence:
-        return _WKWebExtensionErrorInvalidBackgroundPersistence;
-    case WebExtension::Error::BackgroundContentFailedToLoad:
-        return _WKWebExtensionErrorBackgroundContentFailedToLoad;
-    case WebExtension::Error::InvalidResourceCodeSignature:
-        return _WKWebExtensionErrorInvalidResourceCodeSignature;
-    }
-}
-
 NSError *WebExtension::createError(Error error, NSString *customLocalizedDescription, NSError *underlyingError)
 {
-    auto errorCode = toAPI(error);
+    _WKWebExtensionError errorCode;
     NSString *localizedDescription;
 
     switch (error) {
     case Error::Unknown:
+        errorCode = _WKWebExtensionErrorUnknown;
         localizedDescription = WEB_UI_STRING("An unknown error has occurred.", "WKWebExtensionErrorUnknown description");
         break;
 
     case Error::ResourceNotFound:
+        errorCode = _WKWebExtensionErrorResourceNotFound;
         ASSERT(customLocalizedDescription);
         break;
 
     case Error::InvalidManifest:
+        errorCode = _WKWebExtensionErrorInvalidManifest;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
         if (NSString *debugDescription = underlyingError.userInfo[NSDebugDescriptionErrorKey])
@@ -392,10 +340,12 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::UnsupportedManifestVersion:
+        errorCode = _WKWebExtensionErrorUnsupportedManifestVersion;
         localizedDescription = WEB_UI_STRING("An unsupported `manifest_version` was specified.", "WKWebExtensionErrorUnsupportedManifestVersion description");
         break;
 
     case Error::InvalidAction:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         if (usesManifestVersion(3))
             localizedDescription = WEB_UI_STRING("Missing or empty `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for action only");
         else
@@ -403,6 +353,7 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidActionIcon:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         if (usesManifestVersion(3))
             localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only");
         else
@@ -410,14 +361,17 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidBackgroundContent:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Empty or invalid `background` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for background");
         break;
 
     case Error::InvalidContentScripts:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Empty or invalid `content_scripts` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for content_scripts");
         break;
 
     case Error::InvalidDeclarativeNetRequest:
+        errorCode = _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
         if (NSString *debugDescription = underlyingError.userInfo[NSDebugDescriptionErrorKey])
@@ -428,42 +382,52 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidDescription:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Missing or empty `description` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for description");
         break;
 
     case Error::InvalidExternallyConnectable:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Empty or invalid `externally_connectable` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for externally_connectable");
         break;
 
     case Error::InvalidIcon:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Missing or empty `icons` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icons");
         break;
 
     case Error::InvalidName:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Missing or empty `name` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for name");
         break;
 
     case Error::InvalidURLOverrides:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Empty or invalid URL overrides manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for URL overrides");
         break;
 
     case Error::InvalidVersion:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Missing or empty `version` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for version");
         break;
 
     case Error::InvalidWebAccessibleResources:
+        errorCode = _WKWebExtensionErrorInvalidManifestEntry;
         localizedDescription = WEB_UI_STRING("Invalid `web_accessible_resources` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources");
         break;
 
     case Error::InvalidBackgroundPersistence:
+        errorCode = _WKWebExtensionErrorInvalidBackgroundPersistence;
         localizedDescription = WEB_UI_STRING("Invalid `persistent` manifest entry.", "WKWebExtensionErrorInvalidBackgroundPersistence description");
         break;
 
     case Error::BackgroundContentFailedToLoad:
+        errorCode = _WKWebExtensionErrorBackgroundContentFailedToLoad;
         localizedDescription = WEB_UI_STRING("The background content failed to load due to an error.", "WKWebExtensionErrorBackgroundContentFailedToLoad description");
         break;
 
     case Error::InvalidResourceCodeSignature:
+        errorCode = _WKWebExtensionErrorInvalidResourceCodeSignature;
         ASSERT(customLocalizedDescription);
         break;
     }
@@ -478,30 +442,6 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
     return [[NSError alloc] initWithDomain:_WKWebExtensionErrorDomain code:errorCode userInfo:userInfo];
 }
 
-void WebExtension::removeError(Error error, SuppressNotification suppressNotification)
-{
-    if (!m_errors)
-        return;
-
-    auto errorCode = toAPI(error);
-
-    NSIndexSet *indexes = [m_errors indexesOfObjectsPassingTest:^BOOL(NSError *error, NSUInteger, BOOL *) {
-        return error.code == errorCode;
-    }];
-
-    if (!indexes.count)
-        return;
-
-    [m_errors removeObjectsAtIndexes:indexes];
-
-    if (suppressNotification == SuppressNotification::Yes)
-        return;
-
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:WebKit::wrapper(this) userInfo:nil];
-    }).get());
-}
-
 void WebExtension::recordError(NSError *error, SuppressNotification suppressNotification)
 {
     ASSERT(error);
@@ -511,17 +451,13 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
 
     [m_errors addObject:error];
 
-    if (suppressNotification == SuppressNotification::Yes)
-        return;
-
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&, protectedThis = Ref { *this }]() {
+    if (suppressNotification == SuppressNotification::No)
         [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:WebKit::wrapper(this) userInfo:nil];
-    }).get());
 }
 
 NSArray *WebExtension::errors()
 {
-    // FIXME: <https://webkit.org/b/246493> Include runtime and declarativeNetRequest errors.
+    // FIXME: Include runtime and declarativeNetRequest errors.
 
     populateDisplayStringsIfNeeded();
     populateActionPropertiesIfNeeded();
@@ -876,23 +812,6 @@ bool WebExtension::backgroundContentIsServiceWorker()
     return !!m_backgroundServiceWorkerPath;
 }
 
-NSString *WebExtension::backgroundContentPath()
-{
-    populateBackgroundPropertiesIfNeeded();
-
-    if (m_backgroundServiceWorkerPath)
-        return m_backgroundServiceWorkerPath.get();
-
-    if (m_backgroundScriptPaths.get().count)
-        return generatedBackgroundPageFilename;
-
-    if (m_backgroundPagePath)
-        return m_backgroundPagePath.get();
-
-    ASSERT_NOT_REACHED();
-    return nil;
-}
-
 NSString *WebExtension::generatedBackgroundContent()
 {
     if (m_generatedBackgroundContent)
@@ -990,7 +909,7 @@ bool WebExtension::hasInjectedContentForURL(NSURL *url)
     populateContentScriptPropertiesIfNeeded();
 
     for (auto& injectedContent : m_injectedContents) {
-        // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
+        // FIXME: rdar://problem/57375730 Add support for exclude globs.
         bool isExcluded = false;
         for (auto& excludeMatchPattern : injectedContent.excludeMatchPatterns) {
             if (excludeMatchPattern->matchesURL(url)) {
@@ -1002,7 +921,7 @@ bool WebExtension::hasInjectedContentForURL(NSURL *url)
         if (isExcluded)
             continue;
 
-        // FIXME: <https://webkit.org/b/246492> Add support for include globs.
+        // FIXME: rdar://problem/57375730 Add support for include globs.
         for (auto& includeMatchPattern : injectedContent.includeMatchPatterns) {
             if (includeMatchPattern->matchesURL(url))
                 return true;
@@ -1183,7 +1102,7 @@ WebExtension::MatchPatternSet WebExtension::allRequestedMatchPatterns()
     for (auto& matchPattern : m_permissionMatchPatterns)
         result.add(matchPattern);
 
-    // FIXME: <https://webkit.org/b/246491> Add externally connectable match patterns.
+    // FIXME: Add externally connectable match patterns.
 
     for (auto& injectedContent : m_injectedContents) {
         for (auto& matchPattern : injectedContent.includeMatchPatterns)

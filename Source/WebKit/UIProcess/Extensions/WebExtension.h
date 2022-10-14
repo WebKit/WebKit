@@ -154,8 +154,6 @@ public:
     bool validateResourceData(NSURL *, NSData *, NSError **);
 #endif
 
-    bool isAccessibleResourcePath(NSString *, NSURL *frameDocumentURL);
-
     NSURL *resourceFileURLForPath(NSString *);
     NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No);
 
@@ -183,7 +181,6 @@ public:
     bool backgroundContentIsPersistent();
     bool backgroundContentIsServiceWorker();
 
-    NSString *backgroundContentPath();
     NSString *generatedBackgroundContent();
 
     const InjectedContentVector& injectedContents();
@@ -209,7 +206,6 @@ public:
     // If an error can't be synchronously determined by one of the populate methods in the errors() getter,
     // then the caller of recordError() should pass SuppressNotification::No.
     void recordError(NSError *, SuppressNotification = SuppressNotification::Yes);
-    void removeError(Error, SuppressNotification = SuppressNotification::No);
 
     NSArray *errors();
 

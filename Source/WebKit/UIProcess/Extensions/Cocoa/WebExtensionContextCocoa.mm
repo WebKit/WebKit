@@ -32,82 +32,13 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WKNavigationActionPrivate.h"
-#import "WKNavigationDelegatePrivate.h"
-#import "WKPreferencesPrivate.h"
-#import "WKUIDelegatePrivate.h"
-#import "WKWebViewConfigurationInternal.h"
-#import "WKWebViewInternal.h"
-#import "WebExtensionURLSchemeHandler.h"
-#import "WebPageProxy.h"
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionTab.h"
 #import <WebCore/LocalizedStrings.h>
-#import <wtf/BlockPtr.h>
-#import <wtf/URLParser.h>
 
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
-
-@interface _WKWebExtensionContextDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
-    WeakPtr<WebKit::WebExtensionContext> _webExtensionContext;
-}
-
-- (instancetype)initWithWebExtensionContext:(WebKit::WebExtensionContext&)context;
-
-@end
-
-@implementation _WKWebExtensionContextDelegate
-
-- (instancetype)initWithWebExtensionContext:(WebKit::WebExtensionContext&)context
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _webExtensionContext = context;
-
-    return self;
-}
-
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
-{
-    if (!_webExtensionContext)
-        return;
-
-    if (_webExtensionContext->decidePolicyForNavigationAction(webView, navigationAction)) {
-        decisionHandler(WKNavigationActionPolicyAllow);
-        return;
-    }
-
-    decisionHandler(WKNavigationActionPolicyCancel);
-}
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    if (!_webExtensionContext)
-        return;
-
-    _webExtensionContext->didFinishNavigation(webView, navigation);
-}
-
-- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
-{
-    if (!_webExtensionContext)
-        return;
-
-    _webExtensionContext->didFailNavigation(webView, navigation, error);
-}
-
-- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
-{
-    if (!_webExtensionContext)
-        return;
-
-    _webExtensionContext->webViewWebContentProcessDidTerminate(webView);
-}
-
-@end
 
 namespace WebKit {
 
@@ -120,44 +51,27 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     baseURLBuilder.append("webkit-extension://", uniqueIdentifier(), "/");
 
     m_baseURL = URL { baseURLBuilder.toString() };
-
-    m_delegate = [[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this];
-}
-
-static _WKWebExtensionContextError toAPI(WebExtensionContext::Error error)
-{
-    switch (error) {
-    case WebExtensionContext::Error::Unknown:
-        return _WKWebExtensionContextErrorUnknown;
-    case WebExtensionContext::Error::AlreadyLoaded:
-        return _WKWebExtensionContextErrorAlreadyLoaded;
-    case WebExtensionContext::Error::NotLoaded:
-        return _WKWebExtensionContextErrorNotLoaded;
-    case WebExtensionContext::Error::BaseURLTaken:
-        return _WKWebExtensionContextErrorBaseURLTaken;
-    }
 }
 
 NSError *WebExtensionContext::createError(Error error, NSString *customLocalizedDescription, NSError *underlyingError)
 {
-    auto errorCode = toAPI(error);
+    _WKWebExtensionContextError errorCode;
     NSString *localizedDescription;
 
     switch (error) {
     case Error::Unknown:
-        localizedDescription = WEB_UI_STRING_KEY("An unknown error has occurred.", "An unknown error has occurred. (WKWebExtensionContext)", "WKWebExtensionContextErrorUnknown description");
+        errorCode = _WKWebExtensionContextErrorUnknown;
+        localizedDescription = WEB_UI_STRING("An unknown error has occurred.", "WKWebExtensionContextErrorUnknown description");
         break;
 
     case Error::AlreadyLoaded:
+        errorCode = _WKWebExtensionContextErrorAlreadyLoaded;
         localizedDescription = WEB_UI_STRING("Extension context is already loaded.", "WKWebExtensionContextErrorAlreadyLoaded description");
         break;
 
     case Error::NotLoaded:
+        errorCode = _WKWebExtensionContextErrorNotLoaded;
         localizedDescription = WEB_UI_STRING("Extension context is not loaded.", "WKWebExtensionContextErrorNotLoaded description");
-        break;
-
-    case Error::BaseURLTaken:
-        localizedDescription = WEB_UI_STRING("Another extension context is loaded with the same base URL.", "WKWebExtensionContextErrorBaseURLTaken description");
         break;
     }
 
@@ -184,9 +98,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, NSError **out
 
     m_extensionController = controller;
 
-    loadBackgroundWebViewDuringLoad();
-
-    // FIXME: <https://webkit.org/b/246486> Inject content, move local storage (if base URL changed), etc.
+    // FIXME: Load background page, inject content, etc.
 
     return true;
 }
@@ -204,9 +116,7 @@ bool WebExtensionContext::unload(NSError **outError)
 
     m_extensionController = nil;
 
-    unloadBackgroundWebView();
-
-    // FIXME: <https://webkit.org/b/246486> Remove injected content, etc.
+    // FIXME: Unload background page, remove injected content, etc.
 
     return true;
 }
@@ -220,13 +130,8 @@ void WebExtensionContext::setBaseURL(URL&& url)
     if (!url.isValid())
         return;
 
-    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(url.protocol());
-    ASSERT(canonicalScheme);
-    if (!canonicalScheme)
-        return;
-
     StringBuilder baseURLBuilder;
-    baseURLBuilder.append(canonicalScheme.value(), "://", url.host(), "/");
+    baseURLBuilder.append(url.protocol(), "://", url.host(), "/");
 
     m_baseURL = URL { baseURLBuilder.toString() };
 }
@@ -383,9 +288,9 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     if (permissions.isEmpty())
         return;
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&, protectedThis = Ref { *this }]() {
+    dispatch_async(dispatch_get_main_queue(), ^{
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyPermissions: toAPI(permissions) }];
-    }).get());
+    });
 }
 
 void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, MatchPatternSet& matchPatterns)
@@ -393,9 +298,9 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     if (matchPatterns.isEmpty())
         return;
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&, protectedThis = Ref { *this }]() {
+    dispatch_async(dispatch_get_main_queue(), ^{
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
-    }).get());
+    });
 }
 
 void WebExtensionContext::grantPermissions(PermissionsSet&& permissions, WallTime expirationDate)
@@ -982,141 +887,6 @@ void WebExtensionContext::cancelUserGesture(_WKWebExtensionTab *tab)
         return;
 
     [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab];
-}
-
-WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
-{
-    ASSERT(isLoaded());
-
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-
-    configuration._webExtensionController = m_extensionController->wrapper();
-    configuration._processDisplayName = extension().webProcessDisplayName();
-
-    WKPreferences *preferences = configuration.preferences;
-#if PLATFORM(MAC)
-    preferences._domTimersThrottlingEnabled = NO;
-#endif
-    preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
-
-    // FIXME: Configure other extension web view configuration properties.
-
-    return configuration;
-}
-
-URL WebExtensionContext::backgroundContentURL()
-{
-    ASSERT(extension().hasBackgroundContent());
-    return URL { m_baseURL, extension().backgroundContentPath() };
-}
-
-void WebExtensionContext::loadBackgroundWebViewDuringLoad()
-{
-    ASSERT(isLoaded());
-
-    if (!extension().hasBackgroundContent())
-        return;
-
-    // FIXME: <https://webkit.org/b/246483> Handle non-persistent background pages differently here.
-    loadBackgroundWebView();
-}
-
-void WebExtensionContext::loadBackgroundWebView()
-{
-    ASSERT(isLoaded());
-
-    if (!extension().hasBackgroundContent())
-        return;
-
-    ASSERT(!m_backgroundWebView);
-    m_backgroundWebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration()];
-
-    m_backgroundWebView.get().UIDelegate = m_delegate.get();
-    m_backgroundWebView.get().navigationDelegate = m_delegate.get();
-
-    if (extension().backgroundContentIsServiceWorker())
-        m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
-    else
-        m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", (__bridge CFStringRef)extension().displayShortName());
-
-    extension().removeError(WebExtension::Error::BackgroundContentFailedToLoad);
-
-    if (!extension().backgroundContentIsServiceWorker()) {
-        [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
-        return;
-    }
-
-    [m_backgroundWebView _loadServiceWorker:backgroundContentURL() completionHandler:makeBlockPtr([&, protectedThis = Ref { *this }](BOOL success) {
-        if (!success) {
-            extension().recordError(extension().createError(WebExtension::Error::BackgroundContentFailedToLoad), WebExtension::SuppressNotification::No);
-            return;
-        }
-
-        performTasksAfterBackgroundContentLoads();
-    }).get()];
-}
-
-void WebExtensionContext::unloadBackgroundWebView()
-{
-    if (!m_backgroundWebView)
-        return;
-
-    // FIXME: <https://webkit.org/b/246484> Disconnect message ports for the background web view.
-
-    [m_backgroundWebView _close];
-    m_backgroundWebView = nil;
-}
-
-void WebExtensionContext::performTasksAfterBackgroundContentLoads()
-{
-    // FIXME: <https://webkit.org/b/246483> Implement. Fire setup and install events (if needed), perform pending actions, schedule non-persistent page to unload (if needed), etc.
-}
-
-bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
-{
-    // FIXME: <https://webkit.org/b/246485> Handle inspector background pages in the assert.
-    ASSERT(webView == m_backgroundWebView);
-
-    NSURL *url = navigationAction.request.URL;
-    if (!navigationAction.targetFrame.isMainFrame || isURLForThisExtension(url))
-        return true;
-
-    return false;
-}
-
-void WebExtensionContext::didFinishNavigation(WKWebView *webView, WKNavigation *)
-{
-    if (webView != m_backgroundWebView)
-        return;
-
-    // When didFinishNavigation fires for a service worker, the service worker has not executed yet.
-    // The service worker will notify the load via a completion handler instead.
-    if (extension().backgroundContentIsServiceWorker())
-        return;
-
-    performTasksAfterBackgroundContentLoads();
-}
-
-void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, NSError *error)
-{
-    if (webView != m_backgroundWebView)
-        return;
-
-    extension().recordError(extension().createError(WebExtension::Error::BackgroundContentFailedToLoad, nil, error), WebExtension::SuppressNotification::No);
-}
-
-void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webView)
-{
-    // FIXME: <https://webkit.org/b/246484> Disconnect message ports for the crashed web view.
-
-    if (webView == m_backgroundWebView) {
-        loadBackgroundWebView();
-        return;
-    }
-
-    // FIXME: <https://webkit.org/b/246485> Handle inspector background pages too.
-
-    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

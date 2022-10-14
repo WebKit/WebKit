@@ -145,9 +145,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << iceCandidateFilteringEnabled;
     encoder << enumeratingAllNetworkInterfacesEnabled;
     encoder << userContentControllerParameters;
-#if ENABLE(WK_WEB_EXTENSIONS)
-    encoder << webExtensionControllerParameters;
-#endif
     encoder << backgroundColor;
     encoder << oldPageID;
     encoder << overriddenMediaType;
@@ -486,14 +483,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!userContentControllerParameters)
         return std::nullopt;
     parameters.userContentControllerParameters = WTFMove(*userContentControllerParameters);
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    std::optional<WebExtensionControllerParameters> webExtensionControllerParameters;
-    decoder >> webExtensionControllerParameters;
-    if (!webExtensionControllerParameters)
-        return std::nullopt;
-    parameters.webExtensionControllerParameters = WTFMove(*webExtensionControllerParameters);
-#endif
 
     std::optional<std::optional<WebCore::Color>> backgroundColor;
     decoder >> backgroundColor;

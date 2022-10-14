@@ -156,10 +156,6 @@
 #include "PlatformXRSystemProxy.h"
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-#include "WebExtensionControllerProxy.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include <WebCore/VisibleSelection.h>
 #include <wtf/RetainPtr.h>
@@ -2217,11 +2213,6 @@ private:
     RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
 
     Ref<WebUserContentController> m_userContentController;
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    Ref<WebExtensionControllerProxy> m_webExtensionController;
-#endif
-
     UniqueRef<WebScreenOrientationManager> m_screenOrientationManager;
 
 #if ENABLE(GEOLOCATION)

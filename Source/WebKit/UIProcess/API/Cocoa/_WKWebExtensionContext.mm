@@ -31,7 +31,6 @@
 #import "_WKWebExtensionContextInternal.h"
 
 #import "CocoaHelpers.h"
-#import "WKWebView.h"
 #import "WebExtension.h"
 #import "WebExtensionContext.h"
 #import "_WKWebExtensionControllerInternal.h"
@@ -39,7 +38,6 @@
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionTab.h"
 #import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/URLParser.h>
 
 NSErrorDomain const _WKWebExtensionContextErrorDomain = @"_WKWebExtensionContextErrorDomain";
 
@@ -110,9 +108,6 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 - (void)setBaseURL:(NSURL *)baseURL
 {
     NSParameterAssert(baseURL);
-    NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(String(baseURL.scheme)), @"Invalid parameter: '%@' is not a valid URL scheme", baseURL.scheme);
-    NSAssert1(![WKWebView handlesURLScheme:baseURL.scheme], @"Invalid parameter: '%@' is a URL scheme that WKWebView handles natively and cannot be used for extensions", baseURL.scheme);
-    NSAssert(!baseURL.path.length || [baseURL.path isEqualToString:@"/"], @"Invalid parameter: a URL with a path cannot be used");
 
     _webExtensionContext->setBaseURL(baseURL);
 }

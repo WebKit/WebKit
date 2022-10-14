@@ -57,8 +57,6 @@ public:
     void stopAllTasksForPage(WebPageProxy&, WebProcessProxy*);
     void taskCompleted(WebPageProxyIdentifier, WebURLSchemeTask&);
 
-    virtual bool isAPIHandler() { return false; }
-
 protected:
     WebURLSchemeHandler();
 

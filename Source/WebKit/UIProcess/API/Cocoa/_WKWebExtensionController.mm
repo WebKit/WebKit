@@ -95,7 +95,7 @@
 - (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
 {
     if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
-        return extensionContext->wrapper();
+        return extensionContext.value()->wrapper();
     return nil;
 }
 
