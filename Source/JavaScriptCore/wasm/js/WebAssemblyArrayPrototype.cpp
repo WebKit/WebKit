@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AuxiliaryBarrierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
 #include "WebAssemblyArrayPrototype.lut.h"
