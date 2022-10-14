@@ -6098,6 +6098,3 @@ imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]
 
 # WebKit2 Only
 fullscreen/fullscreen-enter-bottom-padding-animation.html [ Skip ]
-
-# webkit.org/b/246464 Heavy EWS impact
-fast/box-shadow/inset-spread-box-shadow-split-inline.html [ Skip ]

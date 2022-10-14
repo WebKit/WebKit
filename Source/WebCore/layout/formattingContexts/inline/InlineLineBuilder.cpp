@@ -358,7 +358,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , partialOverflowingContent ? std::nullopt : committedContent.overflowLogicalWidth
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
-        , m_contentIsConstrainedByFloat
+        , m_lineIsConstrainedByFloat
         , m_lineInitialLogicalLeft
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
@@ -444,7 +444,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, const Inlin
     // While negative margins normally don't expand the available space, preferred width computation gets confused by negative text-indent
     // (shrink the space needed for the content) which we have to balance it here.
     m_lineLogicalRect.expandHorizontally(-m_lineMarginStart);
-    m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
+    m_lineIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
     if (previousLine) {
         if (previousLine->partialOverflowingContent) {
@@ -531,7 +531,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
 
 LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
-    ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_contentIsConstrainedByFloat);
+    ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
     auto& rootStyle = this->rootStyle();
     auto numberOfCommittedItems = committedContent.itemCount;
     auto trailingInlineItemIndex = needsLayoutRange.start + numberOfCommittedItems - 1;
@@ -848,15 +848,14 @@ static std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const Inli
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Break && lineBreakingResult.partialTrailingContent->partialRun)
         return logicalWidthForNextLineAsLeading - lineBreakingResult.partialTrailingContent->partialRun->logicalWidth;
     return { };
-};
+}
 
-
-InlineRect LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& lineCandidate) const
+std::tuple<InlineRect, bool> LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& lineCandidate) const
 {
     auto& inlineContent = lineCandidate.inlineContent;
     // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
     if (isInIntrinsicWidthMode())
-        return m_lineLogicalRect;
+        return { m_lineLogicalRect, false };
     auto maximumLineLogicalHeight = m_lineLogicalRect.height();
     for (auto& run : inlineContent.continuousContent().runs()) {
         auto& inlineItem = run.inlineItem;
@@ -868,14 +867,14 @@ InlineRect LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& l
         }
     }
     if (maximumLineLogicalHeight == m_lineLogicalRect.height())
-        return m_lineLogicalRect;
+        return { m_lineLogicalRect, false };
     auto adjustedLineLogicalRect = InlineRect { m_lineLogicalRect.top(), m_lineLogicalRect.left(), m_lineLogicalRect.width(), maximumLineLogicalHeight };
     auto lineConstraints = floatConstraints(adjustedLineLogicalRect);
     if (lineConstraints.left)
         adjustedLineLogicalRect.shiftLeftTo(std::max<InlineLayoutUnit>(adjustedLineLogicalRect.left(), lineConstraints.left->x));
     if (lineConstraints.right)
         adjustedLineLogicalRect.setRight(std::max(adjustedLineLogicalRect.left(), std::min<InlineLayoutUnit>(adjustedLineLogicalRect.right(), lineConstraints.right->x)));
-    return adjustedLineLogicalRect;
+    return { adjustedLineLogicalRect,  lineConstraints.left || lineConstraints.right };
 }
 
 bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstraintApplies lineBoxConstraintApplies)
@@ -903,7 +902,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
             ASSERT(m_overflowingFloats.isEmpty());
             return true;
         }
-        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_contentIsConstrainedByFloat;
+        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
         if (lineIsConsideredEmpty)
             return true;
         auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight() + trimmableTrailingContentWidth(m_line);
@@ -945,7 +944,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     }
 
     // Shrink the line box with the intrusive float box's margin box.
-    m_contentIsConstrainedByFloat = true;
+    m_lineIsConstrainedByFloat = true;
     auto shouldAdjustLineLogicalLeft = [&] {
         auto matchingInlineDirection = floatingState()->isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection();
         // Floating state inherited from the parent BFC with mismatching inline direction (ltr vs. rtl) puts
@@ -979,9 +978,9 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         inlineContentBreaker.setHyphenationDisabled();
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
-    auto adjustedLineForCandidateContent = lineRectForCandidateInlineContent(lineCandidate);
+    auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineRectForCandidateInlineContent(lineCandidate);
     auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
-    auto lineIsConsideredContentful = m_line.hasContent() || m_contentIsConstrainedByFloat;
+    auto lineIsConsideredContentful = m_line.hasContent() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, trimmableTrailingContentWidth(m_line), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineIsConsideredContentful, !m_wrapOpportunityList.isEmpty() };
     auto toLineBuilderResult = [&](auto& lineBreakingResult) -> LineBuilder::Result {
         auto& candidateRuns = continuousInlineContent.runs();
@@ -1075,11 +1074,11 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     auto lineBreakingResult = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 
     if (lineGainsNewContent) {
-        // Sometimes in order to put this content on the line, we have to avoid additonal float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
-        // which means we need to adjust the line rect to accomodate such new constraints.
-        m_contentIsConstrainedByFloat = m_contentIsConstrainedByFloat || m_lineLogicalRect != adjustedLineForCandidateContent;
+        // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
+        // which means we need to adjust the line rect to accommodate such new constraints.
         m_lineLogicalRect = adjustedLineForCandidateContent;
     }
+    m_lineIsConstrainedByFloat = m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     return toLineBuilderResult(lineBreakingResult);
 }
 
