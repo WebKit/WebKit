@@ -2383,8 +2383,6 @@ webkit.org/b/245592 imported/w3c/web-platform-tests/css/css-counter-styles/mongo
 
 webkit.org/b/245595 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 
-webkit.org/b/245597 fast/canvas/canvas-large-dimensions-drawing.html [ ImageOnlyFailure ]
-
 webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure ]
 
 webkit.org/b/245608 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Failure ]
