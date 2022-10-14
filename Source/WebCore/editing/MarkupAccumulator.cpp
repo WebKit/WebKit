@@ -253,8 +253,10 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
             }
             current = current->parentNode();
             namespaceStack.removeLast();
-            if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(current))
-                current = fragment->host();
+            if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(current)) {
+                if (current != &targetNode)
+                    current = fragment->host();
+            }
 
             shouldAppendNode = !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
             shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
