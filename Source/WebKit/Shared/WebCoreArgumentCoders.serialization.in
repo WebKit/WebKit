@@ -947,3 +947,11 @@ struct WebCore::PublicKeyCredentialRequestOptions {
 [CreateUsing=fromRawString] class WebCore::RegistrableDomain {
     String string()
 }
+
+struct WebCore::AudioConfiguration {
+    String contentType;
+    String channels;
+    std::optional<uint64_t> bitrate;
+    std::optional<uint32_t> samplerate;
+    std::optional<bool> spatialRendering;
+ };
