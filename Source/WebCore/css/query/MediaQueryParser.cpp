@@ -25,7 +25,9 @@
 #include "config.h"
 #include "MediaQueryParser.h"
 
+#include "CSSMarkup.h"
 #include "CSSValueKeywords.h"
+#include "GenericMediaQuerySerialization.h"
 
 namespace WebCore {
 namespace MQ {
