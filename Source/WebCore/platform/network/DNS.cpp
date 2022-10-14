@@ -30,6 +30,10 @@
 #include "DNSResolveQueue.h"
 #include <wtf/MainThread.h>
 
+#if OS(UNIX)
+#include <arpa/inet.h>
+#endif
+
 namespace WebCore {
 
 void prefetchDNS(const String& hostname)
@@ -53,6 +57,23 @@ void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandle
 void stopResolveDNS(uint64_t identifier)
 {
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
+}
+
+std::optional<IPAddress> IPAddress::fromString(const String& string)
+{
+#if OS(UNIX)
+    struct in6_addr addressV6;
+    if (inet_pton(AF_INET6, string.utf8().data(), &addressV6))
+        return IPAddress { addressV6 };
+
+    struct in_addr addressV4;
+    if (inet_pton(AF_INET, string.utf8().data(), &addressV4))
+        return IPAddress { addressV4 };
+#else
+    // FIXME: Add support for this method on Windows.
+    UNUSED_PARAM(string);
+#endif
+    return std::nullopt;
 }
 
 }

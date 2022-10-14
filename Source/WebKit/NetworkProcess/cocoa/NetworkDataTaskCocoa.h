@@ -100,10 +100,9 @@ private:
 
 #if ENABLE(TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
-#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     void updateFirstPartyInfoForSession(const URL&);
+    bool shouldApplyCookiePolicyForThirdPartyCNAMECloaking() const;
     void applyCookiePolicyForThirdPartyCNAMECloaking(const WebCore::ResourceRequest&);
-#endif
     void blockCookies();
     void unblockCookies();
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
@@ -120,9 +119,7 @@ private:
 
 #if ENABLE(TRACKING_PREVENTION)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
-#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
-#endif
 #endif
 
     bool m_isForMainResourceNavigationForAnyFrame { false };
