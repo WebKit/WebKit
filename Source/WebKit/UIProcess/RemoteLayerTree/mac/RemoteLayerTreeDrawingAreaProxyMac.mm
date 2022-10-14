@@ -34,8 +34,11 @@
 namespace WebKit {
 using namespace WebCore;
 
+static const Seconds displayLinkTimerInterval { 1_s / 60 };
+
 RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& processProxy)
     : RemoteLayerTreeDrawingAreaProxy(pageProxy, processProxy)
+    , m_displayLinkTimer(RunLoop::main(), this, &RemoteLayerTreeDrawingAreaProxyMac::displayLinkTimerFired)
 {
 }
 
@@ -47,6 +50,24 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyMac::delegatedScrollingMod
 std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyMac::createScrollingCoordinatorProxy() const
 {
     return makeUnique<RemoteScrollingCoordinatorProxyMac>(m_webPageProxy);
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayLink()
+{
+    if (m_displayLinkTimer.isActive())
+        return;
+    
+    m_displayLinkTimer.startOneShot(displayLinkTimerInterval);
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::pauseDisplayLink()
+{
+    m_displayLinkTimer.stop();
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::displayLinkTimerFired()
+{
+    didRefreshDisplay();
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
