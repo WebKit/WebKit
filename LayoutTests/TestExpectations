@@ -4796,7 +4796,7 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intri
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-006.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-007.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-008.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-009.html [ ImageOnlyFailure ]
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-009.html [ Skip ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-010.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-011.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-012.html [ ImageOnlyFailure ]
