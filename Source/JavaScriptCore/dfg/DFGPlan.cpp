@@ -69,6 +69,7 @@
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
+#include "DFGValidateUnlinked.h"
 #include "DFGValueRepReductionPhase.h"
 #include "DFGVarargsForwardingPhase.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
@@ -333,6 +334,12 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performStackLayout);
         RUN_PHASE(performVirtualRegisterAllocation);
         RUN_PHASE(performWatchpointCollection);
+        if (m_mode == JITCompilationMode::UnlinkedDFG) {
+            if (DFG::canCompileUnlinked(dfg) == DFG::CannotCompile) {
+                m_finalizer = makeUnique<FailedFinalizer>(*this);
+                return FailPath;
+            }
+        }
         dumpAndVerifyGraph(dfg, "Graph after optimization:");
         
         {
