@@ -526,6 +526,16 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 #pragma mark -
 #pragma mark External Interface
 
+- (void)setSupportedOrientations:(UIInterfaceOrientationMask)orientations
+{
+    [_fullscreenViewController setSupportedOrientations:orientations];
+}
+
+- (void)resetSupportedOrientations
+{
+    [_fullscreenViewController resetSupportedOrientations];
+}
+
 - (void)enterFullScreen:(CGSize)videoDimensions
 {
     if ([self isFullScreen])

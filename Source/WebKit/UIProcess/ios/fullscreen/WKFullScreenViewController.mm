@@ -124,6 +124,7 @@ private:
     WebKit::FullscreenTouchSecheuristic _secheuristic;
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
     CGFloat _nonZeroStatusBarHeight;
+    std::optional<UIInterfaceOrientationMask> _supportedOrientations;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     BOOL m_shouldHideMediaControls;
 #endif
@@ -145,7 +146,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
 ALLOW_DEPRECATED_DECLARATIONS_END
     _secheuristic.setParameters(WebKit::FullscreenTouchSecheuristicParameters::iosParameters());
-
     self._webView = webView;
 
     _playbackClient.setParent(self);
@@ -178,6 +178,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_location release];
 
     [super dealloc];
+}
+
+- (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations
+{
+    _supportedOrientations = supportedOrientations;
+    [self setNeedsUpdateOfSupportedInterfaceOrientations];
+}
+
+- (void)resetSupportedOrientations
+{
+    _supportedOrientations = std::nullopt;
+    [self setNeedsUpdateOfSupportedInterfaceOrientations];
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    if (!_supportedOrientations)
+        return [super supportedInterfaceOrientations];
+    return *_supportedOrientations;
 }
 
 - (void)showUI

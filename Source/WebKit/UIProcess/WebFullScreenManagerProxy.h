@@ -38,6 +38,8 @@ namespace WebCore {
 class FloatSize;
 class IntRect;
 
+enum class ScreenOrientationType : uint8_t;
+
 template <typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
 }
@@ -60,6 +62,9 @@ public:
     virtual void exitFullScreen() = 0;
     virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
+
+    virtual bool lockFullscreenOrientation(WebCore::ScreenOrientationType) { return false; }
+    virtual void unlockFullscreenOrientation() { }
 };
 
 class WebFullScreenManagerProxy : public IPC::MessageReceiver {
@@ -96,6 +101,8 @@ public:
     void setFullscreenAutoHideDuration(Seconds);
     void setFullscreenControlsHidden(bool);
     void closeWithCallback(CompletionHandler<void()>&&);
+    bool lockFullscreenOrientation(WebCore::ScreenOrientationType);
+    void unlockFullscreenOrientation();
 
 private:
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);

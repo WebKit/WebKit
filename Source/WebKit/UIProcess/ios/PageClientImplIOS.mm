@@ -67,6 +67,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
+#import <WebCore/ScreenOrientationType.h>
 #import <WebCore/ShareData.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
@@ -739,6 +740,33 @@ void PageClientImpl::enterFullScreen(FloatSize videoDimensions)
 void PageClientImpl::exitFullScreen()
 {
     [[m_webView fullScreenWindowController] exitFullScreen];
+}
+
+static UIInterfaceOrientationMask toUIInterfaceOrientationMask(WebCore::ScreenOrientationType orientation)
+{
+    switch (orientation) {
+    case WebCore::ScreenOrientationType::PortraitPrimary:
+        return UIInterfaceOrientationMaskPortrait;
+    case WebCore::ScreenOrientationType::PortraitSecondary:
+        return UIInterfaceOrientationMaskPortraitUpsideDown;
+    case WebCore::ScreenOrientationType::LandscapePrimary:
+        return UIInterfaceOrientationMaskLandscapeLeft;
+    case WebCore::ScreenOrientationType::LandscapeSecondary:
+        return UIInterfaceOrientationMaskLandscapeRight;
+    }
+    ASSERT_NOT_REACHED();
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+bool PageClientImpl::lockFullscreenOrientation(WebCore::ScreenOrientationType orientation)
+{
+    [[m_webView fullScreenWindowController] setSupportedOrientations:toUIInterfaceOrientationMask(orientation)];
+    return true;
+}
+
+void PageClientImpl::unlockFullscreenOrientation()
+{
+    [[m_webView fullScreenWindowController] resetSupportedOrientations];
 }
 
 void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)

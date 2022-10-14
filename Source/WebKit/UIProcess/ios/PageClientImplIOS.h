@@ -230,6 +230,8 @@ private:
     void exitFullScreen() override;
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
+    bool lockFullscreenOrientation(WebCore::ScreenOrientationType) override;
+    void unlockFullscreenOrientation() override;
 #endif
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
