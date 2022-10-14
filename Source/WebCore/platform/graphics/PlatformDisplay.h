@@ -105,7 +105,6 @@ public:
 #endif
 
 #if USE(ATSPI)
-    void setAccessibilityBusAddress(String&& address) { m_accessibilityBusAddress = WTFMove(address); }
     const String& accessibilityBusAddress() const;
 #endif
 

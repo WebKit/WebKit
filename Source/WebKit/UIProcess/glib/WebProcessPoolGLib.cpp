@@ -34,6 +34,7 @@
 #include "WebProcessCreationParameters.h"
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/FileSystem.h>
+#include <wtf/glib/Sandbox.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
@@ -127,8 +128,18 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if USE(ATSPI)
-    static const char* accessibilityBusAddress = getenv("WEBKIT_A11Y_BUS_ADDRESS");
-    parameters.accessibilityBusAddress = accessibilityBusAddress ? String::fromUTF8(accessibilityBusAddress) : WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress();
+    parameters.accessibilityBusAddress = [this] {
+        if (auto* address = getenv("WEBKIT_A11Y_BUS_ADDRESS"))
+            return String::fromUTF8(address);
+
+        if (m_sandboxEnabled) {
+            String& address = sandboxedAccessibilityBusAddress();
+            if (!address.isNull())
+                return address;
+        }
+
+        return WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress();
+    }();
 #endif
 
 #if PLATFORM(GTK)
