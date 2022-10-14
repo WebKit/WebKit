@@ -5169,6 +5169,10 @@ webkit.org/b/243648 scrollbars/transparent-scrollbar.html [ ImageOnlyFailure ]
 
 webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 
+webkit.org/b/246536 accessibility/table-row-role-changes.html [ Skip ]
+
+webkit.org/b/246537 fast/block/positioning/border-change-relayout-test.html [ Skip ]
+
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 

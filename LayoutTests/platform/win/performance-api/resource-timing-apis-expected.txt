@@ -19,9 +19,9 @@ PASS "secureConnectionStart" in PerformanceResourceTiming.prototype is true
 PASS "requestStart" in PerformanceResourceTiming.prototype is true
 PASS "responseStart" in PerformanceResourceTiming.prototype is true
 PASS "responseEnd" in PerformanceResourceTiming.prototype is true
-FAIL "transferSize" in PerformanceResourceTiming.prototype should be true. Was false.
-FAIL "encodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
-FAIL "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
+PASS "transferSize" in PerformanceResourceTiming.prototype is true
+PASS "encodedBodySize" in PerformanceResourceTiming.prototype is true
+PASS "decodedBodySize" in PerformanceResourceTiming.prototype is true
 PASS PerformanceResourceTiming.prototype.toJSON is defined.
 PASS new PerformanceResourceTiming() threw exception TypeError: Illegal constructor.
 
@@ -50,9 +50,9 @@ PASS [Worker] "secureConnectionStart" in PerformanceResourceTiming.prototype is 
 PASS [Worker] "requestStart" in PerformanceResourceTiming.prototype is true
 PASS [Worker] "responseStart" in PerformanceResourceTiming.prototype is true
 PASS [Worker] "responseEnd" in PerformanceResourceTiming.prototype is true
-FAIL [Worker] "transferSize" in PerformanceResourceTiming.prototype should be true. Was false.
-FAIL [Worker] "encodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
-FAIL [Worker] "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
+PASS [Worker] "transferSize" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "encodedBodySize" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "decodedBodySize" in PerformanceResourceTiming.prototype is true
 PASS [Worker] PerformanceResourceTiming.prototype.toJSON is defined.
 PASS [Worker] new PerformanceResourceTiming() threw exception TypeError: Illegal constructor.
 [Worker]
