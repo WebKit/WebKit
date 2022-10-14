@@ -182,7 +182,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VKCImageAnalysisTranslation : NSObject
 @property (nonatomic, readonly) NSArray<VKCTranslatedParagraph *> *paragraphs;
 @end
-#endif
 
 @interface VKCImageAnalysis : VKImageAnalysis
 - (NSAttributedString *)_attributedStringForRange:(NSRange)range;
@@ -196,6 +195,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
+#endif
 
 #endif // HAVE(VK_IMAGE_TRANSLATION_SUPPORT)
 
