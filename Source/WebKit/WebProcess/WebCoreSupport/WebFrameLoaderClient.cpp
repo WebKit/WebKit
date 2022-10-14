@@ -53,6 +53,7 @@
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebFullScreenManager.h"
+#include "WebHitTestResultData.h"
 #include "WebLoaderStrategy.h"
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
@@ -68,6 +69,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -984,6 +986,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.lockHistory = navigationAction.lockHistory();
     navigationActionData.lockBackForwardList = navigationAction.lockBackForwardList();
     navigationActionData.privateClickMeasurement = navigationAction.privateClickMeasurement();
+    if (auto mouseEventData = navigationAction.mouseEventData()) {
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
+        HitTestResult hitTestResult = m_frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
+
+        WebKit::WebHitTestResultData webHitTestResultData(hitTestResult, false);
+        navigationActionData.webHitTestResultData = std::make_optional(webHitTestResultData);
+    }
 
     auto* coreFrame = m_frame->coreFrame();
     if (!coreFrame)

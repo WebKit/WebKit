@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebHitTestResultData.h"
 #include "WebMouseEvent.h"
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
@@ -68,6 +69,7 @@ struct NavigationActionData {
     WTF::String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags { 0 };
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
+    std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 };
 
 }
