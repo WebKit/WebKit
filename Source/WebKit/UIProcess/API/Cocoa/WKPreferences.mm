@@ -1568,6 +1568,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->modelDocumentEnabled();
 }
 
+- (void)_setRequiresFullscreenToLockScreenOrientation:(BOOL)enabled
+{
+    _preferences->setFullscreenRequirementForScreenOrientationLockingEnabled(enabled);
+}
+
+- (BOOL)_requiresFullscreenToLockScreenOrientation
+{
+    return _preferences->fullscreenRequirementForScreenOrientationLockingEnabled();
+}
+
 - (void)_setInteractionRegionMinimumCornerRadius:(double)radius
 {
     _preferences->setInteractionRegionMinimumCornerRadius(radius);

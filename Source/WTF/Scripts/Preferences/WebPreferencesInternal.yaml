@@ -353,6 +353,18 @@ FullScreenEnabled:
     WebCore:
       default: false
 
+FullscreenRequirementForScreenOrientationLockingEnabled:
+  type: bool
+  humanReadableName: "Require being in Fullscreen to lock screen orientation"
+  humanReadableDescription: "Require being in Fullscreen to lock screen orientation"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 GetUserMediaRequiresFocus:
   type: bool
   humanReadableName: "Require focus to start getUserMedia"
