@@ -162,7 +162,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-static const NSTimeInterval kAnimationDuration = 0.2;
+static constexpr NSTimeInterval kAnimationDuration = 0.2;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
+#endif
 
 #pragma mark -
 
@@ -550,6 +553,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     CGFloat aspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : (960.0 / 540.0);
     [_window setFrame:CGRectMake(0, 0, 540 * aspectRatio, 540)];
+    [_window setClipsToBounds:YES];
+    [_window _setContinuousCornerRadius:kFullScreenWindowCornerRadius];
     [_window setNeedsLayout];
     [_window layoutIfNeeded];
 #endif

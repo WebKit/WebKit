@@ -453,6 +453,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [super viewWillAppear:animated];
 }
 
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+- (void)viewIsAppearing:(BOOL)animated
+{
+    self.view.clipsToBounds = YES;
+    self.view._continuousCornerRadius = self.view.window._continuousCornerRadius;
+
+    [super viewIsAppearing:animated];
+}
+#endif
+
 - (void)viewDidLayoutSubviews
 {
     [self _updateWebViewFullscreenInsets];
