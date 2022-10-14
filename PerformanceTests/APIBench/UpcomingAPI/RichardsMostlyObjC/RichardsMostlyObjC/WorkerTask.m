@@ -25,7 +25,7 @@
 
 #import "WorkerTask.h"
 
-#import <JavaScriptCore/JSLockRefPrivate.h>
+#import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
 @implementation WorkerTask {

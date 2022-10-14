@@ -156,6 +156,22 @@ JS_EXPORT JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx) JSC_API_AV
 */
 JS_EXPORT void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
+/*!
+ @function
+ @abstract Acquire the API lock for the given JSContextRef.
+ @param ctx The execution context to be locked.
+ @discussion The lock has to be held to perform any interactions with the JSContextRef. This function allows holding the lock across multiple interactions to amortize the cost. This lock is a recursive lock.
+ */
+JS_EXPORT void JSLock(JSContextRef ctx) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+ @function
+ @abstract Release the API lock for the given JSContextRef.
+ @param ctx The execution context to be unlocked.
+ @discussion Releases the lock that was previously acquired using JSLock.
+ */
+JS_EXPORT void JSUnlock(JSContextRef ctx) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
 #ifdef __cplusplus
 }
 #endif

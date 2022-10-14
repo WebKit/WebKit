@@ -24,7 +24,7 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSLockRefPrivate.h>
+#import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <QuartzCore/QuartzCore.h>
 

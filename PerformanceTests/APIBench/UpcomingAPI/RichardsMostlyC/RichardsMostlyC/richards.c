@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <JavaScriptCore/JSLockRefPrivate.h>
+#include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <QuartzCore/QuartzCore.h>
 

@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "JSLockRefPrivate.h"
 
 #include "APICast.h"
+#include "JSContextRef.h"
 #include "JSLock.h"
 
 using namespace JSC;
