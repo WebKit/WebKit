@@ -767,8 +767,8 @@ class ShowIdentifier(shell.ShellCommand):
             if identifier:
                 identifier = identifier.replace('master', DEFAULT_BRANCH)
             self.setProperty('identifier', identifier)
-            ews_revision = self.getProperty('ews_revision')
-            if ews_revision:
+            if self.getProperty('ews_revision', False) and not self.getProperty('github.number', False):
+                # Note that this if condition matches with CheckOutSpecificRevision.doStepIf
                 step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
             else:
                 step = self.getLastBuildStepByName(CheckOutSource.name)
