@@ -235,6 +235,7 @@ PlatformWebView::~PlatformWebView()
 {
     m_window.platformWebView = nil;
     [m_view release];
+    [m_window setHidden:YES];
     [m_window release];
 }
 

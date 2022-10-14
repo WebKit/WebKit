@@ -2400,9 +2400,6 @@ webkit.org/b/237547 fast/canvas/webgl/gl-teximage-imagebitmap-memory.html [ Pass
 webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-display-inline-composited.html [ Skip ]
 webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-display-block-composited.html [ Skip ]
 
-# Those tests have been flaky timeouts since they started running on iOS Simulator.
-webkit.org/b/246463 imported/w3c/web-platform-tests/screen-orientation [ Failure Pass ]
-
 webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html [ Pass Failure ]
 
 # webkit.org/b/245967 3X imported/w3c/web-platform-tests/feature-policy/(Layout tests) failing since added
