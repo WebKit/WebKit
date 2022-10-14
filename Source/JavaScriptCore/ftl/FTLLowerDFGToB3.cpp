@@ -15631,8 +15631,6 @@ IGNORE_CLANG_WARNINGS_END
         LValue end = nullptr;
         if (m_node->child3())
             end = lowInt32(m_node->child3());
-        else
-            end = m_out.constInt32(std::numeric_limits<int32_t>::max());
         m_out.branch(isRopeString(string, m_node->child1()), rarely(ropeSlowCase), usually(lengthCheckCase));
 
         LBasicBlock lastNext = m_out.appendTo(lengthCheckCase, emptyCase);
@@ -15690,7 +15688,10 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(ropeSlowCase, continuation);
-        results.append(m_out.anchor(vmCall(pointerType(), operationStringSlice, weakPointer(globalObject), string, start, end)));
+        if (end)
+            results.append(m_out.anchor(vmCall(pointerType(), operationStringSliceWithEnd, weakPointer(globalObject), string, start, end)));
+        else
+            results.append(m_out.anchor(vmCall(pointerType(), operationStringSlice, weakPointer(globalObject), string, start)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);

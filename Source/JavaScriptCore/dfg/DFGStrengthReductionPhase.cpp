@@ -1052,11 +1052,9 @@ private:
             break;
         }
 
-        case StringSubstring: {
+        case StringSubstring:
+        case StringSlice: {
             Node* stringNode = m_node->child1().node();
-            String string = stringNode->tryGetString(m_graph);
-            if (!string)
-                break;
 
             if (!m_node->child2()->isInt32Constant())
                 break;
@@ -1067,10 +1065,26 @@ private:
                 if (!m_node->child3()->isInt32Constant())
                     break;
                 endValue = m_node->child3()->asInt32();
+                if (endValue.value() == startValue) {
+                    // Regardless of whatever the string is, it generates empty string (Even if both are negative index).
+                    m_changed = true;
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+                    m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, emptyString()));
+                    break;
+                }
             }
 
+            String string = stringNode->tryGetString(m_graph);
+            if (!string)
+                break;
+
             int32_t length = string.length();
-            auto [start, end] = extractSubstringOffsets(length, startValue, endValue);
+            int32_t start = 0;
+            int32_t end = 0;
+            if (m_node->op() == StringSubstring)
+                std::tie(start, end) = extractSubstringOffsets(length, startValue, endValue);
+            else
+                std::tie(start, end) = extractSliceOffsets(length, startValue, endValue);
 
             m_changed = true;
             m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());

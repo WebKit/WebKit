@@ -1954,9 +1954,9 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     addSlowPathGenerator(slowPathCall(slowCases, this, operationStringSubstr, tempGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startIndexGPR, tempGPR));
 
     if (endGPR)
-        addSlowPathGenerator(slowPathCall(isRope, this, operationStringSlice, tempGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startGPR, *endGPR));
+        addSlowPathGenerator(slowPathCall(isRope, this, operationStringSliceWithEnd, tempGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startGPR, *endGPR));
     else
-        addSlowPathGenerator(slowPathCall(isRope, this, operationStringSlice, tempGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
+        addSlowPathGenerator(slowPathCall(isRope, this, operationStringSlice, tempGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startGPR));
 
     doneCases.link(&m_jit);
     cellResult(tempGPR, node);
