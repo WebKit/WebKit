@@ -131,6 +131,10 @@ audio {
     height: 25px;
 }
 
+audio:not([controls]) {
+    display: none !important;
+}
+
 /* heading elements */
 
 h1 {
