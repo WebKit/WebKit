@@ -360,10 +360,12 @@ enum : NSUInteger {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
 
+#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
 @interface NSURLSessionTask ()
 @property (nonatomic, copy, nullable) NSArray<NSHTTPCookie*>* (^_cookieTransformCallback)(NSArray<NSHTTPCookie*>* cookies);
 @property (nonatomic, readonly, nullable) NSArray<NSString*>* _resolvedCNAMEChain;
 @end
+#endif
 
 #endif // defined(__OBJC__)
 
