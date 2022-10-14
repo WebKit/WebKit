@@ -35,6 +35,10 @@
 #include <wtf/Int128.h>
 #include <wtf/text/WTFString.h>
 
+#ifdef __OBJC__
+@class NSUUID;
+#endif
+
 namespace WTF {
 
 class StringView;
@@ -54,6 +58,11 @@ public:
     {
         return UUID { generateWeakRandomUUIDVersion4() };
     }
+    
+#ifdef __OBJC__
+    WTF_EXPORT_PRIVATE operator NSUUID *() const;
+    WTF_EXPORT_PRIVATE UUID(NSUUID *);
+#endif
 
     WTF_EXPORT_PRIVATE static std::optional<UUID> parse(StringView);
     WTF_EXPORT_PRIVATE static std::optional<UUID> parseVersion4(StringView);

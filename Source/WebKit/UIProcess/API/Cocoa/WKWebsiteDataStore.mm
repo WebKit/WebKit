@@ -299,6 +299,32 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return WebKit::WebsiteDataStore::deleteDefaultDataStoreForTesting();
 }
 
++ (void)_fetchAllIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler
+{
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    WebKit::WebsiteDataStore::fetchAllDataStoreIdentifiers([completionHandlerCopy](auto&& identifiers) {
+        auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers.size()]);
+        for (auto identifier : identifiers)
+            [result addObject:(NSUUID *)identifier];
+
+        completionHandlerCopy(result.autorelease());
+    });
+}
+
++ (void)_removeDataStoreWithIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError* error))completionHandler
+{
+    if (!identifier)
+        [NSException raise:NSInvalidArgumentException format:@"Identifier cannot be nil"];
+
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    WebKit::WebsiteDataStore::removeDataStoreWithIdentifier(UUID(identifier), [completionHandlerCopy](const String& errorString) {
+        if (errorString.isEmpty())
+            return completionHandlerCopy(nil);
+
+        completionHandlerCopy([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:(NSString *)errorString }]);
+    });
+}
+
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
 {
     if (!(self = [super init]))

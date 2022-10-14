@@ -104,6 +104,7 @@
 		93B07ED826B8717000A09B34 /* SuspendableWorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B07ED726B8715B00A09B34 /* SuspendableWorkQueue.cpp */; };
 		93B5B44E2213D616004B7AA7 /* HexNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B5B44D2213D616004B7AA7 /* HexNumber.cpp */; };
 		93B5B45122171EEA004B7AA7 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B5B45022171EE9004B7AA7 /* Logger.cpp */; };
+		93E4A13728F6B75A006AD994 /* UUIDCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E4A13628F6B75A006AD994 /* UUIDCocoa.mm */; };
 		93F1993E19D7958D00C2390B /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1993D19D7958D00C2390B /* StringView.cpp */; };
 		9BC70F05176C379D00101DEC /* AtomStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomStringTable.cpp */; };
 		A32D8FA521FFFAB400780662 /* ThreadingPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */; };
@@ -1226,6 +1227,7 @@
 		93B5B44D2213D616004B7AA7 /* HexNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HexNumber.cpp; sourceTree = "<group>"; };
 		93B5B45022171EE9004B7AA7 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		93D0017B264DBACF00BCF109 /* StringConcatenateCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenateCF.h; sourceTree = "<group>"; };
+		93E4A13628F6B75A006AD994 /* UUIDCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UUIDCocoa.mm; sourceTree = "<group>"; };
 		93F1993D19D7958D00C2390B /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		996B17841EBA441C007E10EB /* DebugUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtilities.h; sourceTree = "<group>"; };
@@ -2827,6 +2829,7 @@
 				4434F91B27948A65007E3E8A /* TollFreeBridging.h */,
 				44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */,
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
+				93E4A13628F6B75A006AD994 /* UUIDCocoa.mm */,
 				93241657243BC2E50032FAAE /* VectorCocoa.h */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
 			);
@@ -3760,6 +3763,7 @@
 				1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */,
 				A8A47469151A825B004123FF /* UTF8Conversion.cpp in Sources */,
 				7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */,
+				93E4A13728F6B75A006AD994 /* UUIDCocoa.mm in Sources */,
 				E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */,
 				0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */,
 				1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */,

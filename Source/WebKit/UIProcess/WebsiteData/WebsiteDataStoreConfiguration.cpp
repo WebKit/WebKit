@@ -58,13 +58,15 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identif
     : m_isPersistent(IsPersistent::Yes)
     , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
     , m_identifier(identifier)
-    , m_baseCacheDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier.toString()))
-    , m_baseDataDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier.toString()))
+    , m_baseCacheDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
+    , m_baseDataDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
 #if PLATFORM(IOS)
     , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
 #endif
 {
+    ASSERT(m_identifier);
+
     initializePaths();
 }
 
@@ -164,6 +166,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_pcmMachServiceName = this->m_pcmMachServiceName;
     copy->m_webPushMachServiceName = this->m_webPushMachServiceName;
     copy->m_resourceLoadStatisticsDebugModeEnabled = this->m_resourceLoadStatisticsDebugModeEnabled;
+    copy->m_identifier = m_identifier;
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));

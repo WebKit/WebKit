@@ -231,7 +231,7 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
     WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
 }
 
-String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const String& identifier)
+static String defaultWebsiteDataStoreRootDirectory()
 {
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSURL>> websiteDataStoreDirectory;
@@ -249,7 +249,34 @@ String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const String& identifi
         websiteDataStoreDirectory.get() = [webkitDirectory URLByAppendingPathComponent:@"WebsiteDataStore" isDirectory:YES];
     });
 
-    return [websiteDataStoreDirectory.get() URLByAppendingPathComponent:identifier isDirectory:YES].absoluteURL.path;
+    return websiteDataStoreDirectory.get().get().absoluteURL.path;
+}
+
+void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&& completionHandler)
+{
+    Vector<UUID> identifiers;
+    for (auto identifierString : FileSystem::listDirectory(defaultWebsiteDataStoreRootDirectory())) {
+        if (auto identifier = UUID::parse(identifierString))
+            identifiers.append(*identifier);
+    }
+
+    completionHandler(WTFMove(identifiers));
+}
+
+void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (!identifier)
+        return completionHandler("Identifier is invalid"_s);
+
+    if (!FileSystem::deleteNonEmptyDirectory(defaultWebsiteDataStoreDirectory(identifier)))
+        return completionHandler("WebsiteDataStore with this identifier does not exist or deletion failed"_s);
+
+    return completionHandler({ });
+}
+
+String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const UUID& identifier)
+{
+    return FileSystem::pathByAppendingComponent(defaultWebsiteDataStoreRootDirectory(), identifier.toString());
 }
 
 String WebsiteDataStore::defaultCookieStorageFile(const String& baseDirectory)

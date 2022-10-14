@@ -344,7 +344,9 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    static String defaultWebsiteDataStoreDirectory(const String& identifier);
+    static void fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&&);
+    static void removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&&);
+    static String defaultWebsiteDataStoreDirectory(const UUID& identifier);
     static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
 #endif
     static String defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory = nullString());

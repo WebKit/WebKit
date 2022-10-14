@@ -68,8 +68,7 @@ static void checkURLArgument(NSURL *url)
     if (!identifier)
         [NSException raise:NSInvalidArgumentException format:@"Identifier cannot be nil"];
 
-    auto uuid = UUID::parse(String([identifier UUIDString]));
-    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, *uuid);
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, UUID(identifier));
 
     return self;
 }

@@ -44,6 +44,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate;
 + (BOOL)_defaultDataStoreExists;
 + (void)_deleteDefaultDataStoreForTesting;
++ (void)_fetchAllIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)_removeDataStoreWithIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError* error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
