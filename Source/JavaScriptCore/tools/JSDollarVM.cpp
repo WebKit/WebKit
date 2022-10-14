@@ -3531,7 +3531,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGlobalObjectForObject, (JSGlobalObject*, CallFr
     RELEASE_ASSERT(value.isObject());
     JSGlobalObject* result = jsCast<JSObject*>(value)->globalObject();
     RELEASE_ASSERT(result);
-    return JSValue::encode(result);
+    return JSValue::encode(result->globalThis());
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionGetGetterSetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
