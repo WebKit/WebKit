@@ -136,10 +136,11 @@ std::optional<uint64_t> fileSize(PlatformFileHandle handle)
 
 std::optional<PlatformFileID> fileID(PlatformFileHandle handle)
 {
-    GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_ID_FILE, nullptr, nullptr));
-    if (info && g_file_info_has_attribute(info.get(), G_FILE_ATTRIBUTE_ID_FILE))
-        return { g_file_info_get_attribute_string(info.get(), G_FILE_ATTRIBUTE_ID_FILE) };
-
+    if (isHandleValid(handle)) {
+        auto info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_ID_FILE, nullptr, nullptr));
+        if (info && g_file_info_has_attribute(info.get(), G_FILE_ATTRIBUTE_ID_FILE))
+            return { g_file_info_get_attribute_string(info.get(), G_FILE_ATTRIBUTE_ID_FILE) };
+    }
     return std::nullopt;
 }
 
