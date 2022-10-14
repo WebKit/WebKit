@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
 This is a test for https://bugs.webkit.org/show_bug.cgi?id=19541 RBug 19541: Null pointer in showModalDialog() This tests calling the showModalDialog() function on a window object from a detached iframe, both calling the saved showModalDialog() function and getting the property again after the iframe has been detached. If there is no crash this test passes.

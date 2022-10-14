@@ -1,1 +1,4 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
+CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
+
 

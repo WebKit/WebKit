@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
 
 Tests for calling methods of another frame using Function.call
 

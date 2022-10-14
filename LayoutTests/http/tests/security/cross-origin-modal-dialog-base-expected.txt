@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
+CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
 CONSOLE MESSAGE: document.location.origin before setting location to a relative path: http://localhost:8000
 CONSOLE MESSAGE: document.location.origin after setting location to a relative path: http://localhost:8000
 Tests that a modal dialog doesn't fall back to its openers origin when document.location is set to a relative path.

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
 Tests deleting window operations works as expected
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
