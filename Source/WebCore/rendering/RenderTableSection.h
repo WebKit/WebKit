@@ -63,6 +63,8 @@ public:
     RenderTableRow* lastRow() const;
 
     std::optional<LayoutUnit> firstLineBaseline() const override;
+    std::optional<LayoutUnit> lastLineBaseline() const override;
+    std::optional<LayoutUnit> baselineFromCellContentEdges(ItemPosition alignment) const;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 

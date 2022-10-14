@@ -878,10 +878,28 @@ std::optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
     if (firstLineBaseline)
         return firstLineBaseline + m_rowPos[0];
 
+    return baselineFromCellContentEdges(ItemPosition::Baseline);
+}
+
+std::optional<LayoutUnit> RenderTableSection::lastLineBaseline() const
+{
+    if (!m_grid.size())
+        return  { };
+    
+    if (auto lastLineBaseline = m_grid[m_grid.size() - 1].baseline)
+        return lastLineBaseline + m_rowPos[m_grid.size() - 1];
+
+    return baselineFromCellContentEdges(ItemPosition::LastBaseline);
+}
+
+std::optional<LayoutUnit> RenderTableSection::baselineFromCellContentEdges(ItemPosition alignment) const
+{
+    ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
+    auto row = alignment == ItemPosition::Baseline ? m_grid[0].row : m_grid[m_grid.size() - 1].row;
+    
     std::optional<LayoutUnit> result;
-    const Row& firstRow = m_grid[0].row;
-    for (size_t i = 0; i < firstRow.size(); ++i) {
-        const CellStruct& cs = firstRow.at(i);
+    for (size_t i = 0; i < row.size(); ++i) {
+        const CellStruct& cs = row.at(i);
         const RenderTableCell* cell = cs.primaryCell();
         // Only cells with content have a baseline
         if (cell && cell->contentLogicalHeight()) {
@@ -889,7 +907,6 @@ std::optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
             result = std::max(result.value_or(candidate), candidate);
         }
     }
-
     return result;
 }
 
