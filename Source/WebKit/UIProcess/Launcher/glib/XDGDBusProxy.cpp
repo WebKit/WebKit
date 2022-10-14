@@ -32,18 +32,13 @@
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-
-#if PLATFORM(GTK)
-#define BASE_DIRECTORY "webkitgtk"
-#elif PLATFORM(WPE)
-#define BASE_DIRECTORY "wpe"
-#endif
+#include <wtf/glib/Sandbox.h>
 
 namespace WebKit {
 
-CString XDGDBusProxy::makeProxy(const char* proxyTemplate)
+CString XDGDBusProxy::makeProxy(const char* baseDirectory, const char* proxyTemplate)
 {
-    GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
+    GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), baseDirectory, nullptr));
     if (g_mkdir_with_parents(appRunDir.get(), 0700) == -1) {
         g_warning("Failed to mkdir for dbus proxy (%s): %s", appRunDir.get(), g_strerror(errno));
         return { };
@@ -59,7 +54,7 @@ CString XDGDBusProxy::makeProxy(const char* proxyTemplate)
     return proxySocketTemplate.get();
 }
 
-std::optional<CString> XDGDBusProxy::dbusSessionProxy(AllowPortals allowPortals)
+std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory, AllowPortals allowPortals)
 {
     if (!m_dbusSessionProxyPath.isNull())
         return m_dbusSessionProxyPath;
@@ -68,7 +63,7 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(AllowPortals allowPortals)
     if (!dbusAddress)
         return std::nullopt;
 
-    m_dbusSessionProxyPath = makeProxy("bus-proxy-XXXXXX");
+    m_dbusSessionProxyPath = makeProxy(baseDirectory, "bus-proxy-XXXXXX");
     if (m_dbusSessionProxyPath.isNull())
         return std::nullopt;
 
@@ -97,7 +92,7 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(AllowPortals allowPortals)
     return m_dbusSessionProxyPath;
 }
 
-std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* sandboxedAccessibilityBusPath)
+std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const char* sandboxedAccessibilityBusPath)
 {
 #if ENABLE(ACCESSIBILITY)
     if (!m_accessibilityProxyPath.isNull())
@@ -107,12 +102,12 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* sandboxedAcc
     if (dbusAddress.isNull())
         return std::nullopt;
 
-    m_accessibilityProxyPath = makeProxy("a11y-proxy-XXXXXX");
+    m_accessibilityProxyPath = makeProxy(baseDirectory, "a11y-proxy-XXXXXX");
     if (m_accessibilityProxyPath.isNull())
         return std::nullopt;
 
 #if USE(ATSPI)
-    WebCore::PlatformDisplay::sharedDisplay().setAccessibilityBusAddress(makeString("unix:path=", sandboxedAccessibilityBusPath));
+    setSandboxedAccessibilityBusAddress(makeString("unix:path=", sandboxedAccessibilityBusPath));
 #endif
 
     m_args.appendVector(Vector<CString> {

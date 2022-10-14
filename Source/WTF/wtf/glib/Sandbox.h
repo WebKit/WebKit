@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE bool isInsideFlatpak();
@@ -26,9 +28,15 @@ WTF_EXPORT_PRIVATE bool isInsideDocker();
 WTF_EXPORT_PRIVATE bool isInsideSnap();
 WTF_EXPORT_PRIVATE bool shouldUsePortal();
 
+WTF_EXPORT_PRIVATE String& sandboxedAccessibilityBusAddress();
+WTF_EXPORT_PRIVATE void setSandboxedAccessibilityBusAddress(String&&);
+
 } // namespace WTF
 
 using WTF::isInsideFlatpak;
 using WTF::isInsideDocker;
 using WTF::isInsideSnap;
 using WTF::shouldUsePortal;
+
+using WTF::sandboxedAccessibilityBusAddress;
+using WTF::setSandboxedAccessibilityBusAddress;

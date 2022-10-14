@@ -199,13 +199,19 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
         args.appendVector(Vector<CString>({ bindType, path, path }));
 }
 
+static const char* dbusProxyDirectory()
+{
+    static GUniquePtr<char> path(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
+    return path.get();
+}
+
 static void bindDBusSession(Vector<CString>& args, XDGDBusProxy& dbusProxy, bool allowPortals)
 {
-    auto dbusSessionProxyPath = dbusProxy.dbusSessionProxy(allowPortals ? XDGDBusProxy::AllowPortals::Yes : XDGDBusProxy::AllowPortals::No);
+    auto dbusSessionProxyPath = dbusProxy.dbusSessionProxy(BASE_DIRECTORY, allowPortals ? XDGDBusProxy::AllowPortals::Yes : XDGDBusProxy::AllowPortals::No);
     if (!dbusSessionProxyPath)
         return;
 
-    GUniquePtr<char> sandboxedSessionBusPath(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, "bus", nullptr));
+    GUniquePtr<char> sandboxedSessionBusPath(g_build_filename(dbusProxyDirectory(), "bus", nullptr));
     GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", sandboxedSessionBusPath.get()));
     args.appendVector(Vector<CString> {
         "--ro-bind", *dbusSessionProxyPath, sandboxedSessionBusPath.get(),
@@ -347,8 +353,8 @@ static void bindGtkData(Vector<CString>& args)
 #if ENABLE(ACCESSIBILITY)
 static void bindA11y(Vector<CString>& args, XDGDBusProxy& dbusProxy)
 {
-    GUniquePtr<char> sandboxedAccessibilityBusPath(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, "at-spi-bus", nullptr));
-    auto accessibilityProxyPath = dbusProxy.accessibilityProxy(sandboxedAccessibilityBusPath.get());
+    GUniquePtr<char> sandboxedAccessibilityBusPath(g_build_filename(dbusProxyDirectory(), "at-spi-bus", nullptr));
+    auto accessibilityProxyPath = dbusProxy.accessibilityProxy(BASE_DIRECTORY, sandboxedAccessibilityBusPath.get());
     if (!accessibilityProxyPath)
         return;
 
@@ -620,6 +626,30 @@ static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType)
     return true;
 }
 
+static std::optional<CString> directoryContainingDBusSocket(const char* dbusAddress)
+{
+    if (!dbusAddress || !g_str_has_prefix(dbusAddress, "unix:"))
+        return std::nullopt;
+
+    if (const char* pathStart = strstr(dbusAddress, "path=")) {
+        pathStart += strlen("path=");
+
+        const char* pathEnd = pathStart;
+        while (*pathEnd && *pathEnd != ',')
+            pathEnd++;
+
+        CString path(pathStart, pathEnd - pathStart);
+        GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.data()));
+        GRefPtr<GFile> parent = adoptGRef(g_file_get_parent(file.get()));
+        if (!parent)
+            return std::nullopt;
+
+        return { g_file_peek_path(parent.get()) };
+    }
+
+    return std::nullopt;
+}
+
 static void addExtraPaths(const HashMap<CString, SandboxPermission>& paths, Vector<CString>& args)
 {
     for (const auto& pathAndPermission : paths) {
@@ -686,16 +716,31 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--ro-bind-try", PKGLIBEXECDIR, PKGLIBEXECDIR,
     };
 
+    addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
+
     if (launchOptions.processType == ProcessLauncher::ProcessType::DBusProxy) {
         sandboxArgs.appendVector(Vector<CString>({
             "--ro-bind", DBUS_PROXY_EXECUTABLE, DBUS_PROXY_EXECUTABLE,
-            // This is a lot of access, but xdg-dbus-proxy is trusted so that's OK. It's sandboxed
-            // only because we have to mount .flatpak-info in its mount namespace. The user rundir
-            // is where we mount our proxy socket.
-            "--bind", runDir, runDir,
+            "--bind", dbusProxyDirectory(), dbusProxyDirectory(),
         }));
 
-        addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
+        // xdg-dbus-proxy is trusted, so it's OK to mount the directories that contain the session
+        // bus and a11y bus sockets wherever they may be. xdg-dbus-proxy is sandboxed only because
+        // we have to mount .flatpak-info in its mount namespace so that portals may use it as a
+        // trusted way to get the app ID of the process that is using it.
+        if (auto sessionBusDirectory = directoryContainingDBusSocket(g_getenv("DBUS_SESSION_BUS_ADDRESS"))) {
+            sandboxArgs.appendVector(Vector<CString>({
+                "--bind", *sessionBusDirectory, *sessionBusDirectory,
+            }));
+        }
+
+#if ENABLE(ACCESSIBILITY)
+        if (auto a11yBusDirectory = directoryContainingDBusSocket(PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8().data())) {
+            sandboxArgs.appendVector(Vector<CString>({
+                "--bind", *a11yBusDirectory, *a11yBusDirectory,
+            }));
+        }
+#endif
     }
 
     if (shouldUnshareNetwork(launchOptions.processType))
@@ -741,8 +786,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
             bindX11(sandboxArgs);
 #endif
-
-        addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
         Vector<String> extraPaths = { "applicationCacheDirectory"_s, "mediaKeysDirectory"_s, "waylandSocket"_s };
         for (const auto& path : extraPaths) {
