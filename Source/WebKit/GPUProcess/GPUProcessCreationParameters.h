@@ -39,8 +39,6 @@ class Encoder;
 namespace WebKit {
 
 struct GPUProcessCreationParameters {
-    GPUProcessCreationParameters();
-
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices { false };
@@ -65,8 +63,31 @@ struct GPUProcessCreationParameters {
 
     String applicationVisibleName;
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessCreationParameters&);
+    static constexpr auto codedFields()
+    {
+        return std::make_tuple(
+            &GPUProcessCreationParameters::auxiliaryProcessParameters,
+#if ENABLE(MEDIA_STREAM)
+            &GPUProcessCreationParameters::useMockCaptureDevices,
+#if PLATFORM(MAC)
+            &GPUProcessCreationParameters::microphoneSandboxExtensionHandle,
+#endif
+#endif
+#if HAVE(AVCONTENTKEYSPECIFIER)
+            &GPUProcessCreationParameters::sampleBufferContentKeySessionSupportEnabled,
+#endif
+            &GPUProcessCreationParameters::parentPID,
+#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
+            &GPUProcessCreationParameters::containerCachesDirectoryExtensionHandle,
+            &GPUProcessCreationParameters::containerTemporaryDirectoryExtensionHandle,
+#endif
+#if PLATFORM(IOS_FAMILY)
+            &GPUProcessCreationParameters::compilerServiceExtensionHandles,
+            &GPUProcessCreationParameters::dynamicIOKitExtensionHandles,
+#endif
+            &GPUProcessCreationParameters::mobileGestaltExtensionHandle,
+            &GPUProcessCreationParameters::applicationVisibleName);
+    }
 };
 
 } // namespace WebKit

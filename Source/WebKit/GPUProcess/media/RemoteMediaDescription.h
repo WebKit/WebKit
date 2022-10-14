@@ -57,44 +57,13 @@ struct MediaDescriptionInfo {
     bool m_isAudio { false };
     bool m_isText { false };
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
+    static constexpr auto codedFields()
     {
-        encoder << m_codec;
-        encoder << m_isVideo;
-        encoder << m_isAudio;
-        encoder << m_isText;
-    }
-
-    template <class Decoder>
-    static std::optional<MediaDescriptionInfo> decode(Decoder& decoder)
-    {
-        std::optional<AtomString> codec;
-        decoder >> codec;
-        if (!codec)
-            return std::nullopt;
-
-        std::optional<bool> isVideo;
-        decoder >> isVideo;
-        if (!isVideo)
-            return std::nullopt;
-
-        std::optional<bool> isAudio;
-        decoder >> isAudio;
-        if (!isAudio)
-            return std::nullopt;
-
-        std::optional<bool> isText;
-        decoder >> isText;
-        if (!isText)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*codec),
-            *isVideo,
-            *isAudio,
-            *isText
-        }};
+        return std::make_tuple(
+            &MediaDescriptionInfo::m_codec,
+            &MediaDescriptionInfo::m_isVideo,
+            &MediaDescriptionInfo::m_isAudio,
+            &MediaDescriptionInfo::m_isText);
     }
 };
 

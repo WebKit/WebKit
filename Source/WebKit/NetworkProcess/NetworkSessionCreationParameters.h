@@ -52,8 +52,82 @@ namespace WebKit {
 enum class AllowsCellularAccess : bool { No, Yes };
 
 struct NetworkSessionCreationParameters {
-    void encode(IPC::Encoder&) const;
-    static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
+    static constexpr auto codedFields()
+    {
+        return std::make_tuple(
+            &NetworkSessionCreationParameters::sessionID,
+            &NetworkSessionCreationParameters::boundInterfaceIdentifier,
+            &NetworkSessionCreationParameters::allowsCellularAccess,
+#if PLATFORM(COCOA)
+            &NetworkSessionCreationParameters::proxyConfiguration,
+            &NetworkSessionCreationParameters::sourceApplicationBundleIdentifier,
+            &NetworkSessionCreationParameters::sourceApplicationSecondaryIdentifier,
+            &NetworkSessionCreationParameters::shouldLogCookieInformation,
+            &NetworkSessionCreationParameters::httpProxy,
+            &NetworkSessionCreationParameters::httpsProxy,
+#endif
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+            &NetworkSessionCreationParameters::alternativeServiceDirectory,
+            &NetworkSessionCreationParameters::alternativeServiceDirectoryExtensionHandle,
+#endif
+            &NetworkSessionCreationParameters::hstsStorageDirectory,
+            &NetworkSessionCreationParameters::hstsStorageDirectoryExtensionHandle,
+#if USE(SOUP)
+            &NetworkSessionCreationParameters::cookiePersistentStoragePath,
+            &NetworkSessionCreationParameters::cookiePersistentStorageType,
+            &NetworkSessionCreationParameters::persistentCredentialStorageEnabled,
+            &NetworkSessionCreationParameters::ignoreTLSErrors,
+            &NetworkSessionCreationParameters::proxySettings,
+            &NetworkSessionCreationParameters::cookieAcceptPolicy,
+#endif
+#if USE(CURL)
+            &NetworkSessionCreationParameters::cookiePersistentStorageFile,
+            &NetworkSessionCreationParameters::proxySettings,
+#endif
+            &NetworkSessionCreationParameters::deviceManagementRestrictionsEnabled,
+            &NetworkSessionCreationParameters::allLoadsBlockedByDeviceManagementRestrictionsForTesting,
+            &NetworkSessionCreationParameters::webPushDaemonConnectionConfiguration,
+            &NetworkSessionCreationParameters::networkCacheDirectory,
+            &NetworkSessionCreationParameters::networkCacheDirectoryExtensionHandle,
+            &NetworkSessionCreationParameters::dataConnectionServiceType,
+            &NetworkSessionCreationParameters::fastServerTrustEvaluationEnabled,
+            &NetworkSessionCreationParameters::networkCacheSpeculativeValidationEnabled,
+            &NetworkSessionCreationParameters::shouldUseTestingNetworkSession,
+            &NetworkSessionCreationParameters::staleWhileRevalidateEnabled,
+            &NetworkSessionCreationParameters::testSpeedMultiplier,
+            &NetworkSessionCreationParameters::suppressesConnectionTerminationOnSystemChange,
+            &NetworkSessionCreationParameters::allowsServerPreconnect,
+            &NetworkSessionCreationParameters::requiresSecureHTTPSProxyConnection,
+            &NetworkSessionCreationParameters::shouldRunServiceWorkersOnMainThreadForTesting,
+            &NetworkSessionCreationParameters::overrideServiceWorkerRegistrationCountTestingValue,
+            &NetworkSessionCreationParameters::preventsSystemHTTPProxyAuthentication,
+            &NetworkSessionCreationParameters::appHasRequestedCrossWebsiteTrackingPermission,
+            &NetworkSessionCreationParameters::useNetworkLoader,
+            &NetworkSessionCreationParameters::allowsHSTSWithUntrustedRootCertificate,
+            &NetworkSessionCreationParameters::pcmMachServiceName,
+            &NetworkSessionCreationParameters::webPushMachServiceName,
+            &NetworkSessionCreationParameters::enablePrivateClickMeasurementDebugMode,
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+            &NetworkSessionCreationParameters::shouldAcceptInsecureCertificatesForWebSockets,
+#endif
+            &NetworkSessionCreationParameters::shouldUseCustomStoragePaths,
+            &NetworkSessionCreationParameters::perOriginStorageQuota,
+            &NetworkSessionCreationParameters::perThirdPartyOriginStorageQuota,
+            &NetworkSessionCreationParameters::localStorageDirectory,
+            &NetworkSessionCreationParameters::localStorageDirectoryExtensionHandle,
+            &NetworkSessionCreationParameters::indexedDBDirectory,
+            &NetworkSessionCreationParameters::indexedDBDirectoryExtensionHandle,
+            &NetworkSessionCreationParameters::cacheStorageDirectory,
+            &NetworkSessionCreationParameters::cacheStorageDirectoryExtensionHandle,
+            &NetworkSessionCreationParameters::generalStorageDirectory,
+            &NetworkSessionCreationParameters::generalStorageDirectoryHandle,
+#if ENABLE(SERVICE_WORKER)
+            &NetworkSessionCreationParameters::serviceWorkerRegistrationDirectory,
+            &NetworkSessionCreationParameters::serviceWorkerRegistrationDirectoryExtensionHandle,
+            &NetworkSessionCreationParameters::serviceWorkerProcessTerminationDelayEnabled,
+#endif
+            &NetworkSessionCreationParameters::resourceLoadStatisticsParameters);
+    }
     
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
     String boundInterfaceIdentifier;

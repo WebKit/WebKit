@@ -43,30 +43,11 @@ struct InitializationSegmentInfo {
         MediaDescriptionInfo description;
         TrackPrivateRemoteIdentifier identifier;
 
-        template<class Encoder>
-        void encode(Encoder& encoder) const
+        static constexpr auto codedFields()
         {
-            encoder << description;
-            encoder << identifier;
-        }
-
-        template <class Decoder>
-        static std::optional<TrackInformation> decode(Decoder& decoder)
-        {
-            std::optional<MediaDescriptionInfo> mediaDescription;
-            decoder >> mediaDescription;
-            if (!mediaDescription)
-                return std::nullopt;
-
-            std::optional<TrackPrivateRemoteIdentifier> identifier;
-            decoder >> identifier;
-            if (!identifier)
-                return std::nullopt;
-
-            return {{
-                WTFMove(*mediaDescription),
-                WTFMove(*identifier)
-            }};
+            return std::make_tuple(
+                &TrackInformation::description,
+                &TrackInformation::identifier);
         }
     };
 
@@ -74,44 +55,13 @@ struct InitializationSegmentInfo {
     Vector<TrackInformation> videoTracks;
     Vector<TrackInformation> textTracks;
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
+    static constexpr auto codedFields()
     {
-        encoder << duration;
-        encoder << audioTracks;
-        encoder << videoTracks;
-        encoder << textTracks;
-    }
-
-    template <class Decoder>
-    static std::optional<InitializationSegmentInfo> decode(Decoder& decoder)
-    {
-        std::optional<MediaTime> duration;
-        decoder >> duration;
-        if (!duration)
-            return std::nullopt;
-
-        std::optional<Vector<TrackInformation>> audioTracks;
-        decoder >> audioTracks;
-        if (!audioTracks)
-            return std::nullopt;
-
-        std::optional<Vector<TrackInformation>> videoTracks;
-        decoder >> videoTracks;
-        if (!videoTracks)
-            return std::nullopt;
-
-        std::optional<Vector<TrackInformation>> textTracks;
-        decoder >> textTracks;
-        if (!textTracks)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*duration),
-            WTFMove(*audioTracks),
-            WTFMove(*videoTracks),
-            WTFMove(*textTracks)
-        }};
+        return std::make_tuple(
+            &InitializationSegmentInfo::duration,
+            &InitializationSegmentInfo::audioTracks,
+            &InitializationSegmentInfo::videoTracks,
+            &InitializationSegmentInfo::textTracks);
     }
 };
 

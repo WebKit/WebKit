@@ -37,26 +37,15 @@ struct NetworkProcessConnectionInfo {
     std::optional<audit_token_t> auditToken;
 #endif
 
-    void encode(IPC::Encoder& encoder) const
+    static constexpr auto codedFields()
     {
-        encoder << connection;
-        encoder << cookieAcceptPolicy;
+        return std::make_tuple(
+            &NetworkProcessConnectionInfo::connection,
+            &NetworkProcessConnectionInfo::cookieAcceptPolicy
 #if HAVE(AUDIT_TOKEN)
-        encoder << auditToken;
+            , &NetworkProcessConnectionInfo::auditToken
 #endif
-    }
-    
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, NetworkProcessConnectionInfo& info)
-    {
-        if (!decoder.decode(info.connection))
-            return false;
-        if (!decoder.decode(info.cookieAcceptPolicy))
-            return false;
-#if HAVE(AUDIT_TOKEN)
-        if (!decoder.decode(info.auditToken))
-            return false;
-#endif
-        return true;
+            );
     }
 };
 

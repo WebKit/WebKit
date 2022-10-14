@@ -1468,33 +1468,6 @@ String WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::toSt
     return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0', "; Has been seen under ", firstPartyDomain.string(), " in the last 24 hours: ", WallTime::now().secondsSinceEpoch() - timeLastUpdated < 24_h ? '1' : '0');
 }
 
-void WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::encode(IPC::Encoder& encoder) const
-{
-    encoder << firstPartyDomain;
-    encoder << storageAccessGranted;
-    encoder << timeLastUpdated;
-}
-
-auto WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::decode(IPC::Decoder& decoder) -> std::optional<ThirdPartyDataForSpecificFirstParty>
-{
-    std::optional<WebCore::RegistrableDomain> decodedDomain;
-    decoder >> decodedDomain;
-    if (!decodedDomain)
-        return std::nullopt;
-
-    std::optional<bool> decodedStorageAccess;
-    decoder >> decodedStorageAccess;
-    if (!decodedStorageAccess)
-        return std::nullopt;
-
-    std::optional<Seconds> decodedTimeLastUpdated;
-    decoder >> decodedTimeLastUpdated;
-    if (!decodedTimeLastUpdated)
-        return std::nullopt;
-
-    return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
-}
-
 bool WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::operator==(const ThirdPartyDataForSpecificFirstParty& other) const
 {
     return firstPartyDomain == other.firstPartyDomain && storageAccessGranted == other.storageAccessGranted;
@@ -1508,27 +1481,6 @@ String WebResourceLoadStatisticsStore::ThirdPartyData::toString() const
         stringBuilder.append("{ ", firstParty.toString(), " },");
     stringBuilder.append('}');
     return stringBuilder.toString();
-}
-
-void WebResourceLoadStatisticsStore::ThirdPartyData::encode(IPC::Encoder& encoder) const
-{
-    encoder << thirdPartyDomain;
-    encoder << underFirstParties;
-}
-
-auto WebResourceLoadStatisticsStore::ThirdPartyData::decode(IPC::Decoder& decoder) -> std::optional<ThirdPartyData>
-{
-    std::optional<WebCore::RegistrableDomain> decodedDomain;
-    decoder >> decodedDomain;
-    if (!decodedDomain)
-        return std::nullopt;
-
-    std::optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
-    decoder >> decodedFirstParties;
-    if (!decodedFirstParties)
-        return std::nullopt;
-
-    return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
 }
 
 bool WebResourceLoadStatisticsStore::ThirdPartyData::operator<(const ThirdPartyData &other) const

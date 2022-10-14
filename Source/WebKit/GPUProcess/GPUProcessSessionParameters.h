@@ -41,48 +41,16 @@ struct GPUProcessSessionParameters {
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
 #endif
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
+    static constexpr auto codedFields()
     {
-        encoder << mediaCacheDirectory << mediaCacheDirectorySandboxExtensionHandle;
+        return std::make_tuple(
+            &GPUProcessSessionParameters::mediaCacheDirectory,
+            &GPUProcessSessionParameters::mediaCacheDirectorySandboxExtensionHandle
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-        encoder << mediaKeysStorageDirectory << mediaKeysStorageDirectorySandboxExtensionHandle;
+            , &GPUProcessSessionParameters::mediaKeysStorageDirectory,
+            &GPUProcessSessionParameters::mediaKeysStorageDirectorySandboxExtensionHandle
 #endif
-    }
-
-    template <class Decoder>
-    static std::optional<GPUProcessSessionParameters> decode(Decoder& decoder)
-    {
-        std::optional<String> mediaCacheDirectory;
-        decoder >> mediaCacheDirectory;
-        if (!mediaCacheDirectory)
-            return std::nullopt;
-
-        std::optional<SandboxExtension::Handle> mediaCacheDirectorySandboxExtensionHandle;
-        decoder >> mediaCacheDirectorySandboxExtensionHandle;
-        if (!mediaCacheDirectorySandboxExtensionHandle)
-            return std::nullopt;
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-        std::optional<String> mediaKeysStorageDirectory;
-        decoder >> mediaKeysStorageDirectory;
-        if (!mediaKeysStorageDirectory)
-            return std::nullopt;
-
-        std::optional<SandboxExtension::Handle> mediaKeysStorageDirectorySandboxExtensionHandle;
-        decoder >> mediaKeysStorageDirectorySandboxExtensionHandle;
-        if (!mediaKeysStorageDirectorySandboxExtensionHandle)
-            return std::nullopt;
-#endif
-
-        return GPUProcessSessionParameters {
-            WTFMove(*mediaCacheDirectory),
-            WTFMove(*mediaCacheDirectorySandboxExtensionHandle),
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-            WTFMove(*mediaKeysStorageDirectory),
-            WTFMove(*mediaKeysStorageDirectorySandboxExtensionHandle),
-#endif
-        };
+            );
     }
 };
 

@@ -119,8 +119,14 @@ public:
         Seconds timeLastUpdated;
 
         String toString() const;
-        void encode(IPC::Encoder&) const;
-        static std::optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder&);
+
+        static constexpr auto codedFields()
+        {
+            return std::make_tuple(
+                &ThirdPartyDataForSpecificFirstParty::firstPartyDomain,
+                &ThirdPartyDataForSpecificFirstParty::storageAccessGranted,
+                &ThirdPartyDataForSpecificFirstParty::timeLastUpdated);
+        }
 
         // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
         bool operator==(const ThirdPartyDataForSpecificFirstParty&) const;
@@ -131,8 +137,13 @@ public:
         Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
 
         String toString() const;
-        void encode(IPC::Encoder&) const;
-        static std::optional<ThirdPartyData> decode(IPC::Decoder&);
+
+        static constexpr auto codedFields()
+        {
+            return std::make_tuple(
+                &ThirdPartyData::thirdPartyDomain,
+                &ThirdPartyData::underFirstParties);
+        }
 
         // FIXME: This sorts by number of underFirstParties, so it probably should be a named function, not operator<.
         bool operator<(const ThirdPartyData&) const;

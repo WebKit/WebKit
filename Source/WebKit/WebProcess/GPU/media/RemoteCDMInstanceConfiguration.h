@@ -34,23 +34,9 @@ namespace WebKit {
 struct RemoteCDMInstanceConfiguration {
     String keySystem;
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
+    static constexpr auto codedFields()
     {
-        encoder << keySystem;
-    }
-
-    template <class Decoder>
-    static std::optional<RemoteCDMInstanceConfiguration> decode(Decoder& decoder)
-    {
-        std::optional<String> keySystem;
-        decoder >> keySystem;
-        if (!keySystem)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*keySystem),
-        }};
+        return std::make_tuple(&RemoteCDMInstanceConfiguration::keySystem);
     }
 };
 

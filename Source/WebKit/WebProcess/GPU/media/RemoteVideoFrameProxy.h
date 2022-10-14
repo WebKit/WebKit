@@ -63,8 +63,16 @@ public:
         WebCore::IntSize size;
         uint32_t pixelFormat { 0 };
 
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<Properties> decode(Decoder&);
+        static constexpr auto codedFields()
+        {
+            return std::make_tuple(
+                &Properties::reference,
+                &Properties::presentationTime,
+                &Properties::isMirrored,
+                &Properties::rotation,
+                &Properties::size,
+                &Properties::pixelFormat);
+        }
     };
 
     static Properties properties(WebKit::RemoteVideoFrameReference&&, const WebCore::VideoFrame&);
@@ -105,24 +113,6 @@ private:
     mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer;
 #endif
 };
-
-template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encoder& encoder) const
-{
-    encoder << reference << presentationTime << isMirrored << rotation << size << pixelFormat;
-}
-
-template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> RemoteVideoFrameProxy::Properties::decode(Decoder& decoder)
-{
-    auto reference = decoder.template decode<RemoteVideoFrameReference>();
-    auto presentationTime = decoder.template decode<MediaTime>();
-    auto isMirrored = decoder.template decode<bool>();
-    auto rotation = decoder.template decode<Rotation>();
-    auto size = decoder.template decode<WebCore::IntSize>();
-    auto pixelFormat = decoder.template decode<uint32_t>();
-    if (!decoder.isValid())
-        return std::nullopt;
-    return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *rotation, *size, *pixelFormat };
-}
 
 TextStream& operator<<(TextStream&, const RemoteVideoFrameProxy::Properties&);
 

@@ -36,49 +36,16 @@ struct WebSpeechSynthesisVoice {
     bool localService { false };
     bool defaultLang { false };
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<WebSpeechSynthesisVoice> decode(Decoder&);
+    static constexpr auto codedFields()
+    {
+        return std::make_tuple(
+            &WebSpeechSynthesisVoice::voiceURI,
+            &WebSpeechSynthesisVoice::name,
+            &WebSpeechSynthesisVoice::lang,
+            &WebSpeechSynthesisVoice::localService,
+            &WebSpeechSynthesisVoice::defaultLang);
+    }
 };
-
-template<class Encoder>
-void WebSpeechSynthesisVoice::encode(Encoder& encoder) const
-{
-    encoder << voiceURI
-    << name
-    << lang
-    << localService
-    << defaultLang;
-}
-
-template<class Decoder>
-std::optional<WebSpeechSynthesisVoice> WebSpeechSynthesisVoice::decode(Decoder& decoder)
-{
-    std::optional<String> voiceURI;
-    decoder >> voiceURI;
-    if (!voiceURI)
-        return std::nullopt;
-
-    std::optional<String> name;
-    decoder >> name;
-    if (!name)
-        return std::nullopt;
-
-    std::optional<String> lang;
-    decoder >> lang;
-    if (!lang)
-        return std::nullopt;
-
-    std::optional<bool> localService;
-    decoder >> localService;
-    if (!localService)
-        return std::nullopt;
-
-    std::optional<bool> defaultLang;
-    decoder >> defaultLang;
-    if (!defaultLang)
-        return std::nullopt;
-
-    return {{ WTFMove(*voiceURI), WTFMove(*name), WTFMove(*lang), WTFMove(*localService), WTFMove(*defaultLang) }};}
 
 } // namespace WebKit
 

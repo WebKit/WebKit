@@ -851,4 +851,37 @@ template<> struct ArgumentCoder<std::nullptr_t> {
     static std::optional<std::nullptr_t> decode(Decoder&) { return nullptr; }
 };
 
+template<typename T>
+struct ArgumentCoder<T, std::enable_if_t<std::is_invocable_v<decltype(T::codedFields)>>> {
+    using CodedFieldsTuple = std::invoke_result_t<decltype(T::codedFields)>;
+
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const T& object)
+    {
+        encode(encoder, object, T::codedFields(), std::make_index_sequence<std::tuple_size_v<CodedFieldsTuple>> { });
+    }
+
+    template<typename Encoder, size_t... Indices>
+    static void encode(Encoder& encoder, const T& object, const CodedFieldsTuple& data, std::index_sequence<Indices...>)
+    {
+        (encoder << ... << (object.*std::get<Indices>(data)));
+    }
+
+    template<typename Decoder>
+    static std::optional<T> decode(Decoder& decoder)
+    {
+        return decode(decoder, std::make_index_sequence<std::tuple_size_v<CodedFieldsTuple>> { });
+    }
+
+    template<typename Decoder, size_t... Indices>
+    static std::optional<T> decode(Decoder& decoder, std::index_sequence<Indices...>)
+    {
+        using ConstructorTupleType = std::tuple<std::decay_t<std::invoke_result_t<std::tuple_element_t<Indices, CodedFieldsTuple>, T>>...>;
+        auto constructorTuple = decoder.template decode<ConstructorTupleType>();
+        if (!constructorTuple)
+            return std::nullopt;
+        return T { std::get<Indices>(WTFMove(*constructorTuple))... };
+    }
+};
+
 } // namespace IPC

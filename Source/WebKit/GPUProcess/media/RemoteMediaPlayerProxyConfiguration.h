@@ -60,58 +60,31 @@ struct RemoteMediaPlayerProxyConfiguration {
     bool prefersSandboxedParsing { false };
     bool shouldDisableHDR { false };
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
+    static constexpr auto codedFields()
     {
-        encoder << referrer;
-        encoder << userAgent;
-        encoder << sourceApplicationIdentifier;
-        encoder << networkInterfaceName;
-        encoder << mediaContentTypesRequiringHardwareSupport;
-        encoder << allowedMediaContainerTypes;
-        encoder << allowedMediaCodecTypes;
-        encoder << allowedMediaVideoCodecIDs;
-        encoder << allowedMediaAudioCodecIDs;
-        encoder << allowedMediaCaptionFormatTypes;
-        encoder << playerContentBoxRect;
-        encoder << preferredAudioCharacteristics;
+        return std::make_tuple(
+            &RemoteMediaPlayerProxyConfiguration::referrer,
+            &RemoteMediaPlayerProxyConfiguration::userAgent,
+            &RemoteMediaPlayerProxyConfiguration::sourceApplicationIdentifier,
+            &RemoteMediaPlayerProxyConfiguration::networkInterfaceName,
+            &RemoteMediaPlayerProxyConfiguration::mediaContentTypesRequiringHardwareSupport,
+            &RemoteMediaPlayerProxyConfiguration::allowedMediaContainerTypes,
+            &RemoteMediaPlayerProxyConfiguration::allowedMediaCodecTypes,
+            &RemoteMediaPlayerProxyConfiguration::allowedMediaVideoCodecIDs,
+            &RemoteMediaPlayerProxyConfiguration::allowedMediaAudioCodecIDs,
+            &RemoteMediaPlayerProxyConfiguration::allowedMediaCaptionFormatTypes,
+            &RemoteMediaPlayerProxyConfiguration::playerContentBoxRect,
+            &RemoteMediaPlayerProxyConfiguration::preferredAudioCharacteristics,
 #if ENABLE(AVF_CAPTIONS)
-        encoder << outOfBandTrackData;
+            &RemoteMediaPlayerProxyConfiguration::outOfBandTrackData,
 #endif
-        encoder << documentSecurityOrigin;
-        encoder << logIdentifier;
-        encoder << shouldUsePersistentCache;
-        encoder << isVideo;
-        encoder << renderingCanBeAccelerated;
-        encoder << prefersSandboxedParsing;
-        encoder << shouldDisableHDR;
-    }
-
-    template <class Decoder>
-    static bool decode(Decoder& decoder, RemoteMediaPlayerProxyConfiguration& configuration)
-    {
-        return decoder.decode(configuration.referrer)
-            && decoder.decode(configuration.userAgent)
-            && decoder.decode(configuration.sourceApplicationIdentifier)
-            && decoder.decode(configuration.networkInterfaceName)
-            && decoder.decode(configuration.mediaContentTypesRequiringHardwareSupport)
-            && decoder.decode(configuration.allowedMediaContainerTypes)
-            && decoder.decode(configuration.allowedMediaCodecTypes)
-            && decoder.decode(configuration.allowedMediaVideoCodecIDs)
-            && decoder.decode(configuration.allowedMediaAudioCodecIDs)
-            && decoder.decode(configuration.allowedMediaCaptionFormatTypes)
-            && decoder.decode(configuration.playerContentBoxRect)
-            && decoder.decode(configuration.preferredAudioCharacteristics)
-#if ENABLE(AVF_CAPTIONS)
-            && decoder.decode(configuration.outOfBandTrackData)
-#endif
-            && decoder.decode(configuration.documentSecurityOrigin)
-            && decoder.decode(configuration.logIdentifier)
-            && decoder.decode(configuration.shouldUsePersistentCache)
-            && decoder.decode(configuration.isVideo)
-            && decoder.decode(configuration.renderingCanBeAccelerated)
-            && decoder.decode(configuration.prefersSandboxedParsing)
-            && decoder.decode(configuration.shouldDisableHDR);
+            &RemoteMediaPlayerProxyConfiguration::documentSecurityOrigin,
+            &RemoteMediaPlayerProxyConfiguration::logIdentifier,
+            &RemoteMediaPlayerProxyConfiguration::shouldUsePersistentCache,
+            &RemoteMediaPlayerProxyConfiguration::isVideo,
+            &RemoteMediaPlayerProxyConfiguration::renderingCanBeAccelerated,
+            &RemoteMediaPlayerProxyConfiguration::prefersSandboxedParsing,
+            &RemoteMediaPlayerProxyConfiguration::shouldDisableHDR);
     }
 };
 
