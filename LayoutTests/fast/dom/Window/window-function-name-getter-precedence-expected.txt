@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
 This tests that functions of the window object and it's prototype have precedence in lookup over elements with id's of the same name.
 
 PASS: typeof window.getSelection should be function and is.

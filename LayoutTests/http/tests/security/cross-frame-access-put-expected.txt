@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
 CONSOLE MESSAGE: PASS: window.Attr should be 'function Attr() {    [native code]}' and is.
 CONSOLE MESSAGE: PASS: window.CDATASection should be 'function CDATASection() {    [native code]}' and is.
 CONSOLE MESSAGE: PASS: window.CharacterData should be 'function CharacterData() {    [native code]}' and is.

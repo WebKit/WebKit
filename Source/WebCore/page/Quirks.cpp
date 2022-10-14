@@ -1566,4 +1566,15 @@ bool Quirks::needsVideoShouldMaintainAspectRatioQuirk() const
     return m_needsVideoShouldMaintainAspectRatioQuirk.value();
 }
 
+bool Quirks::shouldExposeShowModalDialog() const
+{
+    if (!needsQuirks())
+        return false;
+    if (!m_shouldExposeShowModalDialog) {
+        auto domain = RegistrableDomain(m_document->url()).string();
+        m_shouldExposeShowModalDialog = domain == "pandora.com"_s;
+    }
+    return *m_shouldExposeShowModalDialog;
+}
+
 }

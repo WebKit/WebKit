@@ -501,8 +501,11 @@ JSC_DEFINE_CUSTOM_GETTER(showModalDialogGetter, (JSGlobalObject* lexicalGlobalOb
     if (UNLIKELY(!thisObject))
         return throwVMDOMAttributeGetterTypeError(lexicalGlobalObject, scope, JSDOMWindow::info(), propertyName);
 
+    if (auto* document = thisObject->wrapped().document())
+        document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Window 'showModalDialog' function is deprecated and will be removed soon."_s);
+
     if (auto* frame = thisObject->wrapped().frame()) {
-        if (DOMWindow::canShowModalDialog(*frame)) {
+        if (frame->settings().showModalDialogEnabled() && DOMWindow::canShowModalDialog(*frame)) {
             auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_s, showModalDialog, ImplementationVisibility::Public);
             thisObject->putDirect(vm, propertyName, jsFunction);
             return JSValue::encode(jsFunction);

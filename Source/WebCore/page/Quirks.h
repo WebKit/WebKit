@@ -83,6 +83,7 @@ public:
     bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
     bool shouldHideSearchFieldResultsButton() const;
     bool shouldDisableResolutionMediaQuery() const;
+    bool shouldExposeShowModalDialog() const;
 
     bool needsMillisecondResolutionForHighResTimeStamp() const;
 
@@ -218,6 +219,7 @@ private:
 #endif
     mutable std::optional<bool> m_shouldEnableFontLoadingAPIQuirk;
     mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
+    mutable std::optional<bool> m_shouldExposeShowModalDialog;
 };
 
 } // namespace WebCore
