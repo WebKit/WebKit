@@ -1,0 +1,17 @@
+<style>
+#abs {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+}
+</style>
+<div>PASS if no crash<iframe id=abs></iframe></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+abs.style.position = "static";
+abs.style.float = "left";
+</script>

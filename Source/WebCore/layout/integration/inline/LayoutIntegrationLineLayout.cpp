@@ -100,8 +100,13 @@ RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
 
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
-    if (!renderer.isInline())
+    if (!renderer.isInline()) {
+        if (!renderer.isFloatingOrOutOfFlowPositioned())
+            return nullptr;
+        if (auto* containgBlock = renderer.containingBlock(); containgBlock && is<RenderBlockFlow>(*containgBlock))
+            return downcast<RenderBlockFlow>(*containgBlock).modernLineLayout();
         return nullptr;
+    }
 
     if (auto* container = blockContainer(renderer))
         return container->modernLineLayout();
@@ -422,6 +427,7 @@ void LineLayout::constructContent()
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
 
         if (layoutBox.isOutOfFlowPositioned()) {
+            ASSERT(renderer.layer());
             auto& layer = *renderer.layer();
             auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
 
