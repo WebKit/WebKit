@@ -35,6 +35,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLDialogElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
@@ -63,6 +64,12 @@ FullscreenManager::~FullscreenManager() = default;
 // https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen
 void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefPtr<DeferredPromise>&& promise, FullscreenCheckType checkType)
 {
+    // If pendingDoc is not fully active, then reject promise with a TypeError exception and return promise.
+    if (promise && !document().isFullyActive()) {
+        promise->reject(Exception { TypeError, "Document is not fully active"_s });
+        return;
+    }
+
     auto failedPreflights = [this, weakThis = WeakPtr { *this }](Ref<Element>&& element, RefPtr<DeferredPromise>&& promise) mutable {
         if (!weakThis)
             return;
@@ -75,29 +82,28 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         });
     };
 
-    // 1. If any of the following conditions are true, terminate these steps and queue a task to fire
+    // If any of the following conditions are true, terminate these steps and queue a task to fire
     // an event named fullscreenerror with its bubbles attribute set to true on the context object's
     // node document:
+    if (is<HTMLDialogElement>(element)) {
+        ERROR_LOG(LOGIDENTIFIER, "Element to fullscreen is a <dialog>; failing.");
+        failedPreflights(WTFMove(element), WTFMove(promise));
+        return;
+    }
+
+    if (!document().domWindow() || !document().domWindow()->hasTransientActivation()) {
+        ERROR_LOG(LOGIDENTIFIER, "!hasTransientActivation; failing.");
+        failedPreflights(WTFMove(element), WTFMove(promise));
+        return;
+    }
 
     // This algorithm is not allowed to show a pop-up:
     //   An algorithm is allowed to show a pop-up if, in the task in which the algorithm is running, either:
     //   - an activation behavior is currently being processed whose click event was trusted, or
     //   - the event listener for a trusted click event is being handled.
-
     // FIXME: Align prefixed and unprefixed code paths if possible.
-    bool isFromModernUnprefixedAPI = !!promise;
-    if (isFromModernUnprefixedAPI) {
-        if (!document().isFullyActive()) {
-            promise->reject(Exception { TypeError, "Document is not fully active"_s });
-            return;
-        }
-
-        if (!document().domWindow() || !document().domWindow()->hasTransientActivation()) {
-            ERROR_LOG(LOGIDENTIFIER, "!hasTransientActivation; failing.");
-            failedPreflights(WTFMove(element), WTFMove(promise));
-            return;
-        }
-    } else {
+    bool isFromPrefixedAPI = !promise;
+    if (isFromPrefixedAPI) {
         if (!UserGestureIndicator::processingUserGesture()) {
             ERROR_LOG(LOGIDENTIFIER, "!processingUserGesture; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
