@@ -682,6 +682,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
     $(WebCore)/Modules/webcodecs/VideoPixelFormat.idl \
     $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAlphaOption.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \

@@ -180,17 +180,25 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&&
         return Exception { TypeError, makeString("Data is too small ", data.length(), " / ", layout.allocationSize) };
     
     RefPtr<VideoFrame> videoFrame;
-    if (init.format == VideoPixelFormat::NV12)
+    if (init.format == VideoPixelFormat::NV12) {
+        if (init.codedWidth % 2 || init.codedHeight % 2)
+            return Exception { TypeError, "coded width or height is odd"_s };
+        if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
+            return Exception { TypeError, "visible x or y is odd"_s };
         videoFrame = VideoFrame::createNV12({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1]);
-    else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
+    } else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
         videoFrame = VideoFrame::createRGBA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
     else if (init.format == VideoPixelFormat::BGRA || init.format == VideoPixelFormat::BGRX)
         videoFrame = VideoFrame::createBGRA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
-    else if (init.format == VideoPixelFormat::I420)
+    else if (init.format == VideoPixelFormat::I420) {
+        if (init.codedWidth % 2 || init.codedHeight % 2)
+            return Exception { TypeError, "coded width or height is odd"_s };
+        if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
+            return Exception { TypeError, "visible x or y is odd"_s };
         videoFrame = VideoFrame::createI420({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2]);
-    else
+    } else
         return Exception { NotSupportedError, "VideoPixelFormat is not supported"_s };
-    
+
     if (!videoFrame)
         return Exception { TypeError, "Unable to create internal resource from data"_s };
     
@@ -218,6 +226,10 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&& videoFram
         result->m_visibleWidth = result->m_codedWidth;
         result->m_visibleHeight = result->m_codedHeight;
     }
+
+    result->m_displayWidth = init.displayWidth.value_or(result->m_visibleWidth);
+    result->m_displayHeight = init.displayHeight.value_or(result->m_visibleHeight);
+
     result->m_duration = init.duration;
     result->m_timestamp = init.timestamp;
     result->m_colorSpace = videoFramePickColorSpace(init.colorSpace, *result->m_format);
@@ -253,12 +265,13 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<
     auto result = adoptRef(*new WebCodecsVideoFrame);
     result->m_internalFrame = videoFrame->m_internalFrame;
     if (videoFrame->m_format)
-        result->m_format = computeVideoPixelFormat(*videoFrame->m_format, init.alpha == AlphaOption::Discard);
+        result->m_format = computeVideoPixelFormat(*videoFrame->m_format, init.alpha == WebCodecsAlphaOption::Discard);
 
     result->m_codedWidth = videoFrame->m_codedWidth;
     result->m_codedHeight = videoFrame->m_codedHeight;
+    result->m_colorSpace = videoFrame->m_colorSpace;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_visibleLeft), static_cast<double>(videoFrame->m_visibleTop), static_cast<double>(videoFrame->m_visibleWidth), static_cast<double>(videoFrame->m_visibleHeight) }, result->m_codedWidth, result->m_codedHeight);
+    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_visibleLeft), static_cast<double>(videoFrame->m_visibleTop), static_cast<double>(videoFrame->m_visibleWidth), static_cast<double>(videoFrame->m_visibleHeight) }, videoFrame->m_displayWidth, videoFrame->m_displayHeight);
 
     result->m_duration = init.duration ? init.duration : videoFrame->m_duration;
     result->m_timestamp = init.timestamp.value_or(videoFrame->m_timestamp);

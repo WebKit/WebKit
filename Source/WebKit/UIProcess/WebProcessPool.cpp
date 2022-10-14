@@ -1122,6 +1122,9 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     }
 #endif
 
+    bool shouldTakeSuspendedAssertions = page->preferences().shouldTakeSuspendedAssertions();
+    process->throttler().setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertions);
+
     return page;
 }
 

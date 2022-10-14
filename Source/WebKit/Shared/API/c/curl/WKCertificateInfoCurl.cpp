@@ -26,16 +26,6 @@
 #include "config.h"
 #include "WKCertificateInfoCurl.h"
 
-#include "APIData.h"
-#include "WKAPICast.h"
-#include "WKArray.h"
-#include "WKData.h"
-
-#include <WebCore/CertificateInfo.h>
-
-using Certificate = Vector<uint8_t>;
-using CertificateChain = Vector<Certificate>;
-
 WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef certificateChainRef)
 {
     return nullptr;

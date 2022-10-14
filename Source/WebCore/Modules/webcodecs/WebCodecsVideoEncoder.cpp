@@ -230,6 +230,11 @@ void WebCodecsVideoEncoder::isConfigSupported(WebCodecsVideoEncoderConfig&& conf
         promise->reject(Exception { TypeError, "Config is not valid"_s });
         return;
     }
+    if (config.alpha == WebCodecsAlphaOption::Keep) {
+        promise->reject(Exception { NotSupportedError, "Alpha keep is not supported"_s });
+        return;
+    }
+
     // FIXME: Implement accurate checks.
     promise->resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { true, WTFMove(config) });
 }

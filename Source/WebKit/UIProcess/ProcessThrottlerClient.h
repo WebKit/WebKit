@@ -26,11 +26,12 @@
 #ifndef ProcessThrottlerClient_h
 #define ProcessThrottlerClient_h
 
-#include "ProcessAssertion.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
 enum class IsSuspensionImminent : bool;
+enum class ProcessThrottleState : uint8_t;
 
 class ProcessThrottlerClient {
 public:
@@ -39,7 +40,7 @@ public:
     virtual void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) = 0;
     enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
     virtual void sendProcessDidResume(ResumeReason) = 0;
-    virtual void didSetAssertionType(ProcessAssertionType) { };
+    virtual void didChangeThrottleState(ProcessThrottleState) { };
     virtual ASCIILiteral clientName() const = 0;
 };
 

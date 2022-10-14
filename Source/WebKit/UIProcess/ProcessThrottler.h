@@ -52,6 +52,11 @@ typedef RefCounter<ProcessSuppressionDisabledCounterType> ProcessSuppressionDisa
 typedef ProcessSuppressionDisabledCounter::Token ProcessSuppressionDisabledToken;
 
 enum class IsSuspensionImminent : bool { No, Yes };
+enum class ProcessThrottleState : uint8_t {
+    Suspended,
+    Background,
+    Foreground,
+};
 
 class ProcessThrottlerClient;
 
@@ -136,14 +141,16 @@ public:
     void didConnectToProcess(ProcessID);
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
     void setAllowsActivities(bool);
+    void setShouldTakeSuspendedAssertion(bool);
 
 private:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
 
-    ProcessAssertionType expectedAssertionType();
-    void updateAssertionIfNeeded();
-    void updateAssertionTypeNow();
+    ProcessThrottleState expectedThrottleState();
+    void updateThrottleStateIfNeeded();
+    void updateThrottleStateNow();
     void setAssertionType(ProcessAssertionType);
+    void setThrottleState(ProcessThrottleState);
     void prepareToSuspendTimeoutTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();
@@ -154,6 +161,7 @@ private:
     void removeActivity(BackgroundActivity&);
     void invalidateAllActivities();
     String assertionName(ProcessAssertionType) const;
+    std::optional<ProcessAssertionType> assertionTypeForState(ProcessThrottleState);
 
     void uiAssertionWillExpireImminently();
     void assertionWasInvalidated();
@@ -167,7 +175,9 @@ private:
     HashSet<ForegroundActivity*> m_foregroundActivities;
     HashSet<BackgroundActivity*> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;
+    ProcessThrottleState m_state { ProcessThrottleState::Suspended };
     bool m_shouldTakeUIBackgroundAssertion;
+    bool m_shouldTakeSuspendedAssertion { true };
     bool m_allowsActivities { true };
 };
 

@@ -49,6 +49,12 @@ std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy
     return makeUnique<RemoteScrollingCoordinatorProxyMac>(m_webPageProxy);
 }
 
+void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
+{
+    RemoteLayerTreeDrawingAreaProxy::didChangeViewExposedRect();
+    updateDebugIndicatorPosition();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

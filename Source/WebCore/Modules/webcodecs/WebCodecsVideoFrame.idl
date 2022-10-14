@@ -68,18 +68,12 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 dictionary VideoFrameInit {
     unsigned long long duration;
     long long timestamp;
-    AlphaOption alpha;
+    WebCodecsAlphaOption alpha;
 
     DOMRectInit visibleRect;
 
     [EnforceRange] unsigned long displayWidth;
     [EnforceRange] unsigned long displayHeight;
-};
-
-[Conditional=WEB_CODECS]
-enum AlphaOption {
-  "keep",
-  "discard",
 };
 
 [Conditional=WEB_CODECS]

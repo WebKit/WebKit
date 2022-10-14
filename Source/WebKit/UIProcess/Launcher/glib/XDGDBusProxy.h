@@ -41,14 +41,13 @@ public:
     ~XDGDBusProxy() = default;
 
     enum class AllowPortals : bool { No, Yes };
-    std::optional<CString> dbusSessionProxy(AllowPortals);
-    std::optional<CString> accessibilityProxy(const char* sandboxedAccessibilityBusPath);
+    std::optional<CString> dbusSessionProxy(const char* baseDirectory, AllowPortals);
+    std::optional<CString> accessibilityProxy(const char* baseDirectory, const char* sandboxedAccessibilityBusPath);
 
     bool launch();
 
 private:
-    static CString makePath(const char* dbusAddress);
-    static CString makeProxy(const char* proxyTemplate);
+    static CString makeProxy(const char* baseDirectory, const char* proxyTemplate);
 
     Vector<CString> m_args;
     CString m_dbusSessionProxyPath;

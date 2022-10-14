@@ -5145,6 +5145,8 @@ fast/custom-elements/perform-microtask-checkpoint-before-construction-xml-parser
 fast/custom-elements/throw-on-dynamic-markup-insertion-counter-construct-xml-parser.xhtml [ Skip ]
 fast/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Skip ]
 
+webkit.org/b/246470 http/wpt/selection-live-range [ Skip ]
+
 # css3-text failures.
 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]

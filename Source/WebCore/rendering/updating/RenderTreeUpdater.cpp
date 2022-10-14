@@ -313,7 +313,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
-    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.isInTopLayer());
+    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.isInTopLayer() || element.displayContentsChanged());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -325,6 +325,8 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         tearDownRenderers(element, teardownType, m_builder);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
+
+        element.setDisplayContentsChanged(false);
     }
 
     bool hasDisplayContents = elementUpdate.style->display() == DisplayType::Contents;

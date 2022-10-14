@@ -9,5 +9,5 @@ FAIL VideoEncoder.isConfigSupported() doesn't support config:Too strenuous accel
 FAIL VideoEncoder.isConfigSupported() doesn't support config:Odd sized frames for H264 assert_false: expected false got true
 PASS VideoEncoder.isConfigSupported() supports:{"codec":"avc1.42001E","hardwareAcceleration":"no-preference","width":640,"height":480,"bitrate":5000000,"framerate":24,"avc":{"format":"annexb"},"futureConfigFeature":"foo"}
 PASS VideoEncoder.isConfigSupported() supports:{"codec":"vp8","hardwareAcceleration":"no-preference","width":800,"height":600,"bitrate":7000000,"bitrateMode":"variable","framerate":60,"scalabilityMode":"L1T2","futureConfigFeature":"foo","latencyMode":"quality"}
-FAIL VideoEncoder.isConfigSupported() supports:{"codec":"vp09.00.10.08","hardwareAcceleration":"no-preference","width":1280,"height":720,"bitrate":7000000,"bitrateMode":"constant","framerate":25,"futureConfigFeature":"foo","latencyMode":"realtime","alpha":"discard"} assert_equals: expected (string) "discard" but got (undefined) undefined
+PASS VideoEncoder.isConfigSupported() supports:{"codec":"vp09.00.10.08","hardwareAcceleration":"no-preference","width":1280,"height":720,"bitrate":7000000,"bitrateMode":"constant","framerate":25,"futureConfigFeature":"foo","latencyMode":"realtime","alpha":"discard"}
 

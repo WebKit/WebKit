@@ -31,6 +31,7 @@
 #include "BitrateMode.h"
 #include "HardwareAcceleration.h"
 #include "LatencyMode.h"
+#include "WebCodecsAlphaOption.h"
 #include <optional>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ struct WebCodecsVideoEncoderConfig {
     std::optional<uint64_t> bitrate;
     std::optional<double> framerate;
     HardwareAcceleration hardwareAcceleration { HardwareAcceleration::NoPreference };
+    WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Discard };
     String scalabilityMode;
     BitrateMode bitrateMode { BitrateMode::Variable };
     LatencyMode latencyMode { LatencyMode::Quality };

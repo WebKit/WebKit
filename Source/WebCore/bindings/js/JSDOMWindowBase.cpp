@@ -44,6 +44,7 @@
 #include "JSNode.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScriptController.h"
@@ -133,7 +134,7 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSWindowProxy* proxy)
     if (m_wrapped && m_wrapped->frame() && m_wrapped->frame()->settings().needsSiteSpecificQuirks())
         setNeedsSiteSpecificQuirks(true);
 
-    if (m_wrapped && m_wrapped->frame() && m_wrapped->frame()->settings().showModalDialogEnabled())
+    if (m_wrapped && ((m_wrapped->frame() && m_wrapped->frame()->settings().showModalDialogEnabled()) || (m_wrapped->document() && m_wrapped->document()->quirks().shouldExposeShowModalDialog())))
         putDirectCustomAccessor(vm, builtinNames(vm).showModalDialogPublicName(), CustomGetterSetter::create(vm, showModalDialogGetter, nullptr), static_cast<unsigned>(PropertyAttribute::CustomValue));
 }
 

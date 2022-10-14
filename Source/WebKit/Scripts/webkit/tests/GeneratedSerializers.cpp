@@ -54,6 +54,11 @@ template<> struct ArgumentCoder<Namespace::OtherClass> {
 
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder, const Namespace::Subnamespace::StructName& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.firstMemberName)>>, FirstMemberType>);
+#if ENABLE(SECOND_MEMBER)
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.secondMemberName)>>, SecondMemberType>);
+#endif
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.nullableTestMember)>>, RetainPtr<CFTypeRef>>);
     encoder << instance.firstMemberName;
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
@@ -65,6 +70,11 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
 
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& encoder, const Namespace::Subnamespace::StructName& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.firstMemberName)>>, FirstMemberType>);
+#if ENABLE(SECOND_MEMBER)
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.secondMemberName)>>, SecondMemberType>);
+#endif
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.nullableTestMember)>>, RetainPtr<CFTypeRef>>);
     encoder << instance.firstMemberName;
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
@@ -114,6 +124,9 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 
 void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namespace::OtherClass& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.isNull)>>, bool>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.b)>>, bool>);
     encoder << instance.isNull;
     if (instance.isNull)
         return;
@@ -150,6 +163,9 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 
 void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Namespace::ReturnRefClass& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.functionCall().member1)>>, double>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.functionCall().member2)>>, double>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.uniqueMember)>>, std::unique_ptr<int>>);
     encoder << instance.functionCall().member1;
     encoder << instance.functionCall().member2;
     encoder << !!instance.uniqueMember;
@@ -193,6 +209,8 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
 
 void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, const Namespace::EmptyConstructorStruct& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.m_int)>>, int>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.m_double)>>, double>);
     encoder << instance.m_int;
     encoder << instance.m_double;
 }
@@ -218,6 +236,13 @@ std::optional<Namespace::EmptyConstructorStruct> ArgumentCoder<Namespace::EmptyC
 
 void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder, const Namespace::EmptyConstructorNullable& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.m_isNull)>>, bool>);
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.m_type)>>, MemberType>);
+#endif
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.m_value)>>, OtherMemberType>);
+#endif
     encoder << instance.m_isNull;
     if (instance.m_isNull)
         return;
@@ -266,6 +291,7 @@ std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::Empt
 
 void ArgumentCoder<WithoutNamespace>::encode(Encoder& encoder, const WithoutNamespace& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
     encoder << instance.a;
 }
 
@@ -284,11 +310,13 @@ std::optional<WithoutNamespace> ArgumentCoder<WithoutNamespace>::decode(Decoder&
 
 void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(Encoder& encoder, const WithoutNamespaceWithAttributes& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
     encoder << instance.a;
 }
 
 void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(OtherEncoder& encoder, const WithoutNamespaceWithAttributes& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
     encoder << instance.a;
 }
 
@@ -307,6 +335,8 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
 
 void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCore::InheritsFrom& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.b)>>, int>);
     encoder << instance.a;
     encoder << instance.b;
 }

@@ -79,8 +79,6 @@ enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, Inclu
 
 struct PasteboardWebContent {
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT PasteboardWebContent();
-    WEBCORE_EXPORT ~PasteboardWebContent();
     String contentOrigin;
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
@@ -116,8 +114,6 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
-    WEBCORE_EXPORT PasteboardImage();
-    WEBCORE_EXPORT ~PasteboardImage();
     RefPtr<Image> image;
 #if PLATFORM(MAC)
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
@@ -137,9 +133,6 @@ struct PasteboardImage {
 };
 
 struct PasteboardBuffer {
-    WEBCORE_EXPORT PasteboardBuffer();
-    WEBCORE_EXPORT ~PasteboardBuffer();
-
 #if PLATFORM(COCOA)
     String contentOrigin;
 #endif

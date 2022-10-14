@@ -60,4 +60,15 @@ bool shouldUsePortal()
     return returnValue;
 }
 
+String& sandboxedAccessibilityBusAddress()
+{
+    static String accessibilityBusAddress;
+    return accessibilityBusAddress;
+}
+
+void setSandboxedAccessibilityBusAddress(String&& address)
+{
+    sandboxedAccessibilityBusAddress() = address;
+}
+
 } // namespace WTF

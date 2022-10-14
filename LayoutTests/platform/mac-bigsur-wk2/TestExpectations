@@ -1,5 +1,7 @@
 http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html [ Skip ]
 
+webkit.org/b/227369 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Pass Failure ]
+
 webkit.org/b/229502 [ Debug ] http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ Pass Failure ]
 
 webkit.org/b/229837 http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie.html [ Pass Failure ]

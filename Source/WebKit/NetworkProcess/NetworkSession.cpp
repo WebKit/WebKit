@@ -114,7 +114,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(IPC::Connection* c
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     , m_resourceLoadStatisticsDirectory(parameters.resourceLoadStatisticsParameters.directory)
     , m_shouldIncludeLocalhostInResourceLoadStatistics(parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No)
     , m_enableResourceLoadStatisticsDebugMode(parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No)
@@ -169,7 +169,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 #endif
 
@@ -188,7 +188,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 NetworkSession::~NetworkSession()
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     destroyResourceLoadStatistics([] { });
 #endif
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
@@ -199,7 +199,7 @@ NetworkSession::~NetworkSession()
 #endif
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
     if (!m_resourceLoadStatistics)
@@ -214,11 +214,10 @@ void NetworkSession::invalidateAndCancel()
 {
     for (auto& task : m_dataTaskSet)
         task.invalidateAndCancel();
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
 #endif
-    m_storageManager->close();
     m_cacheEngine = nullptr;
 #if ASSERT_ENABLED
     m_isInvalidated = true;
@@ -230,7 +229,7 @@ void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void(
     privateClickMeasurement().destroyStoreForTesting(WTFMove(completionHandler));
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 {
     ASSERT(!m_isInvalidated);
@@ -323,20 +322,14 @@ void NetworkSession::setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteSt
 
 void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain)
 {
-#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     ASSERT(!firstPartyHost.isEmpty() && !cnameDomain.isEmpty() && firstPartyHost != cnameDomain.string());
     if (firstPartyHost.isEmpty() || cnameDomain.isEmpty() || firstPartyHost == cnameDomain.string())
         return;
     m_firstPartyHostCNAMEDomains.add(WTFMove(firstPartyHost), WTFMove(cnameDomain));
-#else
-    UNUSED_PARAM(firstPartyHost);
-    UNUSED_PARAM(cnameDomain);
-#endif
 }
 
 std::optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDomain(const String& firstPartyHost)
 {
-#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     if (!decltype(m_firstPartyHostCNAMEDomains)::isValidKey(firstPartyHost))
         return std::nullopt;
 
@@ -344,24 +337,38 @@ std::optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDom
     if (iterator == m_firstPartyHostCNAMEDomains.end())
         return std::nullopt;
     return iterator->value;
-#else
-    UNUSED_PARAM(firstPartyHost);
-    return std::nullopt;
-#endif
 }
 
-void NetworkSession::resetCNAMEDomainData()
+void NetworkSession::resetFirstPartyDNSData()
 {
     m_firstPartyHostCNAMEDomains.clear();
+    m_firstPartyHostIPAddresses.clear();
     m_thirdPartyCNAMEDomainForTesting = std::nullopt;
 }
-#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+
+void NetworkSession::setFirstPartyHostIPAddress(const String& firstPartyHost, const String& addressString)
+{
+    if (firstPartyHost.isEmpty() || addressString.isEmpty())
+        return;
+
+    if (auto address = WebCore::IPAddress::fromString(addressString))
+        m_firstPartyHostIPAddresses.set(firstPartyHost, WTFMove(*address));
+}
+
+std::optional<WebCore::IPAddress> NetworkSession::firstPartyHostIPAddress(const String& firstPartyHost)
+{
+    if (firstPartyHost.isEmpty())
+        return std::nullopt;
+
+    return m_firstPartyHostIPAddresses.get(firstPartyHost);
+}
+#endif // ENABLE(TRACKING_PREVENTION)
 
 void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& unattributedPrivateClickMeasurement)
 {
     if (m_isRunningEphemeralMeasurementTest)
         unattributedPrivateClickMeasurement.setEphemeral(WebCore::PCM::AttributionEphemeral::Yes);
-    if (unattributedPrivateClickMeasurement.isEphemeral()) {
+    if (unattributedPrivateClickMeasurement.isEphemeral() == WebCore::PCM::AttributionEphemeral::Yes) {
         m_ephemeralMeasurement = WTFMove(unattributedPrivateClickMeasurement);
         return;
     }

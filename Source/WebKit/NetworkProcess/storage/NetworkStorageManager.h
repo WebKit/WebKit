@@ -73,7 +73,6 @@ class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
 public:
-    static void forEach(const Function<void(NetworkStorageManager&)>&);
     static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
 
@@ -81,7 +80,7 @@ public:
     void stopReceivingMessageFromConnection(IPC::Connection&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    void close();
+    void close(CompletionHandler<void()>&&);
     void clearStorageForTesting(CompletionHandler<void()>&&);
     void clearStorageForWebPage(WebPageProxyIdentifier);
     void didIncreaseQuota(WebCore::ClientOrigin&&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);

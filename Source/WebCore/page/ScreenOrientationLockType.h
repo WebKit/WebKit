@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class ScreenOrientationLockType : uint8_t {

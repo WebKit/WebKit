@@ -78,6 +78,12 @@ class PullRequest(Command):
             help='When creating a pull request, append a new commit on the existing branch by default',
         )
         parser.add_argument(
+            '--commit', '--no-commit',
+            dest='commit', default=None,
+            help='When creating a pull request, create (or do not create) a commit from the set of staged changes',
+            action=arguments.NoAction,
+        )
+        parser.add_argument(
             '--with-history', '--no-history',
             dest='history', default=None,
             help='Create numbered branches to track the history of a change',
@@ -545,9 +551,12 @@ class PullRequest(Command):
         if not branch_point:
             return 1
 
-        result = cls.create_commit(args, repository, **kwargs)
-        if result:
-            return result
+        if args.commit is None:
+            args.commit = repository.config().get('webkitscmpy.auto-create-commit') == 'true'
+        if args.commit:
+            result = cls.create_commit(args, repository, **kwargs)
+            if result:
+                return result
         if args.squash:
             result = Squash.squash_commit(args, repository, branch_point, **kwargs)
             if result:

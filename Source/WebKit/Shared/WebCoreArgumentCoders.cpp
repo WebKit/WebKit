@@ -580,55 +580,27 @@ bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
     return true;
 }
 
-static void encodeImage(Encoder& encoder, Image& image)
+void ArgumentCoder<RefPtr<Image>>::encode(Encoder& encoder, const RefPtr<Image>& image)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image.size()), { });
+    bool hasImage = !!image;
+    encoder << hasImage;
+
+    if (!hasImage)
+        return;
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image->size()), { });
     auto graphicsContext = bitmap->createGraphicsContext();
     encoder << !!graphicsContext;
     if (!graphicsContext)
         return;
 
-    graphicsContext->drawImage(image, IntPoint());
-
-    ShareableBitmapHandle handle;
-    bitmap->createHandle(handle);
-
-    encoder << handle;
-}
-
-static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
-{
-    std::optional<bool> didCreateGraphicsContext;
-    decoder >> didCreateGraphicsContext;
-    if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
-        return false;
-
-    ShareableBitmapHandle handle;
-    if (!decoder.decode(handle))
-        return false;
+    graphicsContext->drawImage(*image, IntPoint());
     
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
-    if (!bitmap)
-        return false;
-    image = bitmap->createImage();
-    if (!image)
-        return false;
-    return true;
+    encoder << bitmap;
 }
 
-static void encodeOptionalImage(Encoder& encoder, Image* image)
+bool ArgumentCoder<RefPtr<Image>>::decode(Decoder& decoder, RefPtr<Image>& image)
 {
-    bool hasImage = !!image;
-    encoder << hasImage;
-
-    if (hasImage)
-        encodeImage(encoder, *image);
-}
-
-static WARN_UNUSED_RETURN bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
-{
-    image = nullptr;
-
     bool hasImage;
     if (!decoder.decode(hasImage))
         return false;
@@ -636,7 +608,20 @@ static WARN_UNUSED_RETURN bool decodeOptionalImage(Decoder& decoder, RefPtr<Imag
     if (!hasImage)
         return true;
 
-    return decodeImage(decoder, image);
+    std::optional<bool> didCreateGraphicsContext;
+    decoder >> didCreateGraphicsContext;
+    if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
+        return false;
+
+    std::optional<RefPtr<WebKit::ShareableBitmap>> bitmap;
+    decoder >> bitmap;
+    if (!bitmap)
+        return false;
+    
+    image = bitmap.value()->createImage();
+    if (!image)
+        return false;
+    return true;
 }
 
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
@@ -719,7 +704,7 @@ void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
     }
 
     encoder << true;
-    encodeImage(encoder, *cursor.image());
+    encoder << cursor.image();
     encoder << cursor.hotSpot();
 #if ENABLE(MOUSE_CURSOR_SCALE)
     encoder << cursor.imageScaleFactor();
@@ -755,7 +740,7 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
     }
 
     RefPtr<Image> image;
-    if (!decodeImage(decoder, image))
+    if (!decoder.decode(image))
         return false;
 
     IntPoint hotSpot;
@@ -1203,104 +1188,8 @@ bool ArgumentCoder<InspectorOverlay::Highlight>::decode(Decoder& decoder, Inspec
     return true;
 }
 
-void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
-{
-    encoder << content.contentOrigin;
-    encoder << content.canSmartCopyOrDelete;
-    encoder << content.dataInStringFormat;
-    encoder << content.dataInHTMLFormat;
-
-    encoder << content.dataInWebArchiveFormat;
-    encoder << content.dataInRTFDFormat;
-    encoder << content.dataInRTFFormat;
-    encoder << content.dataInAttributedStringFormat;
-
-    encoder << content.clientTypes;
-    encoder << content.clientData;
-}
-
-bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
-{
-    if (!decoder.decode(content.contentOrigin))
-        return false;
-    if (!decoder.decode(content.canSmartCopyOrDelete))
-        return false;
-    if (!decoder.decode(content.dataInStringFormat))
-        return false;
-    if (!decoder.decode(content.dataInHTMLFormat))
-        return false;
-
-    if (!decoder.decode(content.dataInWebArchiveFormat))
-        return false;
-    if (!decoder.decode(content.dataInRTFDFormat))
-        return false;
-    if (!decoder.decode(content.dataInRTFFormat))
-        return false;
-    if (!decoder.decode(content.dataInAttributedStringFormat))
-        return false;
-    if (!decoder.decode(content.clientTypes))
-        return false;
-    if (!decoder.decode(content.clientData))
-        return false;
-
-    return true;
-}
-
-void ArgumentCoder<PasteboardImage>::encode(Encoder& encoder, const PasteboardImage& pasteboardImage)
-{
-    encodeOptionalImage(encoder, pasteboardImage.image.get());
-    encoder << pasteboardImage.url.url;
-    encoder << pasteboardImage.url.title;
-    encoder << pasteboardImage.resourceMIMEType;
-    encoder << pasteboardImage.suggestedName;
-    encoder << pasteboardImage.imageSize;
-    encoder << pasteboardImage.resourceData;
-    encoder << pasteboardImage.clientTypes;
-    encoder << pasteboardImage.clientData;
-}
-
-bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& pasteboardImage)
-{
-    if (!decodeOptionalImage(decoder, pasteboardImage.image))
-        return false;
-    if (!decoder.decode(pasteboardImage.url.url))
-        return false;
-    if (!decoder.decode(pasteboardImage.url.title))
-        return false;
-    if (!decoder.decode(pasteboardImage.resourceMIMEType))
-        return false;
-    if (!decoder.decode(pasteboardImage.suggestedName))
-        return false;
-    if (!decoder.decode(pasteboardImage.imageSize))
-        return false;
-    if (!decoder.decode(pasteboardImage.resourceData))
-        return false;
-    if (!decoder.decode(pasteboardImage.clientTypes))
-        return false;
-    if (!decoder.decode(pasteboardImage.clientData))
-        return false;
-
-    return true;
-}
-
 #endif
 
-#if USE(LIBWPE)
-void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
-{
-    encoder << content.text;
-    encoder << content.markup;
-}
-
-bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
-{
-    if (!decoder.decode(content.text))
-        return false;
-    if (!decoder.decode(content.markup))
-        return false;
-    return true;
-}
-#endif // USE(LIBWPE)
 
 void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& alternative)
 {
@@ -1899,9 +1788,9 @@ void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndica
     encoder << textIndicatorData.presentationTransition;
     encoder << textIndicatorData.options;
 
-    encodeOptionalImage(encoder, textIndicatorData.contentImage.get());
-    encodeOptionalImage(encoder, textIndicatorData.contentImageWithHighlight.get());
-    encodeOptionalImage(encoder, textIndicatorData.contentImageWithoutSelection.get());
+    encoder << textIndicatorData.contentImage;
+    encoder << textIndicatorData.contentImageWithHighlight;
+    encoder << textIndicatorData.contentImageWithoutSelection;
 }
 
 std::optional<TextIndicatorData> ArgumentCoder<TextIndicatorData>::decode(Decoder& decoder)
@@ -1931,13 +1820,13 @@ std::optional<TextIndicatorData> ArgumentCoder<TextIndicatorData>::decode(Decode
     if (!decoder.decode(textIndicatorData.options))
         return std::nullopt;
 
-    if (!decodeOptionalImage(decoder, textIndicatorData.contentImage))
+    if (!decoder.decode(textIndicatorData.contentImage))
         return std::nullopt;
 
-    if (!decodeOptionalImage(decoder, textIndicatorData.contentImageWithHighlight))
+    if (!decoder.decode(textIndicatorData.contentImageWithHighlight))
         return std::nullopt;
 
-    if (!decodeOptionalImage(decoder, textIndicatorData.contentImageWithoutSelection))
+    if (!decoder.decode(textIndicatorData.contentImageWithoutSelection))
         return std::nullopt;
 
     return textIndicatorData;
@@ -2506,13 +2395,13 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
 
 void ArgumentCoder<WebCore::NotificationResources>::encode(Encoder& encoder, const WebCore::NotificationResources& resources)
 {
-    encodeOptionalImage(encoder, resources.icon().get());
+    encoder << resources.icon();
 }
 
 std::optional<RefPtr<WebCore::NotificationResources>> ArgumentCoder<WebCore::NotificationResources>::decode(Decoder& decoder)
 {
     RefPtr<Image> icon;
-    if (!decodeOptionalImage(decoder, icon))
+    if (!decoder.decode(icon))
         return std::nullopt;
 
     if (!icon)

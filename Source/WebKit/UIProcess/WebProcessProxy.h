@@ -332,7 +332,7 @@ public:
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void sendProcessDidResume(ResumeReason) final;
-    void didSetAssertionType(ProcessAssertionType) final;
+    void didChangeThrottleState(ProcessThrottleState) final;
     ASCIILiteral clientName() const final { return "WebProcess"_s; }
 
 #if PLATFORM(COCOA)
@@ -378,7 +378,7 @@ public:
     void startServiceWorkerBackgroundProcessing();
     void endServiceWorkerBackgroundProcessing();
 #endif
-    void setAssertionTypeForTesting(ProcessAssertionType type) { didSetAssertionType(type); }
+    void setThrottleStateForTesting(ProcessThrottleState state) { didChangeThrottleState(state); }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }

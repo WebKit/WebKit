@@ -43,138 +43,19 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/SystemTracing.h>
 
-// FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
-// breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
-#if PLATFORM(IOS_FAMILY)
-@interface WKOneShotDisplayLinkHandler : NSObject {
-    WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
-    CADisplayLink *_displayLink;
-#if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-    RetainPtr<NSTimer> _updateTimer;
-    std::optional<WebCore::FramesPerSecond> _overrideFrameRate;
-#endif
-}
-
-- (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy;
-- (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond;
-- (void)displayLinkFired:(CADisplayLink *)sender;
-- (void)invalidate;
-- (void)schedule;
-
-@end
-
-@implementation WKOneShotDisplayLinkHandler
-
-- (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy
-{
-    if (self = [super init]) {
-        _drawingAreaProxy = drawingAreaProxy;
-        // Note that CADisplayLink retains its target (self), so a call to -invalidate is needed on teardown.
-        bool createDisplayLink = true;
-#if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-        NSInteger overrideRefreshRateValue = [NSUserDefaults.standardUserDefaults integerForKey:@"MainScreenRefreshRate"];
-        if (overrideRefreshRateValue) {
-            _overrideFrameRate = overrideRefreshRateValue;
-            createDisplayLink = false;
-        }
-#endif
-        if (createDisplayLink) {
-            _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
-            [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-            _displayLink.paused = YES;
-
-            if (drawingAreaProxy && !drawingAreaProxy->page().preferences().preferPageRenderingUpdatesNear60FPSEnabled())
-                _displayLink.preferredFramesPerSecond = (1.0 / _displayLink.maximumRefreshRate);
-            else
-                _displayLink.preferredFramesPerSecond = 60;
-        }
-
-        if (drawingAreaProxy) {
-            auto& page = drawingAreaProxy->page();
-            if (page.preferences().webAnimationsCustomFrameRateEnabled() || !page.preferences().preferPageRenderingUpdatesNear60FPSEnabled()) {
-                auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
-                if (minimumRefreshInterval > 0) {
-                    if (auto displayId = page.displayId()) {
-                        WebCore::FramesPerSecond frameRate = std::round(1.0 / minimumRefreshInterval);
-                        page.windowScreenDidChange(*displayId, frameRate);
-                    }
-                }
-            }
-        }
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(!_displayLink);
-    [super dealloc];
-}
-
-- (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond
-{
-    _displayLink.preferredFramesPerSecond = preferredFramesPerSecond;
-}
-
-- (void)displayLinkFired:(CADisplayLink *)sender
-{
-    ASSERT(isUIThread());
-    _drawingAreaProxy->didRefreshDisplay();
-}
-
-#if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-- (void)timerFired
-{
-    ASSERT(isUIThread());
-    _drawingAreaProxy->didRefreshDisplay();
-}
-#endif // ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-
-- (void)invalidate
-{
-    [_displayLink invalidate];
-    _displayLink = nullptr;
-
-#if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-    [_updateTimer invalidate];
-    _updateTimer = nil;
-#endif
-}
-
-- (void)schedule
-{
-    _displayLink.paused = NO;
-#if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-    if (!_updateTimer && _overrideFrameRate.has_value())
-        _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / _overrideFrameRate.value() target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
-#endif
-}
-
-- (void)pause
-{
-    _displayLink.paused = YES;
-#if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
-    [_updateTimer invalidate];
-    _updateTimer = nil;
-#endif
-}
-
-@end
-#endif
-
 namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
 
-RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& process)
-    : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, webPageProxy, process)
+RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy, WebProcessProxy& processProxy)
+    : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, pageProxy, processProxy)
     , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
 {
     // We don't want to pool surfaces in the UI process.
     // FIXME: We should do this somewhere else.
     IOSurfacePool::sharedPool().setPoolSize(0);
 
-    process.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
+    processProxy.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
 
     if (m_webPageProxy.preferences().tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
@@ -184,15 +65,6 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
     m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
     process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
-
-#if PLATFORM(IOS_FAMILY)
-    [m_displayLinkHandler invalidate];
-#endif
-}
-
-DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxy::delegatedScrollingMode() const
-{
-    return DelegatedScrollingMode::DelegatedToNativeScrollView;
 }
 
 std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemoteLayerTreeHost()
@@ -205,15 +77,6 @@ std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy
 {
     return makeUnique<RemoteScrollingCoordinatorProxy>(m_webPageProxy);
 }
-
-#if PLATFORM(IOS_FAMILY)
-WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxy::displayLinkHandler()
-{
-    if (!m_displayLinkHandler)
-        m_displayLinkHandler = adoptNS([[WKOneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
-    return m_displayLinkHandler.get();
-}
-#endif
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
@@ -248,15 +111,6 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     m_lastSentSize = m_size;
     send(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()));
     m_isWaitingForDidUpdateGeometry = true;
-}
-
-void RemoteLayerTreeDrawingAreaProxy::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
-{
-#if PLATFORM(IOS_FAMILY)
-    [displayLinkHandler() setPreferredFramesPerSecond:preferredFramesPerSecond];
-#else
-    UNUSED_PARAM(preferredFramesPerSecond);
-#endif
 }
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
@@ -315,14 +169,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     m_webPageProxy.layerTreeCommitComplete();
 
-#if PLATFORM(IOS_FAMILY)
     if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
         didRefreshDisplay();
-    [displayLinkHandler() schedule];
-#else
-    m_didUpdateMessageState = NeedsDidUpdate;
-    didRefreshDisplay();
-#endif
+    scheduleDisplayLink();
 
     if (didUpdateEditorState)
         m_webPageProxy.dispatchDidUpdateEditorState();
@@ -347,14 +196,6 @@ void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(uint64_t layerI
 }
 
 static const float indicatorInset = 10;
-
-#if PLATFORM(MAC)
-void RemoteLayerTreeDrawingAreaProxy::didChangeViewExposedRect()
-{
-    DrawingAreaProxy::didChangeViewExposedRect();
-    updateDebugIndicatorPosition();
-}
-#endif
 
 FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 {
@@ -481,9 +322,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
 
     if (m_didUpdateMessageState != NeedsDidUpdate) {
         m_didUpdateMessageState = MissedCommit;
-#if PLATFORM(IOS_FAMILY)
-        [displayLinkHandler() pause];
-#endif
+        pauseDisplayLink();
         return;
     }
     

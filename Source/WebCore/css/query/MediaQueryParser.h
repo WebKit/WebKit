@@ -29,39 +29,26 @@
 namespace WebCore {
 namespace MQ {
 
-struct MediaCondition;
-
-using MediaFeature = Feature;
-using MediaInParens = std::variant<MediaCondition, MediaFeature, GeneralEnclosed>;
-
 enum class Prefix : bool { Not, Only };
-
-struct MediaCondition {
-    LogicalOperator logicalOperator { LogicalOperator::And };
-    Vector<MediaInParens> queries;
-};
 
 struct MediaQuery {
     std::optional<Prefix> prefix;
     AtomString mediaType;
-    std::optional<MediaCondition> condition { };
+    std::optional<Condition> condition { };
 };
 
 using MediaQueryList = Vector<MediaQuery>;
 
 class MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
 public:
-    MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
+    MediaQueryParser(const CSSParserContext&);
     
+    MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
     std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);
-    std::optional<MediaInParens> consumeQueryInParens(CSSParserTokenRange&);
-
-private:
-    std::optional<MediaFeature> consumeMediaFeature(CSSParserTokenRange&);
-
-    MediaQueryParser(const CSSParserContext& context)
-        : GenericMediaQueryParser(context) { }
 };
+
+void serialize(StringBuilder&, const MediaQueryList&);
+void serialize(StringBuilder&, const MediaQuery&);
 
 }
 }

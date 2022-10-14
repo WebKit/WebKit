@@ -146,6 +146,7 @@ public:
 
     PAL::SessionID sessionID() const;
 
+    const NetworkSession* networkSession() const;
     NetworkSession* networkSession();
 
 protected:

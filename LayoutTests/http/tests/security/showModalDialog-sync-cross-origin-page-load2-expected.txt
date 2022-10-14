@@ -1,4 +1,5 @@
 ALERT: <html><head></head><body></body></html>
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
 CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
 This test passes if it does not alert the fail.html's content when clicking the button.
 

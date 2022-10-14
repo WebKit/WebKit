@@ -1830,7 +1830,7 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
     config.get().adNetworkRegistrableDomain = pcm.destinationSite().registrableDomain.string();
     config.get().impressionId = pcm.ephemeralSourceNonce()->nonce;
     config.get().sourceWebRegistrableDomain = pcm.sourceSite().registrableDomain.string();
-    config.get().version = @"3";
+    config.get().version = @"4.0";
     config.get().attributionContext = AttributionTypeDefault;
     [[ASDInstallAttribution sharedInstance] addInstallWebAttributionParamsWithConfig:config.get() completionHandler:^(NSError *) { }];
 #endif

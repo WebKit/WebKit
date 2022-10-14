@@ -1,0 +1,10 @@
+This tests if an audio file that has no controls is always display: none, including after script removal of attribute.
+
+EXPECTED (getComputedStyle(audio)['display'] == 'none') OK
+
+EXPECTED (getComputedStyle(audio)['display'] == 'inline') OK
+
+EXPECTED (getComputedStyle(audio)['display'] == 'none') OK
+
+END OF TEST
+

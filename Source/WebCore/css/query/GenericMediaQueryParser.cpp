@@ -41,8 +41,8 @@ static AtomString consumeFeatureName(CSSParserTokenRange& range)
 std::optional<Feature> GenericMediaQueryParserBase::consumeFeature(CSSParserTokenRange& range)
 {
     auto rangeCopy = range;
-    if (auto sizeFeature = consumeBooleanOrPlainFeature(range))
-        return sizeFeature;
+    if (auto feature = consumeBooleanOrPlainFeature(range))
+        return feature;
 
     range = rangeCopy;
     return consumeRangeFeature(range);

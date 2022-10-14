@@ -40,6 +40,8 @@ public:
 
     id <WKURLSchemeHandler> apiHandler() const { return m_apiHandler.get(); }
 
+    bool isAPIHandler() final { return true; }
+
 private:
     WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler>);
 

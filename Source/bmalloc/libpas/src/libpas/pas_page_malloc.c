@@ -54,6 +54,8 @@ bool pas_page_malloc_decommit_zero_fill = false;
 
 #if PAS_OS(DARWIN)
 #define PAS_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
+#elif PAS_PLATFORM(PLAYSTATION) && defined(VM_MAKE_TAG)
+#define PAS_VM_TAG VM_MAKE_TAG(VM_TYPE_USER1)
 #else
 #define PAS_VM_TAG -1
 #endif
@@ -120,13 +122,8 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
             return result;
     }
     
-#if PAS_PLATFORM(PLAYSTATION)
-    mmap_result = mmap_np(NULL, mapped_size, PROT_READ | PROT_WRITE,
-                          MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0, "SceNKLibpas");
-#else
     mmap_result = mmap(NULL, mapped_size, PROT_READ | PROT_WRITE,
                        MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0);
-#endif
     if (mmap_result == MAP_FAILED) {
         errno = 0; /* Clear the error so that we don't leak errno in those
                       cases where we handle the allocation failure

@@ -103,6 +103,7 @@ void ScrollSnapAnimatorState::setFocusedElementForAxis(ScrollEventAxis axis)
     });
     if (found == snapOffsets.end())
         return;
+
     auto newIndex = std::distance(snapOffsets.begin(), found);
     auto newID = snapOffsets[newIndex].snapTargetID;
     setActiveSnapIndexForAxis(axis, newIndex);
@@ -117,8 +118,10 @@ bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis)
     auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [snapID](SnapOffset<LayoutUnit> p) -> bool {
         return p.snapTargetID == *snapID;
     });
-    if (found == snapOffsets.end())
+    if (found == snapOffsets.end()) {
+        setActiveSnapIndexIDForAxis(axis, std::nullopt);
         return false;
+    }
     
     setActiveSnapIndexForAxis(axis, std::distance(snapOffsets.begin(), found));
     return true;
@@ -148,12 +151,11 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
         activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     }
     
-    // If we have an active target, see if we need to preserve it
-    if (activeHorizontalID && activeHorizontalIndex) {
-        if (*activeHorizontalID != snapOffsetsHorizontal[*activeHorizontalIndex].snapTargetID)
-            snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal);
-    } else if (activeVerticalID && activeVerticalIndex && *activeVerticalID != snapOffsetsVertical[*activeVerticalIndex].snapTargetID)
-        snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical);
+    // If we have active targets, see if we need to preserve one of them
+    if (activeHorizontalID && activeHorizontalIndex && activeVerticalID && activeVerticalIndex && *activeHorizontalID
+        != snapOffsetsHorizontal[*activeHorizontalIndex].snapTargetID && *activeVerticalID
+        != snapOffsetsVertical[*activeVerticalIndex].snapTargetID)
+        snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal);
 
     // If we do not have current targets and are snapped to multiple targets, set them
     if ((!activeHorizontalID && activeHorizontalIndex) && (!activeVerticalID && activeVerticalIndex)) {

@@ -52,6 +52,26 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
     }
 }
 
+#if PLATFORM(COCOA)
+
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identifier)
+    : m_isPersistent(IsPersistent::Yes)
+    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
+    , m_identifier(identifier)
+    , m_baseCacheDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
+    , m_baseDataDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
+    , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
+#if PLATFORM(IOS)
+    , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
+#endif
+{
+    ASSERT(m_identifier);
+
+    initializePaths();
+}
+
+#endif
+
 #if !PLATFORM(COCOA)
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory)
     : m_isPersistent(IsPersistent::Yes)
@@ -87,6 +107,9 @@ void WebsiteDataStoreConfiguration::initializePaths()
     setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory(m_baseDataDirectory));
     setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(m_baseDataDirectory));
     setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory(m_baseDataDirectory));
+#if PLATFORM(COCOA)
+    setCookieStorageFile(WebsiteDataStore::defaultCookieStorageFile(m_baseDataDirectory));
+#endif
 }
 
 Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
@@ -143,6 +166,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_pcmMachServiceName = this->m_pcmMachServiceName;
     copy->m_webPushMachServiceName = this->m_webPushMachServiceName;
     copy->m_resourceLoadStatisticsDebugModeEnabled = this->m_resourceLoadStatisticsDebugModeEnabled;
+    copy->m_identifier = m_identifier;
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));

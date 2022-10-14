@@ -312,6 +312,10 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
 };
 
+template<> struct ArgumentCoder<RefPtr<WebCore::Image>> {
+    static void encode(Encoder&, const RefPtr<WebCore::Image>&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::Image>&);
+};
 
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
@@ -371,15 +375,6 @@ template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::InspectorOverlay::Highlight&);
 };
 
-template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
-    static void encode(Encoder&, const WebCore::PasteboardWebContent&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PasteboardWebContent&);
-};
-
-template<> struct ArgumentCoder<WebCore::PasteboardImage> {
-    static void encode(Encoder&, const WebCore::PasteboardImage&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PasteboardImage&);
-};
 #endif
 
 template<> struct ArgumentCoder<WebCore::PasteboardCustomData> {
@@ -391,13 +386,6 @@ template<> struct ArgumentCoder<WebCore::PasteboardCustomData> {
 template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
     static void encode(Encoder&, const WebCore::SoupNetworkProxySettings&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::SoupNetworkProxySettings&);
-};
-#endif
-
-#if USE(LIBWPE)
-template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
-    static void encode(Encoder&, const WebCore::PasteboardWebContent&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PasteboardWebContent&);
 };
 #endif
 

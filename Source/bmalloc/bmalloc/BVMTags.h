@@ -27,6 +27,10 @@
 
 #include "BPlatform.h"
 
+#if BPLATFORM(PLAYSTATION)
+#include <sys/mman.h>
+#endif
+
 // On Mac OS X, the VM subsystem allows tagging memory requested from mmap and vm_map
 // in order to aid tools that inspect system memory use.
 #if BOS(DARWIN)
@@ -56,6 +60,13 @@
 #else
 #define VM_TAG_FOR_GIGACAGE_MEMORY VM_MAKE_TAG(63)
 #endif // defined(VM_MEMORY_JAVASCRIPT_CORE)
+
+#elif BPLATFORM(PLAYSTATION) && defined(VM_MAKE_TAG)
+
+#define VM_TAG_FOR_TCMALLOC_MEMORY VM_MAKE_TAG(VM_TYPE_USER1)
+#define VM_TAG_FOR_ISOHEAP_MEMORY VM_MAKE_TAG(VM_TYPE_USER2)
+#define VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY VM_MAKE_TAG(VM_TYPE_USER3)
+#define VM_TAG_FOR_GIGACAGE_MEMORY VM_MAKE_TAG(VM_TYPE_USER4)
 
 #else // BOS(DARWIN)
 

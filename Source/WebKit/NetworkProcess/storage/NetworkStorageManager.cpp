@@ -166,18 +166,6 @@ static void deleteEmptyOriginDirectory(const String& directory)
     FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
 }
 
-static WeakHashSet<NetworkStorageManager>& allNetworkStorageManagers()
-{
-    static MainThreadNeverDestroyed<WeakHashSet<NetworkStorageManager>> managers;
-    return managers;
-}
-
-void NetworkStorageManager::forEach(const Function<void(NetworkStorageManager&)>& apply)
-{
-    for (auto& manager : allNetworkStorageManagers())
-        apply(manager);
-}
-
 Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths)
 {
     return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, shouldUseCustomPaths));
@@ -195,7 +183,6 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
 {
     ASSERT(RunLoop::isMain());
 
-    allNetworkStorageManagers().add(*this);
     m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), shouldUseCustomPaths]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
@@ -223,8 +210,6 @@ NetworkStorageManager::~NetworkStorageManager()
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_closed);
-
-    allNetworkStorageManagers().remove(*this);
 }
 
 bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)
@@ -235,22 +220,22 @@ bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)
         || types.contains(WebsiteDataType::IndexedDBDatabases);
 }
 
-void NetworkStorageManager::close()
+void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
-    if (m_closed)
-        return;
     m_closed = true;
-
     for (auto& connection : m_connections)
         connection.removeWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName());
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_originStorageManagers.clear();
         m_fileSystemStorageHandleRegistry = nullptr;
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
     });
 }
 
@@ -398,6 +383,7 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
 void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         // Reset persisted value.
@@ -413,6 +399,7 @@ void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& c
 void NetworkStorageManager::clearStorageForWebPage(WebPageProxyIdentifier pageIdentifier)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, pageIdentifier]() mutable {
         for (auto& manager : m_originStorageManagers.values()) {
@@ -425,6 +412,7 @@ void NetworkStorageManager::clearStorageForWebPage(WebPageProxyIdentifier pageId
 void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(WTFMove(origin)), identifier, newQuota]() mutable {
         if (auto manager = m_originStorageManagers.get(origin))
@@ -787,6 +775,7 @@ void NetworkStorageManager::resume()
 void NetworkStorageManager::handleLowMemoryWarning()
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }] {
         for (auto& manager : m_originStorageManagers.values()) {
@@ -801,6 +790,7 @@ void NetworkStorageManager::handleLowMemoryWarning()
 void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& manager : m_originStorageManagers.values()) {
@@ -815,6 +805,7 @@ void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& complet
 void NetworkStorageManager::registerTemporaryBlobFilePaths(IPC::Connection& connection, const Vector<String>& filePaths)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, connectionID = connection.uniqueID(), filePaths = crossThreadCopy(filePaths)] {
         assertIsCurrent(workQueue());
@@ -828,6 +819,7 @@ void NetworkStorageManager::registerTemporaryBlobFilePaths(IPC::Connection& conn
 void NetworkStorageManager::requestSpace(const WebCore::ClientOrigin& origin, uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(origin), size, completionHandler = WTFMove(completionHandler)]() mutable {
         originStorageManager(origin).quotaManager().requestSpace(size, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
@@ -864,6 +856,7 @@ void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::Cli
 void NetworkStorageManager::setBackupExclusionPeriodForTesting(Seconds period, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, period, completionHandler = WTFMove(completionHandler)]() mutable {
         m_backupExclusionPeriod = period;

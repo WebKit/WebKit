@@ -883,6 +883,7 @@ css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
 css/query/GenericMediaQueryEvaluator.cpp
 css/query/GenericMediaQueryParser.cpp
+css/query/GenericMediaQuerySerialization.cpp
 css/query/MediaQueryParser.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMapReadOnly.cpp
@@ -4151,6 +4152,7 @@ JSWakeLockType.cpp
 JSWaveShaperNode.cpp
 JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
+JSWebCodecsAlphaOption.cpp
 JSWebCodecsEncodedVideoChunk.cpp
 JSWebCodecsEncodedVideoChunkMetadata.cpp
 JSWebCodecsEncodedVideoChunkOutputCallback.cpp

@@ -167,6 +167,11 @@ PAL::SessionID NetworkDataTask::sessionID() const
     return m_session->sessionID();
 }
 
+const NetworkSession* NetworkDataTask::networkSession() const
+{
+    return m_session.get();
+}
+
 NetworkSession* NetworkDataTask::networkSession()
 {
     return m_session.get();

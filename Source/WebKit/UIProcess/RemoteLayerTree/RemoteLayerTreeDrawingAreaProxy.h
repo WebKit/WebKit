@@ -33,8 +33,6 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 
-OBJC_CLASS WKOneShotDisplayLinkHandler;
-
 namespace WebKit {
 
 class RemoteScrollingCoordinatorProxy;
@@ -68,8 +66,10 @@ public:
     void updateOverlayRegionIDs(const HashSet<WebCore::GraphicsLayer::PlatformLayerID> &overlayRegionIDs) { m_remoteLayerTreeHost->updateOverlayRegionIDs(overlayRegionIDs); }
 #endif
 
+protected:
+    void updateDebugIndicatorPosition();
+
 private:
-    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;
@@ -78,19 +78,13 @@ private:
     // For now, all callbacks are called before committing changes, because that's what the only client requires.
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
     void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) final;
-
-#if PLATFORM(MAC)
-    void didChangeViewExposedRect() final;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    WKOneShotDisplayLinkHandler *displayLinkHandler();
-#endif
+    
+    virtual void scheduleDisplayLink() { }
+    virtual void pauseDisplayLink() { }
 
     float indicatorScale(WebCore::IntSize contentsSize) const;
     void updateDebugIndicator() final;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
-    void updateDebugIndicatorPosition();
     void initializeDebugIndicator();
 
     void waitForDidUpdateActivityState(ActivityStateChangeID) final;
@@ -106,7 +100,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Message handlers
-    void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
+    virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
     void willCommitLayerTree(TransactionID);
     void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     
@@ -130,8 +124,6 @@ private:
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     CallbackMap m_callbacks;
-
-    RetainPtr<WKOneShotDisplayLinkHandler> m_displayLinkHandler;
 };
 
 } // namespace WebKit

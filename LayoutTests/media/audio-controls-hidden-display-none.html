@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Audio Controls - selective control element display</title>
+<script src="video-test.js"></script>
+<script src="media-file.js"></script>
+<script>
+var audio;
+
+function testDisplay(event)
+{
+    audio = event.target;
+
+    testExpected("getComputedStyle(audio)['display']", 'none', "==");
+    consoleWrite("");
+
+    audio.setAttribute("controls", "");
+
+    testExpected("getComputedStyle(audio)['display']", 'inline', "==");
+    consoleWrite("");
+
+    audio.removeAttribute("controls");
+
+    testExpected("getComputedStyle(audio)['display']", 'none', "==");
+    consoleWrite("");
+
+    endTest();
+    }
+
+function init()
+{
+    audio = document.getElementsByTagName("audio")[0];
+    audio.addEventListener('canplaythrough', testDisplay, false);
+    audio.src = findMediaFile('audio', 'content/short');
+}
+</script>
+</head>
+<body onload="init()">
+    <audio></audio>
+    <p>
+        This tests if an audio file that has no controls is always display: none,
+        including after script removal of attribute.
+    </p>
+</body>
+</html>

@@ -28,6 +28,7 @@
 #include <optional>
 #include <variant>
 #include <wtf/Forward.h>
+#include <wtf/HashTraits.h>
 
 #if OS(WINDOWS)
 #include <winsock2.h>
@@ -51,6 +52,13 @@ public:
     {
     }
 
+    explicit IPAddress(WTF::HashTableEmptyValueType)
+        : m_address(WTF::HashTableEmptyValue)
+    {
+    }
+
+    WEBCORE_EXPORT static std::optional<IPAddress> fromString(const String&);
+
     bool isIPv4() const { return std::holds_alternative<struct in_addr>(m_address); }
     bool isIPv6() const { return std::holds_alternative<struct in6_addr>(m_address); }
 
@@ -58,7 +66,7 @@ public:
     const struct in6_addr& ipv6Address() const { return std::get<struct in6_addr>(m_address); }
 
 private:
-    std::variant<struct in_addr, struct in6_addr> m_address;
+    std::variant<WTF::HashTableEmptyValueType, struct in_addr, struct in6_addr> m_address;
 };
 
 enum class DNSError { Unknown, CannotResolve, Cancelled };
@@ -79,4 +87,12 @@ inline std::optional<IPAddress> IPAddress::fromSockAddrIn6(const struct sockaddr
     return { };
 }
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::IPAddress> : GenericHashTraits<WebCore::IPAddress> {
+    static WebCore::IPAddress emptyValue() { return WebCore::IPAddress { WTF::HashTableEmptyValue }; }
+};
+
+} // namespace WTF

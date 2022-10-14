@@ -444,6 +444,12 @@ UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
 void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
 {
     TestRunnerWKWebView *webView = mainWebView()->platformView();
+
+    // Make sure this is the top-most window or the call to setNeedsUpdateOfSupportedInterfaceOrientations
+    // below won't do anything. UIKit prioritizes the top-most scene-sized window when determining interface
+    // orientation.
+    [webView.window makeKeyWindow];
+
     switch (orientation) {
     case kWKScreenOrientationTypePortraitPrimary:
         webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskPortrait;

@@ -36,7 +36,7 @@
 #import "Logging.h"
 #import "PageClientImplIOS.h"
 #import "PrintInfo.h"
-#import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "SmartMagnificationController.h"
 #import "UIKitSPI.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -678,7 +678,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process
 {
-    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page, process);
+    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(*_page, process);
 }
 
 - (void)_processDidExit

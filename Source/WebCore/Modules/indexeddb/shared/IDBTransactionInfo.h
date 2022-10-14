@@ -65,7 +65,7 @@ public:
 
     const Vector<String>& objectStores() const { return m_objectStores; }
 
-    IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
+    const std::unique_ptr<IDBDatabaseInfo>& originalDatabaseInfo() const { return m_originalDatabaseInfo; }
 
     IDBTransactionInfo(IDBResourceIdentifier identifier, IDBTransactionMode mode, IDBTransactionDurability durability, uint64_t newVersion, Vector<String>&& objectStores, std::unique_ptr<IDBDatabaseInfo> originalDatabaseInfo)
         : m_identifier(identifier)

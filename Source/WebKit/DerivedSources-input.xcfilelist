@@ -143,6 +143,7 @@ $(PROJECT_DIR)/Shared/IPCTester.messages.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
+$(PROJECT_DIR)/Shared/Pasteboard.serialization.in
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
@@ -180,6 +181,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexAttribute.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
+$(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in
 $(PROJECT_DIR)/Shared/mac/SecItemResponseData.serialization.in
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json
 $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmFormat.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>

@@ -71,7 +71,7 @@ public:
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    bool isVideoElement() const;
+    bool isVideoElementWithControls() const;
 #endif
     void close();
 
@@ -99,7 +99,7 @@ public:
 
 private:
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
-    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, WebCore::FloatSize videoDimensions);
+    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElementWithControls, WebCore::FloatSize videoDimensions);
     void exitFullScreen();
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
@@ -113,7 +113,7 @@ private:
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    bool m_isVideoElement { false };
+    bool m_isVideoElementWithControls { false };
 #endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 };

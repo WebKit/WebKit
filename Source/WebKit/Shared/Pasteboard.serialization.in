@@ -1,0 +1,90 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+headers: <WebCore/Pasteboard.h>
+
+header: <WebCore/Pasteboard.h>
+[CustomHeader=True] struct WebCore::PasteboardImage {
+    RefPtr<WebCore::Image> image;
+#if PLATFORM(MAC)
+    RefPtr<WebCore::SharedBuffer> dataInWebArchiveFormat;
+    String dataInHTMLFormat;
+#endif
+#if !PLATFORM(WIN)
+    WebCore::PasteboardURL url;
+#endif
+#if !(PLATFORM(GTK) || PLATFORM(WIN))
+    RefPtr<WebCore::SharedBuffer> resourceData;
+    String resourceMIMEType;
+    Vector<String> clientTypes;
+    Vector<RefPtr<WebCore::SharedBuffer>> clientData;
+#endif
+    String suggestedName;
+    WebCore::FloatSize imageSize;
+};
+
+header: <WebCore/Pasteboard.h>
+[CustomHeader=True] struct WebCore::PasteboardWebContent {
+#if PLATFORM(COCOA)
+    String contentOrigin;
+    bool canSmartCopyOrDelete;
+    RefPtr<WebCore::SharedBuffer> dataInWebArchiveFormat;
+    RefPtr<WebCore::SharedBuffer> dataInRTFDFormat;
+    RefPtr<WebCore::SharedBuffer> dataInRTFFormat;
+    RefPtr<WebCore::SharedBuffer> dataInAttributedStringFormat;
+    String dataInHTMLFormat;
+    String dataInStringFormat;
+    Vector<String> clientTypes;
+    Vector<RefPtr<WebCore::SharedBuffer>> clientData;
+#endif
+#if PLATFORM(GTK)
+    String contentOrigin;
+    bool canSmartCopyOrDelete;
+    String text;
+    String markup;
+#endif
+#if USE(LIBWPE)
+    String text;
+    String markup;
+#endif
+};
+
+header: <WebCore/Pasteboard.h>
+[CustomHeader=True] struct WebCore::PasteboardURL {
+    URL url
+    String title
+#if PLATFORM(MAC)
+    String userVisibleForm
+#endif
+#if PLATFORM(GTK)
+    String markup
+#endif
+};
+
+header: <WebCore/Pasteboard.h>
+[CustomHeader=True] struct WebCore::PasteboardBuffer {
+#if PLATFORM(COCOA)
+    String contentOrigin;
+#endif
+    String type;
+    RefPtr<WebCore::SharedBuffer> data;
+};

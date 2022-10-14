@@ -224,7 +224,7 @@ NSUUID *toAPI(const UUID& uuid)
 UUID toImpl(NSUUID *uuid)
 {
     if (!uuid)
-        return UUID(0);
+        return UUID(UInt128 { 0 });
 
     uuid_t bytes;
     [uuid getUUIDBytes:bytes];

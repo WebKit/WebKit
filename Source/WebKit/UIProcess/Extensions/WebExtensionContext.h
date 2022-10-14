@@ -49,7 +49,12 @@ OBJC_CLASS NSMapTable;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSUUID;
+OBJC_CLASS WKNavigation;
+OBJC_CLASS WKNavigationAction;
+OBJC_CLASS WKWebView;
+OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS _WKWebExtensionContext;
+OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_PROTOCOL(_WKWebExtensionTab);
 #endif
 
@@ -87,6 +92,7 @@ public:
         Unknown = 1,
         AlreadyLoaded,
         NotLoaded,
+        BaseURLTaken,
     };
 
     enum class PermissionState : int8_t {
@@ -177,6 +183,11 @@ public:
     bool hasActiveUserGesture(_WKWebExtensionTab *) const;
     void cancelUserGesture(_WKWebExtensionTab *);
 
+    bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
+    void didFinishNavigation(WKWebView *, WKNavigation *);
+    void didFailNavigation(WKWebView *, WKNavigation *, NSError *);
+    void webViewWebContentProcessDidTerminate(WKWebView *);
+
     _WKWebExtensionContext *wrapper() const { return (_WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
 #endif
 
@@ -192,6 +203,16 @@ private:
 
     PermissionsMap& removeExpired(PermissionsMap&, NSString *notificationName = nil);
     PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, NSString *notificationName = nil);
+
+    WKWebViewConfiguration *webViewConfiguration();
+
+    URL backgroundContentURL();
+
+    void loadBackgroundWebViewDuringLoad();
+    void loadBackgroundWebView();
+    void unloadBackgroundWebView();
+
+    void performTasksAfterBackgroundContentLoads();
 #endif
 
     // IPC::MessageReceiver.
@@ -218,6 +239,9 @@ private:
     RetainPtr<NSMapTable> m_temporaryTabPermissionMatchPatterns;
 
     bool m_requestedOptionalAccessToAllHosts = false;
+
+    RetainPtr<WKWebView> m_backgroundWebView;
+    RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
 #endif
 };
 

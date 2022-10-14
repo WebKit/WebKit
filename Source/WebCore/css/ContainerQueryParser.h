@@ -38,9 +38,7 @@ public:
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const CSSParserContext&);
 
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
-    std::optional<CQ::QueryInParens> consumeQueryInParens(CSSParserTokenRange&);
-    std::optional<CQ::SizeFeature> consumeSizeFeature(CSSParserTokenRange&);
-    RefPtr<CSSValue> consumeValue(CSSParserTokenRange&);
+    std::optional<MQ::Feature> consumeFeature(CSSParserTokenRange&);
 
 private:
     ContainerQueryParser(const CSSParserContext& context)
