@@ -74,6 +74,18 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapHandle& han
     return create(handle.m_size, handle.m_configuration, sharedMemory.releaseNonNull());
 }
 
+std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(const std::optional<ShareableBitmapHandle>& handle)
+{
+    if (!handle)
+        return std::nullopt;
+
+    auto sharedMemory = SharedMemory::map(handle->m_handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return std::nullopt;
+    
+    return adoptRef(*new ShareableBitmap(handle->m_size, handle->m_configuration, sharedMemory.releaseNonNull()));
+}
+
 bool ShareableBitmap::createHandle(ShareableBitmapHandle& handle, SharedMemory::Protection protection) const
 {
     if (!m_sharedMemory->createHandle(handle.m_handle, protection))
@@ -81,6 +93,16 @@ bool ShareableBitmap::createHandle(ShareableBitmapHandle& handle, SharedMemory::
     handle.m_size = m_size;
     handle.m_configuration = m_configuration;
     return true;
+}
+
+std::optional<ShareableBitmapHandle> ShareableBitmap::createReadOnlyHandle() const
+{
+    ShareableBitmapHandle handle;
+    if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::Protection::ReadOnly))
+        return std::nullopt;
+    handle.m_size = m_size;
+    handle.m_configuration = m_configuration;
+    return handle;
 }
 
 ShareableBitmap::ShareableBitmap(const IntSize& size, ShareableBitmapConfiguration configuration, Ref<SharedMemory>&& sharedMemory)

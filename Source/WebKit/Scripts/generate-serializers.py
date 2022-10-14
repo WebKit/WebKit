@@ -335,12 +335,25 @@ def generate_impl(serialized_types, serialized_enums, headers):
                 result.append('    } else')
                 result.append('        ' + sanitize_string_for_variable_name(member.name) + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
             else:
-                result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')
-                result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
-                result.append('        return std::nullopt;')
-                if 'ReturnEarlyIfTrue' in member.attributes:
-                    result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
-                    result.append('        return { ' + type.namespace_and_name() + ' { } };')
+                r = re.compile("SecureCodingAllowed=\[(.*)\]")
+                decodable_classes = [r.match(m).groups()[0] for m in list(filter(r.match, member.attributes))]
+                if len(decodable_classes) == 1:
+                    match = re.search("RetainPtr<(.*)>", member.type)
+                    assert match
+                    result.append('    ' + sanitize_string_for_variable_name(member.name) + ' = IPC::decode<' + match.groups()[0] + '>(decoder, @[ ' + decodable_classes[0] + ' ]);')
+                    result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append('        return std::nullopt;')
+                    if 'ReturnEarlyIfTrue' in member.attributes:
+                        result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
+                        result.append('        return { ' + type.namespace_and_name() + ' { } };')
+                else:
+                    assert len(decodable_classes) == 0
+                    result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')
+                    result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append('        return std::nullopt;')
+                    if 'ReturnEarlyIfTrue' in member.attributes:
+                        result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
+                        result.append('        return { ' + type.namespace_and_name() + ' { } };')
             for attribute in member.attributes:
                 match = re.search(r'Validator=\'(.*)\'', attribute)
                 if match:
@@ -365,10 +378,10 @@ def generate_impl(serialized_types, serialized_enums, headers):
                     result.append('#endif')
             result.append('    return { WTFMove(result) };')
         else:
-            if type.return_ref:
-                result.append('    return { ' + type.namespace_and_name() + '::create(')
-            elif type.create_using:
+            if type.create_using:
                 result.append('    return { ' + type.namespace_and_name() + '::' + type.create_using + '(')
+            elif type.return_ref:
+                result.append('    return { ' + type.namespace_and_name() + '::create(')
             else:
                 result.append('    return { ' + type.namespace_and_name() + ' {')
             if type.parent_class is not None:
@@ -603,6 +616,11 @@ def parse_serialized_types(file, file_name):
             if match:
                 complete, _, validator, _ = match.groups()
                 member_attributes.append(validator)
+                member_attributes_s = member_attributes_s.replace(complete, "")
+            match = re.search(r"((, |^)+(SecureCodingAllowed=\[.*?\]))(, |$)?", member_attributes_s)
+            if match:
+                complete, _, allow_list, _ = match.groups()
+                member_attributes.append(allow_list)
                 member_attributes_s = member_attributes_s.replace(complete, "")
             member_attributes += [member_attribute.strip() for member_attribute in member_attributes_s.split(",")]
             members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))

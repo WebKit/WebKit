@@ -278,18 +278,6 @@ struct CGAffineTransform {
     WebCore::FloatSize size()
 }
 
-header: <WebCore/Pasteboard.h>
-[CustomHeader=True] struct WebCore::PasteboardURL {
-    URL url
-    String title
-#if PLATFORM(MAC)
-    String userVisibleForm
-#endif
-#if PLATFORM(GTK)
-    String markup
-#endif
-};
-
 [Return=Ref, CustomHeader=True] class WebCore::LinearTimingFunction {
 };
 

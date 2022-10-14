@@ -47,10 +47,6 @@ static NSBitmapImageFileType bitmapPNGFileType()
 }
 #endif // PLATFORM(MAC)
 
-// Making this non-inline so that WebKit 2's decoding doesn't have to include FragmentedSharedBuffer.h.
-PasteboardWebContent::PasteboardWebContent() = default;
-PasteboardWebContent::~PasteboardWebContent() = default;
-
 enum class ImageType {
     Invalid = 0,
     TIFF,
