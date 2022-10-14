@@ -242,7 +242,7 @@
             "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyAll": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
             },
-            "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyAll": {
+            "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyOne": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
             },
             "WTF_DateMath.calculateLocalTimeOffset": {
