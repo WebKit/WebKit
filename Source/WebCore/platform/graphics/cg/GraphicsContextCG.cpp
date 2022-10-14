@@ -330,15 +330,6 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     if (subImage == image && currentImageSize.height() < imageSize.height())
         adjustedDestRect.setHeight(adjustedDestRect.height() * currentImageSize.height() / imageSize.height());
 
-#if PLATFORM(IOS_FAMILY)
-    bool wasAntialiased = CGContextGetShouldAntialias(context);
-    // Anti-aliasing is on by default on the iPhone. Need to turn it off when drawing images.
-    CGContextSetShouldAntialias(context, false);
-
-    // Align to pixel boundaries
-    adjustedDestRect = roundToDevicePixels(adjustedDestRect);
-#endif
-
     auto oldCompositeOperator = compositeOperation();
     auto oldBlendMode = blendMode();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
@@ -365,9 +356,6 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
 
     if (!stateSaver.didSave()) {
         CGContextSetCTM(context, transform);
-#if PLATFORM(IOS_FAMILY)
-        CGContextSetShouldAntialias(context, wasAntialiased);
-#endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
     }
 
