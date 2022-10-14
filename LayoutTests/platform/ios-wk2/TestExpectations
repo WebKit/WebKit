@@ -2418,3 +2418,5 @@ webkit.org/b/246427 imported/w3c/web-platform-tests/preload/preload-referrer-pol
 # webkit.org/b/243681  Newly imported tests that fail on iOS16
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
+
+webkit.org/b/246547 animations/steps-transform-rendering-updates.html [ Pass Failure ]
