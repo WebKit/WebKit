@@ -861,11 +861,6 @@ const gl::Limitations &Context11::getNativeLimitations() const
     return mRenderer->getNativeLimitations();
 }
 
-ShPixelLocalStorageType Context11::getNativePixelLocalStorageType() const
-{
-    return mRenderer->getNativePixelLocalStorageType();
-}
-
 angle::Result Context11::dispatchCompute(const gl::Context *context,
                                          GLuint numGroupsX,
                                          GLuint numGroupsY,

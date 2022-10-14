@@ -1263,10 +1263,6 @@ ANGLE_INLINE bool ValidateVertexAttribIndex(const Context *context,
 
     return true;
 }
-
-bool ValidateLogicOpCommon(const Context *context,
-                           angle::EntryPoint entryPoint,
-                           LogicalOperation opcodePacked);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES_H_

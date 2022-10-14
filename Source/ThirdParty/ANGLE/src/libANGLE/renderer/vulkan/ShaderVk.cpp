@@ -114,17 +114,13 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->precisionSafeDivision = true;
     }
 
-    if (contextVk->getExtensions().shaderPixelLocalStorageANGLE)
+    if (contextVk->getExtensions().shaderPixelLocalStorageCoherentANGLE)
     {
-        options->pls.type = contextVk->getNativePixelLocalStorageType();
-        if (contextVk->getExtensions().shaderPixelLocalStorageCoherentANGLE)
-        {
-            ASSERT(contextVk->getFeatures().supportsFragmentShaderPixelInterlock.enabled);
-            // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock in
-            // both Vulkan Glslang and our own backend.
-            options->pls.fragmentSynchronizationType =
-                ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
-        }
+        ASSERT(contextVk->getFeatures().supportsFragmentShaderPixelInterlock.enabled);
+        // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock in both
+        // Vulkan GLSL and our own backend.
+        options->pls.fragmentSynchronizationType =
+            ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
     }
 
     return compileImpl(context, compilerInstance, mState.getSource(), options);

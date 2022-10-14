@@ -205,8 +205,6 @@ struct Box
     bool coversSameExtent(const Extents &size) const;
 
     bool contains(const Box &other) const;
-    size_t volume() const;
-    void extend(const Box &other);
 
     int x;
     int y;
@@ -221,7 +219,6 @@ struct RasterizerState final
     // This will zero-initialize the struct, including padding.
     RasterizerState();
     RasterizerState(const RasterizerState &other);
-    RasterizerState &operator=(const RasterizerState &other);
 
     bool cullFace;
     CullFaceMode cullMode;
@@ -271,7 +268,6 @@ struct DepthStencilState final
     // This will zero-initialize the struct, including padding.
     DepthStencilState();
     DepthStencilState(const DepthStencilState &other);
-    DepthStencilState &operator=(const DepthStencilState &other);
 
     bool isDepthMaskedOut() const;
     bool isStencilMaskedOut() const;

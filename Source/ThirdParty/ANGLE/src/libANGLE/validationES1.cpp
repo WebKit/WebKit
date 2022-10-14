@@ -1128,7 +1128,29 @@ bool ValidateLoadMatrixx(const Context *context, angle::EntryPoint entryPoint, c
 bool ValidateLogicOp(const Context *context, angle::EntryPoint entryPoint, LogicalOperation opcode)
 {
     ANGLE_VALIDATE_IS_GLES1(context, entryPoint);
-    return ValidateLogicOpCommon(context, entryPoint, opcode);
+    switch (opcode)
+    {
+        case LogicalOperation::And:
+        case LogicalOperation::AndInverted:
+        case LogicalOperation::AndReverse:
+        case LogicalOperation::Clear:
+        case LogicalOperation::Copy:
+        case LogicalOperation::CopyInverted:
+        case LogicalOperation::Equiv:
+        case LogicalOperation::Invert:
+        case LogicalOperation::Nand:
+        case LogicalOperation::Noop:
+        case LogicalOperation::Nor:
+        case LogicalOperation::Or:
+        case LogicalOperation::OrInverted:
+        case LogicalOperation::OrReverse:
+        case LogicalOperation::Set:
+        case LogicalOperation::Xor:
+            return true;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidLogicOp);
+            return false;
+    }
 }
 
 bool ValidateMaterialf(const Context *context,

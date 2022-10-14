@@ -16,9 +16,7 @@
 namespace rx
 {
 
-DisplayVkLinux::DisplayVkLinux(const egl::DisplayState &state)
-    : DisplayVk(state), mDrmFormatsInitialized(false)
-{}
+DisplayVkLinux::DisplayVkLinux(const egl::DisplayState &state) : DisplayVk(state) {}
 
 ExternalImageSiblingImpl *DisplayVkLinux::createExternalImageSibling(
     const gl::Context *context,
@@ -133,15 +131,19 @@ egl::Error DisplayVkLinux::queryDmaBufFormats(EGLint maxFormats,
                                               EGLint *formats,
                                               EGLint *numFormats)
 {
-    if (!mDrmFormatsInitialized)
+    static bool drmFormatInited = false;
+
+    if (drmFormatInited == false)
     {
-        mDrmFormats            = GetDrmFormats(getRenderer());
-        mDrmFormatsInitialized = true;
+        mDrmFormats = GetDrmFormats(getRenderer());
     }
 
     EGLint formatsSize = static_cast<EGLint>(mDrmFormats.size());
-    *numFormats        = formatsSize;
-    if (maxFormats > 0)
+    if (maxFormats == 0)
+    {
+        *numFormats = formatsSize;
+    }
+    else if (maxFormats > 0)
     {
         // Do not copy data beyond the limits of the vector
         maxFormats = std::min(maxFormats, formatsSize);
@@ -196,8 +198,11 @@ egl::Error DisplayVkLinux::queryDmaBufModifiers(EGLint drmFormat,
 
     EGLint drmModifiersSize = static_cast<EGLint>(drmModifiers.size());
 
-    *numModifiers = drmModifiersSize;
-    if (maxModifiers > 0)
+    if (maxModifiers == 0)
+    {
+        *numModifiers = drmModifiersSize;
+    }
+    else if (maxModifiers > 0)
     {
         maxModifiers = std::min(maxModifiers, drmModifiersSize);
         std::memcpy(modifiers, drmModifiers.data(), maxModifiers * sizeof(drmModifiers[0]));

@@ -28,7 +28,6 @@
 #include "libANGLE/Fence.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/MemoryObject.h"
-#include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramPipeline.h"
 #include "libANGLE/Query.h"
@@ -690,7 +689,6 @@ void Context::initializeDefaultResources()
     mDrawDirtyObjects.set(State::DIRTY_OBJECT_VERTEX_ARRAY);
     mDrawDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES);
     mDrawDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
     mDrawDirtyObjects.set(State::DIRTY_OBJECT_SAMPLERS);
     mDrawDirtyObjects.set(State::DIRTY_OBJECT_IMAGES);
 
@@ -742,7 +740,6 @@ void Context::initializeDefaultResources()
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_ACTIVE_TEXTURES);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_IMAGES);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_SAMPLERS);
 
@@ -1130,26 +1127,14 @@ void Context::loseContext(GraphicsResetStatus current, GraphicsResetStatus other
     markContextLost(current);
 }
 
-void Context::deleteFramebuffer(FramebufferID framebufferID)
+void Context::deleteFramebuffer(FramebufferID framebuffer)
 {
-    // We are responsible for deleting the GL objects from the Framebuffer's pixel local storage.
-    std::unique_ptr<PixelLocalStorage> plsToDelete;
-
-    Framebuffer *framebuffer = mState.mFramebufferManager->getFramebuffer(framebufferID);
-    if (framebuffer)
+    if (mState.mFramebufferManager->getFramebuffer(framebuffer))
     {
-        plsToDelete = framebuffer->detachPixelLocalStorage();
-        detachFramebuffer(framebufferID);
+        detachFramebuffer(framebuffer);
     }
 
-    mState.mFramebufferManager->deleteObject(this, framebufferID);
-
-    // Delete the pixel local storage GL objects after the framebuffer, in order to avoid any
-    // potential trickyness with orphaning.
-    if (plsToDelete)
-    {
-        plsToDelete->deleteContextObjects(this);
-    }
+    mState.mFramebufferManager->deleteObject(this, framebuffer);
 }
 
 void Context::deleteFencesNV(GLsizei n, const FenceNVID *fences)
@@ -1432,6 +1417,7 @@ void Context::useProgramStages(ProgramPipelineID pipeline,
 
     ASSERT(programPipeline);
     ANGLE_CONTEXT_TRY(programPipeline->useProgramStages(this, stages, shaderProgram));
+    mState.mDirtyBits.set(State::DirtyBitType::DIRTY_BIT_PROGRAM_EXECUTABLE);
 }
 
 void Context::bindTransformFeedback(GLenum target, TransformFeedbackID transformFeedbackHandle)
@@ -1448,6 +1434,10 @@ void Context::bindProgramPipeline(ProgramPipelineID pipelineHandle)
     ProgramPipeline *pipeline = mState.mProgramPipelineManager->checkProgramPipelineAllocation(
         mImplementation.get(), pipelineHandle);
     ANGLE_CONTEXT_TRY(mState.setProgramPipelineBinding(this, pipeline));
+    if (pipeline && pipeline->isLinked())
+    {
+        ANGLE_CONTEXT_TRY(mState.onProgramPipelineExecutableChange(this));
+    }
     mStateCache.onProgramExecutableChange(this);
     mProgramPipelineObserverBinding.bind(pipeline);
 }
@@ -2261,17 +2251,6 @@ void Context::getIntegervImpl(GLenum pname, GLint *params) const
             *params = mState.mClipControlDepth;
             break;
 
-        // ANGLE_shader_pixel_local_storage
-        case GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE:
-            *params = mState.mCaps.maxPixelLocalStoragePlanes;
-            break;
-        case GL_MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE:
-            *params = mState.mCaps.maxColorAttachmentsWithActivePixelLocalStorage;
-            break;
-        case GL_MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE:
-            *params = mState.mCaps.maxCombinedDrawBuffersAndPixelLocalStoragePlanes;
-            break;
-
         default:
             ANGLE_CONTEXT_TRY(mState.getIntegerv(this, pname, params));
             break;
@@ -2356,7 +2335,7 @@ void Context::getIntegeri_v(GLenum target, GLuint index, GLint *data)
                 *data = mState.mCaps.maxComputeWorkGroupSize[index];
                 break;
             default:
-                mState.getIntegeri_v(this, target, index, data);
+                mState.getIntegeri_v(target, index, data);
         }
     }
     else
@@ -4222,22 +4201,6 @@ void Context::initCaps()
         mMemoryProgramCache = nullptr;
     }
 
-    if (mSupportedExtensions.shaderPixelLocalStorageANGLE)
-    {
-        // TODO(anglebug.com/7279): These limits are specific to shader images. They will need to be
-        // updated once we have other implementations.
-        mState.mCaps.maxPixelLocalStoragePlanes =
-            mState.mCaps.maxShaderImageUniforms[ShaderType::Fragment];
-        ANGLE_LIMIT_CAP(mState.mCaps.maxPixelLocalStoragePlanes,
-                        IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES);
-        mState.mCaps.maxColorAttachmentsWithActivePixelLocalStorage =
-            mState.mCaps.maxColorAttachments;
-        mState.mCaps.maxCombinedDrawBuffersAndPixelLocalStoragePlanes = std::min<GLint>(
-            mState.mCaps.maxPixelLocalStoragePlanes +
-                std::min(mState.mCaps.maxDrawBuffers, mState.mCaps.maxColorAttachments),
-            mState.mCaps.maxCombinedShaderOutputResources);
-    }
-
 #undef ANGLE_LIMIT_CAP
 #undef ANGLE_LOG_CAP_LIMIT
 
@@ -4449,12 +4412,11 @@ ANGLE_INLINE angle::Result Context::prepareForDispatch()
     ProgramPipeline *pipeline = mState.getProgramPipeline();
     if (!program && pipeline)
     {
+        bool goodResult = pipeline->link(this) == angle::Result::Continue;
         // Linking the PPO can't fail due to a validation error within the compute program,
         // since it successfully linked already in order to become part of the PPO in the first
         // place.
-        pipeline->resolveLink(this);
-        ANGLE_CHECK(this, pipeline->isLinked(), "Program pipeline link failed",
-                    GL_INVALID_OPERATION);
+        ANGLE_CHECK(this, goodResult, "Program pipeline link failed", GL_INVALID_OPERATION);
     }
 
     ANGLE_TRY(syncDirtyObjects(mComputeDirtyObjects, Command::Dispatch));
@@ -9113,77 +9075,6 @@ void Context::importSemaphoreZirconHandle(SemaphoreID semaphore,
     ANGLE_CONTEXT_TRY(semaphoreObject->importZirconHandle(this, handleType, handle));
 }
 
-void Context::framebufferMemorylessPixelLocalStorage(GLint plane, GLenum internalformat)
-{
-    Framebuffer *framebuffer = mState.getDrawFramebuffer();
-    ASSERT(framebuffer);
-    PixelLocalStorage &pls = framebuffer->getPixelLocalStorage(this);
-
-    if (internalformat == GL_NONE)
-    {
-        pls.deinitialize(this, plane);
-    }
-    else
-    {
-        pls.setMemoryless(this, plane, internalformat);
-    }
-}
-
-void Context::framebufferTexturePixelLocalStorage(GLint plane,
-                                                  TextureID backingtexture,
-                                                  GLint level,
-                                                  GLint layer)
-{
-    Framebuffer *framebuffer = mState.getDrawFramebuffer();
-    ASSERT(framebuffer);
-    PixelLocalStorage &pls = framebuffer->getPixelLocalStorage(this);
-
-    if (backingtexture.value == 0)
-    {
-        pls.deinitialize(this, plane);
-    }
-    else
-    {
-        Texture *tex = getTexture(backingtexture);
-        ASSERT(tex);  // Validation guarantees this.
-        pls.setTextureBacked(this, plane, tex, level, layer);
-    }
-}
-
-void Context::beginPixelLocalStorage(GLsizei planes, const GLenum loadops[], const void *cleardata)
-{
-    Framebuffer *framebuffer = mState.getDrawFramebuffer();
-    ASSERT(framebuffer);
-    PixelLocalStorage &pls = framebuffer->getPixelLocalStorage(this);
-
-    pls.begin(this, planes, loadops, cleardata);
-    mState.setPixelLocalStorageActive(true);
-}
-
-void Context::endPixelLocalStorage()
-{
-    Framebuffer *framebuffer = mState.getDrawFramebuffer();
-    ASSERT(framebuffer);
-    PixelLocalStorage &pls = framebuffer->getPixelLocalStorage(this);
-
-    pls.end(this);
-    mState.setPixelLocalStorageActive(false);
-}
-
-void Context::pixelLocalStorageBarrier()
-{
-    if (getExtensions().shaderPixelLocalStorageCoherentANGLE)
-    {
-        return;
-    }
-
-    Framebuffer *framebuffer = mState.getDrawFramebuffer();
-    ASSERT(framebuffer);
-    PixelLocalStorage &pls = framebuffer->getPixelLocalStorage(this);
-
-    pls.barrier(this);
-}
-
 void Context::eGLImageTargetTexStorage(GLenum target, GLeglImageOES image, const GLint *attrib_list)
 {
     Texture *texture        = getTextureByType(FromGLenum<TextureType>(target));
@@ -9278,20 +9169,6 @@ bool Context::getIndexedQueryParameterInfo(GLenum target,
                 *numParams = 4;
                 return true;
             }
-        }
-    }
-
-    if (mSupportedExtensions.shaderPixelLocalStorageANGLE)
-    {
-        switch (target)
-        {
-            case GL_PIXEL_LOCAL_FORMAT_ANGLE:
-            case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
-            case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
-            case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
-                *type      = GL_INT;
-                *numParams = 1;
-                return true;
         }
     }
 
@@ -9664,11 +9541,6 @@ void Context::getRenderbufferImage(GLenum target, GLenum format, GLenum type, vo
     Buffer *packBuffer         = mState.getTargetBuffer(BufferBinding::PixelPack);
     ANGLE_CONTEXT_TRY(renderbuffer->getRenderbufferImage(this, mState.getPackState(), packBuffer,
                                                          format, type, pixels));
-}
-
-void Context::logicOpANGLE(LogicalOperation opcodePacked)
-{
-    mState.setLogicOp(opcodePacked);
 }
 
 egl::Error Context::releaseHighPowerGPU()

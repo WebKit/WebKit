@@ -443,9 +443,6 @@
     "glFramebufferTextureMultiview": {
         "texture": "TextureID"
     },
-    "glFramebufferTexturePixelLocalStorage": {
-        "backingtexture": "TextureID"
-    },
     "glGenBuffers": {
         "buffers": "BufferID *"
     },
@@ -1023,9 +1020,6 @@
         "program": "ShaderProgramID"
     },
     "glLogicOp": {
-        "opcode": "LogicalOperation"
-    },
-    "glLogicOpANGLE": {
         "opcode": "LogicalOperation"
     },
     "glLoseContext": {

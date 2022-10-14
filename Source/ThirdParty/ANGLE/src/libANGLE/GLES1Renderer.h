@@ -30,22 +30,21 @@ class ShaderProgramManager;
 
 enum class GLES1StateEnables : uint64_t
 {
-    Lighting                       = 0,
-    Fog                            = 1,
-    ClipPlanes                     = 2,
-    DrawTexture                    = 3,
-    PointRasterization             = 4,
-    PointSprite                    = 5,
-    RescaleNormal                  = 6,
-    Normalize                      = 7,
-    AlphaTest                      = 8,
-    ShadeModelFlat                 = 9,
-    ColorMaterial                  = 10,
-    LightModelTwoSided             = 11,
-    LogicOpThroughFramebufferFetch = 12,
+    Lighting           = 0,
+    Fog                = 1,
+    ClipPlanes         = 2,
+    DrawTexture        = 3,
+    PointRasterization = 4,
+    PointSprite        = 5,
+    RescaleNormal      = 6,
+    Normalize          = 7,
+    AlphaTest          = 8,
+    ShadeModelFlat     = 9,
+    ColorMaterial      = 10,
+    LightModelTwoSided = 11,
 
-    InvalidEnum = 13,
-    EnumCount   = 13,
+    InvalidEnum = 12,
+    EnumCount   = 12,
 };
 
 constexpr int kClipPlaneCount = 6;
@@ -164,7 +163,6 @@ class GLES1Renderer final : angle::NonCopyable
                       Program *programObject,
                       UniformLocation location,
                       GLint value);
-    void setUniform1ui(Program *programObject, UniformLocation location, GLuint value);
     void setUniform1iv(Context *context,
                        Program *programObject,
                        UniformLocation location,
@@ -274,9 +272,6 @@ class GLES1Renderer final : angle::NonCopyable
 
         // Clip planes
         UniformLocation clipPlanesLoc;
-
-        // Logic op
-        UniformLocation logicOpLoc;
 
         // Point rasterization
         UniformLocation pointSizeMinLoc;

@@ -316,8 +316,7 @@ FramebufferVk::FramebufferVk(RendererVk *renderer, const gl::FramebufferState &s
     : FramebufferImpl(state),
       mBackbuffer(nullptr),
       mActiveColorComponentMasksForClear(0),
-      mReadOnlyDepthFeedbackLoopMode(false),
-      mIsCurrentFramebufferCached(false)
+      mReadOnlyDepthFeedbackLoopMode(false)
 {
     if (mState.isDefault())
     {
@@ -331,8 +330,7 @@ FramebufferVk::~FramebufferVk() = default;
 
 void FramebufferVk::destroy(const gl::Context *context)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    releaseCurrentFramebuffer(contextVk);
+    mCurrentFramebuffer.release();
 }
 
 void FramebufferVk::insertCache(ContextVk *contextVk,
@@ -1380,6 +1378,7 @@ void FramebufferVk::updateColorResolveAttachment(
     vk::ImageOrBufferViewSubresourceSerial resolveImageViewSerial)
 {
     mCurrentFramebufferDesc.updateColorResolve(colorIndexGL, resolveImageViewSerial);
+    mCurrentFramebuffer.release();
     mRenderPassDesc.packColorResolveAttachment(colorIndexGL);
 }
 
@@ -1387,19 +1386,8 @@ void FramebufferVk::removeColorResolveAttachment(uint32_t colorIndexGL)
 {
     mCurrentFramebufferDesc.updateColorResolve(colorIndexGL,
                                                vk::kInvalidImageOrBufferViewSubresourceSerial);
+    mCurrentFramebuffer.release();
     mRenderPassDesc.removeColorResolveAttachment(colorIndexGL);
-}
-
-void FramebufferVk::releaseCurrentFramebuffer(ContextVk *contextVk)
-{
-    if (mIsCurrentFramebufferCached)
-    {
-        mCurrentFramebuffer.release();
-    }
-    else
-    {
-        contextVk->addGarbage(&mCurrentFramebuffer);
-    }
 }
 
 void FramebufferVk::updateLayerCount()
@@ -1462,7 +1450,6 @@ angle::Result FramebufferVk::resolveColorWithSubpass(ContextVk *contextVk,
         mCurrentFramebufferDesc.getColorImageViewSerial(drawColorIndexGL);
     ASSERT(resolveImageViewSerial.viewSerial.valid());
     srcFramebufferVk->updateColorResolveAttachment(readColorIndexGL, resolveImageViewSerial);
-    srcFramebufferVk->releaseCurrentFramebuffer(contextVk);
 
     // Since the source FBO was updated with a resolve attachment it didn't have when the render
     // pass was started, we need to:
@@ -1489,7 +1476,6 @@ angle::Result FramebufferVk::resolveColorWithSubpass(ContextVk *contextVk,
 
     // Remove the resolve attachment from the source framebuffer.
     srcFramebufferVk->removeColorResolveAttachment(readColorIndexGL);
-    srcFramebufferVk->releaseCurrentFramebuffer(contextVk);
 
     return angle::Result::Continue;
 }
@@ -1931,7 +1917,7 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS:
                 // Invalidate the cache. If we have performance critical code hitting this path we
                 // can add related data (such as width/height) to the cache
-                releaseCurrentFramebuffer(contextVk);
+                mCurrentFramebuffer.release();
                 break;
             case gl::Framebuffer::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE:
                 shouldUpdateSrgbWriteControlMode = true;
@@ -2034,7 +2020,7 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
     updateRenderPassDesc(contextVk);
 
     // Deactivate Framebuffer
-    releaseCurrentFramebuffer(contextVk);
+    mCurrentFramebuffer.release();
 
     // Notify the ContextVk to update the pipeline desc.
     return contextVk->onFramebufferChange(this, command);
@@ -2136,8 +2122,7 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
                                                               mCurrentFramebuffer))
     {
         ASSERT(mCurrentFramebuffer.valid());
-        *framebufferOut             = &mCurrentFramebuffer;
-        mIsCurrentFramebufferCached = true;
+        *framebufferOut = &mCurrentFramebuffer;
         return angle::Result::Continue;
     }
 
@@ -2240,26 +2225,13 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
     // Check that our description matches our attachments. Can catch implementation bugs.
     ASSERT(static_cast<uint32_t>(attachments.size()) == mCurrentFramebufferDesc.attachmentCount());
 
-    // Since the cache key FramebufferDesc can't distinguish between
-    // two FramebufferHelper, if they both have 0 attachment, but their sizes
-    // are different, we could have wrong cache hit(new framebufferHelper has
-    // a bigger height and width, but get cache hit with framebufferHelper of
-    // lower height and width). As a workaround, do not cache the
-    // FramebufferHelper if it doesn't have any attachment.
-    if (attachments.size() > 0)
-    {
-        insertCache(contextVk, mCurrentFramebufferDesc, std::move(newFramebuffer));
-        bool result = contextVk->getShareGroup()->getFramebufferCache().get(
-            contextVk, mCurrentFramebufferDesc, mCurrentFramebuffer);
-        ASSERT(result);
-        mIsCurrentFramebufferCached = true;
-    }
-    else
-    {
-        mCurrentFramebuffer         = std::move(newFramebuffer.getFramebuffer());
-        mIsCurrentFramebufferCached = false;
-    }
+    insertCache(contextVk, mCurrentFramebufferDesc, std::move(newFramebuffer));
+
+    bool result = contextVk->getShareGroup()->getFramebufferCache().get(
+        contextVk, mCurrentFramebufferDesc, mCurrentFramebuffer);
+    ASSERT(result);
     ASSERT(mCurrentFramebuffer.valid());
+
     *framebufferOut = &mCurrentFramebuffer;
     return angle::Result::Continue;
 }
@@ -2812,7 +2784,7 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
     if (unresolveChanged)
     {
         // Make sure framebuffer is recreated.
-        releaseCurrentFramebuffer(contextVk);
+        mCurrentFramebuffer.release();
 
         mCurrentFramebufferDesc.updateUnresolveMask(MakeUnresolveAttachmentMask(mRenderPassDesc));
     }
@@ -3013,7 +2985,7 @@ void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasF
     }
 
     // Make sure framebuffer is recreated.
-    releaseCurrentFramebuffer(contextVk);
+    mCurrentFramebuffer.release();
     mCurrentFramebufferDesc.setFramebufferFetchMode(hasFramebufferFetch);
 
     mRenderPassDesc.setFramebufferFetchMode(hasFramebufferFetch);
@@ -3023,7 +2995,7 @@ void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasF
     if (contextVk->getFeatures().permanentlySwitchToFramebufferFetchMode.enabled)
     {
         ASSERT(hasFramebufferFetch);
-        releaseCurrentFramebuffer(contextVk);
+        mCurrentFramebuffer.release();
     }
 }
 }  // namespace rx

@@ -249,7 +249,6 @@ class WrappedObject
     bool valid() const { return (mMetalObject != nil); }
 
     T get() const { return mMetalObject; }
-    T leakObject() { return std::exchange(mMetalObject, nullptr); }
     inline void reset() { release(); }
 
     operator T() const { return get(); }

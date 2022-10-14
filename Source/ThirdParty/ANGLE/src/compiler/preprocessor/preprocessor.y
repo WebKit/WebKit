@@ -84,8 +84,8 @@ struct Context
 }  // namespace
 %}
 
-%define api.pure
-%define api.prefix {pp}
+%pure-parser
+%name-prefix "pp"
 %parse-param {Context *context}
 %lex-param {Context *context}
 

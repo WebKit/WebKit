@@ -131,11 +131,6 @@ bool DisplayImpl::isWayland() const
     return false;
 }
 
-bool DisplayImpl::isGBM() const
-{
-    return false;
-}
-
 bool DisplayImpl::supportsDmaBufFormat(EGLint format) const
 {
     UNREACHABLE();

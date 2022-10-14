@@ -17,7 +17,6 @@
 #include "libANGLE/Display.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/FramebufferAttachment.h"
-#include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/Renderbuffer.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/Texture.h"
@@ -845,11 +844,6 @@ void Framebuffer::onDestroy(const Context *context)
     mState.mWebGLDepthAttachment.detach(context, mState.mFramebufferSerial);
     mState.mWebGLStencilAttachment.detach(context, mState.mFramebufferSerial);
     mState.mWebGLDepthStencilAttachment.detach(context, mState.mFramebufferSerial);
-
-    if (mPixelLocalStorage)
-    {
-        mPixelLocalStorage->onFramebufferDestroyed(context);
-    }
 
     mImpl->destroy(context);
 }
@@ -2239,7 +2233,7 @@ FramebufferAttachment *Framebuffer::getAttachmentFromSubjectIndex(angle::Subject
 bool Framebuffer::formsRenderingFeedbackLoopWith(const Context *context) const
 {
     const State &glState                = context->getState();
-    const ProgramExecutable *executable = glState.getLinkedProgramExecutable(context);
+    const ProgramExecutable *executable = glState.getProgramExecutable();
 
     // In some error cases there may be no bound program or executable.
     if (!executable)
@@ -2709,19 +2703,5 @@ bool Framebuffer::partialBufferClearNeedsInit(const Context *context, GLenum buf
             UNREACHABLE();
             return false;
     }
-}
-
-PixelLocalStorage &Framebuffer::getPixelLocalStorage(const Context *context)
-{
-    if (!mPixelLocalStorage)
-    {
-        mPixelLocalStorage = PixelLocalStorage::Make(context);
-    }
-    return *mPixelLocalStorage.get();
-}
-
-std::unique_ptr<PixelLocalStorage> Framebuffer::detachPixelLocalStorage()
-{
-    return std::move(mPixelLocalStorage);
 }
 }  // namespace gl

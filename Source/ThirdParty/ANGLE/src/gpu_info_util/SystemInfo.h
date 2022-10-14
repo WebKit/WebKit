@@ -21,7 +21,6 @@ using VendorID       = uint32_t;
 using DeviceID       = uint32_t;
 using RevisionID     = uint32_t;
 using SystemDeviceID = uint64_t;
-using DriverID       = uint32_t;
 
 struct VersionInfo
 {
@@ -47,10 +46,8 @@ struct GPUDeviceInfo
     std::string driverVersion;
     std::string driverDate;
 
-    // Fields only available via GetSystemInfoVulkan:
+    // Only available via GetSystemInfoVulkan currently.
     VersionInfo detailedDriverVersion;
-    DriverID driverId         = 0;
-    uint32_t driverApiVersion = 0;
 };
 
 struct SystemInfo
@@ -117,9 +114,6 @@ constexpr VendorID kVendorID_Microsoft = 0x1414;
 constexpr VendorID kVendorID_Vivante     = 0x10001;
 constexpr VendorID kVendorID_VeriSilicon = 0x10002;
 constexpr VendorID kVendorID_Kazan       = 0x10003;
-constexpr VendorID kVendorID_CodePlay    = 0x10004;
-constexpr VendorID kVendorID_Mesa        = 0x10005;
-constexpr VendorID kVendorID_PoCL        = 0x10006;
 
 // Known device IDs
 constexpr DeviceID kDeviceID_Swiftshader  = 0xC0DE;

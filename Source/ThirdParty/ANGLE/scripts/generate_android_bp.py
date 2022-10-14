@@ -651,18 +651,10 @@ def main():
     blueprint_targets.append((
         'filegroup',
         {
-            'name':
-                'ANGLE_srcs',
-            # We only need EmptyMainActivity.java since we just need to be able to reply to the intent
+            'name': 'ANGLE_srcs',
+            # Only add EmptyMainActivity.java since we just need to be able to reply to the intent
             # android.app.action.ANGLE_FOR_ANDROID to indicate ANGLE is present on the device.
-            # However, the internal branch currently uses these files with patches in that branch.
-            'srcs': [
-                'src/android_system_settings/src/com/android/angle/MainActivity.java',
-                'src/android_system_settings/src/com/android/angle/common/GlobalSettings.java',
-                'src/android_system_settings/src/com/android/angle/common/MainFragment.java',
-                'src/android_system_settings/src/com/android/angle/common/Receiver.java',
-                'src/android_system_settings/src/com/android/angle/common/SearchProvider.java',
-            ],
+            'srcs': ['src/android_system_settings/src/com/android/angle/EmptyMainActivity.java'],
         }))
     blueprint_targets.append((
         'java_defaults',
@@ -678,8 +670,8 @@ def main():
                 for target in root_targets
             ],
             'aaptflags': [
-                '-0 .json',  # Don't compress *.json files
-                "--extra-packages com.android.angle.common",
+                # Don't compress *.json files
+                '-0 .json',
             ],
             'srcs': [':ANGLE_srcs'],
             'plugins': ['java_api_finder',],
@@ -688,27 +680,10 @@ def main():
             'owner': 'google',
         }))
 
-    blueprint_targets.append(('android_library', {
-        'name': 'ANGLE_library',
-        'sdk_version': 'system_current',
-        'min_sdk_version': sdk_version,
-        'resource_dirs': ['src/android_system_settings/res',],
-        'asset_dirs': ['src/android_system_settings/assets',],
-        'aaptflags': ['-0 .json',],
-        'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
-        'static_libs': ['androidx.preference_preference',],
-    }))
-
     blueprint_targets.append(('android_app', {
         'name': 'ANGLE',
         'defaults': ['ANGLE_java_defaults'],
-        'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
-        'static_libs': ['ANGLE_library'],
-        'optimize': {
-            'enabled': True,
-            'shrink': True,
-            'proguard_compatibility': False,
-        },
+        'manifest': 'android/AndroidManifest.xml',
         'asset_dirs': ['src/android_system_settings/assets',],
     }))
 

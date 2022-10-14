@@ -99,10 +99,15 @@ static inline gl::PrimitiveMode getNewPrimitiveMode(const uint fixIndexBufferKey
             return gl::PrimitiveMode::InvalidEnum;
     }
 }
-ProvokingVertexHelper::ProvokingVertexHelper(ContextMtl *context)
-    : mIndexBuffers(false), mPipelineCache(this)
+ProvokingVertexHelper::ProvokingVertexHelper(ContextMtl *context,
+                                             mtl::CommandQueue *commandQueue,
+                                             DisplayMtl *display)
+    : mCommandBuffer(commandQueue),
+      mIndexBuffers(false),
+      mPipelineCache(this),
+      mCurrentEncoder(&mCommandBuffer)
 {
-    id<MTLLibrary> mtlLib   = context->getDisplay()->getDefaultShadersLib();
+    id<MTLLibrary> mtlLib   = display->getDefaultShadersLib();
     mProvokingVertexLibrary = mtlLib;
     mIndexBuffers.initialize(context, kInitialIndexBufferSize, mtl::kIndexBufferOffsetAlignment, 0);
 }
@@ -113,9 +118,35 @@ void ProvokingVertexHelper::onDestroy(ContextMtl *context)
     mPipelineCache.clear();
 }
 
-void ProvokingVertexHelper::releaseInFlightBuffers(ContextMtl *contextMtl)
+void ProvokingVertexHelper::commitPreconditionCommandBuffer(ContextMtl *contextMtl)
 {
+    if (mCurrentEncoder.valid())
+    {
+        mCurrentEncoder.endEncoding();
+    }
+    mCommandBuffer.commit(mtl::NoWait);
+
     mIndexBuffers.releaseInFlightBuffers(contextMtl);
+}
+
+mtl::ComputeCommandEncoder *ProvokingVertexHelper::getComputeCommandEncoder()
+{
+    if (mCurrentEncoder.valid())
+    {
+        return &mCurrentEncoder;
+    }
+
+    ensureCommandBufferReady();
+    return &mCurrentEncoder.restart();
+}
+
+void ProvokingVertexHelper::ensureCommandBufferReady()
+{
+    if (!mCommandBuffer.ready())
+    {
+        mCommandBuffer.restart();
+    }
+    ASSERT(mCommandBuffer.ready());
 }
 
 static uint buildIndexBufferKey(const mtl::ProvokingVertexComputePipelineDesc &pipelineDesc)
@@ -197,6 +228,7 @@ mtl::BufferRef ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *contex
     // Get specialized program
     // Upload index buffer
     // dispatch per-primitive?
+    ensureCommandBufferReady();
     mtl::ProvokingVertexComputePipelineDesc pipelineDesc;
     pipelineDesc.elementType             = (uint8_t)elementsType;
     pipelineDesc.primitiveMode           = primitiveMode;
@@ -216,8 +248,7 @@ mtl::BufferRef ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *contex
     uint indexCountEncoded     = (uint)indexCount;
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
-    mtl::ComputeCommandEncoder *encoder =
-        context->getComputeCommandEncoderWithoutEndingRenderEncoder();
+    mtl::ComputeCommandEncoder *encoder = getComputeCommandEncoder();
     prepareCommandEncoderForDescriptor(context, encoder, pipelineDesc);
     encoder->setBuffer(indexBuffer, static_cast<uint32_t>(indexOffset), 0);
     encoder->setBufferForWrite(
@@ -246,6 +277,7 @@ mtl::BufferRef ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     // Get specialized program
     // Upload index buffer
     // dispatch per-primitive?
+    ensureCommandBufferReady();
     mtl::ProvokingVertexComputePipelineDesc pipelineDesc;
     pipelineDesc.elementType             = (uint8_t)elementsType;
     pipelineDesc.primitiveMode           = primitiveMode;
@@ -267,8 +299,7 @@ mtl::BufferRef ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     uint indexOffsetEncoded    = static_cast<uint>(newIndexOffset);
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
-    mtl::ComputeCommandEncoder *encoder =
-        context->getComputeCommandEncoderWithoutEndingRenderEncoder();
+    mtl::ComputeCommandEncoder *encoder = getComputeCommandEncoder();
     prepareCommandEncoderForDescriptor(context, encoder, pipelineDesc);
     encoder->setBufferForWrite(newBuffer, indexOffsetEncoded, 1);
     encoder->setData(indexCountEncoded, 2);

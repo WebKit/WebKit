@@ -90,7 +90,6 @@ enum class CommandID : uint16_t
     SetFragmentShadingRate,
     SetFrontFace,
     SetLineWidth,
-    SetLogicOp,
     SetPrimitiveRestartEnable,
     SetRasterizerDiscardEnable,
     SetScissor,
@@ -500,12 +499,6 @@ struct SetLineWidthParams
 };
 VERIFY_4_BYTE_ALIGNMENT(SetLineWidthParams)
 
-struct SetLogicOpParams
-{
-    VkLogicOp logicOp;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetLogicOpParams)
-
 struct SetPrimitiveRestartEnableParams
 {
     VkBool32 primitiveRestartEnable;
@@ -829,7 +822,6 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                                 VkFragmentShadingRateCombinerOpKHR ops[2]);
     void setFrontFace(VkFrontFace frontFace);
     void setLineWidth(float lineWidth);
-    void setLogicOp(VkLogicOp logicOp);
     void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
@@ -1105,10 +1097,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindDescriptorSets(const PipelineLayou
     paramStruct->dynamicOffsetCount = dynamicOffsetCount;
     // Copy variable sized data
     writePtr = storePointerParameter(writePtr, descriptorSets, descSize);
-    if (offsetSize)
-    {
-        storePointerParameter(writePtr, dynamicOffsets, offsetSize);
-    }
+    storePointerParameter(writePtr, dynamicOffsets, offsetSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindGraphicsPipeline(const Pipeline &pipeline)
@@ -1577,18 +1566,9 @@ ANGLE_INLINE void SecondaryCommandBuffer::pipelineBarrier(
     paramStruct->bufferMemoryBarrierCount = bufferMemoryBarrierCount;
     paramStruct->imageMemoryBarrierCount  = imageMemoryBarrierCount;
     // Copy variable sized data
-    if (memBarrierSize)
-    {
-        writePtr = storePointerParameter(writePtr, memoryBarriers, memBarrierSize);
-    }
-    if (buffBarrierSize)
-    {
-        writePtr = storePointerParameter(writePtr, bufferMemoryBarriers, buffBarrierSize);
-    }
-    if (imgBarrierSize)
-    {
-        storePointerParameter(writePtr, imageMemoryBarriers, imgBarrierSize);
-    }
+    writePtr = storePointerParameter(writePtr, memoryBarriers, memBarrierSize);
+    writePtr = storePointerParameter(writePtr, bufferMemoryBarriers, buffBarrierSize);
+    storePointerParameter(writePtr, imageMemoryBarriers, imgBarrierSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::pushConstants(const PipelineLayout &layout,
@@ -1735,12 +1715,6 @@ ANGLE_INLINE void SecondaryCommandBuffer::setLineWidth(float lineWidth)
 {
     SetLineWidthParams *paramStruct = initCommand<SetLineWidthParams>(CommandID::SetLineWidth);
     paramStruct->lineWidth          = lineWidth;
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::setLogicOp(VkLogicOp logicOp)
-{
-    SetLogicOpParams *paramStruct = initCommand<SetLogicOpParams>(CommandID::SetLogicOp);
-    paramStruct->logicOp          = logicOp;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable)

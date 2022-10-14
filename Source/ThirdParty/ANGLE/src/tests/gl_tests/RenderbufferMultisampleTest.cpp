@@ -254,7 +254,5 @@ TEST_P(RenderbufferMultisampleTestES31, ColorBurnBlend)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RenderbufferMultisampleTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(RenderbufferMultisampleTest);
-
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RenderbufferMultisampleTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(RenderbufferMultisampleTestES31);
 }  // namespace

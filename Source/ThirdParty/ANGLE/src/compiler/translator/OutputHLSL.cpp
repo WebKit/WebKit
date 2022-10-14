@@ -378,18 +378,11 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
 
     if (mOutputType == SH_HLSL_3_0_OUTPUT)
     {
-        // Fragment shaders need dx_DepthRange, dx_ViewCoords, dx_DepthFront,
-        // and dx_FragCoordOffset.
+        // Fragment shaders need dx_DepthRange, dx_ViewCoords and dx_DepthFront.
         // Vertex shaders need a slightly different set: dx_DepthRange, dx_ViewCoords and
         // dx_ViewAdjust.
-        if (mShaderType == GL_VERTEX_SHADER)
-        {
-            mResourcesHLSL->reserveUniformRegisters(3);
-        }
-        else
-        {
-            mResourcesHLSL->reserveUniformRegisters(4);
-        }
+        // In both cases total 3 uniform registers need to be reserved.
+        mResourcesHLSL->reserveUniformRegisters(3);
     }
 
     // Reserve registers for the default uniform block and driver constants
@@ -839,7 +832,6 @@ void OutputHLSL::header(TInfoSinkBase &out,
             if (mUsesFragCoord)
             {
                 out << "    float4 dx_ViewCoords : packoffset(c1);\n";
-                out << "    float2 dx_FragCoordOffset : packoffset(c3);\n";
             }
 
             if (mUsesFragCoord || mUsesFrontFacing)
@@ -851,19 +843,19 @@ void OutputHLSL::header(TInfoSinkBase &out,
             {
                 // dx_ViewScale is only used in the fragment shader to correct
                 // the value for glFragCoord if necessary
-                out << "    float2 dx_ViewScale : packoffset(c3.z);\n";
+                out << "    float2 dx_ViewScale : packoffset(c3);\n";
             }
 
             if (mHasMultiviewExtensionEnabled)
             {
                 // We have to add a value which we can use to keep track of which multi-view code
                 // path is to be selected in the GS.
-                out << "    float multiviewSelectViewportIndex : packoffset(c4.x);\n";
+                out << "    float multiviewSelectViewportIndex : packoffset(c3.z);\n";
             }
 
             if (mOutputType == SH_HLSL_4_1_OUTPUT)
             {
-                unsigned int registerIndex = 5;
+                unsigned int registerIndex = 4;
                 mResourcesHLSL->samplerMetadataUniforms(out, registerIndex);
                 // Sampler metadata struct must be two 4-vec, 32 bytes.
                 registerIndex += mResourcesHLSL->getSamplerCount() * 2;
@@ -892,7 +884,6 @@ void OutputHLSL::header(TInfoSinkBase &out,
             if (mUsesFragCoord || mUsesFrontFacing)
             {
                 out << "uniform float3 dx_DepthFront : register(c2);\n";
-                out << "uniform float2 dx_FragCoordOffset : register(c3);\n";
             }
         }
 

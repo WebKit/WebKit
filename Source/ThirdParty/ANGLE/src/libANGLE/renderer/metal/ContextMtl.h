@@ -207,7 +207,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     const gl::TextureCapsMap &getNativeTextureCaps() const override;
     const gl::Extensions &getNativeExtensions() const override;
     const gl::Limitations &getNativeLimitations() const override;
-    ShPixelLocalStorageType getNativePixelLocalStorageType() const override;
 
     const ProgramMtl *getProgram() const { return mProgram; }
 
@@ -369,14 +368,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Will end current command encoder and start new blit command encoder. Unless a blit comamnd
     // encoder is already started.
     mtl::BlitCommandEncoder *getBlitCommandEncoder();
+
     // Will end current command encoder and start new compute command encoder. Unless a compute
     // command encoder is already started.
     mtl::ComputeCommandEncoder *getComputeCommandEncoder();
-
-    // Because this backend uses an intermediate representation for the rendering
-    // commands, a render encoder can coexist with blit/compute command encoders.
-    mtl::BlitCommandEncoder *getBlitCommandEncoderWithoutEndingRenderEncoder();
-    mtl::ComputeCommandEncoder *getComputeCommandEncoderWithoutEndingRenderEncoder();
 
     // Get the provoking vertex command encoder.
     mtl::ComputeCommandEncoder *getIndexPreprocessingCommandEncoder();
@@ -393,7 +388,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
   private:
     void ensureCommandBufferReady();
-    void endBlitAndComputeEncoding();
     angle::Result ensureIncompleteTexturesCreated(const gl::Context *context);
     angle::Result setupDraw(const gl::Context *context,
                             gl::PrimitiveMode mode,

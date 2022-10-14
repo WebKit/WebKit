@@ -15,7 +15,6 @@
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
-#include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/Renderbuffer.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/VertexArray.h"
@@ -314,7 +313,7 @@ static bool ValidateTexImageFormatCombination(const Context *context,
             }
         }
 
-        if (!ValidES3Type(type) || (type == GL_HALF_FLOAT_OES && context->isWebGL()))
+        if (!ValidES3Type(type))
         {
             context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidType);
             return false;
@@ -3088,8 +3087,7 @@ bool ValidateBeginTransformFeedback(const Context *context,
         }
     }
 
-    const ProgramExecutable *programExecutable =
-        context->getState().getLinkedProgramExecutable(context);
+    const ProgramExecutable *programExecutable = context->getState().getProgramExecutable();
     if (!programExecutable)
     {
         context->validationError(entryPoint, GL_INVALID_OPERATION, kProgramNotBound);
@@ -3355,35 +3353,6 @@ bool ValidateIndexedStateQuery(const Context *context,
                 return false;
             }
             break;
-        // GL_ANGLE_shader_pixel_local_storage
-        case GL_PIXEL_LOCAL_FORMAT_ANGLE:
-        case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
-        case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
-        case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
-        {
-            // Check that the pixel local storage extension is enabled at all.
-            if (!context->getExtensions().shaderPixelLocalStorageANGLE)
-            {
-                context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSExtensionNotEnabled);
-                return false;
-            }
-            // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0
-            // is bound to DRAW_FRAMEBUFFER.
-            Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
-            if (framebuffer->id().value == 0)
-            {
-                context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
-                                         kPLSDefaultFramebufferBound);
-                return false;
-            }
-            // INVALID_VALUE is generated if <index> >= MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
-            if (index >= context->getCaps().maxPixelLocalStoragePlanes)
-            {
-                context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSPlaneOutOfRange);
-                return false;
-            }
-            break;
-        }
         default:
             context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
             return false;
@@ -4439,8 +4408,8 @@ bool ValidateResumeTransformFeedback(const Context *context, angle::EntryPoint e
         return false;
     }
 
-    if (!ValidateProgramExecutableXFBBuffersPresent(
-            context, context->getState().getLinkedProgramExecutable(context)))
+    if (!ValidateProgramExecutableXFBBuffersPresent(context,
+                                                    context->getState().getProgramExecutable()))
     {
         context->validationError(entryPoint, GL_INVALID_OPERATION, kTransformFeedbackBufferMissing);
         return false;

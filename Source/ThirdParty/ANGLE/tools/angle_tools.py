@@ -33,9 +33,7 @@ def get_exe_name(file_name, windows_extension):
 
 
 def upload_to_google_storage(bucket, files):
-    file_dir = os.path.dirname(os.path.realpath(__file__))
-    upload_script = os.path.join(file_dir, '..', 'third_party', 'depot_tools',
-                                 'upload_to_google_storage.py')
+    upload_script = find_file_in_path('upload_to_google_storage.py')
     upload_args = ['python', upload_script, '-b', bucket] + files
     return subprocess.call(upload_args) == 0
 

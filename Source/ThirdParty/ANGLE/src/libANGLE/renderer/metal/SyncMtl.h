@@ -18,8 +18,6 @@
 #include "libANGLE/renderer/SyncImpl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 
-#include "common/Optional.h"
-
 namespace egl
 {
 class AttributeMap;
@@ -44,15 +42,9 @@ class Sync
 
     void onDestroy();
 
-    angle::Result initialize(ContextMtl *contextMtl,
-                             id<MTLSharedEvent> sharedEvent,
-                             Optional<uint64_t> signalValue);
+    angle::Result initialize(ContextMtl *contextMtl);
 
-    angle::Result set(ContextMtl *contextMtl,
-                      GLenum condition,
-                      GLbitfield flags,
-                      id<MTLSharedEvent> sharedEvent,
-                      Optional<uint64_t> signalValue);
+    angle::Result set(ContextMtl *contextMtl, GLenum condition, GLbitfield flags);
     angle::Result clientWait(ContextMtl *contextMtl,
                              bool flushCommands,
                              uint64_t timeout,
@@ -60,11 +52,9 @@ class Sync
     void serverWait(ContextMtl *contextMtl);
     angle::Result getStatus(bool *signaled);
 
-    void *copySharedEvent() const;
-
   private:
     SharedEventRef mMetalSharedEvent;
-    uint64_t mSignalValue = 0;
+    uint64_t mSetCounter = 0;
 
     std::shared_ptr<std::condition_variable> mCv;
     std::shared_ptr<std::mutex> mLock;
@@ -98,12 +88,6 @@ class Sync
     {
         UNREACHABLE();
         return angle::Result::Stop;
-    }
-
-    void *copySharedEvent() const
-    {
-        UNREACHABLE();
-        return nullptr;
     }
 };
 #endif  // #if defined(__IPHONE_12_0) || defined(__MAC_10_14)
@@ -166,14 +150,10 @@ class EGLSyncMtl final : public EGLSyncImpl
                           EGLint flags) override;
     egl::Error getStatus(const egl::Display *display, EGLint *outStatus) override;
 
-    egl::Error copyMetalSharedEventANGLE(const egl::Display *display, void **result) const override;
     egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *result) const override;
 
   private:
     mtl::Sync mSync;
-    id<MTLSharedEvent> mSharedEvent;
-    Optional<uint64_t> mSignalValue;
-    EGLenum mType;
 };
 
 }  // namespace rx

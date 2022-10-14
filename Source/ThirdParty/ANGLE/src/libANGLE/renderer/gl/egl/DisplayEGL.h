@@ -106,14 +106,6 @@ class DisplayEGL : public DisplayGL
 
     const FunctionsEGL *getFunctionsEGL() const;
 
-    bool supportsDmaBufFormat(EGLint format) const override;
-    egl::Error queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EGLint *numFormats) override;
-    egl::Error queryDmaBufModifiers(EGLint format,
-                                    EGLint maxModifiers,
-                                    EGLuint64KHR *modifiers,
-                                    EGLBoolean *externalOnly,
-                                    EGLint *numModifiers) override;
-
   protected:
     virtual EGLint fixSurfaceType(EGLint surfaceType) const;
 
@@ -173,10 +165,6 @@ class DisplayEGL : public DisplayGL
     bool mSupportsNoConfigContexts = false;
 
     EGLSurface mMockPbuffer = EGL_NO_SURFACE;
-
-    // Supported DRM formats
-    std::vector<EGLint> mDrmFormats;
-    bool mDrmFormatsInitialized = false;
 };
 
 }  // namespace rx

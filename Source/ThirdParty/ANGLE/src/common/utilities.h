@@ -210,8 +210,6 @@ const char *GetGenericErrorMessage(GLenum error);
 
 unsigned int ElementTypeSize(GLenum elementType);
 
-bool IsMipmapFiltered(GLenum minFilterMode);
-
 template <typename T>
 T GetClampedVertexCount(size_t vertexCount)
 {

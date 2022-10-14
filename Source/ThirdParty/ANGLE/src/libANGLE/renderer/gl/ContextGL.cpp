@@ -935,11 +935,6 @@ const gl::Limitations &ContextGL::getNativeLimitations() const
     return mRenderer->getNativeLimitations();
 }
 
-ShPixelLocalStorageType ContextGL::getNativePixelLocalStorageType() const
-{
-    return mRenderer->getNativePixelLocalStorageType();
-}
-
 StateManagerGL *ContextGL::getStateManager()
 {
     return mRenderer->getStateManager();

@@ -15,7 +15,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Shader.h"
 #include "libANGLE/features.h"
-#include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/d3d/ProgramD3D.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
 #include "libANGLE/trace.h"
@@ -287,14 +286,10 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
     {
         options->initializeBuiltinsForInstancedMultiview = true;
     }
-    if (extensions.shaderPixelLocalStorageANGLE)
+    if (extensions.shaderPixelLocalStorageCoherentANGLE)
     {
-        options->pls.type = mRenderer->getNativePixelLocalStorageType();
-        if (extensions.shaderPixelLocalStorageCoherentANGLE)
-        {
-            options->pls.fragmentSynchronizationType =
-                ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
-        }
+        options->pls.fragmentSynchronizationType =
+            ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
     }
 
     auto postTranslateFunctor = [this](gl::ShCompilerInstance *compiler, std::string *infoLog) {

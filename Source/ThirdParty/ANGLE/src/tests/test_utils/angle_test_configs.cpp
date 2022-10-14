@@ -115,12 +115,12 @@ void PlatformParameters::initDefaultParameters()
     eglParameters.debugLayersEnabled = EGL_TRUE;
 }
 
-bool PlatformParameters::isEnableRequested(Feature feature) const
+bool PlatformParameters::isEnabled(Feature feature) const
 {
     return HasFeatureOverride(eglParameters.enabledFeatureOverrides, feature);
 }
 
-bool PlatformParameters::isDisableRequested(Feature feature) const
+bool PlatformParameters::isDisabled(Feature feature) const
 {
     return HasFeatureOverride(eglParameters.disabledFeatureOverrides, feature);
 }

@@ -105,10 +105,12 @@ static TIntermNode *CreateBuiltInInterlockEndCall(const ShCompileOptions &compil
 class RewriteToImagesTraverser : public TIntermTraverser
 {
   public:
-    RewriteToImagesTraverser(TSymbolTable &symbolTable,
+    RewriteToImagesTraverser(TCompiler *compiler,
+                             TSymbolTable &symbolTable,
                              const ShCompileOptions &compileOptions,
                              int shaderVersion)
         : TIntermTraverser(true, false, false, &symbolTable),
+          mCompiler(compiler),
           mCompileOptions(&compileOptions),
           mShaderVersion(shaderVersion)
     {}
@@ -228,7 +230,10 @@ class RewriteToImagesTraverser : public TIntermTraverser
     // Do all PLS formats need to be packed into r32f, r32i, or r32ui image2Ds?
     bool needsR32Packing() const
     {
-        return mCompileOptions->pls.type == ShPixelLocalStorageType::ImageStoreR32PackedFormats;
+        // ES images can only have both read and write access if their format is r32f, r32i, r32ui.
+        // D3D 11.0 UAVs only support R32_FLOAT, R32_UINT, R32_SINT formats.
+        return mCompiler->getOutputType() == ShShaderOutput::SH_ESSL_OUTPUT ||
+               mCompiler->getOutputType() == ShShaderOutput::SH_HLSL_4_1_OUTPUT;
     }
 
     // Sets the given image2D as the backing storage for the plsSymbol's binding point. An entry
@@ -477,6 +482,7 @@ class RewriteToImagesTraverser : public TIntermTraverser
         return TIntermAggregate::CreateConstructor(imageStoreType, {result});
     }
 
+    const TCompiler *const mCompiler;
     const ShCompileOptions *const mCompileOptions;
     const int mShaderVersion;
 
@@ -527,7 +533,7 @@ bool RewritePixelLocalStorageToImages(TCompiler *compiler,
     }
 
     // Rewrite PLS operations to image operations.
-    RewriteToImagesTraverser traverser(symbolTable, compileOptions, shaderVersion);
+    RewriteToImagesTraverser traverser(compiler, symbolTable, compileOptions, shaderVersion);
     root->traverse(&traverser);
     if (!traverser.updateTree(compiler, root))
     {
