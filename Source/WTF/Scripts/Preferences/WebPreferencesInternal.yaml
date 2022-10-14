@@ -608,13 +608,15 @@ LegacyOverflowScrollingTouchEnabled:
 LineHeightUnitsEnabled:
   type: bool
   humanReadableName: "lh / rlh units"
-  humanReadableDescription: "Enable the lh and lhr units"
+  humanReadableDescription: "Enable the lh and rlh units"
   webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
+    WebCore:
+      default: true
 
 LiveRangeSelectionEnabled:
   type: bool
