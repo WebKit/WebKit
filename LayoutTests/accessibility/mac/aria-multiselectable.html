@@ -1,55 +1,57 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <ul id="tree" role="tree" aria-multiselectable="true" tabindex="0">
     <li id="treeitem1" role="treeitem"><span>Siamese</span></li>
     <li id="treeitem2" role="treeitem"><span>Tabby</span></li>
 </ul>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var testOutput = "This tests that aria trees that are multi selectable will return the right selected rows.\n\n";
 
-    description("This tests that aria trees that are multi selectable will return the right selected rows.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var tree = accessibilityController.accessibleElementById("tree");
 
-    if (window.accessibilityController) {
+    var treeitem1 = tree.childAtIndex(0);
+    testOutput += expect("treeitem1.role", "'AXRole: AXRow'");
+    testOutput += expect("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
+    document.getElementById("treeitem1").setAttribute("aria-selected", true);
 
-          var tree = document.getElementById("tree");
-          tree.focus();
+    var treeitem2 = tree.childAtIndex(1);
+    testOutput += expect("treeitem2.role", "'AXRole: AXRow'");
+    testOutput += expect("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
+    document.getElementById("treeitem2").setAttribute("aria-selected", true);
 
-          // Test tree attributes.
-          tree = accessibilityController.focusedElement;
+    var selectedRow1, selectedRow2;
+    setTimeout(async function() {
+        // Test that the tree will give us both rows as selected (since its multi-selectable)
+        await waitFor(() => {
+            selectedRow1 = tree.selectedRowAtIndex(0);
+            selectedRow2 = tree.selectedRowAtIndex(1);
+            return (selectedRow1 && selectedRow1.isEqual(treeitem1)) && (selectedRow2 && selectedRow2.isEqual(treeitem2));
+        })
+        testOutput += expect("selectedRow1.isEqual(treeitem1)", "true");
+        testOutput += expect("selectedRow2.isEqual(treeitem2)", "true");
 
-          var treeitem1 = tree.childAtIndex(0);
-          shouldBe("treeitem1.role", "'AXRole: AXRow'");
-          shouldBe("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
-          document.getElementById("treeitem1").setAttribute("aria-selected", true);
+        // Test that if one of the items becomes de-selected, we still get the right selected row.
+        document.getElementById("treeitem1").setAttribute("aria-selected", false);
+        await waitFor(() => {
+            selectedRow1 = tree.selectedRowAtIndex(0);
+            return selectedRow1 && selectedRow1.isEqual(treeitem2);
+        })
+        testOutput += expect("selectedRow1.isEqual(treeitem2)", "true");
 
-          var treeitem2 = tree.childAtIndex(1);
-          shouldBe("treeitem2.role", "'AXRole: AXRow'");
-          shouldBe("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
-          document.getElementById("treeitem2").setAttribute("aria-selected", true);
-
-          // Test that the tree will give us both rows as selected (since its multi-selectable)
-          var selectedRow1 = tree.selectedRowAtIndex(0);
-          var selectedRow2 = tree.selectedRowAtIndex(1);
-
-          shouldBe("selectedRow1.isEqual(treeitem1)", "true");          
-          shouldBe("selectedRow2.isEqual(treeitem2)", "true");
-
-          // Test that if one of the items becomes de-selected, we still get the right selected row.
-          document.getElementById("treeitem1").setAttribute("aria-selected", false);
-          selectedRow1 = tree.selectedRowAtIndex(0);
-          shouldBe("selectedRow1.isEqual(treeitem2)", "true");          
-    }
-
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

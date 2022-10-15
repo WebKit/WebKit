@@ -1417,21 +1417,13 @@ void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode, 
     
 void AXObjectCache::selectedChildrenChanged(Node* node)
 {
-    handleMenuItemSelected(node);
-    
-    // postTarget is ObservableParent so that you can pass in any child of an element and it will go up the parent tree
-    // to find the container which should send out the notification.
-    postNotification(node, AXSelectedChildrenChanged, PostTarget::ObservableParent);
+    postNotification(node, AXSelectedChildrenChanged);
 }
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
     if (renderer)
-        handleMenuItemSelected(renderer->node());
-
-    // postTarget is ObservableParent so that you can pass in any child of an element and it will go up the parent tree
-    // to find the container which should send out the notification.
-    postNotification(renderer, AXSelectedChildrenChanged, PostTarget::ObservableParent);
+        selectedChildrenChanged(renderer->node());
 }
 
 static bool isARIATableCell(Node* node)
@@ -1445,8 +1437,14 @@ void AXObjectCache::onSelectedChanged(Node* node)
         postNotification(node, AXSelectedCellChanged);
     else if (is<HTMLOptionElement>(node))
         postNotification(node, AXSelectedStateChanged);
-    else
-        selectedChildrenChanged(node);
+    else if (auto* axObject = getOrCreate(node)) {
+        if (auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*axObject, false, [] (const auto& object) {
+            return object.canHaveSelectedChildren();
+        }))
+            selectedChildrenChanged(ancestor->node());
+    }
+
+    handleMenuItemSelected(node);
 }
 
 #ifndef NDEBUG
