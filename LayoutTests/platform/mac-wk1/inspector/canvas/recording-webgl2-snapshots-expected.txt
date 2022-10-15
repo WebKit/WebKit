@@ -12,7 +12,7 @@ initialState:
   content: <filtered>
 frames:
   0: (duration)
-    0: useProgram(0)
+    0: useProgram(1)
       swizzleTypes: [WebGLProgram]
       trace:
         0: useProgram

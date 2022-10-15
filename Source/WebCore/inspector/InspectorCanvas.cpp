@@ -610,35 +610,35 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLBuffer }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLBuffer }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLFramebuffer* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLFramebuffer }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLFramebuffer }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLProgram* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLProgram }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLProgram }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLQuery* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLQuery }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLQuery }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLRenderbuffer* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLRenderbuffer }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLRenderbuffer }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLRenderingContextBase::BufferDataSource& argument)
@@ -673,42 +673,42 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLSampler }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLSampler }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLShader* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLShader }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLShader }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLSync* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLSync }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLSync }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLTexture* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLTexture }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLTexture }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLUniformLocation* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLUniformLocation }};
+    return {{ JSON::Value::create(argument->location()), RecordingSwizzleType::WebGLUniformLocation }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLVertexArrayObject* argument)
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLVertexArrayObject }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLVertexArrayObject }};
 }
 
 #endif // ENABLE(WEBGL)
@@ -719,7 +719,7 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 {
     if (!argument)
         return std::nullopt;
-    return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLTransformFeedback }};
+    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLTransformFeedback }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGL2RenderingContext::Uint32List::VariantType& argument)
