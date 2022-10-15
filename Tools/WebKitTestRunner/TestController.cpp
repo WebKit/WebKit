@@ -3704,12 +3704,12 @@ void TestController::setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPar
     m_currentInvocation->didSetFirstPartyHostCNAMEDomain();
 }
 
-void TestController::setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString)
+void TestController::setStatisticsThirdPartyCNAMEDomainAndAddress(WKStringRef cnameURLString, WKStringRef addressString)
 {
     ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(websiteDataStore(), cnameURLString, &context, resourceStatisticsVoidResultCallback);
+    WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainAndAddressForTesting(websiteDataStore(), cnameURLString, addressString, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetThirdPartyCNAMEDomain();
+    m_currentInvocation->didSetThirdPartyCNAMEDomainAndAddress();
 }
 
 struct AppBoundDomainsCallbackContext {

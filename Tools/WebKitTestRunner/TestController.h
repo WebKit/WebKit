@@ -260,7 +260,7 @@ public:
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value);
     void setStatisticsToSameSiteStrictCookies(WKStringRef hostName);
     void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString);
-    void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString);
+    void setStatisticsThirdPartyCNAMEDomainAndAddress(WKStringRef cnameURLString, WKStringRef addressString);
     void setAppBoundDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 

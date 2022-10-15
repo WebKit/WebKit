@@ -244,7 +244,7 @@ public:
     void setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(bool enabled, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsToSameSiteStrictCookiesForTesting(const URL&, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting(const URL& firstPartyURL, const URL& cnameURL, CompletionHandler<void()>&&);
-    void setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(const URL&, CompletionHandler<void()>&&);
+    void setResourceLoadStatisticsThirdPartyCNAMEDomainAndAddressForTesting(const URL& cnameURL, const String& addressString, CompletionHandler<void()>&&);
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const;
     bool isItpStateExplicitlySet() const { return m_isItpStateExplicitlySet; }
     void useExplicitITPState() { m_isItpStateExplicitlySet = true; }

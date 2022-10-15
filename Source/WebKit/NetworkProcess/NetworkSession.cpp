@@ -344,6 +344,7 @@ void NetworkSession::resetFirstPartyDNSData()
     m_firstPartyHostCNAMEDomains.clear();
     m_firstPartyHostIPAddresses.clear();
     m_thirdPartyCNAMEDomainForTesting = std::nullopt;
+    m_thirdPartyIPAddressForTesting = std::nullopt;
 }
 
 void NetworkSession::setFirstPartyHostIPAddress(const String& firstPartyHost, const String& addressString)
@@ -353,6 +354,12 @@ void NetworkSession::setFirstPartyHostIPAddress(const String& firstPartyHost, co
 
     if (auto address = WebCore::IPAddress::fromString(addressString))
         m_firstPartyHostIPAddresses.set(firstPartyHost, WTFMove(*address));
+}
+
+void NetworkSession::setThirdPartyCNAMEDomainAndAddressForTesting(WebCore::RegistrableDomain&& domain, String&& addressString)
+{
+    m_thirdPartyCNAMEDomainForTesting = domain.isEmpty() ? std::nullopt : std::optional { WTFMove(domain) };
+    m_thirdPartyIPAddressForTesting = WebCore::IPAddress::fromString(WTFMove(addressString));
 }
 
 std::optional<WebCore::IPAddress> NetworkSession::firstPartyHostIPAddress(const String& firstPartyHost)

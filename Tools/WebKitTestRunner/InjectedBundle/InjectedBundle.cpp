@@ -330,8 +330,8 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetThirdPartyCNAMEDomain")) {
-        m_testRunner->statisticsCallDidSetThirdPartyCNAMEDomainCallback();
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetThirdPartyCNAMEDomainAndAddress")) {
+        m_testRunner->statisticsCallDidSetThirdPartyCNAMEDomainAndAddressCallback();
         return;
     }
 

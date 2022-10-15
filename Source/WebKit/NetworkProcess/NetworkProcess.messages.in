@@ -146,7 +146,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, enum:uint8_t WebCore::FirstPartyWebsiteDataRemovalMode mode) -> ()
     SetToSameSiteStrictCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> ()
     SetFirstPartyHostCNAMEDomainForTesting(PAL::SessionID sessionID, String firstPartyHost, WebCore::RegistrableDomain cnameDomain) -> ()
-    SetThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> ()
+    SetThirdPartyCNAMEDomainAndAddressForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, String addressString) -> ()
 #endif
 
     SetPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)

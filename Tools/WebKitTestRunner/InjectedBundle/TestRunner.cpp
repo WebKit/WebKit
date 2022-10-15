@@ -636,7 +636,7 @@ enum {
     StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
     StatisticsDidSetToSameSiteStrictCookiesCallbackID,
     StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID,
-    StatisticsDidSetThirdPartyCNAMEDomainCallbackID,
+    StatisticsdidSetThirdPartyCNAMEDomainAndAddressCallbackID,
     AllStorageAccessEntriesCallbackID,
     LoadedSubresourceDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
@@ -1700,15 +1700,18 @@ void TestRunner::statisticsCallDidSetFirstPartyHostCNAMEDomainCallback()
     callTestRunnerCallback(StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID);
 }
 
-void TestRunner::statisticsSetThirdPartyCNAMEDomain(JSStringRef cnameURLString, JSValueRef completionHandler)
+void TestRunner::statisticsSetThirdPartyCNAMEDomainAndAddress(JSStringRef cnameURLString, JSStringRef addressString, JSValueRef completionHandler)
 {
-    cacheTestRunnerCallback(StatisticsDidSetThirdPartyCNAMEDomainCallbackID, completionHandler);
-    postMessage("StatisticsSetThirdPartyCNAMEDomain", toWK(cnameURLString));
+    cacheTestRunnerCallback(StatisticsdidSetThirdPartyCNAMEDomainAndAddressCallbackID, completionHandler);
+    postMessage("StatisticsSetThirdPartyCNAMEDomainAndAddress", createWKDictionary({
+        { "CNAME", toWK(cnameURLString) },
+        { "address", toWK(addressString) }
+    }));
 }
 
-void TestRunner::statisticsCallDidSetThirdPartyCNAMEDomainCallback()
+void TestRunner::statisticsCallDidSetThirdPartyCNAMEDomainAndAddressCallback()
 {
-    callTestRunnerCallback(StatisticsDidSetThirdPartyCNAMEDomainCallbackID);
+    callTestRunnerCallback(StatisticsdidSetThirdPartyCNAMEDomainAndAddressCallbackID);
 }
 
 void TestRunner::statisticsResetToConsistentState(JSValueRef completionHandler)

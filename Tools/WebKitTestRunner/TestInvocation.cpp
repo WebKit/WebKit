@@ -779,8 +779,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetThirdPartyCNAMEDomain")) {
-        TestController::singleton().setStatisticsThirdPartyCNAMEDomain(stringValue(messageBody));
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetThirdPartyCNAMEDomainAndAddress")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto cnameURLString = stringValue(messageBodyDictionary, "CNAME");
+        auto addressString = stringValue(messageBodyDictionary, "address");
+        TestController::singleton().setStatisticsThirdPartyCNAMEDomainAndAddress(cnameURLString, addressString);
         return;
     }
 
@@ -1577,9 +1580,9 @@ void TestInvocation::didSetFirstPartyHostCNAMEDomain()
     postPageMessage("CallDidSetFirstPartyHostCNAMEDomain");
 }
 
-void TestInvocation::didSetThirdPartyCNAMEDomain()
+void TestInvocation::didSetThirdPartyCNAMEDomainAndAddress()
 {
-    postPageMessage("CallDidSetThirdPartyCNAMEDomain");
+    postPageMessage("CallDidSetThirdPartyCNAMEDomainAndAddress");
 }
 
 void TestInvocation::didResetStatisticsToConsistentState()

@@ -665,10 +665,10 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTest
 #endif
 }
 
-void WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef cnameURLString, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTestingFunction completionHandler)
+void WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainAndAddressForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef cnameURLString, WKStringRef addressString, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainAndAddressForTestingFunction completionHandler)
 {
 #if ENABLE(TRACKING_PREVENTION)
-    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(URL { WebKit::toImpl(cnameURLString)->string() }, [context, completionHandler] {
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsThirdPartyCNAMEDomainAndAddressForTesting(URL { WebKit::toImpl(cnameURLString)->string() }, WebKit::toImpl(addressString)->string(), [context, completionHandler] {
         completionHandler(context);
     });
 #else

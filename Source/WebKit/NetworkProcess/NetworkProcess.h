@@ -272,7 +272,7 @@ public:
     void setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID, WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
     void setToSameSiteStrictCookiesForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&&);
-    void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
+    void setThirdPartyCNAMEDomainAndAddressForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, String&& addressString, CompletionHandler<void()>&&);
 #endif
 
     void setPrivateClickMeasurementEnabled(bool);

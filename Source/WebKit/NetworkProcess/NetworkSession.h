@@ -139,8 +139,9 @@ public:
     std::optional<WebCore::RegistrableDomain> firstPartyHostCNAMEDomain(const String& firstPartyHost);
     void setFirstPartyHostIPAddress(const String& firstPartyHost, const String& addressString);
     std::optional<WebCore::IPAddress> firstPartyHostIPAddress(const String& firstPartyHost);
-    void setThirdPartyCNAMEDomainForTesting(WebCore::RegistrableDomain&& domain) { m_thirdPartyCNAMEDomainForTesting = WTFMove(domain); };
+    void setThirdPartyCNAMEDomainAndAddressForTesting(WebCore::RegistrableDomain&&, String&& addressString);
     std::optional<WebCore::RegistrableDomain> thirdPartyCNAMEDomainForTesting() const { return m_thirdPartyCNAMEDomainForTesting; }
+    std::optional<WebCore::IPAddress> thirdPartyIPAddressForTesting() const { return m_thirdPartyIPAddressForTesting; }
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 #endif
@@ -274,6 +275,7 @@ protected:
     HashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
     HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
+    std::optional<WebCore::IPAddress> m_thirdPartyIPAddressForTesting;
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<PCM::ManagerInterface> m_privateClickMeasurement;

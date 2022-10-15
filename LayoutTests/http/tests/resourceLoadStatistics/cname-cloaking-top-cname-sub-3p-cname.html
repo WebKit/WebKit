@@ -64,9 +64,7 @@
     function runTest() {
         setEnableFeature(true, function() {
             testRunner.statisticsSetFirstPartyHostCNAMEDomain(firstParty, firstPartyCNAMEForTesting, function() {
-                testRunner.statisticsSetThirdPartyCNAMEDomain(thirdPartyCNAMEForTesting, function() {
-                    setAndCheckCookie();
-                });
+                testRunner.statisticsSetThirdPartyCNAMEDomainAndAddress(thirdPartyCNAMEForTesting, "", setAndCheckCookie);
             });
         });
     }

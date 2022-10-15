@@ -1333,10 +1333,10 @@ void NetworkProcess::setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID sessi
     completionHandler();
 }
 
-void NetworkProcess::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setThirdPartyCNAMEDomainAndAddressForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain&& domain, String&& addressString, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setThirdPartyCNAMEDomainForTesting(WTFMove(domain));
+        session->setThirdPartyCNAMEDomainAndAddressForTesting(WTFMove(domain), WTFMove(addressString));
     completionHandler();
 }
 #endif // ENABLE(TRACKING_PREVENTION)

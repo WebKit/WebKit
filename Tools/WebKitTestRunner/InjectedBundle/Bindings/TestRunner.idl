@@ -347,7 +347,7 @@ interface TestRunner {
     undefined setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
     undefined statisticsSetToSameSiteStrictCookies(DOMString hostName, object callback);
     undefined statisticsSetFirstPartyHostCNAMEDomain(DOMString firstPartyURLString, DOMString cnameURLString, object callback);
-    undefined statisticsSetThirdPartyCNAMEDomain(DOMString cnameURLString, object callback);
+    undefined statisticsSetThirdPartyCNAMEDomainAndAddress(DOMString cnameURLString, DOMString addressString, object callback);
     undefined loadedSubresourceDomains(object callback);
 
     // Injected bundle form client.

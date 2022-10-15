@@ -56,9 +56,7 @@
 
     function runTest() {
         setEnableFeature(true, function() {
-            testRunner.statisticsSetThirdPartyCNAMEDomain(thirdPartyCNAMEForTesting, function() {
-                setAndCheckCookie();
-            });
+            testRunner.statisticsSetThirdPartyCNAMEDomainAndAddress(thirdPartyCNAMEForTesting, "", setAndCheckCookie);
         });
     }
 </script>

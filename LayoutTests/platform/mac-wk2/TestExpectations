@@ -894,6 +894,8 @@ http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-uni
 [ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html [ Pass ]
 [ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Pass ]
 [ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Pass ]
+http/tests/resourceLoadStatistics/ip-address-cloaking-first-party-address.html [ Pass ]
+http/tests/resourceLoadStatistics/ip-address-cloaking-third-party-address.html [ Pass ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 media/deactivate-audio-session.html [ Pass ]

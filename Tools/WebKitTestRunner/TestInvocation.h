@@ -79,7 +79,7 @@ public:
     void didSetFirstPartyWebsiteDataRemovalMode();
     void didSetToSameSiteStrictCookies();
     void didSetFirstPartyHostCNAMEDomain();
-    void didSetThirdPartyCNAMEDomain();
+    void didSetThirdPartyCNAMEDomainAndAddress();
     void didResetStatisticsToConsistentState();
     void didSetBlockCookiesForHost();
     void didSetStatisticsDebugMode();

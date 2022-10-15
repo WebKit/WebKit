@@ -8,14 +8,12 @@
 </head>
 <body onload="runTest()">
 <script>
-    description("Test for CNAME Cloaking: No cookie expiry capping if the top frame has an alternate CNAME and the sub resource has matching alternate CNAME.");
+    description("Test for IP address cloaking: Apply cookie expiry capping if the sub-resource's IP comes from a different block as the block containing the top frame's IP");
     jsTestIsAsync = true;
 
     function finishTest() {
         resetCookiesForCurrentOrigin();
-        setEnableFeature(false, function() {
-            finishJSTest();
-        });
+        setEnableFeature(false, finishJSTest);
     }
 
     function checkCookieExpiry(cookieData, seconds, shouldBeLessThan) {
@@ -23,15 +21,15 @@
         let expiryDateInMilliseconds = now.getTime() + (seconds * 1000);
 
         if ((cookieData["expires"] < expiryDateInMilliseconds) === shouldBeLessThan)
-            testPassed("Cookie named " + cookieData["name"] + " expires in " + (shouldBeLessThan ? "less" : "more") + " than " + seconds + " seconds.");
+            testPassed(`Cookie named ${cookieData["name"]} expires in ${shouldBeLessThan ? "less" : "more"} than ${seconds} seconds.`);
         else
-            testFailed("Cookie named " + cookieData["name"] + " expires in " + (shouldBeLessThan ? "more" : "less") + " than " + seconds + " seconds.");
+            testFailed(`Cookie named ${cookieData["name"]} expires in ${shouldBeLessThan ? "more" : "less"} than ${seconds} seconds.`);
     }
 
     const oneWeekInSeconds = 7 * 24 * 60 * 60;
     const overOneWeekInSeconds = oneWeekInSeconds + 600;
-    const cookieName = "cnameTestCookie";
-    const subPathToSetFirstPartyCookie = "resources/set-cookie.py?name=" + cookieName + "&value=value&dummy=" + Math.random();
+    const cookieName = "thirdPartyIPCookie";
+    const subPathToSetFirstPartyCookie = `resources/set-cookie.py?name=${cookieName}&value=value&dummy=${Math.random()}`;
 
     function setAndCheckCookie() {
         fetch(subPathToSetFirstPartyCookie).then(function() {
@@ -41,9 +39,9 @@
                     testFailed("No cookies found.");
                 for (let cookie of cookies) {
                     if (cookie.name === cookieName) {
-                        checkCookieExpiry(cookie, overOneWeekInSeconds, false);
+                        checkCookieExpiry(cookie, overOneWeekInSeconds, true);
                     } else {
-                        testFailed("Unknown cookie " + cookie.name + " found.");
+                        testFailed(`Unknown cookie ${cookie.name} found.`);
                     }
                 }
                 finishTest();
@@ -53,12 +51,12 @@
 
     const firstParty = "http://127.0.0.1:8000";
     const firstPartyCNAMEForTesting = "http://testwebkit.org";
-    const thirdPartyCNAMEForTesting = firstPartyCNAMEForTesting;
+    const thirdPartyIPAddressForTesting = "10.49.253.10";
 
     function runTest() {
         setEnableFeature(true, function() {
             testRunner.statisticsSetFirstPartyHostCNAMEDomain(firstParty, firstPartyCNAMEForTesting, function() {
-                testRunner.statisticsSetThirdPartyCNAMEDomainAndAddress(thirdPartyCNAMEForTesting, "", setAndCheckCookie);
+                testRunner.statisticsSetThirdPartyCNAMEDomainAndAddress("", thirdPartyIPAddressForTesting, setAndCheckCookie);
             });
         });
     }

@@ -1339,9 +1339,9 @@ void NetworkProcessProxy::setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID 
     sendWithAsyncReply(Messages::NetworkProcess::SetFirstPartyHostCNAMEDomainForTesting(sessionID, firstPartyHost, cnameDomain), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, const WebCore::RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::setThirdPartyCNAMEDomainAndAddressForTesting(PAL::SessionID sessionID, const WebCore::RegistrableDomain& domain, const String& addressString, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetThirdPartyCNAMEDomainForTesting(sessionID, domain), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetThirdPartyCNAMEDomainAndAddressForTesting(sessionID, domain, addressString), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)

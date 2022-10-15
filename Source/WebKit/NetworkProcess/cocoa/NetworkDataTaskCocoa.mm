@@ -220,7 +220,7 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore:
     auto firstPartyHostCNAME = networkSession()->firstPartyHostCNAMEDomain(firstPartyHostName);
     auto firstPartyAddress = networkSession()->firstPartyHostIPAddress(firstPartyHostName);
 
-    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->resourceLoadStatisticsDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
+    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), thirdPartyIPAddressForTesting = crossThreadCopy(networkSession()->thirdPartyIPAddressForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->resourceLoadStatisticsDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;
@@ -233,7 +233,7 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore:
             if (!firstPartyAddress)
                 return cookiesSetInResponse;
 
-            auto remoteAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(task.get()));
+            auto remoteAddress = thirdPartyIPAddressForTesting ?: WebCore::IPAddress::fromString(lastRemoteIPAddress(task.get()));
             if (!remoteAddress)
                 return cookiesSetInResponse;
 

@@ -451,8 +451,8 @@ public:
     void statisticsCallDidSetToSameSiteStrictCookiesCallback();
     void statisticsSetFirstPartyHostCNAMEDomain(JSStringRef firstPartyURLString, JSStringRef cnameURLString, JSValueRef completionHandler);
     void statisticsCallDidSetFirstPartyHostCNAMEDomainCallback();
-    void statisticsSetThirdPartyCNAMEDomain(JSStringRef cnameURLString, JSValueRef completionHandler);
-    void statisticsCallDidSetThirdPartyCNAMEDomainCallback();
+    void statisticsSetThirdPartyCNAMEDomainAndAddress(JSStringRef cnameURLString, JSStringRef addressString, JSValueRef completionHandler);
+    void statisticsCallDidSetThirdPartyCNAMEDomainAndAddressCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();
     void loadedSubresourceDomains(JSValueRef callback);

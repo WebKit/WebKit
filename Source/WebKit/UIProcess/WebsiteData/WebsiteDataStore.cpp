@@ -1397,16 +1397,15 @@ void WebsiteDataStore::setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTest
     networkProcess().setFirstPartyHostCNAMEDomainForTesting(m_sessionID, firstPartyURL.host().toString(), WebCore::RegistrableDomain { cnameURL }, [callbackAggregator] { });
 }
 
-void WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(const URL& cnameURL, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainAndAddressForTesting(const URL& cnameURL, const String& addressString, CompletionHandler<void()>&& completionHandler)
 {
-    if (cnameURL.host() != "testwebkit.org"_s && cnameURL.host() != "3rdpartytestwebkit.org"_s) {
-        completionHandler();
-        return;
-    }
-
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-
-    networkProcess().setThirdPartyCNAMEDomainForTesting(m_sessionID, WebCore::RegistrableDomain { cnameURL }, [callbackAggregator] { });
+    WebCore::RegistrableDomain cnameDomain;
+    if (cnameURL.host() == "testwebkit.org"_s || cnameURL.host() == "3rdpartytestwebkit.org"_s)
+        cnameDomain = WebCore::RegistrableDomain { cnameURL };
+    String allowedAddressString;
+    if (addressString.startsWith("127.0.0."_s) || addressString == "10.49.253.10"_s)
+        allowedAddressString = addressString;
+    networkProcess().setThirdPartyCNAMEDomainAndAddressForTesting(m_sessionID, WTFMove(cnameDomain), addressString, WTFMove(completionHandler));
 }
 #endif // ENABLE(TRACKING_PREVENTION)
 

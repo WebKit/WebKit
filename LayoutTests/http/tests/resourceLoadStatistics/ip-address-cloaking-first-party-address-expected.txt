@@ -1,0 +1,10 @@
+Test for IP address cloaking: No cookie expiry capping if the sub-resource's IP comes from the same block as the block containing the top frame's IP
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cookie named firstPartyIPCookie expires in more than 605400 seconds.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

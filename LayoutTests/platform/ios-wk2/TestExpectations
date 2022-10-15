@@ -144,6 +144,8 @@ http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html [ P
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html [ Pass ]
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Pass ]
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Pass ]
+http/tests/resourceLoadStatistics/ip-address-cloaking-first-party-address.html [ Pass ]
+http/tests/resourceLoadStatistics/ip-address-cloaking-third-party-address.html [ Pass ]
 
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
 fast/mediastream/getUserMedia-rvfc.html [ Pass ]
