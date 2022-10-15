@@ -1890,7 +1890,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
             break;
         }
     } else {
-        fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
+        fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !primitiveValue.isParentFontRelativeLength());
         if (primitiveValue.isLength()) {
             auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
             size = primitiveValue.computeLength<float>(conversionData);
