@@ -1413,6 +1413,10 @@ public:
     void handleContextMenuKeyEvent();
 #endif
 
+#if ENABLE(CONTEXT_MENU_EVENT)
+    void dispatchAfterCurrentContextMenuEvent(CompletionHandler<void(bool)>&&);
+#endif
+
     // Called by the WebOpenPanelResultListenerProxy.
 #if PLATFORM(IOS_FAMILY)
     void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const API::Data* iconData);
@@ -2406,6 +2410,10 @@ private:
     void showContextMenu(ContextMenuContextData&&, const UserData&);
 #endif
 
+#if ENABLE(CONTEXT_MENU_EVENT)
+    void processContextMenuCallbacks();
+#endif
+
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 #if PLATFORM(MAC)
     void showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint&, const WebCore::IntRect&);
@@ -2950,12 +2958,19 @@ private:
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
 #endif
 
+    enum class EventPreventionState : uint8_t { None, Waiting, Prevented, Allowed };
+
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
 #if ENABLE(MAC_GESTURE_EVENTS)
     Deque<NativeWebGestureEvent> m_gestureEventQueue;
 #endif
     Vector<WTF::Function<void ()>> m_callbackHandlersAfterProcessingPendingMouseEvents;
+
+#if ENABLE(CONTEXT_MENU_EVENT)
+    EventPreventionState m_contextMenuPreventionState { EventPreventionState::None };
+    Vector<CompletionHandler<void(bool)>> m_contextMenuCallbacks;
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
     struct TouchEventTracking {
