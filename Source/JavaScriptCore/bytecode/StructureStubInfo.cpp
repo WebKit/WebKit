@@ -506,12 +506,11 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
     tookSlowPath = unlinkedStubInfo.tookSlowPath;
     useDataIC = true;
 
-    auto usedJSRs = RegisterSetBuilder::stubUnavailableRegisters();
+    usedRegisters = RegisterSet::stubUnavailableRegisters();
     if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {
         // For iterator_next, we can't clobber the "dontClobberJSR" register either.
-        usedJSRs.add(BaselineJITRegisters::GetById::FastPath::dontClobberJSR, IgnoreVectors);
+        usedRegisters.set(BaselineJITRegisters::GetById::FastPath::dontClobberJSR);
     }
-    usedRegisters = usedJSRs;
 
     m_slowOperation = slowOperationFromUnlinkedStructureStubInfo(unlinkedStubInfo);
 

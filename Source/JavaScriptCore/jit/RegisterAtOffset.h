@@ -28,40 +28,32 @@
 #if ENABLE(ASSEMBLER)
 
 #include "Reg.h"
-#include <cstddef>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
 
 class RegisterAtOffset {
 public:
-    RegisterAtOffset() = default;
-    
-    RegisterAtOffset(Reg reg, ptrdiff_t offset, Width width)
-        : m_regIndex(reg.index())
-        , m_width(width == Width128)
-        , m_offsetBits((offset >> 2) & 0xFFFFFFFFFFFFFF)
+    RegisterAtOffset()
+        : m_offset(0)
     {
-        ASSERT(!(offset & 0b11));
-        ASSERT(width == conservativeWidthWithoutVectors(reg));
-        ASSERT(reg.index() < (1 << 6));
-        ASSERT(Reg::last().index() < (1 << 6));
-        ASSERT(this->reg() == reg);
-        ASSERT(this->offset() == offset);
-        ASSERT(this->width() == width);
     }
     
-    bool operator!() const { return !reg(); }
+    RegisterAtOffset(Reg reg, ptrdiff_t offset)
+        : m_reg(reg)
+        , m_offset(offset)
+    {
+    }
     
-    Reg reg() const { return Reg::fromIndex(m_regIndex); }
-    ptrdiff_t offset() const { return m_offsetBits << 2; }
-    size_t byteSize() const { return bytesForWidth(width()); }
-    Width width() const { return m_width ? conservativeWidth(reg()) : conservativeWidthWithoutVectors(reg()); }
+    bool operator!() const { return !m_reg; }
+    
+    Reg reg() const { return m_reg; }
+    ptrdiff_t offset() const { return m_offset; }
     int offsetAsIndex() const { ASSERT(!(offset() % sizeof(CPURegister))); return offset() / static_cast<int>(sizeof(CPURegister)); }
     
     bool operator==(const RegisterAtOffset& other) const
     {
-        return reg() == other.reg() && offset() == other.offset() && width() == other.width();
+        return reg() == other.reg() && offset() == other.offset();
     }
     
     bool operator<(const RegisterAtOffset& other) const
@@ -76,9 +68,8 @@ public:
     void dump(PrintStream& out) const;
 
 private:
-    unsigned m_regIndex : 7 = Reg().index();
-    bool m_width : 1 = false;
-    ptrdiff_t m_offsetBits : (sizeof(ptrdiff_t) * CHAR_BIT - 7 - 1) = 0;
+    Reg m_reg;
+    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg)) * CHAR_BIT;
 };
 
 } // namespace JSC

@@ -33,7 +33,7 @@
 
 namespace JSC { namespace B3 {
 
-void ValueRep::addUsedRegistersTo(RegisterSetBuilder& set) const
+void ValueRep::addUsedRegistersTo(RegisterSet& set) const
 {
     switch (m_kind) {
     case WarmAny:
@@ -47,20 +47,20 @@ void ValueRep::addUsedRegistersTo(RegisterSetBuilder& set) const
         return;
     case LateRegister:
     case Register:
-        set.add(reg(), IgnoreVectors);
+        set.set(reg());
         return;
     case Stack:
     case StackArgument:
-        set.add(MacroAssembler::stackPointerRegister, IgnoreVectors);
-        set.add(GPRInfo::callFrameRegister, IgnoreVectors);
+        set.set(MacroAssembler::stackPointerRegister);
+        set.set(GPRInfo::callFrameRegister);
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RegisterSetBuilder ValueRep::usedRegisters() const
+RegisterSet ValueRep::usedRegisters() const
 {
-    RegisterSetBuilder result;
+    RegisterSet result;
     addUsedRegistersTo(result);
     return result;
 }

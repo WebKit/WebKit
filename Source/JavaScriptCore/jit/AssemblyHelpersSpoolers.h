@@ -157,9 +157,9 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { ASSERT(bytesForWidth(entry.width()) == sizeof(CPURegister)); execute<GPRReg>(entry); }
+    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg>(entry); }
+    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 private:
@@ -206,9 +206,9 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { ASSERT(bytesForWidth(entry.width()) == sizeof(CPURegister)); execute<GPRReg>(entry); }
+    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg>(entry); }
+    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 private:

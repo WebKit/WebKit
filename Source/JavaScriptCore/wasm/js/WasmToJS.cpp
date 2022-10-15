@@ -90,7 +90,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // If we ever change this, we will also need to change WasmB3IRGenerator.
 
     // Below, we assume that the JS calling convention is always on the stack.
-    ASSERT_UNUSED(jsCC, !jsCC.jsrArgs.size());
+    ASSERT(!jsCC.jsrArgs.size());
     ASSERT(!jsCC.fprArgs.size());
 
     jit.emitFunctionPrologue();
@@ -102,11 +102,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         return handleBadGCTypeIndexUse(vm, jit, importIndex);
 
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
-#if ASSERT_ENABLED
-    wasmCC.calleeSaveRegisters.forEachWithWidth([&] (Reg reg, Width width) {
-        ASSERT(jsCC.calleeSaveRegisters.contains(reg, width));
-    });
-#endif
+    RegisterSet missingCalleeSaves = wasmCC.calleeSaveRegisters;
+    missingCalleeSaves.exclude(jsCC.calleeSaveRegisters);
+    ASSERT(missingCalleeSaves.isEmpty());
 
     // Note: We don't need to perform a stack check here since WasmB3IRGenerator
     // will do the stack check for us. Whenever it detects that it might make
@@ -309,7 +307,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // jsArg10 might overlap with regT0, so store 'this' argument first
     jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))), jsArg10);
     constexpr GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
-    ASSERT(!wasmCC.calleeSaveRegisters.contains(importJSCellGPRReg, IgnoreVectors));
+    ASSERT(!wasmCC.calleeSaveRegisters.get(importJSCellGPRReg));
     materializeImportJSCell(jit, importIndex, importJSCellGPRReg);
     jit.storePtr(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 #if USE(JSVALUE32_64)
@@ -340,7 +338,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         case TypeKind::I64: {
             // FIXME: Optimize I64 extraction from BigInt.
             // https://bugs.webkit.org/show_bug.cgi?id=220053
-            JSValueRegs dest = wasmCallInfo.results[0].location.jsr();
+            JSValueRegs dest = wasmCallInfo.results[0].jsr();
             jit.setupArguments<decltype(operationConvertToI64)>(JSRInfo::returnValueJSR);
             auto call = jit.call(OperationPtrTag);
             exceptionChecks.append(jit.emitJumpIfException(vm));
@@ -354,7 +352,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         case TypeKind::I32: {
             CCallHelpers::JumpList done;
             CCallHelpers::JumpList slowPath;
-            JSValueRegs destJSR = wasmCallInfo.results[0].location.jsr();
+            JSValueRegs destJSR = wasmCallInfo.results[0].jsr();
 
             slowPath.append(jit.branchIfNotNumber(JSRInfo::returnValueJSR, jit.scratchRegister(), DoNotHaveTagRegisters));
             slowPath.append(jit.branchIfNotInt32(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
@@ -378,7 +376,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             break;
         }
         case TypeKind::F32: {
-            FPRReg dest = wasmCallInfo.results[0].location.fpr();
+            FPRReg dest = wasmCallInfo.results[0].fpr();
 
             CCallHelpers::JumpList done;
             auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, jit.scratchRegister(), DoNotHaveTagRegisters);
@@ -410,7 +408,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             break;
         }
         case TypeKind::F64: {
-            FPRReg dest = wasmCallInfo.results[0].location.fpr();
+            FPRReg dest = wasmCallInfo.results[0].fpr();
             CCallHelpers::JumpList done;
 
             auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, jit.scratchRegister(), DoNotHaveTagRegisters);
@@ -442,7 +440,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         }
         default:  {
             if (Wasm::isRefType(returnType))
-                jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].location.jsr());
+                jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].jsr());
             else
                 // For the JavaScript embedding, imports with these types in their type definition return are a WebAssembly.Module validation error.
                 RELEASE_ASSERT_NOT_REACHED();
@@ -470,7 +468,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         exceptionChecks.append(jit.emitJumpIfException(vm));
 
         for (unsigned i = 0; i < signature.returnCount(); ++i) {
-            ValueLocation loc = wasmCallInfo.results[i].location;
+            ValueLocation loc = wasmCallInfo.results[i];
             if (loc.isGPR()) {
 #if USE(JSVALUE32_64)
                 ASSERT(savedResultRegisters.find(loc.jsr().payloadGPR())->offset() + 4 == savedResultRegisters.find(loc.jsr().tagGPR())->offset());

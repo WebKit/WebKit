@@ -99,7 +99,7 @@ public:
     // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
     const RegisterSet& mutableRegs() const { return m_mutableRegs; }
     
-    bool isPinned(Reg reg) const { return !mutableRegs().contains(reg, IgnoreVectors); }
+    bool isPinned(Reg reg) const { return !mutableRegs().get(reg); }
     void pinRegister(Reg);
     
     void setOptLevel(unsigned optLevel) { m_optLevel = optLevel; }
@@ -228,7 +228,7 @@ public:
     RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
     
     // This just tells you what the callee saves are.
-    RegisterSetBuilder calleeSaveRegisters() const { return m_calleeSaveRegisters; }
+    RegisterSet calleeSaveRegisters() const { return m_calleeSaveRegisters; }
 
     // Recomputes predecessors and deletes unreachable blocks.
     JS_EXPORT_PRIVATE void resetReachability();
@@ -402,7 +402,7 @@ private:
     bool m_preserveB3Origins { true };
     bool m_forceIRC { false };
     RegisterAtOffsetList m_uncorrectedCalleeSaveRegisterAtOffsetList;
-    RegisterSetBuilder m_calleeSaveRegisters;
+    RegisterSet m_calleeSaveRegisters;
     StackSlot* m_calleeSaveStackSlot { nullptr };
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
     Vector<MacroAssembler::Label> m_entrypointLabels; // This is empty until code generation.

@@ -279,7 +279,7 @@ public:
         CallSiteIndex callSiteIndex = callSiteIndexForCodeOrigin(m_ftlState, CodeOrigin(BytecodeIndex(0)));
         stackOverflowHandler->appendSomeRegister(m_callFrame);
         stackOverflowHandler->appendSomeRegister(m_vmValue);
-        stackOverflowHandler->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        stackOverflowHandler->clobber(RegisterSet::macroScratchRegisters());
         stackOverflowHandler->numGPScratchRegisters = 1;
         stackOverflowHandler->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -2422,7 +2422,7 @@ private:
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
@@ -2530,7 +2530,7 @@ private:
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->numFPScratchRegisters = 2;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
@@ -4050,7 +4050,7 @@ private:
         patchpoint->appendSomeRegister(property);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -4137,7 +4137,7 @@ private:
         patchpoint->appendSomeRegister(property);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -4285,7 +4285,7 @@ private:
         patchpoint->appendSomeRegister(brand);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -4446,7 +4446,7 @@ private:
         patchpoint->appendSomeRegister(value);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -4794,7 +4794,7 @@ private:
         patchpoint->appendSomeRegister(value);
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 3 : 0;
 
         // FIXME: If this is a PutByIdFlush, we might want to late-clobber volatile registers.
@@ -5585,7 +5585,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->appendSomeRegister(property);
             patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
             patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
             patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
             RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -5941,7 +5941,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->appendSomeRegister(value);
             patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
             patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
             patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
             RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -6315,7 +6315,7 @@ IGNORE_CLANG_WARNINGS_END
         }
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
@@ -10459,8 +10459,8 @@ IGNORE_CLANG_WARNINGS_END
         
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
@@ -10571,9 +10571,9 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         }
         
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         if (!isTail) {
-            patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+            patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
             patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
         }
         
@@ -10596,15 +10596,15 @@ IGNORE_CLANG_WARNINGS_END
                     CallFrameShuffleData shuffleData;
                     shuffleData.numLocals = state->jitCode->common.frameRegisterCount;
                     
-                    auto toSave = params.unavailableRegisters();
+                    RegisterSet toSave = params.unavailableRegisters();
                     shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatCell);
-                    toSave.add(calleeGPR, IgnoreVectors);
+                    toSave.set(calleeGPR);
                     for (unsigned i = 0; i < numPassedArgs; ++i) {
                         ValueRecovery recovery = params[1 + i].recoveryForJSValue();
                         shuffleData.args.append(recovery);
                         recovery.forEachReg(
                             [&] (Reg reg) {
-                                toSave.add(reg, IgnoreVectors);
+                                toSave.set(reg);
                             });
                     }
                     for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
@@ -10738,7 +10738,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
         // Prevent any of the arguments from using the scratch register.
-        patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
         
         patchpoint->effects.terminal = true;
 
@@ -10945,8 +10945,8 @@ IGNORE_CLANG_WARNINGS_END
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->clobber(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters())); // No inputs will be in a volatile register.
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobber(RegisterSet::volatileRegistersForJSCall()); // No inputs will be in a volatile register.
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         patchpoint->numGPScratchRegisters = 0;
@@ -10980,11 +10980,10 @@ IGNORE_CLANG_WARNINGS_END
 
                 auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
 
-                auto usedRegisters = RegisterSetBuilder(RegisterSetBuilder::allScalarRegisters())
-                    .exclude(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()))
-                    .buildAndValidate();
+                RegisterSet usedRegisters = RegisterSet::allRegisters();
+                usedRegisters.exclude(RegisterSet::volatileRegistersForJSCall());
                 GPRReg calleeGPR = params[1].gpr();
-                usedRegisters.add(calleeGPR, IgnoreVectors);
+                usedRegisters.set(calleeGPR);
 
                 ScratchRegisterAllocator allocator(usedRegisters);
                 GPRReg scratchGPR1 = allocator.allocateScratchGPR();
@@ -10994,7 +10993,7 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
                 auto getValueFromRep = [&] (B3::ValueRep rep, GPRReg result) {
-                    ASSERT(!usedRegisters.contains(result, IgnoreVectors));
+                    ASSERT(!usedRegisters.get(result));
 
                     if (rep.isConstant()) {
                         jit.move(CCallHelpers::Imm64(rep.value()), result);
@@ -11010,7 +11009,7 @@ IGNORE_CLANG_WARNINGS_END
                     }
 
                     RELEASE_ASSERT(rep.isGPR());
-                    ASSERT(usedRegisters.contains(rep.gpr(), IgnoreVectors));
+                    ASSERT(usedRegisters.get(rep.gpr()));
                     jit.move(rep.gpr(), result);
                 };
 
@@ -11115,7 +11114,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
 
-                ASSERT(!usedRegisters.contains(GPRInfo::regT2, IgnoreVectors)); // Used on the slow path.
+                ASSERT(!usedRegisters.get(GPRInfo::regT2)); // Used on the slow path.
 
                 CCallHelpers::JumpList slowPath;
                 CCallHelpers::Jump done;
@@ -11226,8 +11225,8 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         // This is the minimum amount of call arg area stack space that all JS->JS calls always have.
@@ -11316,19 +11315,19 @@ IGNORE_CLANG_WARNINGS_END
 
                 // Get some scratch registers.
                 RegisterSet usedRegisters;
-                usedRegisters.merge(RegisterSetBuilder::stackRegisters());
-                usedRegisters.merge(RegisterSetBuilder::reservedHardwareRegisters());
-                usedRegisters.merge(RegisterSetBuilder::calleeSaveRegisters());
-                usedRegisters.add(calleeGPR, IgnoreVectors);
+                usedRegisters.merge(RegisterSet::stackRegisters());
+                usedRegisters.merge(RegisterSet::reservedHardwareRegisters());
+                usedRegisters.merge(RegisterSet::calleeSaveRegisters());
+                usedRegisters.set(calleeGPR);
                 if (argumentsGPR != InvalidGPRReg)
-                    usedRegisters.add(argumentsGPR, IgnoreVectors);
-                usedRegisters.add(thisGPR, IgnoreVectors);
+                    usedRegisters.set(argumentsGPR);
+                usedRegisters.set(thisGPR);
                 if (calleeLateRep.isReg())
-                    usedRegisters.add(calleeLateRep.reg(), IgnoreVectors);
+                    usedRegisters.set(calleeLateRep.reg());
                 if (argumentsLateRep.isReg())
-                    usedRegisters.add(argumentsLateRep.reg(), IgnoreVectors);
+                    usedRegisters.set(argumentsLateRep.reg());
                 if (thisLateRep.isReg())
-                    usedRegisters.add(thisLateRep.reg(), IgnoreVectors);
+                    usedRegisters.set(thisLateRep.reg());
                 ScratchRegisterAllocator allocator(usedRegisters);
                 GPRReg scratchGPR1 = allocator.allocateScratchGPR();
                 GPRReg scratchGPR2 = allocator.allocateScratchGPR();
@@ -11486,8 +11485,8 @@ IGNORE_CLANG_WARNINGS_END
         
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
@@ -12048,7 +12047,7 @@ IGNORE_CLANG_WARNINGS_END
             PatchpointValue* patchpoint = m_out.patchpoint(Void);
             patchpoint->effects = Effects::forCall();
             if (intrinsic == CPUCpuidIntrinsic)
-                patchpoint->clobber(RegisterSetBuilder { X86Registers::eax, X86Registers::ebx, X86Registers::ecx, X86Registers::edx });
+                patchpoint->clobber(RegisterSet { X86Registers::eax, X86Registers::ebx, X86Registers::ecx, X86Registers::edx });
 
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 switch (intrinsic) {
@@ -12071,7 +12070,7 @@ IGNORE_CLANG_WARNINGS_END
         case CPURdtscIntrinsic: {
             PatchpointValue* patchpoint = m_out.patchpoint(Int32);
             patchpoint->effects = Effects::forCall();
-            patchpoint->clobber(RegisterSetBuilder { X86Registers::eax, X86Registers::edx });
+            patchpoint->clobber(RegisterSet { X86Registers::eax, X86Registers::edx });
             // The low 32-bits of rdtsc go into rax.
             patchpoint->resultConstraints = { ValueRep::reg(X86Registers::eax) };
             patchpoint->setGenerator( [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
@@ -13074,7 +13073,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->appendSomeRegister(subscriptValue);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         if constexpr (type == AccessType::InById)
             patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 2 : 0;
         else
@@ -13419,7 +13418,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
@@ -14692,7 +14691,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(ConstrainedValue(stringLength, ValueRep::SomeLateRegister));
         patchpoint->append(ConstrainedValue(argument, ValueRep::SomeLateRegister));
         patchpoint->numGPScratchRegisters = inlineCodeStats8Bit.needsTemp2() ? 6 : 5;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -15365,7 +15364,7 @@ IGNORE_CLANG_WARNINGS_END
         // IC code is super smart about saving registers.
         // https://bugs.webkit.org/show_bug.cgi?id=152848
         
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
@@ -15455,7 +15454,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->appendSomeRegister(thisValue);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 2 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
@@ -15920,7 +15919,7 @@ IGNORE_CLANG_WARNINGS_END
 
         patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
         patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
         State* state = &m_ftlState;
         Node* node = m_node;
@@ -16060,7 +16059,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
         patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
@@ -16857,7 +16856,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->numFPScratchRegisters = 2;
         if (scratchFPRUsage == NeedScratchFPR)
             patchpoint->numFPScratchRegisters++;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
@@ -16925,7 +16924,7 @@ IGNORE_CLANG_WARNINGS_END
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
@@ -16983,7 +16982,7 @@ IGNORE_CLANG_WARNINGS_END
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->numFPScratchRegisters = 1;
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
@@ -17059,7 +17058,7 @@ IGNORE_CLANG_WARNINGS_END
         PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
         if (isARM64()) {
             // emitAllocateWithNonNullAllocator uses the scratch registers on ARM.
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
         }
         patchpoint->effects.terminal = true;
         if (actualAllocator.isConstant())
@@ -18732,7 +18731,7 @@ IGNORE_CLANG_WARNINGS_END
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(result);
         
-        result->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        result->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
 
         result->setGenerator(
@@ -18746,7 +18745,7 @@ IGNORE_CLANG_WARNINGS_END
                 CCallHelpers::PatchableJump patchableJump = jit.patchableJump();
                 CCallHelpers::Label done = jit.label();
 
-                auto usedRegisters = params.unavailableRegisters();
+                RegisterSet usedRegisters = params.unavailableRegisters();
 
                 RefPtr<ExceptionTarget> exceptionTarget =
                     exceptionHandle->scheduleExitCreation(params);

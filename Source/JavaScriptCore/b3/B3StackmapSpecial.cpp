@@ -46,7 +46,7 @@ StackmapSpecial::~StackmapSpecial()
 {
 }
 
-void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSetBuilder& usedRegisters)
+void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSet& usedRegisters)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -57,7 +57,7 @@ void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSetBuilder& 
     value->m_usedRegisters.merge(usedRegisters);
 }
 
-RegisterSetBuilder StackmapSpecial::extraClobberedRegs(Inst& inst)
+RegisterSet StackmapSpecial::extraClobberedRegs(Inst& inst)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -65,7 +65,7 @@ RegisterSetBuilder StackmapSpecial::extraClobberedRegs(Inst& inst)
     return value->lateClobbered();
 }
 
-RegisterSetBuilder StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
+RegisterSet StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);

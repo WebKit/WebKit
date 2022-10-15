@@ -1188,8 +1188,8 @@ void testWasmAddressDoesNotCSE()
 
     PatchpointValue* patchpoint = b->appendNew<PatchpointValue>(proc, Void, Origin());
     patchpoint->effects = Effects::forCall();
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-    patchpoint->clobber(RegisterSetBuilder(pinnedGPR));
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet(pinnedGPR));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             CHECK(!params.size());
@@ -1283,10 +1283,10 @@ void testStoreAfterClobberExitsSideways()
     proc.pinRegister(pinnedSizeGPR);
 
     // Please don't make me save anything.
-    RegisterSetBuilder csrs;
-    csrs.merge(RegisterSetBuilder::calleeSaveRegisters());
-    csrs.exclude(RegisterSetBuilder::stackRegisters());
-    csrs.buildAndValidate().forEach(
+    RegisterSet csrs;
+    csrs.merge(RegisterSet::calleeSaveRegisters());
+    csrs.exclude(RegisterSet::stackRegisters());
+    csrs.forEach(
         [&] (Reg reg) {
             CHECK(reg != pinnedBaseGPR);
             CHECK(reg != pinnedSizeGPR);
@@ -1463,10 +1463,10 @@ void testStoreAfterClobberExitsSidewaysSuccessor()
     proc.pinRegister(pinnedSizeGPR);
 
     // Please don't make me save anything.
-    RegisterSetBuilder csrs;
-    csrs.merge(RegisterSetBuilder::calleeSaveRegisters());
-    csrs.exclude(RegisterSetBuilder::stackRegisters());
-    csrs.buildAndValidate().forEach(
+    RegisterSet csrs;
+    csrs.merge(RegisterSet::calleeSaveRegisters());
+    csrs.exclude(RegisterSet::stackRegisters());
+    csrs.forEach(
         [&] (Reg reg) {
             CHECK(reg != pinnedBaseGPR);
             CHECK(reg != pinnedSizeGPR);

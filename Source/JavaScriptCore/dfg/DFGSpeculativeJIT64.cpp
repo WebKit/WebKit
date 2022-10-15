@@ -156,15 +156,15 @@ void SpeculativeJIT::cachedGetById(CodeOrigin origin, JSValueRegs base, JSValueR
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode, AccessType type)
 {
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
-        usedRegisters.remove(baseGPR);
-        usedRegisters.remove(resultGPR);
+        usedRegisters.set(baseGPR, false);
+        usedRegisters.set(resultGPR, false);
         if (stubInfoGPR != InvalidGPRReg)
-            usedRegisters.remove(stubInfoGPR);
+            usedRegisters.set(stubInfoGPR, false);
         if (scratchGPR != InvalidGPRReg)
-            usedRegisters.remove(scratchGPR);
+            usedRegisters.set(scratchGPR, false);
     }
     JSValueRegs baseRegs { baseGPR };
     JSValueRegs resultRegs { resultGPR };
@@ -201,18 +201,15 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, const JITCompiler::JumpList& slowPathTarget)
 {
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
     // We've already flushed registers to the stack, we don't need to spill these.
-    if (baseGPR != InvalidGPRReg)
-        usedRegisters.remove(baseGPR);
-    if (thisGPR != InvalidGPRReg)
-        usedRegisters.remove(thisGPR);
-    if (resultGPR != InvalidGPRReg)
-        usedRegisters.remove(resultGPR);
+    usedRegisters.set(baseGPR, false);
+    usedRegisters.set(thisGPR, false);
+    usedRegisters.set(resultGPR, false);
     if (stubInfoGPR != InvalidGPRReg)
-        usedRegisters.remove(stubInfoGPR);
+        usedRegisters.set(stubInfoGPR, false);
     if (scratchGPR != InvalidGPRReg)
-        usedRegisters.remove(scratchGPR);
+        usedRegisters.set(scratchGPR, false);
     
     JSValueRegs baseRegs { baseGPR };
     JSValueRegs resultRegs { resultGPR };
@@ -2496,7 +2493,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSetBuilder usedRegisters = this->usedRegisters();
+        RegisterSet usedRegisters = this->usedRegisters();
 
         JITCompiler::JumpList slowCases;
         if (!m_state.forNode(m_graph.varArgChild(node, 0)).isType(SpecCell))
@@ -6458,7 +6455,7 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
     if (!m_state.forNode(node->child1()).isType(SpecCell))

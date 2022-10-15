@@ -421,12 +421,12 @@ void Procedure::setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator> gen
     code().setWasmBoundsCheckGenerator(generator);
 }
 
-RegisterSetBuilder Procedure::mutableGPRs()
+RegisterSet Procedure::mutableGPRs()
 {
     return code().mutableGPRs();
 }
 
-RegisterSetBuilder Procedure::mutableFPRs()
+RegisterSet Procedure::mutableFPRs()
 {
     return code().mutableFPRs();
 }

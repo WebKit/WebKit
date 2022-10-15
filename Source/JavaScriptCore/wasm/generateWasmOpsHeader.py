@@ -53,7 +53,7 @@ def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty, str(wasm.types[ty]["width"]))
+        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
         inc += 1
 
 
@@ -208,8 +208,6 @@ contents = wasm.header + """
 #include <cstdint>
 #include <wtf/PrintStream.h>
 
-#include "Reg.h"
-
 #if ENABLE(WEBASSEMBLY_B3JIT)
 #include "B3Type.h"
 #endif
@@ -255,14 +253,6 @@ struct Type {
         #define CREATE_CASE(name, ...) case TypeKind::name: out.print(#name); break;
         FOR_EACH_WASM_TYPE(CREATE_CASE)
         #undef CREATE_CASE
-        }
-    }
-
-    Width width() const {
-    switch (kind) {
-#define CREATE_CASE(name, id, b3type, inc, wasmName, width, ...) case TypeKind::name: return widthForBytes(width / 8);
-        FOR_EACH_WASM_TYPE(CREATE_CASE)
-#undef CREATE_CASE
         }
     }
 

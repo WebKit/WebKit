@@ -637,15 +637,15 @@ private:
         if (!currentCalleeSaves)
             return;
 
-        RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
-        auto dontCopyRegisters = RegisterSetBuilder::stackRegisters();
+        RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+        RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         CPURegister* frame = reinterpret_cast<CPURegister*>(m_callFrame->registers());
 
         unsigned registerCount = currentCalleeSaves->registerCount();
         VMEntryRecord* record = vmEntryRecord(m_vm.topEntryFrame);
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset currentEntry = currentCalleeSaves->at(i);
-            if (dontCopyRegisters.contains(currentEntry.reg(), IgnoreVectors))
+            if (dontCopyRegisters.get(currentEntry.reg()))
                 continue;
             RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
             

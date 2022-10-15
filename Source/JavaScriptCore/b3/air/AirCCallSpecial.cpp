@@ -34,10 +34,13 @@ namespace JSC { namespace B3 { namespace Air {
 
 CCallSpecial::CCallSpecial()
 {
-    m_clobberedRegs = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
-    m_clobberedRegs.remove(GPRInfo::returnValueGPR);
-    m_clobberedRegs.remove(GPRInfo::returnValueGPR2);
-    m_clobberedRegs.remove(FPRInfo::returnValueFPR);
+    m_clobberedRegs = RegisterSet::allRegisters();
+    m_clobberedRegs.exclude(RegisterSet::stackRegisters());
+    m_clobberedRegs.exclude(RegisterSet::reservedHardwareRegisters());
+    m_clobberedRegs.exclude(RegisterSet::calleeSaveRegisters());
+    m_clobberedRegs.clear(GPRInfo::returnValueGPR);
+    m_clobberedRegs.clear(GPRInfo::returnValueGPR2);
+    m_clobberedRegs.clear(FPRInfo::returnValueFPR);
 }
 
 CCallSpecial::~CCallSpecial()
@@ -123,7 +126,7 @@ bool CCallSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
     return admitsStack(inst, argIndex);
 }
 
-void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSetBuilder&)
+void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 {
 }
 
@@ -149,12 +152,12 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     return CCallHelpers::Jump();
 }
 
-RegisterSetBuilder CCallSpecial::extraEarlyClobberedRegs(Inst&)
+RegisterSet CCallSpecial::extraEarlyClobberedRegs(Inst&)
 {
-    return { };
+    return m_emptyRegs;
 }
 
-RegisterSetBuilder CCallSpecial::extraClobberedRegs(Inst&)
+RegisterSet CCallSpecial::extraClobberedRegs(Inst&)
 {
     return m_clobberedRegs;
 }

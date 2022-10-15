@@ -57,7 +57,7 @@ Bank MemoryValue::accessBank() const
 
 size_t MemoryValue::accessByteSize() const
 {
-    return bytesForWidth(accessWidth());
+    return bytes(accessWidth());
 }
 
 void MemoryValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const

@@ -407,7 +407,7 @@ public:
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR);
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const RegisterSet& skipList);
 
-    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSetBuilder::stubUnavailableRegisters());
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSet::stubUnavailableRegisters());
 
     void emitMaterializeTagCheckRegisters()
     {
@@ -1307,7 +1307,7 @@ public:
         };
 
         for (GPRReg reg : registers) {
-            if (!preserved.contains(reg, IgnoreVectors))
+            if (!preserved.contains(reg))
                 return reg;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1318,30 +1318,30 @@ public:
     static GPRReg selectScratchGPR(Regs... args)
     {
         RegisterSet set;
-        constructRegisterSetBuilder(set, args...);
+        constructRegisterSet(set, args...);
         return selectScratchGPR(set);
     }
 
-    static void constructRegisterSetBuilder(RegisterSet&)
+    static void constructRegisterSet(RegisterSet&)
     {
     }
 
     template<typename... Regs>
-    static void constructRegisterSetBuilder(RegisterSet& set, JSValueRegs regs, Regs... args)
+    static void constructRegisterSet(RegisterSet& set, JSValueRegs regs, Regs... args)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            set.add(regs.tagGPR(), IgnoreVectors);
+            set.set(regs.tagGPR());
         if (regs.payloadGPR() != InvalidGPRReg)
-            set.add(regs.payloadGPR(), IgnoreVectors);
-        constructRegisterSetBuilder(set, args...);
+            set.set(regs.payloadGPR());
+        constructRegisterSet(set, args...);
     }
 
     template<typename... Regs>
-    static void constructRegisterSetBuilder(RegisterSet& set, GPRReg reg, Regs... args)
+    static void constructRegisterSet(RegisterSet& set, GPRReg reg, Regs... args)
     {
         if (reg != InvalidGPRReg)
-            set.add(reg, IgnoreVectors);
-        constructRegisterSetBuilder(set, args...);
+            set.set(reg);
+        constructRegisterSet(set, args...);
     }
 
     // Add a debug call. This call has no effect on JIT code execution state.

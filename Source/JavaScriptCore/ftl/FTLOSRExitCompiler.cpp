@@ -474,11 +474,11 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     jit.checkStackPointerAlignment();
 
     {
-        auto allFTLCalleeSaves = RegisterSetBuilder::ftlCalleeSaveRegisters();
+        RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
         const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
         auto iterateCalleeSavesImpl = [&](auto check, auto func) {
             for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-                if (!allFTLCalleeSaves.contains(reg, IgnoreVectors))
+                if (!allFTLCalleeSaves.get(reg))
                     continue;
                 if (!check(reg))
                     continue;
@@ -501,23 +501,23 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             // This means that it also didn't use them. Their values at the beginning of OSR exit should
             // be the ones to retain. We saved all registers into the register scratch buffer at the beginning
             // of the thunk. So we can restore them from there.
-            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT3, IgnoreVectors));
-            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT0, IgnoreVectors));
-            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT1, IgnoreVectors));
-            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT0, IgnoreVectors));
-            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT1, IgnoreVectors));
+            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT3));
+            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT0));
+            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT1));
+            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT0));
+            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT1));
             jit.move(CCallHelpers::TrustedImmPtr(registerScratch), GPRInfo::regT3);
             {
                 // Load from registerScratch buffer to callee-save registers.
                 CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
                 iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), conservativeWidthWithoutVectors(reg) });
+                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), });
                 });
                 spooler.finalizeGPR();
                 iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), conservativeWidthWithoutVectors(reg) });
+                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), });
                 });
                 spooler.finalizeFPR();
             }
@@ -552,12 +552,12 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
                 iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), conservativeWidthWithoutVectors(reg) });
+                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), });
                 });
                 spooler.finalizeGPR();
                 iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), conservativeWidthWithoutVectors(reg) });
+                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), });
                 });
                 spooler.finalizeFPR();
             }

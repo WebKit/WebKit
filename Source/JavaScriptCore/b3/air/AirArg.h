@@ -605,7 +605,7 @@ public:
             if (isARM64()) {
                 if (!width)
                     return true;
-                return scale == 1 || scale == bytesForWidth(*width);
+                return scale == 1 || scale == bytes(*width);
             }
             return false;
         default:
@@ -719,7 +719,7 @@ public:
     {
         Arg result;
         result.m_kind = WidthArg;
-        result.m_offset = bytesForWidth(width);
+        result.m_offset = width;
         return result;
     }
 
@@ -941,8 +941,6 @@ public:
                 return B3::isRepresentableAs<int32_t>(value);
             case Width64:
                 return B3::isRepresentableAs<int64_t>(value);
-            case Width128:
-                break;
             }
             RELEASE_ASSERT_NOT_REACHED();
         case Unsigned:
@@ -955,8 +953,6 @@ public:
                 return B3::isRepresentableAs<uint32_t>(value);
             case Width64:
                 return B3::isRepresentableAs<uint64_t>(value);
-            case Width128:
-                break;
             }
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -977,8 +973,6 @@ public:
                 return static_cast<int32_t>(value);
             case Width64:
                 return static_cast<int64_t>(value);
-            case Width128:
-                break;
             }
             RELEASE_ASSERT_NOT_REACHED();
         case Unsigned:
@@ -991,8 +985,6 @@ public:
                 return static_cast<uint32_t>(value);
             case Width64:
                 return static_cast<uint64_t>(value);
-            case Width128:
-                break;
             }
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1064,7 +1056,7 @@ public:
     Width width() const
     {
         ASSERT(kind() == WidthArg);
-        return widthForBytes(m_offset);
+        return static_cast<Width>(m_offset);
     }
 
     bool isGPTmp() const
@@ -1270,8 +1262,6 @@ public:
                 return isValidScaledUImm12<32>(offset);
             case Width64:
                 return isValidScaledUImm12<64>(offset);
-            case Width128:
-                return false;
             }
         }
         return false;

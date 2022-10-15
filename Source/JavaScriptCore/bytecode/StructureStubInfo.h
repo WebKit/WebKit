@@ -415,7 +415,7 @@ public:
 
     CodePtr<JITStubRoutinePtrTag> m_codePtr;
 
-    ScalarRegisterSet usedRegisters;
+    RegisterSet usedRegisters;
 
     CallSiteIndex callSiteIndex;
 

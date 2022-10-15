@@ -37,7 +37,10 @@ const JSCallingConvention& jsCallingConvention()
     static LazyNeverDestroyed<JSCallingConvention> staticJSCallingConvention;
     static std::once_flag staticJSCCallingConventionFlag;
     std::call_once(staticJSCCallingConventionFlag, [] () {
-        staticJSCallingConvention.construct(Vector<JSValueRegs>(), Vector<FPRReg>(), RegisterSetBuilder::calleeSaveRegisters());
+        RegisterSet callerSaveRegisters = RegisterSet::allRegisters();
+        callerSaveRegisters.exclude(RegisterSet::calleeSaveRegisters());
+
+        staticJSCallingConvention.construct(Vector<JSValueRegs>(), Vector<FPRReg>(), RegisterSet::calleeSaveRegisters(), WTFMove(callerSaveRegisters));
     });
 
     return staticJSCallingConvention;
@@ -66,20 +69,20 @@ const WasmCallingConvention& wasmCallingConvention()
         for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i)
             fprArgumentRegisters[i] = FPRInfo::toArgumentRegister(i);
 
-        RegisterSetBuilder scratch = RegisterSetBuilder::allGPRs();
-        scratch.exclude(RegisterSetBuilder::vmCalleeSaveRegisters().includeWholeRegisterWidth());
-        scratch.exclude(RegisterSetBuilder::macroClobberedRegisters());
-        scratch.exclude(RegisterSetBuilder::reservedHardwareRegisters());
-        scratch.exclude(RegisterSetBuilder::stackRegisters());
+        RegisterSet scratch = RegisterSet::allGPRs();
+        scratch.exclude(RegisterSet::vmCalleeSaveRegisters());
+        scratch.exclude(RegisterSet::macroScratchRegisters());
+        scratch.exclude(RegisterSet::reservedHardwareRegisters());
+        scratch.exclude(RegisterSet::stackRegisters());
         for (JSValueRegs jsr : jsrArgumentRegisters) {
-            scratch.remove(jsr.payloadGPR());
+            scratch.clear(jsr.payloadGPR());
 #if USE(JSVALUE32_64)
-            scratch.remove(jsr.tagGPR());
+            scratch.clear(jsr.tagGPR());
 #endif
         }
 
         Vector<GPRReg> scratchGPRs;
-        for (Reg reg : scratch.buildAndValidate())
+        for (Reg reg : scratch)
             scratchGPRs.append(reg.gpr());
 
         // Need at least one JSValue and an additional GPR
@@ -89,7 +92,10 @@ const WasmCallingConvention& wasmCallingConvention()
         RELEASE_ASSERT(scratchGPRs.size() >= 3);
 #endif
 
-        staticWasmCallingConvention.construct(WTFMove(jsrArgumentRegisters), WTFMove(fprArgumentRegisters), WTFMove(scratchGPRs), RegisterSetBuilder::calleeSaveRegisters());
+        RegisterSet callerSaveRegisters = RegisterSet::allRegisters();
+        callerSaveRegisters.exclude(RegisterSet::calleeSaveRegisters());
+
+        staticWasmCallingConvention.construct(WTFMove(jsrArgumentRegisters), WTFMove(fprArgumentRegisters), WTFMove(scratchGPRs), RegisterSet::calleeSaveRegisters(), WTFMove(callerSaveRegisters));
     });
 
     return staticWasmCallingConvention;

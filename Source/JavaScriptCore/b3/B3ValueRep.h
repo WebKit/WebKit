@@ -284,15 +284,15 @@ public:
         }
     }
 
-    void addUsedRegistersTo(RegisterSetBuilder&) const;
+    void addUsedRegistersTo(RegisterSet&) const;
     
-    RegisterSetBuilder usedRegisters() const;
+    RegisterSet usedRegisters() const;
 
     // Get the used registers for a vector of ValueReps.
     template<typename VectorType>
-    static RegisterSetBuilder usedRegisters(const VectorType& vector)
+    static RegisterSet usedRegisters(const VectorType& vector)
     {
-        RegisterSetBuilder result;
+        RegisterSet result;
         for (const ValueRep& value : vector)
             value.addUsedRegistersTo(result);
         return result;

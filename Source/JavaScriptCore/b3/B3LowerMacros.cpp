@@ -575,7 +575,7 @@ private:
                 patchpoint->numGPScratchRegisters = 2;
                 // Technically, we don't have to clobber macro registers on X86_64. This is probably
                 // OK though.
-                patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+                patchpoint->clobber(RegisterSet::macroScratchRegisters());
                 
                 BitVector handledIndices;
                 for (unsigned i = start; i < end; ++i) {

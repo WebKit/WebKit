@@ -361,7 +361,7 @@ inline InternalDependencyType opaqueMixture(T value, Arguments... arguments)
 class Dependency {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    constexpr Dependency()
+    Dependency()
         : m_value(0)
     {
     }

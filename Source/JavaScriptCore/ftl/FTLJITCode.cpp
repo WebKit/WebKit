@@ -152,7 +152,7 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
         exit.m_descriptor->validateReferences(trackedReferences);
 }
 
-RegisterSetBuilder JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
+RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
     for (OSRExit& exit : m_osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {

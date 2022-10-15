@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "jit/GPRInfo.h"
 
 #if ENABLE(JIT)
 #include "JIT.h"

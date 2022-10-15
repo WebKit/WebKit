@@ -168,7 +168,7 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     JITInstanceOfGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
-        RegisterSetBuilder::stubUnavailableRegisters(),
+        RegisterSet::stubUnavailableRegisters(),
         resultJSR.payloadGPR(),
         valueJSR.payloadGPR(),
         protoJSR.payloadGPR(),

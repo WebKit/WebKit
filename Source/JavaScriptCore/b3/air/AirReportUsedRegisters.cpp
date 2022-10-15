@@ -91,9 +91,13 @@ void reportUsedRegisters(Code& code)
                 if (canDelete)
                     inst = Inst();
             }
-
-            if (inst.kind.opcode == Patch)
-                inst.reportUsedRegisters(RegisterSetBuilder(localCalc.live()));
+            
+            if (inst.kind.opcode == Patch) {
+                RegisterSet registerSet;
+                for (Reg reg : localCalc.live())
+                    registerSet.set(reg);
+                inst.reportUsedRegisters(registerSet);
+            }
             localCalc.execute(instIndex);
         }
         

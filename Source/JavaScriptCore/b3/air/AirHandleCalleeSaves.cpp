@@ -36,14 +36,14 @@ namespace JSC { namespace B3 { namespace Air {
 
 void handleCalleeSaves(Code& code)
 {
-    RegisterSetBuilder usedCalleeSaves;
+    RegisterSet usedCalleeSaves;
 
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
             inst.forEachTmpFast(
                 [&] (Tmp& tmp) {
                     // At first we just record all used regs.
-                    usedCalleeSaves.add(tmp.reg(), IgnoreVectors);
+                    usedCalleeSaves.set(tmp.reg());
                 });
 
             if (inst.kind.opcode == Patch) {
@@ -56,19 +56,17 @@ void handleCalleeSaves(Code& code)
     handleCalleeSaves(code, WTFMove(usedCalleeSaves));
 }
 
-void handleCalleeSaves(Code& code, RegisterSetBuilder usedCalleeSaves)
+void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
 {
     // We filter to really get the callee saves.
-    usedCalleeSaves.filter(RegisterSetBuilder::calleeSaveRegisters());
+    usedCalleeSaves.filter(RegisterSet::calleeSaveRegisters());
     usedCalleeSaves.filter(code.mutableRegs());
-    usedCalleeSaves.exclude(RegisterSetBuilder::stackRegisters()); // We don't need to save FP here.
+    usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 
-    auto calleSavesToSave = usedCalleeSaves.buildWithLowerBits();
-
-    if (!calleSavesToSave.numberOfSetRegisters())
+    if (!usedCalleeSaves.numberOfSetRegisters())
         return;
 
-    RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(calleSavesToSave);
+    RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(usedCalleeSaves);
 
     size_t byteSize = 0;
     for (const RegisterAtOffset& entry : calleeSaveRegisters)

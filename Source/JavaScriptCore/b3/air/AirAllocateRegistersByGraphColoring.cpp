@@ -384,7 +384,7 @@ protected:
                 ASSERT(!isPrecolored(aliasTmpIndex) || (isPrecolored(aliasTmpIndex) && reg));
 
                 if (reg)
-                    coloredRegisters.add(reg, IgnoreVectors);
+                    coloredRegisters.set(reg);
             }
 
             bool colorAssigned = false;
@@ -392,7 +392,7 @@ protected:
             if (iter != m_biases.end()) {
                 for (IndexType desiredBias : iter->value) {
                     if (Reg desiredColor = m_coloredTmp[getAlias(desiredBias)]) {
-                        if (!coloredRegisters.contains(desiredColor, IgnoreVectors)) {
+                        if (!coloredRegisters.get(desiredColor)) {
                             m_coloredTmp[tmpIndex] = desiredColor;
                             colorAssigned = true;
                             break;
@@ -402,7 +402,7 @@ protected:
             }
             if (!colorAssigned) {
                 for (Reg reg : m_regsInPriorityOrder) {
-                    if (!coloredRegisters.contains(reg, IgnoreVectors)) {
+                    if (!coloredRegisters.get(reg)) {
                         m_coloredTmp[tmpIndex] = reg;
                         colorAssigned = true;
                         break;
@@ -2087,7 +2087,7 @@ private:
                             canUseMove32IfDidSpill = false;
                         
                         stackSlotEntry->value->ensureSize(
-                            canUseMove32IfDidSpill ? 4 : bytesForWidth(width));
+                            canUseMove32IfDidSpill ? 4 : bytes(width));
                         arg = Arg::stack(stackSlotEntry->value);
                         didSpill = true;
                         if (needScratchIfSpilledInPlace)

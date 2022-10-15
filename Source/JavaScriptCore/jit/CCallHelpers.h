@@ -95,9 +95,9 @@ private:
     ALWAYS_INLINE void setupStubArgs(std::array<RegType, NumberOfRegisters> destinations, std::array<RegType, NumberOfRegisters> sources)
     {
         if (ASSERT_ENABLED) {
-            RegisterSetBuilder set;
+            RegisterSet set;
             for (RegType dest : destinations)
-                set.add(dest, IgnoreVectors);
+                set.set(dest);
             ASSERT_WITH_MESSAGE(set.numberOfSetRegisters() == NumberOfRegisters, "Destinations should not be aliased.");
         }
 
@@ -118,19 +118,19 @@ private:
 
 #if ASSERT_ENABLED
         auto numUniqueSources = [&] () -> unsigned {
-            RegisterSetBuilder set;
+            RegisterSet set;
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                set.add(source, IgnoreVectors);
+                set.set(source);
             }
             return set.numberOfSetRegisters();
         };
 
         auto numUniqueDests = [&] () -> unsigned {
-            RegisterSetBuilder set;
+            RegisterSet set;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                set.add(dest, IgnoreVectors);
+                set.set(dest);
             }
             return set.numberOfSetRegisters();
         };
@@ -140,11 +140,11 @@ private:
             RegisterSet freeDestinations;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                freeDestinations.add(dest, IgnoreVectors);
+                freeDestinations.set(dest);
             }
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                freeDestinations.remove(source);
+                freeDestinations.clear(source);
             }
 
             if (freeDestinations.numberOfSetRegisters()) {
@@ -153,7 +153,7 @@ private:
                     auto& pair = pairs[i];
                     RegType source = pair.first;
                     RegType dest = pair.second;
-                    if (freeDestinations.contains(dest, IgnoreVectors)) {
+                    if (freeDestinations.get(dest)) {
                         move(source, dest);
                         pairs.remove(i);
                         madeMove = true;
@@ -828,14 +828,14 @@ public:
     {
         RegisterSet preserved;
         if (preservedGPR1 != InvalidGPRReg)
-            preserved.add(preservedGPR1, IgnoreVectors);
+            preserved.add(preservedGPR1);
         if (preservedGPR2 != InvalidGPRReg)
-            preserved.add(preservedGPR2, IgnoreVectors);
+            preserved.add(preservedGPR2);
 
         GPRReg temp1 = selectScratchGPR(preserved);
-        preserved.add(temp1, IgnoreVectors);
+        preserved.add(temp1);
         GPRReg temp2 = selectScratchGPR(preserved);
-        preserved.add(temp2, IgnoreVectors);
+        preserved.add(temp2);
         GPRReg temp3 = selectScratchGPR(preserved);
 
         GPRReg newFramePointer = temp1;

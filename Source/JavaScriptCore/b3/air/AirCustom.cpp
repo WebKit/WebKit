@@ -43,17 +43,17 @@ bool PatchCustom::isValidForm(Inst& inst)
         return false;
     if (!inst.args[0].special()->isValid(inst))
         return false;
-    auto clobberedEarly = inst.extraEarlyClobberedRegs().buildWithLowerBits();
-    auto clobberedLate = inst.extraClobberedRegs().buildWithLowerBits();
+    RegisterSet clobberedEarly = inst.extraEarlyClobberedRegs();
+    RegisterSet clobberedLate = inst.extraClobberedRegs();
     bool ok = true;
     inst.forEachTmp(
         [&] (Tmp& tmp, Arg::Role role, Bank, Width) {
             if (!tmp.isReg())
                 return;
             if (Arg::isLateDef(role) || Arg::isLateUse(role))
-                ok &= !clobberedLate.contains(tmp.reg(), IgnoreVectors);
+                ok &= !clobberedLate.get(tmp.reg());
             else
-                ok &= !clobberedEarly.contains(tmp.reg(), IgnoreVectors);
+                ok &= !clobberedEarly.get(tmp.reg());
         });
     return ok;
 }

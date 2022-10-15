@@ -193,23 +193,23 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     // they must be in the used register set passed by the callers (Baseline, DFG, and FTL) if they need to be kept.
     // Some registers can be locked, but not in the used register set. For example, the caller could make baseGPR
     // same to valueRegs, and not include it in the used registers since it will be changed.
-    RegisterSetBuilder usedRegisters;
+    RegisterSet registersToSpillForCCall;
     for (auto& value : regs) {
         SnippetReg reg = value.reg();
         if (reg.isJSValueRegs())
-            usedRegisters.add(reg.jsValueRegs(), IgnoreVectors);
+            registersToSpillForCCall.set(reg.jsValueRegs());
         else if (reg.isGPR())
-            usedRegisters.add(reg.gpr(), IgnoreVectors);
+            registersToSpillForCCall.set(reg.gpr());
         else
-            usedRegisters.add(reg.fpr(), IgnoreVectors);
+            registersToSpillForCCall.set(reg.fpr());
     }
     for (GPRReg reg : gpScratch)
-        usedRegisters.add(reg, IgnoreVectors);
+        registersToSpillForCCall.set(reg);
     for (FPRReg reg : fpScratch)
-        usedRegisters.add(reg, IgnoreVectors);
+        registersToSpillForCCall.set(reg);
     if (jit.codeBlock()->useDataIC())
-        usedRegisters.add(stubInfo.m_stubInfoGPR, IgnoreVectors);
-    auto registersToSpillForCCall = RegisterSetBuilder::registersToSaveForCCall(usedRegisters);
+        registersToSpillForCCall.set(stubInfo.m_stubInfoGPR);
+    registersToSpillForCCall.exclude(RegisterSet::registersToNotSaveForCCall());
 
     AccessCaseSnippetParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     snippet->generator()->run(jit, params);

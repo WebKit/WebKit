@@ -67,7 +67,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     CCallHelpers jit;
     JIT_COMMENT(jit, "throwStackOverflowFromWasmThunkGenerator");
 
-    int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSetBuilder::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
+    int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSet::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
     ASSERT(static_cast<unsigned>(stackSpace) < Options::softReservedZoneSize());
     jit.addPtr(CCallHelpers::TrustedImm32(-stackSpace), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
@@ -87,14 +87,15 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
     jit.emitFunctionPrologue();
 
     const unsigned extraPaddingBytes = 0;
-    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits();
+    RegisterSet registersToSpill = RegisterSet::allRegisters();
+    registersToSpill.exclude(RegisterSet::registersToNotSaveForCCall());
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationWasmTriggerTierUpNow)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
 
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
 
     jit.emitFunctionEpilogue();
     jit.ret();

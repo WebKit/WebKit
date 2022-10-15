@@ -35,27 +35,26 @@
 
 namespace JSC { namespace B3 {
 
-const RegisterSetBuilder& StackmapGenerationParams::usedRegisters() const
+const RegisterSet& StackmapGenerationParams::usedRegisters() const
 {
     ASSERT(m_context.code->needsUsedRegisters());
     
     return m_value->m_usedRegisters;
 }
 
-RegisterSetBuilder StackmapGenerationParams::unavailableRegisters() const
+RegisterSet StackmapGenerationParams::unavailableRegisters() const
 {
-    RegisterSetBuilder result = usedRegisters();
+    RegisterSet result = usedRegisters();
     
-    RegisterSetBuilder unsavedCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisters();
-    ASSERT(!unsavedCalleeSaves.hasAnyWideRegisters());
+    RegisterSet unsavedCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
     unsavedCalleeSaves.exclude(m_context.code->calleeSaveRegisters());
 
     result.merge(unsavedCalleeSaves);
 
     for (GPRReg gpr : m_gpScratch)
-        result.remove(gpr);
+        result.clear(gpr);
     for (FPRReg fpr : m_fpScratch)
-        result.remove(fpr);
+        result.clear(fpr);
     
     return result;
 }

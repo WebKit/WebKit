@@ -192,11 +192,11 @@ void SpeculativeJIT::cachedGetById(
         basePayloadGPR = resultPayloadGPR;
     }
     
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
-        usedRegisters.remove(JSValueRegs(baseTagGPROrNone, basePayloadGPR));
-        usedRegisters.remove(JSValueRegs(resultTagGPR, resultPayloadGPR));
+        usedRegisters.set(JSValueRegs(baseTagGPROrNone, basePayloadGPR), false);
+        usedRegisters.set(JSValueRegs(resultTagGPR, resultPayloadGPR), false);
     }
     
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
@@ -234,7 +234,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(
     CacheableIdentifier identifier, const JITCompiler::JumpList& slowPathTarget)
 {
     UNUSED_PARAM(stubInfoGPR);
-    RegisterSetBuilder usedRegisters = this->usedRegisters();
+    RegisterSet usedRegisters = this->usedRegisters();
     
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
@@ -1846,7 +1846,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
 
             CodeOrigin codeOrigin = node->origin.semantic;
             CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-            RegisterSetBuilder usedRegisters = this->usedRegisters();
+            RegisterSet usedRegisters = this->usedRegisters();
 
             JITCompiler::JumpList slowCases;
             if (!m_state.forNode(m_graph.varArgChild(node, 0)).isType(SpecCell))

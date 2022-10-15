@@ -49,9 +49,8 @@ public:
     // Unless you know the register is not the target of a recovery.
     void lockGPR(GPRReg gpr)
     {
-        ASSERT(!m_lockedRegisters.contains(gpr, IgnoreVectors));
-        ASSERT(Reg(gpr).isGPR());
-        m_lockedRegisters.add(gpr, IgnoreVectors);
+        ASSERT(!m_lockedRegisters.get(gpr));
+        m_lockedRegisters.set(gpr);
         if (verbose)
             dataLog("   * Locking ", gpr, "\n");
     }
@@ -67,19 +66,17 @@ public:
 
     void releaseGPR(GPRReg gpr)
     {
-        ASSERT(Reg::fromIndex(gpr).isGPR());
         if (verbose) {
-            if (m_lockedRegisters.contains(gpr, IgnoreVectors))
+            if (m_lockedRegisters.get(gpr))
                 dataLog("   * Releasing ", gpr, "\n");
             else
                 dataLog("   * ", gpr, " was not locked\n");
         }
-        m_lockedRegisters.remove(gpr);
+        m_lockedRegisters.clear(gpr);
     }
 
     void restoreGPR(GPRReg gpr)
     {
-        ASSERT(Reg::fromIndex(gpr).isGPR());
         if (!m_newRegisters[gpr])
             return;
 
@@ -420,7 +417,7 @@ private:
     // We also use this to lock registers temporarily, for instance to
     // ensure that we have at least 2 available registers for loading
     // a pair on 32bits.
-    mutable ScalarRegisterSet m_lockedRegisters = { };
+    mutable RegisterSet m_lockedRegisters;
 
     // This stores the current recoveries present in registers. A null
     // CachedRecovery means we can trash the current value as we don't
@@ -449,7 +446,7 @@ private:
     {
         Reg nonTemp { };
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-            if (m_lockedRegisters.contains(reg, IgnoreVectors))
+            if (m_lockedRegisters.get(reg))
                 continue;
 
             if (!check(reg))
@@ -465,8 +462,8 @@ private:
 
 #if USE(JSVALUE64)
         if (!nonTemp && m_numberTagRegister != InvalidGPRReg && check(Reg { m_numberTagRegister })) {
-            ASSERT(m_lockedRegisters.contains(m_numberTagRegister, IgnoreVectors));
-            m_lockedRegisters.remove(m_numberTagRegister);
+            ASSERT(m_lockedRegisters.get(m_numberTagRegister));
+            m_lockedRegisters.clear(m_numberTagRegister);
             nonTemp = Reg { m_numberTagRegister };
             m_numberTagRegister = InvalidGPRReg;
         }
@@ -521,7 +518,7 @@ private:
         // around twice the number of available registers on your
         // architecture), no spilling is going to take place anyways.
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-            if (m_lockedRegisters.contains(reg, IgnoreVectors))
+            if (m_lockedRegisters.get(reg))
                 continue;
 
             CachedRecovery* cachedRecovery { m_newRegisters[reg] };
@@ -564,13 +561,13 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInGPR())
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().gpr(), IgnoreVectors);
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().gpr());
                 if (cachedRecovery.recovery().isInFPR())
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().fpr(), IgnoreVectors);
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().fpr());
 #if USE(JSVALUE32_64)
                 if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().tagGPR(), IgnoreVectors)
-                        && !m_lockedRegisters.contains(cachedRecovery.recovery().payloadGPR(), IgnoreVectors);
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().tagGPR())
+                        && !m_lockedRegisters.get(cachedRecovery.recovery().payloadGPR());
                 }
 #endif
                 return false;
@@ -587,13 +584,13 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInGPR()) {
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().gpr(), IgnoreVectors) 
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().gpr()) 
                         && !m_newRegisters[cachedRecovery.recovery().gpr()];
                 }
 #if USE(JSVALUE32_64)
                 if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().tagGPR(), IgnoreVectors)
-                        && !m_lockedRegisters.contains(cachedRecovery.recovery().payloadGPR(), IgnoreVectors)
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().tagGPR())
+                        && !m_lockedRegisters.get(cachedRecovery.recovery().payloadGPR())
                         && !m_newRegisters[cachedRecovery.recovery().tagGPR()]
                         && !m_newRegisters[cachedRecovery.recovery().payloadGPR()];
                 }
@@ -612,11 +609,11 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInGPR())
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().gpr(), IgnoreVectors);
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().gpr());
 #if USE(JSVALUE32_64)
                 if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().tagGPR(), IgnoreVectors)
-                        && !m_lockedRegisters.contains(cachedRecovery.recovery().payloadGPR(), IgnoreVectors);
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().tagGPR())
+                        && !m_lockedRegisters.get(cachedRecovery.recovery().payloadGPR());
                 }
 #endif
                 return false;
@@ -633,7 +630,7 @@ private:
         ensureRegister(
             [this] (const CachedRecovery& cachedRecovery) {
                 if (cachedRecovery.recovery().isInFPR())
-                    return !m_lockedRegisters.contains(cachedRecovery.recovery().fpr(), IgnoreVectors);
+                    return !m_lockedRegisters.get(cachedRecovery.recovery().fpr());
                 return false;
             });
     }

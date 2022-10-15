@@ -222,19 +222,19 @@ struct AccessGenerationState {
 
     struct SpillState {
         SpillState() = default;
-        SpillState(ScalarRegisterSet&& regs, unsigned usedStackBytes)
+        SpillState(RegisterSet&& regs, unsigned usedStackBytes)
             : spilledRegisters(WTFMove(regs))
             , numberOfStackBytesUsedForRegisterPreservation(usedStackBytes)
         {
         }
 
-        ScalarRegisterSet spilledRegisters { };
+        RegisterSet spilledRegisters { };
         unsigned numberOfStackBytesUsedForRegisterPreservation { std::numeric_limits<unsigned>::max() };
 
         bool isEmpty() const { return numberOfStackBytesUsedForRegisterPreservation == std::numeric_limits<unsigned>::max(); }
     };
 
-    const ScalarRegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
+    const RegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
 
     SpillState preserveLiveRegistersToStackForCall(const RegisterSet& extra = { });
     SpillState preserveLiveRegistersToStackForCallWithoutExceptions();
@@ -242,7 +242,7 @@ struct AccessGenerationState {
     void restoreLiveRegistersFromStackForCallWithThrownException(const SpillState&);
     void restoreLiveRegistersFromStackForCall(const SpillState&, const RegisterSet& dontRestore = { });
 
-    const ScalarRegisterSet& liveRegistersForCall();
+    const RegisterSet& liveRegistersForCall();
 
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     DisposableCallSiteIndex callSiteIndexForExceptionHandling();
@@ -267,10 +267,10 @@ struct AccessGenerationState {
     ScratchRegisterAllocator makeDefaultScratchAllocator(GPRReg extraToLock = InvalidGPRReg);
 
 private:
-    const ScalarRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
+    const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
     
-    ScalarRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
-    ScalarRegisterSet m_liveRegistersForCall;
+    RegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    RegisterSet m_liveRegistersForCall;
     CallSiteIndex m_callSiteIndex;
     SpillState m_spillStateForJSCall;
     bool m_calculatedRegistersForCallAndExceptionHandling : 1 { false };
