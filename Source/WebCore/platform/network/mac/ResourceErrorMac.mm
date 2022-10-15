@@ -33,6 +33,15 @@
 #import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ResourceErrorMacAdditions.mm>)
+#import <WebKitAdditions/ResourceErrorMacAdditions.mm>
+#else
+static bool dueToCompromisingNetworkConnectionIntegrity(NSError *)
+{
+    return false;
+}
+#endif
+
 @interface NSError (WebExtras)
 - (NSString *)_web_localizedDescription;
 @end
@@ -159,14 +168,16 @@ void ResourceError::platformLazyInit()
     m_domain = [m_platformError domain];
     m_errorCode = [m_platformError code];
 
-    if (NSString* failingURLString = [[m_platformError userInfo] valueForKey:@"NSErrorFailingURLStringKey"])
+    RetainPtr userInfo = [m_platformError userInfo];
+    if (auto *failingURLString = dynamic_objc_cast<NSString>([userInfo valueForKey:@"NSErrorFailingURLStringKey"]))
         m_failingURL = URL { failingURLString };
-    else
-        m_failingURL = URL((NSURL *)[[m_platformError userInfo] valueForKey:@"NSErrorFailingURLKey"]);
+    else if (auto *failingURL = dynamic_objc_cast<NSURL>([userInfo valueForKey:@"NSErrorFailingURLKey"]))
+        m_failingURL = URL { failingURL };
     // Workaround for <rdar://problem/6554067>
     m_localizedDescription = m_failingURL.string();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_localizedDescription = [m_platformError _web_localizedDescription];
+    m_compromisedNetworkConnectionIntegrity = dueToCompromisingNetworkConnectionIntegrity(m_platformError.get());
     END_BLOCK_OBJC_EXCEPTIONS
 
     m_dataIsUpToDate = true;
