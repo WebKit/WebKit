@@ -17,7 +17,11 @@
         --expertise-shadow: 0px 5px 10px 0px hsla(0, 0%, 100%, 0.1);
         --hover-text-color: hsl(0, 0%, 100%);
     }
+    img.github {
+        filter: invert(100%);
+    }
 }
+
 article ul {
     list-style: none;
     padding-left: 0;
@@ -87,7 +91,6 @@ li em {
     }
 
 }
-
 </style>
 	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
@@ -206,8 +209,9 @@ function addElement(container, tagName, attributes, text = "") {
 function populateContributorListItem(listItem, contributor) {
     addElement(listItem, 'strong', {'class': 'name'}, contributor.name);
     if (contributor.github) {
+        addText(listItem, ' ');
         addElement(listItem, 'a', {'href': 'https://github.com/' + contributor.github });
-        addElement(listItem.lastChild, 'img', {'src': 'https://raw.githubusercontent.com/primer/octicons/main/icons/mark-github-16.svg', 'width': '16', 'height': '16', 'alt': contributor.github});
+        addElement(listItem.lastChild, 'img', {'src': 'https://raw.githubusercontent.com/primer/octicons/main/icons/mark-github-16.svg', 'width': '16', 'height': '16', 'alt': contributor.github, 'class': 'github'});
     }
     if (contributor.nicks) {
         addElement(listItem, 'span', {'class': 'nicks'}, ' (' + contributor.nicks.join(', ') + ')');
