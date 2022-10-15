@@ -646,7 +646,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
 }
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
+GraphicsContextGLCocoa::IOSurfaceTextureAttachment GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
 {
     constexpr EGLint emptyAttributes[] = { EGL_NONE };
 
@@ -656,19 +656,22 @@ void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IO
     RetainPtr<MTLSharedTextureHandle> handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
     if (!handle) {
         LOG(WebGL, "Unable to create a MTLSharedTextureHandle from the IOSurface in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
 
     if (!handle.get().device) {
         LOG(WebGL, "MTLSharedTextureHandle does not have a Metal device in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
 
     auto texture = adoptNS([handle.get().device newSharedTextureWithHandle:handle.get()]);
     if (!texture) {
         LOG(WebGL, "Unable to create a MTLSharedTexture from the texture handle in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
+
+    GCGLuint textureWidth = [texture width];
+    GCGLuint textureHeight = [texture height];
 
     // FIXME: Does the texture have the correct usage mode?
 
@@ -677,13 +680,13 @@ void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IO
     auto eglImage = EGL_CreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
     if (!eglImage) {
         LOG(WebGL, "Unable to create an EGLImage from the Metal handle in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
 
     // Tell the currently bound texture to use the EGLImage.
     GL_EGLImageTargetTexture2DOES(target, eglImage);
 
-    return eglImage;
+    return std::make_tuple(eglImage, textureWidth, textureHeight);
 }
 
 void GraphicsContextGLCocoa::detachIOSurfaceFromSharedTexture(void* handle)

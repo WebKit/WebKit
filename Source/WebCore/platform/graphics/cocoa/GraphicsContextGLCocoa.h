@@ -63,7 +63,8 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    void* attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
+    using IOSurfaceTextureAttachment = std::optional<std::tuple<void*, unsigned, unsigned>>;
+    IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
     void detachIOSurfaceFromSharedTexture(void* handle);
 #endif
 

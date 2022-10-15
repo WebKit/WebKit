@@ -94,22 +94,8 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     ASSERT(data.surface);
     auto size = data.surface->size();
-    auto surfaceWidth = size.width();
-    auto surfaceHeight = size.height();
-    if (!surfaceWidth || !surfaceHeight)
-        return;
-
-    auto bufferWidth = static_cast<uint32_t>(surfaceWidth);
-    auto bufferHeight = static_cast<uint32_t>(surfaceHeight);
-
-    // The drawing target can change size at any point during the session. If this happens, we need
-    // to recreate the framebuffer.
-    if (bufferWidth != m_width || bufferHeight != m_height) {
-        m_width = bufferWidth;
-        m_height = bufferHeight;
-        if (!setupFramebuffer())
-            return;
-    }
+    auto bufferWidth = static_cast<uint32_t>(size.width());
+    auto bufferHeight = static_cast<uint32_t>(size.height());
 
     auto gCGL = static_cast<GraphicsContextGLCocoa*>(m_context.graphicsContextGL());
     GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
@@ -151,7 +137,18 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
     if (data.isShared) {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-        m_ioSurfaceTextureHandle = gCGL->attachIOSurfaceToSharedTexture(textureTarget, data.surface.get());
+        auto surfaceTextureAttachment = gCGL->attachIOSurfaceToSharedTexture(textureTarget, data.surface.get());
+        if (!surfaceTextureAttachment) {
+            gCGL->deleteTexture(m_opaqueTexture);
+            m_opaqueTexture = 0;
+            return;
+        }
+
+        auto [textureHandle, textureWidth, textureHeight] = surfaceTextureAttachment.value();
+        m_ioSurfaceTextureHandle = textureHandle;
+        bufferWidth = textureWidth;
+        bufferHeight = textureHeight;
+
         m_ioSurfaceTextureHandleIsShared = true;
 #else
         ASSERT_NOT_REACHED();
@@ -159,6 +156,18 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     } else {
         m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLCocoa::PbufferAttachmentUsage::Write, GL::BGRA, bufferWidth, bufferHeight, GL::UNSIGNED_BYTE, data.surface->surface(), 0);
         m_ioSurfaceTextureHandleIsShared = false;
+    }
+
+    if (!bufferWidth || !bufferHeight)
+        return;
+
+    // The drawing target can change size at any point during the session. If this happens, we need
+    // to recreate the framebuffer.
+    if (bufferWidth != m_width || bufferHeight != m_height) {
+        m_width = bufferWidth;
+        m_height = bufferHeight;
+        if (!setupFramebuffer())
+            return;
     }
 
     if (!m_ioSurfaceTextureHandle) {
@@ -333,8 +342,8 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
                 if (m_attributes.depth)
                     gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
             } else {
-                if (m_attributes.stencil || m_attributes.depth)
-                    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+                ASSERT(m_attributes.stencil || m_attributes.depth);
+                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
             }
         } else {
             if (m_attributes.stencil) {
