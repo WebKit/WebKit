@@ -35,11 +35,13 @@ namespace WebCore {
 
 class RemoteDOMWindow;
 
+// FIXME: Don't instantiate any of these until the unsafe reinterpret_cast's are removed from FrameTree.h
+// and FrameTree::m_thisFrame is an AbstractFrame&. Otherwise we will have some invalid pointer use.
 class RemoteFrame final : public AbstractFrame {
 public:
-    static Ref<RemoteFrame> create(GlobalFrameIdentifier&& frameIdentifier)
+    static Ref<RemoteFrame> create(Page& page, GlobalFrameIdentifier&& frameIdentifier)
     {
-        return adoptRef(* new RemoteFrame(WTFMove(frameIdentifier)));
+        return adoptRef(* new RemoteFrame(page, WTFMove(frameIdentifier)));
     }
     ~RemoteFrame();
 
@@ -52,7 +54,7 @@ public:
     AbstractFrame* opener() const { return m_opener.get(); }
 
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(GlobalFrameIdentifier&&);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, GlobalFrameIdentifier&&);
 
     bool isRemoteFrame() const final { return true; }
     bool isLocalFrame() const final { return false; }
@@ -60,6 +62,8 @@ private:
     AbstractDOMWindow* virtualWindow() const final;
 
     GlobalFrameIdentifier m_identifier;
+
+    // FIXME: This should not be a raw pointer.
     RemoteDOMWindow* m_window { nullptr };
 
     RefPtr<AbstractFrame> m_opener;

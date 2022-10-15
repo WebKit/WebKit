@@ -630,13 +630,14 @@ NSRect Frame::rectForScrollToVisible()
 
 void Frame::setTimersPaused(bool paused)
 {
-    if (!m_page)
+    auto* page = this->page();
+    if (!page)
         return;
     JSLockHolder lock(commonVM());
     if (paused)
-        m_page->suspendActiveDOMObjectsAndAnimations();
+        page->suspendActiveDOMObjectsAndAnimations();
     else
-        m_page->resumeActiveDOMObjectsAndAnimations();
+        page->resumeActiveDOMObjectsAndAnimations();
 }
 
 void Frame::dispatchPageHideEventBeforePause()

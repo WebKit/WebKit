@@ -134,13 +134,6 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 // We prewarm local storage for at most 5 origins in a given page.
 static const unsigned maxlocalStoragePrewarmingCount { 5 };
 
-static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
-{
-    if (!ownerElement)
-        return 0;
-    return ownerElement->document().frame();
-}
-
 static inline float parentPageZoomFactor(Frame* frame)
 {
     Frame* parent = frame->tree().parent();
@@ -158,10 +151,9 @@ static inline float parentTextZoomFactor(Frame* frame)
 }
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient)
-    : m_mainFrame(ownerElement ? page.mainFrame() : *this)
-    , m_page(page)
+    : AbstractFrame(page, ownerElement)
+    , m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_settings(&page.settings())
-    , m_treeNode(*this, parentFromOwnerElement(ownerElement))
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_frameID(FrameIdentifier::generate())
@@ -183,8 +175,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
 #endif
 
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
-    Frame* parent = parentFromOwnerElement(ownerElement);
-    if (parent && parent->activeDOMObjectsAndAnimationsSuspended())
+    if (Frame* parent = tree().parent(); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 }
 
@@ -223,11 +214,6 @@ Frame::~Frame()
 
     if (!isMainFrame())
         m_mainFrame.selfOnlyDeref();
-}
-
-Page* Frame::page() const
-{
-    return m_page.get();
 }
 
 HTMLFrameOwnerElement* Frame::ownerElement() const
@@ -284,8 +270,8 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = true;
 
     if (isMainFrame()) {
-        if (m_page)
-            m_page->didChangeMainDocument();
+        if (auto* page = this->page())
+            page->didChangeMainDocument();
         m_loader->client().dispatchDidChangeMainDocument();
 
         // We want to generate the same unique names whenever a page is loaded to avoid making layout tests
@@ -320,8 +306,8 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     }
 #endif
 
-    if (m_page && m_doc && isMainFrame() && !loader().stateMachine().isDisplayingInitialEmptyDocument())
-        m_page->mainFrameDidChangeToNonInitialEmptyDocument();
+    if (page() && m_doc && isMainFrame() && !loader().stateMachine().isDisplayingInitialEmptyDocument())
+        page()->mainFrameDidChangeToNonInitialEmptyDocument();
 
     InspectorInstrumentation::frameDocumentUpdated(*this);
 
@@ -330,7 +316,7 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
 
 void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
-    if (!m_page || !m_doc || !m_doc->renderView())
+    if (!page() || !m_doc || !m_doc->renderView())
         return;
 
     bool needsUpdateForWheelEventHandlers = false;
@@ -348,10 +334,10 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
 #endif
 #if ENABLE(EDITABLE_REGION)
     // Document::mayHaveEditableElements never changes from true to false currently.
-    needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
+    needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && page()->shouldBuildEditableRegion();
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    needsUpdateForInteractionRegions = m_page->shouldBuildInteractionRegions();
+    needsUpdateForInteractionRegions = page()->shouldBuildInteractionRegions();
 #endif
     if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions)
         return;
@@ -373,8 +359,8 @@ void Frame::orientationChanged()
 
 int Frame::orientation() const
 {
-    if (m_page)
-        return m_page->chrome().client().deviceOrientation();
+    if (auto* page = this->page())
+        return page->chrome().client().deviceOrientation();
     return 0;
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
@@ -664,14 +650,14 @@ FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, cons
 
 void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 {
-    if (!m_page)
+    if (!page())
         return;
 
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
-    bool pageWasNotified = m_page->hasBeenNotifiedToInjectUserScripts();
-    m_page->userContentProvider().forEachUserScript([this, protectedThis = Ref { *this }, injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
+    bool pageWasNotified = page()->hasBeenNotifiedToInjectUserScripts();
+    page()->userContentProvider().forEachUserScript([this, protectedThis = Ref { *this }, injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
         if (script.injectionTime() == injectionTime) {
             if (script.waitForNotificationBeforeInjecting() == WaitForNotificationBeforeInjecting::Yes && !pageWasNotified)
                 addUserScriptAwaitingNotification(world, script);
@@ -875,7 +861,7 @@ void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& 
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
-    ASSERT(m_page);
+    ASSERT(page());
 
     bool isMainFrame = this->isMainFrame();
 

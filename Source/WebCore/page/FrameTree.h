@@ -28,6 +28,7 @@ namespace WebCore {
 enum class CanWrap : bool { No, Yes };
 enum class DidWrap : bool { No, Yes };
 
+class AbstractFrame;
 class Frame;
 class TreeScope;
 
@@ -36,7 +37,7 @@ class FrameTree {
 public:
     static constexpr unsigned invalidCount = static_cast<unsigned>(-1);
 
-    FrameTree(Frame& thisFrame, Frame* parentFrame);
+    FrameTree(AbstractFrame& thisFrame, AbstractFrame* parentFrame);
 
     ~FrameTree();
 
@@ -46,10 +47,11 @@ public:
     WEBCORE_EXPORT void clearName();
     WEBCORE_EXPORT Frame* parent() const;
     
-    Frame* nextSibling() const { return m_nextSibling.get(); }
-    Frame* previousSibling() const { return m_previousSibling.get(); }
-    Frame* firstChild() const { return m_firstChild.get(); }
-    Frame* lastChild() const { return m_lastChild.get(); }
+    // FIXME: Add type checks and move them to callers instead of these reinterpret_casts.
+    Frame* nextSibling() const { return reinterpret_cast<Frame*>(m_nextSibling.get()); }
+    Frame* previousSibling() const { return reinterpret_cast<Frame*>(m_previousSibling.get()); }
+    Frame* firstChild() const { return reinterpret_cast<Frame*>(m_firstChild.get()); }
+    Frame* lastChild() const { return reinterpret_cast<Frame*>(m_lastChild.get()); }
 
     Frame* firstRenderedChild() const;
     Frame* nextRenderedSibling() const;
@@ -93,16 +95,17 @@ private:
     AtomString uniqueChildName(const AtomString& requestedName) const;
     AtomString generateUniqueName() const;
 
+    // FIXME: This should be an AbstractFrame&.
     Frame& m_thisFrame;
 
-    WeakPtr<Frame> m_parent;
+    WeakPtr<AbstractFrame> m_parent;
     AtomString m_name; // The actual frame name (may be empty).
     AtomString m_uniqueName;
 
-    RefPtr<Frame> m_nextSibling;
-    WeakPtr<Frame> m_previousSibling;
-    RefPtr<Frame> m_firstChild;
-    WeakPtr<Frame> m_lastChild;
+    RefPtr<AbstractFrame> m_nextSibling;
+    WeakPtr<AbstractFrame> m_previousSibling;
+    RefPtr<AbstractFrame> m_firstChild;
+    WeakPtr<AbstractFrame> m_lastChild;
     mutable unsigned m_scopedChildCount { invalidCount };
     mutable uint64_t m_frameIDGenerator { 0 };
 };

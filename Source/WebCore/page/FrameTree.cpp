@@ -36,15 +36,15 @@
 
 namespace WebCore {
 
-FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
-    : m_thisFrame(thisFrame)
+FrameTree::FrameTree(AbstractFrame& thisFrame, AbstractFrame* parentFrame)
+    : m_thisFrame(static_cast<Frame&>(thisFrame))
     , m_parent(parentFrame)
 {
 }
 
 FrameTree::~FrameTree()
 {
-    for (Frame* child = firstChild(); child; child = child->tree().nextSibling())
+    for (auto* child = firstChild(); child; child = child->tree().nextSibling())
         child->setView(nullptr);
 }
 
@@ -66,8 +66,9 @@ void FrameTree::clearName()
 }
 
 Frame* FrameTree::parent() const 
-{ 
-    return m_parent.get();
+{
+    // FIXME: This should return an AbstractFrame.
+    return dynamicDowncast<Frame>(m_parent.get());
 }
 
 void FrameTree::appendChild(Frame& child)
@@ -90,8 +91,8 @@ void FrameTree::appendChild(Frame& child)
 
 void FrameTree::removeChild(Frame& child)
 {
-    WeakPtr<Frame>& newLocationForPrevious = m_lastChild == &child ? m_lastChild : child.tree().m_nextSibling->tree().m_previousSibling;
-    RefPtr<Frame>& newLocationForNext = m_firstChild == &child ? m_firstChild : child.tree().m_previousSibling->tree().m_nextSibling;
+    WeakPtr<AbstractFrame>& newLocationForPrevious = m_lastChild == &child ? m_lastChild : child.tree().m_nextSibling->tree().m_previousSibling;
+    RefPtr<AbstractFrame>& newLocationForNext = m_firstChild == &child ? m_firstChild : child.tree().m_previousSibling->tree().m_nextSibling;
 
     child.tree().m_parent = nullptr;
     newLocationForPrevious = std::exchange(child.tree().m_previousSibling, nullptr);
@@ -131,13 +132,13 @@ static bool inScope(Frame& frame, TreeScope& scope)
     return &owner->treeScope() == &scope;
 }
 
-inline Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
+Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
 {
     if (!scope)
         return nullptr;
 
     unsigned scopedIndex = 0;
-    for (Frame* result = firstChild(); result; result = result->tree().nextSibling()) {
+    for (auto* result = firstChild(); result; result = result->tree().nextSibling()) {
         if (inScope(*result, *scope)) {
             if (scopedIndex == index)
                 return result;
@@ -148,12 +149,12 @@ inline Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
     return nullptr;
 }
 
-inline Frame* FrameTree::scopedChild(const AtomString& name, TreeScope* scope) const
+Frame* FrameTree::scopedChild(const AtomString& name, TreeScope* scope) const
 {
     if (!scope)
         return nullptr;
 
-    for (Frame* child = firstChild(); child; child = child->tree().nextSibling()) {
+    for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
         if (child->tree().uniqueName() == name && inScope(*child, *scope))
             return child;
     }
@@ -166,7 +167,7 @@ inline unsigned FrameTree::scopedChildCount(TreeScope* scope) const
         return 0;
 
     unsigned scopedCount = 0;
-    for (Frame* result = firstChild(); result; result = result->tree().nextSibling()) {
+    for (auto* result = firstChild(); result; result = result->tree().nextSibling()) {
         if (inScope(*result, *scope))
             scopedCount++;
     }
@@ -209,7 +210,7 @@ unsigned FrameTree::descendantCount() const
 
 Frame* FrameTree::child(unsigned index) const
 {
-    Frame* result = firstChild();
+    auto* result = firstChild();
     for (unsigned i = 0; result && i != index; ++i)
         result = result->tree().nextSibling();
     return result;
@@ -217,9 +218,10 @@ Frame* FrameTree::child(unsigned index) const
 
 Frame* FrameTree::child(const AtomString& name) const
 {
-    for (Frame* child = firstChild(); child; child = child->tree().nextSibling())
+    for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
         if (child->tree().uniqueName() == name)
             return child;
+    }
     return nullptr;
 }
 
@@ -251,13 +253,13 @@ Frame* FrameTree::find(const AtomString& name, Frame& activeFrame) const
         return nullptr;
 
     // Search subtree starting with this frame first.
-    for (Frame* frame = &m_thisFrame; frame; frame = frame->tree().traverseNext(&m_thisFrame)) {
+    for (auto* frame = &m_thisFrame; frame; frame = frame->tree().traverseNext(&m_thisFrame)) {
         if (frame->tree().uniqueName() == name)
             return frame;
     }
 
     // Then the rest of the tree.
-    for (Frame* frame = &m_thisFrame.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_thisFrame.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->tree().uniqueName() == name)
             return frame;
     }
@@ -288,15 +290,16 @@ bool FrameTree::isDescendantOf(const Frame* ancestor) const
     if (m_thisFrame.page() != ancestor->page())
         return false;
 
-    for (Frame* frame = &m_thisFrame; frame; frame = frame->tree().parent())
+    for (auto* frame = &m_thisFrame; frame; frame = frame->tree().parent()) {
         if (frame == ancestor)
             return true;
+    }
     return false;
 }
 
 Frame* FrameTree::traverseNext(const Frame* stayWithin) const
 {
-    Frame* child = firstChild();
+    auto* child = firstChild();
     if (child) {
         ASSERT(!stayWithin || child->tree().isDescendantOf(stayWithin));
         return child;
@@ -305,13 +308,13 @@ Frame* FrameTree::traverseNext(const Frame* stayWithin) const
     if (&m_thisFrame == stayWithin)
         return nullptr;
 
-    Frame* sibling = nextSibling();
+    auto* sibling = nextSibling();
     if (sibling) {
         ASSERT(!stayWithin || sibling->tree().isDescendantOf(stayWithin));
         return sibling;
     }
 
-    Frame* frame = &m_thisFrame;
+    auto* frame = &m_thisFrame;
     while (!sibling && (!stayWithin || frame->tree().parent() != stayWithin)) {
         frame = frame->tree().parent();
         if (!frame)
@@ -329,7 +332,7 @@ Frame* FrameTree::traverseNext(const Frame* stayWithin) const
 
 Frame* FrameTree::firstRenderedChild() const
 {
-    Frame* child = firstChild();
+    auto* child = firstChild();
     if (!child)
         return nullptr;
     
@@ -346,7 +349,7 @@ Frame* FrameTree::firstRenderedChild() const
 
 Frame* FrameTree::nextRenderedSibling() const
 {
-    Frame* sibling = &m_thisFrame;
+    auto* sibling = &m_thisFrame;
 
     while ((sibling = sibling->tree().nextSibling())) {
         if (sibling->ownerRenderer())
@@ -358,7 +361,7 @@ Frame* FrameTree::nextRenderedSibling() const
 
 Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
 {
-    Frame* child = firstRenderedChild();
+    auto* child = firstRenderedChild();
     if (child) {
         ASSERT(!stayWithin || child->tree().isDescendantOf(stayWithin));
         return child;
@@ -367,13 +370,13 @@ Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
     if (&m_thisFrame == stayWithin)
         return nullptr;
 
-    Frame* sibling = nextRenderedSibling();
+    auto* sibling = nextRenderedSibling();
     if (sibling) {
         ASSERT(!stayWithin || sibling->tree().isDescendantOf(stayWithin));
         return sibling;
     }
 
-    Frame* frame = &m_thisFrame;
+    auto* frame = &m_thisFrame;
     while (!sibling && (!stayWithin || frame->tree().parent() != stayWithin)) {
         frame = frame->tree().parent();
         if (!frame)
@@ -391,7 +394,7 @@ Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
 
 Frame* FrameTree::traverseNext(CanWrap canWrap, DidWrap* didWrap) const
 {
-    if (Frame* result = traverseNext())
+    if (auto* result = traverseNext())
         return result;
 
     if (canWrap == CanWrap::Yes) {
@@ -407,9 +410,9 @@ Frame* FrameTree::traversePrevious(CanWrap canWrap, DidWrap* didWrap) const
 {
     // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
 
-    if (Frame* prevSibling = previousSibling())
+    if (auto* prevSibling = previousSibling())
         return prevSibling->tree().deepLastChild();
-    if (Frame* parentFrame = parent())
+    if (auto* parentFrame = parent())
         return parentFrame;
     
     // no siblings, no parent, self==top
@@ -428,7 +431,7 @@ Frame* FrameTree::traverseNextInPostOrder(CanWrap canWrap) const
     if (m_nextSibling)
         return m_nextSibling->tree().deepFirstChild();
     if (m_parent)
-        return m_parent.get();
+        return dynamicDowncast<Frame>(m_parent.get());
     if (canWrap == CanWrap::Yes)
         return deepFirstChild();
     return nullptr;
@@ -436,7 +439,7 @@ Frame* FrameTree::traverseNextInPostOrder(CanWrap canWrap) const
 
 Frame* FrameTree::deepFirstChild() const
 {
-    Frame* result = &m_thisFrame;
+    auto* result = &m_thisFrame;
     while (auto* next = result->tree().firstChild())
         result = next;
     return result;
@@ -444,8 +447,8 @@ Frame* FrameTree::deepFirstChild() const
 
 Frame* FrameTree::deepLastChild() const
 {
-    Frame* result = &m_thisFrame;
-    for (Frame* last = lastChild(); last; last = last->tree().lastChild())
+    auto* result = &m_thisFrame;
+    for (auto* last = lastChild(); last; last = last->tree().lastChild())
         result = last;
 
     return result;
@@ -453,8 +456,8 @@ Frame* FrameTree::deepLastChild() const
 
 Frame& FrameTree::top() const
 {
-    Frame* frame = &m_thisFrame;
-    for (Frame* parent = &m_thisFrame; parent; parent = parent->tree().parent())
+    auto* frame = &m_thisFrame;
+    for (auto* parent = &m_thisFrame; parent; parent = parent->tree().parent())
         frame = parent;
     return *frame;
 }
@@ -509,7 +512,7 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
     } else
         printIndent(indent);
 
-    WebCore::FrameView* view = frame.view();
+    auto* view = frame.view();
     printf("Frame %p %dx%d\n", &frame, view ? view->width() : 0, view ? view->height() : 0);
     printIndent(indent);
     printf("  ownerElement=%p\n", frame.ownerElement());
@@ -524,7 +527,7 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
     printIndent(indent);
     printf("  uri=%s\n", frame.document()->documentURI().utf8().data());
 
-    for (WebCore::Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
+    for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         printFrames(*child, targetFrame, indent + 1);
 }
 

@@ -119,10 +119,10 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
     m_coreFrame->init();
 }
 
-Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
+Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frame = create(page);
-    auto coreFrame = Frame::create(page.corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
+    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
     frame->m_coreFrame = coreFrame;
 
     ASSERT(!frame->m_frameID);
@@ -131,10 +131,8 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     page.send(Messages::WebPageProxy::DidCreateSubframe(coreFrame->frameID(), parent.frameID()));
 
     coreFrame->tree().setName(frameName);
-    if (ownerElement) {
-        ASSERT(ownerElement->document().frame());
-        ownerElement->document().frame()->tree().appendChild(coreFrame.get());
-    }
+    ASSERT(ownerElement.document().frame());
+    ownerElement.document().frame()->tree().appendChild(coreFrame.get());
     coreFrame->init();
 
     return frame;
