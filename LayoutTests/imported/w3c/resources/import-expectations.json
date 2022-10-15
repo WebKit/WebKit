@@ -2,6 +2,7 @@
     "LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/": "import", 
     "apng": "import", 
     "css/css-animations": "import", 
+    "css/css-animations/parsing": "import", 
     "css/css-box": "import", 
     "css/css-color": "import", 
     "css/css-flexbox": "import", 
