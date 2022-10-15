@@ -44,6 +44,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyStruct.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
@@ -393,6 +394,9 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
     // Basic operators
     template<OpType>
@@ -843,6 +847,8 @@ private:
     void emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedTmp>& liveValues);
 
     void emitWriteBarrierForJSWrapper();
+    void emitWriteBarrier(TypedTmp cell, TypedTmp instanceCell);
+
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     ExpressionType emitLoadOp(LoadOpType, ExpressionType pointer, uint32_t offset);
     void emitStoreOp(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
@@ -1789,44 +1795,8 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
 inline void AirIRGenerator::emitWriteBarrierForJSWrapper()
 {
     auto cell = g64();
-    auto vm = g64();
-    auto cellState = g32();
-    auto threshold = g32();
-
-    BasicBlock* fenceCheckPath = m_code.addBlock();
-    BasicBlock* fencePath = m_code.addBlock();
-    BasicBlock* doSlowPath = m_code.addBlock();
-    BasicBlock* continuation = m_code.addBlock();
-
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfOwner()), cell);
-    append(Move, Arg::addr(cell, JSWebAssemblyInstance::offsetOfVM()), vm);
-    append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
-    append(Move32, Arg::addr(vm, VM::offsetOfHeapBarrierThreshold()), threshold);
-
-    append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, threshold);
-    m_currentBlock->setSuccessors(continuation, fenceCheckPath);
-    m_currentBlock = fenceCheckPath;
-
-    append(Load8, Arg::addr(vm, VM::offsetOfHeapMutatorShouldBeFenced()), threshold);
-    append(BranchTest32, Arg::resCond(MacroAssembler::Zero), threshold, threshold);
-    m_currentBlock->setSuccessors(doSlowPath, fencePath);
-    m_currentBlock = fencePath;
-
-    auto* doFence = addPatchpoint(B3::Void);
-    doFence->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        jit.memoryFence();
-    });
-    emitPatchpoint(doFence, Tmp());
-
-    append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
-    append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, Arg::imm(blackThreshold));
-    m_currentBlock->setSuccessors(continuation, doSlowPath);
-    m_currentBlock = doSlowPath;
-
-    emitCCall(&operationWasmWriteBarrierSlowPath, TypedTmp(), cell, vm);
-    append(Jump);
-    m_currentBlock->setSuccessors(continuation);
-    m_currentBlock = continuation;
+    emitWriteBarrier(cell, cell);
 }
 
 inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
@@ -2215,6 +2185,47 @@ void AirIRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type valueType, Tm
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
+}
+
+void AirIRGenerator::emitWriteBarrier(TypedTmp cell, TypedTmp instanceCell)
+{
+    auto vm = g64();
+    auto cellState = g32();
+    auto threshold = g32();
+
+    BasicBlock* fenceCheckPath = m_code.addBlock();
+    BasicBlock* fencePath = m_code.addBlock();
+    BasicBlock* doSlowPath = m_code.addBlock();
+    BasicBlock* continuation = m_code.addBlock();
+
+    append(Move, Arg::addr(instanceCell, JSWebAssemblyInstance::offsetOfVM()), vm);
+    append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
+    append(Move32, Arg::addr(vm, VM::offsetOfHeapBarrierThreshold()), threshold);
+
+    append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, threshold);
+    m_currentBlock->setSuccessors(continuation, fenceCheckPath);
+    m_currentBlock = fenceCheckPath;
+
+    append(Load8, Arg::addr(vm, VM::offsetOfHeapMutatorShouldBeFenced()), threshold);
+    append(BranchTest32, Arg::resCond(MacroAssembler::Zero), threshold, threshold);
+    m_currentBlock->setSuccessors(doSlowPath, fencePath);
+    m_currentBlock = fencePath;
+
+    auto* doFence = addPatchpoint(B3::Void);
+    doFence->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.memoryFence();
+    });
+    emitPatchpoint(doFence, Tmp());
+
+    append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
+    append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, Arg::imm(blackThreshold));
+    m_currentBlock->setSuccessors(continuation, doSlowPath);
+    m_currentBlock = doSlowPath;
+
+    emitCCall(&operationWasmWriteBarrierSlowPath, TypedTmp(), cell, vm);
+    append(Jump);
+    m_currentBlock->setSuccessors(continuation);
+    m_currentBlock = continuation;
 }
 
 void AirIRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type valueType, Tmp result)
@@ -3382,6 +3393,100 @@ auto AirIRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
 
     result = g32();
     append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), result);
+
+    return { };
+}
+
+auto AirIRGenerator::addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    ASSERT(typeIndex < m_info.typeCount());
+    result = tmpForType(Type { TypeKind::Ref, m_info.typeSignatures[typeIndex]->index() });
+    // FIXME: inline the allocation.
+    // https://bugs.webkit.org/show_bug.cgi?id=244388
+    emitCCall(&operationWasmStructNewEmpty, result, instanceValue(), addConstant(Types::I32, typeIndex));
+
+    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    for (unsigned i = 0; i < args.size(); ++i) {
+        auto status = addStructSet(result, structType, i, args[i]);
+        if (!status)
+            return status;
+    }
+
+    return { };
+}
+
+auto AirIRGenerator::addStructGet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
+{
+    Arg payloadPointer = Arg::addr(structReference, JSWebAssemblyStruct::offsetOfPayload());
+    auto payload = g64();
+    appendEffectful(Move, payloadPointer, payload);
+
+    uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.getFieldOffset(fieldIndex));
+    Arg addrArg = Arg::addr(payload, fieldOffset);
+
+    const auto& fieldType = structType.field(fieldIndex).type;
+    result = tmpForType(fieldType);
+    switch (fieldType.kind) {
+    case TypeKind::I32: {
+        appendEffectful(Move32, addrArg, result);
+        break;
+    }
+    case TypeKind::Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+    case TypeKind::I64:
+        appendEffectful(Move, addrArg, result);
+        break;
+    case TypeKind::F32:
+        appendEffectful(MoveFloat, addrArg, result);
+        break;
+    case TypeKind::F64:
+        appendEffectful(MoveDouble, addrArg, result);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return { };
+}
+
+auto AirIRGenerator::addStructSet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType value) -> PartialResult
+{
+    Arg payloadPointer = Arg::addr(structReference, JSWebAssemblyStruct::offsetOfPayload());
+    auto payload = g64();
+    appendEffectful(Move, payloadPointer, payload);
+
+    uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.getFieldOffset(fieldIndex));
+    Arg addrArg = Arg::addr(payload, fieldOffset);
+
+    const auto& fieldType = structType.field(fieldIndex).type;
+    switch (fieldType.kind) {
+    case TypeKind::I32:
+        append(Move32, value, addrArg);
+        break;
+    case TypeKind::Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+    case TypeKind::I64: {
+        if (isRefType(fieldType)) {
+            auto instanceCell = g64();
+            append(Move, Arg::addr(instanceValue(), Instance::offsetOfOwner()), instanceCell);
+            emitWriteBarrier(structReference, instanceCell);
+        }
+        append(Move, value, addrArg);
+        break;
+    }
+    case TypeKind::F32:
+        append(MoveFloat, value, addrArg);
+        break;
+    case TypeKind::F64:
+        append(MoveDouble, value, addrArg);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     return { };
 }

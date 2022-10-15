@@ -194,6 +194,7 @@ constexpr bool typeExposedByDefault = true;
     macro(WebAssemblyMemory,       webAssemblyMemory,       webAssemblyMemory,       JSWebAssemblyMemory,       Memory,       object, typeExposedByDefault) \
     macro(WebAssemblyModule,       webAssemblyModule,       webAssemblyModule,       JSWebAssemblyModule,       Module,       object, typeExposedByDefault) \
     macro(WebAssemblyRuntimeError, webAssemblyRuntimeError, webAssemblyRuntimeError, ErrorInstance,             RuntimeError, error,  typeExposedByDefault) \
+    macro(WebAssemblyStruct,       webAssemblyStruct,       webAssemblyStruct,       JSWebAssemblyStruct,       Struct,       object, Options::useWebAssemblyGC()) \
     macro(WebAssemblyTable,        webAssemblyTable,        webAssemblyTable,        JSWebAssemblyTable,        Table,        object, typeExposedByDefault) \
     macro(WebAssemblyTag,          webAssemblyTag,          webAssemblyTag,          JSWebAssemblyTag,          Tag,          object, typeExposedByDefault) 
 #else

@@ -51,6 +51,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyStruct.h"
 #include "ProbeContext.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmBranchHints.h"
@@ -364,6 +365,9 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
     // Basic operators
     template<OpType>
@@ -440,6 +444,7 @@ private:
     void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack);
 
     void emitWriteBarrierForJSWrapper();
+    void emitWriteBarrier(Value* cell, Value* instanceCell);
     Value* emitCheckAndPreparePointer(Value* pointer, uint32_t offset, uint32_t sizeOfOp);
     B3::Kind memoryKind(B3::Opcode memoryOp);
     Value* emitLoadOp(LoadOpType, Value* pointer, uint32_t offset);
@@ -450,6 +455,8 @@ private:
     void emitAtomicStoreOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
     Value* emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
     Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
+
+    void emitStructSet(Value*, uint32_t, const StructType&, ExpressionType&);
 
     void unify(Value* phi, const ExpressionType source);
     void unifyValuesWithBlock(const Stack& resultStack, const ControlData& block);
@@ -1416,9 +1423,14 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 
 inline void B3IRGenerator::emitWriteBarrierForJSWrapper()
 {
-    Value* cell = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+    Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+    emitWriteBarrier(instance, instance);
+}
+
+inline void B3IRGenerator::emitWriteBarrier(Value* cell, Value* instanceCell)
+{
     Value* cellState = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
-    Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), cell, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
+    Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceCell, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
     Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
 
     BasicBlock* fenceCheckPath = m_proc.addBlock();
@@ -2050,6 +2062,32 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
     return sanitizeAtomicResult(op, valueType, phi);
 }
 
+void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const StructType& structType, ExpressionType& argument)
+{
+    Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), structValue, JSWebAssemblyStruct::offsetOfPayload());
+    int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
+    const auto& fieldType = structType.field(fieldIndex).type;
+    switch (fieldType.kind) {
+    case TypeKind::I32:
+    case TypeKind::Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+    case TypeKind::I64:
+    case TypeKind::F32:
+    case TypeKind::F64: {
+        if (isRefType(fieldType)) {
+            Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+            emitWriteBarrier(structValue, instance);
+        }
+        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), get(argument), payloadBase, fieldOffset);
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 auto B3IRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
     ASSERT(pointer->type() == Int32);
@@ -2513,6 +2551,61 @@ auto B3IRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result)
 
     result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize())));
 
+    return { };
+}
+
+auto B3IRGenerator::addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    const auto type = Type { TypeKind::Ref, m_info.typeSignatures[typeIndex]->index() };
+
+    // FIXME: inline the allocation.
+    // https://bugs.webkit.org/show_bug.cgi?id=244388
+    Value* structValue = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(type), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmStructNewEmpty)),
+        instanceValue(),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex));
+
+    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    for (uint32_t i = 0; i < args.size(); ++i)
+        emitStructSet(structValue, i, structType, args[i]);
+
+    result = push(structValue);
+
+    return { };
+}
+
+auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
+{
+    Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(structReference), JSWebAssemblyStruct::offsetOfPayload());
+    int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
+    switch (structType.field(fieldIndex).type.kind) {
+    case TypeKind::I32:
+        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin(), payloadBase, fieldOffset));
+        break;
+    case TypeKind::Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+    case TypeKind::I64:
+        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), payloadBase, fieldOffset));
+        break;
+    case TypeKind::F32: {
+        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Float, origin(), payloadBase, fieldOffset));
+        break;
+    }
+    case TypeKind::F64:
+        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Double, origin(), payloadBase, fieldOffset));
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addStructSet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType value) -> PartialResult
+{
+    emitStructSet(get(structReference), fieldIndex, structType, value);
     return { };
 }
 

@@ -93,6 +93,9 @@ WASM_SLOW_PATH_HIDDEN_DECL(array_new);
 WASM_SLOW_PATH_HIDDEN_DECL(array_new_default);
 WASM_SLOW_PATH_HIDDEN_DECL(array_get);
 WASM_SLOW_PATH_HIDDEN_DECL(array_set);
+WASM_SLOW_PATH_HIDDEN_DECL(struct_new);
+WASM_SLOW_PATH_HIDDEN_DECL(struct_get);
+WASM_SLOW_PATH_HIDDEN_DECL(struct_set);
 
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const WasmInstruction*, Wasm::Instance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" SlowPathReturnType slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;

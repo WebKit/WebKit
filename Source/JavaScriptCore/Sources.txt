@@ -1161,6 +1161,7 @@ wasm/js/JSWebAssemblyLinkError.cpp
 wasm/js/JSWebAssemblyMemory.cpp
 wasm/js/JSWebAssemblyModule.cpp
 wasm/js/JSWebAssemblyRuntimeError.cpp
+wasm/js/JSWebAssemblyStruct.cpp
 wasm/js/JSWebAssemblyTable.cpp
 wasm/js/JSWebAssemblyTag.cpp
 wasm/js/WasmToJS.cpp
@@ -1186,6 +1187,8 @@ wasm/js/WebAssemblyModulePrototype.cpp
 wasm/js/WebAssemblyModuleRecord.cpp
 wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
 wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
+wasm/js/WebAssemblyStructConstructor.cpp
+wasm/js/WebAssemblyStructPrototype.cpp
 wasm/js/WebAssemblyTableConstructor.cpp
 wasm/js/WebAssemblyTablePrototype.cpp
 wasm/js/WebAssemblyTagConstructor.cpp

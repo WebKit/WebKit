@@ -383,6 +383,32 @@ WASM_SLOW_PATH_DECL(array_set)
     WASM_END_IMPL();
 }
 
+WASM_SLOW_PATH_DECL(struct_new)
+{
+    auto instruction = pc->as<WasmStructNew>();
+    ASSERT(instruction.m_typeIndex < instance->module().moduleInformation().typeCount());
+
+    ASSERT(!instruction.m_firstValue.isConstant());
+    WASM_RETURN(Wasm::operationWasmStructNew(instance, instruction.m_typeIndex, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue))));
+}
+
+WASM_SLOW_PATH_DECL(struct_get)
+{
+    UNUSED_PARAM(instance);
+    auto instruction = pc->as<WasmStructGet>();
+    auto structReference = READ(instruction.m_structReference).encodedJSValue();
+    WASM_RETURN(Wasm::operationWasmStructGet(structReference, instruction.m_fieldIndex));
+}
+
+WASM_SLOW_PATH_DECL(struct_set)
+{
+    auto instruction = pc->as<WasmStructSet>();
+    auto structReference = READ(instruction.m_structReference).encodedJSValue();
+    auto value = READ(instruction.m_value).encodedJSValue();
+    Wasm::operationWasmStructSet(instance, structReference, instruction.m_fieldIndex, value);
+    WASM_END();
+}
+
 WASM_SLOW_PATH_DECL(table_get)
 {
     auto instruction = pc->as<WasmTableGet>();

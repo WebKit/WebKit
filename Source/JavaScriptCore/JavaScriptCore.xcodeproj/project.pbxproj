@@ -815,9 +815,12 @@
 		14D01BE626DEEF3800CAE0D0 /* WebAssemblyTagConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BDA26DEEF3700CAE0D0 /* WebAssemblyTagConstructor.h */; };
 		14D01BE726DEEF3800CAE0D0 /* WebAssemblyTagPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BDB26DEEF3700CAE0D0 /* WebAssemblyTagPrototype.h */; };
 		14D01BE926DEEF3800CAE0D0 /* WebAssemblyExceptionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BDD26DEEF3700CAE0D0 /* WebAssemblyExceptionPrototype.h */; };
+		14D01BE926DECC3800CAE0D0 /* WebAssemblyStructPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BDD26DEEF378CCAE0D0 /* WebAssemblyStructPrototype.h */; };
 		14D01BEC26DEEF3800CAE0D0 /* JSWebAssemblyTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BE026DEEF3700CAE0D0 /* JSWebAssemblyTag.h */; };
 		14D01BED26DEEF3800CAE0D0 /* JSWebAssemblyException.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BE126DEEF3800CAE0D0 /* JSWebAssemblyException.h */; };
+		14D01A7721FBEF3800CAE0D0 /* JSWebAssemblyStruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BE026DEEF3800CAE0D0 /* JSWebAssemblyStruct.h */; };
 		14D01BEF26DEEF3800CAE0D0 /* WebAssemblyExceptionConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BE326DEEF3800CAE0D0 /* WebAssemblyExceptionConstructor.h */; };
+		14D01DEF26DEEF3800CAE0D0 /* WebAssemblyStructConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BE326DFEF3800CAE0D0 /* WebAssemblyStructConstructor.h */; };
 		14D01BF526DEEF5300CAE0D0 /* WasmTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01BF326DEEF5200CAE0D0 /* WasmTag.h */; };
 		14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DF04DA16B3996D0016A513 /* StaticPropertyAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DF04D916B3996D0016A513 /* StaticPropertyAnalysis.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3709,15 +3712,21 @@
 		14D01BDA26DEEF3700CAE0D0 /* WebAssemblyTagConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyTagConstructor.h; path = js/WebAssemblyTagConstructor.h; sourceTree = "<group>"; };
 		14D01BDB26DEEF3700CAE0D0 /* WebAssemblyTagPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyTagPrototype.h; path = js/WebAssemblyTagPrototype.h; sourceTree = "<group>"; };
 		14D01BDC26DEEF3700CAE0D0 /* JSWebAssemblyException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyException.cpp; path = js/JSWebAssemblyException.cpp; sourceTree = "<group>"; };
+		14CC3BA22138F3700CAE0D0D /* JSWebAssemblyStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyStruct.cpp; path = js/JSWebAssemblyStruct.cpp; sourceTree = "<group>"; };
 		14D01BDD26DEEF3700CAE0D0 /* WebAssemblyExceptionPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyExceptionPrototype.h; path = js/WebAssemblyExceptionPrototype.h; sourceTree = "<group>"; };
+		14D01BDD26DEEF378CCAE0D0 /* WebAssemblyStructPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyStructPrototype.h; path = js/WebAssemblyStructPrototype.h; sourceTree = "<group>"; };
 		14D01BDE26DEEF3700CAE0D0 /* WebAssemblyTagConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyTagConstructor.cpp; path = js/WebAssemblyTagConstructor.cpp; sourceTree = "<group>"; };
 		14D01BDF26DEEF3700CAE0D0 /* WebAssemblyTagPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyTagPrototype.cpp; path = js/WebAssemblyTagPrototype.cpp; sourceTree = "<group>"; };
 		14D01BE026DEEF3700CAE0D0 /* JSWebAssemblyTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyTag.h; path = js/JSWebAssemblyTag.h; sourceTree = "<group>"; };
 		14D01BE126DEEF3800CAE0D0 /* JSWebAssemblyException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyException.h; path = js/JSWebAssemblyException.h; sourceTree = "<group>"; };
+		14D01BE026DEEF3800CAE0D0 /* JSWebAssemblyStruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyStruct.h; path = js/JSWebAssemblyStruct.h; sourceTree = "<group>"; };
 		14D01BE226DEEF3800CAE0D0 /* WebAssemblyExceptionPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyExceptionPrototype.cpp; path = js/WebAssemblyExceptionPrototype.cpp; sourceTree = "<group>"; };
+		14D01BE226DEEF3CFECAE0D0 /* WebAssemblyStructPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyStructPrototype.cpp; path = js/WebAssemblyStructPrototype.cpp; sourceTree = "<group>"; };
 		14D01BE326DEEF3800CAE0D0 /* WebAssemblyExceptionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyExceptionConstructor.h; path = js/WebAssemblyExceptionConstructor.h; sourceTree = "<group>"; };
+		14D01BE326DFEF3800CAE0D0 /* WebAssemblyStructConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyStructConstructor.h; path = js/WebAssemblyStructConstructor.h; sourceTree = "<group>"; };
 		14D01BE426DEEF3800CAE0D0 /* JSWebAssemblyTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyTag.cpp; path = js/JSWebAssemblyTag.cpp; sourceTree = "<group>"; };
 		14D01BE526DEEF3800CAE0D0 /* WebAssemblyExceptionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyExceptionConstructor.cpp; path = js/WebAssemblyExceptionConstructor.cpp; sourceTree = "<group>"; };
+		14D01BE526DEEF38CCCAE0D0 /* WebAssemblyStructConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyStructConstructor.cpp; path = js/WebAssemblyStructConstructor.cpp; sourceTree = "<group>"; };
 		14D01BF226DEEF5200CAE0D0 /* WasmTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTag.cpp; sourceTree = "<group>"; };
 		14D01BF326DEEF5200CAE0D0 /* WasmTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmTag.h; sourceTree = "<group>"; };
 		14D2F3D9139F4BE200491031 /* MarkedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpace.h; sourceTree = "<group>"; };
@@ -9482,6 +9491,8 @@
 				AD2FCB8D1DB5844000B3E736 /* JSWebAssemblyModule.h */,
 				AD2FCBAC1DB58DA400B3E736 /* JSWebAssemblyRuntimeError.cpp */,
 				AD2FCBAD1DB58DA400B3E736 /* JSWebAssemblyRuntimeError.h */,
+				14CC3BA22138F3700CAE0D0D /* JSWebAssemblyStruct.cpp */,
+				14D01BE026DEEF3800CAE0D0 /* JSWebAssemblyStruct.h */,
 				AD2FCBAE1DB58DA400B3E736 /* JSWebAssemblyTable.cpp */,
 				AD2FCBAF1DB58DA400B3E736 /* JSWebAssemblyTable.h */,
 				14D01BE426DEEF3800CAE0D0 /* JSWebAssemblyTag.cpp */,
@@ -9530,6 +9541,10 @@
 				AD2FCBBD1DB58DA400B3E736 /* WebAssemblyRuntimeErrorConstructor.h */,
 				AD2FCBBE1DB58DA400B3E736 /* WebAssemblyRuntimeErrorPrototype.cpp */,
 				AD2FCBBF1DB58DA400B3E736 /* WebAssemblyRuntimeErrorPrototype.h */,
+				14D01BE526DEEF38CCCAE0D0 /* WebAssemblyStructConstructor.cpp */,
+				14D01BE326DFEF3800CAE0D0 /* WebAssemblyStructConstructor.h */,
+				14D01BE226DEEF3CFECAE0D0 /* WebAssemblyStructPrototype.cpp */,
+				14D01BDD26DEEF378CCAE0D0 /* WebAssemblyStructPrototype.h */,
 				AD2FCBC01DB58DA400B3E736 /* WebAssemblyTableConstructor.cpp */,
 				AD2FCBC11DB58DA400B3E736 /* WebAssemblyTableConstructor.h */,
 				AD2FCBC21DB58DA400B3E736 /* WebAssemblyTablePrototype.cpp */,
@@ -10889,6 +10904,7 @@
 				AD2FCBE71DB58DAD00B3E736 /* JSWebAssemblyMemory.h in Headers */,
 				AD2FCC051DB58DAD00B3E736 /* JSWebAssemblyModule.h in Headers */,
 				AD2FCBE91DB58DAD00B3E736 /* JSWebAssemblyRuntimeError.h in Headers */,
+				14D01A7721FBEF3800CAE0D0 /* JSWebAssemblyStruct.h in Headers */,
 				AD2FCBEB1DB58DAD00B3E736 /* JSWebAssemblyTable.h in Headers */,
 				14D01BEC26DEEF3800CAE0D0 /* JSWebAssemblyTag.h in Headers */,
 				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,
@@ -11427,6 +11443,8 @@
 				AD2FCC1E1DB59CB200B3E736 /* WebAssemblyRuntimeErrorConstructor.lut.h in Headers */,
 				AD2FCBFB1DB58DAD00B3E736 /* WebAssemblyRuntimeErrorPrototype.h in Headers */,
 				AD2FCC1F1DB59CB200B3E736 /* WebAssemblyRuntimeErrorPrototype.lut.h in Headers */,
+				14D01DEF26DEEF3800CAE0D0 /* WebAssemblyStructConstructor.h in Headers */,
+				14D01BE926DECC3800CAE0D0 /* WebAssemblyStructPrototype.h in Headers */,
 				AD2FCBFD1DB58DAD00B3E736 /* WebAssemblyTableConstructor.h in Headers */,
 				AD2FCC201DB59CB200B3E736 /* WebAssemblyTableConstructor.lut.h in Headers */,
 				AD2FCBFF1DB58DAD00B3E736 /* WebAssemblyTablePrototype.h in Headers */,

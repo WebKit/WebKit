@@ -1963,4 +1963,25 @@ op :array_len,
         arrayref: VirtualRegister,
     }
 
+op :struct_new,
+    args: {
+        dst: VirtualRegister,
+        typeIndex: unsigned,
+        firstValue: VirtualRegister,
+    }
+
+op :struct_get,
+    args: {
+        dst: VirtualRegister,
+        structReference: VirtualRegister,
+        fieldIndex: unsigned,
+    }
+
+op :struct_set,
+    args: {
+        structReference: VirtualRegister,
+        fieldIndex: unsigned,
+        value: VirtualRegister,
+    }
+
 end_section :Wasm

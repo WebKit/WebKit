@@ -186,6 +186,22 @@ private:
     };
     PartialResult WARN_UNUSED_RETURN parseMemoryInitImmediates(MemoryInitImmediates&);
 
+    PartialResult WARN_UNUSED_RETURN parseStructTypeIndex(uint32_t& structTypeIndex, const char* operation);
+    PartialResult WARN_UNUSED_RETURN parseStructFieldIndex(uint32_t& structFieldIndex, const StructType&, const char* operation);
+
+    struct StructTypeIndexAndFieldIndex {
+        uint32_t structTypeIndex;
+        uint32_t fieldIndex;
+    };
+    PartialResult WARN_UNUSED_RETURN parseStructTypeIndexAndFieldIndex(StructTypeIndexAndFieldIndex& result, const char* operation);
+
+    struct StructFieldManipulation {
+        StructTypeIndexAndFieldIndex indices;
+        TypedExpression structReference;
+        FieldType field;
+    };
+    PartialResult WARN_UNUSED_RETURN parseStructFieldManipulation(StructFieldManipulation& result, const char* operation);
+
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
     template <typename ...Args>
@@ -734,6 +750,67 @@ auto FunctionParser<Context>::parseMemoryInitImmediates(MemoryInitImmediates& re
 }
 
 template<typename Context>
+auto FunctionParser<Context>::parseStructTypeIndex(uint32_t& structTypeIndex, const char* operation) -> PartialResult
+{
+    uint32_t typeIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for", operation);
+    WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), operation, " index ", typeIndex, " is out of bound");
+    const TypeDefinition& type = m_info.typeSignatures[typeIndex].get();
+    WASM_VALIDATOR_FAIL_IF(!type.is<StructType>(), operation, ": invalid type index", typeIndex);
+
+    structTypeIndex = typeIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseStructFieldIndex(uint32_t& structFieldIndex, const StructType& structType, const char* operation) -> PartialResult
+{
+    uint32_t fieldIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldIndex), "can't get type index for ", operation);
+    WASM_PARSER_FAIL_IF(fieldIndex >= structType.fieldCount(), operation, " field immediate ", fieldIndex, " is out of bounds");
+
+    structFieldIndex = fieldIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseStructTypeIndexAndFieldIndex(StructTypeIndexAndFieldIndex& result, const char* operation) -> PartialResult
+{
+    uint32_t structTypeIndex;
+    WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(structTypeIndex, operation));
+
+    const auto& typeDefinition = m_info.typeSignatures[structTypeIndex];
+    uint32_t fieldIndex;
+    WASM_FAIL_IF_HELPER_FAILS(parseStructFieldIndex(fieldIndex, *typeDefinition->template as<StructType>(), operation));
+
+    result.fieldIndex = fieldIndex;
+    result.structTypeIndex = structTypeIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseStructFieldManipulation(StructFieldManipulation& result, const char* operation) -> PartialResult
+{
+    StructTypeIndexAndFieldIndex typeIndexAndFieldIndex;
+    WASM_PARSER_FAIL_IF(!parseStructTypeIndexAndFieldIndex(typeIndexAndFieldIndex, operation));
+
+    TypedExpression structRef;
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(structRef, "struct reference");
+    WASM_VALIDATOR_FAIL_IF(!isRefWithTypeIndex(structRef.type()), operation, " invalid index: ", structRef.type().kind);
+    const TypeIndex structTypeIndex = structRef.type().index;
+    const TypeDefinition& structTypeDefinition = TypeInformation::get(structTypeIndex);
+    WASM_VALIDATOR_FAIL_IF(!structTypeDefinition.is<StructType>(), operation, " type index points into a non struct type");
+    const auto& structType = *structTypeDefinition.as<StructType>();
+    WASM_VALIDATOR_FAIL_IF(structRef.type().index != m_info.typeSignatures[typeIndexAndFieldIndex.structTypeIndex]->index(), operation, ": popped struct has a different type index than specified in immeddiate");
+
+    result.structReference = structRef;
+    result.indices.fieldIndex = typeIndexAndFieldIndex.fieldIndex;
+    result.indices.structTypeIndex = typeIndexAndFieldIndex.structTypeIndex;
+    result.field = structType.field(result.indices.fieldIndex);
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> PartialResult
 {
     if (!target.branchTargetArity())
@@ -1194,7 +1271,59 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Types::I32, result);
             return { };
         }
+        case GCOpType::StructNew: {
+            uint32_t typeIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new"));
 
+            const auto& typeDefinition = m_info.typeSignatures[typeIndex];
+            const auto* structType = typeDefinition->template as<StructType>();
+            WASM_PARSER_FAIL_IF(structType->fieldCount() > m_expressionStack.size(), "struct.new ", typeIndex, " requires ", structType->fieldCount(), " values, but the expression stack currently holds ", m_expressionStack.size(), " values");
+
+            Vector<ExpressionType> args;
+            size_t firstArgumentIndex = m_expressionStack.size() - structType->fieldCount();
+            WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new ", structType->fieldCount(), " values");
+
+            for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
+                TypedExpression arg = m_expressionStack.at(i);
+                const auto& fieldType = structType->field(StructFieldCount(i - firstArgumentIndex)).type;
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), fieldType), "argument type mismatch in struct.new, got ", arg.type().kind, ", expected ", fieldType.kind);
+                args.uncheckedAppend(arg);
+                m_context.didPopValueFromStack();
+            }
+            m_expressionStack.shrink(firstArgumentIndex);
+            RELEASE_ASSERT(structType->fieldCount() == args.size());
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addStructNew(typeIndex, args, result));
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
+            return { };
+        }
+        case GCOpType::StructGet: {
+            StructFieldManipulation structGetInput;
+            WASM_PARSER_FAIL_IF(!parseStructFieldManipulation(structGetInput, "struct.get"));
+
+            ExpressionType result;
+            const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->template as<StructType>();
+            WASM_TRY_ADD_TO_CONTEXT(addStructGet(structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
+
+            m_expressionStack.constructAndAppend(structGetInput.field.type, result);
+            return { };
+        }
+        case GCOpType::StructSet: {
+            TypedExpression value;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "struct.set value");
+
+            StructFieldManipulation structSetInput;
+            WASM_PARSER_FAIL_IF(!parseStructFieldManipulation(structSetInput, "struct.set"));
+
+            const auto& field = structSetInput.field;
+            WASM_PARSER_FAIL_IF(field.mutability != Mutability::Mutable, "the field ", structSetInput.indices.fieldIndex, " can't be set because it is immutable");
+            WASM_PARSER_FAIL_IF(!isSubtype(value.type(), field.type), "type mismatch in struct.set");
+
+            const auto& structType = *m_info.typeSignatures[structSetInput.indices.structTypeIndex]->template as<StructType>();
+            WASM_TRY_ADD_TO_CONTEXT(addStructSet(structSetInput.structReference, structType, structSetInput.indices.fieldIndex, value));
+            return { };
+        }
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
             break;
@@ -2132,6 +2261,21 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         }
         case GCOpType::ArrayLen:
             return { };
+        case GCOpType::StructNew: {
+            uint32_t unused;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new"));
+            return { };
+        }
+        case GCOpType::StructGet: {
+            StructTypeIndexAndFieldIndex unused;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndexAndFieldIndex(unused, "struct.get"));
+            return { };
+        }
+        case GCOpType::StructSet: {
+            StructTypeIndexAndFieldIndex unused;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndexAndFieldIndex(unused, "struct.set"));
+            return { };
+        }
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
             break;

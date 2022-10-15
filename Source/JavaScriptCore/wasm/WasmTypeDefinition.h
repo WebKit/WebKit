@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmOps.h"
+#include "WriteBarrier.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
@@ -46,6 +47,39 @@ using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
 using RecursionGroupCount = uint32_t;
 using ProjectionIndex = uint32_t;
+
+constexpr size_t typeKindSizeInBytes(TypeKind kind)
+{
+    switch (kind) {
+    case TypeKind::I32:
+    case TypeKind::F32: {
+        return 4;
+    }
+    case TypeKind::I64:
+    case TypeKind::F64: {
+        return 8;
+    }
+
+    case TypeKind::Arrayref:
+    case TypeKind::Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull: {
+        return sizeof(WriteBarrierBase<Unknown>);
+    }
+    case TypeKind::Array:
+    case TypeKind::Func:
+    case TypeKind::Struct:
+    case TypeKind::Void:
+    case TypeKind::Rec:
+    case TypeKind::I31ref: {
+        break;
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
 class FunctionSignature {
 public:
@@ -108,12 +142,7 @@ struct FieldType {
 
 class StructType {
 public:
-    StructType(FieldType* payload, StructFieldCount fieldCount)
-        : m_payload(payload)
-        , m_fieldCount(fieldCount)
-        , m_hasRecursiveReference(false)
-    {
-    }
+    StructType(FieldType*, StructFieldCount, const FieldType*);
 
     StructFieldCount fieldCount() const { return m_fieldCount; }
     bool hasRecursiveReference() const { return m_hasRecursiveReference; }
@@ -127,10 +156,17 @@ public:
     FieldType* storage(StructFieldCount i) { return i + m_payload; }
     const FieldType* storage(StructFieldCount i) const { return const_cast<StructType*>(this)->storage(i); }
 
+    const unsigned* getFieldOffset(StructFieldCount i) const { ASSERT(i < fieldCount()); return bitwise_cast<const unsigned*>(m_payload + m_fieldCount) + i; }
+    unsigned* getFieldOffset(StructFieldCount i) { return const_cast<unsigned*>(const_cast<const StructType*>(this)->getFieldOffset(i)); }
+
+    size_t instancePayloadSize() const { return m_instancePayloadSize; }
+
 private:
+    // Payload is structured this way = | field types | precalculated field offsets |.
     FieldType* m_payload;
     StructFieldCount m_fieldCount;
     bool m_hasRecursiveReference;
+    size_t m_instancePayloadSize;
 };
 
 class ArrayType {
@@ -238,13 +274,16 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
         RELEASE_ASSERT(kind == TypeDefinitionKind::FunctionSignature);
     }
 
-    TypeDefinition(TypeDefinitionKind kind, uint32_t fieldCount)
-        : m_typeHeader { StructType { static_cast<FieldType*>(payload()), static_cast<StructFieldCount>(fieldCount) } }
+    TypeDefinition(TypeDefinitionKind kind, uint32_t fieldCount, const FieldType* fields)
+        : m_typeHeader { StructType { static_cast<FieldType*>(payload()), static_cast<StructFieldCount>(fieldCount), fields } }
     {
-        if (kind == TypeDefinitionKind::RecursionGroup)
-            m_typeHeader = { RecursionGroup { static_cast<TypeIndex*>(payload()), static_cast<RecursionGroupCount>(fieldCount) } };
-        else
-            RELEASE_ASSERT(kind == TypeDefinitionKind::StructType);
+        RELEASE_ASSERT(kind == TypeDefinitionKind::StructType);
+    }
+
+    TypeDefinition(TypeDefinitionKind kind, uint32_t fieldCount)
+        : m_typeHeader { RecursionGroup { static_cast<TypeIndex*>(payload()), static_cast<RecursionGroupCount>(fieldCount) } }
+    {
+        RELEASE_ASSERT(kind == TypeDefinitionKind::RecursionGroup);
     }
 
     TypeDefinition(TypeDefinitionKind kind)
@@ -260,7 +299,7 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     void* payload() { return this + 1; }
 
     static size_t allocatedFunctionSize(Checked<FunctionArgCount> retCount, Checked<FunctionArgCount> argCount) { return sizeof(TypeDefinition) + (retCount + argCount) * sizeof(Type); }
-    static size_t allocatedStructSize(Checked<StructFieldCount> fieldCount) { return sizeof(TypeDefinition) + fieldCount * sizeof(FieldType); }
+    static size_t allocatedStructSize(Checked<StructFieldCount> fieldCount) { return sizeof(TypeDefinition) + fieldCount * (sizeof(FieldType) + sizeof(unsigned)); }
     static size_t allocatedArraySize() { return sizeof(TypeDefinition) + sizeof(FieldType); }
     static size_t allocatedRecursionGroupSize(Checked<RecursionGroupCount> typeCount) { return sizeof(TypeDefinition) + typeCount * sizeof(TypeIndex); }
     static size_t allocatedProjectionSize() { return sizeof(TypeDefinition) + 2 * sizeof(TypeIndex); }
@@ -297,7 +336,7 @@ private:
     friend struct ProjectionParameterTypes;
 
     static RefPtr<TypeDefinition> tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount);
-    static RefPtr<TypeDefinition> tryCreateStructType(StructFieldCount);
+    static RefPtr<TypeDefinition> tryCreateStructType(StructFieldCount, const FieldType*);
     static RefPtr<TypeDefinition> tryCreateArrayType();
     static RefPtr<TypeDefinition> tryCreateRecursionGroup(RecursionGroupCount);
     static RefPtr<TypeDefinition> tryCreateProjection();

@@ -312,6 +312,9 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
     // Basic operators
     template<OpType>
@@ -1943,6 +1946,41 @@ auto LLIntGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
 {
     result = push();
     WasmArrayLen::emit(this, result, arrayref);
+
+    return { };
+}
+
+auto LLIntGenerator::addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    result = push();
+
+    // We have to materialize the arguments here since it might include constants or
+    // delayed moves, but the wasm_struct_new opcode expects all the arguments to be contiguous
+    // in the stack.
+    for (unsigned i = args.size(); i > 0; --i) {
+        auto& arg = args[i - 1];
+        ExpressionType argLoc = push();
+        WasmMov::emit(this, argLoc, arg);
+        arg = argLoc;
+    }
+
+    WasmStructNew::emit(this, result, index, args.isEmpty() ? VirtualRegister() : args[0]);
+
+    m_stackSize -= args.size();
+    return { };
+}
+
+auto LLIntGenerator::addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
+{
+    result = push();
+    WasmStructGet::emit(this, result, structReference, fieldIndex);
+
+    return { };
+}
+
+auto LLIntGenerator::addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value) -> PartialResult
+{
+    WasmStructSet::emit(this, structReference, fieldIndex, value);
 
     return { };
 }

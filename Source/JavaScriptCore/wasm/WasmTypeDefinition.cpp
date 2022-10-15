@@ -99,6 +99,25 @@ void StructType::dump(PrintStream& out) const
     out.print(")");
 }
 
+StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const FieldType* fieldTypes)
+    : m_payload(payload)
+    , m_fieldCount(fieldCount)
+    , m_hasRecursiveReference(false)
+{
+    bool hasRecursiveReference = false;
+    unsigned currentFieldOffset = 0;
+    for (unsigned fieldIndex = 0; fieldIndex < m_fieldCount; ++fieldIndex) {
+        const auto& fieldType = fieldTypes[fieldIndex];
+        hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
+        getField(fieldIndex) = fieldType;
+        *getFieldOffset(fieldIndex) = currentFieldOffset;
+        currentFieldOffset += typeKindSizeInBytes(field(fieldIndex).type.kind);
+    }
+
+    m_instancePayloadSize = WTF::roundUpToMultipleOf<sizeof(uint64_t)>(currentFieldOffset);
+    setHasRecursiveReference(hasRecursiveReference);
+}
+
 String ArrayType::toString() const
 {
     return WTF::toString(*this);
@@ -231,14 +250,14 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCou
     return adoptRef(signature);
 }
 
-RefPtr<TypeDefinition> TypeDefinition::tryCreateStructType(StructFieldCount fieldCount)
+RefPtr<TypeDefinition> TypeDefinition::tryCreateStructType(StructFieldCount fieldCount, const FieldType* fields)
 {
     // We use WTF_MAKE_FAST_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedStructSize(fieldCount));
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::StructType, fieldCount);
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::StructType, fieldCount, fields);
     return adoptRef(signature);
 }
 
@@ -462,18 +481,8 @@ struct StructParameterTypes {
 
     static void translate(TypeHash& entry, const StructParameterTypes& params, unsigned)
     {
-        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateStructType(params.fields.size());
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateStructType(params.fields.size(), params.fields.data());
         RELEASE_ASSERT(signature);
-        bool hasRecursiveReference = false;
-
-        StructType* structType = signature->as<StructType>();
-        for (unsigned i = 0; i < params.fields.size(); ++i) {
-            structType->getField(i) = params.fields[i];
-            hasRecursiveReference |= isRefWithRecursiveReference(params.fields[i].type);
-        }
-
-        signature->as<StructType>()->setHasRecursiveReference(hasRecursiveReference);
-
         entry.key = WTFMove(signature);
     }
 };

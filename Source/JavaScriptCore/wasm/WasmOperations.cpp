@@ -39,6 +39,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "JSWebAssemblyStruct.h"
 #include "ProbeContext.h"
 #include "ReleaseHeapAccessScope.h"
 #include "TypedArrayController.h"
@@ -831,6 +832,45 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instan
     JSValue value = instance->getFunctionWrapper(index);
     ASSERT(value.isCallable());
     return JSValue::encode(value);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint64_t* arguments))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    Ref<TypeDefinition> structTypeDefinition = jsInstance->instance().module().moduleInformation().typeSignatures[typeIndex];
+    const StructType& structType = *structTypeDefinition->as<StructType>();
+
+    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(jsInstance, typeIndex);
+    for (unsigned i = 0; i < structType.fieldCount(); ++i)
+        structValue->set(jsInstance->globalObject(), i, toJSValue(jsInstance->globalObject(), structType.field(i).type, arguments[i]));
+    return JSValue::encode(structValue);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance* instance, uint32_t typeIndex))
+{
+    return JSValue::encode(JSWebAssemblyStruct::tryCreate(instance->owner<JSWebAssemblyInstance>(), typeIndex));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))
+{
+    auto structReference = JSValue::decode(encodedStructReference);
+    ASSERT(structReference.isObject());
+    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
+    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    return structPointer->get(fieldIndex);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructSet, void, (Instance* instance, EncodedJSValue encodedStructReference, uint32_t fieldIndex, EncodedJSValue argument))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    auto structReference = JSValue::decode(encodedStructReference);
+    ASSERT(structReference.isObject());
+    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
+    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    const auto fieldType = structPointer->structType()->field(fieldIndex).type;
+    return structPointer->set(jsInstance->globalObject(), fieldIndex, toJSValue(jsInstance->globalObject(), fieldType, argument));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance* instance, unsigned tableIndex))
