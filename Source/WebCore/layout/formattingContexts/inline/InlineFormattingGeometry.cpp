@@ -289,7 +289,7 @@ InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) c
 {
     if (layoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
-    return formattingContext().formattingQuirks().initialLineHeight(isFirstLine);
+    return formattingContext().formattingQuirks().initialLineHeight();
 }
 
 FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext& floatingContext) const
