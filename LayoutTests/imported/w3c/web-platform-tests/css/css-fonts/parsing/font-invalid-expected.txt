@@ -10,4 +10,9 @@ PASS e.style['font'] = "normal normal normal normal normal 20%/1.2 \"FB Armada\"
 PASS e.style['font'] = "italic small-caps lighter condensed smaller" should not set the property value
 PASS e.style['font'] = "normal 100 semi-condensed oblique small-caps Menu" should not set the property value
 PASS e.style['font'] = "100% larger / 2 fantasy" should not set the property value
+PASS e.style['font'] = "oldstyle-nums medium serif" should not set the property value
+PASS e.style['font'] = "common-ligatures medium serif" should not set the property value
+PASS e.style['font'] = "normal full-width medium serif" should not set the property value
+PASS e.style['font'] = "italic titling-caps medium serif" should not set the property value
+PASS e.style['font'] = "petite-caps medium serif" should not set the property value
 

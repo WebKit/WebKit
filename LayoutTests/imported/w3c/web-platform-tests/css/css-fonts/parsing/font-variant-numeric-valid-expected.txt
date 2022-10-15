@@ -9,5 +9,5 @@ PASS e.style['font-variant-numeric'] = "stacked-fractions" should set the proper
 PASS e.style['font-variant-numeric'] = "ordinal" should set the property value
 PASS e.style['font-variant-numeric'] = "slashed-zero" should set the property value
 PASS e.style['font-variant-numeric'] = "oldstyle-nums tabular-nums diagonal-fractions" should set the property value
-FAIL e.style['font-variant-numeric'] = "slashed-zero ordinal stacked-fractions proportional-nums lining-nums" should set the property value assert_equals: serialization should be canonical expected "lining-nums proportional-nums stacked-fractions ordinal slashed-zero" but got "slashed-zero ordinal stacked-fractions proportional-nums lining-nums"
+PASS e.style['font-variant-numeric'] = "slashed-zero ordinal stacked-fractions proportional-nums lining-nums" should set the property value
 

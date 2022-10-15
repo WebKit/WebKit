@@ -3719,11 +3719,9 @@ webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-flow
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1.html [ Skip ]
 
-# wpt css-fonts failures
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/alternates-order.html [ ImageOnlyFailure ]
+# Untriaged css-fonts failures
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-001.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-002.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-001.xht [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-002.xht [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-003.xht [ ImageOnlyFailure ]
@@ -3743,61 +3741,82 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-na
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-024.xht [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-025.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-03.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-04.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-001.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-002.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-05.xht [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-06.xht [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-03.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-04.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-05.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-06.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-07.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-08.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-09.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-10.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-11.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-12.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-15.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-16.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-17.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-18.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-descriptor-01.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-02.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-03.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-weight-bolder-001.xht [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-weight-lighter-001.xht [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-weight-normal-001.xht [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-10.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-11.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-12.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-13.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-14.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-15.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-16.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-17.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-18.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-19.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-20.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-3.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-4.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-8.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-9.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/ascent-descent-override.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-zero-1.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-zero-2.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/line-gap-override.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/rem-in-monospace.html [ ImageOnlyFailure ]
+webkit.org/b/206882 imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html [ Failure ]
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ ImageOnlyFailure ]
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-2.html [ ImageOnlyFailure ]
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3.html [ ImageOnlyFailure ]
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1.html [ ImageOnlyFailure ]
+webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
+
+# Untriaged font-style/font-face @font-face descriptor bugs
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-style-auto-variable.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-style-default-variable.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-weight-auto-variable.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-weight-default-variable.html [ ImageOnlyFailure ]
+
+# Triaged css-fonts failures
+webkit.org/b/246566 imported/w3c/web-platform-tests/css/css-fonts/rem-in-monospace.html [ ImageOnlyFailure ]
+webkit.org/b/246565 imported/w3c/web-platform-tests/css/css-fonts/font-palette-21.html [ ImageOnlyFailure ]
+webkit.org/b/246564 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-small-caps-not-applied.html [ ImageOnlyFailure ]
+
+# vert font feature in vertical-text
+webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ ImageOnlyFailure ]
+webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-03.html [ ImageOnlyFailure ]
+webkit.org/b/86071 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
+
+# font-variant-alternates
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/alternates-order.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-03.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-04.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-05.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-06.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-07.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-08.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-09.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-10.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-11.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-12.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-15.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-16.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-17.html [ ImageOnlyFailure ]
+webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-18.html [ ImageOnlyFailure ]
+
+# font-size-adjust
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-001.html [ ImageOnlyFailure ]
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-002.html [ ImageOnlyFailure ]
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-zero-1.html [ ImageOnlyFailure ]
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-zero-2.html [ ImageOnlyFailure ]
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-009.html [ ImageOnlyFailure ]
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-010.html [ ImageOnlyFailure ]
+webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-011.html [ ImageOnlyFailure ]
+
+# @font-face: ascent-override, descent-override, and line-gap-override
+webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/ascent-descent-override.html [ ImageOnlyFailure ]
+webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/line-gap-override.html [ ImageOnlyFailure ]
+webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/font-face-unicode-range-nbsp.html [ ImageOnlyFailure ]
+webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-font-loading/fontface-override-descriptors.html [ ImageOnlyFailure ]
+
+# @font-face: size-adjust
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-01.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-text-decoration.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/size-adjust.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
-webkit.org/b/206882 imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html [ Failure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-font-loading/fontface-size-adjust-descriptor.html [ ImageOnlyFailure ]
+
+# We intentionally do not want to allow disabling required ligatures, so we don't honor this optional test.
+imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.optional.html [ ImageOnlyFailure ]
+
+# These tests have no reference on WPT: https://github.com/web-platform-tests/wpt/issues/36474
+imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-02.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-03.html [ ImageOnlyFailure ]
+
+# Potentially broken tests: https://github.com/web-platform-tests/wpt/issues/36473
+imported/w3c/web-platform-tests/css/css-fonts/font-weight-bolder-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-weight-lighter-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-fonts/font-weight-normal-001.xht [ ImageOnlyFailure ]
 
 # webkit.org/b/203763 2019 WebGL test gardening: These tests pass in Safari and the conformance suite, but timeout in TestRunner and MiniBrowser.
 webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
@@ -4598,13 +4617,6 @@ webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html [ ImageOnlyFailure ]
 
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ ImageOnlyFailure ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-2.html [ ImageOnlyFailure ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3.html [ ImageOnlyFailure ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1.html [ ImageOnlyFailure ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2b.html [ ImageOnlyFailure ]
-
 webkit.org/b/214387 imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html [ Pass Failure ]
 
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b.html [ ImageOnlyFailure ]
@@ -5202,10 +5214,6 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 
 # It passes in legacy line layout by sheer luck. Fails with FF and Chrome too (it expects "random" code points to be computed to zero width).
 fast/text/zero-width-characters-complex-script.html [ Failure ]
-
-webkit.org/b/229726 imported/w3c/web-platform-tests/css/css-font-loading/fontface-override-descriptors.html [ ImageOnlyFailure ]
-webkit.org/b/229726 imported/w3c/web-platform-tests/css/css-font-loading/fontface-size-adjust-descriptor.html [ ImageOnlyFailure ]
-webkit.org/b/229727 imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-load-var.html [ Skip ]
 
 webkit.org/b/230237 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-inline-image.html [ Failure ]
 

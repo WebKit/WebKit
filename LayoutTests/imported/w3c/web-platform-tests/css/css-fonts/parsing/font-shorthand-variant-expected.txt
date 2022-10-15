@@ -1,0 +1,3 @@
+
+FAIL font shorthand returns only CSS2 font-variant values assert_equals: font should be empty expected "" but got "titling-caps medium serif"
+

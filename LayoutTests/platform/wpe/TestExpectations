@@ -515,7 +515,7 @@ webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-default-0
 webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ ImageOnlyFailure ]
 webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-02.html [ ImageOnlyFailure ]
 webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-01.html [ ImageOnlyFailure ]
-webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.html [ Pass ]
+webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.optional.html [ Pass ]
 
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]

@@ -14,5 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/COLR-palettes-test-font-no-light-dark.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/COLR-palettes-test-font.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/colorization_SVG_COLR.ttf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/markA.ttf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/markB.ttf

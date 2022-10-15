@@ -1948,6 +1948,18 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-0
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-stretch-auto-variable.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-stretch-default-variable.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-metrics.html [ ImageOnlyFailure ]
+
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ar.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ja-vs-zh.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ja.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-mixed.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ur-vs-ar.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ur.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-zh.html [ ImageOnlyFailure ]
+webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui.html [ ImageOnlyFailure ]
 
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]
 
