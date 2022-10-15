@@ -285,4 +285,88 @@ TEST(WTF_RunLoop, Create)
     }
 }
 
+// FIXME(https://bugs.webkit.org/show_bug.cgi?id=246569): glib runloop does not match Cocoa.
+#if USE(GLIB)
+#define MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1 DISABLED_DispatchInRunLoopIterationDispatchesOnNextIteration1
+#define MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration2 DISABLED_DispatchInRunLoopIterationDispatchesOnNextIteration2
+#else
+#define MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1 DispatchInRunLoopIterationDispatchesOnNextIteration1
+#define MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration2 DispatchInRunLoopIterationDispatchesOnNextIteration2
+#endif
+
+// Tests that RunLoop::dispatch() respects run loop iteration isolation. E.g. all functions
+// dispatched within a run loop iteration will be executed on subsequent iteration.
+// Note: At the time of writing, run loop iteration isolation is not respected by 
+// RunLoop::dispatchAfter().
+TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1)
+{
+    WTF::initializeMainThread();
+    auto& runLoop = RunLoop::current();
+    bool outer = false;
+    bool inner = false;
+    for (int i = 0; i < 100; ++i) {
+        SCOPED_TRACE(i);
+        runLoop.dispatch([&] {
+            outer = true;
+            runLoop.dispatch([&] {
+                inner = true;
+            });
+            // No matter how long the runloop task takes, all dispatch()es
+            // will execute on the next iteration.
+            sleep(Seconds { i / 100000. });
+        });
+        EXPECT_FALSE(outer);
+        EXPECT_FALSE(inner);
+        runLoop.cycle();
+        EXPECT_TRUE(outer);
+        EXPECT_FALSE(inner);
+        runLoop.cycle();
+        EXPECT_TRUE(outer);
+        EXPECT_TRUE(inner);
+        inner = outer = false;
+    }
+    // Cleanup local references.
+    bool done = false;
+    runLoop.dispatch([&] {
+        done = true;
+    });
+    while (!done)
+        runLoop.cycle();
+}
+
+TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration2)
+{
+    WTF::initializeMainThread();
+    auto& runLoop = RunLoop::current();
+    int outer = 0;
+    int inner = 0;
+    for (int i = 0; i < 100; ++i) {
+        SCOPED_TRACE(i);
+        runLoop.dispatch([&] {
+            outer++;
+            runLoop.dispatch([&] {
+                inner++;
+            });
+            // No matter how long the runloop task takes, all dispatch()es
+            // will execute on the next iteration.
+            sleep(Seconds { i / 100000. });
+        });
+    }
+    EXPECT_EQ(outer, 0);
+    EXPECT_EQ(inner, 0);
+    runLoop.cycle();
+    EXPECT_EQ(outer, 100);
+    EXPECT_EQ(inner, 0);
+    runLoop.cycle();
+    EXPECT_EQ(outer, 100);
+    EXPECT_EQ(inner, 100);
+    // Cleanup local references.
+    bool done = false;
+    runLoop.dispatch([&] {
+        done = true;
+    });
+    while (!done)
+        runLoop.cycle();
+}
+
 } // namespace TestWebKitAPI

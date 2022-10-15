@@ -355,6 +355,8 @@ public:
     void dispatchMessageReceiverMessage(MessageReceiver&, std::unique_ptr<Decoder>&&);
     // Can be called from any thread.
     void dispatchDidReceiveInvalidMessage(MessageName);
+
+    size_t pendingMessageCountForTesting() const;
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
@@ -362,7 +364,7 @@ private:
     void platformOpen();
     void platformInvalidate();
 
-    bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
+    bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
 
     static HashMap<IPC::Connection::UniqueID, Connection*>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock);
     
@@ -406,21 +408,9 @@ private:
 #if PLATFORM(COCOA)
     bool sendMessage(std::unique_ptr<MachMessage>);
 #endif
-    class MessagesThrottler {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        typedef void (Connection::*DispatchMessagesFunction)();
-        MessagesThrottler(Connection&, DispatchMessagesFunction);
+    size_t numberOfMessagesToProcess(size_t totalMessages);
+    bool isThrottlingIncomingMessages() const { return *m_incomingMessagesThrottlingLevel > 0; }
 
-        size_t numberOfMessagesToProcess(size_t totalMessages);
-        void scheduleMessagesDispatch();
-
-    private:
-        RunLoop::Timer<Connection> m_dispatchMessagesTimer;
-        Connection& m_connection;
-        DispatchMessagesFunction m_dispatchMessages;
-        unsigned m_throttlingLevel { 0 };
-    };
     class SyncMessageState;
     struct SyncMessageStateRelease {
         void operator()(SyncMessageState*) const;
@@ -448,11 +438,11 @@ private:
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreTimeoutsForTesting { false };
     bool m_didReceiveInvalidMessage { false };
+    std::optional<uint8_t> m_incomingMessagesThrottlingLevel;
 
     // Incoming messages.
-    Lock m_incomingMessagesLock;
+    mutable Lock m_incomingMessagesLock;
     Deque<std::unique_ptr<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
-    std::unique_ptr<MessagesThrottler> m_incomingMessagesThrottler;
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
     // Outgoing messages.

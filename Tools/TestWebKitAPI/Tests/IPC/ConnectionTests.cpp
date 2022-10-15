@@ -55,6 +55,14 @@ public:
         ASSERT(m_messages.isEmpty()); // Received unexpected messages.
     }
 
+    Vector<MessageInfo> takeMessages()
+    {
+        Vector<MessageInfo> result;
+        result.appendRange(m_messages.begin(), m_messages.end());
+        m_messages.clear();
+        return result;
+    }
+
     MessageInfo waitForMessage(Seconds timeout)
     {
         if (m_messages.isEmpty()) {
@@ -62,7 +70,7 @@ public:
             Util::runFor(&m_continueWaitForMessage, timeout);
         }
         ASSERT(m_messages.size() >= 1);
-        return m_messages.takeLast();
+        return m_messages.takeFirst();
     }
 
     bool gotDidClose() const
@@ -77,10 +85,19 @@ public:
         return m_didClose;
     }
 
+    // Handler returns false if the message should be just recorded.
+    void setAsyncMessageHandler(Function<bool(MessageInfo&)>&& handler)
+    {
+        m_asyncMessageHandler = WTFMove(handler);
+    }
+
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
     {
-        m_messages.insert(0, { decoder.messageName(), decoder.destinationID() });
+        MessageInfo messageInfo { decoder.messageName(), decoder.destinationID() };
+        if (m_asyncMessageHandler && m_asyncMessageHandler(messageInfo))
+            return;
+        m_messages.append(WTFMove(messageInfo));
         m_continueWaitForMessage = true;
     }
 
@@ -102,8 +119,9 @@ public:
 private:
     bool m_didClose { false };
     std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
-    Vector<MessageInfo> m_messages;
+    Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
+    Function<bool(MessageInfo&)> m_asyncMessageHandler;
 };
 
 }
@@ -295,6 +313,97 @@ TEST_P(OpenedConnectionTest, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     a()->invalidate();
     deleteA();
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+}
+
+TEST_P(OpenedConnectionTest, IncomingMessageThrottlingWorks)
+{
+    const size_t testedCount = 2300;
+    a()->enableIncomingMessagesThrottling();
+    ASSERT_TRUE(openBoth());
+    size_t otherRunLoopTasksRun = 0u;
+
+    for (uint64_t i = 0u; i < testedCount; ++i)
+        b()->send(MockTestMessage1 { }, i);
+    while (a()->pendingMessageCountForTesting() < testedCount)
+        sleep(0.1_s);
+
+    Vector<MessageInfo> messages;
+    std::array<size_t, 18> messageCounts { 600, 300, 200, 150, 120, 100, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
+    for (size_t i = 0; i < messageCounts.size(); ++i) {
+        SCOPED_TRACE(i);
+        RunLoop::current().dispatch([&otherRunLoopTasksRun] { 
+            otherRunLoopTasksRun++;
+        });
+        Util::spinRunLoop();
+        EXPECT_EQ(otherRunLoopTasksRun, i + 1u);
+        auto messages1 = aClient().takeMessages();
+        EXPECT_EQ(messageCounts[i], messages1.size());
+        messages.appendVector(WTFMove(messages1));
+    }
+    EXPECT_EQ(testedCount, messages.size());
+    for (uint64_t i = 0u; i < messages.size(); ++i) {
+        auto& message = messages[i];
+        EXPECT_EQ(message.messageName, MockTestMessage1::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+}
+
+// Tests the case where a throttled connection dispatches a message that
+// spins the run loop in the message handler. A naive throttled connection
+// would only schedule one work dispatch function, which would then fail
+// in this scenario. Thus test the non-naive implementation where the throttled
+// connection schedules another dispatch function that ensures that nested
+// runloops will dispatch the throttled connection messages.
+TEST_P(OpenedConnectionTest, IncomingMessageThrottlingNestedRunLoopDispatches)
+{
+    const size_t testedCount = 2300;
+    a()->enableIncomingMessagesThrottling();
+    ASSERT_TRUE(openBoth());
+    size_t otherRunLoopTasksRun = 0u;
+
+    for (uint64_t i = 0u; i < testedCount; ++i)
+        b()->send(MockTestMessage1 { }, i);
+    while (a()->pendingMessageCountForTesting() < testedCount)
+        sleep(0.1_s);
+    
+    // Two messages invoke nested run loop. The handler skips total 4 messages for the
+    // proofs of logic that the test was ran.
+    bool isProcessing = false;
+    aClient().setAsyncMessageHandler([&] (MessageInfo& message) -> bool {
+        if (message.destinationID == 888 || message.destinationID == 1299) {
+            isProcessing = true;
+            Util::spinRunLoop();
+            isProcessing = false;
+            return true; // Skiping the message is the proof that the message was processed.
+        }
+        if (message.destinationID == 889 || message.destinationID == 1300) {
+            EXPECT_TRUE(isProcessing); // Passing the EXPECT is the proof that we ran the message in a nested event loop.
+            return true; // Skipping the message is the proof that above EXPECT was ran.
+        }
+        return false;
+    });
+
+    Vector<MessageInfo> messages;
+    std::array<size_t, 16> messageCounts { 600, 498, 150, 218, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
+    for (size_t i = 0; i < messageCounts.size(); ++i) {
+        SCOPED_TRACE(i);
+        RunLoop::current().dispatch([&otherRunLoopTasksRun] { 
+            otherRunLoopTasksRun++;
+        });
+        Util::spinRunLoop();
+        EXPECT_EQ(otherRunLoopTasksRun, i + 1u);
+        auto messages1 = aClient().takeMessages();
+        EXPECT_EQ(messageCounts[i], messages1.size());
+        messages.appendVector(WTFMove(messages1));
+    }
+    EXPECT_EQ(testedCount - 4, messages.size());
+    for (uint64_t i = 0u, j = 0u; i < messages.size(); ++i, ++j) {
+        if (j == 888 || j == 1299)
+            j += 2;
+        auto& message = messages[i];
+        EXPECT_EQ(message.messageName, MockTestMessage1::name());
+        EXPECT_EQ(message.destinationID, j);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,

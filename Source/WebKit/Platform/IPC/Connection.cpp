@@ -928,8 +928,7 @@ void Connection::enableIncomingMessagesThrottling()
 {
     if (isIncomingMessagesThrottlingEnabled())
         return;
-
-    m_incomingMessagesThrottler = makeUnique<MessagesThrottler>(*this, &Connection::dispatchIncomingMessages);
+    m_incomingMessagesThrottlingLevel = 0;
 }
 
 #if ENABLE(IPC_TESTING_API)
@@ -1082,6 +1081,13 @@ void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName)
     });
 }
 
+size_t Connection::pendingMessageCountForTesting() const
+{
+    // Note: current testing does not need to inspect the sync message state.
+    Locker lock { m_incomingMessagesLock };
+    return m_incomingMessages.size();
+}
+
 void Connection::didFailToSendSyncMessage()
 {
     if (!m_shouldExitOnSyncMessageSendFailure)
@@ -1218,41 +1224,18 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }
 
-Connection::MessagesThrottler::MessagesThrottler(Connection& connection, DispatchMessagesFunction dispatchMessages)
-    : m_dispatchMessagesTimer(RunLoop::main(), &connection, dispatchMessages)
-    , m_connection(connection)
-    , m_dispatchMessages(dispatchMessages)
+size_t Connection::numberOfMessagesToProcess(size_t totalMessages)
 {
-    ASSERT(RunLoop::isMain());
-}
-
-void Connection::MessagesThrottler::scheduleMessagesDispatch()
-{
-    ASSERT(RunLoop::isMain());
-
-    if (m_throttlingLevel) {
-        m_dispatchMessagesTimer.startOneShot(0_s);
-        return;
-    }
-    RunLoop::main().dispatch([this, protectedConnection = RefPtr { &m_connection }]() mutable {
-        (protectedConnection.get()->*m_dispatchMessages)();
-    });
-}
-
-size_t Connection::MessagesThrottler::numberOfMessagesToProcess(size_t totalMessages)
-{
-    ASSERT(RunLoop::isMain());
-
     // Never dispatch more than 600 messages without returning to the run loop, we can go as low as 60 with maximum throttling level.
     static const size_t maxIncomingMessagesDispatchingBatchSize { 600 };
-    static const unsigned maxThrottlingLevel = 9;
+    static const uint8_t maxThrottlingLevel = 9;
 
-    size_t batchSize = maxIncomingMessagesDispatchingBatchSize / (m_throttlingLevel + 1);
+    size_t batchSize = maxIncomingMessagesDispatchingBatchSize / (*m_incomingMessagesThrottlingLevel + 1);
 
     if (totalMessages > maxIncomingMessagesDispatchingBatchSize)
-        m_throttlingLevel = std::min(m_throttlingLevel + 1, maxThrottlingLevel);
-    else if (m_throttlingLevel)
-        --m_throttlingLevel;
+        m_incomingMessagesThrottlingLevel = std::min<uint8_t>(*m_incomingMessagesThrottlingLevel + 1u, maxThrottlingLevel);
+    else if (*m_incomingMessagesThrottlingLevel)
+        --*m_incomingMessagesThrottlingLevel;
 
     return std::min(totalMessages, batchSize);
 }
@@ -1294,9 +1277,9 @@ void Connection::dispatchIncomingMessages()
 
         // Incoming messages may get adding to the queue by the IPC thread while we're dispatching the messages below.
         // To make sure dispatchIncomingMessages() yields, we only ever process messages that were in the queue when
-        // dispatchIncomingMessages() was called. Additionally, the MessageThrottler may further cap the number of
+        // dispatchIncomingMessages() was called. Additionally, the message throttling may further cap the number of
         // messages to process to make sure we give the main run loop a chance to process other events.
-        messagesToProcess = m_incomingMessagesThrottler->numberOfMessagesToProcess(m_incomingMessages.size());
+        messagesToProcess = numberOfMessagesToProcess(m_incomingMessages.size());
         if (messagesToProcess < m_incomingMessages.size()) {
             RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: IPC throttling was triggered (has %zu pending incoming messages, will only process %zu before yielding)", this, m_incomingMessages.size(), messagesToProcess);
             RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %" PUBLIC_LOG_STRING, this, description(message->messageName()));
@@ -1304,8 +1287,11 @@ void Connection::dispatchIncomingMessages()
 
         // Re-schedule ourselves *before* we dispatch the messages because we want to process follow-up messages if the client
         // spins a nested run loop while we're dispatching a message. Note that this means we can re-enter this method.
-        if (!m_incomingMessages.isEmpty())
-            m_incomingMessagesThrottler->scheduleMessagesDispatch();
+        if (!m_incomingMessages.isEmpty()) {
+            RunLoop::main().dispatch([protectedThis = Ref { *this }] {
+                protectedThis->dispatchIncomingMessages();
+            });
+        }
     }
 
     dispatchMessage(WTFMove(message));
