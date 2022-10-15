@@ -912,11 +912,12 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
+    auto type = JSC::retrieveTypeAssertion(globalObject, assertions);
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
     parameters = jsUndefined();
-    if (!assertions.isEmpty()) {
-        if (std::optional<ScriptFetchParameters::Type> type = ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())))
-            parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
-    }
+    if (type)
+        parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
 
     auto result = JSC::importModule(globalObject, Identifier::fromString(vm, specifier), jsString(vm, referrer.string()), parameters, jsUndefined());
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));

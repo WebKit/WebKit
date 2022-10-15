@@ -157,11 +157,13 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
 
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, reject(scope));
+
+    auto type = JSC::retrieveTypeAssertion(globalObject, assertions);
+    RETURN_IF_EXCEPTION(scope, reject(scope));
+
     parameters = jsUndefined();
-    if (!assertions.isEmpty()) {
-        if (std::optional<ScriptFetchParameters::Type> type = ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())))
-            parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
-    }
+    if (type)
+        parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
 
     return import(specifier, parameters);
 }

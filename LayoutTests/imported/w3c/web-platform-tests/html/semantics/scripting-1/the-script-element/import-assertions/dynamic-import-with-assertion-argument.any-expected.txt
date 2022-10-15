@@ -1,5 +1,5 @@
 
 PASS Dynamic import with an empty assert clause should succeed
 PASS Dynamic import with an unsupported import assertion should succeed
-FAIL Dynamic import with an unsupported type assertion should fail assert_unreached: Should have rejected: Dynamic import with an unsupported type assertion should fail Reached unreachable code
+PASS Dynamic import with an unsupported type assertion should fail
 
