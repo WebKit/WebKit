@@ -8675,7 +8675,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.hostFileDescriptor = pageClient().hostFileDescriptor();
 #endif
 
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     parameters.nativeWindowHandle = reinterpret_cast<uint64_t>(viewWidget());
 #endif
 #if USE(GRAPHICS_LAYER_WC)

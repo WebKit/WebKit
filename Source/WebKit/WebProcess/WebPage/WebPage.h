@@ -1495,7 +1495,7 @@ public:
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
 
@@ -2145,7 +2145,7 @@ private:
     RefPtr<WebCore::AccessibilityRootAtspi> m_accessibilityRootObject;
 #endif
 
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     uint64_t m_nativeWindowHandle { 0 };
 #endif
 

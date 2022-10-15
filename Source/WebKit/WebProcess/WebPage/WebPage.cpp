@@ -519,7 +519,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #elif ENABLE(ACCESSIBILITY) && PLATFORM(GTK)
     , m_accessibilityObject(nullptr)
 #endif
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     , m_nativeWindowHandle(parameters.nativeWindowHandle)
 #endif
     , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)

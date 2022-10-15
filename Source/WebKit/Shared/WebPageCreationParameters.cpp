@@ -125,7 +125,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(WPE_RENDERER)
     encoder << hostFileDescriptor;
 #endif
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     encoder << nativeWindowHandle;
 #endif
 #if USE(GRAPHICS_LAYER_WC)
@@ -430,7 +430,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 #endif
 
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     if (!decoder.decode(parameters.nativeWindowHandle))
         return std::nullopt;
 #endif
