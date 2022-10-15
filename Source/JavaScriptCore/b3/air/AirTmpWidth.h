@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
+#include "B3Bank.h"
 
 namespace JSC { namespace B3 { namespace Air {
 

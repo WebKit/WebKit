@@ -126,7 +126,7 @@ void testPatchpointWithStackArgumentResult()
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
     patchpoint->resultConstraints = { ValueRep::stackArgument(0) };
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -152,9 +152,9 @@ void testPatchpointWithAnyResult()
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
     patchpoint->resultConstraints = { ValueRep::WarmAny };
-    patchpoint->clobberLate(RegisterSet::allFPRs());
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    patchpoint->clobber(RegisterSet(GPRInfo::regT0));
+    patchpoint->clobberLate(RegisterSetBuilder::allFPRs());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder(GPRInfo::regT0));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);

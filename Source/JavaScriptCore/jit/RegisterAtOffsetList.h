@@ -64,7 +64,7 @@ public:
     {
         // This preserves m_sizeOfAreaInBytes
         for (RegisterAtOffset &item : m_registers)
-            item = RegisterAtOffset { item.reg(), item.offset() + addend };
+            item = RegisterAtOffset { item.reg(), item.offset() + addend, item.width() };
     }
 
     RegisterAtOffset* find(Reg) const;

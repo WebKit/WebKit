@@ -444,7 +444,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     JITGetByIdGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSetBuilder::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
@@ -549,8 +549,8 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     {
         emitJumpSlowCaseIfNotJSCell(returnValueJSR);
 
-        RegisterSet preservedRegs = RegisterSet::stubUnavailableRegisters();
-        preservedRegs.set(iterCallResultJSR);
+        auto preservedRegs = RegisterSetBuilder::stubUnavailableRegisters();
+        preservedRegs.add(iterCallResultJSR, IgnoreVectors);
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         JITGetByIdGenerator gen(
             nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
@@ -568,7 +568,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     }
 
     {
-        RegisterSet usedRegisters(doneJSR, iterCallResultJSR);
+        auto usedRegisters = RegisterSetBuilder(doneJSR, iterCallResultJSR).buildAndValidate();
         ScratchRegisterAllocator scratchAllocator(usedRegisters);
         GPRReg scratch1 = scratchAllocator.allocateScratchGPR();
         GPRReg scratch2 = scratchAllocator.allocateScratchGPR();
@@ -581,7 +581,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         JITGetByIdGenerator gen(
-            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSetBuilder::stubUnavailableRegisters(),
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 

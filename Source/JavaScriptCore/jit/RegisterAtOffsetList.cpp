@@ -36,28 +36,16 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
 
 RegisterAtOffsetList::RegisterAtOffsetList() { }
 
-RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)
-    : m_registers(registerSet.numberOfSetRegisters())
+RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSetBuilder, OffsetBaseType offsetBaseType)
+    : m_registers(registerSetBuilder.numberOfSetRegisters())
 {
-    constexpr size_t sizeOfGPR = sizeof(CPURegister);
-    constexpr size_t sizeOfFPR = sizeof(double);
+    ASSERT(!registerSetBuilder.hasAnyWideRegisters());
 
-    size_t sizeOfAreaInBytes;
-    {
-#if USE(JSVALUE64)
-        static_assert(sizeOfGPR == sizeOfFPR);
-        size_t numberOfRegs = registerSet.numberOfSetRegisters();
-        sizeOfAreaInBytes = numberOfRegs * sizeOfGPR;
-#elif USE(JSVALUE32_64)
-        static_assert(2 * sizeOfGPR == sizeOfFPR);
-        size_t numberOfGPRs = registerSet.numberOfSetGPRs();
-        size_t numberOfFPRs = registerSet.numberOfSetFPRs();
-        if (numberOfFPRs)
-            numberOfGPRs = WTF::roundUpToMultipleOf<2>(numberOfGPRs);
-        sizeOfAreaInBytes = numberOfGPRs * sizeOfGPR + numberOfFPRs * sizeOfFPR;
-        m_sizeOfAreaInBytes = sizeOfAreaInBytes; // Hold on to it to avoid having to re-compute it
+    size_t sizeOfAreaInBytes = registerSetBuilder.byteSizeOfSetRegisters();
+#if USE(JSVALUE32_64)
+    m_sizeOfAreaInBytes = sizeOfAreaInBytes;
 #endif
-    }
+    ASSERT(this->sizeOfAreaInBytes() == sizeOfAreaInBytes);
 
     ptrdiff_t startOffset = 0;
     if (offsetBaseType == FramePointerBased)
@@ -66,11 +54,11 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseTy
     ptrdiff_t offset = startOffset;
     unsigned index = 0;
 
-    registerSet.forEach([&] (Reg reg) {
-        size_t registerSize = reg.isGPR() ? sizeOfGPR : sizeOfFPR;
+    registerSetBuilder.forEachWithWidth([&] (Reg reg, Width width) {
+        size_t registerSize = bytesForWidth(width);
         offset = WTF::roundUpToMultipleOf(registerSize, offset);
-        m_registers[index++] = RegisterAtOffset(reg, offset);
-        offset += registerSize;
+        m_registers[index++] = RegisterAtOffset(reg, offset, width);
+        offset += bytesForWidth(width);
     });
 
     ASSERT(static_cast<size_t>(offset - startOffset) == sizeOfAreaInBytes);
@@ -98,7 +86,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::llintBaselineCalleeSaveRegiste
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSet::llintBaselineCalleeSaveRegisters());
+        result.construct(RegisterSetBuilder::llintBaselineCalleeSaveRegisters());
     });
     return result.get();
 }
@@ -108,7 +96,7 @@ const RegisterAtOffsetList& RegisterAtOffsetList::dfgCalleeSaveRegisters()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSet::dfgCalleeSaveRegisters());
+        result.construct(RegisterSetBuilder::dfgCalleeSaveRegisters());
     });
     return result.get();
 }

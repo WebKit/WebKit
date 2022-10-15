@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class RegisterSet;
+class RegisterSetBuilder;
 
 namespace B3 { namespace Air {
 
@@ -45,7 +45,7 @@ class Code;
 // We should make this interact with the client: https://bugs.webkit.org/show_bug.cgi?id=150459
 
 void handleCalleeSaves(Code&);
-void handleCalleeSaves(Code&, RegisterSet);
+void handleCalleeSaves(Code&, RegisterSetBuilder);
 
 } } } // namespace JSC::B3::Air
 

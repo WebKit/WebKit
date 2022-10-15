@@ -46,14 +46,16 @@ void ScratchRegisterAllocator::lock(GPRReg reg)
 {
     if (reg == InvalidGPRReg)
         return;
-    m_lockedRegisters.set(reg);
+    ASSERT(Reg::fromIndex(reg).isGPR());
+    m_lockedRegisters.add(reg, IgnoreVectors);
 }
 
 void ScratchRegisterAllocator::lock(FPRReg reg)
 {
     if (reg == InvalidFPRReg)
         return;
-    m_lockedRegisters.set(reg);
+    ASSERT(Reg::fromIndex(reg).isFPR());
+    m_lockedRegisters.add(reg, IgnoreVectors);
 }
 
 void ScratchRegisterAllocator::lock(JSValueRegs regs)
@@ -68,10 +70,10 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
     // First try to allocate a register that is totally free.
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
         auto reg = BankInfo::toRegister(i);
-        if (!m_lockedRegisters.get(reg)
-            && !m_usedRegisters.get(reg)
-            && !m_scratchRegisters.get(reg)) {
-            m_scratchRegisters.set(reg);
+        if (!m_lockedRegisters.contains(reg, IgnoreVectors)
+            && !m_usedRegisters.contains(reg, IgnoreVectors)
+            && !m_scratchRegisters.contains(reg, IgnoreVectors)) {
+            m_scratchRegisters.add(reg, IgnoreVectors);
             return reg;
         }
     }
@@ -80,8 +82,8 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
     // locked or used for scratch.
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
         auto reg = BankInfo::toRegister(i);
-        if (!m_lockedRegisters.get(reg) && !m_scratchRegisters.get(reg)) {
-            m_scratchRegisters.set(reg);
+        if (!m_lockedRegisters.contains(reg, IgnoreVectors) && !m_scratchRegisters.contains(reg, IgnoreVectors)) {
+            m_scratchRegisters.add(reg, IgnoreVectors);
             m_numberOfReusedRegisters++;
             return reg;
         }
@@ -107,14 +109,14 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
-            registersToSpill.set(reg);
+        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
+            registersToSpill.add(reg, IgnoreVectors);
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
-            registersToSpill.set(reg);
+        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
+            registersToSpill.add(reg, IgnoreVectors);
     }
 
     unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
@@ -135,33 +137,20 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
-            registersToFill.set(reg);
+        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
+            registersToFill.add(reg, IgnoreVectors);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
-            registersToFill.set(reg);
+        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
+            registersToFill.add(reg, IgnoreVectors);
     }
 
     unsigned extraStackBytesAtTopOfStack =
         preservedState.extraStackSpaceRequirement == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
-    RegisterSet dontRestore; // Empty set. We want to restore everything.
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToFill, dontRestore,
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToFill, { },
         preservedState.numberOfBytesPreserved, extraStackBytesAtTopOfStack);
-}
-
-RegisterSet ScratchRegisterAllocator::usedRegistersForCall() const
-{
-    RegisterSet result = m_usedRegisters;
-    result.exclude(RegisterSet::registersToNotSaveForJSCall());
-    return result;
-}
-
-unsigned ScratchRegisterAllocator::desiredScratchBufferSizeForCall() const
-{
-    return usedRegistersForCall().numberOfSetRegisters() * sizeof(JSValue);
 }
 
 unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, unsigned extraBytesAtTopOfStack)
@@ -169,9 +158,10 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
     if (!usedRegisters.numberOfSetRegisters())
         return 0;
+    ASSERT(!usedRegisters.hasAnyWideRegisters());
     JIT_COMMENT(jit, "Preserve registers to stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
-    
-    unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
+
+    unsigned stackOffset = usedRegisters.byteSizeOfSetRegisters();
     stackOffset += extraBytesAtTopOfStack;
     stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
     jit.subPtr(
@@ -182,22 +172,24 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
 
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (usedRegisters.get(reg)) {
-            spooler.storeGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))) });
+        if (usedRegisters.contains(reg, IgnoreVectors)) {
+            spooler.storeGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * conservativeRegisterBytesWithoutVectors(reg))), conservativeWidthWithoutVectors(reg) });
             count++;
         }
     }
     spooler.finalizeGPR();
 
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (usedRegisters.get(reg)) {
-            spooler.storeFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))) });
+        if (usedRegisters.contains(reg, IgnoreVectors)) {
+            spooler.storeFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * conservativeRegisterBytesWithoutVectors(reg))), conservativeWidthWithoutVectors(reg) });
             count++;
         }
     }
     spooler.finalizeFPR();
 
-    RELEASE_ASSERT(count == usedRegisters.numberOfSetRegisters());
+#if USE(JSVALUE64)
+    RELEASE_ASSERT(count * sizeof(EncodedJSValue) == usedRegisters.byteSizeOfSetRegisters());
+#endif
 
     return stackOffset;
 }
@@ -209,35 +201,41 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
         RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == 0);
         return;
     }
-
+    ASSERT(!usedRegisters.hasAnyWideRegisters());
     JIT_COMMENT(jit, "Restore registers from stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
 
     AssemblyHelpers::LoadRegSpooler spooler(jit, MacroAssembler::stackPointerRegister);
 
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (usedRegisters.get(reg)) {
-            if (!ignore.get(reg))
-                spooler.loadGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)) });
+        if (usedRegisters.contains(reg, IgnoreVectors)) {
+            if (!ignore.contains(reg, IgnoreVectors))
+                spooler.loadGPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (conservativeRegisterBytesWithoutVectors(reg) * count)), conservativeWidthWithoutVectors(reg) });
             count++;
         }
     }
     spooler.finalizeGPR();
 
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (usedRegisters.get(reg)) {
-            if (!ignore.get(reg))
-                spooler.loadFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)) });
-            count++;
+        if (usedRegisters.contains(reg, IgnoreVectors)) {
+            // You should never have to ignore only part of a register.
+            ASSERT(ignore.contains(reg, IgnoreVectors) == ignore.contains(reg, Width128));
+            if (usedRegisters.contains(reg, IgnoreVectors)) {
+                if (!ignore.contains(reg, IgnoreVectors))
+                    spooler.loadFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (conservativeRegisterBytesWithoutVectors(reg) * count)), conservativeWidthWithoutVectors(reg) });
+                count++;
+            }
         }
     }
     spooler.finalizeFPR();
 
-    unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
+    unsigned stackOffset = usedRegisters.byteSizeOfSetRegisters();
     stackOffset += extraBytesAtTopOfStack;
     stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
 
-    RELEASE_ASSERT(count == usedRegisters.numberOfSetRegisters());
+#if USE(JSVALUE64)
+    RELEASE_ASSERT(count * sizeof(EncodedJSValue) == usedRegisters.byteSizeOfSetRegisters());
+#endif
     RELEASE_ASSERT(stackOffset == numberOfStackBytesUsedForRegisterPreservation);
 
     jit.addPtr(

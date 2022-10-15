@@ -86,9 +86,7 @@ struct TmpData {
 };
 
 struct Clobber {
-    Clobber()
-    {
-    }
+    Clobber() = default;
     
     Clobber(size_t index, RegisterSet regs)
         : index(index)
@@ -118,7 +116,7 @@ public:
     void run()
     {
         padInterference(m_code);
-        buildRegisterSet();
+        buildRegisterSetBuilder();
         buildIndices();
         buildIntervals();
         if (shouldSpillEverything()) {
@@ -149,13 +147,14 @@ public:
     }
     
 private:
-    void buildRegisterSet()
+    void buildRegisterSetBuilder()
     {
         forEachBank(
             [&] (Bank bank) {
                 m_registers[bank] = m_code.regsInPriorityOrder(bank);
-                m_registerSet[bank].setAll(m_registers[bank]);
-                m_unifiedRegisterSet.merge(m_registerSet[bank]);
+                for (Reg r : m_registers[bank])
+                    m_registerSetBuilder[bank].add(r, IgnoreVectors);
+                m_unifiedRegisterSetBuilder.merge(m_registerSetBuilder[bank]);
             });
     }
 
@@ -270,31 +269,33 @@ private:
                 // liveness constraints. Except we want those constraints to separate the late
                 // actions of one instruction from the early actions of the next.
                 // https://bugs.webkit.org/show_bug.cgi?id=170850
-                const RegisterSet& regs = localCalc.live();
+                const auto& regs = localCalc.live();
                 if (Inst* prev = block->get(instIndex - 1)) {
-                    RegisterSet prevRegs = regs;
+                    RegisterSetBuilder prevRegs = regs;
                     prev->forEach<Reg>(
-                        [&] (Reg& reg, Arg::Role role, Bank, Width) {
+                        [&] (Reg& reg, Arg::Role role, Bank, Width width) {
+                            ASSERT(width <= Width64);
                             if (Arg::isLateDef(role))
-                                prevRegs.add(reg);
+                                prevRegs.add(reg, width);
                         });
                     if (prev->kind.opcode == Patch)
                         prevRegs.merge(prev->extraClobberedRegs());
-                    prevRegs.filter(m_unifiedRegisterSet);
+                    prevRegs.filter(m_unifiedRegisterSetBuilder);
                     if (!prevRegs.isEmpty())
-                        m_clobbers.append(Clobber(indexOfHead + instIndex * 2 - 1, prevRegs));
+                        m_clobbers.append(Clobber(indexOfHead + instIndex * 2 - 1, prevRegs.buildAndValidate()));
                 }
                 if (Inst* next = block->get(instIndex)) {
-                    RegisterSet nextRegs = regs;
+                    RegisterSetBuilder nextRegs = regs;
                     next->forEach<Reg>(
-                        [&] (Reg& reg, Arg::Role role, Bank, Width) {
+                        [&] (Reg& reg, Arg::Role role, Bank, Width width) {
+                            ASSERT(width <= Width64);
                             if (Arg::isEarlyDef(role))
-                                nextRegs.add(reg);
+                                nextRegs.add(reg, width);
                         });
                     if (next->kind.opcode == Patch)
                         nextRegs.merge(next->extraEarlyClobberedRegs());
                     if (!nextRegs.isEmpty())
-                        m_clobbers.append(Clobber(indexOfHead + instIndex * 2, nextRegs));
+                        m_clobbers.append(Clobber(indexOfHead + instIndex * 2, nextRegs.buildAndValidate()));
                 }
             };
             
@@ -461,11 +462,11 @@ private:
                 while (clobberIndex < m_clobbers.size() && m_clobbers[clobberIndex].index < index)
                     clobberIndex++;
                 
-                RegisterSet possibleRegs = m_registerSet[bank];
+                RegisterSetBuilder possibleRegs = m_registerSetBuilder[bank];
                 for (size_t i = clobberIndex; i < m_clobbers.size() && m_clobbers[i].index < entry.interval.end(); ++i)
                     possibleRegs.exclude(m_clobbers[i].regs);
                 
-                entry.possibleRegs = possibleRegs;
+                entry.possibleRegs = possibleRegs.buildWithLowerBits();
                 entry.didBuildPossibleRegs = true;
             }
             
@@ -478,7 +479,7 @@ private:
                 for (Reg reg : m_registers[bank]) {
                     // FIXME: Could do priority coloring here.
                     // https://bugs.webkit.org/show_bug.cgi?id=170304
-                    if (!m_activeRegs.contains(reg) && entry.possibleRegs.contains(reg)) {
+                    if (!m_activeRegs.contains(reg, IgnoreVectors) && entry.possibleRegs.contains(reg, IgnoreVectors)) {
                         assign(tmp, reg);
                         didAssign = true;
                         break;
@@ -491,7 +492,7 @@ private:
             // This is SpillAtInterval in Fig. 1, but modified to handle clobbers.
             Tmp spillTmp = m_active.takeLast(
                 [&] (Tmp spillCandidate) -> bool {
-                    return entry.possibleRegs.contains(m_map[spillCandidate].assigned);
+                    return entry.possibleRegs.contains(m_map[spillCandidate].assigned, IgnoreVectors);
                 });
             if (!spillTmp) {
                 spill(tmp);
@@ -533,7 +534,7 @@ private:
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.spilled);
         entry.assigned = reg;
-        m_activeRegs.add(reg);
+        m_activeRegs.add(reg, IgnoreVectors);
         addToActive(tmp);
     }
     
@@ -541,7 +542,7 @@ private:
     {
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.isUnspillable);
-        entry.spilled = m_code.addStackSlot(8, StackSlotKind::Spill);
+        entry.spilled = m_code.addStackSlot(conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
         entry.assigned = Reg();
         m_didSpill = true;
     }
@@ -669,8 +670,8 @@ private:
     
     Code& m_code;
     Vector<Reg> m_registers[numBanks];
-    RegisterSet m_registerSet[numBanks];
-    RegisterSet m_unifiedRegisterSet;
+    RegisterSet m_registerSetBuilder[numBanks];
+    RegisterSet m_unifiedRegisterSetBuilder;
     IndexMap<BasicBlock*, size_t> m_startIndex;
     TmpMap<TmpData> m_map;
     IndexMap<BasicBlock*, PhaseInsertionSet> m_insertionSets;

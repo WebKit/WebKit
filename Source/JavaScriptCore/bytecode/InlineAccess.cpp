@@ -214,7 +214,7 @@ bool InlineAccess::generateSelfPropertyAccess(CodeBlock* codeBlock, StructureStu
 
 ALWAYS_INLINE static GPRReg getScratchRegister(StructureStubInfo& stubInfo)
 {
-    ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
+    ScratchRegisterAllocator allocator(stubInfo.usedRegisters.toRegisterSet());
     allocator.lock(stubInfo.m_baseGPR);
     allocator.lock(stubInfo.m_valueGPR);
     allocator.lock(stubInfo.m_extraGPR);

@@ -28,10 +28,25 @@
 #if ENABLE(B3_JIT)
 
 #include "B3ValueRep.h"
+#include "B3Width.h"
+#include "WasmCallingConvention.h"
 
 namespace JSC { namespace B3 {
 
 class Value;
+
+struct ArgumentLocation {
+    ArgumentLocation(Wasm::ValueLocation loc, Width width)
+        : location(loc)
+        , width(width)
+    {
+    }
+
+    ArgumentLocation() { }
+
+    Wasm::ValueLocation location;
+    Width width;
+};
 
 class ConstrainedValue {
 public:
@@ -48,6 +63,12 @@ public:
     ConstrainedValue(Value* value, const ValueRep& rep)
         : m_value(value)
         , m_rep(rep)
+    {
+    }
+
+    ConstrainedValue(Value* value, const Wasm::ArgumentLocation& loc)
+        : m_value(value)
+        , m_rep(loc.location)
     {
     }
 

@@ -55,11 +55,12 @@ void logRegisterPressure(Code& code)
             localCalc.execute(instIndex);
 
             RegisterSet set;
-            set.setAll(localCalc.live());
+            set.merge(localCalc.live());
             Inst::forEachDefWithExtraClobberedRegs<Reg>(
                 prevInst, &inst,
-                [&] (Reg reg, Arg::Role, Bank, Width) {
-                    set.set(reg);
+                [&] (Reg reg, Arg::Role, Bank, Width width) {
+                    ASSERT(width <= Width64);
+                    set.add(reg, width);
                 });
 
             StringPrintStream instOut;

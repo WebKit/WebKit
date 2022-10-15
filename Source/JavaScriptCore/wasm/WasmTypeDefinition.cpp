@@ -356,7 +356,7 @@ const TypeDefinition& TypeDefinition::expand() const
 
 TypeInformation::TypeInformation()
 {
-#define MAKE_THUNK_SIGNATURE(type, enc, str, val, _) \
+#define MAKE_THUNK_SIGNATURE(type, enc, str, val, ...) \
     do { \
         if (TypeKind::type != TypeKind::Void) { \
             RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(1, 0); \

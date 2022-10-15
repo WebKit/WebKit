@@ -323,7 +323,7 @@ public:
         use(nodeUse.node());
     }
     
-    RegisterSet usedRegisters();
+    RegisterSetBuilder usedRegisters();
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {

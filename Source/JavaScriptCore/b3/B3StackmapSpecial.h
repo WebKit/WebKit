@@ -51,9 +51,9 @@ public:
     };
 
 protected:
-    void reportUsedRegisters(Air::Inst&, const RegisterSet&) final;
-    RegisterSet extraEarlyClobberedRegs(Air::Inst&) final;
-    RegisterSet extraClobberedRegs(Air::Inst&) final;
+    void reportUsedRegisters(Air::Inst&, const RegisterSetBuilder&) final;
+    RegisterSetBuilder extraEarlyClobberedRegs(Air::Inst&) final;
+    RegisterSetBuilder extraClobberedRegs(Air::Inst&) final;
 
     // Note that this does not override generate() or dumpImpl()/deepDumpImpl(). We have many
     // subclasses that implement that.

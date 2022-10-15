@@ -50,48 +50,48 @@ namespace JSC {
 
 class Reg {
 public:
-    Reg()
+    constexpr Reg()
         : m_index(invalid())
     {
     }
 
-    Reg(WTF::HashTableDeletedValueType)
+    constexpr Reg(WTF::HashTableDeletedValueType)
         : m_index(deleted())
     {
     }
     
-    Reg(MacroAssembler::RegisterID reg)
+    constexpr Reg(MacroAssembler::RegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
     {
     }
     
-    Reg(MacroAssembler::FPRegisterID reg)
+    constexpr Reg(MacroAssembler::FPRegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
     {
     }
     
-    static Reg fromIndex(unsigned index)
+    static constexpr Reg fromIndex(unsigned index)
     {
         Reg result;
         result.m_index = index;
         return result;
     }
     
-    static Reg first()
+    static constexpr Reg first()
     {
         Reg result;
         result.m_index = 0;
         return result;
     }
     
-    static Reg last()
+    static constexpr Reg last()
     {
         Reg result;
         result.m_index = MacroAssembler::numberOfRegisters() + MacroAssembler::numberOfFPRegisters() - 1;
         return result;
     }
     
-    Reg next() const
+    constexpr Reg next() const
     {
         ASSERT(!!*this);
         if (*this == last())
@@ -101,24 +101,24 @@ public:
         return result;
     }
     
-    unsigned index() const { return m_index; }
+    constexpr unsigned index() const { return m_index; }
 
     static unsigned maxIndex()
     {
         return last().index();
     }
     
-    bool isSet() const { return m_index != invalid(); }
-    explicit operator bool() const { return isSet(); }
+    constexpr bool isSet() const { return m_index != invalid(); }
+    constexpr explicit operator bool() const { return isSet(); }
 
-    bool isHashTableDeletedValue() const { return m_index == deleted(); }
+    constexpr bool isHashTableDeletedValue() const { return m_index == deleted(); }
     
-    bool isGPR() const
+    constexpr bool isGPR() const
     {
         return m_index < MacroAssembler::numberOfRegisters();
     }
     
-    bool isFPR() const
+    constexpr bool isFPR() const
     {
         return (m_index - MacroAssembler::numberOfRegisters()) < MacroAssembler::numberOfFPRegisters();
     }
@@ -136,37 +136,37 @@ public:
             MacroAssembler::firstFPRegister() + (m_index - MacroAssembler::numberOfRegisters()));
     }
     
-    bool operator==(const Reg& other) const
+    constexpr bool operator==(const Reg& other) const
     {
         return m_index == other.m_index;
     }
     
-    bool operator!=(const Reg& other) const
+    constexpr bool operator!=(const Reg& other) const
     {
         return m_index != other.m_index;
     }
     
-    bool operator<(const Reg& other) const
+    constexpr bool operator<(const Reg& other) const
     {
         return m_index < other.m_index;
     }
     
-    bool operator>(const Reg& other) const
+    constexpr bool operator>(const Reg& other) const
     {
         return m_index > other.m_index;
     }
     
-    bool operator<=(const Reg& other) const
+    constexpr bool operator<=(const Reg& other) const
     {
         return m_index <= other.m_index;
     }
     
-    bool operator>=(const Reg& other) const
+    constexpr bool operator>=(const Reg& other) const
     {
         return m_index >= other.m_index;
     }
     
-    unsigned hash() const
+    constexpr unsigned hash() const
     {
         return m_index;
     }
@@ -216,11 +216,11 @@ public:
     static AllRegsIterable all() { return AllRegsIterable(); }
 
 private:
-    static uint8_t invalid() { return 0xff; }
+    static constexpr uint8_t invalid() { return (1 << 7) - 1; }
 
-    static uint8_t deleted() { return 0xfe; }
+    static constexpr uint8_t deleted() { return invalid() - 1; }
     
-    uint8_t m_index;
+    unsigned m_index : 7;
 };
 
 struct RegHash {
@@ -228,6 +228,112 @@ struct RegHash {
     static bool equal(const Reg& a, const Reg& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
+
+enum class Width : uint8_t {
+    Width8,
+    Width16,
+    Width32,
+    Width64,
+    Width128,
+};
+static constexpr Width Width8 = Width::Width8;
+static constexpr Width Width16 = Width::Width16;
+static constexpr Width Width32 = Width::Width32;
+static constexpr Width Width64 = Width::Width64;
+static constexpr Width Width128 = Width::Width128;
+
+ALWAYS_INLINE constexpr Width widthForBytes(unsigned bytes)
+{
+    switch (bytes) {
+    case 0:
+    case 1:
+        return Width8;
+    case 2:
+        return Width16;
+    case 3:
+    case 4:
+        return Width32;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+        return Width64;
+    default:
+        return Width128;
+    }
+}
+
+ALWAYS_INLINE constexpr unsigned bytesForWidth(Width width)
+{
+    switch (width) {
+    case Width8:
+        return 1;
+    case Width16:
+        return 2;
+    case Width32:
+        return 4;
+    case Width64:
+        return 8;
+    case Width128:
+        return 16;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
+
+inline constexpr uint64_t mask(Width width)
+{
+    switch (width) {
+    case Width8:
+        return 0x00000000000000ffllu;
+    case Width16:
+        return 0x000000000000ffffllu;
+    case Width32:
+        return 0x00000000ffffffffllu;
+    case Width64:
+        return 0xffffffffffffffffllu;
+    case Width128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+constexpr Width pointerWidth()
+{
+    if (sizeof(void*) == 8)
+        return Width64;
+    return Width32;
+}
+
+inline Width canonicalWidth(Width width)
+{
+    return std::max(Width32, width);
+}
+
+inline bool isCanonicalWidth(Width width)
+{
+    return width >= Width32;
+}
+
+ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
+}
+
+ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
+}
+
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)
+{
+    return bytesForWidth(conservativeWidth(reg));
+}
+
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytesWithoutVectors(const Reg reg)
+{
+    return bytesForWidth(conservativeWidthWithoutVectors(reg));
+}
 
 } // namespace JSC
 
@@ -240,6 +346,29 @@ template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Reg> : SimpleClassHashTraits<JSC::Reg> {
     static constexpr bool emptyValueIsZero = false;
  };
+
+inline void printInternal(PrintStream& out, JSC::Width width)
+{
+    switch (width) {
+    case JSC::Width8:
+        out.print("8");
+        return;
+    case JSC::Width16:
+        out.print("16");
+        return;
+    case JSC::Width32:
+        out.print("32");
+        return;
+    case JSC::Width64:
+        out.print("64");
+        return;
+    case JSC::Width128:
+        out.print("128");
+        return;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
 
 } // namespace WTF
 
