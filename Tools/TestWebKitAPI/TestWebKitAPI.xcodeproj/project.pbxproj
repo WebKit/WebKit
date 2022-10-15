@@ -575,6 +575,7 @@
 		7B9FC5D628A5326A007570E7 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */; };
 		7BA3936C271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BA3936B271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm */; };
 		7BAA4A9028CA14AE004CE938 /* StreamConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */; };
+		7BB8BDE428F0781A00129836 /* CompletionHandlerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */; };
 		7BF5017828E55F7A0008BB16 /* StackTraceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */; };
 		7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3965051CDD74F90094DBB8 /* ColorTests.cpp */; };
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
@@ -2712,6 +2713,7 @@
 		7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionTests.cpp; sourceTree = "<group>"; };
 		7BB754AF274E39A100D00EC1 /* TestUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		7BB754B0274E39A100D00EC1 /* TestUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestUtilities.cpp; sourceTree = "<group>"; };
+		7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompletionHandlerTests.cpp; sourceTree = "<group>"; };
 		7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTraceTest.cpp; sourceTree = "<group>"; };
 		7C1AF7931E8DCBAB002645B9 /* PrepareForMoveToWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrepareForMoveToWindow.mm; sourceTree = "<group>"; };
 		7C3965051CDD74F90094DBB8 /* ColorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorTests.cpp; sourceTree = "<group>"; };
@@ -4983,6 +4985,7 @@
 				FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */,
 				E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */,
 				9B0C051824FDFB7000F2FE31 /* CompactUniquePtrTuple.cpp */,
+				7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */,
 				0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */,
 				0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */,
 				278DE64B22B8D611004E0E7A /* CrossThreadCopier.cpp */,
@@ -5940,6 +5943,7 @@
 				FF5D0CB4283221AD00F3278A /* CompactRefPtr.cpp in Sources */,
 				E302BDAA2404B92400865277 /* CompactRefPtrTuple.cpp in Sources */,
 				9B0C051924FDFB7D00F2FE31 /* CompactUniquePtrTuple.cpp in Sources */,
+				7BB8BDE428F0781A00129836 /* CompletionHandlerTests.cpp in Sources */,
 				0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				7C83DEC31D0A590C00FEBCF3 /* Condition.cpp in Sources */,
 				7C83DEA61D0A590C00FEBCF3 /* Counters.cpp in Sources */,

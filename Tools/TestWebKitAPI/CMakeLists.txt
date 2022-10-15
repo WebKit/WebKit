@@ -34,6 +34,7 @@ set(TestWTF_SOURCES
     Tests/WTF/CompactRefPtr.cpp
     Tests/WTF/CompactRefPtrTuple.cpp
     Tests/WTF/CompactUniquePtrTuple.cpp
+    Tests/WTF/CompletionHandlerTests.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
     Tests/WTF/Condition.cpp
     Tests/WTF/CrossThreadCopier.cpp

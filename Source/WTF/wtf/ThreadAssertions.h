@@ -31,6 +31,27 @@
 namespace WTF {
 
 class ThreadLikeAssertion;
+WTF_EXPORT_PRIVATE bool isMainThread();
+
+struct MainThreadLike {
+    constexpr operator uint32_t() const { return -3; }
+};
+inline constexpr MainThreadLike mainThreadLike;
+
+struct CurrentThreadLike {
+    constexpr operator uint32_t() const { return static_cast<uint32_t>(-2); }
+};
+inline constexpr CurrentThreadLike currentThreadLike;
+
+struct AnyThreadLike {
+    constexpr operator uint32_t() const { return static_cast<uint32_t>(-1); }
+};
+inline constexpr AnyThreadLike anyThreadLike;
+
+struct NoneThreadLike {
+    constexpr operator uint32_t() const { return 0; }
+};
+inline constexpr NoneThreadLike noneThreadLike;
 
 class ThreadLike {
 public:
@@ -57,35 +78,84 @@ protected:
 // };
 class WTF_CAPABILITY("is current") ThreadLikeAssertion {
 public:
-    ThreadLikeAssertion() = default;
-    enum UninitializedTag { Uninitialized };
-    constexpr ThreadLikeAssertion(UninitializedTag)
-#if ASSERT_ENABLED
-        : m_uid(0)
-#endif
+    constexpr ThreadLikeAssertion(NoneThreadLike a)
+        : ThreadLikeAssertion(static_cast<uint32_t>(a))
     {
     }
+    constexpr ThreadLikeAssertion(AnyThreadLike a)
+        : ThreadLikeAssertion(static_cast<uint32_t>(a))
+    {
+    }
+    constexpr ThreadLikeAssertion(MainThreadLike a)
+        : ThreadLikeAssertion(static_cast<uint32_t>(a))
+    {
+    }
+    ThreadLikeAssertion(CurrentThreadLike = currentThreadLike);
+    ThreadLikeAssertion(ThreadLikeAssertion&&);
     ~ThreadLikeAssertion() { assertIsCurrent(*this); }
-    void reset() { *this = ThreadLikeAssertion { }; }
+    ThreadLikeAssertion(const ThreadLikeAssertion&) = default;
+    ThreadLikeAssertion& operator=(const ThreadLikeAssertion&) = default;
+    ThreadLikeAssertion& operator=(ThreadLikeAssertion&&);
+
+    void reset() { *this = currentThreadLike; }
 private:
+    constexpr ThreadLikeAssertion(uint32_t uid);
+    bool isCurrent() const;
 #if ASSERT_ENABLED
-    constexpr ThreadLikeAssertion(uint32_t uid)
-        : m_uid(uid)
-    {
-    }
-    uint32_t m_uid { ThreadLike::currentSequence() };
-#else
-    constexpr ThreadLikeAssertion(uint32_t)
-    {
-    }
+    uint32_t m_uid;
 #endif
     friend void assertIsCurrent(const ThreadLikeAssertion&);
     friend class ThreadLike;
 };
 
+inline ThreadLikeAssertion::ThreadLikeAssertion(CurrentThreadLike)
+{
+#if ASSERT_ENABLED
+    m_uid = isMainThread() ? mainThreadLike : ThreadLike::currentSequence();
+#endif
+}
+
+inline ThreadLikeAssertion::ThreadLikeAssertion(ThreadLikeAssertion&& other)
+{
+    *this = WTFMove(other);
+}
+
+inline ThreadLikeAssertion& ThreadLikeAssertion::operator=(ThreadLikeAssertion&& other)
+{
+#if ASSERT_ENABLED
+    m_uid = std::exchange(other.m_uid, anyThreadLike);
+#else
+    UNUSED_PARAM(other);
+#endif
+    return *this;
+}
+
+inline constexpr ThreadLikeAssertion::ThreadLikeAssertion(uint32_t uid)
+#if ASSERT_ENABLED
+    : m_uid(uid)
+#endif
+{
+#if !ASSERT_ENABLED
+    UNUSED_PARAM(uid);
+#endif
+}
+
+inline bool ThreadLikeAssertion::isCurrent() const
+{
+#if ASSERT_ENABLED
+    if (m_uid == anyThreadLike)
+        return true;
+    if (m_uid == mainThreadLike)
+        return isMainThread();
+    return ThreadLike::currentSequence() == m_uid;
+#else
+    return true;
+#endif
+}
+
 inline void assertIsCurrent(const ThreadLikeAssertion& threadLikeAssertion) WTF_ASSERTS_ACQUIRED_CAPABILITY(threadLikeAssertion)
 {
-    ASSERT_UNUSED(threadLikeAssertion, ThreadLike::currentSequence() == threadLikeAssertion.m_uid);
+    ASSERT_UNUSED(threadLikeAssertion, threadLikeAssertion.isCurrent());
 }
 
 inline ThreadLikeAssertion ThreadLike::createThreadLikeAssertion(uint32_t uid)
@@ -111,7 +181,15 @@ class WTF_CAPABILITY("is current") NamedAssertion { };
 
 }
 
+using WTF::anyThreadLike;
+using WTF::AnyThreadLike;
+using WTF::assertIsCurrent;
+using WTF::currentThreadLike;
+using WTF::CurrentThreadLike;
+using WTF::mainThreadLike;
+using WTF::MainThreadLike;
+using WTF::NamedAssertion;
+using WTF::noneThreadLike;
+using WTF::NoneThreadLike;
 using WTF::ThreadLike;
 using WTF::ThreadLikeAssertion;
-using WTF::assertIsCurrent;
-using WTF::NamedAssertion;

@@ -26,6 +26,13 @@
 #pragma once
 
 #include <wtf/Seconds.h>
+
+#if ASSERT_ENABLED
+#define MAYBE_ASSERT_ENABLED_DEATH_TEST(name) name##DeathTest
+#else
+#define MAYBE_ASSERT_ENABLED_DEATH_TEST(name) DISABLED_##name##DeathTest
+#endif
+
 namespace TestWebKitAPI::Util {
 
 // Runs a platform runloop until the 'done' flag is true.

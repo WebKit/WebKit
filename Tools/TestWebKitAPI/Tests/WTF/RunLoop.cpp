@@ -244,12 +244,7 @@ TEST(WTF_RunLoop, CapabilityIsCurrentIsSupported)
     EXPECT_TRUE(result);
 }
 
-#if ASSERT_ENABLED
-#define MAYBE_CapabilityIsCurrentNegativeDeathTest CapabilityIsCurrentNegativeDeathTest
-#else
-#define MAYBE_CapabilityIsCurrentNegativeDeathTest DISABLED_CapabilityIsCurrentNegativeDeathTest
-#endif
-TEST(WTF_RunLoop, MAYBE_CapabilityIsCurrentNegativeDeathTest)
+TEST(WTF_RunLoopDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(CapabilityIsCurrentFailureAsserts))
 {
     ::testing::FLAGS_gtest_death_test_style = "threadsafe";
     ASSERT_DEATH_IF_SUPPORTED({
