@@ -1796,7 +1796,6 @@ void WebGLRenderingContextBase::deleteTexture(WebGLTexture* texture)
     if (!deleteObject(locker, texture))
         return;
 
-    unsigned current = 0;
     for (auto& textureUnit : m_textureUnits) {
         if (texture == textureUnit.texture2DBinding)
             textureUnit.texture2DBinding = nullptr;
@@ -1808,7 +1807,6 @@ void WebGLRenderingContextBase::deleteTexture(WebGLTexture* texture)
             if (texture == textureUnit.texture2DArrayBinding)
                 textureUnit.texture2DArrayBinding = nullptr;
         }
-        ++current;
     }
     if (m_framebufferBinding)
         m_framebufferBinding->removeAttachmentFromBoundFramebuffer(locker, GraphicsContextGL::FRAMEBUFFER, texture);
