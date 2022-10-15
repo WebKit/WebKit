@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
     auto mainWindow = std::make_unique<MainWindow>(argc > 1 ? argv[1] : nullptr);
     mainWindow->setFocused();
-    app.setRootWidget(move(mainWindow));
+    app.setRootWidget(std::move(mainWindow));
 
     // Request the first frame to start the application loop.
     applicationClient.requestNextFrame();

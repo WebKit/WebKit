@@ -148,7 +148,7 @@ WebViewWindow* MainWindow::createNewWebView(WKPageConfigurationRef configuration
     webViewWindow->fill(WHITE);
 
     WebViewWindow* rawWebViewWindow = webViewWindow.get();
-    m_webviewFrame->appendChild(move(webViewWindow));
+    m_webviewFrame->appendChild(std::move(webViewWindow));
 
     // Acrivate the new window.
     rawWebViewWindow->setActive(true);
