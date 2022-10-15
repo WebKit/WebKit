@@ -612,8 +612,7 @@ bool UIDelegate::UIClient::lockScreenOrientation(WebPageProxy&, WebCore::ScreenO
     if (!delegate)
         return false;
 
-    [(id<WKUIDelegatePrivate>)delegate _webViewLockScreenOrientation:m_uiDelegate->m_webView.get().get() lockType:toWKScreenOrientationType(orientation)];
-    return true;
+    return [(id<WKUIDelegatePrivate>)delegate _webViewLockScreenOrientation:m_uiDelegate->m_webView.get().get() lockType:toWKScreenOrientationType(orientation)];
 #else
     UNUSED_PARAM(orientation);
     return false;

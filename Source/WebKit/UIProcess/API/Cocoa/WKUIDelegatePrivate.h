@@ -265,7 +265,7 @@ struct UIEdgeInsets;
 - (NSInteger)_webView:(WKWebView *)webView dataOwnerForDropSession:(id <UIDropSession>)session WK_API_AVAILABLE(ios(11.0));
 - (NSInteger)_webView:(WKWebView *)webView dataOwnerForDragSession:(id <UIDragSession>)session WK_API_AVAILABLE(ios(11.0));
 
-- (void)_webViewLockScreenOrientation:(WKWebView *)webView lockType:(_WKScreenOrientationType)lockType WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (BOOL)_webViewLockScreenOrientation:(WKWebView *)webView lockType:(_WKScreenOrientationType)lockType WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webViewUnlockScreenOrientation:(WKWebView *)webView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
