@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
 <head>
+<title>:nth-child with selector list specificity</title>
+<link rel="help" href="https://w3c.github.io/csswg-drafts/selectors-4/#child-index">
+<link rel="match" href="nth-child-specificity-4-ref.html">
 <style>
     /* (1, 2, 1) */
     :nth-child(even of target.foo, .foo#bar, target.foo#bar, target#bar) {
@@ -37,11 +40,11 @@
     <div>
         <target>Black text.</target>
         <target>Black text.</target>
-        <target class="foo">Red text with black border.</target>
-        <target class="foo">White text on red background with purple border.</target>
         <target id="bar">Black text with blue border.</target>
-        <target id="bar">White text on red background with purple border.</target>
+        <target class="foo">White text on red background with purple border.</target>
         <target class="foo" id="bar">Red text on green background with blue border.</target>
+        <target id="bar">White text on red background with purple border.</target>
+        <target class="foo">Red text with black border.</target>
         <target class="foo" id="bar">White text on red background with purple border.</target>
     </div>
 </body>
