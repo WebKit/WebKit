@@ -3163,8 +3163,6 @@ webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-019.ht
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-024.html [ ImageOnlyFailure ]
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-025.html [ ImageOnlyFailure ]
 
-webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-005.html [ ImageOnlyFailure ]
-webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-007.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-013.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-014.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-015.html [ ImageOnlyFailure ]
@@ -3750,7 +3748,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-0
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-001.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-002.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-02.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-05.xht [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-06.xht [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-03.html [ ImageOnlyFailure ]
@@ -4594,10 +4591,8 @@ webkit.org/b/234762 imported/w3c/web-platform-tests/css/css-writing-modes/wm-pro
 
 # New failures after updating WPT import of css/css-text on 2020-07
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-021.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-025.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-026.html [ ImageOnlyFailure ]
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-offset-table-001.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/text-overflow-ruby.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ ImageOnlyFailure ]

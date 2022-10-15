@@ -1944,6 +1944,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html [ Pass Failure ]
 
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-01.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-02.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]
