@@ -166,6 +166,9 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
 
 auto ContainerQueryEvaluator::evaluateFeature(const MQ::Feature& sizeFeature, const SelectedContainer& container) const -> MQ::EvaluationResult
 {
+    if (!sizeFeature.validSchema)
+        return MQ::EvaluationResult::Unknown;
+
     // "If the query container does not have a principal box, or the principal box is not a layout containment box,
     // or the query container does not support container size queries on the relevant axes, then the result of
     // evaluating the size feature is unknown."

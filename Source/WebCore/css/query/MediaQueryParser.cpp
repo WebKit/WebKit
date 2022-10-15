@@ -37,6 +37,16 @@ MediaQueryParser::MediaQueryParser(const CSSParserContext& context)
 {
 }
 
+Vector<MQ::FeatureSchema> MediaQueryParser::featureSchemas()
+{
+    return {
+        // FIXME: Add the rest.
+        { "width"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } },
+        { "height"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } },
+        { "orientation"_s, FeatureSchema::Type::Discrete, { }, { CSSValuePortrait, CSSValueLandscape } }
+    };
+}
+
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)
 {
     MediaQueryList list;

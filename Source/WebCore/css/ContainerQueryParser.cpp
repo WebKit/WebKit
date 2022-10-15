@@ -30,6 +30,20 @@
 
 namespace WebCore {
 
+using namespace MQ;
+
+Vector<MQ::FeatureSchema> ContainerQueryParser::featureSchemas()
+{
+    return {
+        { "width"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } },
+        { "height"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } },
+        { "inline-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } },
+        { "block-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } },
+        { "aspect-ratio"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Ratio }, { } },
+        { "orientation"_s, FeatureSchema::Type::Discrete, { }, { CSSValuePortrait, CSSValueLandscape } }
+    };
+}
+
 std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ContainerQueryParser parser(context);

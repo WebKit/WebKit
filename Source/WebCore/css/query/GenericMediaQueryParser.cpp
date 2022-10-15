@@ -197,5 +197,61 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
     return nullptr;
 }
 
+bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
+{
+    auto valueTypeForValue = [](auto& value) -> std::optional<FeatureSchema::ValueType> {
+        if (value.isInteger())
+            return FeatureSchema::ValueType::Integer;
+        if (value.isNumber())
+            return FeatureSchema::ValueType::Number;
+        if (value.isLength())
+            return FeatureSchema::ValueType::Length;
+        if (value.isResolution())
+            return FeatureSchema::ValueType::Resolution;
+        return { };
+    };
+
+    auto validateValue = [&](auto& value) {
+        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+            if (primitiveValue->isValueID())
+                return schema.valueIdentifiers.contains(primitiveValue->valueID());
+            auto valueType = valueTypeForValue(*primitiveValue);
+            return valueType && schema.valueTypes.contains(*valueType);
+        }
+        if (auto* list = dynamicDowncast<CSSValueList>(value)) {
+            if (!schema.valueTypes.contains(FeatureSchema::ValueType::Ratio))
+                return false;
+            if (list->length() != 2 || list->separator() != CSSValue::SlashSeparator)
+                return false;
+            auto first = dynamicDowncast<CSSPrimitiveValue>(list->item(0));
+            auto second = dynamicDowncast<CSSPrimitiveValue>(list->item(1));
+            return first && second && first->isNumberOrInteger() && second->isNumberOrInteger();
+        }
+        return false;
+    };
+
+    auto isValid = [&] {
+        if (schema.type == FeatureSchema::Type::Discrete) {
+            if (feature.leftComparison && feature.leftComparison->op != ComparisonOperator::Equal)
+                return false;
+            if (feature.rightComparison && feature.rightComparison->op != ComparisonOperator::Equal)
+                return false;
+        }
+
+        if (feature.leftComparison) {
+            if (!validateValue(*feature.leftComparison->value))
+                return false;
+        }
+        if (feature.rightComparison) {
+            if (!validateValue(*feature.rightComparison->value))
+                return false;
+        }
+        return true;
+    }();
+
+    feature.validSchema = isValid ? &schema : nullptr;
+    return isValid;
+}
+
 }
 }

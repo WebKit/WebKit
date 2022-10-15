@@ -37,8 +37,12 @@ class ContainerQueryParser : public MQ::GenericMediaQueryParser<ContainerQueryPa
 public:
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const CSSParserContext&);
 
+    static Vector<MQ::FeatureSchema> featureSchemas();
+    static bool rejectInvalidFeatures() { return false; }
+
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
     std::optional<MQ::Feature> consumeFeature(CSSParserTokenRange&);
+
 
 private:
     ContainerQueryParser(const CSSParserContext& context)

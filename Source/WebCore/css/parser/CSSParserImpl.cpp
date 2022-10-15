@@ -52,6 +52,7 @@
 #include "FontPaletteValues.h"
 #include "LegacyMediaQueryParser.h"
 #include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"

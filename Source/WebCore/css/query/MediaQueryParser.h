@@ -42,9 +42,12 @@ using MediaQueryList = Vector<MediaQuery>;
 class MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
 public:
     MediaQueryParser(const CSSParserContext&);
-    
+
     MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
     std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);
+
+    static Vector<MQ::FeatureSchema> featureSchemas();
+    static bool rejectInvalidFeatures() { return true; }
 };
 
 void serialize(StringBuilder&, const MediaQueryList&);
