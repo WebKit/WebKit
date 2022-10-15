@@ -210,6 +210,7 @@
 		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
 		37E7DD671EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E7DD661EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm */; };
 		37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */; };
+		3A1337B328F9177600F29B73 /* UniqueRefVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1337AB28F9177600F29B73 /* UniqueRefVector.cpp */; };
 		3A15784128D1505B00142DB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		3A15784228D1505B00142DB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
 		3A15784428D1505B00142DB1 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
@@ -2203,6 +2204,7 @@
 		37E7DD651EA0715B009B396D /* AdditionalReadAccessAllowedURLsProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalReadAccessAllowedURLsProtocol.h; sourceTree = "<group>"; };
 		37E7DD661EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AdditionalReadAccessAllowedURLsPlugin.mm; sourceTree = "<group>"; };
 		37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuDefaultItemsHaveTags.mm; sourceTree = "<group>"; };
+		3A1337AB28F9177600F29B73 /* UniqueRefVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRefVector.cpp; sourceTree = "<group>"; };
 		3A15785328D1505B00142DB1 /* TestWGSL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWGSL; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5DDAD228D15169004DA950 /* LexerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LexerTests.cpp; sourceTree = "<group>"; };
 		3A5DDADB28D15328004DA950 /* TestWGSL.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestWGSL.xcconfig; sourceTree = "<group>"; };
@@ -5073,6 +5075,7 @@
 				0F2C20B71DCD544800542D9E /* Time.cpp */,
 				E398BC0F2041C76300387136 /* UniqueArray.cpp */,
 				5C5E633D1D0B67940085A025 /* UniqueRef.cpp */,
+				3A1337AB28F9177600F29B73 /* UniqueRefVector.cpp */,
 				E3A1E78021B25B79008C6007 /* URL.cpp */,
 				E3A1E78421B25B91008C6007 /* URLParser.cpp */,
 				144D40EC221B46A7004B474F /* UUID.cpp */,
@@ -6036,6 +6039,7 @@
 				44CDE4D426EE6E4A009F6ACB /* TypeCastsCocoa.mm in Sources */,
 				44652CB726FCD405005EC272 /* TypeCastsCocoaARC.mm in Sources */,
 				E324A6F02041C82000A76593 /* UniqueArray.cpp in Sources */,
+				3A1337B328F9177600F29B73 /* UniqueRefVector.cpp in Sources */,
 				E3A1E78221B25B7A008C6007 /* URL.cpp in Sources */,
 				E3C21A7C21B25CA2003B31A3 /* URLExtras.mm in Sources */,
 				E3A1E78521B25B91008C6007 /* URLParser.cpp in Sources */,

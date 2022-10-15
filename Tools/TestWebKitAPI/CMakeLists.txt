@@ -115,6 +115,7 @@ set(TestWTF_SOURCES
     Tests/WTF/URLParser.cpp
     Tests/WTF/UniqueArray.cpp
     Tests/WTF/UniqueRef.cpp
+    Tests/WTF/UniqueRefVector.cpp
     Tests/WTF/Vector.cpp
     Tests/WTF/WTFString.cpp
     Tests/WTF/WeakPtr.cpp
