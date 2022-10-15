@@ -42,6 +42,7 @@ typedef NS_ERROR_ENUM(_WKWebExtensionContextErrorDomain, _WKWebExtensionContextE
     _WKWebExtensionContextErrorUnknown = 1,
     _WKWebExtensionContextErrorAlreadyLoaded,
     _WKWebExtensionContextErrorNotLoaded,
+    _WKWebExtensionContextErrorBaseURLTaken,
 } NS_SWIFT_NAME(_WKWebExtensionContext.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKWebExtensionContextPermissionState) {

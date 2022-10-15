@@ -662,6 +662,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.deviceOrientationUpdateProvider = WebDeviceOrientationUpdateProvider::create(*this);
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (parameters.webExtensionControllerParameters)
+        m_webExtensionController = WebExtensionControllerProxy::getOrCreate(parameters.webExtensionControllerParameters.value().identifier);
+#endif
+
     m_corsDisablingPatterns = WTFMove(parameters.corsDisablingPatterns);
     if (!m_corsDisablingPatterns.isEmpty())
         synchronizeCORSDisablingPatternsWithNetworkProcess();

@@ -57,6 +57,10 @@
 #include <WebCore/ApplicationManifest.h>
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionControllerParameters.h"
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -215,6 +219,10 @@ struct WebPageCreationParameters {
     bool enumeratingAllNetworkInterfacesEnabled { false };
 
     UserContentControllerParameters userContentControllerParameters;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    std::optional<WebExtensionControllerParameters> webExtensionControllerParameters;
+#endif
 
     std::optional<WebCore::Color> backgroundColor;
 

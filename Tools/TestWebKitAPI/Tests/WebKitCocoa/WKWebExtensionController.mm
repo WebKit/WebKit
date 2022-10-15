@@ -113,6 +113,74 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
     EXPECT_FALSE(testContextOne.loaded);
 }
 
+TEST(WKWebExtensionController, BackgroundPageLoading)
+{
+    NSDictionary *resources = @{
+        @"background.html": @"<body>Hello world!</body>",
+        @"background.js": @"console.log('Hello World!')"
+    };
+
+    NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"page": @"background.html" } } mutableCopy];
+
+    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+
+    EXPECT_NULL(testExtension.errors);
+
+    NSError *error;
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    EXPECT_NULL(testExtension.errors);
+
+    manifest[@"background"] = @{ @"service_worker": @"background.js" };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
+
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    EXPECT_NULL(testExtension.errors);
+
+    testContext.baseURL = [NSURL URLWithString:@"test-extension://aaabbbcccddd"];
+
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    EXPECT_NULL(testExtension.errors);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

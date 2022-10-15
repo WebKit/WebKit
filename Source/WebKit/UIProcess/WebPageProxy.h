@@ -390,6 +390,10 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+class WebExtensionController;
+#endif
+
 struct AppPrivacyReportTestingData;
 struct DataDetectionResult;
 struct DocumentEditingContext;
@@ -2765,6 +2769,11 @@ private:
     Ref<WebPreferences> m_preferences;
 
     Ref<WebUserContentControllerProxy> m_userContentController;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    RefPtr<WebExtensionController> m_webExtensionController;
+#endif
+
     Ref<VisitedLinkStore> m_visitedLinkStore;
     Ref<WebsiteDataStore> m_websiteDataStore;
 

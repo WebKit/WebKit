@@ -161,6 +161,10 @@
 #import "WKDataDetectorTypesInternal.h"
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import "_WKWebExtensionControllerInternal.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -455,6 +459,11 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->setVisitedLinkStore([_configuration _visitedLinkStore]->_visitedLinkStore.get());
     pageConfiguration->setWebsiteDataStore([_configuration websiteDataStore]->_websiteDataStore.get());
     pageConfiguration->setDefaultWebsitePolicies([_configuration defaultWebpagePreferences]->_websitePolicies.get());
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (auto *controller = _configuration.get()._webExtensionControllerIfExists)
+        pageConfiguration->setWebExtensionController(&controller._webExtensionController);
+#endif
 
 #if PLATFORM(MAC)
     if (auto pageGroup = WebKit::toImpl([_configuration _pageGroup]))
@@ -1729,12 +1738,6 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (NakedPtr<WebKit::WebPageProxy>)_page
 {
     return _page.get();
-}
-
-- (id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
-{
-    auto* handler = static_cast<WebKit::WebURLSchemeHandlerCocoa*>(_page->urlSchemeHandlerForScheme(urlScheme));
-    return handler ? handler->apiHandler() : nil;
 }
 
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
