@@ -1,4 +1,4 @@
 
-FAIL Test isConfigSupported() and configure() using a SharedArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer) promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Test isConfigSupported() and configure() using a SharedArrayBuffer
+PASS Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer)
 

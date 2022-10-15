@@ -414,4 +414,16 @@ template<> struct Converter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, I
     }
 };
 
+template<>
+struct JSConverter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return JSConverter<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>::convert(lexicalGlobalObject, globalObject, value);
+    }
+};
+
 } // namespace WebCore
