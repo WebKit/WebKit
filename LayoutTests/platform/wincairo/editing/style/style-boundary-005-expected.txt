@@ -61,7 +61,8 @@ layer at (0,0) size 800x600
             text run at (2,2) width 83: "one two three"
           RenderInline {B} at (0,0) size 31x19
             RenderText {#text} at (85,2) size 31x19
-              text run at (85,2) width 31: " four"
+              text run at (85,2) width 4: " "
+              text run at (89,2) width 27: "four"
           RenderText {#text} at (116,2) size 22x19
             text run at (116,2) width 22: "one"
 caret: position 3 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

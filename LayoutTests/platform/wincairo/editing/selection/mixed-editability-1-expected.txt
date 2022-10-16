@@ -1,6 +1,6 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 3 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange: toDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > BODY > HTML > #document to 2 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -14,8 +14,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 19: "On"
       RenderText {#text} at (19,0) size 768x39
         text run at (19,0) width 442: "ly the first two letters of the first word in this sentence should be selected. "
-        text run at (461,0) width 303: "To run this test manually, double click between the"
-        text run at (764,0) width 4: " "
+        text run at (461,0) width 307: "To run this test manually, double click between the "
         text run at (0,20) width 313: "first two letters of the first word of the first sentence."
       RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of body

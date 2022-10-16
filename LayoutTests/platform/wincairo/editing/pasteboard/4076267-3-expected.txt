@@ -486,31 +486,81 @@ layer at (0,0) size 800x600
             text run at (0,0) width 18: "x x"
         RenderBlock {DIV} at (0,20) size 784x20
           RenderText {#text} at (0,0) size 22x19
-            text run at (0,0) width 22: "x  x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 7: "x"
         RenderBlock {DIV} at (0,40) size 784x20
           RenderText {#text} at (0,0) size 26x19
-            text run at (0,0) width 26: "x   x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 11: " x"
         RenderBlock {DIV} at (0,60) size 784x20
           RenderText {#text} at (0,0) size 30x19
-            text run at (0,0) width 30: "x    x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 7: "x"
         RenderBlock {DIV} at (0,80) size 784x20
           RenderText {#text} at (0,0) size 34x19
-            text run at (0,0) width 34: "x     x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 11: " x"
         RenderBlock {DIV} at (0,100) size 784x20
           RenderText {#text} at (0,0) size 38x19
-            text run at (0,0) width 38: "x      x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 4: " "
+            text run at (27,0) width 4: " "
+            text run at (31,0) width 7: "x"
         RenderBlock {DIV} at (0,120) size 784x20
           RenderText {#text} at (0,0) size 42x19
-            text run at (0,0) width 42: "x       x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 4: " "
+            text run at (27,0) width 4: " "
+            text run at (31,0) width 11: " x"
         RenderBlock {DIV} at (0,140) size 784x20
           RenderText {#text} at (0,0) size 46x19
-            text run at (0,0) width 46: "x        x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 4: " "
+            text run at (27,0) width 4: " "
+            text run at (31,0) width 4: " "
+            text run at (35,0) width 4: " "
+            text run at (39,0) width 7: "x"
         RenderBlock {DIV} at (0,160) size 784x20
           RenderText {#text} at (0,0) size 50x19
-            text run at (0,0) width 50: "x         x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 4: " "
+            text run at (27,0) width 4: " "
+            text run at (31,0) width 4: " "
+            text run at (35,0) width 4: " "
+            text run at (39,0) width 11: " x"
         RenderBlock {DIV} at (0,180) size 784x20
           RenderText {#text} at (0,0) size 54x19
-            text run at (0,0) width 54: "x          x"
+            text run at (0,0) width 11: "x "
+            text run at (11,0) width 4: " "
+            text run at (15,0) width 4: " "
+            text run at (19,0) width 4: " "
+            text run at (23,0) width 4: " "
+            text run at (27,0) width 4: " "
+            text run at (31,0) width 4: " "
+            text run at (35,0) width 4: " "
+            text run at (39,0) width 4: " "
+            text run at (43,0) width 4: " "
+            text run at (47,0) width 7: "x"
         RenderBlock {DIV} at (0,200) size 784x20
           RenderBR {BR} at (0,0) size 0x19
 caret: position 0 of child 0 {BR} of child 10 {DIV} of child 5 {DIV} of body

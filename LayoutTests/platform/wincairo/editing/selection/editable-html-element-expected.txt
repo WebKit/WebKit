@@ -26,9 +26,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (32,0) size 450x19
         text run at (32,0) width 450: "This tests to see where the selection is set when an html element is focused."
       RenderBR {BR} at (482,0) size 0x19
-      RenderText {#text} at (0,20) size 784x39
+      RenderText {#text} at (0,20) size 785x39
         text run at (0,20) width 498: "We set it inside the body because we don't want to allow editing outside the body. "
-        text run at (498,20) width 283: "This test also does some editing to make sure it"
-        text run at (781,20) width 3: " "
+        text run at (498,20) width 287: "This test also does some editing to make sure it "
         text run at (0,40) width 125: "happens in the body."
 caret: position 153 of child 3 {#text} of body

@@ -62,7 +62,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (14,42) size 34x27
               text run at (14,42) width 34: "bar"
           RenderText {#text} at (48,42) size 42x27
-            text run at (48,42) width 42: " xxx"
+            text run at (48,42) width 6: " "
+            text run at (54,42) width 36: "xxx"
           RenderBR {BR} at (90,42) size 0x27
           RenderBR {BR} at (14,70) size 0x27
           RenderText {#text} at (14,98) size 69x27

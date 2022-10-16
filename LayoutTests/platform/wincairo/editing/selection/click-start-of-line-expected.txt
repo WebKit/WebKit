@@ -1,6 +1,6 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange: toDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -27,7 +27,6 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,102) size 250x114
         RenderText {#text} at (0,1) size 232x112
-          text run at (0,1) width 147: "Alice in"
-          text run at (147,1) width 12: " "
+          text run at (0,1) width 159: "Alice in "
           text run at (0,58) width 232: "Wonderland"
 caret: position 10 of child 0 {#text} of child 7 {DIV} of body

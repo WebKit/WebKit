@@ -17,7 +17,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x40
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 96x19
-            text run at (0,0) width 96: "First paragraph."
+            text run at (0,0) width 27: "First"
+            text run at (27,0) width 4: " "
+            text run at (31,0) width 65: "paragraph."
         RenderBlock {DIV} at (0,20) size 784x20
           RenderText {#text} at (0,0) size 115x19
             text run at (0,0) width 115: "Second paragraph."

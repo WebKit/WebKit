@@ -40,8 +40,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 81x24 [color=#0000EE]
               RenderText {#text} at (19,6) size 81x24
-                text run at (19,6) width 74: "Sandwiches &"
-                text run at (93,6) width 4: " "
+                text run at (19,6) width 78: "Sandwiches & "
                 text run at (16,18) width 42: "Burgers"
           RenderListItem {LI} at (0,75) size 120x21
             RenderListMarker at (-14,6) size 5x12: bullet
