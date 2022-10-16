@@ -79,7 +79,7 @@ public:
     CSSValueID keywordSizeAsIdentifier() const
     {
         CSSValueID identifier = m_keywordSize ? static_cast<CSSValueID>(CSSValueXxSmall + m_keywordSize - 1) : CSSValueInvalid;
-        ASSERT(identifier == CSSValueInvalid || (identifier >= CSSValueXxSmall && identifier <= CSSValueWebkitXxxLarge));
+        ASSERT(identifier == CSSValueInvalid || (identifier >= CSSValueXxSmall && identifier <= CSSValueXxxLarge));
         return identifier;
     }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
@@ -99,8 +99,8 @@ public:
     }
     void setKeywordSizeFromIdentifier(CSSValueID identifier)
     {
-        ASSERT(!identifier || (identifier >= CSSValueXxSmall && identifier <= CSSValueWebkitXxxLarge));
-        static_assert(CSSValueWebkitXxxLarge - CSSValueXxSmall + 1 == 8, "Maximum keyword size should be 8.");
+        ASSERT(!identifier || (identifier >= CSSValueXxSmall && identifier <= CSSValueXxxLarge));
+        static_assert(CSSValueXxxLarge - CSSValueXxSmall + 1 == 8, "Maximum keyword size should be 8.");
         setKeywordSize(identifier ? identifier - CSSValueXxSmall + 1 : 0);
     }
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }

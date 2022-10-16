@@ -4557,6 +4557,13 @@ std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange& r
 
 std::optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless)
 {
+    // -webkit-xxx-large is a parse-time alias.
+    if (range.peek().id() == CSSValueWebkitXxxLarge) {
+        if (auto ident = consumeIdentRaw(range); ident && ident == CSSValueWebkitXxxLarge)
+            return { CSSValueXxxLarge };
+        return std::nullopt;
+    }
+
     if (range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) {
         if (auto ident = consumeIdentRaw(range))
             return { *ident };

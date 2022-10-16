@@ -167,7 +167,7 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& si
         size = CSSValueXxLarge;
         break;
     case 7:
-        size = CSSValueWebkitXxxLarge;
+        size = CSSValueXxxLarge;
         break;
     default:
         ASSERT_NOT_REACHED();

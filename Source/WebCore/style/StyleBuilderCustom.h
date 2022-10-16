@@ -1873,7 +1873,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         case CSSValueLarge:
         case CSSValueXLarge:
         case CSSValueXxLarge:
-        case CSSValueWebkitXxxLarge:
+        case CSSValueXxxLarge:
             size = Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), builderState.document());
             fontDescription.setKeywordSizeFromIdentifier(ident);
             break;

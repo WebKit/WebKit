@@ -146,10 +146,11 @@ medium
 large
 x-large
 xx-large
--webkit-xxx-large
+xxx-large
 -webkit-ruby-text
 smaller
 larger
+-webkit-xxx-large
 
 //
 // CSS_PROP_FONT_STRETCH:

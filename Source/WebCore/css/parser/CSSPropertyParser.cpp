@@ -1156,6 +1156,12 @@ static RefPtr<CSSValue> consumeTextSizeAdjust(CSSParserTokenRange& range, CSSPar
 
 static RefPtr<CSSValue> consumeFontSize(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless = UnitlessQuirk::Forbid)
 {
+    // -webkit-xxx-large is a parse-time alias.
+    if (range.peek().id() == CSSValueWebkitXxxLarge) {
+        consumeIdent(range);
+        return CSSValuePool::singleton().createValue(CSSValueXxxLarge);
+    }
+
     if (range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger)
         return consumeIdent(range);
     return consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative, unitless);
