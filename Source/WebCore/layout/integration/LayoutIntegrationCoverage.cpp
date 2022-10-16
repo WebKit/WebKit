@@ -390,9 +390,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (renderer.style().shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
-            if (!is<RenderReplaced>(renderer))
+            if (!renderer.parent()->style().isLeftToRightDirection() || !renderer.parent()->style().isHorizontalWritingMode())
                 return false;
-            if (!renderer.parent()->style().isLeftToRightDirection())
+            if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
                 return false;
             // This simply checks the not-yet supported case when the out-of-flow positioned
             // content has a relatively positioned inline containing block (has to call container to not skip RenderInlines).

@@ -55,8 +55,8 @@ public:
 
     static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
 
-    LayoutPoint staticPositionForOutOfFlowInlineLevelBox(const Box&) const;
-    LayoutPoint staticPositionForOutOfFlowBlockLevelBox(const Box&) const;
+    LayoutPoint staticPositionForOutOfFlowInlineLevelBox(const Box&, LayoutPoint contentBoxTopLeft) const;
+    LayoutPoint staticPositionForOutOfFlowBlockLevelBox(const Box&, LayoutPoint contentBoxTopLeft) const;
 
 private:
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
