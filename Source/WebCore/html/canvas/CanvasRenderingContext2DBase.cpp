@@ -2409,7 +2409,7 @@ String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
 
     unsigned textLength = text.length();
     Vector<UChar> charVector(textLength);
-    StringView(text).getCharactersWithUpconvert(charVector.data());
+    StringView(text).getCharacters(charVector.data());
 
     charVector[i++] = ' ';
 

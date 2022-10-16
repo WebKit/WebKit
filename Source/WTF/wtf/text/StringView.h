@@ -96,6 +96,8 @@ public:
     bool is8Bit() const;
     const LChar* characters8() const;
     const UChar* characters16() const;
+    Span<const LChar> span8() const { return { characters8(), length() }; }
+    Span<const UChar> span16() const { return { characters16(), length() }; }
 
     unsigned hash() const;
 
@@ -130,8 +132,9 @@ public:
     class UpconvertedCharacters;
     UpconvertedCharacters upconvertedCharacters() const;
 
-    void getCharactersWithUpconvert(LChar*) const;
-    void getCharactersWithUpconvert(UChar*) const;
+    template<typename CharacterType> void getCharacters(CharacterType*) const;
+    template<typename CharacterType> void getCharacters8(CharacterType*) const;
+    template<typename CharacterType> void getCharacters16(CharacterType*) const;
 
     enum class CaseConvertType { Upper, Lower };
     WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, LChar*) const;
@@ -568,27 +571,22 @@ template<bool isSpecialCharacter(UChar)> inline bool StringView::isAllSpecialCha
     return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length());
 }
 
-inline void StringView::getCharactersWithUpconvert(LChar* destination) const
+template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
 {
-    if (!characters8())
-        return;
-
-    ASSERT(is8Bit());
     StringImpl::copyCharacters(destination, characters8(), m_length);
 }
 
-inline void StringView::getCharactersWithUpconvert(UChar* destination) const
+template<typename CharacterType> inline void StringView::getCharacters16(CharacterType* destination) const
 {
-    if (is8Bit()) {
-        if (!characters8())
-            return;
-
-        StringImpl::copyCharacters(destination, characters8(), m_length);
-        return;
-    }
-    if (!characters16())
-        return;
     StringImpl::copyCharacters(destination, characters16(), m_length);
+}
+
+template<typename CharacterType> inline void StringView::getCharacters(CharacterType* destination) const
+{
+    if (is8Bit())
+        getCharacters8(destination);
+    else
+        getCharacters16(destination);
 }
 
 inline StringView::UpconvertedCharacters::UpconvertedCharacters(StringView string)
@@ -685,7 +683,7 @@ public:
 
     unsigned length() { return m_string.length(); }
     bool is8Bit() { return m_string.is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharactersWithUpconvert(destination); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharacters(destination); }
 
 private:
     StringView m_string;
@@ -695,7 +693,7 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
 {
     unsigned oldSize = buffer.size();
     buffer.grow(oldSize + string.length());
-    string.getCharactersWithUpconvert(buffer.data() + oldSize);
+    string.getCharacters(buffer.data() + oldSize);
 }
 
 ALWAYS_INLINE bool equal(StringView a, StringView b, unsigned length)

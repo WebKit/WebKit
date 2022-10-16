@@ -314,14 +314,8 @@ public:
         m_stringPointers.reserveInitialCapacity(m_strings.size());
         m_stringLengths.reserveInitialCapacity(m_strings.size());
         for (auto& string : m_strings) {
-            if (string.is8Bit()) {
-                auto vector = makeUnique<Vector<UChar>>();
-                vector->resize(string.length());
-                StringImpl::copyCharacters(vector->data(), string.characters8(), string.length());
-                m_retainedUpconvertedStrings.append(WTFMove(vector));
-                m_stringPointers.append(m_retainedUpconvertedStrings.last()->data());
-            } else
-                m_stringPointers.append(string.characters16());
+            string.convertTo16Bit();
+            m_stringPointers.append(string.characters16());
             m_stringLengths.append(string.length());
         }
     }
@@ -332,7 +326,6 @@ public:
 
 private:
     Vector<String, 4> m_strings;
-    Vector<std::unique_ptr<Vector<UChar>>, 4> m_retainedUpconvertedStrings;
     Vector<const UChar*, 4> m_stringPointers;
     Vector<int32_t, 4> m_stringLengths;
 };

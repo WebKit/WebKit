@@ -259,12 +259,13 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
             m_name = AtomString(token.name().data(), token.name().size());
         initializeAttributes(token.attributes());
         return;
-    case Type::Comment:
+    case Type::Comment: {
         if (token.commentIsAll8BitData())
-            m_data = String::make8BitFrom16BitSource(token.comment());
+            m_data = String::make8Bit(token.comment().data(), token.comment().size());
         else
-            m_data = String(token.comment());
+            m_data = String(token.comment().data(), token.comment().size());
         return;
+    }
     case Type::Character:
         m_externalCharacters = token.characters().span();
         m_externalCharactersIsAll8BitData = token.charactersIsAll8BitData();

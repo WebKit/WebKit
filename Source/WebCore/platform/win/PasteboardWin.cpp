@@ -605,7 +605,7 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
 
     if (!title.isEmpty()) {
         size_t len = std::min<size_t>(title.length(), fsPathMaxLengthExcludingExtension);
-        StringView(title).left(len).getCharactersWithUpconvert(fsPathBuffer);
+        StringView(title).left(len).getCharacters(fsPathBuffer);
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(wcharFrom(fsPathBuffer), len);
     }
@@ -620,10 +620,10 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
         auto lastComponent = url.lastPathComponent();
         if (url.isLocalFile() || (!isLink && !lastComponent.isEmpty())) {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, lastComponent.length());
-            lastComponent.left(len).getCharactersWithUpconvert(fsPathBuffer);
+            lastComponent.left(len).getCharacters(fsPathBuffer);
         } else {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, urlString.length());
-            StringView(urlString).left(len).getCharactersWithUpconvert(fsPathBuffer);
+            StringView(urlString).left(len).getCharacters(fsPathBuffer);
         }
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(wcharFrom(fsPathBuffer), len);
@@ -721,7 +721,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     fgd->fgd[0].nFileSizeLow = content.length();
 
     unsigned maxSize = std::min<unsigned>(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
-    StringView(fsPath).left(maxSize).getCharactersWithUpconvert(ucharFrom(fgd->fgd[0].cFileName));
+    StringView(fsPath).left(maxSize).getCharacters(ucharFrom(fgd->fgd[0].cFileName));
     GlobalUnlock(urlFileDescriptor);
 
     char* fileContents = static_cast<char*>(GlobalLock(urlFileContent));
@@ -959,7 +959,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     }
 
     int maxSize = std::min<int>(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
-    StringView(fsPath).left(maxSize).getCharactersWithUpconvert(ucharFrom(fgd->fgd[0].cFileName));
+    StringView(fsPath).left(maxSize).getCharacters(ucharFrom(fgd->fgd[0].cFileName));
     GlobalUnlock(memObj);
 
     return memObj;

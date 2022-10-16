@@ -29,6 +29,7 @@
 #include <cstring>
 #include <wtf/DateMath.h>
 #include <wtf/Gigacage.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadGroup.h>

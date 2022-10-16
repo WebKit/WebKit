@@ -3640,12 +3640,8 @@ JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
     String string = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    if (!string.is8Bit())
-        return JSValue::encode(jsString(vm, WTFMove(string)));
-    Vector<UChar> buffer;
-    buffer.resize(string.length());
-    StringImpl::copyCharacters(buffer.data(), string.characters8(), string.length());
-    return JSValue::encode(jsString(vm, String::adopt(WTFMove(buffer))));
+    string.convertTo16Bit();
+    return JSValue::encode(jsString(vm, WTFMove(string)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* globalObject, CallFrame* callFrame))

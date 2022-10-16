@@ -114,10 +114,10 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
     auto previousContent = currentTextItem.inlineTextBox().content();
     auto currentContent = nextInlineTextItem.inlineTextBox().content();
-    if (currentContent.is8Bit() && !previousContent.is8Bit()) {
-        // FIXME: Remove this workaround when we move over to a better way of handling prior-context with unicode.
+    if (!previousContent.is8Bit()) {
+        // FIXME: Remove this workaround when we move over to a better way of handling prior-context with Unicode.
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters. 
-        currentContent = String::make16BitFrom8BitSource(currentContent.characters8(), currentContent.length());
+        currentContent.convertTo16Bit();
     }
     auto& style = nextInlineTextItem.style();
     auto lineBreakIterator = LazyLineBreakIterator { currentContent, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };

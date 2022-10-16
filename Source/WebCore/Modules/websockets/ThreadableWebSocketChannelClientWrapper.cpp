@@ -107,7 +107,7 @@ void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subpr
 {
     unsigned length = subprotocol.length();
     m_subprotocol.resize(length);
-    StringView(subprotocol).getCharactersWithUpconvert(m_subprotocol.data());
+    StringView(subprotocol).getCharacters(m_subprotocol.data());
 }
 
 String ThreadableWebSocketChannelClientWrapper::extensions() const
@@ -121,7 +121,7 @@ void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extens
 {
     unsigned length = extensions.length();
     m_extensions.resize(length);
-    StringView(extensions).getCharactersWithUpconvert(m_extensions.data());
+    StringView(extensions).getCharacters(m_extensions.data());
 }
 
 ThreadableWebSocketChannel::SendResult ThreadableWebSocketChannelClientWrapper::sendRequestResult() const

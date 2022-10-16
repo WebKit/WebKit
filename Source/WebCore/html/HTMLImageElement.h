@@ -141,7 +141,7 @@ public:
     void setLoadingForBindings(const AtomString&);
 
     bool isLazyLoadable() const;
-    static bool hasLazyLoadableAttributeValue(const AtomString&);
+    static bool hasLazyLoadableAttributeValue(StringView);
 
     bool isDeferred() const;
 

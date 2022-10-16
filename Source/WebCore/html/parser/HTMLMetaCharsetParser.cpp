@@ -41,7 +41,7 @@ HTMLMetaCharsetParser::HTMLMetaCharsetParser()
 {
 }
 
-static StringView extractCharset(const String& value)
+static StringView extractCharset(StringView value)
 {
     unsigned length = value.length();
     for (size_t pos = 0; pos < length; ) {
@@ -78,22 +78,21 @@ static StringView extractCharset(const String& value)
         if (quoteMark && (end == length))
             break; // Close quote not found.
 
-        return StringView(value).substring(pos, end - pos);
+        return value.substring(pos, end - pos);
     }
-    return StringView();
+    return { };
 }
 
 bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
 {
     auto attributes = token.attributes().map([](auto& attribute) {
-        return std::pair { AtomString(attribute.name), AtomString(attribute.value) };
+        return std::pair { StringView { attribute.name.data(), static_cast<unsigned>(attribute.name.size()) }, StringView { attribute.value.data(), static_cast<unsigned>(attribute.value.size()) } };
     });
-
     m_encoding = encodingFromMetaAttributes(attributes);
     return m_encoding.isValid();
 }
 
-PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeList& attributes)
+PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(Span<const std::pair<StringView, StringView>> attributes)
 {
     bool gotPragma = false;
     enum { None, Charset, Pragma } mode = None;
@@ -103,15 +102,15 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const Attrib
         auto& attributeName = attribute.first;
         auto& attributeValue = attribute.second;
 
-        if (attributeName == http_equivAttr) {
+        if (attributeName == "http-equiv"_s) {
             if (equalLettersIgnoringASCIICase(attributeValue, "content-type"_s))
                 gotPragma = true;
-        } else if (attributeName == charsetAttr) {
+        } else if (attributeName == "charset"_s) {
             charset = attributeValue;
             mode = Charset;
             // Charset attribute takes precedence
             break;
-        } else if (attributeName == contentAttr) {
+        } else if (attributeName == "content"_s) {
             charset = extractCharset(attributeValue);
             if (charset.length())
                 mode = Pragma;
@@ -119,7 +118,7 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const Attrib
     }
 
     if (mode == Charset || (mode == Pragma && gotPragma))
-        return PAL::TextEncoding(charset.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>));
+        return charset.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
 
     return PAL::TextEncoding();
 }
@@ -157,21 +156,21 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
     while (auto token = m_tokenizer.nextToken(m_input)) {
         bool isEnd = token->type() == HTMLToken::Type::EndTag;
         if (isEnd || token->type() == HTMLToken::Type::StartTag) {
-            AtomString tagName(token->name());
+            auto knownTagName = AtomString::lookUp(token->name().data(), token->name().size());
             if (!isEnd) {
-                m_tokenizer.updateStateFor(tagName);
-                if (tagName == metaTag && processMeta(*token)) {
+                m_tokenizer.updateStateFor(knownTagName);
+                if (knownTagName == metaTag && processMeta(*token)) {
                     m_doneChecking = true;
                     return true;
                 }
             }
 
-            if (tagName != scriptTag && tagName != noscriptTag
-                && tagName != styleTag && tagName != linkTag
-                && tagName != metaTag && tagName != objectTag
-                && tagName != titleTag && tagName != baseTag
-                && (isEnd || tagName != htmlTag)
-                && (isEnd || tagName != headTag)) {
+            if (knownTagName != scriptTag && knownTagName != noscriptTag
+                && knownTagName != styleTag && knownTagName != linkTag
+                && knownTagName != metaTag && knownTagName != objectTag
+                && knownTagName != titleTag && knownTagName != baseTag
+                && (isEnd || knownTagName != htmlTag)
+                && (isEnd || knownTagName != headTag)) {
                 m_inHeadSection = false;
             }
         }

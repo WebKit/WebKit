@@ -1839,35 +1839,27 @@ ALWAYS_INLINE void Lexer<T>::parseCommentDirective()
     }
 }
 
-template <typename T>
-ALWAYS_INLINE String Lexer<T>::parseCommentDirectiveValue()
+template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::parseCommentDirectiveValue()
 {
     skipWhitespace();
-    bool hasNonLatin1 = false;
-    const T* stringStart = currentSourcePtr();
+    UChar mergedCharacterBits = 0;
+    auto stringStart = currentSourcePtr();
     while (!isWhiteSpace(m_current) && !isLineTerminator(m_current) && m_current != '"' && m_current != '\'' && !atEnd()) {
-        if (!isLatin1(m_current))
-            hasNonLatin1 = true;
+        if constexpr (std::is_same_v<CharacterType, UChar>)
+            mergedCharacterBits |= m_current;
         shift();
     }
-    const T* stringEnd = currentSourcePtr();
-    skipWhitespace();
+    unsigned length = currentSourcePtr() - stringStart;
 
+    skipWhitespace();
     if (!isLineTerminator(m_current) && !atEnd())
         return String();
 
-    unsigned length = stringEnd - stringStart;
-    if (hasNonLatin1) {
-        UChar* buffer = nullptr;
-        String result = StringImpl::createUninitialized(length, buffer);
-        StringImpl::copyCharacters(buffer, stringStart, length);
-        return result;
+    if constexpr (std::is_same_v<CharacterType, UChar>) {
+        if (isLatin1(mergedCharacterBits))
+            return String::make8Bit(stringStart, length);
     }
-
-    LChar* buffer = nullptr;
-    String result = StringImpl::createUninitialized(length, buffer);
-    StringImpl::copyCharacters(buffer, stringStart, length);
-    return result;
+    return { stringStart, length };
 }
 
 template <typename T>

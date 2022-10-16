@@ -145,16 +145,12 @@ template<typename CharacterType>
 void JSRopeString::resolveRopeInternal(CharacterType* buffer) const
 {
     if (isSubstring()) {
-        // It is possible that underlying string becomes 8bit/16bit while wrapper substring is saying it is 16bit/8bit.
-        // But It is definitely true that substring part can be represented as its parent's status 8bit/16bit, which is described as CharacterType.
-        auto& string = substringBase()->valueInternal();
-        if (string.is8Bit())
-            StringImpl::copyCharacters(buffer, string.characters8() + substringOffset(), length());
-        else
-            StringImpl::copyCharacters(buffer, string.characters16() + substringOffset(), length());
+        // It is possible underlying string is now 8-bit/16-bit even if wrapper substring says it is 16-bit/8-bit.
+        // But it's guaranteed substring characters can be represented in parent rope's character width, passed as CharacterType.
+        StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).getCharacters(buffer);
         return;
     }
-    
+
     resolveRopeInternalNoSubstring(buffer);
 }
 
@@ -170,13 +166,9 @@ void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
 
     CharacterType* position = buffer;
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
-        const StringImpl& fiberString = *fiber(i)->valueInternal().impl();
-        unsigned length = fiberString.length();
-        if (fiberString.is8Bit())
-            StringImpl::copyCharacters(position, fiberString.characters8(), length);
-        else
-            StringImpl::copyCharacters(position, fiberString.characters16(), length);
-        position += length;
+        StringView view = *fiber(i)->valueInternal().impl();
+        view.getCharacters(position);
+        position += view.length();
     }
     ASSERT((buffer + length()) == position);
 }
@@ -336,15 +328,11 @@ void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
             JSRopeString* currentFiberAsRope = static_cast<JSRopeString*>(currentFiber);
             if (currentFiberAsRope->isSubstring()) {
                 ASSERT(!currentFiberAsRope->substringBase()->isRope());
-                StringImpl* string = static_cast<StringImpl*>(
-                    currentFiberAsRope->substringBase()->valueInternal().impl());
+                StringView view = *currentFiberAsRope->substringBase()->valueInternal().impl();
                 unsigned offset = currentFiberAsRope->substringOffset();
                 unsigned length = currentFiberAsRope->length();
                 position -= length;
-                if (string->is8Bit())
-                    StringImpl::copyCharacters(position, string->characters8() + offset, length);
-                else
-                    StringImpl::copyCharacters(position, string->characters16() + offset, length);
+                view.substring(offset, length).getCharacters(position);
                 continue;
             }
             for (size_t i = 0; i < s_maxInternalRopeLength && currentFiberAsRope->fiber(i); ++i)
@@ -352,13 +340,9 @@ void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
             continue;
         }
 
-        StringImpl* string = static_cast<StringImpl*>(currentFiber->valueInternal().impl());
-        unsigned length = string->length();
-        position -= length;
-        if (string->is8Bit())
-            StringImpl::copyCharacters(position, string->characters8(), length);
-        else
-            StringImpl::copyCharacters(position, string->characters16(), length);
+        StringView view = *currentFiber->valueInternal().impl();
+        position -= view.length();
+        view.getCharacters(position);
     }
 
     ASSERT(buffer == position);

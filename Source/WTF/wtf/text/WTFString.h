@@ -24,9 +24,6 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
-#include <stdarg.h>
-#include <wtf/Function.h>
-#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
@@ -62,17 +59,6 @@ public:
     // Construct a string with UTF-16 data.
     WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
     ALWAYS_INLINE String(Span<const UChar> characters) : String(characters.data(), characters.size()) { }
-
-    // Construct a string by copying the contents of a vector.  To avoid
-    // copying, consider using String::adopt instead.
-    // This method will never create a null string. Vectors with size() == 0
-    // will return the empty string.
-    // NOTE: This is different from String(vector.data(), vector.size())
-    // which will sometimes return a null string when vector.data() is null
-    // which can only occur for vectors without inline capacity.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=109792
-    template<size_t inlineCapacity, typename OverflowHandler>
-    explicit String(const Vector<UChar, inlineCapacity, OverflowHandler>&);
 
     // Construct a string with Latin-1 data.
     WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
@@ -279,24 +265,21 @@ public:
     WTF_EXPORT_PRIVATE Vector<wchar_t> wideCharacters() const;
 #endif
 
-    WTF_EXPORT_PRIVATE static String make8BitFrom16BitSource(const UChar*, size_t);
-    template<size_t inlineCapacity> static String make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>&);
+    WTF_EXPORT_PRIVATE static String make8Bit(const UChar*, unsigned);
+    WTF_EXPORT_PRIVATE void convertTo16Bit();
 
-    WTF_EXPORT_PRIVATE static String make16BitFrom8BitSource(const LChar*, size_t);
-
-    // String::fromUTF8 will return a null string if
-    // the input data contains invalid UTF-8 sequences.
+    // String::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
     WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*, size_t);
     WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*);
-    static String fromUTF8(const char* characters, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(characters), length); };
-    static String fromUTF8(const char* string) { return fromUTF8(reinterpret_cast<const LChar*>(string)); };
+    static String fromUTF8(const char* characters, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(characters), length); }
+    static String fromUTF8(const char* string) { return fromUTF8(reinterpret_cast<const LChar*>(string)); }
     WTF_EXPORT_PRIVATE static String fromUTF8(const CString&);
     static String fromUTF8(const Vector<LChar>& characters);
     static String fromUTF8ReplacingInvalidSequences(const LChar*, size_t);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
-    static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(characters), length); };
+    static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(characters), length); }
 
     WTF_EXPORT_PRIVATE static String fromCodePoint(UChar32 codePoint);
 
@@ -458,11 +441,6 @@ inline String::String(ASCIILiteral characters)
 {
 }
 
-template<size_t inlineCapacity, typename OverflowHandler> String::String(const Vector<UChar, inlineCapacity, OverflowHandler>& vector)
-    : m_impl(vector.size() ? StringImpl::create(vector.data(), vector.size()) : Ref<StringImpl> { *StringImpl::empty() })
-{
-}
-
 template<> inline const LChar* String::characters<LChar>() const
 {
     return characters8();
@@ -495,11 +473,6 @@ ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& s
 }
 
 WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringByRemoving(const String&, unsigned position, unsigned lengthToRemove);
-
-template<size_t inlineCapacity> inline String String::make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>& buffer)
-{
-    return make8BitFrom16BitSource(buffer.data(), buffer.size());
-}
 
 inline std::optional<UCharDirection> String::defaultWritingDirection() const
 {

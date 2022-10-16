@@ -22,6 +22,7 @@
 #pragma once
 
 #include <string>
+#include <wtf/Forward.h>
 #include <wtf/text/LChar.h>
 
 namespace WTF {

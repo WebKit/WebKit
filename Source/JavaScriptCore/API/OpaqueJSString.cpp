@@ -91,9 +91,8 @@ const UChar* OpaqueJSString::characters()
     if (m_string.isNull())
         return nullptr;
 
-    unsigned length = m_string.length();
-    UChar* newCharacters = static_cast<UChar*>(fastMalloc(length * sizeof(UChar)));
-    StringView(m_string).getCharactersWithUpconvert(newCharacters);
+    UChar* newCharacters = static_cast<UChar*>(fastMalloc(m_string.length() * sizeof(UChar)));
+    StringView { m_string }.getCharacters(newCharacters);
 
     if (!m_characters.compare_exchange_strong(characters, newCharacters)) {
         fastFree(newCharacters);

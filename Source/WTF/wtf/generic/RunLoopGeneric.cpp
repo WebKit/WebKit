@@ -28,6 +28,7 @@
 #include <wtf/RunLoop.h>
 
 #include <wtf/DataLog.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 
 namespace WTF {

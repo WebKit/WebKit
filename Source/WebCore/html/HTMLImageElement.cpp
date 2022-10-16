@@ -278,7 +278,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
         document().addDynamicMediaQueryDependentImage(*this);
 }
 
-bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attributeValue)
+bool HTMLImageElement::hasLazyLoadableAttributeValue(StringView attributeValue)
 {
     return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
 }

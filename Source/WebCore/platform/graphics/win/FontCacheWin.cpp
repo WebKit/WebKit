@@ -326,7 +326,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
         LOGFONT logFont;
         logFont.lfCharSet = DEFAULT_CHARSET;
-        StringView(linkedFonts->at(linkedFontIndex)).getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
+        StringView(linkedFonts->at(linkedFontIndex)).getCharacters(ucharFrom(logFont.lfFaceName));
         logFont.lfFaceName[linkedFonts->at(linkedFontIndex).length()] = 0;
         EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
         linkedFontIndex++;
@@ -518,7 +518,7 @@ static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeig
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     StringView truncatedFamily = StringView(family).left(static_cast<unsigned>(LF_FACESIZE - 1));
-    truncatedFamily.getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
+    truncatedFamily.getCharacters(ucharFrom(logFont.lfFaceName));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 
@@ -632,7 +632,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     StringView truncatedFamily = StringView(familyName).left(static_cast<unsigned>(LF_FACESIZE - 1));
-    truncatedFamily.getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
+    truncatedFamily.getCharacters(ucharFrom(logFont.lfFaceName));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 
