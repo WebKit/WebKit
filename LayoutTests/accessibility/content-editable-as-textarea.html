@@ -1,32 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div id="content" contenteditable tabindex="0">
 hello<br>
 <b>world</b>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+    var testOutput = "This tests that a contenteditable region behaves as a proper AXTextArea.\n\n";
 
-    description("This tests that a contenteditable region behaves as a proper AXTextArea.");
-
-    var notification = 0;
-    var textArea = 0;
+    var textArea;
     var notificationType = "AXValueChanged";
-    function callback(notification) {
-        if (notification == notificationType) {
-            textArea.removeNotificationListener();
-            debug("Updated value: " + textArea.stringValue);
-            document.getElementById("content").style.visibility = "hidden";
-            finishJSTest();
-        }
+    const targetCharacter = "q";
+    async function callback(notification) {
+        if (notification !== notificationType)
+            return;
+
+        textArea.removeNotificationListener();
+        await waitFor(() => textArea.stringValue.includes(targetCharacter));
+        testOutput += `Updated value: ${textArea.stringValue}`;
+        document.getElementById("content").style.visibility = "hidden";
+        debug(testOutput);
+        finishJSTest();
     }
 
     if (window.accessibilityController) {
@@ -40,16 +40,16 @@ hello<br>
         textArea = accessibilityController.accessibleElementById("content");
         textArea.addNotificationListener(callback);
 
-        debug("Role: " + textArea.role);
-        debug("Value: " + textArea.stringValue);
-        debug("Value (writable): " + textArea.isAttributeSettable("AXValue"));
-        debug("String with range: " + textArea.stringForRange(1, 9));
-        debug("Attributed string with range: " + textArea.attributedStringForRange(1, 9));
-        debug("Line for index(0): " + textArea.lineForIndex(0));
-        debug("Line for index(7): " + textArea.lineForIndex(7));
-        debug("Range for line(0): " + textArea.rangeForLine(0));
-        debug("Range for line(1): " + textArea.rangeForLine(1));
-        debug("Bounds for range: " + textArea.boundsForRange(3, 5));
+        testOutput += `Role: ${textArea.role}\n`;
+        testOutput += `Value: ${textArea.stringValue}\n`;
+        testOutput += `Value (writable): ${textArea.isAttributeSettable("AXValue")}\n`;
+        testOutput += `String with range: ${textArea.stringForRange(1, 9)}\n`;
+        testOutput += `Attributed string with range: ${textArea.attributedStringForRange(1, 9)}\n`;
+        testOutput += `Line for index(0): ${textArea.lineForIndex(0)}\n`;
+        testOutput += `Line for index(7): ${textArea.lineForIndex(7)}\n`;
+        testOutput += `Range for line(0): ${textArea.rangeForLine(0)}\n`;
+        testOutput += `Range for line(1): ${textArea.rangeForLine(1)}\n`;
+        testOutput += `Bounds for range: ${textArea.boundsForRange(3, 5)}\n`;
 
         var range = document.createRange();
         range.setStart(document.getElementById("content").firstChild, 0);
@@ -57,16 +57,14 @@ hello<br>
         var sel = window.getSelection();
         sel.addRange(range);
 
-        debug("Selected text range: " + textArea.selectedTextRange);
-        debug("Selected text: " + textArea.stringAttributeValue("AXSelectedText"));
+        testOutput += `Selected text range: ${textArea.selectedTextRange}\n`;
+        testOutput += `Selected text: ${textArea.stringAttributeValue("AXSelectedText")}\n`;
 
-        // Send a value cahnge.
+        // Send a value change.
         document.getElementById("content").focus();
-        eventSender.keyDown('q', []);
+        eventSender.keyDown(targetCharacter, []);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

@@ -1,63 +1,72 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
-  <div id="content">
-    <div id="menu1" role="menu" aria-label="First menu">
-      <div role="menuitem" id="item1" aria-label="item 1" tabindex="-1">Menu item 1</div>
-      <div role="menuitem" id="item2" aria-label="item 2" tabindex="0">Menu item 2</div>
-      <div role="menuitem" id="item3" aria-label="item 3" tabindex="-1">Menu item 3</div>
-    </div>
-    <div id="menu2" role="menu" aria-label="Second menu" aria-activedescendant="item5">
-      <div role="menuitemcheckbox" id="item4" aria-label="item 4" tabindex="-1">Menu item 4</div>
-      <div role="menuitemcheckbox" id="item5" aria-label="item 5" tabindex="-1">Menu item 5</div>
-      <div role="menuitemcheckbox" id="item6" aria-label="item 6" tabindex="-1">Menu item 6</div>
-    </div>
-    <div id="menubar1" role="menubar" aria-label="First menubar">
-      <div role="menuitem" id="item7" aria-label="File" tabindex="-1">File</div>
-      <div role="menuitem" id="item8" aria-label="Edit" tabindex="0">Edit</div>
-      <div role="menuitem" id="item9" aria-label="View" tabindex="-1">View</div>
-    </div>
-    <div id="menubar2" role="menubar" aria-label="Second menubar" aria-activedescendant="item12">
-      <div role="menuitem" id="item10" aria-label="File" tabindex="-1">File</div>
-      <div role="menuitem" id="item11" aria-label="Edit" tabindex="-1">Edit</div>
-      <div role="menuitem" id="item12" aria-label="View" tabindex="-1">View</div>
-    </div>
+<body>
+
+<div id="content">
+  <div id="menu1" role="menu" aria-label="First menu">
+    <div role="menuitem" id="item1" aria-label="item 1" tabindex="-1">Menu item 1</div>
+    <div role="menuitem" id="item2" aria-label="item 2" tabindex="0">Menu item 2</div>
+    <div role="menuitem" id="item3" aria-label="item 3" tabindex="-1">Menu item 3</div>
   </div>
-<p id="description"></p>
-<div id="console"></div>
+  <div id="menu2" role="menu" aria-label="Second menu" aria-activedescendant="item5">
+    <div role="menuitemcheckbox" id="item4" aria-label="item 4" tabindex="-1">Menu item 4</div>
+    <div role="menuitemcheckbox" id="item5" aria-label="item 5" tabindex="-1">Menu item 5</div>
+    <div role="menuitemcheckbox" id="item6" aria-label="item 6" tabindex="-1">Menu item 6</div>
+  </div>
+  <div id="menubar1" role="menubar" aria-label="First menubar">
+    <div role="menuitem" id="item7" aria-label="File" tabindex="-1">File</div>
+    <div role="menuitem" id="item8" aria-label="Edit" tabindex="0">Edit</div>
+    <div role="menuitem" id="item9" aria-label="View" tabindex="-1">View</div>
+  </div>
+  <div id="menubar2" role="menubar" aria-label="Second menubar" aria-activedescendant="item12">
+    <div role="menuitem" id="item10" aria-label="File" tabindex="-1">File</div>
+    <div role="menuitem" id="item11" aria-label="Edit" tabindex="-1">Edit</div>
+    <div role="menuitem" id="item12" aria-label="View" tabindex="-1">View</div>
+  </div>
+</div>
+
 <script>
-    function selectedChildInfo(axElement) {
-        if (!axElement)
-            debug("Element not exposed");
+description("This tests that focused/active menu items are reported as selected children of the parent container.");
 
-        var count = axElement.selectedChildrenCount;
-        debug(platformValueForW3CName(axElement) + " has " + count + " selected child(ren)");
-        for (var i = 0; i < count; i++) {
-            var child = axElement.selectedChildAtIndex(i);
-            result = "\t" + platformValueForW3CName(child) + " (" + child.role + ")";
-            result += " isSelectable: " + child.isSelectable + " isSelected: " + child.isSelected;
-            debug(result);
-	}
-   }
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    description("This tests that focused/active menu items are reported as selected children of the parent container.");
-
-    if (window.accessibilityController) {
-        document.getElementById("item2").focus();
+    document.getElementById("item2").focus();
+    setTimeout(async () => {
+        await focus("item2");
         selectedChildInfo(window.accessibilityController.accessibleElementById("menu1"));
         selectedChildInfo(window.accessibilityController.accessibleElementById("menu2"));
-        document.getElementById("item8").focus();
+        await focus("item8");
         selectedChildInfo(window.accessibilityController.accessibleElementById("menubar1"));
         selectedChildInfo(window.accessibilityController.accessibleElementById("menubar2"));
         document.getElementById("content").style.visibility = "hidden";
+
+        finishJSTest();
+    }, 0);
+}
+
+function selectedChildInfo(axElement) {
+    if (!axElement)
+        debug("Element not exposed");
+
+    var count = axElement.selectedChildrenCount;
+    debug(platformValueForW3CName(axElement) + " has " + count + " selected child(ren)");
+    for (var i = 0; i < count; i++) {
+        var child = axElement.selectedChildAtIndex(i);
+        result = "\t" + platformValueForW3CName(child) + " (" + child.role + ")";
+        result += " isSelectable: " + child.isSelectable + " isSelected: " + child.isSelected;
+        debug(result);
     }
+}
 
+async function focus(id) {
+    document.getElementById(id).focus();
+    await waitFor(() => accessibilityController.focusedElement.domIdentifier === id);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
