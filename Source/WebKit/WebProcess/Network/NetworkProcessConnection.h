@@ -57,9 +57,9 @@ enum class WebsiteDataType : uint32_t;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
-    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier&& connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
+    static Ref<NetworkProcessConnection> create(Ref<IPC::Connection> connection, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
     {
-        return adoptRef(*new NetworkProcessConnection(connectionIdentifier, httpCookieAcceptPolicy));
+        return adoptRef(*new NetworkProcessConnection(WTFMove(connection), httpCookieAcceptPolicy));
     }
     ~NetworkProcessConnection();
     
@@ -92,7 +92,7 @@ public:
 #endif
 
 private:
-    NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
+    NetworkProcessConnection(Ref<IPC::Connection>, WebCore::HTTPCookieAcceptPolicy);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

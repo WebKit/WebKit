@@ -73,28 +73,28 @@ static bool isFlatpakSpawnUsable()
 }
 #endif
 
-static int connectionOptions()
+static auto connectionOptions()
 {
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     // When using the WPE process launcher API, we cannot use CLOEXEC for the client socket because
     // we need to leak it to the child process.
     if (ProcessProviderLibWPE::singleton().isEnabled())
-        return IPC::PlatformConnectionOptions::SetCloexecOnServer;
+        return { };
 #endif
 
     // We use CLOEXEC for the client socket here even though we need to leak it to the child,
     // because we don't want it leaking to xdg-dbus-proxy. If the IPC socket is unexpectedly open in
     // an extra subprocess, WebKit won't notice when its child process crashes. We can ensure it
     // gets leaked into only the correct subprocess by using g_subprocess_launcher_take_fd() later.
-    return IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer;
+    return IPC::PlatformConnectionOptions::SetCloexecOnClient;
 }
 
 void ProcessLauncher::launchProcess()
 {
-    IPC::SocketPair socketPair = IPC::createPlatformConnection(connectionOptions());
+    auto connectionPair = IPC::Connection::createConnectionPair({ connectionOptions() });
 
     GUniquePtr<gchar> processIdentifier(g_strdup_printf("%" PRIu64, m_launchOptions.processIdentifier.toUInt64()));
-    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", socketPair.client));
+    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", connectionPair->client.value()));
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
@@ -105,13 +105,13 @@ void ProcessLauncher::launchProcess()
         argv[i++] = webkitSocket.get();
         argv[i++] = nullptr;
 
-        m_processIdentifier = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, socketPair.client);
+        m_processIdentifier = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, connectionPair->client.value());
         if (m_processIdentifier <= -1)
             g_error("Unable to spawn a new child process");
 
         // We've finished launching the process, message back to the main run loop.
-        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
-            didFinishLaunchingProcess(m_processIdentifier, IPC::Connection::Identifier { serverSocket });
+        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, connection = WTFMove(connectionPair->server)]() mutable {
+            didFinishLaunchingProcess(m_processIdentifier,  WTFMove(server));
         });
 
         return;
@@ -181,7 +181,7 @@ void ProcessLauncher::launchProcess()
     //
     // Please keep this comment in sync with the duplicate comment in XDGDBusProxy::launch.
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-    g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
+    g_subprocess_launcher_take_fd(launcher.get(), connectionPair->client.value(), connectionPair->client.value());
 
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process;
@@ -199,7 +199,7 @@ void ProcessLauncher::launchProcess()
 #endif
 
     if (sandboxEnabled && isFlatpakSpawnUsable())
-        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
+        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, connectionPair->client.value(), &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or Docker so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
@@ -221,8 +221,8 @@ void ProcessLauncher::launchProcess()
     RELEASE_ASSERT(m_processIdentifier);
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
-        didFinishLaunchingProcess(m_processIdentifier, IPC::Connection::Identifier { serverSocket });
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, connection = WTFMove(connectionPair->server)]() mutable {
+        didFinishLaunchingProcess(m_processIdentifier, WTFMove(connection));
     });
 }
 

@@ -121,13 +121,13 @@ static GPUProcessConnectionParameters getGPUProcessConnectionParameters()
 
 RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& parentConnection)
 {
-    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
-    if (!connectionIdentifiers)
+    auto connections = IPC::Connection::createConnectionPair();
+    if (!connections)
         return nullptr;
 
-    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(connectionIdentifiers->client, getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(connections->client, getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
-    auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server)));
+    auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connections->server)));
 #if ENABLE(IPC_TESTING_API)
     if (parentConnection.ignoreInvalidMessageForTesting())
         instance->connection().setIgnoreInvalidMessageForTesting();
@@ -135,8 +135,8 @@ RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& paren
     return instance;
 }
 
-GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
-    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier))
+GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection> connection)
+    : m_connection(WTFMove(connection))
 {
     m_connection->open(*this);
 

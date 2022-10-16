@@ -94,6 +94,24 @@ enum class WaitForOption {
     DispatchIncomingSyncMessagesWhileWaiting = 1 << 1,
 };
 
+struct PlatformConnectionPairOptions {
+#if OS(DARWIN)
+    OSObjectPtr<xpc_connection_t> serverXPCConnection;
+#endif
+#if USE(UNIX_DOMAIN_SOCKETS)
+    enum PlatformConnectionPairFlag {
+        NoSetCloexecOnClient = 1 << 0,
+    };
+    OptionSet<PlatformConnectionPairFlag> flags;
+#endif
+};
+
+struct PlatformClientConnectionOptions {
+#if OS(DARWIN)
+    OSObjectPtr<xpc_connection_t> xpcConnection;
+#endif
+};
+
 #define MESSAGE_CHECK_BASE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, (void)0)
 
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
@@ -141,64 +159,19 @@ public:
     using Handle = MachSendRight;
 #endif
 
-    struct Identifier {
-        Identifier() = default;
-#if USE(UNIX_DOMAIN_SOCKETS)
-        explicit Identifier(Handle&& handle)
-            : Identifier(handle.release())
-        {
-        }
-        explicit Identifier(int handle)
-            : handle(handle)
-        {
-        }
-        operator bool() const { return handle != -1; }
-        int handle { -1 };
-#elif OS(WINDOWS)
-        explicit Identifier(Handle&& handle)
-            : Identifier(handle.release())
-        {
-        }
-        explicit Identifier(HANDLE handle)
-            : handle(handle)
-        {
-        }
-        operator bool() const { return !!handle; }
-        HANDLE handle { 0 };
-#elif OS(DARWIN)
-        explicit Identifier(Handle&& handle)
-            : Identifier(handle.leakSendRight())
-        {
-        }
-        explicit Identifier(mach_port_t port)
-            : port(port)
-        {
-        }
-        Identifier(mach_port_t port, OSObjectPtr<xpc_connection_t> xpcConnection)
-            : port(port)
-            , xpcConnection(WTFMove(xpcConnection))
-        {
-        }
-        operator bool() const { return MACH_PORT_VALID(port); }
-        mach_port_t port { MACH_PORT_NULL };
-        OSObjectPtr<xpc_connection_t> xpcConnection;
-#endif
-    };
-
 #if OS(DARWIN)
+    mach_port_t port() const;
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
 #endif
 
-    static Ref<Connection> createServerConnection(Identifier);
-    static Ref<Connection> createClientConnection(Identifier);
-
-    struct ConnectionIdentifierPair {
-        IPC::Connection::Identifier server;
+    static Ref<Connection> createClientConnection(Handle&&, PlatformClientConnectionOptions = { });
+    struct ConnectionPair {
+        Ref<IPC::Connection> server;
         IPC::Connection::Handle client;
     };
-    static std::optional<ConnectionIdentifierPair> createConnectionIdentifierPair();
+    static std::optional<ConnectionPair> createConnectionPair(PlatformConnectionPairOptions = { });
 
     ~Connection();
 
@@ -325,8 +298,6 @@ public:
 
     bool inSendSync() const { return m_inSendSyncCount; }
 
-    Identifier identifier() const;
-
 #if PLATFORM(COCOA)
     bool kill();
 #endif
@@ -358,10 +329,16 @@ public:
 
     size_t pendingMessageCountForTesting() const;
 private:
-    Connection(Identifier, bool isServer);
-    void platformInitialize(Identifier);
+    Connection();
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
+    Connection(Handle&&);
+#elif OS(DARWIN)
+    Connection(mach_port_t receiveRight, OSObjectPtr<xpc_connection_t>);
+    Connection(Handle&&, OSObjectPtr<xpc_connection_t>);
+#endif
     bool platformPrepareForOpen();
     void platformOpen();
+    void platformDestroy();
     void platformInvalidate();
 
     bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
@@ -420,7 +397,6 @@ private:
     Client* m_client { nullptr };
     std::unique_ptr<SyncMessageState, SyncMessageStateRelease> m_syncState;
     UniqueID m_uniqueID;
-    bool m_isServer;
     std::atomic<bool> m_isValid { true };
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
@@ -490,11 +466,13 @@ private:
     RefPtr<WTF::Thread> m_socketMonitor;
 #endif
 #elif OS(DARWIN)
+    void destroyPortRightsIfNeeded();
     // Called on the connection queue.
     void receiveSourceEventHandler();
     void initializeSendSource();
     void resumeSendSource();
-    void cancelReceiveSource();
+
+    bool m_isServer { false };
 
     mach_port_t m_sendPort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_sendSource;
@@ -533,7 +511,7 @@ private:
     EventListener m_readListener;
     std::unique_ptr<Encoder> m_pendingWriteEncoder;
     EventListener m_writeListener;
-    HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
+    Win32Handle m_connectionPipe;
 #endif
     friend class StreamClientConnection;
 };

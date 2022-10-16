@@ -39,47 +39,47 @@ namespace IPC {
 // FIXME: Rename this or use a different constant on windows.
 static const size_t inlineMessageMaxSize = 4096;
 
-bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier)
+
+std::optional<Connection::ConnectionPair> Connection::createConnectionPair(PlatformConnectionPairOptions)
 {
     String pipeName;
-
+    Win32Handle serverPipe;
     do {
         unsigned uniqueID = randomNumber() * std::numeric_limits<unsigned>::max();
         pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit.", hex(uniqueID));
 
-        serverIdentifier = ::CreateNamedPipe(pipeName.wideCharacters().data(),
+        serverPipe = Win32Handle { ::CreateNamedPipe(pipeName.wideCharacters().data(),
             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,
             PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 1, inlineMessageMaxSize, inlineMessageMaxSize,
-            0, 0);
-    } while (!serverIdentifier && ::GetLastError() == ERROR_PIPE_BUSY);
+            0, 0) };
+    } while (!serverPipe && ::GetLastError() == ERROR_PIPE_BUSY);
 
-    if (!serverIdentifier)
-        return false;
+    if (!serverPipe)
+        return std::nullopt;
 
-    clientIdentifier = ::CreateFileW(pipeName.wideCharacters().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
-    if (!clientIdentifier) {
-        ::CloseHandle(serverIdentifier);
-        return false;
-    }
-
+    Win32Handle clientPipe { ::CreateFileW(pipeName.wideCharacters().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0) };
+    if (!clientPipe)
+        return std::nullopt;
+    
     DWORD mode = PIPE_READMODE_MESSAGE;
-    if (!::SetNamedPipeHandleState(clientIdentifier, &mode, 0, 0)) {
-        ::CloseHandle(serverIdentifier);
-        ::CloseHandle(clientIdentifier);
-        return false;
-    }
-
-    return true;
+    if (!::SetNamedPipeHandleState(clientPipe.get(), &mode, 0, 0))
+        return std::nullopt;
+    return ConnectionPair { adoptRef(*new Connection(WTFMove(serverPipe))), WTFMove(clientPipe) };
 }
 
-void Connection::platformInitialize(Identifier identifier)
+Connection::Connection(Handle&& handle)
+    : Connection()
 {
-    m_connectionPipe = identifier.handle;
+    m_connectionPipe = WTFMove(handle);
+}
+
+void Connection::platformDestroy()
+{
 }
 
 void Connection::platformInvalidate()
 {
-    if (m_connectionPipe == INVALID_HANDLE_VALUE)
+    if (!m_connectionPipe)
         return;
 
     m_isConnected = false;
@@ -87,19 +87,18 @@ void Connection::platformInvalidate()
     m_readListener.close();
     m_writeListener.close();
 
-    ::CloseHandle(m_connectionPipe);
-    m_connectionPipe = INVALID_HANDLE_VALUE;
+    m_connectionPipe = { };
 }
 
 void Connection::readEventHandler()
 {
-    if (m_connectionPipe == INVALID_HANDLE_VALUE)
+    if (!m_connectionPipe)
         return;
 
     while (true) {
         // Check if we got some data.
         DWORD numberOfBytesRead = 0;
-        if (!::GetOverlappedResult(m_connectionPipe, &m_readListener.state(), &numberOfBytesRead, FALSE)) {
+        if (!::GetOverlappedResult(m_connectionPipe.get(), &m_readListener.state(), &numberOfBytesRead, FALSE)) {
             DWORD error = ::GetLastError();
             switch (error) {
             case ERROR_BROKEN_PIPE:
@@ -109,7 +108,7 @@ void Connection::readEventHandler()
                 // Read the rest of the message out of the pipe.
 
                 DWORD bytesToRead = 0;
-                if (!::PeekNamedPipe(m_connectionPipe, 0, 0, 0, 0, &bytesToRead)) {
+                if (!::PeekNamedPipe(m_connectionPipe.get(), 0, 0, 0, 0, &bytesToRead)) {
                     DWORD error = ::GetLastError();
                     if (error == ERROR_BROKEN_PIPE) {
                         connectionDidClose();
@@ -126,7 +125,7 @@ void Connection::readEventHandler()
                     break;
 
                 m_readBuffer.grow(m_readBuffer.size() + bytesToRead);
-                if (!::ReadFile(m_connectionPipe, m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readListener.state())) {
+                if (!::ReadFile(m_connectionPipe.get(), m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readListener.state())) {
                     ASSERT_NOT_REACHED();
                     return;
                 }
@@ -155,7 +154,7 @@ void Connection::readEventHandler()
         // loop (if we chose a buffer size that was too small) or allocating extra memory (if we
         // chose a buffer size that was too large).)
         DWORD bytesToRead = 0;
-        if (!::PeekNamedPipe(m_connectionPipe, 0, 0, 0, 0, &bytesToRead)) {
+        if (!::PeekNamedPipe(m_connectionPipe.get(), 0, 0, 0, 0, &bytesToRead)) {
             DWORD error = ::GetLastError();
             if (error == ERROR_BROKEN_PIPE) {
                 connectionDidClose();
@@ -176,7 +175,7 @@ void Connection::readEventHandler()
 
         // Either read the next available message (which should occur synchronously), or start an
         // asynchronous read of the next message that becomes available.
-        BOOL result = ::ReadFile(m_connectionPipe, m_readBuffer.data(), m_readBuffer.size(), 0, &m_readListener.state());
+        BOOL result = ::ReadFile(m_connectionPipe.get(), m_readBuffer.data(), m_readBuffer.size(), 0, &m_readListener.state());
         if (result) {
             // There was already a message waiting in the pipe, and we read it synchronously.
             // Process it.
@@ -210,11 +209,11 @@ void Connection::readEventHandler()
 
 void Connection::writeEventHandler()
 {
-    if (m_connectionPipe == INVALID_HANDLE_VALUE)
+    if (!m_connectionPipe)
         return;
 
     DWORD numberOfBytesWritten = 0;
-    if (!::GetOverlappedResult(m_connectionPipe, &m_writeListener.state(), &numberOfBytesWritten, FALSE)) {
+    if (!::GetOverlappedResult(m_connectionPipe.get(), &m_writeListener.state(), &numberOfBytesWritten, FALSE)) {
         DWORD error = ::GetLastError();
 
         if (error == ERROR_IO_INCOMPLETE) {
@@ -281,7 +280,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     ASSERT(!m_pendingWriteEncoder);
 
     // Just bail if the handle has been closed.
-    if (m_connectionPipe == INVALID_HANDLE_VALUE)
+    if (!m_connectionPipe)
         return false;
 
     // We put the message ID last.
@@ -289,7 +288,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     // Write the outgoing message.
 
-    if (::WriteFile(m_connectionPipe, encoder->buffer(), encoder->bufferSize(), 0, &m_writeListener.state())) {
+    if (::WriteFile(m_connectionPipe.get(), encoder->buffer(), encoder->bufferSize(), 0, &m_writeListener.state())) {
         // We successfully sent this message.
         return true;
     }
@@ -362,17 +361,6 @@ void Connection::EventListener::close()
     m_state.hEvent = 0;
 
     m_handler = Function<void()>();
-}
-
-std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
-{
-    HANDLE serverIdentifier;
-    HANDLE clientIdentifier;
-    if (!createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
-        LOG_ERROR("Failed to create server and client identifiers");
-        return std::nullopt;
-    }
-    return ConnectionIdentifierPair { Identifier { Win32Handle { serverIdentifier } }, Win32Handle { clientIdentifier } };
 }
 
 } // namespace IPC

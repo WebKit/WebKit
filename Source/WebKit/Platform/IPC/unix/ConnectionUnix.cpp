@@ -100,14 +100,23 @@ private:
 
 static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
 
-void Connection::platformInitialize(Identifier identifier)
+Connection::Connection(Handle&& handle)
+    : Connection()
 {
-    m_socketDescriptor = identifier.handle;
+    m_socketDescriptor = handle.release();
 #if USE(GLIB)
     m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
 #endif
     m_readBuffer.reserveInitialCapacity(messageMaxSize);
     m_fileDescriptors.reserveInitialCapacity(attachmentMaxAmount);
+}
+
+void Connection::platformDestroy()
+{
+#if !USE(GLIB)
+    if (m_socketDescriptor != -1)
+        closeWithRetry(m_socketDescriptor);
+#endif
 }
 
 void Connection::platformInvalidate()
@@ -588,25 +597,33 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
     return true;
 }
 
-SocketPair createPlatformConnection(unsigned options)
+std::optional<Connection::ConnectionPair> Connection::createConnectionPair(PlatformConnectionPairOptions options)
 {
     int sockets[2];
     RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) != -1);
+    const int client = sockets[0];
+    const int server = sockets[1];
 
-    if (options & SetCloexecOnServer) {
-        // Don't expose the child socket to the parent process.
-        if (!setCloseOnExec(sockets[1]))
-            RELEASE_ASSERT_NOT_REACHED();
-    }
+    // Don't expose the child socket to the parent process.
+    if (!setCloseOnExec(server))
+        RELEASE_ASSERT_NOT_REACHED();
 
-    if (options & SetCloexecOnClient) {
+    if (!options.flags.contains(PlatformConnectionPairOptions::NoSetCloexecOnClient)) {
         // Don't expose the parent socket to potential future children.
-        if (!setCloseOnExec(sockets[0]))
+        if (!setCloseOnExec(client))
             RELEASE_ASSERT_NOT_REACHED();
     }
 
-    SocketPair socketPair = { sockets[0], sockets[1] };
-    return socketPair;
+#if PLATFORM(PLAYSTATION)
+    int sendBufSize = 32 * 1024;
+    setsockopt(server, SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);
+    setsockopt(client, SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);
+
+    int recvBufSize = 32 * 1024;
+    setsockopt(server, SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
+    setsockopt(client, SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
+#endif
+    return ConnectionPair { adoptRef(*new Connection { UnixFileDescriptor { server,  UnixFileDescriptor::Adopt } }), UnixFileDescriptor { client, UnixFileDescriptor::Adopt } };
 }
 
 void Connection::willSendSyncMessage(OptionSet<SendSyncOption>)
@@ -617,9 +634,4 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 {
 }
 
-std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
-{
-    SocketPair socketPair = createPlatformConnection();
-    return ConnectionIdentifierPair { Identifier { UnixFileDescriptor { socketPair.server,  UnixFileDescriptor::Adopt } }, UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } };
-}
 } // namespace IPC

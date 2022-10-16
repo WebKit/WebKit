@@ -136,7 +136,7 @@ private:
     void sendProcessDidResume(ResumeReason) final;
 
     // ProcessLauncher::Client
-    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+    void didFinishLaunching(ProcessLauncher*, RefPtr<IPC::Connection>) override;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

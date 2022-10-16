@@ -1032,15 +1032,15 @@ void WebProcessProxy::setIgnoreInvalidMessageForTesting()
 }
 #endif
 
-void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, RefPtr<IPC::Connection> connectionIn)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "didFinishLaunching:");
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
     Ref protectedThis { *this };
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIn));
 
-    if (!connectionIdentifier) {
+    if (!connection()) {
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "didFinishLaunching: Invalid connection identifier (web process failed to launch)");
         processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
         return;
@@ -1066,7 +1066,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
 #if ENABLE(IPC_TESTING_API)
     if (m_ignoreInvalidMessageForTesting)
-        connection()->setIgnoreInvalidMessageForTesting();
+        this->connection()->setIgnoreInvalidMessageForTesting();
 #endif
 
 #if PLATFORM(IOS_FAMILY)

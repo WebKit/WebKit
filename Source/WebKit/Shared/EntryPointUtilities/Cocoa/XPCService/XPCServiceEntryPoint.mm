@@ -60,13 +60,12 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
     return true;
 }
 
-bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
+bool XPCServiceInitializerDelegate::getConnection(RefPtr<IPC::Connection>& connection)
 {
     mach_port_t port = xpc_dictionary_copy_mach_send(m_initializerMessage, "server-port");
     if (!MACH_PORT_VALID(port))
         return false;
-
-    identifier = IPC::Connection::Identifier(port, m_connection);
+    connection = IPC::Connection::createClientConnection(MachSendRight::adopt(port), { m_connection });
     return true;
 }
 

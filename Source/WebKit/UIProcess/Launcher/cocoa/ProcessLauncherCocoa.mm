@@ -127,26 +127,6 @@ void ProcessLauncher::launchProcess()
 #endif
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 
-    // Create the listening port.
-    mach_port_t listeningPort = MACH_PORT_NULL;
-    auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
-    if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Could not allocate mach port, error %x: %s", kr, mach_error_string(kr));
-        CRASH();
-    }
-
-    // Insert a send right so we can send to it.
-    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-
-    mach_port_t previousNotificationPort = MACH_PORT_NULL;
-    auto mc = mach_port_request_notification(mach_task_self(), listeningPort, MACH_NOTIFY_NO_SENDERS, 0, listeningPort, MACH_MSG_TYPE_MAKE_SEND_ONCE, &previousNotificationPort);
-    ASSERT(!previousNotificationPort);
-    ASSERT(mc == KERN_SUCCESS);
-    if (mc != KERN_SUCCESS) {
-        // If mach_port_request_notification fails, 'previousNotificationPort' will be uninitialized.
-        LOG_ERROR("mach_port_request_notification failed: (%x) %s", mc, mach_error_string(mc));
-    }
-
     String clientIdentifier;
 #if PLATFORM(MAC)
     clientIdentifier = codeSigningIdentifierForCurrentProcess();
@@ -170,7 +150,10 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
 
-    xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
+    auto connectionPair = IPC::Connection::createConnectionPair({ m_xpcConnection });
+    xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", connectionPair->client.sendRight());
+    // FIXME: Here we should do `connectionPair->client = { };` but this breaks some tests until
+    // Connection is made to deliver all received messages before dispatching IPC::Connection::Client::didClose().
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
@@ -194,7 +177,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, logName = CString(name)] (xpc_object_t event) {
+    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, logName = CString(name)] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -213,27 +196,14 @@ void ProcessLauncher::launchProcess()
         else
             LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.data());
 
-#if ASSERT_ENABLED
-        mach_port_urefs_t sendRightCount = 0;
-        mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
-        ASSERT(sendRightCount >= 1);
-#endif
-
-        // We failed to launch. Release the send right.
-        deallocateSendRightSafely(listeningPort);
-
-        // And the receive right.
-        mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
-
         if (processLauncher->m_xpcConnection)
             xpc_connection_cancel(processLauncher->m_xpcConnection.get());
         processLauncher->m_xpcConnection = nullptr;
 
-        processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
+        processLauncher->didFinishLaunchingProcess(0, { });
     };
 
     auto eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), eventHandler = m_client->xpcEventHandler()] (xpc_object_t event) mutable {
-
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
             RunLoop::main().dispatch([errorHandlerImpl = WTFMove(errorHandlerImpl), event = OSObjectPtr(event)] {
                 errorHandlerImpl(event.get());
@@ -257,37 +227,28 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    ref();
-    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
-        // Errors are handled in the event handler.
-        // It is possible for this block to be called after the error event handler, in which case we're no longer
+    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), [this, protectedThis = Ref { *this }, connection = WTFMove(connectionPair->server), didCloseWorkaround = WTFMove(connectionPair->client)] (xpc_object_t reply) mutable {
+        // It is possible for this function to be called after the error event handler, in which case we're no longer
         // launching and we already took care of cleaning things up.
-        if (isLaunching() && xpc_get_type(reply) != XPC_TYPE_ERROR) {
-            ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
-            ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
-
-#if ASSERT_ENABLED
-            mach_port_urefs_t sendRightCount = 0;
-            mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
-            ASSERT(sendRightCount >= 1);
-#endif
-
-            deallocateSendRightSafely(listeningPort);
-
-            if (!m_xpcConnection) {
-                // The process was terminated.
-                didFinishLaunchingProcess(0, IPC::Connection::Identifier());
-                return;
-            }
-
-            // The process has finished launching, grab the pid from the connection.
-            pid_t processIdentifier = xpc_connection_get_pid(m_xpcConnection.get());
-
-            didFinishLaunchingProcess(processIdentifier, IPC::Connection::Identifier(listeningPort, m_xpcConnection));
-            m_xpcConnection = nullptr;
+        // Errors are handled in the event handler.
+        if (xpc_get_type(reply) == XPC_TYPE_ERROR || !isLaunching() || !m_xpcConnection) {
+            connection->invalidate();
+            return;
         }
 
-        deref();
+        ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
+        ASSERT(xpc_dictionary_get_string(reply, "message-name") == "process-finished-launching"_s);
+
+        if (!m_xpcConnection) {
+            // The process was terminated.
+            connection->invalidate();
+            didFinishLaunchingProcess(0, { });
+            return;
+        }
+
+        // The process has finished launching, grab the pid from the connection.
+        pid_t processIdentifier = xpc_connection_get_pid(m_xpcConnection.get());
+        didFinishLaunchingProcess(processIdentifier, WTFMove(connection));
     });
 }
 

@@ -87,7 +87,7 @@ void WebInspector::setFrontendConnection(IPC::Connection::Handle&& connectionHan
     if (!connectionHandle)
         return;
 
-    m_frontendConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) });
+    m_frontendConnection = IPC::Connection::createClientConnection(WTFMove(connectionHandle));
     m_frontendConnection->open(*this);
 
     for (auto& callback : m_frontendConnectionActions)

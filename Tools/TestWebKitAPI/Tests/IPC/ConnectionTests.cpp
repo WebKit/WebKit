@@ -137,28 +137,26 @@ protected:
     MockConnectionClient m_mockClientClient;
 };
 
-TEST_F(ConnectionTest, CreateServerConnection)
+TEST_F(ConnectionTest, CreateConnectionsAndInvalidateNoAssert)
 {
-    auto identifiers = IPC::Connection::createConnectionIdentifierPair();
-    ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    connection->invalidate();
-}
-
-TEST_F(ConnectionTest, CreateClientConnection)
-{
-    auto identifiers = IPC::Connection::createConnectionIdentifierPair();
-    ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
-    connection->invalidate();
+    auto connections = IPC::Connection::createConnectionPair();
+    ASSERT_NE(connections, std::nullopt);
+    {
+        Ref<IPC::Connection> server = WTFMove(connections->server);
+        server->invalidate();
+    }
+    {
+        Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(WTFMove(connections->client));
+        connection->invalidate();
+    }
 }
 
 TEST_F(ConnectionTest, ConnectLocalConnection)
 {
-    auto identifiers = IPC::Connection::createConnectionIdentifierPair();
-    ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    auto connections = IPC::Connection::createConnectionPair();
+    ASSERT_NE(connections, std::nullopt);
+    Ref<IPC::Connection> serverConnection = WTFMove(connections->server);
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(WTFMove(connections->client));
     serverConnection->open(m_mockServerClient);
     clientConnection->open(m_mockClientClient);
     serverConnection->invalidate();
@@ -187,13 +185,7 @@ public:
     void SetUp()
     {
         WTF::initializeMainThread();
-        auto identifiers = IPC::Connection::createConnectionIdentifierPair();
-        if (!identifiers) {
-            FAIL();
-            return;
-        }
-        m_connections[serverIsA() ? 0 : 1].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-        m_connections[serverIsA() ? 1 : 0].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+        createBoth();
     }
 
     void TearDown()
@@ -203,6 +195,16 @@ public:
                 c.connection->invalidate();
             c.connection = nullptr;
         }
+    }
+    void createBoth()
+    {
+        auto connections = IPC::Connection::createConnectionPair();
+        if (!connections) {
+            FAIL();
+            return;
+        }
+        m_connections[serverIsA() ? 0 : 1].connection = WTFMove(connections->server);
+        m_connections[serverIsA() ? 1 : 0].connection = IPC::Connection::createClientConnection(WTFMove(connections->client));
     }
 
     ::testing::AssertionResult openA()
@@ -252,6 +254,12 @@ public:
         return m_connections[1].client;
     }
 
+    void deleteBoth()
+    {
+        deleteA();
+        deleteB();
+    }
+
     void deleteA()
     {
         m_connections[0].connection = nullptr;
@@ -298,6 +306,36 @@ TEST_P(OpenedConnectionTest, AInvalidateDeliversBDidClose)
     EXPECT_FALSE(aClient().gotDidClose());
 }
 
+TEST_P(OpenedConnectionTest, UnopenedAAndInvalidateDoesDeliverBDidClose)
+{
+    ASSERT_TRUE(openB());
+    a()->invalidate();
+    EXPECT_TRUE(bClient().waitForDidClose(kDefaultWaitForTimeout));
+}
+
+TEST_P(OpenedConnectionTest, DeleteUnopenedADoesDeliverBDidClose)
+{
+    ASSERT_TRUE(openB());
+    deleteA();
+    EXPECT_TRUE(bClient().waitForDidClose(kDefaultWaitForTimeout));
+}
+
+TEST_P(OpenedConnectionTest, DeleteUnopenedAABeforeBOpenDoesDeliverBDidClose)
+{
+    deleteA();
+    ASSERT_TRUE(openB());
+    EXPECT_TRUE(bClient().waitForDidClose(kDefaultWaitForTimeout));
+}
+
+TEST_P(OpenedConnectionTest, DeleteOpenedABeforeBOpenDoesDeliverBDidClose)
+{
+    ASSERT_TRUE(openA());
+    a()->invalidate();
+    deleteA();
+    ASSERT_TRUE(openB());
+    EXPECT_TRUE(bClient().waitForDidClose(kDefaultWaitForTimeout));
+}
+
 TEST_P(OpenedConnectionTest, AAndBInvalidateDoesNotDeliverDidClose)
 {
     ASSERT_TRUE(openBoth());
@@ -307,12 +345,16 @@ TEST_P(OpenedConnectionTest, AAndBInvalidateDoesNotDeliverDidClose)
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
 
-TEST_P(OpenedConnectionTest, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
+TEST_P(OpenedConnectionTest, CreateManyConnectionsNoAssert)
 {
-    ASSERT_TRUE(openB());
-    a()->invalidate();
-    deleteA();
-    EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+    deleteBoth();
+    for (int i = 0; i < 10000; ++i) {
+        createBoth();
+        ASSERT_TRUE(openBoth());
+        a()->invalidate();
+        b()->invalidate();
+        deleteBoth();
+    }
 }
 
 TEST_P(OpenedConnectionTest, IncomingMessageThrottlingWorks)

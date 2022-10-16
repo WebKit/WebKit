@@ -556,6 +556,7 @@
 		7B2739F32632AB640040F182 /* ThreadAssertionsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */; };
 		7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */; };
 		7B397C0828BE394B00239202 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
+		7B3E8D1C28D89EC5003E3AEE /* ConnectionTestsDarwin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B3E8D1B28D89C6E003E3AEE /* ConnectionTestsDarwin.mm */; };
 		7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
 		7B774906267CCE72009873B4 /* TestRunnerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B774904267CCE68009873B4 /* TestRunnerTests.cpp */; };
 		7B7D096A2519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */; };
@@ -2699,6 +2700,7 @@
 		7B18417B2673860200ED4F8D /* ImageBufferTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferTests.cpp; sourceTree = "<group>"; };
 		7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadAssertionsTest.cpp; sourceTree = "<group>"; };
 		7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionTests.cpp; sourceTree = "<group>"; };
+		7B3E8D1B28D89C6E003E3AEE /* ConnectionTestsDarwin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConnectionTestsDarwin.mm; path = Tests/IPC/darwin/ConnectionTestsDarwin.mm; sourceTree = SOURCE_ROOT; };
 		7B774904267CCE68009873B4 /* TestRunnerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunnerTests.cpp; sourceTree = "<group>"; };
 		7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLNoCrashOnOtherThreadAccess.mm; sourceTree = "<group>"; };
 		7B9FC57E28A26137007570E7 /* TestIPC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestIPC; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4344,6 +4346,15 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		7B3E8D1A28D89C44003E3AEE /* darwin */ = {
+			isa = PBXGroup;
+			children = (
+				7B3E8D1B28D89C6E003E3AEE /* ConnectionTestsDarwin.mm */,
+			);
+			name = darwin;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		7B774903267CCE38009873B4 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
@@ -4355,6 +4366,7 @@
 		7B9FC58228A26544007570E7 /* IPC */ = {
 			isa = PBXGroup;
 			children = (
+				7B3E8D1A28D89C44003E3AEE /* darwin */,
 				7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */,
 				7B9FC58328A26792007570E7 /* StreamConnectionBufferTests.cpp */,
 				7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */,
@@ -5917,6 +5929,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */,
+				7B3E8D1C28D89EC5003E3AEE /* ConnectionTestsDarwin.mm in Sources */,
 				7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */,
 				7B9FC3A028A26137007570E7 /* mainMac.mm in Sources */,
 				7B9FC58428A26792007570E7 /* StreamConnectionBufferTests.cpp in Sources */,

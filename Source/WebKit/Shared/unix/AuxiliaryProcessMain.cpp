@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuxiliaryProcessMain.h"
 
+#include "Connection.h"
 #include <JavaScriptCore/Options.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <signal.h>
@@ -52,7 +53,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         return false;
 
     m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
-    m_parameters.connectionIdentifier = IPC::Connection::Identifier { atoi(argv[2]) };
+    m_parameters.connection = IPC::Connection::createClientConnection(UnixFileDescriptor { atoi(argv[2]), UnixFileDescriptor::Adopt });
 #if ENABLE(DEVELOPER_MODE)
     if (argc > 3 && !strcmp(argv[3], "--configure-jsc-for-testing"))
         JSC::Config::configureForTesting();

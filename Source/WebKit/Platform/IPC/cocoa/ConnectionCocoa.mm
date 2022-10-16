@@ -75,78 +75,91 @@ static const size_t inlineMessageMaxSize = 4096;
 constexpr mach_msg_id_t inlineBodyMessageID = 0xdba0dba;
 constexpr mach_msg_id_t outOfLineBodyMessageID = 0xdba1dba;
 
+
+Ref<Connection> Connection::createClientConnection(Handle&& handle, PlatformClientConnectionOptions options)
+{
+    return adoptRef(*new Connection(WTFMove(handle), WTFMove(options.xpcConnection)));
+}
+
+std::optional<Connection::ConnectionPair> Connection::createConnectionPair(PlatformConnectionPairOptions options)
+{
+    // Create the listening port.
+    mach_port_t listeningPort = MACH_PORT_NULL;
+    auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(Process, "Connection::createConnectionPair: Could not allocate mach port, error %x", kr);
+        return std::nullopt;
+    }
+    if (!MACH_PORT_VALID(listeningPort)) {
+        RELEASE_LOG_ERROR(Process, "Connection::createConnectionPair: Could not allocate mach port, returned port was invalid");
+        return std::nullopt;
+    }
+    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    return ConnectionPair { adoptRef(*new Connection(listeningPort, WTFMove(options.serverXPCConnection))), MachSendRight::adopt(listeningPort) };
+}
+
+Connection::Connection(mach_port_t receiveRight, OSObjectPtr<xpc_connection_t> xpcConnection)
+    : Connection()
+{
+    m_isServer = true;
+    m_receivePort = receiveRight;
+    m_xpcConnection = WTFMove(xpcConnection);
+#if !PLATFORM(WATCHOS)
+    mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
+#endif
+}
+
+Connection::Connection(Handle&& handle, OSObjectPtr<xpc_connection_t> xpcConnection)
+    : Connection()
+{
+    m_isServer = false;
+    m_sendPort = handle.leakSendRight();
+    m_xpcConnection = WTFMove(xpcConnection);
+}
+
+void Connection::platformDestroy()
+{
+    // In case caller never called invalidate(), adoption of port rights does not happen. Destroy them explicitly.
+    destroyPortRightsIfNeeded();
+}
+
+void Connection::destroyPortRightsIfNeeded()
+{
+    // Server connection owns the m_receivePort until receive source adopts it.
+    if (MACH_PORT_VALID(m_receivePort)) {
+        ASSERT(m_isServer);
+#if !PLATFORM(WATCHOS)
+        mach_port_unguard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this));
+#endif
+        mach_port_mod_refs(mach_task_self(), m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
+        m_receivePort = MACH_PORT_NULL;
+    }
+    // Client connection owns the m_sendPort until receive source adopts it.
+    if (MACH_PORT_VALID(m_sendPort)) {
+        ASSERT(!m_isServer);
+        deallocateSendRightSafely(m_sendPort);
+        m_sendPort = MACH_PORT_NULL;
+    }
+}
+
 void Connection::platformInvalidate()
 {
-    if (!m_isConnected) {
-        if (m_sendPort) {
-            ASSERT(!m_isServer);
-            deallocateSendRightSafely(m_sendPort);
-            m_sendPort = MACH_PORT_NULL;
-        }
-
-        if (m_receiveSource) {
-            // For a short period of time, when m_isServer is true and open() has been called, m_receiveSource has been initialized
-            // but m_isConnected has not been set to true yet. In this case, we need to cancel m_receiveSource instead of destroying
-            // m_receivePort ourselves.
-            ASSERT(m_isServer);
-            cancelReceiveSource();
-        }
-
-        if (m_receivePort) {
-            ASSERT(m_isServer);
-#if !PLATFORM(WATCHOS)
-            mach_port_unguard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this));
-#endif
-            mach_port_mod_refs(mach_task_self(), m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
-            m_receivePort = MACH_PORT_NULL;
-        }
-
-        return;
-    }
-
     m_pendingOutgoingMachMessage = nullptr;
     m_isInitializingSendSource = false;
     m_isConnected = false;
-
-    ASSERT(m_sendPort);
-    ASSERT(m_receivePort);
-
-    // Unregister our ports.
-    dispatch_source_cancel(m_sendSource.get());
-    m_sendSource = nullptr;
-    m_sendPort = MACH_PORT_NULL;
-
-    cancelReceiveSource();
-}
-
-void Connection::cancelReceiveSource()
-{
-    dispatch_source_cancel(m_receiveSource.get());
-    m_receiveSource = nullptr;
-    m_receivePort = MACH_PORT_NULL;
-}
-
-void Connection::platformInitialize(Identifier identifier)
-{
-    if (!MACH_PORT_VALID(identifier.port))
-        return;
-
-    if (m_isServer) {
-        m_receivePort = identifier.port;
-        m_sendPort = MACH_PORT_NULL;
-
-#if !PLATFORM(WATCHOS)
-        mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
-#endif
-    } else {
+    if (m_receiveSource) {
+        dispatch_source_cancel(m_receiveSource.get());
+        m_receiveSource = nullptr;
         m_receivePort = MACH_PORT_NULL;
-        m_sendPort = identifier.port;
     }
-
-    m_sendSource = nullptr;
-    m_receiveSource = nullptr;
-
-    m_xpcConnection = identifier.xpcConnection;
+    if (m_sendSource) {
+        dispatch_source_cancel(m_sendSource.get());
+        m_sendSource = nullptr;
+        m_sendPort = MACH_PORT_NULL;
+    }
+    // In case caller called invalidate() without open(), adoption of port rights does not happen.
+    // Destroy them explicitly.
+    destroyPortRightsIfNeeded();
 }
 
 static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
@@ -578,9 +591,9 @@ void Connection::receiveSourceEventHandler()
     processIncomingMessage(WTFMove(decoder));
 }    
 
-IPC::Connection::Identifier Connection::identifier() const
+mach_port_t Connection::port() const
 {
-    return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
+    return m_isServer ? m_receivePort : m_sendPort;
 }
 
 std::optional<audit_token_t> Connection::getAuditToken()
@@ -635,20 +648,4 @@ pid_t Connection::remoteProcessID() const
     return xpc_connection_get_pid(m_xpcConnection.get());
 }
 
-std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
-{
-    // Create the listening port.
-    mach_port_t listeningPort = MACH_PORT_NULL;
-    auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
-    if (kr != KERN_SUCCESS) {
-        RELEASE_LOG_ERROR(Process, "Connection::createConnectionIdentifierPair: Could not allocate mach port, error %x", kr);
-        return std::nullopt;
-    }
-    if (!MACH_PORT_VALID(listeningPort)) {
-        RELEASE_LOG_ERROR(Process, "Connection::createConnectionIdentifierPair: Could not allocate mach port, returned port was invalid");
-        return std::nullopt;
-    }
-    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::adopt(listeningPort) };
-}
 } // namespace IPC

@@ -276,7 +276,7 @@ bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)
+void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, RefPtr<IPC::Connection> connectionIn)
 {
     ASSERT(!m_connection);
     ASSERT(isMainRunLoop());
@@ -285,18 +285,17 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     if (launchTime > 1_s)
         RELEASE_LOG_FAULT(Process, "%s process (%p) took %f seconds to launch", processName().characters(), this, launchTime.value());
     
-    if (!connectionIdentifier)
+    if (!connectionIn)
         return;
 
-#if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
-#endif
+    m_connection = WTFMove(connectionIn);
 
-    m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    m_lifetimeAssertion = ProcessAssertion::create(xpc_connection_get_pid(m_connection->xpcConnection()), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
+#endif
 
     connectionWillOpen(*m_connection);
     m_connection->open(*this);
-
     for (auto&& pendingMessage : std::exchange(m_pendingMessages, { })) {
         if (!shouldSendPendingMessage(pendingMessage))
             continue;

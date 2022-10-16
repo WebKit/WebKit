@@ -141,17 +141,17 @@ private:
 
 class JSIPCConnection : public RefCounted<JSIPCConnection>, private IPC::Connection::Client {
 public:
-    static Ref<JSIPCConnection> create(IPC::Connection::Identifier&& testedConnectionIdentifier)
+    static Ref<JSIPCConnection> create(Ref<IPC::Connection>&& testedConnection)
     {
-        return adoptRef(*new JSIPCConnection(WTFMove(testedConnectionIdentifier)));
+        return adoptRef(*new JSIPCConnection(WTFMove(testedConnection)));
     }
 
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCConnection* toWrapped(JSContextRef, JSValueRef);
 
 private:
-    JSIPCConnection(IPC::Connection::Identifier&& testedConnectionIdentifier)
-        : m_testedConnection { IPC::Connection::createServerConnection(testedConnectionIdentifier) }
+    JSIPCConnection(Ref<IPC::Connection>&& testedConnection)
+        : m_testedConnection { WTFMove(testedConnection) }
     {
     }
 
@@ -2262,8 +2262,8 @@ JSValueRef JSIPC::createConnectionPair(JSContextRef context, JSObjectRef, JSObje
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
     }
-    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
-    if (!connectionIdentifiers)
+    auto connections = IPC::Connection::createConnectionPair();
+    if (!connections)
         return JSValueMakeUndefined(context);
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
@@ -2272,10 +2272,10 @@ JSValueRef JSIPC::createConnectionPair(JSContextRef context, JSObjectRef, JSObje
     JSC::JSObject* connectionPairObject = JSC::constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     int index = 0;
-    auto jsValue = toJS(globalObject, JSIPCConnection::create(WTFMove(connectionIdentifiers->server))->createJSWrapper(context));
+    auto jsValue = toJS(globalObject, JSIPCConnection::create(WTFMove(connections->server))->createJSWrapper(context));
     connectionPairObject->putDirectIndex(globalObject, index++, jsValue);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
-    jsValue = toJS(globalObject, JSIPCConnectionHandle::create(WTFMove(connectionIdentifiers->client))->createJSWrapper(context));
+    jsValue = toJS(globalObject, JSIPCConnectionHandle::create(WTFMove(connections->client))->createJSWrapper(context));
     connectionPairObject->putDirectIndex(globalObject, index++, jsValue);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     return toRef(vm, connectionPairObject);

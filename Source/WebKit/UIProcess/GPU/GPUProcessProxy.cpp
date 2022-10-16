@@ -473,18 +473,18 @@ void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
     didClose(connection);
 }
 
-void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, RefPtr<IPC::Connection> connectionIn)
 {
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIn));
 
-    if (!connectionIdentifier) {
+    if (!connection()) {
         gpuProcessExited(ProcessTerminationReason::Crash);
         return;
     }
     
 #if PLATFORM(IOS_FAMILY)
-    if (xpc_connection_t connection = this->connection()->xpcConnection())
-        m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
+    if (xpc_connection_t xpcConnection = this->connection()->xpcConnection())
+        m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
 #endif
 
 #if PLATFORM(COCOA)

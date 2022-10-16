@@ -52,15 +52,13 @@ static LPCWSTR processName(ProcessLauncher::ProcessType processType)
 
 void ProcessLauncher::launchProcess()
 {
-    // First, create the server and client identifiers.
-    HANDLE serverIdentifier, clientIdentifier;
-    if (!IPC::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+    auto connectionPair = IPC::Connection::createConnectionPair();
+    if (!connectionPair) {
         // FIXME: What should we do here?
         ASSERT_NOT_REACHED();
     }
-
     // Ensure that the child process inherits the client identifier.
-    ::SetHandleInformation(clientIdentifier, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
+    ::SetHandleInformation(connectionPair->client.get(), HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
 
     // To get the full file path to WebKit2WebProcess.exe, we fild the location of WebKit2.dll,
     // remove the last path component.
@@ -86,7 +84,7 @@ void ProcessLauncher::launchProcess()
     commandLineBuilder.append(" -processIdentifier ");
     commandLineBuilder.append(String::number(m_launchOptions.processIdentifier.toUInt64()));
     commandLineBuilder.append(" -clientIdentifier ");
-    commandLineBuilder.append(String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
+    commandLineBuilder.append(String::number(reinterpret_cast<uintptr_t>(connectionPair->client.get())));
     if (m_client->shouldConfigureJSCForTesting())
         commandLineBuilder.append(" -configure-jsc-for-testing");
     if (!m_client->isJITEnabled())
@@ -102,8 +100,8 @@ void ProcessLauncher::launchProcess()
     PROCESS_INFORMATION processInformation { };
     BOOL result = ::CreateProcess(0, commandLine.data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation);
 
-    // We can now close the client identifier handle.
-    ::CloseHandle(clientIdentifier);
+    // We can now close the client connection handle.
+    connectionPair->client = { };
 
     if (!result) {
         // FIXME: What should we do here?
@@ -118,8 +116,8 @@ void ProcessLauncher::launchProcess()
     m_hProcess = processInformation.hProcess;
     WTF::ProcessID pid = processInformation.dwProcessId;
 
-    RunLoop::main().dispatch([protectedThis, pid, serverIdentifier] {
-        protectedThis->didFinishLaunchingProcess(pid, IPC::Connection::Identifier { serverIdentifier });
+    RunLoop::main().dispatch([protectedThis, pid, connection = WTFMove(connectionPair->server)]() mutable {
+        protectedThis->didFinishLaunchingProcess(pid, WTFMove(connection));
     });
 }
 
