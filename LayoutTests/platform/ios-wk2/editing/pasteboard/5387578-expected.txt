@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 88x28
             RenderTableRow {TR} at (0,2) size 88x24
               RenderTableCell {TD} at (2,2) size 84x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 80x19
-                  text run at (2,2) width 80: "Hello World"
-                  text run at (81,2) width 1: " \x{9}\x{9} \x{9}\x{9}"
+                RenderText {#text} at (2,2) size 84x19
+                  text run at (2,2) width 84: "Hello World "
 caret: position 11 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

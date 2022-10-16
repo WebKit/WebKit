@@ -10,7 +10,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x100
         RenderBlock (anonymous) at (0,0) size 784x40
           RenderText {#text} at (0,0) size 24x19
-            text run at (0,0) width 24: "On "
+            text run at (0,0) width 20: "On"
+            text run at (19,0) width 5: " "
           RenderBR {BR} at (23,0) size 1x19
           RenderBR {BR} at (0,20) size 0x19
         RenderBlock {BLOCKQUOTE} at (0,40) size 784x20 [color=#0000FF] [border: none (2px solid #0000FF)]

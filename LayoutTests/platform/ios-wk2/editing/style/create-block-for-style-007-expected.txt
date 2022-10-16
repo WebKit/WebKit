@@ -11,9 +11,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,15) size 756x58
-          text run at (14,15) width 756: "Should see \"foo\" centered in its own red box. The \"bar\" and \"baz\" lines should"
-          text run at (769,15) width 1: " "
+        RenderText {#text} at (14,15) size 762x58
+          text run at (14,15) width 762: "Should see \"foo\" centered in its own red box. The \"bar\" and \"baz\" lines should "
           text run at (14,45) width 153: "not be centered."
       RenderBlock {DIV} at (0,112) size 784x146
         RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]

@@ -14,12 +14,10 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
           RenderText {#text} at (134,0) size 350x19
             text run at (134,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7152"
-        RenderText {#text} at (483,0) size 784x59
+        RenderText {#text} at (483,0) size 786x59
           text run at (483,0) width 9: ". "
-          text run at (491,0) width 261: "Adding visible candidates after tables, at"
-          text run at (751,0) width 5: " "
-          text run at (0,20) width 782: "[table, numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be"
-          text run at (781,20) width 3: " "
+          text run at (491,0) width 265: "Adding visible candidates after tables, at "
+          text run at (0,20) width 786: "[table, numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be "
           text run at (0,40) width 144: "inside an atomic node."
       RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,86) size 164x56 [border: (1px outset #808080)]

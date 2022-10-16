@@ -28,8 +28,7 @@ layer at (0,0) size 800x600
           text run at (0,60) width 473: "moveTo{Beginning, End}OfParagraphAndModifySelection should work."
       RenderBlock {DIV} at (0,96) size 200x40
         RenderText {#text} at (0,0) size 191x39
-          text run at (0,0) width 187: "The quick brown fox jumped"
-          text run at (186,0) width 5: " "
+          text run at (0,0) width 191: "The quick brown fox jumped "
           text run at (0,20) width 160: "over the lazy brown dog."
 selection start: position 0 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 51 of child 0 {#text} of child 2 {DIV} of body

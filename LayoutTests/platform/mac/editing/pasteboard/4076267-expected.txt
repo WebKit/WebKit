@@ -29,5 +29,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,44) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 338x18
-            text run at (0,0) width 338: " this text should have a single leading space before it"
+            text run at (0,0) width 4: " "
+            text run at (4,0) width 334: "this text should have a single leading space before it"
 caret: position 55 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

@@ -7,8 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 763x36
           text run at (0,0) width 490: "This tests to see if selection gaps are removed when the selection is deleted. "
           text run at (489,0) width 224: "Nothing should be selected below. "
-          text run at (712,0) width 47: "A caret"
-          text run at (758,0) width 5: " "
+          text run at (712,0) width 51: "A caret "
           text run at (0,18) width 180: "should be inside the red div."
       RenderBlock {DIV} at (30,66) size 152x20 [border: (1px solid #FF0000)]
         RenderBR {BR} at (1,1) size 0x18

@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 38x28
             RenderText {#text} at (24,15) size 38x28
               text run at (24,15) width 38: "\x{9}"
-          RenderBR {BR} at (62,14) size 0x28
+          RenderBR {BR} at (62,15) size 0x28
           RenderText {#text} at (14,45) size 12x28
             text run at (14,45) width 12: "x"
           RenderInline {SPAN} at (0,0) size 84x28

@@ -28,9 +28,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (199,66) size 0x18
       RenderBlock {DIV} at (0,232) size 191x56 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 191x56
-          text run at (0,0) width 4 RTL: " "
-          text run at (3,0) width 188 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+        RenderText {#text} at (-4,0) size 196x56
+          text run at (-4,0) width 195 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
           text run at (147,28) width 44 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
 layer at (8,178) size 199x62 clip at (9,179) size 197x60
   RenderTextControl {TEXTAREA} at (0,18) size 199x62 [bgcolor=#FFFFFF] [border: (1px solid #000000)]

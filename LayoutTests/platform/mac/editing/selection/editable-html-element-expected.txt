@@ -28,7 +28,6 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (515,0) size 1x18
       RenderText {#text} at (0,18) size 751x36
         text run at (0,18) width 527: "We set it inside the body because we don't want to allow editing outside the body. "
-        text run at (526,18) width 221: "This test also does some editing to"
-        text run at (746,18) width 5: " "
+        text run at (526,18) width 225: "This test also does some editing to "
         text run at (0,36) width 214: "make sure it happens in the body."
 caret: position 153 of child 3 {#text} of body

@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
             text run at (0,0) width 379: "This test passes if the caret is at the start of the second line."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,20) size 352x102 [border: (1px solid #0000FF)]
-        RenderText {#text} at (1,1) size 12x19
+        RenderText {#text} at (1,1) size 8x39
           text run at (1,1) width 8: "a"
-          text run at (8,1) width 5: " "
-        RenderText {#text} at (1,21) size 344x19
-          text run at (1,21) width 344: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          text run at (1,21) width 4: " "
+        RenderText {#text} at (5,21) size 344x19
+          text run at (5,21) width 344: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 caret: position 2 of child 0 {#text} of child 2 {DIV} of body

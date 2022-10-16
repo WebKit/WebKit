@@ -20,7 +20,8 @@ layer at (0,0) size 800x600
           text run at (89,18) width 157: "'link' should be selected."
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 46x18
-          text run at (0,0) width 46: "A new "
+          text run at (0,0) width 42: "A new"
+          text run at (41,0) width 5: " "
         RenderInline {A} at (0,0) size 26x18 [color=#0000EE]
           RenderText {#text} at (45,0) size 26x18
             text run at (45,0) width 26: "link"

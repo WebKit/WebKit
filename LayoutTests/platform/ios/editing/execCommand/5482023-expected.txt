@@ -5,10 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x571
       RenderBlock {H1} at (0,0) size 784x114
         RenderText {#text} at (0,1) size 778x112
-          text run at (0,1) width 720: "This tests for a bug when performing a FormatBlock"
-          text run at (719,1) width 9: " "
+          text run at (0,1) width 728: "This tests for a bug when performing a FormatBlock "
           text run at (0,39) width 511: "inside a body with no visible content. "
-          text run at (510,39) width 260: "This text should be"
-          text run at (769,39) width 9: " "
+          text run at (510,39) width 268: "This text should be "
           text run at (0,77) width 287: "inside an h1 element."
 caret: position 132 of child 0 {#text} of child 0 {H1} of body

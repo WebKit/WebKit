@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 760x36
-        text run at (0,0) width 760: "VisiblePositions created at [html, x] where html is non-editable should descend into an editable body, for convenience."
+      RenderText {#text} at (0,0) size 764x36
+        text run at (0,0) width 764: "VisiblePositions created at [html, x] where html is non-editable should descend into an editable body, for convenience. "
         text run at (0,18) width 278: "Everything on this page should be selected."
       RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of body

@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
           RenderImage {IMG} at (24,14) size 77x103
           RenderText {#text} at (100,95) size 47x28
             text run at (100,95) width 47: "new "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (146,95) size 1x28
           RenderImage {IMG} at (14,123) size 76x103
           RenderText {#text} at (90,204) size 104x28
             text run at (90,204) width 104: " conceived"

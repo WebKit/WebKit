@@ -16,15 +16,14 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x60
         RenderText {#text} at (0,1) size 764x58
-          text run at (0,1) width 758: "Test inserting paragraphs: should see a blue box with \"bar\" in it, and two blank"
-          text run at (757,1) width 7: " "
+          text run at (0,1) width 764: "Test inserting paragraphs: should see a blue box with \"bar\" in it, and two blank "
           text run at (0,31) width 292: "lines between \"foo\" and \"bar\"."
       RenderBlock {DIV} at (0,60) size 784x36
       RenderBlock (anonymous) at (0,96) size 784x90
         RenderInline {SPAN} at (0,0) size 32x28
           RenderText {#text} at (0,1) size 32x28
             text run at (0,1) width 32: "foo"
-        RenderBR {BR} at (31,0) size 1x28
+        RenderBR {BR} at (31,1) size 1x28
         RenderBR {BR} at (0,31) size 0x28
         RenderBR {BR} at (0,61) size 0x28
       RenderBlock {DIV} at (0,186) size 784x58 [border: (2px solid #0000FF)]
