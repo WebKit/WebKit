@@ -357,6 +357,8 @@ public:
     void dispatchDidReceiveInvalidMessage(MessageName);
 
     size_t pendingMessageCountForTesting() const;
+    void dispatchOnReceiveQueueForTesting(Function<void()>&&);
+
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
@@ -495,6 +497,7 @@ private:
     void initializeSendSource();
     void resumeSendSource();
     void cancelReceiveSource();
+    void cancelSendSource();
 
     mach_port_t m_sendPort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_sendSource;
@@ -503,7 +506,6 @@ private:
     OSObjectPtr<dispatch_source_t> m_receiveSource;
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
-    bool m_isInitializingSendSource { false };
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     bool m_wasKilled { false };

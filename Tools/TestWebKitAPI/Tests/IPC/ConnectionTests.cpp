@@ -24,12 +24,14 @@
  */
 
 #include "config.h"
+#include "WTFStringUtilities.h"
 #include "Connection.h"
 
 #include "ArgumentCoders.h"
 #include "Test.h"
 #include "Utilities.h"
 #include <optional>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
 
@@ -52,7 +54,6 @@ class MockConnectionClient final : public IPC::Connection::Client {
 public:
     ~MockConnectionClient()
     {
-        ASSERT(m_messages.isEmpty()); // Received unexpected messages.
     }
 
     Vector<MessageInfo> takeMessages()
@@ -126,7 +127,7 @@ private:
 
 }
 
-class ConnectionTest : public testing::Test {
+class SimpleConnectionTest : public testing::Test {
 public:
     void SetUp() override
     {
@@ -137,7 +138,7 @@ protected:
     MockConnectionClient m_mockClientClient;
 };
 
-TEST_F(ConnectionTest, CreateServerConnection)
+TEST_F(SimpleConnectionTest, CreateServerConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
@@ -145,7 +146,7 @@ TEST_F(ConnectionTest, CreateServerConnection)
     connection->invalidate();
 }
 
-TEST_F(ConnectionTest, CreateClientConnection)
+TEST_F(SimpleConnectionTest, CreateClientConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
@@ -153,7 +154,7 @@ TEST_F(ConnectionTest, CreateClientConnection)
     connection->invalidate();
 }
 
-TEST_F(ConnectionTest, ConnectLocalConnection)
+TEST_F(SimpleConnectionTest, ConnectLocalConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
@@ -165,26 +166,26 @@ TEST_F(ConnectionTest, ConnectLocalConnection)
     clientConnection->invalidate();
 }
 
-enum class ConnectionTestDirection {
-    ServerIsA,
-    ClientIsA
-};
-
-void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
+static void ensureConnectionWorkQueueEmpty(IPC::Connection& connection)
 {
-    if (value == ConnectionTestDirection::ServerIsA)
-        *o << "ServerIsA";
-    else if (value == ConnectionTestDirection::ClientIsA)
-        *o << "ClientIsA";
-    else
-        *o << "Unknown";
+    // FIXME: currently we have no real way to ensure that a work queue completes.
+    // On Cocoa this is a problem when exit() occurs while work queue is still cancelling
+    // the dispatch queue sources.
+    // To workaround for now, we dispatch one sync message to ensure invalidate is run to
+    // cancel the dispatch sources and one sync message to ensure that the cancel handler
+    // has run.
+    for (int i = 0; i < 2; ++i) {
+        BinarySemaphore semaphore;
+        connection.dispatchOnReceiveQueueForTesting([&semaphore] {
+            semaphore.signal();
+        });
+        semaphore.wait();
+    }
 }
 
-class OpenedConnectionTest : public testing::TestWithParam<std::tuple<ConnectionTestDirection>> {
+class ConnectionTestBase {
 public:
-    bool serverIsA() const { return std::get<0>(GetParam()) == ConnectionTestDirection::ServerIsA; }
-
-    void SetUp()
+    void setupBase()
     {
         WTF::initializeMainThread();
         auto identifiers = IPC::Connection::createConnectionIdentifierPair();
@@ -192,16 +193,37 @@ public:
             FAIL();
             return;
         }
-        m_connections[serverIsA() ? 0 : 1].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-        m_connections[serverIsA() ? 1 : 0].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+        m_connections[0].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
+        m_connections[1].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
     }
 
-    void TearDown()
+    void teardownBase()
     {
         for (auto& c : m_connections) {
-            if (c.connection)
+            if (c.connection) {
                 c.connection->invalidate();
+                ensureConnectionWorkQueueEmpty(*c.connection);
+            }
             c.connection = nullptr;
+        }
+        // Tests should handle all messages. Catch unexpected messages.
+        {
+            auto messages = aClient().takeMessages();
+            EXPECT_EQ(messages.size(), 0u);
+            for (uint64_t i = 0u; i < messages.size(); ++i) {
+                SCOPED_TRACE(makeString("A had unexpected message: ", i));
+                EXPECT_EQ(messages[i].messageName, static_cast<IPC::MessageName>(0xaaaa));
+                EXPECT_EQ(messages[i].destinationID, 0xddddddu);
+            }
+        }
+        {
+            auto messages = bClient().takeMessages();
+            EXPECT_EQ(messages.size(), 0u);
+            for (uint64_t i = 0u; i < messages.size(); ++i) {
+                SCOPED_TRACE(makeString("B had unexpected message message: ", i));
+                EXPECT_EQ(messages[i].messageName, static_cast<IPC::MessageName>(0xaaaa));
+                EXPECT_EQ(messages[i].destinationID, 0xddddddu);
+            }
         }
     }
 
@@ -269,7 +291,95 @@ protected:
     } m_connections[2];
 };
 
-TEST_P(OpenedConnectionTest, SendLocalMessage)
+class ConnectionTest : public testing::Test, protected ConnectionTestBase {
+public:
+    void SetUp() override
+    {
+        setupBase();
+    }
+    void TearDown() override
+    {
+        teardownBase();
+    }
+    auto openServer() { return openA(); }
+    auto openClient() { return openB(); }
+    auto* server() { return a(); }
+    auto* client() { return b(); }
+    auto& serverClient() { return aClient(); }
+    auto& clientClient() { return bClient(); }
+    void deleteServer() { deleteA(); }
+    void deleteClient() { deleteB(); }
+};
+
+// Explicit version of AInvalidateDeliversBDidClose that was flaky on Cocoa in scenario to
+//  1. Both connections open
+//  2. Client sends the initialization message with the mach port to use as server's send port
+//  3. Client is cancelled and the mach port destroyed
+//  4. Server receives the initialization message
+TEST_F(ConnectionTest, ClientInvalidateBeforeServerHandlesInitializationDeliversDidClose)
+{
+    ASSERT_TRUE(openServer());
+    // Simulation for scheduling for step 4: insert a wait after receive source has been
+    // resumed.
+    BinarySemaphore semaphore;
+    bool captureGuard = false;
+    server()->dispatchOnReceiveQueueForTesting([&semaphore, &captureGuard] {
+        semaphore.wait();
+        captureGuard = true;
+    });
+    ASSERT_TRUE(openClient());
+    Util::runFor(0.2_s); // Simulation for step 2. Give client time to send the initialization message.
+    client()->invalidate(); // Step 3.
+    semaphore.signal(); // Step 4.
+    ASSERT_FALSE(serverClient().gotDidClose());
+
+    // Test for the contract that did not work: invalidated on client causes didClose on server.
+    EXPECT_TRUE(serverClient().waitForDidClose(kDefaultWaitForTimeout));
+
+    // End of test. Ensure clean up for buggy cases.
+    EXPECT_FALSE(clientClient().gotDidClose());
+    Util::run(&captureGuard);
+}
+
+enum class ConnectionTestDirection {
+    ServerIsA,
+    ClientIsA
+};
+
+void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
+{
+    if (value == ConnectionTestDirection::ServerIsA)
+        *o << "ServerIsA";
+    else if (value == ConnectionTestDirection::ClientIsA)
+        *o << "ClientIsA";
+    else
+        *o << "Unknown";
+}
+
+
+// Test fixture for tests that are run two times:
+//  - Server as a(), and client as b()
+//  - Server as b() and client as a()
+// The setup and teardown of the Connection is not symmetric, so this fixture is useful to test various scenarios
+// around these.
+class ConnectionTestABBA : public testing::TestWithParam<std::tuple<ConnectionTestDirection>>, protected ConnectionTestBase {
+public:
+    bool serverIsA() const { return std::get<0>(GetParam()) == ConnectionTestDirection::ServerIsA; }
+
+    void SetUp() override
+    {
+        setupBase();
+        if (!serverIsA())
+            std::swap(m_connections[0].connection, m_connections[1].connection);
+    }
+
+    void TearDown() override
+    {
+        teardownBase();
+    }
+};
+
+TEST_P(ConnectionTestABBA, SendLocalMessage)
 {
     ASSERT_TRUE(openBoth());
 
@@ -284,12 +394,12 @@ TEST_P(OpenedConnectionTest, SendLocalMessage)
     }
     for (uint64_t i = 100u; i < 160u; ++i) {
         auto message = aClient().waitForMessage(kDefaultWaitForTimeout);
-        EXPECT_EQ(message.messageName, MockTestMessage1::name());
-        EXPECT_EQ(message.destinationID, i);
+        EXPECT_EQ(message.messageName, MockTestMessage1::name()) << " i:" << i;
+        EXPECT_EQ(message.destinationID, i) << " i:" << i;
     }
 }
 
-TEST_P(OpenedConnectionTest, AInvalidateDeliversBDidClose)
+TEST_P(ConnectionTestABBA, AInvalidateDeliversBDidClose)
 {
     ASSERT_TRUE(openBoth());
     a()->invalidate();
@@ -298,7 +408,7 @@ TEST_P(OpenedConnectionTest, AInvalidateDeliversBDidClose)
     EXPECT_FALSE(aClient().gotDidClose());
 }
 
-TEST_P(OpenedConnectionTest, AAndBInvalidateDoesNotDeliverDidClose)
+TEST_P(ConnectionTestABBA, AAndBInvalidateDoesNotDeliverDidClose)
 {
     ASSERT_TRUE(openBoth());
     a()->invalidate();
@@ -307,7 +417,7 @@ TEST_P(OpenedConnectionTest, AAndBInvalidateDoesNotDeliverDidClose)
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
 
-TEST_P(OpenedConnectionTest, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
+TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
 {
     ASSERT_TRUE(openB());
     a()->invalidate();
@@ -315,7 +425,7 @@ TEST_P(OpenedConnectionTest, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
 
-TEST_P(OpenedConnectionTest, IncomingMessageThrottlingWorks)
+TEST_P(ConnectionTestABBA, IncomingMessageThrottlingWorks)
 {
     const size_t testedCount = 2300;
     a()->enableIncomingMessagesThrottling();
@@ -354,7 +464,7 @@ TEST_P(OpenedConnectionTest, IncomingMessageThrottlingWorks)
 // in this scenario. Thus test the non-naive implementation where the throttled
 // connection schedules another dispatch function that ensures that nested
 // runloops will dispatch the throttled connection messages.
-TEST_P(OpenedConnectionTest, IncomingMessageThrottlingNestedRunLoopDispatches)
+TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
 {
     const size_t testedCount = 2300;
     a()->enableIncomingMessagesThrottling();
@@ -407,7 +517,7 @@ TEST_P(OpenedConnectionTest, IncomingMessageThrottlingNestedRunLoopDispatches)
 }
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
-    OpenedConnectionTest,
+    ConnectionTestABBA,
     testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
     TestParametersToStringFormatter());
 

@@ -1088,6 +1088,11 @@ size_t Connection::pendingMessageCountForTesting() const
     return m_incomingMessages.size();
 }
 
+void Connection::dispatchOnReceiveQueueForTesting(Function<void()>&& completionHandler)
+{
+    m_connectionQueue->dispatch(WTFMove(completionHandler));
+}
+
 void Connection::didFailToSendSyncMessage()
 {
     if (!m_shouldExitOnSyncMessageSendFailure)
