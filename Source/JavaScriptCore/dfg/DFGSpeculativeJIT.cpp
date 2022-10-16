@@ -140,7 +140,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
         allocator = allocatorForConcurrently<JSFinalObject>(vm, JSFinalObject::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
     if (allocator) {
         emitAllocateJSObject(resultGPR, JITAllocator::constant(allocator), scratchGPR, TrustedImmPtr(structure), storageGPR, scratch2GPR, slowCases);
-        m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
+        m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity(), scratchGPR);
     } else
         slowCases.append(m_jit.jump());
 
@@ -152,30 +152,16 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
         structure, vectorLength));
 
     if (numElements < vectorLength) {
-#if USE(JSVALUE64)
         if (hasDouble(structure->indexingType()))
-            m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
+            m_jit.emitFillStorageWithDoubleEmpty(storageGPR, sizeof(double) * numElements, vectorLength - numElements, scratchGPR);
         else
-            m_jit.move(TrustedImm64(JSValue::encode(JSValue())), scratchGPR);
-        for (unsigned i = numElements; i < vectorLength; ++i)
-            m_jit.store64(scratchGPR, MacroAssembler::Address(storageGPR, sizeof(double) * i));
-#else
-        EncodedValueDescriptor value;
-        if (hasDouble(structure->indexingType()))
-            value.asInt64 = JSValue::encode(JSValue(JSValue::EncodeAsDouble, PNaN));
-        else
-            value.asInt64 = JSValue::encode(JSValue());
-        for (unsigned i = numElements; i < vectorLength; ++i) {
-            m_jit.store32(TrustedImm32(value.asBits.tag), MacroAssembler::Address(storageGPR, sizeof(double) * i + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-            m_jit.store32(TrustedImm32(value.asBits.payload), MacroAssembler::Address(storageGPR, sizeof(double) * i + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-        }
-#endif
+            m_jit.emitFillStorageWithJSEmpty(storageGPR, sizeof(EncodedJSValue) * numElements, vectorLength - numElements, scratchGPR);
     }
     
     if (hasIndexingHeader)
         m_jit.store32(TrustedImm32(numElements), MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
     
-    m_jit.emitInitializeOutOfLineStorage(storageGPR, structure->outOfLineCapacity());
+    m_jit.emitInitializeOutOfLineStorage(storageGPR, structure->outOfLineCapacity(), scratchGPR);
     
     m_jit.mutatorFence(vm);
 }
@@ -15242,7 +15228,7 @@ void SpeculativeJIT::compileNewObject(Node* node)
     else {
         auto butterfly = TrustedImmPtr(nullptr);
         emitAllocateJSObject(resultGPR, JITAllocator::constant(allocatorValue), allocatorGPR, TrustedImmPtr(structure), butterfly, scratchGPR, slowPath);
-        m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
+        m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity(), scratchGPR);
         m_jit.mutatorFence(vm());
     }
 

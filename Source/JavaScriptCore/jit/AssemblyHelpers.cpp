@@ -356,8 +356,7 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
 {
     const Structure* structurePtr = reinterpret_cast<const Structure*>(structure.m_value);
 #if USE(JSVALUE64)
-    jit.store32(TrustedImm32(structurePtr->id().bits()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-    jit.store32(TrustedImm32(structurePtr->typeInfoBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
+    jit.store64(TrustedImm64(static_cast<uint64_t>(structurePtr->id().bits()) | (static_cast<uint64_t>(structurePtr->typeInfoBlob()) << 32)), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
     if (ASSERT_ENABLED) {
         Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id().bits()));
         jit.abortWithReason(AHStructureIDIsValid);
@@ -626,9 +625,15 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     done = jump();
         
     popPath.link(this);
-        
-    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
-    xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
+
+    ASSERT(static_cast<ptrdiff_t>(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead() + sizeof(void*)) == static_cast<ptrdiff_t>(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()));
+    if constexpr (isARM64()) {
+        loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR, scratchGPR);
+        xorPtr(scratchGPR, resultGPR);
+    } else {
+        loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
+        xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
+    }
     slowPath.append(branchTestPtr(Zero, resultGPR));
         
     // The object is half-allocated: we have what we know is a fresh object, but

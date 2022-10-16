@@ -951,6 +951,23 @@ public:
         }
     }
 
+    void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64(src, TrustedImm32(0), dest1, dest2);
+    }
+
+    void loadPair64(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
+    {
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (src == dest1) {
+            load64(Address(src, offset.m_value + 8), dest2);
+            load64(Address(src, offset.m_value), dest1);
+        } else {
+            load64(Address(src, offset.m_value), dest1);
+            load64(Address(src, offset.m_value + 8), dest2);
+        }
+    }
+
     DataLabel32 load64WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         padBeforePatch();
@@ -1032,6 +1049,17 @@ public:
     {
         move(imm, scratchRegister());
         m_assembler.movq_rm(scratchRegister(), address.offset, address.base, address.index, address.scale);
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        storePair64(src1, src2, dest, TrustedImm32(0));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        store64(src1, Address(dest, offset.m_value));
+        store64(src2, Address(dest, offset.m_value + 8));
     }
 
     void transfer64(Address src, Address dest)
