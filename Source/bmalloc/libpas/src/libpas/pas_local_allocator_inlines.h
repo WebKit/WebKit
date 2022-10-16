@@ -34,6 +34,7 @@
 #include "pas_debug_heap.h"
 #include "pas_epoch.h"
 #include "pas_full_alloc_bits_inlines.h"
+#include "pas_malloc_stack_logging.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_exclusive_view_inlines.h"
 #include "pas_segregated_size_directory_inlines.h"

@@ -30,6 +30,7 @@
 #include "pas_deallocate.h"
 
 #include "pas_debug_heap.h"
+#include "pas_malloc_stack_logging.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_page_inlines.h"
 
@@ -106,6 +107,7 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
         pas_debug_heap_free(ptr);
         return true;
     }
+    pas_msl_free_logging(ptr);
 
     if (verbose)
         pas_log("Deallocating %p normally.\n", ptr);

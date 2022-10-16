@@ -35,6 +35,7 @@
 #include "pas_internal_config.h"
 #include "pas_local_allocator.h"
 #include "pas_local_allocator_result.h"
+#include "pas_malloc_stack_logging.h"
 #include "pas_segregated_page_config_kind_and_role.h"
 #include "pas_utils.h"
 #include <pthread.h>
@@ -106,7 +107,7 @@ static inline pas_thread_local_cache* pas_thread_local_cache_try_get(void)
 static inline bool pas_thread_local_cache_can_set(void)
 {
 #if PAS_OS(DARWIN)
-    return !pthread_self_is_exiting_np();
+    return !pthread_self_is_exiting_np() && !pas_msl_is_enabled();
 #else
     return ((uintptr_t)pas_thread_local_cache_try_get_impl()) != PAS_THREAD_LOCAL_CACHE_DESTROYED;
 #endif
