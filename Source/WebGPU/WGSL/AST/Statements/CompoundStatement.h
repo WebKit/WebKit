@@ -31,18 +31,19 @@ namespace WGSL::AST {
 
 class CompoundStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    CompoundStatement(SourceSpan span, Vector<UniqueRef<Statement>>&& statements)
+    CompoundStatement(SourceSpan span, Statement::List&& statements)
         : Statement(span)
         , m_statements(WTFMove(statements))
     {
     }
 
     Kind kind() const override { return Kind::Compound; }
-    Vector<UniqueRef<Statement>>& statements() { return m_statements; }
+    Statement::List& statements() { return m_statements; }
 
 private:
-    Vector<UniqueRef<Statement>> m_statements;
+    Statement::List m_statements;
 };
 
 } // namespace WGSL::AST

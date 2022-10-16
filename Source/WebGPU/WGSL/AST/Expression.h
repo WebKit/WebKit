@@ -26,12 +26,15 @@
 #pragma once
 
 #include "ASTNode.h"
+
 #include <wtf/TypeCasts.h>
+#include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
 class Expression : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     enum class Kind {
         BoolLiteral,
@@ -47,6 +50,8 @@ public:
         UnaryExpression,
     };
 
+    using List = UniqueRefVector<Expression>;
+
     Expression(SourceSpan span)
         : ASTNode(span)
     {
@@ -54,7 +59,7 @@ public:
 
     virtual ~Expression() {}
 
-    virtual Kind kind() const  = 0;
+    virtual Kind kind() const = 0;
     bool isBoolLiteral() const { return kind() == Kind::BoolLiteral; }
     bool isInt32Literal() const { return kind() == Kind::Int32Literal; }
     bool isUInt32Literal() const { return kind() == Kind::Uint32Literal; }

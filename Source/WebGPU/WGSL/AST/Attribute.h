@@ -26,14 +26,17 @@
 #pragma once
 
 #include "ASTNode.h"
-#include <wtf/text/StringView.h>
+
 #include <wtf/UniqueRef.h>
+#include <wtf/UniqueRefVector.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
 class Attribute : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     enum class Kind {
         Group,
@@ -43,6 +46,8 @@ public:
         Builtin,
     };
 
+    using List = UniqueRefVector<Attribute, 2>;
+
     Attribute(SourceSpan span)
         : ASTNode(span)
     {
@@ -50,7 +55,7 @@ public:
 
     virtual ~Attribute() {};
 
-    virtual Kind kind() const = 0 ;
+    virtual Kind kind() const = 0;
     bool isGroup() const { return kind() == Kind::Group; }
     bool isBinding() const { return kind() == Kind::Binding; }
     bool isStage() const { return kind() == Kind::Stage; }
@@ -60,6 +65,7 @@ public:
 
 class GroupAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     GroupAttribute(SourceSpan span, unsigned group)
         : Attribute(span)
@@ -76,6 +82,7 @@ private:
 
 class BindingAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     BindingAttribute(SourceSpan span, unsigned binding)
         : Attribute(span)
@@ -92,6 +99,7 @@ private:
 
 class StageAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     enum class Stage : uint8_t {
         Compute,
@@ -114,6 +122,7 @@ private:
 
 class BuiltinAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     BuiltinAttribute(SourceSpan span, StringView name)
         : Attribute(span)
@@ -130,6 +139,7 @@ private:
 
 class LocationAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     LocationAttribute(SourceSpan span, unsigned value)
         : Attribute(span)
@@ -144,8 +154,6 @@ private:
     unsigned m_value;
 };
 
-using Attributes = Vector<UniqueRef<Attribute>, 2>;
-
 } // namespace WGSL::AST
 
 #define SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(ToValueTypeName, predicate) \
@@ -158,4 +166,3 @@ SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(BindingAttribute, isBinding())
 SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(StageAttribute, isStage())
 SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(LocationAttribute, isLocation())
 SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(BuiltinAttribute, isBuiltin())
-

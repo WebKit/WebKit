@@ -41,6 +41,8 @@ public:
         Variable,
     };
 
+    using List = UniqueRefVector<Statement>;
+
     Statement(SourceSpan span)
         : ASTNode(span)
     {

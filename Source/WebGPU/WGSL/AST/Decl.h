@@ -26,18 +26,23 @@
 #pragma once
 
 #include "ASTNode.h"
+
 #include <wtf/TypeCasts.h>
+#include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
 class Decl : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     enum class Kind {
         Variable,
         Struct,
         Function,
     };
+
+    using List = UniqueRefVector<Decl>;
 
     Decl(SourceSpan span)
         : ASTNode(span)

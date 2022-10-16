@@ -30,17 +30,19 @@
 #include "CompilationMessage.h"
 #include "Decl.h"
 #include "TypeDecl.h"
-#include <wtf/text/StringView.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
-
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
 class StructMember final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
+    using List = UniqueRefVector<StructMember>;
+
+    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
         : ASTNode(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -50,18 +52,21 @@ public:
 
     const StringView& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
-    Attributes& attributes() { return m_attributes; }
+    Attribute::List& attributes() { return m_attributes; }
 
 private:
     StringView m_name;
-    Attributes m_attributes;
+    Attribute::List m_attributes;
     UniqueRef<TypeDecl> m_type;
 };
 
 class StructDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members, Attributes&& attributes)
+    using List = UniqueRefVector<StructDecl>;
+
+    StructDecl(SourceSpan sourceSpan, StringView name, StructMember::List&& members, Attribute::List&& attributes)
         : Decl(sourceSpan)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -71,13 +76,13 @@ public:
 
     Kind kind() const override { return Kind::Struct; }
     const StringView& name() const { return m_name; }
-    Attributes& attributes() { return m_attributes; }
-    Vector<UniqueRef<StructMember>>& members() { return m_members; }
+    Attribute::List& attributes() { return m_attributes; }
+    StructMember::List& members() { return m_members; }
 
 private:
     StringView m_name;
-    Attributes m_attributes;
-    Vector<UniqueRef<StructMember>> m_members;
+    Attribute::List m_attributes;
+    StructMember::List m_members;
 };
 
 } // namespace WGSL::AST

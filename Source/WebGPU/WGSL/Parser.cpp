@@ -117,7 +117,7 @@ Expected<AST::ShaderModule, Error> parse(const String& wgsl)
 {
     Lexer lexer(wgsl);
     Parser parser(lexer);
-    
+
     return parser.parseShader();
 }
 
@@ -153,10 +153,10 @@ Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader()
 {
     START_PARSE();
 
-    Vector<UniqueRef<AST::GlobalDirective>> directives;
+    AST::GlobalDirective::List directives;
     // FIXME: parse directives here.
 
-    Vector<UniqueRef<AST::Decl>> decls;
+    AST::Decl::List decls;
     while (!m_lexer.isAtEndOfFile()) {
         PARSE(globalDecl, GlobalDecl)
         decls.append(WTFMove(globalDecl));
@@ -192,9 +192,9 @@ Expected<UniqueRef<AST::Decl>, Error> Parser<Lexer>::parseGlobalDecl()
 }
 
 template<typename Lexer>
-Expected<AST::Attributes, Error> Parser<Lexer>::parseAttributes()
+Expected<AST::Attribute::List, Error> Parser<Lexer>::parseAttributes()
 {
-    AST::Attributes attributes;
+    AST::Attribute::List attributes;
 
     while (current().m_type == TokenType::Attribute) {
         PARSE(firstAttribute, Attribute);
@@ -255,7 +255,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
 }
 
 template<typename Lexer>
-Expected<AST::StructDecl, Error> Parser<Lexer>::parseStructDecl(AST::Attributes&& attributes)
+Expected<AST::StructDecl, Error> Parser<Lexer>::parseStructDecl(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -263,7 +263,7 @@ Expected<AST::StructDecl, Error> Parser<Lexer>::parseStructDecl(AST::Attributes&
     CONSUME_TYPE_NAMED(name, Identifier);
     CONSUME_TYPE(BraceLeft);
 
-    Vector<UniqueRef<AST::StructMember>> members;
+    AST::StructMember::List members;
     while (current().m_type != TokenType::BraceRight) {
         PARSE(member, StructMember);
         members.append(makeUniqueRef<AST::StructMember>(WTFMove(member)));
@@ -368,11 +368,11 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseArrayType()
 template<typename Lexer>
 Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDecl()
 {
-    return parseVariableDeclWithAttributes(AST::Attributes { });
+    return parseVariableDeclWithAttributes(AST::Attribute::List { });
 }
 
 template<typename Lexer>
-Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDeclWithAttributes(AST::Attributes&& attributes)
+Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDeclWithAttributes(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -475,7 +475,7 @@ Expected<AST::AccessMode, Error> Parser<Lexer>::parseAccessMode()
 }
 
 template<typename Lexer>
-Expected<AST::FunctionDecl, Error> Parser<Lexer>::parseFunctionDecl(AST::Attributes&& attributes)
+Expected<AST::FunctionDecl, Error> Parser<Lexer>::parseFunctionDecl(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -483,14 +483,14 @@ Expected<AST::FunctionDecl, Error> Parser<Lexer>::parseFunctionDecl(AST::Attribu
     CONSUME_TYPE_NAMED(name, Identifier);
 
     CONSUME_TYPE(ParenLeft);
-    Vector<UniqueRef<AST::Parameter>> parameters;
+    AST::Parameter::List parameters;
     while (current().m_type != TokenType::ParenRight) {
         PARSE(parameter, Parameter);
         parameters.append(makeUniqueRef<AST::Parameter>(WTFMove(parameter)));
     }
     CONSUME_TYPE(ParenRight);
 
-    AST::Attributes returnAttributes;
+    AST::Attribute::List returnAttributes;
     std::unique_ptr<AST::TypeDecl> maybeReturnType = nullptr;
     if (current().m_type == TokenType::Arrow) {
         consume();
@@ -530,7 +530,7 @@ Expected<UniqueRef<AST::Statement>, Error> Parser<Lexer>::parseStatement()
     }
     case TokenType::Semicolon: {
         consume();
-        Vector<UniqueRef<AST::Statement>> statements;
+        AST::Statement::List statements;
         return { makeUniqueRef<AST::CompoundStatement>(CURRENT_SOURCE_SPAN(), WTFMove(statements)) };
     }
     case TokenType::KeywordReturn: {
@@ -563,7 +563,7 @@ Expected<AST::CompoundStatement, Error> Parser<Lexer>::parseCompoundStatement()
 
     CONSUME_TYPE(BraceLeft);
 
-    Vector<UniqueRef<AST::Statement>> statements;
+    AST::Statement::List statements;
     while (current().m_type != TokenType::BraceRight) {
         PARSE(stmt, Statement);
         statements.append(WTFMove(stmt));
@@ -793,12 +793,12 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseCoreLHSExpressio
 }
 
 template<typename Lexer>
-Expected<Vector<UniqueRef<AST::Expression>>, Error> Parser<Lexer>::parseArgumentExpressionList()
+Expected<AST::Expression::List, Error> Parser<Lexer>::parseArgumentExpressionList()
 {
     START_PARSE();
     CONSUME_TYPE(ParenLeft);
 
-    Vector<UniqueRef<AST::Expression>> arguments;
+    AST::Expression::List arguments;
     while (current().m_type != TokenType::ParenRight) {
         PARSE(expr, Expression);
         arguments.append(WTFMove(expr));

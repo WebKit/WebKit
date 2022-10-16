@@ -37,8 +37,11 @@ namespace WGSL::AST {
 
 class VariableDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    VariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
+    using List = UniqueRefVector<VariableDecl>;
+
+    VariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attribute::List&& attributes)
         : Decl(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -51,14 +54,14 @@ public:
 
     Kind kind() const override { return Kind::Variable; }
     const StringView& name() const { return m_name; }
-    Attributes& attributes() { return m_attributes; }
+    Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
     TypeDecl* maybeTypeDecl() { return m_type.get(); }
     Expression* maybeInitializer() { return m_initializer.get(); }
 
 private:
     StringView m_name;
-    Attributes m_attributes;
+    Attribute::List m_attributes;
     // Each of the following may be null
     // But at least one of type and initializer must be non-null
     std::unique_ptr<VariableQualifier> m_qualifier;

@@ -32,7 +32,10 @@ namespace WGSL::AST {
 
 class GlobalDirective : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
+    using List = UniqueRefVector<GlobalDirective>;
+
     GlobalDirective(SourceSpan span, StringView name)
         : ASTNode(span)
         , m_name(name)

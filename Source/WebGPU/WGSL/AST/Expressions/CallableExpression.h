@@ -38,8 +38,9 @@ namespace WGSL::AST {
 // kind of expression can only be resolved during semantic analysis.
 class CallableExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Vector<UniqueRef<Expression>>&& arguments)
+    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Expression::List&& arguments)
         : Expression(span)
         , m_target(WTFMove(target))
         , m_arguments(WTFMove(arguments))
@@ -48,15 +49,7 @@ public:
 
     Kind kind() const override { return Kind::CallableExpression; }
     const TypeDecl& target() const { return m_target; }
-    Vector<std::reference_wrapper<const Expression>> arguments() const 
-    {
-        Vector<std::reference_wrapper<const Expression>> arguments;
-
-        for (const auto& argument : m_arguments)
-            arguments.append(std::cref(argument.get()));
-
-        return arguments;
-    }
+    const Expression::List& arguments() const { return m_arguments; }
 
 private:
     // If m_target is a NamedType, it could either be a:
@@ -64,7 +57,7 @@ private:
     //   * Identifier that refers to a type alias.
     //   * Identifier that refers to a function.
     UniqueRef<TypeDecl> m_target;
-    Vector<UniqueRef<Expression>> m_arguments;
+    Expression::List m_arguments;
 };
 
 } // namespace WGSL::AST

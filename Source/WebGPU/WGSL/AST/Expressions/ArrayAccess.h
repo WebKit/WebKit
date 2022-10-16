@@ -41,8 +41,8 @@ public:
     }
 
     Kind kind() const override { return Kind::ArrayAccess; }
-    UniqueRef<Expression>& base() { return m_base; }
-    UniqueRef<Expression>& index() { return m_index; }
+    Expression& base() { return m_base.get(); }
+    Expression& index() { return m_index.get(); }
 
 private:
     UniqueRef<Expression> m_base;
