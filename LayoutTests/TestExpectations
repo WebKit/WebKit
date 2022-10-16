@@ -3757,7 +3757,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-weig
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-weight-default-variable.html [ ImageOnlyFailure ]
 
 # Triaged css-fonts failures
-webkit.org/b/246565 imported/w3c/web-platform-tests/css/css-fonts/font-palette-21.html [ ImageOnlyFailure ]
 webkit.org/b/246564 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-small-caps-not-applied.html [ ImageOnlyFailure ]
 
 # vert font feature in vertical-text
