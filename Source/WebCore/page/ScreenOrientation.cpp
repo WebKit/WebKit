@@ -28,6 +28,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"

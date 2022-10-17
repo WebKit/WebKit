@@ -26,7 +26,9 @@
 #include "config.h"
 #include "AbstractFrame.h"
 
+#include "DocumentInlines.h"
 #include "HTMLFrameOwnerElement.h"
+#include "Page.h"
 #include "WindowProxy.h"
 
 namespace WebCore {

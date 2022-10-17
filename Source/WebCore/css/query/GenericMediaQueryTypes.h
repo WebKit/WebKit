@@ -26,6 +26,7 @@
 
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore::MQ {

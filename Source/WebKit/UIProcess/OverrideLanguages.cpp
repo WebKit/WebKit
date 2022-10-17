@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "OverrideLanguages.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 

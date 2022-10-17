@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "NumberPredictionFuzzerAgent.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace JSC {
 
