@@ -79,18 +79,47 @@ function getPropertyCSSValue(elementId, property)
     return style.getPropertyValue(property);
 }
 
+function initTransitionOnElement(elementId)
+{
+    let element = document.getElementById(elementId);
+    element.className += " go";
+    for (let animation of element.getAnimations()) {
+        if (animation instanceof CSSTransition && animation.transitionProperty == "width") {
+            animation.pause();
+        }
+    }
+}
+
 function runTest(expected)
 {
     let result = document.getElementById("result");
-    for (let i = 0; i < expected.length; i++) {
+
+    initTransitionOnElement("outer");
+    for (let i = 0; i < 5; i++) {
         let [time, elementId, property, expectedValue, dependsOn] = expected[i];
-        let elem = (i < 5) ? dependsOn : elementId;
-        pauseTransitionAtTimeOnElement(property, time, document.getElementById(elem));
+
+        pauseTransitionAtTimeOnElement(property, time, document.getElementById(dependsOn));
         let actual = Number.parseFloat(getPropertyCSSValue(elementId, property));
+
         if (actual == expectedValue)
-            result.innerHTML += 'PASS - "' + property + '" property for "' + elementId +'" element at ' + time + 's was: ' + actual + '<br/>';
+            result.innerHTML += `PASS - "${property}" property for "${elementId}" element at ${time}s was: ${actual}<br/>`;
         else
-            result.innerHTML += 'FAIL - "' + property + '" property for "' + elementId +'" element at ' + time + 's expected: ' + expectedValue + ' but saw: ' + actual + '<br/>';
+            result.innerHTML += `FAIL - "${property}" property for "${elementId}" element at ${time}s expected ${expectedValue} but saw: ${actual}<br/>`;
+
+    }
+
+    initTransitionOnElement("innerTransition");
+    for (let i = 5; i < expected.length; i++) {
+        let [time, elementId, property, expectedValue, dependsOn] = expected[i];
+
+        pauseTransitionAtTimeOnElement(property, time, document.getElementById(elementId));
+        let actual = Number.parseFloat(getPropertyCSSValue(elementId, property));
+
+        if (actual == expectedValue)
+            result.innerHTML += `PASS - "${property}" property for "${elementId}" element at ${time}s was: ${actual}<br/>`;
+        else
+            result.innerHTML += `FAIL - "${property}" property for "${elementId}" element at ${time}s expected ${expectedValue} but saw: ${actual}<br/>`;
+
     }
     if (window.testRunner)
         testRunner.notifyDone();
@@ -99,11 +128,6 @@ function runTest(expected)
 function loadListener()
 {
     waitForAnimationStart(function(){runTest(expectedValues);});
-}
-
-for (let each of transitioningElements) {
-    let element = document.getElementById(each);
-    element.className += " go";
 }
 
 window.addEventListener("load", loadListener, false);
