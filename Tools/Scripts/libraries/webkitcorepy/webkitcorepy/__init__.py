@@ -35,7 +35,6 @@ from webkitcorepy.timeout import Timeout
 from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run, Thread
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 from webkitcorepy.task_pool import TaskPool
-from webkitcorepy.timer import Timer
 from webkitcorepy.terminal import Terminal
 from webkitcorepy.environment import Environment
 from webkitcorepy.credentials import credentials, delete_credentials
@@ -46,7 +45,7 @@ from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 from webkitcorepy.null_context import NullContext
 
-version = Version(0, 13, 19)
+version = Version(0, 13, 18)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

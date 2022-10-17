@@ -27,7 +27,7 @@ import sys
 if not sys.platform.startswith('win'):
     import readline
 
-from webkitcorepy import StringIO, run, Timer
+from webkitcorepy import StringIO, run
 
 if sys.version_info > (3, 0):
     file = io.IOBase
@@ -37,30 +37,17 @@ class Terminal(object):
     _atty_overrides = {}
     colors = True
     URL_PREFIXES = ('file://', 'http://', 'https://', 'radar://', 'rdar://')
-    RING_INTERVAL = 30
 
     @classmethod
     def input(cls, *args, **kwargs):
-        alert_after = kwargs.pop('alert_after', None)
-
         try:
-            if alert_after and cls.isatty(sys.stdout):
-                with Timer(alert_after, lambda: cls.ring(sys.stdout)):
-                    return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
-            else:
-                return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+            return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
         except KeyboardInterrupt:
             sys.stderr.write('\nUser interrupted program\n')
             sys.exit(1)
 
     @classmethod
-    def ring(cls, file=sys.stdout):
-        if file:
-            file.write('\a')
-            file.flush()
-
-    @classmethod
-    def choose(cls, prompt, options=None, default=None, strict=False, numbered=False, alert_after=RING_INTERVAL):
+    def choose(cls, prompt, options=None, default=None, strict=False, numbered=False):
         options = options or ('Yes', 'No')
 
         response = None
@@ -76,7 +63,7 @@ class Terminal(object):
                     '[{}]'.format(option) if option == default else option for option in options
                 ])))
             sys.stdout.flush()
-            response = cls.input(': ', alert_after=alert_after)
+            response = cls.input(': ')
 
             if numbered and response.isdigit():
                 index = int(response) - 1
@@ -101,7 +88,7 @@ class Terminal(object):
         if not isinstance(target, (io.IOBase, file, StringIO)):
             raise ValueError('{} is not an IO object'.format(target))
         if not isinstance(target, StringIO) and not (getattr(target, 'writable', None) and target.writable()) and 'w' not in getattr(target, 'mode', 'r'):
-            raise ValueError('{} is an IO object, but is not writable'.format(target))
+            raise ValueError('{} is an IO object, but is not writable {}'.format(target, ))
 
     @classmethod
     def supports_color(cls, file):
@@ -139,7 +126,7 @@ class Terminal(object):
                 cls._atty_overrides[key] = previous
 
     @classmethod
-    def open_url(cls, url, prompt=None, alert_after=RING_INTERVAL):
+    def open_url(cls, url, prompt=None):
         if all(not url.startswith(prefix) for prefix in cls.URL_PREFIXES):
             sys.stderr.write("'{}' is not a valid URL\n")
             return False
@@ -148,7 +135,7 @@ class Terminal(object):
 
         if prompt:
             try:
-                cls.input(prompt, alert_after=alert_after)
+                cls.input(prompt)
             except SystemExit:
                 sys.stderr.write('User aborted URL open\n')
                 return False
