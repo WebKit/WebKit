@@ -518,6 +518,10 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
         if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
+    case CachedResource::Type::LinkPrefetch:
+        if (!m_document->contentSecurityPolicy()->allowPrefetchFromSource(url, redirectResponseReceived, preRedirectURL))
+            return false;
+        break;
     case CachedResource::Type::SVGFontResource:
     case CachedResource::Type::FontResource:
         if (!m_document->contentSecurityPolicy()->allowFontFromSource(url, redirectResponseReceived, preRedirectURL))
