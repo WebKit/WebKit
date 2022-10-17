@@ -5261,3 +5261,16 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class DeleteStaleBuildFiles(shell.ShellCommand):
+    name = 'delete-stale-build-files'
+    description = ['Deleting stale build files']
+    descriptionDone = ['Deleted stale build files']
+    command = ['python3', 'Tools/CISupport/delete-stale-build-files', WithProperties('--platform=%(fullPlatform)s')]
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+
+    def __init__(self, **kwargs):
+        super(DeleteStaleBuildFiles, self).__init__(logEnviron=False, timeout=600, **kwargs)
