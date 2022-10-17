@@ -1801,6 +1801,17 @@
    },
    {
       "emails" : [
+         "jalkut@red-sweater.com"
+      ],
+      "github" : "danielpunkass",
+      "name" : "Daniel Jalkut",
+      "nicks" : [
+         "danielpunkass",
+         "dcj"
+      ]
+   },
+   {
+      "emails" : [
          "sievers@chromium.org"
       ],
       "name" : "Daniel Sievers"
