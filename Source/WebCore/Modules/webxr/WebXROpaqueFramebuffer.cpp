@@ -191,6 +191,11 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     if (!m_multisampleColorBuffer)
         gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
 #endif
+
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+    m_completionEvent = gCGL->newSharedEventWithMachPort(data.completionPort.sendRight());
+    m_renderingFrameIndex = data.renderingFrameIndex;
+#endif
 }
 
 void WebXROpaqueFramebuffer::endFrame()
@@ -228,11 +233,24 @@ void WebXROpaqueFramebuffer::endFrame()
         gl.blitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::NEAREST);
     }
 
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+    if (m_completionEvent) {
+        auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
+        auto completionSync = gCGL->createSyncWithSharedEvent(m_completionEvent, m_renderingFrameIndex);
+        ASSERT(completionSync);
+        constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
+        gCGL->clientWaitSyncWithFlush(completionSync, kTimeout);
+        gCGL->destroySync(completionSync);
+    } else
+        gl.finish();
+#else
     // FIXME: We have to call finish rather than flush because we only want to disconnect
     // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
     // It might be possible to set this up so the completion of the rendering triggers
     // the endFrame call.
     gl.finish();
+#endif
+
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     if (m_ioSurfaceTextureHandle) {

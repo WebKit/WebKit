@@ -67,6 +67,12 @@ public:
     IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
     void detachIOSurfaceFromSharedTexture(void* handle);
 #endif
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+    RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
+    void* createSyncWithSharedEvent(const RetainPtr<id>& sharedEvent, uint64_t signalValue);
+    bool destroySync(void* sync);
+    void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
+#endif
 
     // GraphicsContextGLANGLE overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;

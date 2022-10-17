@@ -30,6 +30,7 @@
 #include "GraphicsTypesGL.h"
 
 typedef struct __IOSurface *IOSurfaceRef;
+OBJC_PROTOCOL(MTLSharedEvent);
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ void* createPbufferAndAttachIOSurface(GCGLDisplay, GCGLConfig, GCGLenum target, 
 
 void destroyPbufferAndDetachIOSurface(GCGLDisplay, void* handle);
 
+RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay, mach_port_t);
 }
 
 #endif

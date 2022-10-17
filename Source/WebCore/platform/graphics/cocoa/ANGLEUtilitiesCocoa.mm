@@ -30,6 +30,8 @@
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
 #include "Logging.h"
+#include <Metal/Metal.h>
+#include <pal/spi/cocoa/MetalSPI.h>
 #include <wtf/darwin/WeakLinking.h>
 
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
@@ -76,6 +78,20 @@ void destroyPbufferAndDetachIOSurface(EGLDisplay display, void* handle)
 {
     EGL_ReleaseTexImage(display, handle, EGL_BACK_BUFFER);
     EGL_DestroySurface(display, handle);
+}
+
+RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(EGLDisplay display, mach_port_t machPort)
+{
+    // FIXME: Check for invalid mach_port_t
+    EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
+        return RetainPtr<MTLSharedEvent>();
+
+    id<MTLDevice> mtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(device, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
+        return RetainPtr<MTLSharedEvent>();
+
+    return adoptNS([(id<MTLDeviceSPI>)mtlDevice newSharedEventWithMachPort:machPort]);
 }
 
 }
