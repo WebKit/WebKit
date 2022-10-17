@@ -153,6 +153,8 @@ std::optional<ProcessAssertionType> ProcessThrottler::assertionTypeForState(Proc
     case ProcessThrottleState::Suspended:
         return m_shouldTakeSuspendedAssertion ? std::optional(ProcessAssertionType::Suspended) : std::nullopt;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
