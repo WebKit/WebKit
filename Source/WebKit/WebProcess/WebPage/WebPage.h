@@ -1366,7 +1366,7 @@ public:
     void getTextFragmentMatch(CompletionHandler<void(const String&)>&&);
 
 #if USE(WPE_RENDERER)
-    int hostFileDescriptor() const { return m_hostFileDescriptor.fd().value(); }
+    int hostFileDescriptor() const { return m_hostFileDescriptor.value(); }
 #endif
 
     void updateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers);
@@ -2444,7 +2444,7 @@ private:
     const std::optional<double> m_cpuLimit;
 
 #if USE(WPE_RENDERER)
-    IPC::Attachment m_hostFileDescriptor;
+    UnixFileDescriptor m_hostFileDescriptor;
 #endif
 
     HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;

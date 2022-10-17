@@ -172,7 +172,7 @@ private:
     bool effectiveAppearanceIsDark() const override;
 
 #if USE(WPE_RENDERER)
-    IPC::Attachment hostFileDescriptor() override;
+    UnixFileDescriptor hostFileDescriptor() override;
 #endif
 
     void didChangeWebPageID() const override;

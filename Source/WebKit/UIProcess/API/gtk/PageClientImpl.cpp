@@ -591,9 +591,9 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
 }
 
 #if USE(WPE_RENDERER)
-IPC::Attachment PageClientImpl::hostFileDescriptor()
+UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
-    return IPC::Attachment({ webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), UnixFileDescriptor::Adopt });
+    return { webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), UnixFileDescriptor::Adopt };
 }
 #endif
 

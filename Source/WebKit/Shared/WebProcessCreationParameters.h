@@ -189,7 +189,7 @@ struct WebProcessCreationParameters {
 
 #if USE(WPE_RENDERER)
     bool isServiceWorkerProcess { false };
-    IPC::Attachment hostClientFileDescriptor;
+    UnixFileDescriptor hostClientFileDescriptor;
     CString implementationLibraryName;
 #endif
 

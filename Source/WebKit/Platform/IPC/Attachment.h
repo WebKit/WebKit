@@ -31,9 +31,6 @@
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-#include <optional>
-#include <variant>
-#include <wtf/Function.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
@@ -45,48 +42,10 @@ namespace IPC {
 using Attachment = MachSendRight;
 #elif OS(WINDOWS)
 using Attachment = int; // Windows does not need attachments at the moment.
+#elif USE(UNIX_DOMAIN_SOCKETS)
+using Attachment = UnixFileDescriptor;
 #else
-class Decoder;
-class Encoder;
-
-class Attachment {
-public:
-    Attachment();
-
-    enum Type {
-        Uninitialized,
-        FileDescriptorType,
-        CustomWriterType,
-    };
-
-    explicit Attachment(UnixFileDescriptor&&);
-
-    Attachment(Attachment&&);
-    Attachment& operator=(Attachment&&);
-    ~Attachment();
-
-    using SocketDescriptor = int;
-    using CustomWriterFunc = WTF::Function<void(SocketDescriptor)>;
-    using CustomWriter = std::variant<CustomWriterFunc, SocketDescriptor>;
-    Attachment(CustomWriter&&);
-
-    Type type() const { return m_type; }
-
-    bool isNull() const { return !m_fd; }
-
-    const UnixFileDescriptor& fd() const { return m_fd; }
-    UnixFileDescriptor release() { return std::exchange(m_fd, UnixFileDescriptor { }); }
-
-    const CustomWriter& customWriter() const { return m_customWriter; }
-
-    void encode(Encoder&) const;
-    static std::optional<Attachment> decode(Decoder&);
-private:
-    Type m_type;
-
-    UnixFileDescriptor m_fd;
-    CustomWriter m_customWriter;
-};
+#error Unsupported platform
 #endif
 
 } // namespace IPC

@@ -189,7 +189,7 @@ struct WebPageCreationParameters {
     WebCore::Color accentColor;
 #endif
 #if USE(WPE_RENDERER)
-    IPC::Attachment hostFileDescriptor;
+    UnixFileDescriptor hostFileDescriptor;
 #endif
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     uint64_t nativeWindowHandle;
