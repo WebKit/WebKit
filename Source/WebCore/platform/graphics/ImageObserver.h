@@ -54,6 +54,7 @@ public:
     virtual void scheduleRenderingUpdate(const Image&) = 0;
 
     virtual bool allowsAnimation(const Image&) const { return true; }
+    virtual bool layerBasedSVGEngineEnabled() const { return false; }
 };
 
 }

@@ -99,6 +99,10 @@ CachedImage::~CachedImage()
 void CachedImage::load(CachedResourceLoader& loader)
 {
     m_skippingRevalidationDocument = loader.document();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    m_layerBasedSVGEngineEnabled = loader.document() ? loader.document()->settings().layerBasedSVGEngineEnabled() : false;
+#endif
+
     if (loader.shouldPerformImageLoad(url()))
         CachedResource::load(loader);
     else
