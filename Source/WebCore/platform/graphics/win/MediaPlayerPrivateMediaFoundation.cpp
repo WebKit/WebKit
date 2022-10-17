@@ -392,7 +392,7 @@ bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const
     return m_loadingProgress;
 }
 
-void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
+void MediaPlayerPrivateMediaFoundation::setPresentationSize(const IntSize& size)
 {
     m_size = size;
 }

@@ -53,6 +53,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     Vector<WebCore::PlatformTextTrackData> outOfBandTrackData;
 #endif
     WebCore::SecurityOriginData documentSecurityOrigin;
+    WebCore::IntSize presentationSize { };
     uint64_t logIdentifier { 0 };
     bool shouldUsePersistentCache { false };
     bool isVideo { false };
@@ -79,6 +80,7 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << outOfBandTrackData;
 #endif
         encoder << documentSecurityOrigin;
+        encoder << presentationSize;
         encoder << logIdentifier;
         encoder << shouldUsePersistentCache;
         encoder << isVideo;
@@ -106,6 +108,7 @@ struct RemoteMediaPlayerProxyConfiguration {
             && decoder.decode(configuration.outOfBandTrackData)
 #endif
             && decoder.decode(configuration.documentSecurityOrigin)
+            && decoder.decode(configuration.presentationSize)
             && decoder.decode(configuration.logIdentifier)
             && decoder.decode(configuration.shouldUsePersistentCache)
             && decoder.decode(configuration.isVideo)

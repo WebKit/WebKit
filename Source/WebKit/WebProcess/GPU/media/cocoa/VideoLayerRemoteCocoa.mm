@@ -111,14 +111,24 @@ static const Seconds PostAnimationDelay { 100_ms };
 
     WebCore::FloatRect sourceVideoFrame = self.videoLayerFrame;
     WebCore::FloatRect targetVideoFrame = self.bounds;
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    if (!sourceVideoFrame.isEmpty()) {
-        if ([self resizePreservingGravity]) {
-            auto scale = std::fmax(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
-            transform = CGAffineTransformMakeScale(scale, scale);
-        } else
-            transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+
+    if (sourceVideoFrame == targetVideoFrame && CGAffineTransformIsIdentity(self.affineTransform))
+        return;
+
+    if (sourceVideoFrame.isEmpty()) {
+        // The initial resize will have an empty videoLayerFrame, which makes
+        // the subsequent calculations incorrect. When this happens, just do
+        // the synchronous resize step instead.
+        [self resolveBounds];
+        return;
     }
+
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    if ([self resizePreservingGravity]) {
+        auto scale = std::fmax(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+        transform = CGAffineTransformMakeScale(scale, scale);
+    } else
+        transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
 
     auto* videoSublayer = [sublayers objectAtIndex:0];
     [CATransaction begin];

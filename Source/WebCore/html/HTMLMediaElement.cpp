@@ -8819,10 +8819,10 @@ MediaElementSession& HTMLMediaElement::mediaSession() const
     return *m_mediaSession;
 }
 
-void HTMLMediaElement::updateMediaPlayer(IntSize elementSize, bool shouldMaintainAspectRatio)
+void HTMLMediaElement::updateMediaPlayer(IntSize presentationSize, bool shouldMaintainAspectRatio)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_player->setSize(elementSize);
+    m_player->setPresentationSize(presentationSize);
     visibilityStateChanged();
     m_player->setVisibleInViewport(isVisibleInViewport());
 

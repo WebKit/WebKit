@@ -96,7 +96,7 @@ public:
 
     bool didLoadingProgress() const final;
 
-    void setSize(const IntSize&) final;
+    void setPresentationSize(const IntSize&) final;
 
     void paint(GraphicsContext&, const FloatRect&) final;
 
