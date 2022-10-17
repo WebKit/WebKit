@@ -47,6 +47,7 @@ ASCIILiteral imgSrc = "img-src"_s;
 ASCIILiteral mediaSrc = "media-src"_s;
 ASCIILiteral objectSrc = "object-src"_s;
 ASCIILiteral pluginTypes = "plugin-types"_s;
+ASCIILiteral prefetchSrc = "prefetch-src"_s;
 ASCIILiteral reportTo = "report-to"_s;
 ASCIILiteral reportURI = "report-uri"_s;
 ASCIILiteral sandbox = "sandbox"_s;

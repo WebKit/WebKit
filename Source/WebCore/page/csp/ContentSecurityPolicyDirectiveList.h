@@ -65,6 +65,7 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestor(const Frame&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestorOrigins(const Vector<RefPtr<SecurityOrigin>>&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForPrefetch(const URL&, bool didReceiveRedirectResponse) const;
 #if ENABLE(APPLICATION_MANIFEST)
     const ContentSecurityPolicyDirective* violatedDirectiveForManifest(const URL&, bool didReceiveRedirectResponse) const;
 #endif
@@ -144,6 +145,7 @@ private:
 #endif
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_mediaSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_objectSrc;
+    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_prefetchSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_styleSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrcElem;

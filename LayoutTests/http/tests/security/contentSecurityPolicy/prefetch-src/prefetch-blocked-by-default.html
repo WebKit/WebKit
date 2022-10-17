@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self'">
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function runTest() {
+        let link = document.createElement("link");
+        link.rel = "prefetch";
+        link.href = `${window.origin}/cache/resources/prefetched-main-resource.py`;
+
+        window.addEventListener("securitypolicyviolation", () => {
+            document.getElementById("log").innerText = "PASS";
+            testRunner.notifyDone();
+        });
+
+        if (internals) {
+            internals.addPrefetchLoadEventListener(link, () => {
+                document.getElementById("log").innerText = "FAIL: default-src blocked prefetch was allowed.";
+                testRunner.notifyDone();
+            });
+        }
+
+        document.body.appendChild(link);
+    }
+</script>
+</head>
+<body onload="runTest()">
+<div id="log"></div>
+</body>
+</html>

@@ -669,6 +669,11 @@ bool ContentSecurityPolicy::allowImageFromSource(const URL& url, RedirectRespons
     return allowResourceFromSource(url, redirectResponseReceived, &ContentSecurityPolicyDirectiveList::violatedDirectiveForImage, preRedirectURL);
 }
 
+bool ContentSecurityPolicy::allowPrefetchFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
+{
+    return allowResourceFromSource(url, redirectResponseReceived, &ContentSecurityPolicyDirectiveList::violatedDirectiveForPrefetch, preRedirectURL);
+}
+
 bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL, const String& nonce) const
 {
     if (LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
