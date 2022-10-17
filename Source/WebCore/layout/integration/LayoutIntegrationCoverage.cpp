@@ -123,6 +123,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasTextCombine:
         stream << "text combine";
         break;
+    case AvoidanceReason::FlowHasAfterWhiteSpaceLineBreak:
+        stream << "line-break is after-white-space";
+        break;
     case AvoidanceReason::FlowTextIsCombineText:
         stream << "text is combine";
         break;
@@ -317,6 +320,8 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
 #endif
     // These are non-standard properties.
+    if (style.lineBreak() == LineBreak::AfterWhiteSpace)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasAfterWhiteSpaceLineBreak, reasons, includeReasons);
     if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.lineAlign() != LineAlign::None)

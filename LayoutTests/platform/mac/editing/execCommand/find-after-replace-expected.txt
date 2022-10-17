@@ -29,8 +29,6 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
                 RenderText {#text} at (0,0) size 55x18
-                  text run at (0,0) width 26: "A B"
-                  text run at (25,0) width 5: " "
-                  text run at (29,0) width 26: "A B"
+                  text run at (0,0) width 55: "A B A B"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
