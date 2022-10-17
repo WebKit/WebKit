@@ -792,9 +792,9 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 #endif
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
+void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
 {
-    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
@@ -913,7 +913,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
-    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->playerContentBoxRect()).size());
+    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), m_player->presentationSize());
     m_player->renderingModeChanged();
 }
 

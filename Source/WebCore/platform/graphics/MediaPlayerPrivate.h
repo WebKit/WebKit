@@ -174,7 +174,7 @@ public:
     // override didLoadingProgressAsync to create a more proper async implementation.
     virtual void didLoadingProgressAsync(MediaPlayer::DidLoadingProgressCompletionHandler&& callback) const { callback(didLoadingProgress()); }
 
-    virtual void setSize(const IntSize&) { }
+    virtual void setPresentationSize(const IntSize&) { }
 
     virtual void paint(GraphicsContext&, const FloatRect&) = 0;
 

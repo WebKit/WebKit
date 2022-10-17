@@ -166,6 +166,8 @@ public:
     void setRate(double);
     void didLoadingProgress(CompletionHandler<void(bool)>&&);
 
+    void setPresentationSize(const WebCore::IntSize&);
+
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&);
 #endif
