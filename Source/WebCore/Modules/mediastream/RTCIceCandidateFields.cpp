@@ -33,7 +33,12 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcomma"
+
 #include <webrtc/pc/webrtc_sdp.h>
+
+#pragma clang diagnostic pop
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END

@@ -323,11 +323,19 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchResponse.idl
     Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
 
+    Modules/filesystemaccess/DOMWindow+FileSystemAccess.idl
+    Modules/filesystemaccess/DirectoryPickerOptions.idl
+    Modules/filesystemaccess/FilePickerAccessType.idl
+    Modules/filesystemaccess/FilePickerOptions.idl
     Modules/filesystemaccess/FileSystemDirectoryHandle.idl
     Modules/filesystemaccess/FileSystemFileHandle.idl
     Modules/filesystemaccess/FileSystemHandle.idl
+    Modules/filesystemaccess/FileSystemPermissionMode.idl
     Modules/filesystemaccess/FileSystemSyncAccessHandle.idl
+    Modules/filesystemaccess/OpenFilePickerOptions.idl
+    Modules/filesystemaccess/SaveFilePickerOptions.idl
     Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
+    Modules/filesystemaccess/WellKnownDirectory.idl
 
     Modules/geolocation/Geolocation.idl
     Modules/geolocation/GeolocationCoordinates.idl

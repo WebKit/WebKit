@@ -312,10 +312,18 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/fetch/FetchResponse.idl \
     $(WebCore)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl \
     $(WebCore)/Modules/filesystemaccess/FileSystemDirectoryHandle.idl \
+    $(WebCore)/Modules/filesystemaccess/DOMWindow+FileSystemAccess.idl \
+    $(WebCore)/Modules/filesystemaccess/DirectoryPickerOptions.idl \
+    $(WebCore)/Modules/filesystemaccess/FilePickerAcceptType.idl \
+    $(WebCore)/Modules/filesystemaccess/FilePickerOptions.idl \
     $(WebCore)/Modules/filesystemaccess/FileSystemFileHandle.idl \
     $(WebCore)/Modules/filesystemaccess/FileSystemHandle.idl \
+    $(WebCore)/Modules/filesystemaccess/FileSystemPermissionMode.idl \
     $(WebCore)/Modules/filesystemaccess/FileSystemSyncAccessHandle.idl \
+    $(WebCore)/Modules/filesystemaccess/OpenFilePickerOptions.idl \
+    $(WebCore)/Modules/filesystemaccess/SaveFilePickerOptions.idl \
     $(WebCore)/Modules/filesystemaccess/StorageManager+FileSystemAccess.idl \
+    $(WebCore)/Modules/filesystemaccess/WellKnownDirectory.idl \
     $(WebCore)/Modules/gamepad/Gamepad.idl \
     $(WebCore)/Modules/gamepad/GamepadButton.idl \
     $(WebCore)/Modules/gamepad/GamepadEvent.idl \

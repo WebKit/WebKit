@@ -55,7 +55,7 @@ FAIL FileSystemWritableFileStream interface: operation seek(unsigned long long) 
 FAIL FileSystemWritableFileStream interface: operation truncate(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
 PASS StorageManager interface: operation getDirectory()
 FAIL DataTransferItem interface: operation getAsFileSystemHandle() assert_own_property: interface prototype object missing non-static operation expected property "getAsFileSystemHandle" missing
-FAIL Window interface: operation showOpenFilePicker(optional OpenFilePickerOptions) assert_own_property: global object missing non-static operation expected property "showOpenFilePicker" missing
-FAIL Window interface: operation showSaveFilePicker(optional SaveFilePickerOptions) assert_own_property: global object missing non-static operation expected property "showSaveFilePicker" missing
-FAIL Window interface: operation showDirectoryPicker(optional DirectoryPickerOptions) assert_own_property: global object missing non-static operation expected property "showDirectoryPicker" missing
+PASS Window interface: operation showOpenFilePicker(optional OpenFilePickerOptions)
+PASS Window interface: operation showSaveFilePicker(optional SaveFilePickerOptions)
+PASS Window interface: operation showDirectoryPicker(optional DirectoryPickerOptions)
 

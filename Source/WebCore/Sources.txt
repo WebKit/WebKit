@@ -92,6 +92,7 @@ Modules/fetch/FetchRequest.cpp
 Modules/fetch/FetchResponse.cpp
 Modules/fetch/FormDataConsumer.cpp
 Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
+Modules/filesystemaccess/DOMWindowFileSystemAccess.cpp
 Modules/filesystemaccess/FileSystemDirectoryHandle.cpp
 Modules/filesystemaccess/FileSystemFileHandle.cpp
 Modules/filesystemaccess/FileSystemHandle.cpp
@@ -3267,6 +3268,8 @@ JSFetchResponse.cpp
 JSFile.cpp
 JSFileCallback.cpp
 JSFileList.cpp
+JSFilePickerAcceptType.cpp
+JSFilePickerOptions.cpp
 JSFileReader.cpp
 JSFileReaderSync.cpp
 JSFileSystemDirectoryEntry.cpp
@@ -3278,6 +3281,7 @@ JSFileSystemEntryCallback.cpp
 JSFileSystemFileEntry.cpp
 JSFileSystemFileHandle.cpp
 JSFileSystemHandle.cpp
+JSFileSystemPermissionMode.cpp
 JSFileSystemSyncAccessHandle.cpp
 JSFillMode.cpp
 JSFocusEvent.cpp
@@ -3663,6 +3667,7 @@ JSOfflineAudioContext.cpp
 JSOfflineAudioContextOptions.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
+JSOpenFilePickerOptions.cpp
 JSOptionalEffectTiming.cpp
 JSOscillatorNode.cpp
 JSOscillatorOptions.cpp
@@ -4000,6 +4005,7 @@ JSSVGVKernElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
+JSSaveFilePickerOptions.cpp
 JSScreen.cpp
 JSScreenOrientation.cpp
 JSScriptProcessorNode.cpp
@@ -4117,6 +4123,7 @@ JSCSSTranslate.cpp
 JSCSSStyleValue.cpp
 JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp
+JSDirectoryPickerOptions.cpp
 JSFullscreenOptions.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
@@ -4237,6 +4244,7 @@ JSWebXRView.cpp
 JSWebXRViewerPose.cpp
 JSWebXRViewport.cpp
 JSWebXRWebGLLayer.cpp
+JSWellKnownDirectory.cpp
 JSWheelEvent.cpp
 JSWindowEventHandlers.cpp
 JSWindowEventHandlers+Gamepad.cpp
