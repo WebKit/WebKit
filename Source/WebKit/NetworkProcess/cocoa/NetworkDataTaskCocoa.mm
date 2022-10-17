@@ -58,7 +58,6 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
-static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { }
 namespace WebKit {
 void enableNetworkConnectionIntegrity(NSMutableURLRequest *) { }
 }
@@ -75,7 +74,15 @@ static NSString *lastRemoteIPAddress(NSURLSessionDataTask *task)
 
 void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, NSMutableURLRequest *request)
 {
-    processPCMRequest(pcmDataCarried, request);
+#if ENABLE(TRACKER_DISPOSITION)
+    if (request._needsNetworkTrackingPrevention || pcmDataCarried == WebCore::PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable)
+        return;
+
+    request._needsNetworkTrackingPrevention = YES;
+#else
+    UNUSED_PARAM(pcmDataCarried);
+    UNUSED_PARAM(request);
+#endif
 }
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
