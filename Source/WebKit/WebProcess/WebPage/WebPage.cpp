@@ -309,6 +309,7 @@
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
+#include <mach/mach_time.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
@@ -958,6 +959,20 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
     }
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+    auto auditToken = WebProcess::singleton().auditTokenForSelf();
+    auto experimentalSandbox = parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxEnabledKey());
+    if (experimentalSandbox)
+        sandbox_enable_state_flag("EnableExperimentalSandbox", *auditToken);
+#if USE(APPLE_INTERNAL_SDK)
+    uint64_t bootTime = mach_boottime_usec();
+    if (!(bootTime & 0x7)) {
+        // Set sandbox state variable with probability of 1/8.
+        sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
+    }
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // HAVE(SANDBOX_STATE_FLAGS)
 
     updateThrottleState();
 }

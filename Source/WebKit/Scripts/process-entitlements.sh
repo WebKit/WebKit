@@ -186,6 +186,8 @@ function mac_process_webcontent_shared_entitlements()
         then
             plistbuddy Add :com.apple.private.security.mutable-state-flags array
             plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
+            plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
+            plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string EnableExperimentalSandboxWithProbability
             plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
@@ -337,6 +339,8 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.security.mutable-state-flags array
     plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string EnableExperimentalSandboxWithProbability
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES

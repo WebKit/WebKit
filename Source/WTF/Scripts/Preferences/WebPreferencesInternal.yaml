@@ -280,6 +280,16 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
     WebCore:
       default: false
 
+ExperimentalSandboxEnabled:
+  type: bool
+  humanReadableName: "Enable experimental sandbox features"
+  humanReadableDescription: "Enable experimental sandbox features"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 FasterClicksEnabled:
   type: bool
   humanReadableName: "Fast clicks"
