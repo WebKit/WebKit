@@ -2243,9 +2243,10 @@ svg/filters/feImage-self-and-other-referencing.html
 # GCController.collect() issues.
 svg/animations/svglength-element-removed-crash.svg [ Failure ]
 
-# Compositing/z-index needs LBSE enabled builds, which is off by default for this port.
+# The following tests need LBSE enabled builds, which is off by default for this port.
 svg/compositing [ Skip ]
 svg/z-index [ Skip ]
+svg/foreignObject/respect-block-margin.html [ Skip ]
 
 ################################################################################
 ###################          End SVG Issues              #######################

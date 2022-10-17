@@ -118,7 +118,7 @@ function continueDynamicTest2() {
 <script id="2" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt)" xlink:href="resources/script-load.js"></script>
 <script id="3" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt); lastTestBeforeRootElementLoaded();" xlink:href="resources/script-load.js"/>
 </defs>
-<foreignObject>
+<foreignObject width="100%" height="100">
 Test load and error event handling with SVGScriptElement
 <xhtml:hr/>
 <xhtml:p id="results">FAIL: Test never finished.</xhtml:p>
