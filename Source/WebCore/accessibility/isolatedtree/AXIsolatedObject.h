@@ -50,8 +50,6 @@ public:
     static Ref<AXIsolatedObject> create(const Ref<AXCoreObject>&, AXIsolatedTree*);
     ~AXIsolatedObject();
 
-    void init() override;
-
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
 
@@ -407,9 +405,7 @@ private:
     VisiblePosition visiblePositionForIndex(int) const override;
     int indexForVisiblePosition(const VisiblePosition&) const override;
     int lineForPosition(const VisiblePosition&) const override;
-    PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override;
     std::optional<SimpleRange> visibleCharacterRange() const override;
-    int index(const VisiblePosition&) const override;
     FloatRect unobscuredContentRect() const override;
     
     // Attribute setters.
@@ -449,27 +445,16 @@ private:
     // Functions that should never be called on an isolated tree object. ASSERT that these are not reached;
     bool isAccessibilityNodeObject() const override;
     bool isAccessibilityRenderObject() const override;
-    bool isAccessibilityScrollbar() const override;
-    bool isAccessibilityScrollViewInstance() const override;
     bool isAccessibilityTableInstance() const override;
-    bool isAccessibilityTableColumnInstance() const override;
     bool isAccessibilityARIAGridInstance() const override { return false; }
     bool isAccessibilityARIAGridRowInstance() const override { return false; }
     bool isAccessibilityARIAGridCellInstance() const override { return false; }
-    bool isAccessibilityProgressIndicatorInstance() const override;
     bool isAccessibilityListBoxInstance() const override;
 
     bool isNativeTextControl() const override;
     bool isListBoxOption() const override;
-    bool isSliderThumb() const override;
-    bool isInputSlider() const override;
-    bool isLabel() const override;
     bool isImageMapLink() const override;
-    bool isNativeSpinButton() const override;
-    bool isSpinButtonPart() const override;
     bool isMockObject() const override;
-    bool isMediaObject() const override;
-    bool isARIATextControl() const override;
     bool isNonNativeTextControl() const override;
     bool isIndeterminate() const override;
     bool isLoaded() const override { return loadingProgress() >= 1; }
@@ -491,9 +476,6 @@ private:
     Element* element() const override;
     Node* node() const override;
     RenderObject* renderer() const override;
-    AccessibilityObjectInclusion defaultObjectInclusion() const override;
-    bool accessibilityIsIgnoredByDefault() const override;
-    float stepValueForRange() const override;
 
     AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
 
@@ -502,29 +484,19 @@ private:
     bool supportsChecked() const override;
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
-    AXCoreObject* parentObjectIfExists() const override;
     bool isDescendantOfRole(AccessibilityRole) const override;
-    AXCoreObject* observableObject() const override;
     AXCoreObject* correspondingLabelForControlElement() const override;
     AXCoreObject* correspondingControlForLabelElement() const override;
-    bool isPresentationalChildOfAriaRole() const override;
-    bool ariaRoleHasPresentationalChildren() const override;
     bool inheritsPresentationalRole() const override;
     void setAccessibleName(const AtomString&) override;
     bool hasAttributesRequiredForInclusion() const override;
     String accessibilityDescription() const override { return stringAttributeValue(AXPropertyName::AccessibilityDescription); }
     String title() const override { return stringAttributeValue(AXPropertyName::Title); }
-    String helpText() const override;
-    bool isARIAStaticText() const override;
     String text() const override;
-    String ariaLabeledByAttribute() const override;
-    String ariaDescribedByAttribute() const override;
     AXObjectCache* axObjectCache() const override;
-    Element* anchorElement() const override;
     Element* actionElement() const override;
     Path elementPath() const override { return pathAttributeValue(AXPropertyName::Path); };
     bool supportsPath() const override { return boolAttributeValue(AXPropertyName::SupportsPath); }
-    TextIteratorBehaviors textIteratorBehaviorForTextRange() const override;
 
     bool isWidget() const override { return boolAttributeValue(AXPropertyName::IsWidget); }
     Widget* widget() const override;
@@ -539,13 +511,8 @@ private:
     Page* page() const override;
     Document* document() const override;
     FrameView* documentFrameView() const override;
-    Frame* frame() const override;
-    Frame* mainFrame() const override;
-    Document* topDocument() const override;
     ScrollView* scrollView() const override;
-    ScrollView* scrollViewAncestor() const override;
     void detachFromParent() override;
-    bool shouldFocusActiveDescendant() const override;
     AXCoreObject* activeDescendant() const override;
 
     OptionSet<AXAncestorFlag> ancestorFlags() const;
@@ -556,7 +523,6 @@ private:
     bool isInDescriptionListTerm() const override { return ancestorFlags().contains(AXAncestorFlag::IsInDescriptionListTerm); }
     bool isInCell() const override { return ancestorFlags().contains(AXAncestorFlag::IsInCell); }
 
-    AXCoreObject* firstAnonymousBlockChild() const override;
     std::optional<String> attributeValue(const String&) const override;
 #if PLATFORM(COCOA)
     bool hasApplePDFAnnotationAttribute() const override { return boolAttributeValue(AXPropertyName::HasApplePDFAnnotationAttribute); }

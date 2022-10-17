@@ -63,11 +63,6 @@ AXIsolatedObject::~AXIsolatedObject()
     ASSERT(!wrapper());
 }
 
-void AXIsolatedObject::init()
-{
-    ASSERT_NOT_REACHED();
-}
-
 void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject, IsRoot isRoot)
 {
     ASSERT(is<AccessibilityObject>(coreObject));
@@ -111,7 +106,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::IsRequired, object.isRequired());
     setProperty(AXPropertyName::IsScrollbar, object.isScrollbar());
     setProperty(AXPropertyName::IsSelected, object.isSelected());
-    setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
     setProperty(AXPropertyName::IsTextControl, object.isTextControl());
@@ -358,6 +352,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
 #if PLATFORM(ATSPI)
     setProperty(AXPropertyName::ActionVerb, object.actionVerb().isolatedCopy());
     setProperty(AXPropertyName::IsFieldset, object.isFieldset());
+    setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::IsVisible, object.isVisible());
     setProperty(AXPropertyName::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
 #endif
@@ -1053,18 +1048,6 @@ int AXIsolatedObject::indexForVisiblePosition(const VisiblePosition&) const
     return 0;
 }
 
-PlainTextRange AXIsolatedObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-int AXIsolatedObject::index(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTextCriteria& criteria) const
 {
     return Accessibility::retrieveValueFromMainThread<Vector<SimpleRange>>([&criteria, this] () -> Vector<SimpleRange> {
@@ -1211,31 +1194,7 @@ bool AXIsolatedObject::isAccessibilityRenderObject() const
     return false;
 }
 
-bool AXIsolatedObject::isAccessibilityScrollbar() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isAccessibilityScrollViewInstance() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isAccessibilityTableInstance() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isAccessibilityTableColumnInstance() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isAccessibilityProgressIndicatorInstance() const
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1522,55 +1481,13 @@ bool AXIsolatedObject::isListBoxOption() const
     return false;
 }
 
-bool AXIsolatedObject::isSliderThumb() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isInputSlider() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isLabel() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isImageMapLink() const
 {
     ASSERT_NOT_REACHED();
     return false;
 }
 
-bool AXIsolatedObject::isNativeSpinButton() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isSpinButtonPart() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isMockObject() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isMediaObject() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isARIATextControl() const
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1690,24 +1607,6 @@ RenderObject* AXIsolatedObject::renderer() const
     return nullptr;
 }
 
-AccessibilityObjectInclusion AXIsolatedObject::defaultObjectInclusion() const
-{
-    ASSERT_NOT_REACHED();
-    return AccessibilityObjectInclusion::DefaultBehavior;
-}
-
-bool AXIsolatedObject::accessibilityIsIgnoredByDefault() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-float AXIsolatedObject::stepValueForRange() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 bool AXIsolatedObject::supportsHasPopup() const
 {
     ASSERT_NOT_REACHED();
@@ -1738,22 +1637,10 @@ AXCoreObject* AXIsolatedObject::elementAccessibilityHitTest(const IntPoint&) con
     return nullptr;
 }
 
-AXCoreObject* AXIsolatedObject::parentObjectIfExists() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 bool AXIsolatedObject::isDescendantOfRole(AccessibilityRole) const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-AXCoreObject* AXIsolatedObject::observableObject() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 AXCoreObject* AXIsolatedObject::correspondingLabelForControlElement() const
@@ -1766,18 +1653,6 @@ AXCoreObject* AXIsolatedObject::correspondingControlForLabelElement() const
 {
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-bool AXIsolatedObject::isPresentationalChildOfAriaRole() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::ariaRoleHasPresentationalChildren() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool AXIsolatedObject::inheritsPresentationalRole() const
@@ -1797,31 +1672,7 @@ bool AXIsolatedObject::hasAttributesRequiredForInclusion() const
     return false;
 }
 
-String AXIsolatedObject::helpText() const
-{
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-bool AXIsolatedObject::isARIAStaticText() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 String AXIsolatedObject::text() const
-{
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String AXIsolatedObject::ariaLabeledByAttribute() const
-{
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String AXIsolatedObject::ariaDescribedByAttribute() const
 {
     ASSERT_NOT_REACHED();
     return String();
@@ -1833,22 +1684,10 @@ AXObjectCache* AXIsolatedObject::axObjectCache() const
     return tree()->axObjectCache();
 }
 
-Element* AXIsolatedObject::anchorElement() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 Element* AXIsolatedObject::actionElement() const
 {
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-TextIteratorBehaviors AXIsolatedObject::textIteratorBehaviorForTextRange() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
 Widget* AXIsolatedObject::widget() const
@@ -1905,41 +1744,11 @@ FrameView* AXIsolatedObject::documentFrameView() const
     return nullptr;
 }
 
-Frame* AXIsolatedObject::frame() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-Frame* AXIsolatedObject::mainFrame() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-Document* AXIsolatedObject::topDocument() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 ScrollView* AXIsolatedObject::scrollView() const
 {
     if (auto* object = associatedAXObject())
         return object->scrollView();
     return nullptr;
-}
-
-ScrollView* AXIsolatedObject::scrollViewAncestor() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-bool AXIsolatedObject::shouldFocusActiveDescendant() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::relatedObjects(AXRelationType relationType) const
@@ -1962,12 +1771,6 @@ OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const
         [] (OptionSet<AXAncestorFlag>& typedValue) -> OptionSet<AXAncestorFlag> { return typedValue; },
         [] (auto&) { return OptionSet<AXAncestorFlag>(); }
     );
-}
-
-AXCoreObject* AXIsolatedObject::firstAnonymousBlockChild() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 std::optional<String> AXIsolatedObject::attributeValue(const String& attributeName) const

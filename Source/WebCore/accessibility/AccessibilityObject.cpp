@@ -1825,14 +1825,6 @@ const AccessibilityScrollView* AccessibilityObject::ancestorAccessibilityScrollV
     }));
 }
 
-ScrollView* AccessibilityObject::scrollViewAncestor() const
-{
-    if (auto parentScrollView = ancestorAccessibilityScrollView(true/* includeSelf */))
-        return parentScrollView->scrollView();
-    
-    return nullptr;
-}
-
 #if PLATFORM(COCOA)
 RemoteAXObjectRef AccessibilityObject::remoteParentObject() const
 {
@@ -2362,15 +2354,6 @@ AccessibilityOrientation AccessibilityObject::orientation() const
 
     return AccessibilityOrientation::Undefined;
 }    
-
-AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
-{
-    for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->renderer() && child->renderer()->isAnonymousBlock())
-            return child;
-    }
-    return nullptr;
-}
 
 using ARIARoleMap = HashMap<String, AccessibilityRole, ASCIICaseInsensitiveHash>;
 using ARIAReverseRoleMap = HashMap<AccessibilityRole, String, DefaultHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;

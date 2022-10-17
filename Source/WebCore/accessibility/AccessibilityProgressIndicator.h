@@ -40,9 +40,6 @@ private:
     AccessibilityRole roleValue() const override;
     bool isProgressIndicator() const override { return true; }
 
-    // Used in type checking function is<AccessibilityProgressIndicator>.
-    bool isAccessibilityProgressIndicatorInstance() const final { return true; }
-
     String valueDescription() const override;
     String gaugeRegionValueDescription() const;
     float valueForRange() const override;
@@ -59,5 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityProgressIndicator, isAccessibilityProgressIndicatorInstance())
