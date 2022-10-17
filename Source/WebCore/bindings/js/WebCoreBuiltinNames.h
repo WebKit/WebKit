@@ -177,6 +177,7 @@ namespace WebCore {
     macro(DelayNode) \
     macro(DeprecationReportBody) \
     macro(DocumentTimeline) \
+    macro(DOMException) \
     macro(DynamicsCompressorNode) \
     macro(ElementInternals) \
     macro(EncodedAudioChunk) \
