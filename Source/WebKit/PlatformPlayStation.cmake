@@ -20,7 +20,7 @@ list(APPEND NetworkProcess_PRIVATE_LIBRARIES
 )
 
 list(APPEND GPUProcess_SOURCES
-    GPUProcess/EntryPoint/unix/GPUProcessMain.cpp
+    GPUProcess/EntryPoint/playstation/GPUProcessMain.cpp
 )
 list(APPEND GPUProcess_PRIVATE_LIBRARIES
     ${ProcessLauncher_LIBRARY}
