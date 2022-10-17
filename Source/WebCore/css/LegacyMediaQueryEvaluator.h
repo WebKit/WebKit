@@ -64,18 +64,18 @@ MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
 // Some of the constructors are used for cases where the device characteristics are not known.
 // These  can be used to prune the loading of stylesheets to only those which are not already known to not match.
 
-class MediaQueryEvaluator {
+class LegacyMediaQueryEvaluator {
 public:
     // Creates evaluator which evaluates only simple media queries.
     // Evaluator returns true for "all", and returns value of \mediaFeatureResult for any media features.
-    explicit MediaQueryEvaluator(bool mediaFeatureResult = false);
+    explicit LegacyMediaQueryEvaluator(bool mediaFeatureResult = false);
 
     // Creates evaluator which evaluates only simple media queries.
     // Evaluator returns true for acceptedMediaType and returns value of \mediaFeatureResult for any media features.
-    MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult = false);
+    LegacyMediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult = false);
 
     // Creates evaluator which evaluates full media queries.
-    WEBCORE_EXPORT MediaQueryEvaluator(const String& acceptedMediaType, const Document&, const RenderStyle*);
+    WEBCORE_EXPORT LegacyMediaQueryEvaluator(const String& acceptedMediaType, const Document&, const RenderStyle*);
 
     bool mediaTypeMatch(const String& mediaTypeToMatch) const;
     bool mediaTypeMatchSpecific(ASCIILiteral mediaTypeToMatch) const;

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class Document;
 class Element;
-class MediaQueryEvaluator;
+class LegacyMediaQueryEvaluator;
 class ShadowRoot;
 class StyleSheetContents;
 
@@ -47,7 +47,7 @@ struct SelectorMatchingState;
 
 class Invalidator {
 public:
-    Invalidator(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
+    Invalidator(const Vector<StyleSheetContents*>&, const LegacyMediaQueryEvaluator&);
     Invalidator(const InvalidationRuleSetVector&);
 
     ~Invalidator();

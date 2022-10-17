@@ -48,9 +48,9 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include "MediaQueryParserContext.h"
 #include "MouseEvent.h"
 #include "ParsedContentType.h"
@@ -519,7 +519,7 @@ bool HTMLLinkElement::mediaAttributeMatches() const
         documentStyle = Style::resolveForDocument(document());
     auto media = MediaQuerySet::create(m_media, MediaQueryParserContext(document()));
     LOG(MediaQueries, "HTMLLinkElement::mediaAttributeMatches");
-    return MediaQueryEvaluator(document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr).evaluate(media.get());
+    return LegacyMediaQueryEvaluator(document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr).evaluate(media.get());
 }
 
 void HTMLLinkElement::linkLoaded()

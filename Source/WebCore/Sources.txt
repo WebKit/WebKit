@@ -827,10 +827,10 @@ css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
+css/LegacyMediaQueryEvaluator.cpp
 css/MediaFeatureNames.cpp
 css/MediaList.cpp
 css/MediaQuery.cpp
-css/MediaQueryEvaluator.cpp
 css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryListEvent.cpp

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class CSSSelector;
-class MediaQueryEvaluator;
+class LegacyMediaQueryEvaluator;
 class StyleSheetContents;
 
 namespace Style {
@@ -80,7 +80,7 @@ public:
 
     bool hasViewportDependentMediaQueries() const { return m_hasViewportDependentMediaQueries; }
 
-    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&);
+    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator&);
 
     const RuleFeatureSet& features() const { return m_features; }
 
@@ -135,7 +135,7 @@ private:
         Vector<size_t> changedQueryIndexes { };
         Vector<Vector<Ref<const StyleRule>>*> affectedRules { };
     };
-    CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&, size_t startIndex);
+    CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator&, size_t startIndex);
 
     template<typename Function> void traverseRuleDatas(Function&&);
 

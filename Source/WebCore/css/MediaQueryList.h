@@ -21,8 +21,8 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include "MediaQueryMatcher.h"
 
 namespace WebCore {
@@ -44,7 +44,7 @@ public:
     void addListener(RefPtr<EventListener>&&);
     void removeListener(RefPtr<EventListener>&&);
 
-    void evaluate(MediaQueryEvaluator&, MediaQueryMatcher::EventMode);
+    void evaluate(LegacyMediaQueryEvaluator&, MediaQueryMatcher::EventMode);
 
     void detachFromMatcher();
 

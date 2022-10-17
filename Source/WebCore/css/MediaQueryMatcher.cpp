@@ -24,9 +24,9 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include "MediaQueryList.h"
 #include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
@@ -79,7 +79,7 @@ bool MediaQueryMatcher::evaluate(const MediaQuerySet& media)
     auto style = documentElementUserAgentStyle();
     if (!style)
         return false;
-    return MediaQueryEvaluator { mediaType(), *m_document, style.get() }.evaluate(media);
+    return LegacyMediaQueryEvaluator { mediaType(), *m_document, style.get() }.evaluate(media);
 }
 
 void MediaQueryMatcher::addMediaQueryList(MediaQueryList& list)
@@ -115,7 +115,7 @@ void MediaQueryMatcher::evaluateAll(EventMode eventMode)
 
     LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryMatcher::styleResolverChanged " << m_document->url());
 
-    MediaQueryEvaluator evaluator { mediaType(), *m_document, style.get() };
+    LegacyMediaQueryEvaluator evaluator { mediaType(), *m_document, style.get() };
 
     auto mediaQueryLists = m_mediaQueryLists;
     for (auto& list : mediaQueryLists) {

@@ -34,12 +34,12 @@
 #include "HTMLSrcsetParser.h"
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "LinkLoader.h"
 #include "LinkRelAttribute.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include "MediaQueryParserContext.h"
 #include "RenderView.h"
 #include "SecurityPolicy.h"
@@ -230,7 +230,7 @@ private:
                 auto mediaSet = MediaQuerySet::create(m_mediaAttribute, MediaQueryParserContext(m_document));
                 RefPtr documentElement = m_document.documentElement();
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
-                m_mediaMatched = MediaQueryEvaluator { m_document.printing() ? "print"_s : "screen"_s, m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
+                m_mediaMatched = LegacyMediaQueryEvaluator { m_document.printing() ? "print"_s : "screen"_s, m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
             }
             if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)

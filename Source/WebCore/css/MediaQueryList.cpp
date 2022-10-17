@@ -81,7 +81,7 @@ void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)
     removeEventListener(eventNames().changeEvent, *listener, { });
 }
 
-void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, MediaQueryMatcher::EventMode eventMode)
+void MediaQueryList::evaluate(LegacyMediaQueryEvaluator& evaluator, MediaQueryMatcher::EventMode eventMode)
 {
     RELEASE_ASSERT(m_matcher);
     if (m_evaluationRound != m_matcher->evaluationRound())

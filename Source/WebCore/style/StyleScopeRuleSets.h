@@ -35,7 +35,7 @@ namespace WebCore {
 class CSSStyleRule;
 class CSSStyleSheet;
 class ExtensionStyleSheets;
-class MediaQueryEvaluator;
+class LegacyMediaQueryEvaluator;
 
 namespace Style {
 
@@ -77,14 +77,14 @@ public:
     void initializeUserStyle();
 
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, Style::InspectorCSSOMWrappers&);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, LegacyMediaQueryEvaluator*, Style::InspectorCSSOMWrappers&);
 
     void resetUserAgentMediaQueryStyle();
 
     bool hasViewportDependentMediaQueries() const;
     bool hasContainerQueries() const;
 
-    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&);
+    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator&);
 
     RuleFeatureSet& mutableFeatures();
 
@@ -94,7 +94,7 @@ public:
 
 private:
     void collectFeatures() const;
-    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&);
+    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const LegacyMediaQueryEvaluator&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
     RefPtr<RuleSet> m_authorStyle;

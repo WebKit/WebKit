@@ -29,14 +29,14 @@ namespace Style {
 class RuleSetBuilder {
 public:
     enum class ShrinkToFit { Enable, Disable };
-    RuleSetBuilder(RuleSet&, const MediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
+    RuleSetBuilder(RuleSet&, const LegacyMediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
     ~RuleSetBuilder();
 
     void addRulesFromSheet(const StyleSheetContents&, const MediaQuerySet* sheetQuery = nullptr);
     void addStyleRule(const StyleRule&);
 
 private:
-    RuleSetBuilder(const MediaQueryEvaluator&);
+    RuleSetBuilder(const LegacyMediaQueryEvaluator&);
 
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
@@ -52,7 +52,7 @@ private:
     struct MediaQueryCollector {
         ~MediaQueryCollector();
 
-        const MediaQueryEvaluator& evaluator;
+        const LegacyMediaQueryEvaluator& evaluator;
         bool collectDynamic { false };
 
         struct DynamicContext {

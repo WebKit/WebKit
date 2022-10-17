@@ -47,9 +47,9 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
 #include "PageRuleCollector.h"
 #include "Pair.h"
@@ -154,9 +154,9 @@ Resolver::Resolver(Document& document)
     // is always from the document that owns the style selector
     FrameView* view = m_document.view();
     if (view)
-        m_mediaQueryEvaluator = MediaQueryEvaluator { view->mediaType() };
+        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { view->mediaType() };
     else
-        m_mediaQueryEvaluator = MediaQueryEvaluator { };
+        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { };
 
     if (auto* documentElement = m_document.documentElement()) {
         m_rootDefaultStyle = styleForElement(*documentElement, { m_document.renderStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
@@ -168,7 +168,7 @@ Resolver::Resolver(Document& document)
     }
 
     if (m_rootDefaultStyle && view)
-        m_mediaQueryEvaluator = MediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };
+        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };
 
     m_ruleSets.resetAuthorStyle();
     m_ruleSets.resetUserAgentMediaQueryStyle();

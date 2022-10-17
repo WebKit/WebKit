@@ -29,7 +29,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

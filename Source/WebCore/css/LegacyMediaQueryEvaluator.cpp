@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 
 #include "CSSAspectRatioValue.h"
 #include "CSSPrimitiveValue.h"
@@ -91,11 +91,11 @@ static bool isAccessibilitySettingsDependent(const AtomString& mediaFeature)
 
 static bool isAppearanceDependent(const AtomString& mediaFeature)
 {
-    return mediaFeature == MediaFeatureNames::prefersDarkInterface
 #if ENABLE(DARK_MODE_CSS)
-        || mediaFeature == MediaFeatureNames::prefersColorScheme
+    if (mediaFeature == MediaFeatureNames::prefersColorScheme)
+        return true;
 #endif
-    ;
+    return mediaFeature == MediaFeatureNames::prefersDarkInterface;
 }
 
 MediaQueryViewportState mediaQueryViewportStateForDocument(const Document& document)
@@ -104,32 +104,32 @@ MediaQueryViewportState mediaQueryViewportStateForDocument(const Document& docum
     return { document.view()->layoutSize(), document.frame()->pageZoomFactor(), document.printing() };
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
+LegacyMediaQueryEvaluator::LegacyMediaQueryEvaluator(bool mediaFeatureResult)
     : m_fallbackResult(mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
+LegacyMediaQueryEvaluator::LegacyMediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
     , m_fallbackResult(mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, const Document& document, const RenderStyle* style)
+LegacyMediaQueryEvaluator::LegacyMediaQueryEvaluator(const String& acceptedMediaType, const Document& document, const RenderStyle* style)
     : m_mediaType(acceptedMediaType)
     , m_document(document)
     , m_style(style)
 {
 }
 
-bool MediaQueryEvaluator::mediaTypeMatch(const String& mediaTypeToMatch) const
+bool LegacyMediaQueryEvaluator::mediaTypeMatch(const String& mediaTypeToMatch) const
 {
     return mediaTypeToMatch.isEmpty()
         || equalLettersIgnoringASCIICase(mediaTypeToMatch, "all"_s)
         || equalIgnoringASCIICase(mediaTypeToMatch, m_mediaType);
 }
 
-bool MediaQueryEvaluator::mediaTypeMatchSpecific(ASCIILiteral mediaTypeToMatch) const
+bool LegacyMediaQueryEvaluator::mediaTypeMatchSpecific(ASCIILiteral mediaTypeToMatch) const
 {
     // Like mediaTypeMatch, but without the special cases for "" and "all".
     ASSERT(!mediaTypeToMatch.isNull());
@@ -143,13 +143,13 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
     return r == MediaQuery::Not ? !value : value;
 }
 
-bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults, Mode mode) const
+bool LegacyMediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults, Mode mode) const
 {
-    LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate on " << (m_document ? m_document->url().string() : emptyString()));
+    LOG_WITH_STREAM(MediaQueries, stream << "LegacyMediaQueryEvaluator::evaluate on " << (m_document ? m_document->url().string() : emptyString()));
 
     auto& queries = querySet.queryVector();
     if (!queries.size()) {
-        LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate " << querySet << " returning true");
+        LOG_WITH_STREAM(MediaQueries, stream << "LegacyMediaQueryEvaluator::evaluate " << querySet << " returning true");
         return true; // Empty query list evaluates to true.
     }
 
@@ -200,11 +200,11 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDyna
             result = applyRestrictor(query.restrictor(), false);
     }
 
-    LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate " << querySet << " returning " << result);
+    LOG_WITH_STREAM(MediaQueries, stream << "LegacyMediaQueryEvaluator::evaluate " << querySet << " returning " << result);
     return result;
 }
 
-bool MediaQueryEvaluator::evaluateForChanges(const MediaQueryDynamicResults& dynamicResults) const
+bool LegacyMediaQueryEvaluator::evaluateForChanges(const MediaQueryDynamicResults& dynamicResults) const
 {
     auto hasChanges = [&](auto& dynamicResultsVector) {
         for (auto& dynamicResult : dynamicResultsVector) {
@@ -927,7 +927,7 @@ static void add(MediaQueryFunctionMap& map, AtomStringImpl* key, MediaQueryFunct
     map.add(key, value);
 }
 
-bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
+bool LegacyMediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
 {
     if (!m_document)
         return m_fallbackResult;
@@ -967,11 +967,11 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
     return function(expression.value(), { *m_style, &defaultStyle, nullptr, document.renderView() }, *frame, NoPrefix);
 }
 
-bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
+bool LegacyMediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
 {
     ASSERT(document.renderView());
     auto mediaQueries = MediaQuerySet::create(attributeValue, MediaQueryParserContext(document));
-    return MediaQueryEvaluator { "screen"_s, document, &document.renderView()->style() }.evaluate(mediaQueries.get());
+    return LegacyMediaQueryEvaluator { "screen"_s, document, &document.renderView()->style() }.evaluate(mediaQueries.get());
 }
 
 } // WebCore

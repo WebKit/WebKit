@@ -31,7 +31,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
@@ -40,7 +40,7 @@
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const LegacyMediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
@@ -48,7 +48,7 @@ RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MediaQueryEvaluator& eval
 {
 }
 
-RuleSetBuilder::RuleSetBuilder(const MediaQueryEvaluator& evaluator)
+RuleSetBuilder::RuleSetBuilder(const LegacyMediaQueryEvaluator& evaluator)
     : m_mediaQueryCollector({ evaluator, true })
 {
 }
@@ -365,7 +365,7 @@ bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* s
 
     // Only evaluate static expressions that require style rebuild.
     MediaQueryDynamicResults dynamicResults;
-    auto mode = collectDynamic ? MediaQueryEvaluator::Mode::AlwaysMatchDynamic : MediaQueryEvaluator::Mode::Normal;
+    auto mode = collectDynamic ? LegacyMediaQueryEvaluator::Mode::AlwaysMatchDynamic : LegacyMediaQueryEvaluator::Mode::Normal;
 
     bool result = evaluator.evaluate(*set, &dynamicResults, mode);
 
