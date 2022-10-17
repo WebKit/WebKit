@@ -3788,7 +3788,6 @@ imported/w3c/web-platform-tests/css/css-values/angle-units-004.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-values/angle-units-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html [ ImageOnlyFailure ]
 svg/animations/animated-string-href.svg [ ImageOnlyFailure ]
-svg/css/invalid-color-cascade.svg [ ImageOnlyFailure ]
 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
 svg/custom/href-xlink-href-gradient-element.svg [ ImageOnlyFailure ]
 svg/custom/local-url-reference-fill.html [ ImageOnlyFailure ]
