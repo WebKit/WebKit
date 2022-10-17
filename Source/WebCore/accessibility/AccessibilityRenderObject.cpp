@@ -3319,7 +3319,7 @@ void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
     if (is<Element>(node))
         downcast<Element>(*node).setAttribute(aria_labelAttr, name);
 }
-    
+
 static bool isLinkable(const AccessibilityRenderObject& object)
 {
     if (!object.renderer())

@@ -66,4 +66,6 @@ private:
 
 } // namespace WebCore 
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTableColumn, isAccessibilityTableColumnInstance())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityTableColumn) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityTableColumnInstance(); } \
+SPECIALIZE_TYPE_TRAITS_END()

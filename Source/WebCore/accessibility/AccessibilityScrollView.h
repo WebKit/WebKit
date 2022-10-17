@@ -89,4 +89,6 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollView, isAccessibilityScrollViewInstance())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityScrollView) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityScrollViewInstance(); } \
+SPECIALIZE_TYPE_TRAITS_END()

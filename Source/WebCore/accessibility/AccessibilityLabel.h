@@ -55,4 +55,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityLabel, isLabel())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityLabel) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isLabel(); } \
+SPECIALIZE_TYPE_TRAITS_END()
