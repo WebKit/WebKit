@@ -718,7 +718,7 @@ TEST(PushAPI, fireNotificationClickEvent)
 
     terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
 
-    provider.simulateNotificationClick();
+    EXPECT_TRUE(provider.simulateNotificationClick());
 
     done = false;
     expectedMessage = "Received notificationclick"_s;

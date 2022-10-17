@@ -356,17 +356,6 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
     TestWebKitAPI::Util::run(&clearedStore);
 }
 
-static void enableNotifications(WKWebViewConfiguration *configuration)
-{
-    [configuration.preferences _setNotificationsEnabled:YES];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-        if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"]) {
-            [configuration.preferences _setEnabled:YES forFeature:feature];
-            break;
-        }
-    }
-}
-
 static constexpr auto constants = R"SRC(
     const VALID_SERVER_KEY = "BA1Hxzyi1RUM1b5wjxsn7nGxAszw2u61m164i3MrAIxHF6YK5h4SDYic-dRuU_RCPCfA5aq9ojSwk5Y2EmClBPs";
     const VALID_SERVER_KEY_THAT_CAUSES_INJECTED_FAILURE = "BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg";
@@ -376,44 +365,74 @@ class WebPushDTest : public ::testing::Test {
 protected:
     WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
     {
-        [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
+        m_origin = "https://example.com"_s;
+        m_url = adoptNS([[NSURL alloc] initWithString:@"https://example.com/"]);
         m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
-
-        auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-        dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
-        m_dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
-        m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        m_configuration.get().websiteDataStore = m_dataStore.get();
-        clearWebsiteDataStore([m_configuration websiteDataStore]);
-
-        [m_configuration.get().preferences _setPushAPIEnabled:YES];
-        enableNotifications(m_configuration.get());
-
         m_testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
-        [[m_configuration userContentController] addScriptMessageHandler:m_testMessageHandler.get() name:@"test"];
-
         m_notificationMessageHandler = adoptNS([[NotificationScriptMessageHandler alloc] init]);
-        [[m_configuration userContentController] addScriptMessageHandler:m_notificationMessageHandler.get() name:@"note"];
     }
 
     void loadRequest(ASCIILiteral htmlSource, ASCIILiteral serviceWorkerScriptSource)
     {
+        ASSERT_FALSE(m_server);
         m_server.reset(new TestWebKitAPI::HTTPServer({
             { "/"_s, { htmlSource } },
             { "/constants.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, constants } },
             { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
-        }, TestWebKitAPI::HTTPServer::Protocol::Http));
+        }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy));
+
+        auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+        [dataStoreConfiguration setProxyConfiguration:@{
+            (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+            (NSString *)kCFStreamPropertyHTTPSProxyPort: @(m_server->port())
+        }];
+        dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+
+        // FIXME: This seems like it shouldn't be necessary, but _clearResourceLoadStatistics (called by clearWebsiteDataStore) doesn't seem to work.
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtURL:[dataStoreConfiguration _resourceLoadStatisticsDirectory] error:&error];
+        ASSERT_NULL(error);
+
+        m_dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+        [m_dataStore _setResourceLoadStatisticsEnabled:YES];
+        clearWebsiteDataStore(m_dataStore.get());
+
+        __block bool done = false;
+        [m_dataStore _setPrevalentDomain:m_url.get() completionHandler:^{
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+        [m_dataStore _logUserInteraction:m_url.get() completionHandler:^{
+            done = true;
+        }];
+        Util::run(&done);
+
+        m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        m_configuration.get().websiteDataStore = m_dataStore.get();
+
+        auto userContentController = m_configuration.get().userContentController;
+        [userContentController addScriptMessageHandler:m_testMessageHandler.get() name:@"test"];
+        [userContentController addScriptMessageHandler:m_notificationMessageHandler.get() name:@"note"];
+
+        [m_configuration.get().preferences _setPushAPIEnabled:YES];
 
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [[m_configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
-        m_notificationProvider->setPermission(m_server->origin(), true);
+        m_notificationProvider->setPermission(m_origin, true);
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
+
         m_uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
         [m_webView setUIDelegate:m_uiDelegate.get()];
-        [m_webView loadRequest:m_server->request()];
+
+        m_navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        m_navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        };
+        [m_webView setNavigationDelegate:m_navigationDelegate.get()];
+
+        [m_webView loadRequest:[NSURLRequest requestWithURL:m_url.get()]];
     }
 
     bool hasPushSubscription()
@@ -421,7 +440,7 @@ protected:
         __block bool done = false;
         __block bool result = false;
 
-        [m_dataStore _scopeURL:m_server->request().URL hasPushSubscriptionForTesting:^(BOOL fetchedResult) {
+        [m_dataStore _scopeURL:m_url.get() hasPushSubscriptionForTesting:^(BOOL fetchedResult) {
             result = fetchedResult;
             done = true;
         }];
@@ -436,8 +455,12 @@ protected:
         __block Vector<String> result;
 
         [m_dataStore _getOriginsWithPushSubscriptions:^(NSSet<WKSecurityOrigin *> *origins) {
-            for (WKSecurityOrigin *origin in origins)
-                result.append(makeString(String(origin.protocol), "://"_s, String(origin.host), ":"_s, String::number(origin.port)));
+            for (WKSecurityOrigin *origin in origins) {
+                if (origin.port)
+                    result.append(makeString(String(origin.protocol), "://"_s, String(origin.host), ":"_s, String::number(origin.port)));
+                else
+                    result.append(makeString(String(origin.protocol), "://"_s, String(origin.host)));
+            }
             done = true;
         }];
 
@@ -450,10 +473,10 @@ protected:
         cleanUpTestWebPushD(m_tempDirectory.get());
     }
 public:
-    static RetainPtr<NSDictionary> injectPushMessage(NSDictionary *pushUserInfo, NSURL *url, WKWebsiteDataStore *dataStore, bool expectedMessages = true)
+    RetainPtr<NSDictionary> injectPushMessage(NSDictionary *pushUserInfo)
     {
-        String scope = url.absoluteString;
-        String topic = "com.apple.WebKit.TestWebKitAPI "_str + scope;
+        String scope = [m_url absoluteString];
+        String topic = makeString("com.apple.WebKit.TestWebKitAPI "_s, scope);
         id obj = @{
             @"topic": (NSString *)topic,
             @"userInfo": pushUserInfo
@@ -469,13 +492,11 @@ public:
         // Fetch push messages
         __block bool gotMessages = false;
         __block RetainPtr<NSArray<NSDictionary *>> messages;
-        [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *rawMessages) {
+        [m_dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *rawMessages) {
             messages = rawMessages;
             gotMessages = true;
         }];
         TestWebKitAPI::Util::run(&gotMessages);
-
-        EXPECT_EQ([messages count], expectedMessages);
 
         return [messages count] ? [messages objectAtIndex:0] : nullptr;
     }
@@ -492,15 +513,19 @@ protected:
         return std::make_pair(WTFMove(enabledTopics), WTFMove(ignoredTopics));
     }
 
+    String m_origin;
+    RetainPtr<NSURL> m_url;
     RetainPtr<NSURL> m_tempDirectory;
-    RetainPtr<WKWebsiteDataStore> m_dataStore;
-    RetainPtr<WKWebViewConfiguration> m_configuration;
     RetainPtr<TestMessageHandler> m_testMessageHandler;
     RetainPtr<NotificationScriptMessageHandler> m_notificationMessageHandler;
+    bool m_loadedRequest { false };
+    RetainPtr<WKWebsiteDataStore> m_dataStore;
+    RetainPtr<WKWebViewConfiguration> m_configuration;
     std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
     std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
     RetainPtr<WKWebView> m_webView;
     RetainPtr<id<WKUIDelegatePrivate>> m_uiDelegate;
+    RetainPtr<TestNavigationDelegate> m_navigationDelegate;
 };
 
 class WebPushDInjectedPushTest : public WebPushDTest {
@@ -546,9 +571,9 @@ self.addEventListener("message", (event) => {
     port = event.data.port;
     port.postMessage("Ready");
 });
-self.addEventListener("push", (event) => {
+self.addEventListener("push", async (event) => {
     try {
-        self.registration.showNotification("notification");
+        await self.registration.showNotification("notification");
         if (!event.data) {
             port.postMessage("Received: null data");
             return;
@@ -558,6 +583,9 @@ self.addEventListener("push", (event) => {
     } catch (e) {
         port.postMessage("Error: " + e);
     }
+});
+self.addEventListener("notificationclick", () => {
+    port.postMessage("Received: notificationclick");
 });
 )SWRESOURCE"_s;
 
@@ -576,7 +604,7 @@ void WebPushDInjectedPushTest::runTest(NSString *expectedMessage, NSDictionary *
     loadRequest(injectedPushHTMLSource, injectedPushServiceWorkerSource);
     TestWebKitAPI::Util::run(&ready);
 
-    auto message = injectPushMessage(pushUserInfo, m_server->request().URL, m_dataStore.get());
+    auto message = injectPushMessage(pushUserInfo);
 
     __block bool pushMessageProcessed = false;
     __block bool pushMessageProcessedResult = false;
@@ -620,130 +648,6 @@ TEST_F(WebPushDInjectedPushTest, HandleInjectedAES128GCMPush)
         @"content_encoding": @"aes128gcm",
         @"payload": (NSString *)payloadBase64
     });
-}
-
-TEST(WebPush, ITPCleanup)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-    auto tempDir = setUpTestWebPushD();
-    using namespace TestWebKitAPI;
-    
-    NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtURL:adoptNS([_WKWebsiteDataStoreConfiguration new]).get()._resourceLoadStatisticsDirectory error:&error];
-    EXPECT_NULL(error);
-
-    auto runTestWithInterval = ^(NSTimeInterval interval, bool expectPushAfterITPCleanupToSucceed) {
-        HTTPServer server({
-            { "/"_s, { injectedPushHTMLSource } },
-            { "/constants.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, constants } },
-            { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, injectedPushServiceWorkerSource } }
-        }, HTTPServer::Protocol::HttpsProxy);
-
-        NSURL *exampleURL = [NSURL URLWithString:@"https://example.com/"];
-
-        auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-        [dataStoreConfiguration setProxyConfiguration:@{
-            (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
-            (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
-        }];
-        dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
-
-        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-        clearWebsiteDataStore(dataStore.get());
-        [dataStore _setResourceLoadStatisticsEnabled:YES];
-        __block bool done { false };
-        [dataStore _clearResourceLoadStatistics:^{
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-        [dataStore _setPrevalentDomain:exampleURL completionHandler:^{
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-        [dataStore _logUserInteraction:exampleURL completionHandler:^{
-            done = true;
-        }];
-        Util::run(&done);
-        auto notificationMessageHandler = adoptNS([[NotificationScriptMessageHandler alloc] init]);
-        auto testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
-
-        __block bool ready = false;
-        [testMessageHandler addMessage:@"Ready" withHandler:^{
-            ready = true;
-        }];
-        __block bool gotExpectedMessage = false;
-        [testMessageHandler addMessage:@"Received: test aesgcm payload" withHandler:^{
-            gotExpectedMessage = true;
-        }];
-
-        auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-        [webViewConfiguration.get().preferences _setPushAPIEnabled:YES];
-        [webViewConfiguration setWebsiteDataStore:dataStore.get()];
-        enableNotifications(webViewConfiguration.get());
-        [webViewConfiguration.get().userContentController addScriptMessageHandler:notificationMessageHandler.get() name:@"note"];
-        [webViewConfiguration.get().userContentController addScriptMessageHandler:testMessageHandler.get() name:@"test"];
-
-        auto notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [[webViewConfiguration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
-        notificationProvider->setPermission("https://example.com"_s, true);
-
-        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-        auto uiDelegate = adoptNS([NotificationPermissionDelegate new]);
-        auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
-        navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
-            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-        };
-        [webView setUIDelegate:uiDelegate.get()];
-        [webView setNavigationDelegate:navigationDelegate.get()];
-        [webView loadRequest:[NSURLRequest requestWithURL:exampleURL]];
-        TestWebKitAPI::Util::run(&ready);
-
-        auto testPush = ^(bool expectedMessages){
-            gotExpectedMessage = false;
-            auto message = WebPushDTest::injectPushMessage(aesGCMPushData(), exampleURL, dataStore.get(), expectedMessages);
-
-            __block bool pushMessageProcessed = false;
-            __block bool pushMessageProcessedResult = false;
-            [dataStore _processPushMessage:message.get() completionHandler:^(bool result) {
-                pushMessageProcessedResult = result;
-                pushMessageProcessed = true;
-            }];
-            if (!expectedMessages) {
-                TestWebKitAPI::Util::runFor(0.1_s);
-                EXPECT_FALSE(gotExpectedMessage);
-                return;
-            }
-            TestWebKitAPI::Util::run(&gotExpectedMessage);
-            TestWebKitAPI::Util::run(&pushMessageProcessed);
-            EXPECT_TRUE(pushMessageProcessedResult);
-        };
-
-        testPush(true);
-
-        done = false;
-        [dataStore _setResourceLoadStatisticsTimeAdvanceForTesting:interval completionHandler:^{
-            done = true;
-        }];
-        TestWebKitAPI::Util::run(&done);
-
-        done = false;
-        [dataStore _processStatisticsAndDataRecords:^{
-            done = true;
-        }];
-        Util::run(&done);
-
-        testPush(expectPushAfterITPCleanupToSucceed);
-    };
-
-    runTestWithInterval(3600 * 24 * 0, true);
-    runTestWithInterval(3600 * 24 * 29, true);
-    runTestWithInterval(3600 * 24 * 31, false);
-    runTestWithInterval(3600 * 24 * 50, false);
-    runTestWithInterval(3600 * 24 * 100, false);
-
-    cleanUpTestWebPushD(tempDir);
 }
 
 TEST_F(WebPushDTest, SubscribeTest)
@@ -794,7 +698,7 @@ TEST_F(WebPushDTest, SubscribeTest)
 
     auto result = getOriginsWithPushSubscriptions();
     EXPECT_EQ(result.size(), 1u);
-    EXPECT_EQ(result.first(), m_server->origin());
+    EXPECT_EQ(result.first(), m_origin);
 }
 
 TEST_F(WebPushDTest, SubscribeFailureTest)
@@ -1001,7 +905,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
     WKWebsiteDataRecord *filteredRecord = nil;
     for (WKWebsiteDataRecord *record in records.get()) {
         for (NSString *originString in record._originsStrings) {
-            if ([originString isEqualToString:m_server->origin()]) {
+            if ([originString isEqualToString:m_origin]) {
                 filteredRecord = record;
                 break;
             }
@@ -1053,7 +957,7 @@ TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
     ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
     ASSERT_TRUE(hasPushSubscription());
 
-    m_notificationProvider->resetPermission(m_server->origin());
+    m_notificationProvider->resetPermission(m_origin);
 
     bool isSubscribed = true;
     TestWebKitAPI::Util::waitForConditionWithLogging([this, &isSubscribed] {
@@ -1104,7 +1008,7 @@ TEST_F(WebPushDTest, IgnoresSubscriptionOnPermissionDenied)
     ASSERT_TRUE(hasPushSubscription());
 
     // Topic should be moved to ignored list after denying permission, but the subscription should still exist.
-    m_notificationProvider->setPermission(m_server->origin(), false);
+    m_notificationProvider->setPermission(m_origin, false);
 
     bool isIgnored = false;
     TestWebKitAPI::Util::waitForConditionWithLogging([this, &isIgnored] {
@@ -1122,7 +1026,7 @@ TEST_F(WebPushDTest, IgnoresSubscriptionOnPermissionDenied)
     ASSERT_TRUE(hasPushSubscription());
 
     // Topic should be moved back to enabled list after allowing permission, and the subscription should still exist.
-    m_notificationProvider->setPermission(m_server->origin(), true);
+    m_notificationProvider->setPermission(m_origin, true);
 
     bool isEnabled = false;
     TestWebKitAPI::Util::waitForConditionWithLogging([this, &isEnabled] {
@@ -1142,6 +1046,17 @@ TEST_F(WebPushDTest, IgnoresSubscriptionOnPermissionDenied)
 
 #if ENABLE(INSTALL_COORDINATION_BUNDLES)
 #if USE(APPLE_INTERNAL_SDK)
+static void showNotificationsViaWebPushDInsteadOfUIProcess(WKWebViewConfiguration *configuration)
+{
+    [configuration.preferences _setNotificationsEnabled:YES];
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"]) {
+            [configuration.preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
 TEST(WebPushD, PermissionManagement)
 {
     NSURL *tempDirectory = setUpTestWebPushD();
@@ -1153,7 +1068,7 @@ TEST(WebPushD, PermissionManagement)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = dataStore.get();
-    enableNotifications(configuration.get());
+    showNotificationsViaWebPushDInsteadOfUIProcess(configuration.get());
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     auto uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
@@ -1346,7 +1261,7 @@ TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)
 
         __block bool processedPush = false;
         __block bool pushResult = false;
-        auto message = injectPushMessage(@{ }, m_server->request().URL, m_dataStore.get());
+        auto message = injectPushMessage(@{ });
 
         [m_dataStore _processPushMessage:message.get() completionHandler:^(bool result) {
             pushResult = result;
@@ -1484,6 +1399,113 @@ TEST_F(WebPushDMultipleLaunchTest, GetPushSubscriptionAfterDaemonRelaunch)
     [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
     TestWebKitAPI::Util::run(&gotMessage);
     ASSERT_TRUE([message isEqual:[NSNull null]]);
+}
+
+class WebPushDITPTest : public WebPushDTest {
+public:
+    static constexpr Seconds days { 3600.0 * 24 };
+
+    void SetUp() override
+    {
+        __block bool ready = false;
+        [m_testMessageHandler addMessage:@"Ready" withHandler:^{
+            ready = true;
+        }];
+        [m_testMessageHandler addMessage:@"Received: test aesgcm payload" withHandler:^{
+            m_gotPushEventInServiceWorker = true;
+        }];
+        [m_testMessageHandler addMessage:@"Received: notificationclick" withHandler:^{
+            m_gotNotificationClick = true;
+        }];
+
+        loadRequest(injectedPushHTMLSource, injectedPushServiceWorkerSource);
+        TestWebKitAPI::Util::run(&ready);
+    }
+
+    void setITPTimeAdvance(Seconds advance)
+    {
+        if (advance.seconds() <= 0)
+            return;
+
+        __block bool done = false;
+        [m_dataStore _setResourceLoadStatisticsTimeAdvanceForTesting:advance.value() completionHandler:^{
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        done = false;
+        [m_dataStore _processStatisticsAndDataRecords:^{
+            done = true;
+        }];
+        Util::run(&done);
+    }
+
+    void assertPushEventSucceeds(Seconds advance)
+    {
+        setITPTimeAdvance(advance);
+
+        m_gotPushEventInServiceWorker = false;
+        auto message = injectPushMessage(aesGCMPushData());
+        ASSERT_TRUE(message) << "Unexpected push event injection failure after advancing timer by " << (advance / days) << " days; spurious ITP cleanup?";
+
+        __block bool pushResult = false;
+        __block bool processedPush = false;
+        [m_dataStore _processPushMessage:message.get() completionHandler:^(bool result) {
+            pushResult = result;
+            processedPush = true;
+        }];
+        TestWebKitAPI::Util::run(&processedPush);
+        ASSERT_TRUE(pushResult) << "Unexpected push event processing failure after advancing ITP timer by " << (advance / days) << " days; spurious ITP cleanup?";
+
+        TestWebKitAPI::Util::run(&m_gotPushEventInServiceWorker);
+    }
+
+    void assertPushEventFails(Seconds advance)
+    {
+        setITPTimeAdvance(advance);
+
+        auto message = injectPushMessage(aesGCMPushData());
+        ASSERT_FALSE(message) << "Unexpected push event injection success after advancing ITP timer by " << (advance / days) << " days; missing ITP cleanup?";
+    }
+
+    void simulateNotificationClick()
+    {
+        m_gotNotificationClick = false;
+        ASSERT_TRUE(m_notificationProvider->simulateNotificationClick());
+        TestWebKitAPI::Util::run(&m_gotNotificationClick);
+    }
+
+private:
+    bool m_gotPushEventInServiceWorker { false };
+    bool m_gotNotificationClick { false };
+};
+
+TEST_F(WebPushDITPTest, PushSubscriptionExtendsITPCleanupTimerBy30Days)
+{
+    assertPushEventSucceeds(0 * days);
+    assertPushEventSucceeds(29 * days);
+    EXPECT_TRUE(hasPushSubscription());
+
+    assertPushEventFails(31 * days);
+    assertPushEventFails(100 * days);
+    EXPECT_FALSE(hasPushSubscription());
+}
+
+TEST_F(WebPushDITPTest, NotificationClickExtendsITPCleanupTimerBy30Days)
+{
+    assertPushEventSucceeds(0 * days);
+    assertPushEventSucceeds(29 * days);
+    simulateNotificationClick();
+    EXPECT_TRUE(hasPushSubscription());
+
+#if 0
+    // FIXME: won't work until https://bugs.webkit.org/show_bug.cgi?id=246468 is resolved.
+    assertPushEventSucceeds(58 * days);
+    EXPECT_TRUE(hasPushSubscription());
+#endif
+
+    assertPushEventFails(61 * days);
+    EXPECT_FALSE(hasPushSubscription());
 }
 
 } // namespace TestWebKitAPI

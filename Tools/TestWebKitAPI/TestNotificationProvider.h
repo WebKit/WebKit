@@ -45,7 +45,7 @@ public:
 
     WKDictionaryRef notificationPermissions() const;
     void showWebNotification(WKPageRef, WKNotificationRef);
-    void simulateNotificationClick();
+    bool simulateNotificationClick();
 
     bool hasReceivedNotification() const { return m_hasReceivedNotification; }
     void resetHasReceivedNotification() { m_hasReceivedNotification = false; }
