@@ -4872,6 +4872,7 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-002.html 
 webkit.org/b/218325 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-001.html [ Pass ImageOnlyFailure ]
 
 # Cocoa-only
+media/media-source/remoteplayback-from-source-element.html [ Skip ]
 http/tests/media/hls/hls-hdr-switch.html [ Skip ]
 http/tests/media/video-canplaythrough-webm.html [ Skip ]
 media/media-session/mock-coordinator.html [ Skip ]

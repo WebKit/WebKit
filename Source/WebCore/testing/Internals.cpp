@@ -4776,16 +4776,18 @@ ExceptionOr<RefPtr<VTTCue>> Internals::mediaElementCurrentlySpokenCue(HTMLMediaE
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void Internals::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
 {
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
+    auto frame = this->frame();
+    if (!frame || !frame->page())
+        return;
 
-    page->setMockMediaPlaybackTargetPickerEnabled(enabled);
+    frame->page()->setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
 ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, const String& deviceState)
 {
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
+    auto frame = this->frame();
+    if (!frame || !frame->page())
+        return Exception { InvalidAccessError };
 
     MediaPlaybackTargetContext::MockState state = MediaPlaybackTargetContext::MockState::Unknown;
 
@@ -4798,18 +4800,18 @@ ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String&
     else
         return Exception { InvalidAccessError };
 
-    page->setMockMediaPlaybackTargetPickerState(deviceName, state);
+    frame->page()->setMockMediaPlaybackTargetPickerState(deviceName, state);
     return { };
 }
 
 void Internals::mockMediaPlaybackTargetPickerDismissPopup()
 {
-    auto* page = contextDocument()->frame()->page();
-    ASSERT(page);
+    auto frame = this->frame();
+    if (!frame || !frame->page())
+        return;
 
-    page->mockMediaPlaybackTargetPickerDismissPopup();
+    frame->page()->mockMediaPlaybackTargetPickerDismissPopup();
 }
-
 #endif
 
 ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)

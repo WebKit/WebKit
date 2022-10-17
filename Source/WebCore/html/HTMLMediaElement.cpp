@@ -476,15 +476,15 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_shouldVideoPlaybackRequireUserGesture(document.topDocument().videoPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
     , m_volumeLocked(defaultVolumeLocked())
     , m_opaqueRootProvider([this] { return opaqueRoot(); })
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    , m_remote(RemotePlayback::create(*this))
-#endif
 #if USE(AUDIO_SESSION)
     , m_categoryAtMostRecentPlayback(AudioSessionCategory::None)
 #endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(&document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
+#endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    , m_remote(RemotePlayback::create(*this))
 #endif
 {
     allMediaElements().add(this);
@@ -1070,18 +1070,31 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
 void HTMLMediaElement::checkPlaybackTargetCompatibility()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
-        static const Seconds maxIntervalForWirelessPlaybackPlayerUpdate { 500_ms };
-        Seconds delta = MonotonicTime::now() - m_currentPlaybackTargetIsWirelessEventFiredTime;
-        if (delta < maxIntervalForWirelessPlaybackPlayerUpdate) {
-            scheduleCheckPlaybackTargetCompatability();
-            return;
-        }
+    if (!m_isPlayingToWirelessTarget || m_player->canPlayToWirelessPlaybackTarget())
+        return;
 
+    static const Seconds maxIntervalForWirelessPlaybackPlayerUpdate { 500_ms };
+    Seconds delta = MonotonicTime::now() - m_currentPlaybackTargetIsWirelessEventFiredTime;
+    if (delta < maxIntervalForWirelessPlaybackPlayerUpdate) {
+        scheduleCheckPlaybackTargetCompatability();
+        return;
+    }
+
+    auto tryToSwitchEngines = !m_remotePlaybackConfiguration && m_loadState == LoadingFromSourceElement;
+    if (tryToSwitchEngines) {
+        m_remotePlaybackConfiguration = { currentMediaTime(), playbackRate(), paused() };
+        tryToSwitchEngines = havePotentialSourceChild();
+    }
+
+    if (!tryToSwitchEngines) {
         ERROR_LOG(LOGIDENTIFIER, "player incompatible after ", delta.value(), ", calling setShouldPlayToPlaybackTarget(false)");
         m_failedToPlayToWirelessTarget = true;
+        m_remotePlaybackConfiguration = { };
         m_player->setShouldPlayToPlaybackTarget(false);
+        return;
     }
+
+    scheduleNextSourceChild();
 #endif
 }
 
@@ -1600,7 +1613,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     bool loadAttempted = false;
 #if ENABLE(MEDIA_SOURCE)
-    if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol))
+    if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration)
         m_mediaSource = MediaSource::lookup(url.string());
 
     if (m_mediaSource) {
@@ -1621,7 +1634,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    if (!loadAttempted && m_mediaStreamSrcObject) {
+    if (!loadAttempted && m_mediaStreamSrcObject && !m_remotePlaybackConfiguration) {
         loadAttempted = true;
         ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob ", m_mediaStreamSrcObject->logIdentifier());
         if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
@@ -1629,7 +1642,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 #endif
 
-    if (!loadAttempted && m_blob) {
+    if (!loadAttempted && m_blob && !m_remotePlaybackConfiguration) {
         loadAttempted = true;
         ALWAYS_LOG(LOGIDENTIFIER, "loading generic blob");
         if (!m_blobURLForReading.isEmpty())
@@ -1637,11 +1650,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         m_blobURLForReading = BlobURL::createPublicURL(&document().securityOrigin());
         ThreadableBlobRegistry::registerBlobURL(&document().securityOrigin(), document().policyContainer(), m_blobURLForReading, m_blob->url());
 
-        if (!m_player->load(m_blobURLForReading, contentType, keySystem))
+        if (!m_player->load(m_blobURLForReading, contentType, keySystem, !!m_remotePlaybackConfiguration))
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
     }
 
-    if (!loadAttempted && !m_player->load(url, contentType, keySystem))
+    if (!loadAttempted && !m_player->load(url, contentType, keySystem, !!m_remotePlaybackConfiguration))
         mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
 
     mediaPlayerRenderingModeChanged();
@@ -2708,6 +2721,18 @@ void HTMLMediaElement::durationChanged()
     scheduleEvent(eventNames().durationchangeEvent);
 }
 
+void HTMLMediaElement::applyConfiguration(const RemotePlaybackConfiguration& configuration)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (configuration.currentTime)
+        setCurrentTime(configuration.currentTime);
+    if (configuration.rate != 1)
+        setPlaybackRate(configuration.rate);
+    if (!configuration.paused)
+        resumeAutoplaying();
+}
+
 void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 {
     // Set "wasPotentiallyPlaying" BEFORE updating m_readyState, potentiallyPlaying() uses it
@@ -2782,7 +2807,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
             if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
-                enqueuePlaybackTargetAvailabilityChangedEvent();
+                enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::OnlyWhenChanged);
 #endif
             m_initiallyMuted = m_volume < 0.05 || muted();
 
@@ -2823,6 +2848,13 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
         if (!tracksAreReady)
             break;
+
+        if (oldState < HAVE_FUTURE_DATA && m_readyState >= HAVE_FUTURE_DATA) {
+            if (m_remotePlaybackConfiguration) {
+                applyConfiguration(*m_remotePlaybackConfiguration);
+                m_remotePlaybackConfiguration = { };
+            }
+        }
 
         if (m_readyState == HAVE_FUTURE_DATA && oldState <= HAVE_CURRENT_DATA) {
             scheduleEvent(eventNames().canplayEvent);
@@ -5098,7 +5130,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
     UNUSED_PARAM(keySystem);
 
     // Don't log if this was just called to find out if there are any valid <source> elements.
-    bool shouldLog = willLog(WTFLogLevel::Debug) && actionIfInvalid != DoNothing;
+    bool shouldLog = willLog(WTFLogLevel::Always) && actionIfInvalid != DoNothing;
     if (shouldLog)
         INFO_LOG(LOGIDENTIFIER);
 
@@ -5152,6 +5184,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
 #if ENABLE(MEDIA_STREAM)
             parameters.isMediaStream = mediaURL.protocolIs(mediaStreamBlobProtocol);
 #endif
+            parameters.requiresRemotePlayback = !!m_remotePlaybackConfiguration;
             if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback() || Traversal<HTMLSourceElement>::nextSkippingChildren(source))
                 parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
 
@@ -6120,7 +6153,7 @@ void HTMLMediaElement::clearMediaPlayer()
 
         // Send an availability event in case scripts want to hide the picker when the element
         // doesn't support playback to a target.
-        enqueuePlaybackTargetAvailabilityChangedEvent();
+        enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
     }
 
     if (m_isPlayingToWirelessTarget)
@@ -6362,7 +6395,7 @@ void HTMLMediaElement::wirelessRoutesAvailableDidChange()
     bool hasTargets = mediaSession().hasWirelessPlaybackTargets();
     m_remote->availabilityChanged(hasTargets);
 
-    enqueuePlaybackTargetAvailabilityChangedEvent();
+    enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::OnlyWhenChanged);
 }
 
 void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool isCurrentPlayBackTargetWireless)
@@ -6377,12 +6410,13 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
         if (isContextStopped())
             return;
 
-        UNUSED_PARAM(logSiteIdentifier);
-
-        if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
+        auto newValue = isPlayingToWirelessTarget && m_player && m_player->isCurrentPlaybackTargetWireless();
+        if (newValue == m_isPlayingToWirelessTarget)
             return;
 
-        m_isPlayingToWirelessTarget = m_player && m_player->isCurrentPlaybackTargetWireless();
+        UNUSED_PARAM(logSiteIdentifier);
+
+        m_isPlayingToWirelessTarget = newValue;
         m_remote->isPlayingToRemoteTargetChanged(m_isPlayingToWirelessTarget);
         ALWAYS_LOG(logSiteIdentifier, m_isPlayingToWirelessTarget);
         configureMediaControls();
@@ -6400,10 +6434,14 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
     });
 }
 
-void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
+void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior behavior)
 {
     bool hasTargets = m_mediaSession && mediaSession().hasWirelessPlaybackTargets();
+    if (behavior == EnqueueBehavior::OnlyWhenChanged && hasTargets == m_lastTargetAvailabilityEventState)
+        return;
+
     ALWAYS_LOG(LOGIDENTIFIER, "hasTargets = ", hasTargets);
+    m_lastTargetAvailabilityEventState = hasTargets;
     auto event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     scheduleEvent(WTFMove(event));
     scheduleUpdateMediaState();
@@ -6491,7 +6529,7 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
 
     ALWAYS_LOG(LOGIDENTIFIER, "'webkitplaybacktargetavailabilitychanged'");
 
-    enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
+    enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always); // Ensure the event listener gets at least one event.
     return true;
 #else
     return Node::addEventListener(eventType, WTFMove(listener), options);
@@ -7208,7 +7246,7 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
 // which analysis doesn't support.
 void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     mediaSession().setActive(true);
 
@@ -7251,7 +7289,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
         m_hasPlaybackTargetAvailabilityListeners = true;
         mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
-        enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
+        enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always); // Ensure the event listener gets at least one event.
     }
 #endif
 

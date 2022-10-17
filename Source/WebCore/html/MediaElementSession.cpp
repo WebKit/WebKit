@@ -682,22 +682,22 @@ bool MediaElementSession::wantsToObserveViewportVisibilityForAutoplay() const
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaElementSession::showPlaybackTargetPicker()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     auto& document = m_element.document();
     if (m_restrictions & RequireUserGestureToShowPlaybackTargetPicker && !document.processingUserGestureForMedia()) {
-        INFO_LOG(LOGIDENTIFIER, "returning early because of permissions");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning early because of permissions");
         return;
     }
 
     if (!document.page()) {
-        INFO_LOG(LOGIDENTIFIER, "returning early because page is NULL");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning early because page is NULL");
         return;
     }
 
 #if !PLATFORM(IOS_FAMILY)
     if (m_element.readyState() < HTMLMediaElementEnums::HAVE_METADATA) {
-        INFO_LOG(LOGIDENTIFIER, "returning early because element is not playable");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning early because element is not playable");
         return;
     }
 #endif

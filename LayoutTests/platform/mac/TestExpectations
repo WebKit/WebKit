@@ -94,6 +94,7 @@ http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
 svg/filters/feDisplacementMap-filterUnits.svg [ Pass ]
+media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

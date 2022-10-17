@@ -98,6 +98,7 @@ struct MediaEngineSupportParameters {
     URL url;
     bool isMediaSource { false };
     bool isMediaStream { false };
+    bool requiresRemotePlayback { false };
     Vector<ContentType> contentTypesRequiringHardwareSupport;
     std::optional<Vector<String>> allowedMediaContainerTypes;
     std::optional<Vector<String>> allowedMediaCodecTypes;
@@ -112,6 +113,7 @@ struct MediaEngineSupportParameters {
         encoder << url;
         encoder << isMediaSource;
         encoder << isMediaStream;
+        encoder << requiresRemotePlayback;
         encoder << contentTypesRequiringHardwareSupport;
         encoder << allowedMediaContainerTypes;
         encoder << allowedMediaCodecTypes;
@@ -127,6 +129,7 @@ struct MediaEngineSupportParameters {
             && decoder.decode(parameters.url)
             && decoder.decode(parameters.isMediaSource)
             && decoder.decode(parameters.isMediaStream)
+            && decoder.decode(parameters.requiresRemotePlayback)
             && decoder.decode(parameters.contentTypesRequiringHardwareSupport)
             && decoder.decode(parameters.allowedMediaContainerTypes)
             && decoder.decode(parameters.allowedMediaCodecTypes)
@@ -358,7 +361,7 @@ public:
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
 
-    bool load(const URL&, const ContentType&, const String& keySystem);
+    bool load(const URL&, const ContentType&, const String&, bool);
 #if ENABLE(MEDIA_SOURCE)
     bool load(const URL&, const ContentType&, MediaSourcePrivateClient&);
 #endif
@@ -717,6 +720,8 @@ public:
     void setShouldDisableHDR(bool);
     bool shouldDisableHDR() const { return client().mediaPlayerShouldDisableHDR(); }
 
+    bool requiresRemotePlayback() const { return m_requiresRemotePlayback; }
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
@@ -763,6 +768,7 @@ private:
     bool m_shouldContinueAfterKeyNeeded { false };
 #endif
     bool m_isGatheringVideoFrameMetadata { false };
+    bool m_requiresRemotePlayback { false };
     String m_lastErrorMessage;
 };
 

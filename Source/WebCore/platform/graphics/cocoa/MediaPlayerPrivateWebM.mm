@@ -140,7 +140,7 @@ void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<String, ASCIICaseInsensit
 
 MediaPlayer::SupportsType MediaPlayerPrivateWebM::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (parameters.isMediaSource || parameters.isMediaStream)
+    if (parameters.isMediaSource || parameters.isMediaStream || parameters.requiresRemotePlayback)
         return MediaPlayer::SupportsType::IsNotSupported;
     
     return SourceBufferParserWebM::isContentTypeSupported(parameters.type);

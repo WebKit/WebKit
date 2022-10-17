@@ -480,7 +480,7 @@ void MediaPlayer::invalidate()
     m_client = &nullMediaPlayerClient();
 }
 
-bool MediaPlayer::load(const URL& url, const ContentType& contentType, const String& keySystem)
+bool MediaPlayer::load(const URL& url, const ContentType& contentType, const String& keySystem, bool requiresRemotePlayback)
 {
     ASSERT(!m_reloadTimer.isActive());
 
@@ -490,6 +490,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
     m_contentType = contentType;
     m_url = url;
     m_keySystem = keySystem.convertToASCIILowercase();
+    m_requiresRemotePlayback = requiresRemotePlayback;
     m_contentMIMETypeWasInferredFromExtension = false;
 
 #if ENABLE(MEDIA_SOURCE)
@@ -531,6 +532,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSour
     m_contentType = contentType;
     m_url = url;
     m_keySystem = emptyString();
+    m_requiresRemotePlayback = false;
     m_contentMIMETypeWasInferredFromExtension = false;
     loadWithNextMediaEngine(nullptr);
     return m_currentMediaEngine;
@@ -544,6 +546,7 @@ bool MediaPlayer::load(MediaStreamPrivate& mediaStream)
 
     m_mediaStream = &mediaStream;
     m_keySystem = emptyString();
+    m_requiresRemotePlayback = false;
     m_contentType = { };
     m_contentMIMETypeWasInferredFromExtension = false;
     loadWithNextMediaEngine(nullptr);

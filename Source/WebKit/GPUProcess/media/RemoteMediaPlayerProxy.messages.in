@@ -26,7 +26,7 @@
 messages -> RemoteMediaPlayerProxy NotRefCounted {
     PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, enum:uint8_t WebCore::DynamicRangeMode mode) -> (std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId)
 
-    Load(URL url, std::optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
+    Load(URL url, std::optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem, bool requiresRemotePlayback) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #if ENABLE(MEDIA_SOURCE)
     LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #endif
