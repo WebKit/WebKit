@@ -2219,3 +2219,7 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitm
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 
 webkit.org/b/242515 [ arm64 ] compositing/reflections/mask-and-reflection.html [ ImageOnlyFailure ]
+
+# webkit.org/b/245588 
+mathml/presentation/mathvariant-inheritance.html [ ImageOnlyFailure ]
+mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
