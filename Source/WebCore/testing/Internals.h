@@ -1350,6 +1350,7 @@ public:
 #endif
 
     void avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement&);
+    bool hasSleepDisabler() const;
 
 private:
     explicit Internals(Document&);

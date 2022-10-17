@@ -49,6 +49,11 @@
             {
                 return stream !== null;
             }
+
+            function hasSleepDisabler()
+            {
+                return window.internals ? internals.hasSleepDisabler() : false;
+            }
         </script>
     <head>
 
