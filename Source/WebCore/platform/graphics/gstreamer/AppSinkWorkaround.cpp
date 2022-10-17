@@ -68,6 +68,7 @@ static std::once_flag appSinkWorkaroundOnceFlag;
 void registerAppsinkWorkaroundIfNeeded()
 {
     std::call_once(appSinkWorkaroundOnceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_app_sink_workaround_debug, "webkitappsink", 0, "WebKit AppSink Workarounds");
         bool needsWorkaround = checkNeedsAppsinkWorkaround();
         GST_DEBUG("appsink workaround will%s be registered.", needsWorkaround ? "" : " NOT");
         if (!needsWorkaround)
