@@ -2321,12 +2321,6 @@ webkit.org/b/237166 [ BigSur+ ] webgl/pending/conformance/textures/misc/tex-imag
 # macOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
 
-# rdar://101088767
-imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/script-tag.http.html [ Failure ]
-imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/script-tag.https.html [ Failure ]
-imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/script-tag.http.html [ Failure ]
-imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/script-tag.https.html [ Failure ]
-
 # fractional pixel diff between modern and legacy line layout.
 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
 
