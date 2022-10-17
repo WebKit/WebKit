@@ -264,7 +264,7 @@ CONTENT OF TEST
 </html>
 """
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
-        test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 19, test_html)
+        test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 18, test_html)
 
         with OutputCapture():
             converter.feed(test_content[2])
