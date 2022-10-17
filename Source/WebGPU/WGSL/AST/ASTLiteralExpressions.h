@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Expression.h"
+#include "ASTExpression.h"
 
 namespace WGSL::AST {
 

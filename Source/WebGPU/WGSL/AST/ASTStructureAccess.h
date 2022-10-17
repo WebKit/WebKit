@@ -25,41 +25,31 @@
 
 #pragma once
 
-#include "Expression.h"
-#include "TypeDecl.h"
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
+#include "ASTExpression.h"
+
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
-// A CallableExpression expresses a "function" call, which consists of a target to be called,
-// and a list of arguments. The target does not necesserily have to be a function identifier,
-// but can also be a type, in which the whole call is a type conversion expression. The exact
-// kind of expression can only be resolved during semantic analysis.
-class CallableExpression final : public Expression {
+class StructureAccess final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Expression::List&& arguments)
+    StructureAccess(SourceSpan span, UniqueRef<Expression>&& base, StringView fieldName)
         : Expression(span)
-        , m_target(WTFMove(target))
-        , m_arguments(WTFMove(arguments))
+        , m_base(WTFMove(base))
+        , m_fieldName(fieldName)
     {
     }
 
-    Kind kind() const override { return Kind::CallableExpression; }
-    const TypeDecl& target() const { return m_target; }
-    const Expression::List& arguments() const { return m_arguments; }
+    Kind kind() const override { return Kind::StructureAccess; }
+    Expression& base() { return m_base.get(); }
+    const StringView& fieldName() const { return m_fieldName; }
 
 private:
-    // If m_target is a NamedType, it could either be a:
-    //   * Type that does not accept parameters (bool, i32, u32, ...)
-    //   * Identifier that refers to a type alias.
-    //   * Identifier that refers to a function.
-    UniqueRef<TypeDecl> m_target;
-    Expression::List m_arguments;
+    UniqueRef<Expression> m_base;
+    StringView m_fieldName;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(CallableExpression, isCallableExpression())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(StructureAccess, isStructureAccess())

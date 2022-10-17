@@ -25,41 +25,28 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include <wtf/TypeCasts.h>
+#include "ASTExpression.h"
+
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
-class Statement : public ASTNode {
+class IdentifierExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    enum class Kind : uint8_t {
-        Compound,
-        Return,
-        Assignment,
-        Variable,
-    };
-
-    using List = UniqueRefVector<Statement>;
-
-    Statement(SourceSpan span)
-        : ASTNode(span)
+    IdentifierExpression(SourceSpan span, StringView identifier)
+        : Expression(span)
+        , m_identifier(identifier)
     {
     }
 
-    virtual ~Statement() {}
+    Kind kind() const override { return Kind::Identifier; }
+    const StringView& identifier() const { return m_identifier; }
 
-    virtual Kind kind() const = 0;
-    bool isCompound() const { return kind() == Kind::Compound; }
-    bool isReturn() const { return kind() == Kind::Return; }
-    bool isAssignment() const { return kind() == Kind::Assignment; }
-    bool isVariable() const { return kind() == Kind::Variable; }
+private:
+    StringView m_identifier;
 };
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::Statement& statement) { return statement.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(IdentifierExpression, isIdentifier())

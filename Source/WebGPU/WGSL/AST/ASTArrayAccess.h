@@ -25,50 +25,31 @@
 
 #pragma once
 
-#include "Attribute.h"
-#include "CompilationMessage.h"
-#include "Decl.h"
-#include "Expression.h"
-#include "TypeDecl.h"
-#include "VariableQualifier.h"
-#include <wtf/text/WTFString.h>
+#include "ASTExpression.h"
+
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
-class VariableDecl final : public Decl {
+class ArrayAccess final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = UniqueRefVector<VariableDecl>;
-
-    VariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attribute::List&& attributes)
-        : Decl(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_qualifier(WTFMove(qualifier))
-        , m_type(WTFMove(type))
-        , m_initializer(WTFMove(initializer))
+    ArrayAccess(SourceSpan span, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
+        : Expression(span)
+        , m_base(WTFMove(base))
+        , m_index(WTFMove(index))
     {
-        ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override { return Kind::Variable; }
-    const StringView& name() const { return m_name; }
-    Attribute::List& attributes() { return m_attributes; }
-    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
-    TypeDecl* maybeTypeDecl() { return m_type.get(); }
-    Expression* maybeInitializer() { return m_initializer.get(); }
+    Kind kind() const override { return Kind::ArrayAccess; }
+    Expression& base() { return m_base.get(); }
+    Expression& index() { return m_index.get(); }
 
 private:
-    StringView m_name;
-    Attribute::List m_attributes;
-    // Each of the following may be null
-    // But at least one of type and initializer must be non-null
-    std::unique_ptr<VariableQualifier> m_qualifier;
-    std::unique_ptr<TypeDecl> m_type;
-    std::unique_ptr<Expression> m_initializer;
+    UniqueRef<Expression> m_base;
+    UniqueRef<Expression> m_index;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(VariableDecl, isVariable())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(ArrayAccess, isArrayAccess())

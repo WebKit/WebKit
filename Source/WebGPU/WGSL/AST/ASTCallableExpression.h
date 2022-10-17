@@ -25,33 +25,42 @@
 
 #pragma once
 
-#include "Expression.h"
+#include "ASTExpression.h"
+#include "ASTTypeDecl.h"
+
+#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WGSL::AST {
 
-enum class UnaryOperation : uint8_t {
-    Negate
-};
-    
-class UnaryExpression final : public Expression {
+// A CallableExpression expresses a "function" call, which consists of a target to be called,
+// and a list of arguments. The target does not necesserily have to be a function identifier,
+// but can also be a type, in which the whole call is a type conversion expression. The exact
+// kind of expression can only be resolved during semantic analysis.
+class CallableExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    UnaryExpression(SourceSpan span, UniqueRef<Expression>&& expression, UnaryOperation operation)
+    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Expression::List&& arguments)
         : Expression(span)
-        , m_expression(WTFMove(expression))
-        , m_operation(operation)
+        , m_target(WTFMove(target))
+        , m_arguments(WTFMove(arguments))
     {
     }
 
-    Kind kind() const final { return Kind::UnaryExpression; }
-    UnaryOperation operation() const { return m_operation; }
-    Expression& expression() { return m_expression.get(); }
+    Kind kind() const override { return Kind::CallableExpression; }
+    const TypeDecl& target() const { return m_target; }
+    const Expression::List& arguments() const { return m_arguments; }
 
 private:
-    UniqueRef<Expression> m_expression;
-    UnaryOperation m_operation;
+    // If m_target is a NamedType, it could either be a:
+    //   * Type that does not accept parameters (bool, i32, u32, ...)
+    //   * Identifier that refers to a type alias.
+    //   * Identifier that refers to a function.
+    UniqueRef<TypeDecl> m_target;
+    Expression::List m_arguments;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(UnaryExpression, isUnaryExpression())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(CallableExpression, isCallableExpression())

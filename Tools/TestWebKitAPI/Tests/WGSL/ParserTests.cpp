@@ -26,17 +26,18 @@
 #include "config.h"
 #include "Parser.h"
 
-#include "ArrayAccess.h"
-#include "AssignmentStatement.h"
-#include "CallableExpression.h"
-#include "IdentifierExpression.h"
+#include "ASTArrayAccess.h"
+#include "ASTAssignmentStatement.h"
+#include "ASTCallableExpression.h"
+#include "ASTIdentifierExpression.h"
+#include "ASTLiteralExpressions.h"
+#include "ASTReturnStatement.h"
+#include "ASTStructureAccess.h"
+#include "ASTUnaryExpression.h"
+#include "ASTVariableStatement.h"
 #include "Lexer.h"
-#include "LiteralExpressions.h"
-#include "ReturnStatement.h"
-#include "StructureAccess.h"
-#include "UnaryExpression.h"
-#include "VariableStatement.h"
 #include "WGSL.h"
+
 #include <wtf/Assertions.h>
 
 #define EXPECT_SHADER(shader) \

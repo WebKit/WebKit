@@ -25,30 +25,62 @@
 
 #pragma once
 
-#include "Expression.h"
-#include <wtf/text/StringView.h>
+#include "ASTAttribute.h"
+#include "ASTDecl.h"
+#include "ASTTypeDecl.h"
+#include "CompilationMessage.h"
 
 namespace WGSL::AST {
 
-class StructureAccess final : public Expression {
+class StructMember final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    StructureAccess(SourceSpan span, UniqueRef<Expression>&& base, StringView fieldName)
-        : Expression(span)
-        , m_base(WTFMove(base))
-        , m_fieldName(fieldName)
+    using List = UniqueRefVector<StructMember>;
+
+    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
+        : ASTNode(span)
+        , m_name(name)
+        , m_attributes(WTFMove(attributes))
+        , m_type(WTFMove(type))
     {
     }
 
-    Kind kind() const override { return Kind::StructureAccess; }
-    Expression& base() { return m_base.get(); }
-    const StringView& fieldName() const { return m_fieldName; }
+    const StringView& name() const { return m_name; }
+    TypeDecl& type() { return m_type; }
+    Attribute::List& attributes() { return m_attributes; }
 
 private:
-    UniqueRef<Expression> m_base;
-    StringView m_fieldName;
+    StringView m_name;
+    Attribute::List m_attributes;
+    UniqueRef<TypeDecl> m_type;
+};
+
+class StructDecl final : public Decl {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    using List = UniqueRefVector<StructDecl>;
+
+    StructDecl(SourceSpan sourceSpan, StringView name, StructMember::List&& members, Attribute::List&& attributes)
+        : Decl(sourceSpan)
+        , m_name(name)
+        , m_attributes(WTFMove(attributes))
+        , m_members(WTFMove(members))
+    {
+    }
+
+    Kind kind() const override { return Kind::Struct; }
+    const StringView& name() const { return m_name; }
+    Attribute::List& attributes() { return m_attributes; }
+    StructMember::List& members() { return m_members; }
+
+private:
+    StringView m_name;
+    Attribute::List m_attributes;
+    StructMember::List m_members;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(StructureAccess, isStructureAccess())
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(StructDecl, isStruct())

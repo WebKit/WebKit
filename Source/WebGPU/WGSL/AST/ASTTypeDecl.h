@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include "Expression.h"
+#include "ASTExpression.h"
+
 #include <wtf/TypeCasts.h>
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
@@ -46,7 +47,7 @@ public:
     {
     }
 
-    virtual ~TypeDecl() {}
+    virtual ~TypeDecl() { }
 
     virtual Kind kind() const = 0;
     bool isArray() const { return kind() == Kind::Array; }

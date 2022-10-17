@@ -23,27 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "Parser.h"
+
+#include "ASTArrayAccess.h"
+#include "ASTAssignmentStatement.h"
+#include "ASTAttribute.h"
+#include "ASTCallableExpression.h"
+#include "ASTCompoundStatement.h"
+#include "ASTIdentifierExpression.h"
+#include "ASTLiteralExpressions.h"
+#include "ASTReturnStatement.h"
+#include "ASTStructureAccess.h"
+#include "ASTUnaryExpression.h"
+#include "ASTVariableQualifier.h"
+#include "ASTVariableStatement.h"
+#include "Lexer.h"
 #include "ParserPrivate.h"
 
-#include "config.h"
-
-#include "AST/Attribute.h"
-#include "AST/Decl.h"
-#include "AST/Expression.h"
-#include "AST/Expressions/ArrayAccess.h"
-#include "AST/Expressions/CallableExpression.h"
-#include "AST/Expressions/IdentifierExpression.h"
-#include "AST/Expressions/LiteralExpressions.h"
-#include "AST/Expressions/StructureAccess.h"
-#include "AST/Expressions/UnaryExpression.h"
-#include "AST/Statement.h"
-#include "AST/Statements/AssignmentStatement.h"
-#include "AST/Statements/CompoundStatement.h"
-#include "AST/Statements/ReturnStatement.h"
-#include "AST/Statements/VariableStatement.h"
-#include "AST/StructureDecl.h"
-#include "Lexer.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {

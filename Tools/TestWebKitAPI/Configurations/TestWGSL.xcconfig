@@ -23,7 +23,7 @@
 
 PRODUCT_NAME = TestWGSL;
 
-PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebGPU/WGSL $(SRCROOT)/../../Source/WebGPU/WGSL/AST $(SRCROOT)/../../Source/WebGPU/WGSL/AST/Expressions $(SRCROOT)/../../Source/WebGPU/WGSL/AST/Statements $(inherited);
+PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebGPU/WGSL $(SRCROOT)/../../Source/WebGPU/WGSL/AST $(inherited);
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 

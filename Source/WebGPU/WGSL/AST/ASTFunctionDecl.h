@@ -25,28 +25,28 @@
 
 #pragma once
 
+#include "ASTAttribute.h"
+#include "ASTCompoundStatement.h"
+#include "ASTDecl.h"
 #include "ASTNode.h"
-#include "Attribute.h"
+#include "ASTTypeDecl.h"
 #include "CompilationMessage.h"
-#include "Decl.h"
-#include "TypeDecl.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/text/StringView.h>
+
+#include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
-class StructMember final : public ASTNode {
+class Parameter final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    using List = UniqueRefVector<StructMember>;
+    using List = UniqueRefVector<Parameter>;
 
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
+    Parameter(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
         : ASTNode(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
+        , m_name(WTFMove(name))
         , m_type(WTFMove(type))
+        , m_attributes(WTFMove(attributes))
     {
     }
 
@@ -56,35 +56,44 @@ public:
 
 private:
     StringView m_name;
-    Attribute::List m_attributes;
     UniqueRef<TypeDecl> m_type;
+    Attribute::List m_attributes;
 };
 
-class StructDecl final : public Decl {
+class FunctionDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    using List = UniqueRefVector<StructDecl>;
+    using List = UniqueRefVector<FunctionDecl>;
 
-    StructDecl(SourceSpan sourceSpan, StringView name, StructMember::List&& members, Attribute::List&& attributes)
+    FunctionDecl(SourceSpan sourceSpan, StringView name, Parameter::List&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
         : Decl(sourceSpan)
         , m_name(name)
+        , m_parameters(WTFMove(parameters))
         , m_attributes(WTFMove(attributes))
-        , m_members(WTFMove(members))
+        , m_returnAttributes(WTFMove(returnAttributes))
+        , m_returnType(WTFMove(returnType))
+        , m_body(WTFMove(body))
     {
     }
 
-    Kind kind() const override { return Kind::Struct; }
+    Kind kind() const override { return Kind::Function; }
     const StringView& name() const { return m_name; }
+    Parameter::List& parameters() { return m_parameters; }
     Attribute::List& attributes() { return m_attributes; }
-    StructMember::List& members() { return m_members; }
+    Attribute::List& returnAttributes() { return m_returnAttributes; }
+    TypeDecl* maybeReturnType() { return m_returnType.get(); }
+    CompoundStatement& body() { return m_body; }
 
 private:
     StringView m_name;
+    Parameter::List m_parameters;
     Attribute::List m_attributes;
-    StructMember::List m_members;
+    Attribute::List m_returnAttributes;
+    std::unique_ptr<TypeDecl> m_returnType;
+    CompoundStatement m_body;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(StructDecl, isStruct())
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(FunctionDecl, isFunction())

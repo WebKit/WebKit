@@ -25,12 +25,11 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include "Decl.h"
-#include "FunctionDecl.h"
-#include "GlobalDirective.h"
-#include "StructureDecl.h"
-#include "VariableDecl.h"
+#include "ASTFunctionDecl.h"
+#include "ASTGlobalDirective.h"
+#include "ASTStructureDecl.h"
+#include "ASTVariableDecl.h"
+
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

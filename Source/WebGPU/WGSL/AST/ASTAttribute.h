@@ -53,7 +53,7 @@ public:
     {
     }
 
-    virtual ~Attribute() {};
+    virtual ~Attribute() { };
 
     virtual Kind kind() const = 0;
     bool isGroup() const { return kind() == Kind::Group; }

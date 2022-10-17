@@ -25,30 +25,33 @@
 
 #pragma once
 
-#include "Expression.h"
-#include <wtf/text/StringView.h>
+#include "ASTExpression.h"
 
 namespace WGSL::AST {
 
-class ArrayAccess final : public Expression {
+enum class UnaryOperation : uint8_t {
+    Negate
+};
+    
+class UnaryExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ArrayAccess(SourceSpan span, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
+    UnaryExpression(SourceSpan span, UniqueRef<Expression>&& expression, UnaryOperation operation)
         : Expression(span)
-        , m_base(WTFMove(base))
-        , m_index(WTFMove(index))
+        , m_expression(WTFMove(expression))
+        , m_operation(operation)
     {
     }
 
-    Kind kind() const override { return Kind::ArrayAccess; }
-    Expression& base() { return m_base.get(); }
-    Expression& index() { return m_index.get(); }
+    Kind kind() const final { return Kind::UnaryExpression; }
+    UnaryOperation operation() const { return m_operation; }
+    Expression& expression() { return m_expression.get(); }
 
 private:
-    UniqueRef<Expression> m_base;
-    UniqueRef<Expression> m_index;
+    UniqueRef<Expression> m_expression;
+    UnaryOperation m_operation;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(ArrayAccess, isArrayAccess())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(UnaryExpression, isUnaryExpression())

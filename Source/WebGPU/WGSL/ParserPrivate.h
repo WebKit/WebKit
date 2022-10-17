@@ -25,14 +25,30 @@
 
 #pragma once
 
-#include "AST/ShaderModule.h"
-#include "AST/Statements/ReturnStatement.h"
+#include "ASTAttribute.h"
+#include "ASTExpression.h"
+#include "CompilationMessage.h"
 #include "Lexer.h"
 
 namespace WGSL {
 
 namespace AST {
 class ArrayType;
+class CompoundStatement;
+class Decl;
+class FunctionDecl;
+class Parameter;
+class ReturnStatement;
+class ShaderModule;
+class Statement;
+class StructDecl;
+class StructMember;
+class TypeDecl;
+class VariableDecl;
+class VariableQualifier;
+
+enum class AccessMode : uint8_t;
+enum class StorageClass : uint8_t;
 }
 
 template<typename Lexer>

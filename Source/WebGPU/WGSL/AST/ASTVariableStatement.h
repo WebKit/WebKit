@@ -25,29 +25,29 @@
 
 #pragma once
 
-#pragma once
+#include "ASTDecl.h"
+#include "ASTStatement.h"
 
-#include "Expression.h"
-#include "Statement.h"
+#include <wtf/UniqueRef.h>
 
 namespace WGSL::AST {
 
-class ReturnStatement final : public Statement {
+class VariableStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ReturnStatement(SourceSpan span, std::unique_ptr<Expression>&& expression)
+    VariableStatement(SourceSpan span, VariableDecl&& decl)
         : Statement(span)
-        , m_expression(WTFMove(expression))
+        , m_decl(makeUniqueRef<VariableDecl>(WTFMove(decl)))
     {
     }
 
-    Kind kind() const override { return Kind::Return; }
-    Expression* maybeExpression() { return m_expression.get(); }
+    Kind kind() const override { return Kind::Variable; }
+    Decl& declaration() { return m_decl.get(); }
 
 private:
-    std::unique_ptr<Expression> m_expression;
+    UniqueRef<Decl> m_decl;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(ReturnStatement, isReturn())
+SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(VariableStatement, isVariable())

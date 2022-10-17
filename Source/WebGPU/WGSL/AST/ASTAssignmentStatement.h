@@ -25,27 +25,33 @@
 
 #pragma once
 
-#include "Statement.h"
+#include "ASTExpression.h"
+#include "ASTStatement.h"
+
+#include <wtf/UniqueRef.h>
 
 namespace WGSL::AST {
 
-class CompoundStatement final : public Statement {
+class AssignmentStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    CompoundStatement(SourceSpan span, Statement::List&& statements)
+    AssignmentStatement(SourceSpan span, std::unique_ptr<Expression>&& lhs, UniqueRef<Expression>&& rhs)
         : Statement(span)
-        , m_statements(WTFMove(statements))
+        , m_lhs(WTFMove(lhs))
+        , m_rhs(WTFMove(rhs))
     {
     }
 
-    Kind kind() const override { return Kind::Compound; }
-    Statement::List& statements() { return m_statements; }
+    Kind kind() const override { return Kind::Assignment; }
+    Expression* maybeLhs() { return m_lhs.get(); }
+    Expression& rhs() { return m_rhs; }
 
 private:
-    Statement::List m_statements;
+    // LHS can be null in the case it is '_', but RHS is never null
+    std::unique_ptr<Expression> m_lhs;
+    UniqueRef<Expression> m_rhs;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(CompoundStatement, isCompound())
+SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(AssignmentStatement, isAssignment())

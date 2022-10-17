@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "LiteralExpressions.h"
+#import "ASTLiteralExpressions.h"
 #import "ParserPrivate.h"
 
 static Expected<UniqueRef<WGSL::AST::Expression>, WGSL::Error> parseLCharPrimaryExpression(const String& input)

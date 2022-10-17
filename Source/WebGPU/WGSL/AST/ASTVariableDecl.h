@@ -25,27 +25,51 @@
 
 #pragma once
 
-#include "Expression.h"
-#include <wtf/text/StringView.h>
+#include "ASTAttribute.h"
+#include "ASTDecl.h"
+#include "ASTExpression.h"
+#include "ASTTypeDecl.h"
+#include "ASTVariableQualifier.h"
+#include "CompilationMessage.h"
+
+#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
-class IdentifierExpression final : public Expression {
+class VariableDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    IdentifierExpression(SourceSpan span, StringView identifier)
-        : Expression(span)
-        , m_identifier(identifier)
+    using List = UniqueRefVector<VariableDecl>;
+
+    VariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attribute::List&& attributes)
+        : Decl(span)
+        , m_name(name)
+        , m_attributes(WTFMove(attributes))
+        , m_qualifier(WTFMove(qualifier))
+        , m_type(WTFMove(type))
+        , m_initializer(WTFMove(initializer))
     {
+        ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override { return Kind::Identifier; }
-    const StringView& identifier() const { return m_identifier; }
+    Kind kind() const override { return Kind::Variable; }
+    const StringView& name() const { return m_name; }
+    Attribute::List& attributes() { return m_attributes; }
+    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
+    TypeDecl* maybeTypeDecl() { return m_type.get(); }
+    Expression* maybeInitializer() { return m_initializer.get(); }
 
 private:
-    StringView m_identifier;
+    StringView m_name;
+    Attribute::List m_attributes;
+    // Each of the following may be null
+    // But at least one of type and initializer must be non-null
+    std::unique_ptr<VariableQualifier> m_qualifier;
+    std::unique_ptr<TypeDecl> m_type;
+    std::unique_ptr<Expression> m_initializer;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(IdentifierExpression, isIdentifier())
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(VariableDecl, isVariable())
