@@ -1,12 +1,44 @@
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
+CONSOLE MESSAGE: VideoEncoder encode failed: Frame resolution does not match VPx encoder configured size
 
 PASS Test VideoEncoder construction
 PASS Test VideoEncoder.configure()
-FAIL Test successful configure(), encode(), and flush() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL encodeQueueSize test promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test successful reset() and re-confiugre() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test successful encode() after re-configure(). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Verify closed VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Verify unconfigured VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Verify encoding closed frames throws. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Encode video with negative timestamp promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL Test successful configure(), encode(), and flush() assert_not_equals: got disallowed value null
+FAIL encodeQueueSize test assert_equals: expected 0 but got Infinity
+FAIL Test successful reset() and re-confiugre() assert_unreached: unexpected error Reached unreachable code
+FAIL Test successful encode() after re-configure(). assert_equals: number of chunks expected 2 but got 0
+PASS Verify closed VideoEncoder operations
+PASS Verify unconfigured VideoEncoder operations
+FAIL Verify encoding closed frames throws. assert_throws_dom: function "() => {
+    encoder.encode(frame);
+  }" threw object "TypeError: VideoFrame is detached" that is not a DOMException OperationError: property "code" is equal to undefined, expected 0
+FAIL Encode video with negative timestamp assert_equals: expected 1 but got 0
 

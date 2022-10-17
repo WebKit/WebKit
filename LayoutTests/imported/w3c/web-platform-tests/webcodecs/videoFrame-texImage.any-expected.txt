@@ -1,8 +1,8 @@
 
-FAIL texImage2D with 48x36 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texSubImage2D with 48x36 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texImage2D with 480x360 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texSubImage2D with 480x360 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texImage2D with a closed VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texSubImage2D with a closed VideoFrame. Can't find variable: OffscreenCanvas
+FAIL texImage2D with 48x36 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
+FAIL texSubImage2D with 48x36 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
+FAIL texImage2D with 480x360 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
+FAIL texSubImage2D with 480x360 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
+FAIL texImage2D with a closed VideoFrame. null is not an object (evaluating 'gl.texImage2D')
+FAIL texSubImage2D with a closed VideoFrame. null is not an object (evaluating 'gl.texSubImage2D')
 

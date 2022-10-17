@@ -1,4 +1,4 @@
 
-FAIL OffscreenCanvas source preserves alpha promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL ImageBitmap source preserves alpha promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL OffscreenCanvas source preserves alpha promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL ImageBitmap source preserves alpha promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

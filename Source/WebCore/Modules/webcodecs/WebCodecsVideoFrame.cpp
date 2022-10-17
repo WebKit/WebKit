@@ -36,9 +36,16 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageBitmap.h"
+#include "ImageBuffer.h"
 #include "JSPlaneLayout.h"
+#include "OffscreenCanvas.h"
+#include "PixelBuffer.h"
 #include "VideoColorSpaceInit.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
+
+#if PLATFORM(COCOA)
+#include "VideoFrameCV.h"
+#endif
 
 namespace WebCore {
 
@@ -84,8 +91,7 @@ static std::optional<Exception> checkImageUsability(const CanvasImageSource& sou
     },
 #if ENABLE(OFFSCREEN_CANVAS)
     [] (const RefPtr<OffscreenCanvas>& canvas) -> std::optional<Exception> {
-        auto size = canvas->size();
-        if (!size.width() || !size.height())
+        if (!canvas->width() || !canvas->height())
             return Exception { InvalidStateError,  "Input canvas has a bad size"_s };
         return { };
     },
@@ -133,23 +139,66 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         return initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
     },
 #endif
-    [&] (const RefPtr<HTMLCanvasElement>&) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (const RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
-        return adoptRef(*new WebCodecsVideoFrame);
+
+        if (!canvas->width() || !canvas->height())
+            return Exception { InvalidStateError,  "Input canvas has a bad size"_s };
+
+        auto videoFrame = canvas->toVideoFrame();
+        if (!videoFrame)
+            return Exception { InvalidStateError,  "Canvas has no frame"_s };
+
+        return initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
     },
 #if ENABLE(OFFSCREEN_CANVAS)
-    [&] (const RefPtr<OffscreenCanvas>&) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (const RefPtr<OffscreenCanvas>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
-        return adoptRef(*new WebCodecsVideoFrame);
+
+        if (!canvas->width() || !canvas->height())
+            return Exception { InvalidStateError,  "Input canvas has a bad size"_s };
+
+        auto* imageBuffer = canvas->buffer();
+        if (!imageBuffer)
+            return Exception { InvalidStateError,  "Input canvas has no image buffer"_s };
+
+        return create(*imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
     },
-#endif
-    [&] (const RefPtr<ImageBitmap>&) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+#endif // ENABLE(OFFSCREEN_CANVAS)
+    [&] (const RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
-        return adoptRef(*new WebCodecsVideoFrame);
+
+        if (!image->width() || !image->height())
+            return Exception { InvalidStateError,  "Input image has a bad size"_s };
+
+        auto* imageBuffer = image->buffer();
+        if (!imageBuffer)
+            return Exception { InvalidStateError,  "Input image has no image buffer"_s };
+
+        return create(*imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
     });
+}
+
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
+{
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    IntRect region { IntPoint::zero(), size };
+
+    auto pixelBuffer = buffer.getPixelBuffer(format, region);
+    if (!pixelBuffer)
+        return Exception { InvalidStateError,  "Buffer has no frame"_s };
+
+    RefPtr<VideoFrame> videoFrame;
+#if PLATFORM(COCOA)
+    videoFrame = VideoFrameCV::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+#endif
+    if (!videoFrame)
+        return Exception { InvalidStateError,  "Unable to create frame from buffer"_s };
+
+    return WebCodecsVideoFrame::initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(Ref<WebCodecsVideoFrame>&& initFrame, Init&& init)
@@ -297,7 +346,7 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<
     // FIXME: Use internalVideoFrame timestamp if available and init has no timestamp.
     result->m_timestamp = init.timestamp.value_or(0);
 
-    return adoptRef(*new WebCodecsVideoFrame);
+    return result;
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-with-resource-and-size

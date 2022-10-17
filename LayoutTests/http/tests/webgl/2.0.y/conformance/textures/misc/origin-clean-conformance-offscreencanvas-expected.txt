@@ -1,5 +1,11 @@
 CONSOLE MESSAGE: [loadCrossOriginImage]
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'gl.createTexture')
+FAIL: Timed out waiting for notifyDone to be called
+
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html?webglVersion=2
-[ PASS ] All tests passed
+
+[ 1: PASS ] img was loaded
+[ 2: PASS ] img domain (localhost:8000) and page domain (0.1:8000) are not the same.
+[ 3: FAIL ] Unable to fetch WebGL rendering context for Canvas

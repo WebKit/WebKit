@@ -1,10 +1,12 @@
 
-FAIL drawImage(VideoFrame) with canvas(48x36 srgb uint8). Can't find variable: OffscreenCanvas
-FAIL drawImage(VideoFrame) with canvas(480x360 srgb uint8). Can't find variable: OffscreenCanvas
-FAIL drawImage(VideoFrame) with canvas(48x36 display-p3 uint8). Can't find variable: OffscreenCanvas
-FAIL drawImage(VideoFrame) with canvas(480x360 display-p3 uint8). Can't find variable: OffscreenCanvas
-FAIL drawImage(VideoFrame) with canvas(48x36 rec2020 uint8). Can't find variable: OffscreenCanvas
-FAIL drawImage on a closed VideoFrame throws InvalidStateError. Can't find variable: OffscreenCanvas
-FAIL drawImage of nested frame works properly Can't find variable: OffscreenCanvas
-FAIL drawImage with display size != visible size Can't find variable: OffscreenCanvas
+FAIL drawImage(VideoFrame) with canvas(48x36 srgb uint8). Type error
+FAIL drawImage(VideoFrame) with canvas(480x360 srgb uint8). Type error
+FAIL drawImage(VideoFrame) with canvas(48x36 display-p3 uint8). Type error
+FAIL drawImage(VideoFrame) with canvas(480x360 display-p3 uint8). Type error
+FAIL drawImage(VideoFrame) with canvas(48x36 rec2020 uint8). Type error
+FAIL drawImage on a closed VideoFrame throws InvalidStateError. assert_throws_dom: drawImage with a closed VideoFrame should throw InvalidStateError. function "_ => {
+    ctx.drawImage(frame, 0, 0);
+  }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL drawImage of nested frame works properly Type error
+FAIL drawImage with display size != visible size Type error
 

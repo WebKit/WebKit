@@ -117,7 +117,7 @@ DedicatedWorkerThread& DedicatedWorkerGlobalScope::thread()
     return static_cast<DedicatedWorkerThread&>(Base::thread());
 }
 
-#if ENABLE(OFFSCREEN_CANVAS)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 CallbackId DedicatedWorkerGlobalScope::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     if (!m_workerAnimationController)

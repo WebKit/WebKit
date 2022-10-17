@@ -1,3 +1,37 @@
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 800 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
 
-FAIL Reconfiguring encoder promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+Harness Error (FAIL), message = Error: assert_unreached: assert_equals: expected (number) 640 but got (undefined) undefined Reached unreachable code
+
+PASS Reconfiguring encoder
 

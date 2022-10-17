@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: TypeError: Config is not valid
+CONSOLE MESSAGE: TypeError: Config is not valid
+CONSOLE MESSAGE: TypeError: Config is not valid
+CONSOLE MESSAGE: TypeError: Config is not valid
 
-FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
 

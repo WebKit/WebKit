@@ -1,0 +1,4 @@
+
+FAIL capture of an OffscreenCanvas with 2D context canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
+FAIL capture of an OffscreenCanvas with WebGL context canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
+

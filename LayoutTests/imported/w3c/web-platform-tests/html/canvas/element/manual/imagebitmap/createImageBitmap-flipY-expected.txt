@@ -13,8 +13,8 @@ FAIL createImageBitmap from a bitmap SVGImageElement imageOrientation: "none", a
 FAIL createImageBitmap from a bitmap SVGImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL createImageBitmap from a vector SVGImageElement imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL createImageBitmap from a vector SVGImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL createImageBitmap from an OffscreenCanvas imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap from an OffscreenCanvas imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+PASS createImageBitmap from an OffscreenCanvas imageOrientation: "none", and drawImage on the created ImageBitmap
+PASS createImageBitmap from an OffscreenCanvas imageOrientation: "flipY", and drawImage on the created ImageBitmap
 PASS createImageBitmap from an ImageData imageOrientation: "none", and drawImage on the created ImageBitmap
 PASS createImageBitmap from an ImageData imageOrientation: "flipY", and drawImage on the created ImageBitmap
 PASS createImageBitmap from an ImageBitmap imageOrientation: "none", and drawImage on the created ImageBitmap

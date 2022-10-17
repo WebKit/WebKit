@@ -72,6 +72,8 @@ private:
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
+    uint64_t m_width { 0 };
+    uint64_t m_height { 0 };
 };
 
 void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
@@ -124,6 +126,14 @@ void LibWebRTCVPXVideoEncoder::close()
 
 void LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame, VideoEncoder::EncodeCallback&& callback)
 {
+    if (m_width != rawFrame.frame->presentationSize().width() || m_height != rawFrame.frame->presentationSize().height()) {
+        // FIXME: Decide whether to add support, via scaling or cropping for instance.
+        m_postTaskCallback([protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+            callback("Frame resolution does not match VPx encoder configured size"_s);
+        });
+        return;
+    }
+
     m_timestamp = rawFrame.timestamp;
     m_duration = rawFrame.duration;
 
@@ -157,6 +167,8 @@ LibWebRTCVPXInternalVideoEncoder::LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXV
     : m_outputCallback(WTFMove(outputCallback))
     , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_internalEncoder(createInternalEncoder(type))
+    , m_width(config.width)
+    , m_height(config.height)
 {
     if (config.bitRate) {
         webrtc::VideoBitrateAllocation allocation;
@@ -165,11 +177,21 @@ LibWebRTCVPXInternalVideoEncoder::LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXV
     }
     m_internalEncoder->RegisterEncodeCompleteCallback(this);
 
-    // FIXME: Check InitEncode result.
     const int defaultPayloadSize = 1440;
     webrtc::VideoCodec videoCodec;
     videoCodec.width = config.width;
     videoCodec.height = config.height;
+    videoCodec.maxFramerate = 100;
+
+    if (type == LibWebRTCVPXVideoEncoder::Type::VP8)
+        videoCodec.codecType = webrtc::kVideoCodecVP8;
+    else {
+        videoCodec.codecType = webrtc::kVideoCodecVP9;
+        videoCodec.VP9()->numberOfSpatialLayers = 1;
+        videoCodec.VP9()->numberOfTemporalLayers = 1;
+    }
+
+    // FIXME: Check InitEncode result.
     m_internalEncoder->InitEncode(&videoCodec, webrtc::VideoEncoder::Settings { webrtc::VideoEncoder::Capabilities { true }, static_cast<int>(webrtc::CpuInfo::DetectNumberOfCores()), defaultPayloadSize });
 }
 
