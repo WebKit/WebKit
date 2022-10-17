@@ -54,7 +54,6 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
     , m_scrollController(*this)
-    , m_keyboardScrollingAnimator(makeUnique<KeyboardScrollingAnimator>(*this, m_scrollController))
 {
 }
 
@@ -110,6 +109,11 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
 
     setCurrentPosition(adjustedPosition, NotifyScrollableArea::Yes);
     return true;
+}
+
+bool ScrollAnimator::keyboardScrollToPosition(ScrollDirection direction, ScrollGranularity granularity)
+{
+    return m_scrollController.startKeyboardScroll(direction, granularity);
 }
 
 bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)

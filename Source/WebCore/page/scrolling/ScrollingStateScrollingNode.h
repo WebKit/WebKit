@@ -76,7 +76,10 @@ public:
 #endif
 
     const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
+    const KeyboardScrollData& keyboardScrollData() const { return m_keyboardScrollData; }
     WEBCORE_EXPORT void setRequestedScrollData(const RequestedScrollData&);
+
+    WEBCORE_EXPORT void setKeyboardScrollData(const KeyboardScrollData&);
 
     WEBCORE_EXPORT bool hasScrollPositionRequest() const;
 
@@ -132,6 +135,7 @@ private:
 
     ScrollableAreaParameters m_scrollableAreaParameters;
     RequestedScrollData m_requestedScrollData;
+    KeyboardScrollData m_keyboardScrollData;
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif

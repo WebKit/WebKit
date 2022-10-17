@@ -115,6 +115,24 @@ enum class ScrollRequestType : uint8_t {
     CancelAnimatedScroll
 };
 
+struct KeyboardScrollData {
+    FloatSize offset; // Points per increment.
+    FloatSize maximumVelocity; // Points per second.
+    FloatSize force;
+
+    ScrollGranularity granularity;
+    ScrollDirection direction;
+
+    bool operator==(const KeyboardScrollData& other) const
+    {
+        return offset == other.offset
+            && maximumVelocity == other.maximumVelocity
+            && force == other.force
+            && granularity == other.granularity
+            && direction == other.direction;
+    }
+};
+
 struct RequestedScrollData {
     ScrollRequestType requestType { ScrollRequestType::PositionUpdate };
     FloatPoint scrollPosition;

@@ -32,15 +32,6 @@ namespace WebCore {
 
 WEBCORE_EXPORT FloatSize unitVectorForScrollDirection(ScrollDirection);
 
-struct KeyboardScroll {
-    FloatSize offset; // Points per increment.
-    FloatSize maximumVelocity; // Points per second.
-    FloatSize force;
-
-    ScrollGranularity granularity;
-    ScrollDirection direction;
-};
-
 struct KeyboardScrollParameters {
     float springMass { 1 };
     float springStiffness { 109 };

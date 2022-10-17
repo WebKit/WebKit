@@ -138,6 +138,16 @@ void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
+void ScrollableArea::beginKeyboardScroll(ScrollDirection direction, ScrollGranularity granularity)
+{
+    bool startedAnimation = requestStartKeyboardAnimation(direction, granularity);
+    if (!startedAnimation)
+        startedAnimation = scrollAnimator().keyboardScrollToPosition(direction, granularity);
+
+    if (startedAnimation)
+      setScrollAnimationStatus(ScrollAnimationStatus::Animating);
+}
+
 void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);

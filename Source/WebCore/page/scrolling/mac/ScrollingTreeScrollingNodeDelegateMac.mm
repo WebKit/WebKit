@@ -146,6 +146,11 @@ bool ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress() const
     return m_scrollController.isRubberBandInProgress();
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::handleKeyboardScrollRequest(const KeyboardScrollData& scrollData)
+{
+    m_scrollController.setKeyboardScrollData(scrollData);
+}
+
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (horizontalScrollElasticity()) {

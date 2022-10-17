@@ -54,20 +54,20 @@ class KeyboardScrollingAnimator : public CanMakeWeakPtr<KeyboardScrollingAnimato
 public:
     KeyboardScrollingAnimator(ScrollAnimator&, ScrollingEffectsController&);
 
-    bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity);
-    void handleKeyUpEvent();
-    void updateKeyboardScrollPosition(MonotonicTime);
-    WEBCORE_EXPORT void stopScrollingImmediately();
+    // bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity);
+    // void handleKeyUpEvent();
+    // void updateKeyboardScrollPosition(MonotonicTime);
+    // WEBCORE_EXPORT void stopScrollingImmediately();
 
 private:
     void stopKeyboardScrollAnimation();
     RectEdges<bool> scrollableDirectionsFromPosition(FloatPoint) const;
-    std::optional<KeyboardScroll> makeKeyboardScroll(ScrollDirection, ScrollGranularity) const;
-    float scrollDistance(ScrollDirection, ScrollGranularity) const;
+//    std::optional<KeyboardScroll> makeKeyboardScroll(ScrollDirection, ScrollGranularity) const;
+//    float scrollDistance(ScrollDirection, ScrollGranularity) const;
 
     ScrollAnimator& m_scrollAnimator;
     ScrollingEffectsController& m_scrollController;
-    std::optional<WebCore::KeyboardScroll> m_currentKeyboardScroll;
+//    std::optional<WebCore::KeyboardScroll> m_currentKeyboardScroll;
     bool m_scrollTriggeringKeyIsPressed { false };
     FloatSize m_velocity;
     MonotonicTime m_timeAtLastFrame;

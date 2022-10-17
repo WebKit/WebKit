@@ -31,6 +31,7 @@
 #include "RectEdges.h"
 #include "ScrollAnimation.h"
 #include "ScrollSnapAnimatorState.h"
+#include "KeyboardScrollingState.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "WheelEventTestMonitor.h"
@@ -173,6 +174,10 @@ public:
     bool isScrollSnapInProgress() const;
     bool isUserScrollInProgress() const;
 
+    bool startKeyboardScroll(ScrollDirection, ScrollGranularity);
+
+    void setKeyboardScrollData(const KeyboardScrollData& scrollData);
+
 #if PLATFORM(MAC)
     static FloatSize wheelDeltaBiasingTowardsVertical(const FloatSize&);
 
@@ -259,6 +264,8 @@ private:
     bool m_inScrollGesture { false };
 
 #if PLATFORM(MAC)
+    std::unique_ptr<KeyboardScrollingState> m_keyboardScrollingState;
+
     WallTime m_lastMomentumScrollTimestamp;
     FloatSize m_unappliedOverscrollDelta;
     FloatSize m_stretchScrollForce;
