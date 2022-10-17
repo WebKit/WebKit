@@ -25,12 +25,12 @@
 
 #import "config.h"
 #import "MenuUtilities.h"
-#import <pal/cocoa/RevealSoftLink.h>
 
 #if PLATFORM(MAC)
 
 #import "StringUtilities.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/RevealUtilities.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 #import <pal/spi/mac/TelephonyUtilitiesSPI.h>
@@ -41,6 +41,7 @@ SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 #endif
 
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#import <pal/cocoa/RevealSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 @interface WKEmptyPresenterHighlightDelegate : NSObject <RVPresenterHighlightDelegate>
@@ -141,9 +142,7 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *
     auto item = adoptNS([PAL::allocRVItemInstance() initWithURL:[urlComponents URL] rangeInContext:NSMakeRange(0, telephoneNumber.length())]);
     auto presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
     auto delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] initWithRect:rect]);
-    auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:NSZeroPoint inView:webView highlightDelegate:delegate.get()]);
-    static char wkRevealDelegateKey;
-    objc_setAssociatedObject(context.get(), &wkRevealDelegateKey, delegate.get(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    auto context = WebCore::createRVPresentingContextWithRetainedDelegate(NSZeroPoint, webView, delegate.get());
     NSArray *proposedMenuItems = [presenter menuItemsForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     
     [menu setItemArray:proposedMenuItems];

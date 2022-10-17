@@ -527,6 +527,7 @@ platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/PluginBlocklist.mm
 platform/mac/PowerObserverMac.cpp
 platform/mac/PublicSuffixMac.mm
+platform/mac/RevealUtilities.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm
