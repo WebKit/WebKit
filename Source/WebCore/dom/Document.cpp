@@ -300,10 +300,6 @@
 #include "DeviceOrientationEvent.h"
 #endif
 
-#if ENABLE(FULLSCREEN_API)
-#include "RenderFullScreen.h"
-#endif
-
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
 #include "DOMTimerHoldingTank.h"

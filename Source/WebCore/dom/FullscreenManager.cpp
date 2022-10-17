@@ -42,8 +42,6 @@
 #include "Logging.h"
 #include "Page.h"
 #include "QualifiedName.h"
-#include "RenderFullScreen.h"
-#include "RenderTreeBuilder.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
 
@@ -419,24 +417,8 @@ bool FullscreenManager::isFullscreenEnabled() const
     return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document());
 }
 
-static void unwrapFullscreenRenderer(RenderFullScreen* fullscreenRenderer, Element* fullscreenElement)
-{
-    if (!fullscreenRenderer)
-        return;
-    bool requiresRenderTreeRebuild;
-    fullscreenRenderer->unwrapRenderer(requiresRenderTreeRebuild);
-
-    if (requiresRenderTreeRebuild && fullscreenElement && fullscreenElement->parentElement())
-        fullscreenElement->parentElement()->invalidateStyleAndRenderersForSubtree();
-}
-
 bool FullscreenManager::willEnterFullscreen(Element& element)
 {
-    if (!hasLivingRenderTree()) {
-        ERROR_LOG(LOGIDENTIFIER, "No livingRenderTree(); bailing");
-        return false;
-    }
-
     if (backForwardCacheState() != Document::NotInBackForwardCache) {
         ERROR_LOG(LOGIDENTIFIER, "Document in the BackForwardCache; bailing");
         return false;
@@ -459,27 +441,11 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     INFO_LOG(LOGIDENTIFIER);
     ASSERT(page()->settings().fullScreenEnabled());
 
-    unwrapFullscreenRenderer(m_fullscreenRenderer.get(), m_fullscreenElement.get());
-
     element.willBecomeFullscreenElement();
 
     ASSERT(&element == m_pendingFullscreenElement);
     m_pendingFullscreenElement = nullptr;
     m_fullscreenElement = &element;
-
-    // Create a placeholder block for a the full-screen element, to keep the page from reflowing
-    // when the element is removed from the normal flow. Only do this for a RenderBox, as only
-    // a box will have a frameRect. The placeholder will be created in setFullscreenRenderer()
-    // during layout.
-    auto renderer = m_fullscreenElement->renderer();
-    bool shouldCreatePlaceholder = is<RenderBox>(renderer);
-    if (shouldCreatePlaceholder) {
-        m_savedPlaceholderFrameRect = downcast<RenderBox>(*renderer).frameRect();
-        m_savedPlaceholderRenderStyle = RenderStyle::clonePtr(renderer->style());
-    }
-
-    if (m_fullscreenElement != documentElement() && renderer)
-        RenderFullScreen::wrapExistingRenderer(*renderer, document());
 
     m_fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 
@@ -493,11 +459,6 @@ bool FullscreenManager::didEnterFullscreen()
 {
     if (!m_fullscreenElement) {
         ERROR_LOG(LOGIDENTIFIER, "No fullscreenElement; bailing");
-        return false;
-    }
-
-    if (!hasLivingRenderTree()) {
-        ERROR_LOG(LOGIDENTIFIER, "No livingRenderTree(); bailing");
         return false;
     }
 
@@ -516,11 +477,6 @@ bool FullscreenManager::willExitFullscreen()
     auto fullscreenElement = fullscreenOrPendingElement();
     if (!fullscreenElement) {
         ERROR_LOG(LOGIDENTIFIER, "No fullscreenOrPendingElement(); bailing");
-        return false;
-    }
-
-    if (!hasLivingRenderTree()) {
-        ERROR_LOG(LOGIDENTIFIER, "No livingRenderTree(); bailing");
         return false;
     }
 
@@ -543,11 +499,6 @@ bool FullscreenManager::didExitFullscreen()
         return false;
     }
 
-    if (!hasLivingRenderTree()) {
-        ERROR_LOG(LOGIDENTIFIER, "No livingRenderTree(); bailing");
-        return false;
-    }
-
     if (backForwardCacheState() != Document::NotInBackForwardCache) {
         ERROR_LOG(LOGIDENTIFIER, "Document in the BackForwardCache; bailing");
         return false;
@@ -561,8 +512,6 @@ bool FullscreenManager::didExitFullscreen()
 
     m_areKeysEnabledInFullscreen = false;
 
-    unwrapFullscreenRenderer(m_fullscreenRenderer.get(), m_fullscreenElement.get());
-
     m_fullscreenElement = nullptr;
     m_pendingFullscreenElement = nullptr;
     scheduleFullStyleRebuild();
@@ -575,30 +524,6 @@ bool FullscreenManager::didExitFullscreen()
 
     exitingDocument.fullscreenManager().dispatchFullscreenChangeEvents();
     return true;
-}
-
-void FullscreenManager::setFullscreenRenderer(RenderTreeBuilder& builder, RenderFullScreen& renderer)
-{
-    if (&renderer == m_fullscreenRenderer)
-        return;
-
-    if (m_savedPlaceholderRenderStyle)
-        builder.createPlaceholderForFullScreen(renderer, WTFMove(m_savedPlaceholderRenderStyle), m_savedPlaceholderFrameRect);
-    else if (m_fullscreenRenderer && m_fullscreenRenderer->placeholder()) {
-        auto* placeholder = m_fullscreenRenderer->placeholder();
-        builder.createPlaceholderForFullScreen(renderer, RenderStyle::clonePtr(placeholder->style()), placeholder->frameRect());
-    }
-
-    if (m_fullscreenRenderer)
-        builder.destroy(*m_fullscreenRenderer);
-    ASSERT(!m_fullscreenRenderer);
-
-    m_fullscreenRenderer = renderer;
-}
-
-RenderFullScreen* FullscreenManager::fullscreenRenderer() const
-{
-    return m_fullscreenRenderer.get();
 }
 
 void FullscreenManager::dispatchFullscreenChangeEvents()

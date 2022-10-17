@@ -2437,7 +2437,6 @@ rendering/RenderFragmentedFlow.cpp
 rendering/RenderFrame.cpp
 rendering/RenderFrameBase.cpp
 rendering/RenderFrameSet.cpp
-rendering/RenderFullScreen.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
 rendering/RenderHTMLCanvas.cpp
@@ -2653,7 +2652,6 @@ rendering/updating/RenderTreeBuilderBlockFlow.cpp
 rendering/updating/RenderTreeBuilderContinuation.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
 rendering/updating/RenderTreeBuilderFormControls.cpp
-rendering/updating/RenderTreeBuilderFullScreen.cpp
 rendering/updating/RenderTreeBuilderInline.cpp
 rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMathML.cpp

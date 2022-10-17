@@ -5,7 +5,7 @@
         <script src="../media/video-test.js"></script>
         <script src="../media/media-file.js"></script>
         <style>
-            html, body, #spacer {
+            html, body, .spacer {
                 height: 100%;
             }
             video {
@@ -22,7 +22,7 @@
             if (Element.prototype.webkitRequestFullScreen == undefined) {
                 logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
                 endTest();
-                returh;
+                return;
             }
 
             video = document.getElementsByTagName('video')[0];
@@ -53,9 +53,10 @@
     </head>
     <body>
     <p>This tests that page scroll is restored after fullscreen. Press any key to start the test.</p>
-    <div id="spacer"></div>
+    <div class="spacer"></div>
     <div id="parent">
         <video id="video" controls><video>
     </div>
+    <div class="spacer"></div>
     </body>
 </html>

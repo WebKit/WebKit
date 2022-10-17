@@ -31,13 +31,11 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Element.h"
-#include "FullscreenManager.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
-#include "RenderFullScreen.h"
 #include "RenderInline.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -389,14 +387,6 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     element.setRenderer(newRenderer.get());
 
     newRenderer->initializeStyle();
-
-#if ENABLE(FULLSCREEN_API)
-    if (m_document.fullscreenManager().isFullscreen() && m_document.fullscreenManager().currentFullscreenElement() == &element) {
-        newRenderer = RenderFullScreen::wrapNewRenderer(m_builder, WTFMove(newRenderer), insertionPosition.parent(), m_document);
-        if (!newRenderer)
-            return;
-    }
-#endif
 
     m_builder.attach(insertionPosition.parent(), WTFMove(newRenderer), insertionPosition.nextSibling());
 

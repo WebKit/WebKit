@@ -50,7 +50,6 @@
 #include "PageOverlayController.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFragmentedFlow.h"
-#include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
@@ -2632,15 +2631,15 @@ enum class FullScreenDescendant { Yes, No, NotApplicable };
 static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& layer)
 {
     auto& document = layer.renderer().document();
+    auto* fullScreenElement = document.fullscreenManager().fullscreenElement();
 
-    if (!document.fullscreenManager().isFullscreen() || !document.fullscreenManager().fullscreenRenderer())
+    if (!document.fullscreenManager().isFullscreen() || !fullScreenElement)
         return FullScreenDescendant::NotApplicable;
 
-    auto* fullScreenLayer = document.fullscreenManager().fullscreenRenderer()->layer();
-    if (!fullScreenLayer) {
-        ASSERT_NOT_REACHED();
+    auto* fullScreenRenderer = dynamicDowncast<RenderLayerModelObject>(fullScreenElement->renderer());
+    auto* fullScreenLayer = fullScreenRenderer->layer();
+    if (!fullScreenRenderer || !fullScreenLayer)
         return FullScreenDescendant::NotApplicable;
-    }
 
     return layer.isDescendantOf(*fullScreenLayer) ? FullScreenDescendant::Yes : FullScreenDescendant::No;
 }
@@ -3291,7 +3290,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     // z-index and clipping will be broken.
     if (!renderer.isPositioned())
         return false;
-    
+
 #if ENABLE(FULLSCREEN_API)
     if (isDescendantOfFullScreenLayer(layer) == FullScreenDescendant::No)
         return false;

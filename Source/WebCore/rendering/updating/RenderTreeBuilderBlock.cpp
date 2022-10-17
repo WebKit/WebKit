@@ -28,7 +28,6 @@
 
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
-#include "RenderFullScreen.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderRubyRun.h"
@@ -178,13 +177,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
             // If the requested beforeChild is not one of our children, then this is because
             // there is an anonymous container within this object that contains the beforeChild.
             RenderElement* beforeChildAnonymousContainer = beforeChildContainer;
-            if (beforeChildAnonymousContainer->isAnonymousBlock()
-#if ENABLE(FULLSCREEN_API)
-                // Full screen renderers and full screen placeholders act as anonymous blocks, not tables:
-                || beforeChildAnonymousContainer->isRenderFullScreen()
-                || beforeChildAnonymousContainer->isRenderFullScreenPlaceholder()
-#endif
-                ) {
+            if (beforeChildAnonymousContainer->isAnonymousBlock()) {
                 // Insert the child into the anonymous block box instead of here.
                 if (child->isInline() || beforeChildAnonymousContainer->firstChild() != beforeChild)
                     m_builder.attach(*beforeChildAnonymousContainer, WTFMove(child), beforeChild);

@@ -24,26 +24,9 @@ foobar
           (children 1
             (GraphicsLayer
               (bounds 800.00 600.00)
+              (contentsOpaque 1)
+              (drawsContent 1)
               (backingStoreAttached 1)
-              (children 2
-                (GraphicsLayer
-                  (anchor 0.00 0.00)
-                  (bounds 800.00 600.00)
-                  (backingStoreAttached 1)
-                )
-                (GraphicsLayer
-                  (bounds 800.00 600.00)
-                  (backingStoreAttached 1)
-                  (children 1
-                    (GraphicsLayer
-                      (bounds 800.00 600.00)
-                      (contentsOpaque 1)
-                      (drawsContent 1)
-                      (backingStoreAttached 1)
-                    )
-                  )
-                )
-              )
             )
           )
         )
