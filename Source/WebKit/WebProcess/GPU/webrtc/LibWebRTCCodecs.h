@@ -71,7 +71,7 @@ public:
 
     std::optional<VideoCodecType> videoCodecTypeFromWebCodec(const String&);
 
-    using DecoderCallback = Function<void(Ref<WebCore::VideoFrame>&&, int64_t timestamp)>;
+    using DecoderCallback = Function<void(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp)>;
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:

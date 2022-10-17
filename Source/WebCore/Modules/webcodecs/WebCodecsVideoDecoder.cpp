@@ -134,13 +134,19 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&&
             if (!weakedThis || m_state != WebCodecsCodecState::Configured)
                 return;
 
-            WebCodecsVideoFrame::BufferInit init;
-            init.codedWidth = result.frame->presentationSize().width();
-            init.codedHeight = result.frame->presentationSize().height();
-            init.timestamp = result.timestamp;
-            init.duration = result.duration;
+            if (!result.has_value()) {
+                closeDecoder(Exception { EncodingError, WTFMove(result).error() });
+                return;
+            }
 
-            auto videoFrame = WebCodecsVideoFrame::create(WTFMove(result.frame), WTFMove(init));
+            auto decodedResult = WTFMove(result).value();
+            WebCodecsVideoFrame::BufferInit init;
+            init.codedWidth = decodedResult.frame->presentationSize().width();
+            init.codedHeight = decodedResult.frame->presentationSize().height();
+            init.timestamp = decodedResult.timestamp;
+            init.duration = decodedResult.duration;
+
+            auto videoFrame = WebCodecsVideoFrame::create(WTFMove(decodedResult.frame), WTFMove(init));
             m_output->handleEvent(WTFMove(videoFrame));
         }, WTFMove(postTaskCallback));
     });
@@ -228,7 +234,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::closeDecoder(Exception&& exception)
     return { };
 }
 
-ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception& exception)
+ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception&)
 {
     if (m_state == WebCodecsCodecState::Closed)
         return Exception { InvalidStateError, "VideoDecoder is closed"_s };
@@ -242,8 +248,9 @@ ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception& exception
         scheduleDequeueEvent();
     }
     ++m_clearFlushPromiseCount;
+    // FIXME: Check whether aligning with the spec or with WPT tests.
     while (!m_pendingFlushPromises.isEmpty())
-        m_pendingFlushPromises.takeFirst()->reject(exception);
+        m_pendingFlushPromises.takeFirst()->reject(Exception { AbortError, "aborting flush as decoder is reset"_s });
 
     return { };
 }

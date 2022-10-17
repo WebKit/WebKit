@@ -39,7 +39,7 @@ public:
     ~RemoteVideoDecoderCallbacks() = default;
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void notifyVideoFrame(Ref<WebCore::VideoFrame>&&, int64_t timestamp);
+    void notifyDecodingResult(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp);
 
     // Must be called on the VideoDecoder thread, or within postTaskCallback.
     void close() { m_isClosed = true; }
@@ -167,7 +167,7 @@ RemoteVideoDecoder::RemoteVideoDecoder(LibWebRTCCodecs::Decoder& decoder, Ref<Re
     , m_height(height)
 {
     WebProcess::singleton().libWebRTCCodecs().registerDecodedVideoFrameCallback(m_internalDecoder, [callbacks = m_callbacks](auto&& videoFrame, auto timestamp) {
-        callbacks->notifyVideoFrame(WTFMove(videoFrame), timestamp);
+        callbacks->notifyDecodingResult(WTFMove(videoFrame), timestamp);
     });
 }
 
@@ -209,14 +209,18 @@ RemoteVideoDecoderCallbacks::RemoteVideoDecoderCallbacks(VideoDecoder::OutputCal
 {
 }
 
-void RemoteVideoDecoderCallbacks::notifyVideoFrame(Ref<WebCore::VideoFrame>&& frame, int64_t timestamp)
+void RemoteVideoDecoderCallbacks::notifyDecodingResult(RefPtr<WebCore::VideoFrame>&& frame, int64_t timestamp)
 {
     m_postTaskCallback([protectedThis = Ref { *this }, frame = WTFMove(frame), timestamp]() mutable {
         if (protectedThis->m_isClosed)
             return;
 
+        if (!frame) {
+            protectedThis->m_outputCallback(makeUnexpected("Decoder failure"_s));
+            return;
+        }
         auto duration = protectedThis->m_timestampToDuration.take(timestamp + 1);
-        protectedThis->m_outputCallback({ WTFMove(frame), static_cast<int64_t>(timestamp), duration });
+        protectedThis->m_outputCallback(VideoDecoder::DecodedFrame { frame.releaseNonNull(), static_cast<int64_t>(timestamp), duration });
     });
 }
 

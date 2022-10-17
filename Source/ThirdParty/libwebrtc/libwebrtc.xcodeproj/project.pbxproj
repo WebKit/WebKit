@@ -1563,7 +1563,6 @@
 		416731D5212E0430001280EB /* mcomp.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CBAFA5212E03AC00DE1E1D /* mcomp.h */; };
 		416731D6212E0430001280EB /* pickinter.c in Sources */ = {isa = PBXBuildFile; fileRef = 41CBAFAA212E03AD00DE1E1D /* pickinter.c */; };
 		416731D7212E0430001280EB /* vp8_quantize.c in Sources */ = {isa = PBXBuildFile; fileRef = 41CBAFA8212E03AD00DE1E1D /* vp8_quantize.c */; };
-		416B440E235DC23C0040E255 /* RTCWrappedNativeVideoDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41795403216985200028266B /* RTCWrappedNativeVideoDecoder.mm */; };
 		416D3BDE212731C200775F09 /* adaptive_mode_level_estimator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D6B45F212731A1008F9353 /* adaptive_mode_level_estimator.cc */; };
 		416D3BDF212731C200775F09 /* agc2_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D6B46D212731A4008F9353 /* agc2_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		416D3BE0212731C200775F09 /* biquad_filter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D6B45E212731A0008F9353 /* biquad_filter.cc */; };
@@ -2466,6 +2465,7 @@
 		41CBAF9A212E039300DE1E1D /* onyxd_if.c in Sources */ = {isa = PBXBuildFile; fileRef = 4105EBB1212E035C008C0C20 /* onyxd_if.c */; };
 		41CBAF9B212E039300DE1E1D /* threading.c in Sources */ = {isa = PBXBuildFile; fileRef = 4105EBB3212E035C008C0C20 /* threading.c */; };
 		41CBAF9C212E039300DE1E1D /* treereader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4105EBB6212E035D008C0C20 /* treereader.h */; };
+		41CDC66D28F6FC2C00603E59 /* RTCWrappedNativeVideoDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41795403216985200028266B /* RTCWrappedNativeVideoDecoder.mm */; };
 		41D12414215C51D80036B057 /* dwarf2-info.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D1240E215C51CE0036B057 /* dwarf2-info.c */; };
 		41D12415215C51D80036B057 /* dwarf2-aranges.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA20F215C51B60082BFD2 /* dwarf2-aranges.c */; };
 		41D12416215C51D80036B057 /* dwarf2-dbgfmt.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA20E215C51B60082BFD2 /* dwarf2-dbgfmt.c */; };
@@ -22576,7 +22576,7 @@
 				413E67652169854600EF37ED /* RTCVideoEncoderVP8.mm in Sources */,
 				414035ED24AA0EBC00BCE9B2 /* RTCVideoEncoderVP9.mm in Sources */,
 				413E6790216987DB00EF37ED /* RTCVideoFrame.mm in Sources */,
-				416B440E235DC23C0040E255 /* RTCWrappedNativeVideoDecoder.mm in Sources */,
+				41CDC66D28F6FC2C00603E59 /* RTCWrappedNativeVideoDecoder.mm in Sources */,
 				413E676D2169854B00EF37ED /* RTCWrappedNativeVideoEncoder.mm in Sources */,
 				41D6B45921273159008F9353 /* rtp_bitrate_configurator.cc in Sources */,
 				419C82B41FE20DCD0040C30F /* rtp_config.cc in Sources */,

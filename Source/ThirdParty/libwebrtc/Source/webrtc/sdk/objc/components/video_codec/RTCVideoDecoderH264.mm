@@ -58,16 +58,17 @@ void decompressionOutputCallback(void *decoderRef,
                                  CVImageBufferRef imageBuffer,
                                  CMTime timestamp,
                                  CMTime duration) {
+  std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
   if (status != noErr || !imageBuffer) {
     RTCVideoDecoderH264 *decoder = (__bridge RTCVideoDecoderH264 *)decoderRef;
     [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
+    decodeParams->callback(nil);
     return;
   }
 
   overrideColorSpaceAttachments(imageBuffer);
 
-  std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
   // TODO(tkchin): Handle CVO properly.
   RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:imageBuffer];
   RTCVideoFrame *decodedFrame =

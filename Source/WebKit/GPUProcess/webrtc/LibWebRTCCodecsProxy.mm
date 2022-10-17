@@ -100,6 +100,10 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     if (useRemoteFrames)
         videoFrameObjectHeap = m_videoFrameObjectHeap.ptr();
     return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
+        if (!pixelBuffer) {
+            connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+            return;
+        }
         auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::VideoFrame::Rotation::None, pixelBuffer);
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);

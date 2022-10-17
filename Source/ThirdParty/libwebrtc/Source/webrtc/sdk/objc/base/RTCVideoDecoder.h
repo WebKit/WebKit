@@ -19,7 +19,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /** Callback block for decoder. */
-typedef void (^RTCVideoDecoderCallback)(RTCVideoFrame *frame);
+typedef void (^RTCVideoDecoderCallback)(RTCVideoFrame * __nullable frame);
 
 /** Protocol for decoder implementations. */
 RTC_OBJC_EXPORT
