@@ -718,9 +718,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ 
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html [ Pass ]
 
-# Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
-webkit.org/b/241601 css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
