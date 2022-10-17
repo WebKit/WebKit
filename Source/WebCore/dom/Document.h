@@ -994,6 +994,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setCookie(const String&);
 
     WEBCORE_EXPORT String referrer();
+    String referrerForBindings();
 
     WEBCORE_EXPORT String domain() const;
     ExceptionOr<void> setDomain(const String& newDomain);

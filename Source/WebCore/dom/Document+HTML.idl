@@ -32,7 +32,7 @@ partial interface Document {
     // resource metadata management
     [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location;
     attribute USVString domain;
-    readonly attribute USVString referrer;
+    [ImplementedAs=referrerForBindings] readonly attribute USVString referrer;
     attribute USVString cookie;
     readonly attribute DOMString lastModified;
     readonly attribute DocumentReadyState readyState;

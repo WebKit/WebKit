@@ -5437,6 +5437,15 @@ String Document::referrer()
     return String();
 }
 
+String Document::referrerForBindings()
+{
+    if (auto* page = this->page(); page
+        && page->usesEphemeralSession()
+        && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
+        return String();
+    return referrer();
+}
+
 String Document::domain() const
 {
     return securityOrigin().domain();
