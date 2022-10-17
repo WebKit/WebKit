@@ -55,7 +55,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), info());
     }
 
-    static JSWebAssemblyStruct* tryCreate(JSWebAssemblyInstance*, uint32_t);
+    static JSWebAssemblyStruct* tryCreate(JSGlobalObject*, Structure*, JSWebAssemblyInstance*, uint32_t);
 
     DECLARE_VISIT_CHILDREN;
 

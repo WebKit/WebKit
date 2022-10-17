@@ -837,18 +837,21 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instan
 JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint64_t* arguments))
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
     Ref<TypeDefinition> structTypeDefinition = jsInstance->instance().module().moduleInformation().typeSignatures[typeIndex];
     const StructType& structType = *structTypeDefinition->as<StructType>();
 
-    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(jsInstance, typeIndex);
+    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
     for (unsigned i = 0; i < structType.fieldCount(); ++i)
-        structValue->set(jsInstance->globalObject(), i, toJSValue(jsInstance->globalObject(), structType.field(i).type, arguments[i]));
+        structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type, arguments[i]));
     return JSValue::encode(structValue);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance* instance, uint32_t typeIndex))
 {
-    return JSValue::encode(JSWebAssemblyStruct::tryCreate(instance->owner<JSWebAssemblyInstance>(), typeIndex));
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    return JSValue::encode(JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))

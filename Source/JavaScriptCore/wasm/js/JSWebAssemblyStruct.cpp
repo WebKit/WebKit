@@ -46,13 +46,12 @@ JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<Wasm:
     m_payload.fill(0);
 }
 
-JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSWebAssemblyInstance* instance, uint32_t typeIndex)
+JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex)
 {
-    JSGlobalObject* globalObject = instance->globalObject();
-    Ref<Wasm::TypeDefinition> type = instance->instance().module().moduleInformation().typeSignatures[typeIndex];
-
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    Ref<Wasm::TypeDefinition> type = instance->instance().module().moduleInformation().typeSignatures[typeIndex];
 
     if (!globalObject->webAssemblyEnabled()) {
         throwException(globalObject, throwScope, createEvalError(globalObject, globalObject->webAssemblyDisabledErrorMessage()));
@@ -64,7 +63,7 @@ JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSWebAssemblyInstance* insta
         return nullptr;
     }
 
-    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, globalObject->webAssemblyStructStructure(), WTFMove(type));
+    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, structure, WTFMove(type));
     structValue->finishCreation(vm);
     return structValue;
 }
