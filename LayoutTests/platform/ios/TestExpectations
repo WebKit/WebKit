@@ -3823,8 +3823,6 @@ fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
 
 #rdar://100047661 ([ iOS ] 2X fast/events/touch/ios/long-press-on-(Layout tests))
-fast/events/touch/ios/long-press-on-image.html [ Failure ]
-fast/events/touch/ios/long-press-on-link.html [ Failure ]
 fast/forms/basic-selects.html [ Failure ]
 fast/forms/disabled-select-change-index.html [ Failure ]
 fast/forms/select-disabled-appearance.html [ Failure ]
