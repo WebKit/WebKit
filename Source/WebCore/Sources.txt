@@ -828,9 +828,9 @@ css/FontFace.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
 css/LegacyMediaQueryEvaluator.cpp
+css/LegacyMediaQuery.cpp
 css/MediaFeatureNames.cpp
 css/MediaList.cpp
-css/MediaQuery.cpp
 css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryListEvent.cpp

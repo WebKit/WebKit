@@ -32,7 +32,6 @@
 #include "Document.h"
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
-#include "MediaQuery.h"
 #include "NodeRenderStyle.h"
 #include "RenderView.h"
 #include "StyleRule.h"

@@ -38,10 +38,10 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LegacyMediaQuery.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
-#include "MediaQuery.h"
 #include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -138,9 +138,9 @@ bool LegacyMediaQueryEvaluator::mediaTypeMatchSpecific(ASCIILiteral mediaTypeToM
     return equalIgnoringASCIICase(m_mediaType, mediaTypeToMatch);
 }
 
-static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
+static bool applyRestrictor(LegacyMediaQuery::Restrictor r, bool value)
 {
-    return r == MediaQuery::Not ? !value : value;
+    return r == LegacyMediaQuery::Not ? !value : value;
 }
 
 bool LegacyMediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults, Mode mode) const

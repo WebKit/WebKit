@@ -23,7 +23,7 @@
 #include "AddEventListenerOptions.h"
 #include "EventNames.h"
 #include "HTMLFrameOwnerElement.h"
-#include "MediaQuery.h"
+#include "LegacyMediaQuery.h"
 #include "MediaQueryListEvent.h"
 #include <wtf/IsoMallocInlines.h>
 

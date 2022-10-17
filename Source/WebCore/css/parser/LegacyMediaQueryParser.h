@@ -31,7 +31,7 @@
 
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
-#include "MediaQuery.h"
+#include "LegacyMediaQuery.h"
 #include "MediaQueryBlockWatcher.h"
 #include "MediaQueryExpression.h"
 #include "MediaQueryParserContext.h"
@@ -77,7 +77,7 @@ private:
 
     using State = void (LegacyMediaQueryParser::*)(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
 
-    void setStateAndRestrict(State, MediaQuery::Restrictor);
+    void setStateAndRestrict(State, LegacyMediaQuery::Restrictor);
     void handleBlocks(const CSSParserToken&);
     
     void commitMediaQuery();
@@ -92,24 +92,24 @@ private:
         void removeLastExpression();
         void setMediaType(String&& mediaType) { m_mediaType = WTFMove(mediaType); }
 
-        MediaQuery::Restrictor restrictor() const { return m_restrictor; }
+        LegacyMediaQuery::Restrictor restrictor() const { return m_restrictor; }
         Vector<MediaQueryExpression>& expressions() { return m_expressions; }
         const std::optional<String>& mediaType() const { return m_mediaType; }
 
         bool currentMediaQueryChanged() const
         {
-            return (m_restrictor != MediaQuery::None || m_mediaType || !m_expressions.isEmpty());
+            return (m_restrictor != LegacyMediaQuery::None || m_mediaType || !m_expressions.isEmpty());
         }
-        MediaQuery::Restrictor restrictor() { return m_restrictor; }
+        LegacyMediaQuery::Restrictor restrictor() { return m_restrictor; }
 
-        void setRestrictor(MediaQuery::Restrictor restrictor) { m_restrictor = restrictor; }
+        void setRestrictor(LegacyMediaQuery::Restrictor restrictor) { m_restrictor = restrictor; }
 
         void setMediaFeature(const String& str) { m_mediaFeature = str; }
 
         void setMediaQueryParserContext(MediaQueryParserContext context) { m_context = context; }
 
     private:
-        MediaQuery::Restrictor m_restrictor { MediaQuery::None };
+        LegacyMediaQuery::Restrictor m_restrictor { LegacyMediaQuery::None };
         std::optional<String> m_mediaType;
         Vector<MediaQueryExpression> m_expressions;
         String m_mediaFeature;

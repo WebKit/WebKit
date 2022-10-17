@@ -25,9 +25,9 @@
 #include "CSSStyleSheet.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "LegacyMediaQuery.h"
 #include "LegacyMediaQueryParser.h"
 #include "MediaFeatureNames.h"
-#include "MediaQuery.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -140,7 +140,7 @@ bool MediaQuerySet::remove(const String& queryStringToRemove)
     return found;
 }
 
-void MediaQuerySet::addMediaQuery(MediaQuery&& mediaQuery)
+void MediaQuerySet::addMediaQuery(LegacyMediaQuery&& mediaQuery)
 {
     m_queries.append(WTFMove(mediaQuery));
 }

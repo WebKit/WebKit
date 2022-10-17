@@ -86,7 +86,7 @@ LegacyMediaQueryParser::LegacyMediaQueryParser(ParserType parserType, MediaQuery
 
 LegacyMediaQueryParser::~LegacyMediaQueryParser() = default;
 
-void LegacyMediaQueryParser::setStateAndRestrict(State state, MediaQuery::Restrictor restrictor)
+void LegacyMediaQueryParser::setStateAndRestrict(State state, LegacyMediaQuery::Restrictor restrictor)
 {
     m_mediaQueryData.setRestrictor(restrictor);
     m_state = state;
@@ -101,7 +101,7 @@ void LegacyMediaQueryParser::readRestrictor(CSSParserTokenType type, const CSSPa
 void LegacyMediaQueryParser::readMediaNot(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "not"_s))
-        setStateAndRestrict(ReadFeatureStart, MediaQuery::Not);
+        setStateAndRestrict(ReadFeatureStart, LegacyMediaQuery::Not);
     else
         readFeatureStart(type, token, range);
 }
@@ -118,16 +118,16 @@ static bool isRestrictorOrLogicalOperator(const CSSParserToken& token)
 void LegacyMediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     if (type == LeftParenthesisToken) {
-        if (m_mediaQueryData.restrictor() != MediaQuery::None)
+        if (m_mediaQueryData.restrictor() != LegacyMediaQuery::None)
             m_state = SkipUntilComma;
         else
             m_state = ReadFeature;
     } else if (type == IdentToken) {
         if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "not"_s))
-            setStateAndRestrict(ReadMediaType, MediaQuery::Not);
+            setStateAndRestrict(ReadMediaType, LegacyMediaQuery::Not);
         else if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "only"_s))
-            setStateAndRestrict(ReadMediaType, MediaQuery::Only);
-        else if (m_mediaQueryData.restrictor() != MediaQuery::None
+            setStateAndRestrict(ReadMediaType, LegacyMediaQuery::Only);
+        else if (m_mediaQueryData.restrictor() != LegacyMediaQuery::None
             && isRestrictorOrLogicalOperator(token)) {
             m_state = SkipUntilComma;
         } else {
@@ -148,7 +148,7 @@ void LegacyMediaQueryParser::commitMediaQuery()
     // FIXME-NEWPARSER: Convoluted and awful, but we can't change the MediaQuerySet yet because of the
     // old parser.
     static const NeverDestroyed<String> defaultMediaType { "all"_s };
-    MediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().value_or(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
+    LegacyMediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().value_or(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
     m_mediaQueryData.clear();
     m_querySet->addMediaQuery(WTFMove(mediaQuery));
 }
@@ -228,7 +228,7 @@ void LegacyMediaQueryParser::skipUntilComma(CSSParserTokenType type, const CSSPa
     if ((type == CommaToken && !m_blockWatcher.blockLevel()) || type == EOFToken) {
         m_state = ReadRestrictor;
         m_mediaQueryData.clear();
-        MediaQuery query = MediaQuery(MediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
+        auto query = LegacyMediaQuery(LegacyMediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
         m_querySet->addMediaQuery(WTFMove(query));
     }
 }
@@ -288,7 +288,7 @@ RefPtr<MediaQuerySet> LegacyMediaQueryParser::parseInternal(CSSParserTokenRange&
         processToken(CSSParserToken(EOFToken), range);
 
     if (m_state != ReadAnd && m_state != ReadRestrictor && m_state != Done && m_state != ReadMediaNot) {
-        MediaQuery query = MediaQuery(MediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
+        auto query = LegacyMediaQuery(LegacyMediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
         m_querySet->addMediaQuery(WTFMove(query));
     } else if (m_mediaQueryData.currentMediaQueryChanged())
         commitMediaQuery();
@@ -305,7 +305,7 @@ LegacyMediaQueryParser::MediaQueryData::MediaQueryData(MediaQueryParserContext c
 
 void LegacyMediaQueryParser::MediaQueryData::clear()
 {
-    m_restrictor = MediaQuery::None;
+    m_restrictor = LegacyMediaQuery::None;
     m_mediaType = std::nullopt;
     m_mediaFeature = String();
     m_expressions.clear();

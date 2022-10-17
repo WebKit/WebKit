@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-class MediaQuery {
+class LegacyMediaQuery {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Restrictor { Only, Not, None };
 
-    MediaQuery(Restrictor, const String& mediaType, Vector<MediaQueryExpression>&&);
+    LegacyMediaQuery(Restrictor, const String& mediaType, Vector<MediaQueryExpression>&&);
 
     Restrictor restrictor() const { return m_restrictor; }
     const Vector<MediaQueryExpression>& expressions() const { return m_expressions; }
@@ -47,7 +47,7 @@ public:
 
     const String& cssText() const;
 
-    bool operator==(const MediaQuery& other) const;
+    bool operator==(const LegacyMediaQuery& other) const;
 
     void shrinkToFit() { m_expressions.shrinkToFit(); }
 
@@ -61,6 +61,6 @@ private:
     bool m_ignored { false };
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuery&);
+WTF::TextStream& operator<<(WTF::TextStream&, const LegacyMediaQuery&);
 
 } // namespace

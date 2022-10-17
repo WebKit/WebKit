@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "MediaQuery.h"
+#include "LegacyMediaQuery.h"
 
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -35,7 +35,7 @@
 namespace WebCore {
 
 // http://dev.w3.org/csswg/cssom/#serialize-a-media-query
-String MediaQuery::serialize() const
+String LegacyMediaQuery::serialize() const
 {
     if (m_ignored) {
         // If query is invalid, serialized text should turn into "not all".
@@ -45,13 +45,13 @@ String MediaQuery::serialize() const
     bool shouldOmitMediaType = false;
     StringBuilder result;
     switch (m_restrictor) {
-    case MediaQuery::Only:
+    case LegacyMediaQuery::Only:
         result.append("only ");
         break;
-    case MediaQuery::Not:
+    case LegacyMediaQuery::Not:
         result.append("not ");
         break;
-    case MediaQuery::None:
+    case LegacyMediaQuery::None:
         shouldOmitMediaType = !m_expressions.isEmpty() && m_mediaType == "all"_s;
         break;
     }
@@ -69,7 +69,7 @@ String MediaQuery::serialize() const
     return result.toString();
 }
 
-MediaQuery::MediaQuery(Restrictor restrictor, const String& mediaType, Vector<MediaQueryExpression>&& expressions)
+LegacyMediaQuery::LegacyMediaQuery(Restrictor restrictor, const String& mediaType, Vector<MediaQueryExpression>&& expressions)
     : m_mediaType(mediaType.convertToASCIILowercase())
     , m_expressions(WTFMove(expressions))
     , m_restrictor(restrictor)
@@ -77,23 +77,23 @@ MediaQuery::MediaQuery(Restrictor restrictor, const String& mediaType, Vector<Me
 }
 
 // http://dev.w3.org/csswg/cssom/#compare-media-queries
-bool MediaQuery::operator==(const MediaQuery& other) const
+bool LegacyMediaQuery::operator==(const LegacyMediaQuery& other) const
 {
     return cssText() == other.cssText();
 }
 
 // http://dev.w3.org/csswg/cssom/#serialize-a-list-of-media-queries
-const String& MediaQuery::cssText() const
+const String& LegacyMediaQuery::cssText() const
 {
     if (m_serializationCache.isNull())
         m_serializationCache = serialize();
     return m_serializationCache;
 }
 
-TextStream& operator<<(TextStream& ts, const MediaQuery& query)
+TextStream& operator<<(TextStream& ts, const LegacyMediaQuery& query)
 {
     ts << query.cssText();
     return ts;
 }
 
-} //namespace
+} // namespace
