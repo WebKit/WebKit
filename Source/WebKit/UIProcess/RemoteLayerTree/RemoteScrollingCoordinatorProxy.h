@@ -117,12 +117,17 @@ public:
     const HashSet<WebCore::GraphicsLayer::PlatformLayerID>& fixedScrollingNodeLayerIDs() const { return m_fixedScrollingNodeLayerIDs; }
 #endif
 
+protected:
+    RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
+
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&);
 
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
     std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, WebCore::FloatPoint scrollDestination, float velocity) const;
+
+    virtual void didReceiveWheelEvent(bool /* wasHandled */) { }
 
     void sendUIStateChangedIfNecessary();
     void sendScrollingTreeNodeDidScroll();

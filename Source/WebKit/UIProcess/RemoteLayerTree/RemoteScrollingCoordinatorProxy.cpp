@@ -188,6 +188,7 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
         return false;
 
     auto result = m_scrollingTree->handleWheelEvent(wheelEvent);
+    didReceiveWheelEvent(result.wasHandled);
     return result.wasHandled;
 }
 

@@ -34,6 +34,9 @@ namespace WebKit {
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
 public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
+
+private:
+    void didReceiveWheelEvent(bool) override;
 };
 
 } // namespace WebKit
