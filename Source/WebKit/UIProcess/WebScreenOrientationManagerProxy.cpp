@@ -89,6 +89,11 @@ void WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType l
     if (m_currentLockRequest)
         m_currentLockRequest(WebCore::Exception { WebCore::AbortError, "A new lock request was started"_s });
 
+    if (auto exception = platformShouldRejectLockRequest()) {
+        completionHandler(*exception);
+        return;
+    }
+
     m_currentLockRequest = WTFMove(completionHandler);
     auto currentOrientation = m_provider->currentOrientation();
     auto resolvedLockedOrientation = resolveScreenOrientationLockType(currentOrientation, lockType);
@@ -166,6 +171,11 @@ void WebScreenOrientationManagerProxy::platformInitialize()
 
 void WebScreenOrientationManagerProxy::platformDestroy()
 {
+}
+
+std::optional<WebCore::Exception> WebScreenOrientationManagerProxy::platformShouldRejectLockRequest() const
+{
+    return std::nullopt;
 }
 #endif
 
