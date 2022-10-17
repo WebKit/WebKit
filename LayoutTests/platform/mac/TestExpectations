@@ -2346,3 +2346,6 @@ webkit.org/b/242249 [ BigSur+ ] webanimations/accelerated-animation-after-forwar
 webkit.org/b/242481 fast/css/direct-adjacent-style-sharing-3.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/242484 fast/css/display-contents-all.html [ Pass ImageOnlyFailure ]
+
+# rdar://99942843 ([ iOS Mac ] imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets.html is a constant failure)
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets.html [ Failure ]
