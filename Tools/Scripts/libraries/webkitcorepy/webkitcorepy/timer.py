@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,46 +20,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+from threading import Timer as _Timer
 
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+class Timer(_Timer):
+    def __init__(self, interval, callback):
+        super(Timer, self).__init__(interval, callback)
+        self.daemon = True
 
+    def __enter__(self):
+        self.start()
+        return self
 
-setup(
-    name='webkitcorepy',
-    version='0.13.19',
-    description='Library containing various Python support classes and functions.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    keywords='python unicode',
-    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitcorepy',
-        'webkitcorepy.mocks',
-        'webkitcorepy.tests',
-        'webkitcorepy.tests.mocks',
-    ],
-    install_requires=[
-        'mock',
-        'requests',
-        'six',
-        'tblib',
-        'whichcraft',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)
+    def __exit__(self, *args, **kwargs):
+        self.cancel()
