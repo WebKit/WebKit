@@ -1,11 +1,11 @@
 
-FAIL invalid: @keyframes none { } assert_equals: expected 0 but got 1
-FAIL invalid: @keyframes default { } assert_equals: expected 0 but got 1
-FAIL invalid: @keyframes initial { } assert_equals: expected 0 but got 1
-FAIL invalid: @keyframes inherit { } assert_equals: expected 0 but got 1
-FAIL invalid: @keyframes unset { } assert_equals: expected 0 but got 1
-FAIL invalid: @keyframes revert { } assert_equals: expected 0 but got 1
-FAIL invalid: @keyframes revert-layer { } assert_equals: expected 0 but got 1
+PASS invalid: @keyframes none { }
+PASS invalid: @keyframes default { }
+PASS invalid: @keyframes initial { }
+PASS invalid: @keyframes inherit { }
+PASS invalid: @keyframes unset { }
+PASS invalid: @keyframes revert { }
+PASS invalid: @keyframes revert-layer { }
 PASS invalid: @keyframes 12 { }
 PASS invalid: @keyframes -12 { }
 PASS invalid: @keyframes 12foo { }

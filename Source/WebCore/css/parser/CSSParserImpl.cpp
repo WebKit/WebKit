@@ -648,13 +648,16 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(CSSParserTokenRan
     if (!prelude.atEnd())
         return nullptr; // Parse error; expected single non-whitespace token in @keyframes header
 
-    AtomString name;
     if (nameToken.type() == IdentToken) {
-        name = nameToken.value().toAtomString();
-    } else if (nameToken.type() == StringToken)
-        name = nameToken.value().toAtomString();
-    else
-        return nullptr; // Parse error; expected ident token in @keyframes header
+        // According to the CSS Values specification, identifier-based keyframe names
+        // are not allowed to be CSS wide keywords or "default". And CSS Animations 
+        // additionally excludes the "none" keyword.
+        if (!isValidCustomIdentifier(nameToken.id()) || nameToken.id() == CSSValueNone)
+            return nullptr;
+    } else if (nameToken.type() != StringToken)
+        return nullptr; // Parse error; expected ident token or string in @keyframes header
+
+    auto name = nameToken.value().toAtomString();
 
     if (m_observerWrapper) {
         m_observerWrapper->observer().startRuleHeader(StyleRuleType::Keyframes, m_observerWrapper->startOffset(rangeCopy));
