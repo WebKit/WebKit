@@ -110,6 +110,7 @@
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
+#include "WaiterListManager.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -405,6 +406,8 @@ VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
     
+    // WaiterListManager::singleton().unregister(this);
+
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)

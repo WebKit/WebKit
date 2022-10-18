@@ -553,6 +553,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object.") \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
+    v(Bool, useWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
     v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal.") \

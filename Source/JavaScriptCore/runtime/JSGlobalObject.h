@@ -110,7 +110,6 @@ class JSModuleRecord;
 class JSPromise;
 class JSPromiseConstructor;
 class JSPromisePrototype;
-class JSSharedArrayBuffer;
 class JSSharedArrayBufferPrototype;
 class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
