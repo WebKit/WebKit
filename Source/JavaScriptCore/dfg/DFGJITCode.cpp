@@ -35,7 +35,7 @@
 
 namespace JSC { namespace DFG {
 
-JITData::JITData(VM& vm, const JITCode& jitCode, ExitVector&& exits)
+JITData::JITData(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)
     : Base(jitCode.m_linkerIR.size())
     , m_stubInfos(jitCode.m_unlinkedStubInfos.size())
     , m_callLinkInfos(jitCode.m_unlinkedCallLinkInfos.size())
@@ -58,6 +58,10 @@ JITData::JITData(VM& vm, const JITCode& jitCode, ExitVector&& exits)
             OptimizingCallLinkInfo& callLinkInfo = m_callLinkInfos[index];
             callLinkInfo.initializeFromDFGUnlinkedCallLinkInfo(vm, unlinkedCallLinkInfo);
             at(i) = &callLinkInfo;
+            break;
+        }
+        case LinkerIR::Type::GlobalObject: {
+            at(i) = codeBlock->globalObject();
             break;
         }
         default:

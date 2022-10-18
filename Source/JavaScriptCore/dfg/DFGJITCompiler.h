@@ -312,6 +312,7 @@ public:
     class LinkableConstant final : public CCallHelpers::ConstantMaterializer {
     public:
         enum NonCellTag { NonCell };
+        enum GlobalObjectTag { GlobalObject };
         LinkableConstant() = default;
         LinkableConstant(JITCompiler&, JSCell*);
         LinkableConstant(LinkerIR::Constant index)
@@ -333,6 +334,11 @@ public:
             return LinkableConstant(jit, structure.get());
         }
 
+        static LinkableConstant globalObject(JITCompiler& jit, Node* node)
+        {
+            return LinkableConstant(jit, GlobalObject, node->origin.semantic);
+        }
+
         bool isUnlinked() const { return m_index != UINT_MAX; }
 
         void* pointer() const { return m_pointer; }
@@ -348,6 +354,7 @@ public:
 
     private:
         LinkableConstant(JITCompiler&, void*, NonCellTag);
+        LinkableConstant(JITCompiler&, GlobalObjectTag, CodeOrigin);
 
         LinkerIR::Constant m_index { UINT_MAX };
         void* m_pointer { nullptr };
