@@ -513,8 +513,8 @@ private:
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
     void findModalNodes();
-    void updateCurrentModalNode();
-    Element* updateCurrentModalNodeInternal();
+    enum class WillRecomputeFocus : bool { No, Yes };
+    void updateCurrentModalNode(WillRecomputeFocus = WillRecomputeFocus::No);
     bool isNodeVisible(Node*) const;
     bool modalElementHasAccessibleContent(Element&);
 

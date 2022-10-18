@@ -309,10 +309,52 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
     return false;
 }
 
-void AXObjectCache::updateCurrentModalNode()
+void AXObjectCache::updateCurrentModalNode(WillRecomputeFocus willRecomputeFocus)
 {
+    auto recomputeModalElement = [&] () -> Element* {
+        // There might be multiple modal dialog nodes.
+        // We use this function to pick the one we want.
+        if (m_modalElements.isEmpty())
+            return nullptr;
+
+        // Pick the document active modal <dialog> element if it exists.
+        if (Element* activeModalDialog = document().activeModalDialog()) {
+            ASSERT(m_modalElements.contains(activeModalDialog));
+            return activeModalDialog;
+        }
+
+        SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
+        // If any of the modal nodes contains the keyboard focus, we want to pick that one.
+        // If not, we want to pick the last visible dialog in the DOM.
+        RefPtr<Element> focusedElement = document().focusedElement();
+        bool focusedElementIsOutsideModals = focusedElement;
+        RefPtr<Element> lastVisible;
+        for (auto& element : m_modalElements) {
+            // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
+            // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
+            if (!element || !isModalElement(*element))
+                continue;
+
+            // To avoid trapping users in an empty modal, skip any non-visible element, or any element without accessible content.
+            if (!isNodeVisible(element.get()) || !modalElementHasAccessibleContent(*element))
+                continue;
+
+            lastVisible = element.get();
+            if (focusedElement && focusedElement->isDescendantOf(*element)) {
+                focusedElementIsOutsideModals = false;
+                break;
+            }
+        }
+
+        // If there is a focused element, and it's not inside any of the modals, we should
+        // consider all modals inactive to allow the user to freely navigate.
+        if (focusedElementIsOutsideModals && willRecomputeFocus == WillRecomputeFocus::No)
+            return nullptr;
+        return lastVisible.get();
+    };
+
     auto* previousModal = m_currentModalElement.get();
-    m_currentModalElement = updateCurrentModalNodeInternal();
+    m_currentModalElement = recomputeModalElement();
     if (previousModal != m_currentModalElement.get()) {
         childrenChanged(rootWebArea());
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -321,41 +363,6 @@ void AXObjectCache::updateCurrentModalNode()
         m_deferredRegenerateIsolatedTree = true;
 #endif
     }
-}
-
-Element* AXObjectCache::updateCurrentModalNodeInternal()
-{
-    // There might be multiple modal dialog nodes.
-    // We use this function to pick the one we want.
-    if (m_modalElements.isEmpty())
-        return nullptr;
-
-    // Pick the document active modal <dialog> element if it exists.
-    if (Element* activeModalDialog = document().activeModalDialog()) {
-        ASSERT(m_modalElements.contains(activeModalDialog));
-        return activeModalDialog;
-    }
-
-    SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
-    // If any of the modal nodes contains the keyboard focus, we want to pick that one.
-    // If not, we want to pick the last visible dialog in the DOM.
-    RefPtr<Element> focusedElement = document().focusedElement();
-    RefPtr<Element> lastVisible;
-    for (auto& element : m_modalElements) {
-        // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
-        // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
-        if (!element || !isModalElement(*element))
-            continue;
-
-        // To avoid trapping users in an empty modal, skip any non-visible element, or any element without accessible content.
-        if (!isNodeVisible(element.get()) || !modalElementHasAccessibleContent(*element))
-            continue;
-
-        lastVisible = element.get();
-        if (focusedElement && focusedElement->isDescendantOf(*element))
-            break;
-    }
-    return lastVisible.get();
 }
 
 bool AXObjectCache::isNodeVisible(Node* node) const
@@ -3576,7 +3583,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredModalChangedList.clear();
 
     if (shouldRecomputeModal) {
-        updateCurrentModalNode();
+        updateCurrentModalNode(updatedFocusedElement ? WillRecomputeFocus::No : WillRecomputeFocus::Yes);
         // "When a modal element is displayed, assistive technologies SHOULD navigate to the element unless focus has explicitly been set elsewhere."
         // `updatedFocusedElement` indicates focus was explicitly set elsewhere, so don't autofocus into the modal.
         // https://w3c.github.io/aria/#aria-modal
