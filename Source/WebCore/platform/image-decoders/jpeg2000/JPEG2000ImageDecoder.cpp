@@ -503,7 +503,7 @@ void JPEG2000ImageDecoder::decode(bool onlySize, bool allDataReceived)
     const IntRect& frameRect = buffer.backingStore()->frameRect();
     for (int y = 0; y < frameRect.height(); ++y) {
         for (int x = 0; x < frameRect.width(); ++x) {
-            int r, g, b, a;
+            int r, g, b, a = 0xFF;
 
             int offset;
             if (subsampling) {
