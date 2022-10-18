@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssColorValue.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssHSL.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssHWB.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssKeywordValue-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssKeywordValue-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssKeywordValue.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssMatrixComponent.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPerspective.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPositionValue-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPositionValue.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRGB.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRotate.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssScale.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkew.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkewX.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkewY.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformComponent-2d-flattening.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformComponent-toMatrix-relative-units.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformComponent-toMatrix.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformValue-toMatrix.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformValue.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTranslate.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-indexed-getter-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-iterable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-length.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssVariableReferenceValue-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssVariableReferenceValue-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssVariableReferenceValue.html

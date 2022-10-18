@@ -1958,6 +1958,9 @@
     "imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-001.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-typed-om/idlharness.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],

@@ -143,6 +143,7 @@
     "web-platform-tests/css/css-transforms": "import", 
     "web-platform-tests/css/css-transforms/": "import", 
     "web-platform-tests/css/css-transitions": "import", 
+    "web-platform-tests/css/css-typed-om": "import", 
     "web-platform-tests/css/css-ui": "import", 
     "web-platform-tests/css/css-values": "import", 
     "web-platform-tests/css/css-variables": "import", 

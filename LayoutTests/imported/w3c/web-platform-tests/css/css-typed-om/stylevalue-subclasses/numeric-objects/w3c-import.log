@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/add-two-types.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/arithmetic.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/create-a-type.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssMathInvert-type.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssMathNegate-type.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssMathValue.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssUnitValue-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssUnitValue.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssnumericvalue-multiply-two-types.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/equals.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/numeric-factory.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/parse.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/to.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/toSum.tentative.html

@@ -234,13 +234,9 @@ PASS CSSMathClamp interface object name
 PASS CSSMathClamp interface: existence and properties of interface prototype object
 PASS CSSMathClamp interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMathClamp interface: existence and properties of interface prototype object's @@unscopables property
-FAIL CSSMathClamp interface: attribute min assert_throws_js: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL CSSMathClamp interface: attribute val assert_true: The prototype object must have a property "val" expected true got false
-FAIL CSSMathClamp interface: attribute max assert_throws_js: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+PASS CSSMathClamp interface: attribute lower
+PASS CSSMathClamp interface: attribute value
+PASS CSSMathClamp interface: attribute upper
 PASS CSSNumericArray interface: existence and properties of interface object
 PASS CSSNumericArray interface object length
 PASS CSSNumericArray interface object name
@@ -401,8 +397,6 @@ PASS CSSColorValue interface object name
 PASS CSSColorValue interface: existence and properties of interface prototype object
 PASS CSSColorValue interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSColorValue interface: existence and properties of interface prototype object's @@unscopables property
-PASS CSSColorValue interface: attribute colorSpace
-PASS CSSColorValue interface: operation to(CSSKeywordish)
 PASS CSSColorValue interface: operation parse(USVString)
 PASS CSSRGB interface: existence and properties of interface object
 PASS CSSRGB interface object length
@@ -434,16 +428,6 @@ PASS CSSHWB interface: attribute h
 PASS CSSHWB interface: attribute w
 PASS CSSHWB interface: attribute b
 PASS CSSHWB interface: attribute alpha
-PASS CSSLCH interface: existence and properties of interface object
-PASS CSSLCH interface object length
-PASS CSSLCH interface object name
-PASS CSSLCH interface: existence and properties of interface prototype object
-PASS CSSLCH interface: existence and properties of interface prototype object's "constructor" property
-PASS CSSLCH interface: existence and properties of interface prototype object's @@unscopables property
-PASS CSSLCH interface: attribute l
-PASS CSSLCH interface: attribute c
-PASS CSSLCH interface: attribute h
-PASS CSSLCH interface: attribute alpha
 PASS CSSLab interface: existence and properties of interface object
 PASS CSSLab interface object length
 PASS CSSLab interface object name
@@ -454,23 +438,45 @@ PASS CSSLab interface: attribute l
 PASS CSSLab interface: attribute a
 PASS CSSLab interface: attribute b
 PASS CSSLab interface: attribute alpha
+PASS CSSLCH interface: existence and properties of interface object
+PASS CSSLCH interface object length
+PASS CSSLCH interface object name
+PASS CSSLCH interface: existence and properties of interface prototype object
+PASS CSSLCH interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSLCH interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSLCH interface: attribute l
+PASS CSSLCH interface: attribute c
+PASS CSSLCH interface: attribute h
+PASS CSSLCH interface: attribute alpha
+PASS CSSOKLab interface: existence and properties of interface object
+PASS CSSOKLab interface object length
+PASS CSSOKLab interface object name
+PASS CSSOKLab interface: existence and properties of interface prototype object
+PASS CSSOKLab interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSOKLab interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSOKLab interface: attribute l
+PASS CSSOKLab interface: attribute a
+PASS CSSOKLab interface: attribute b
+PASS CSSOKLab interface: attribute alpha
+PASS CSSOKLCH interface: existence and properties of interface object
+PASS CSSOKLCH interface object length
+PASS CSSOKLCH interface object name
+PASS CSSOKLCH interface: existence and properties of interface prototype object
+PASS CSSOKLCH interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSOKLCH interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSOKLCH interface: attribute l
+PASS CSSOKLCH interface: attribute c
+PASS CSSOKLCH interface: attribute h
+PASS CSSOKLCH interface: attribute alpha
 PASS CSSColor interface: existence and properties of interface object
-FAIL CSSColor interface object length assert_equals: wrong value for CSSColor.length expected 1 but got 2
+PASS CSSColor interface object length
 PASS CSSColor interface object name
 PASS CSSColor interface: existence and properties of interface prototype object
 PASS CSSColor interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSColor interface: existence and properties of interface prototype object's @@unscopables property
-FAIL CSSDeviceCMYK interface: existence and properties of interface object assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface object length assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface object name assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: attribute c assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: attribute m assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: attribute y assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: attribute k assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
-FAIL CSSDeviceCMYK interface: attribute alpha assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+PASS CSSColor interface: attribute colorSpace
+FAIL CSSColor interface: attribute channels assert_true: The prototype object must have a property "channels" expected true got false
+PASS CSSColor interface: attribute alpha
 FAIL CSSStyleRule interface: attribute styleMap assert_true: The prototype object must have a property "styleMap" expected true got false
 PASS CSS namespace: operation escape(CSSOMString)
 PASS CSS namespace: operation number(double)
@@ -488,6 +494,30 @@ PASS CSS namespace: operation vi(double)
 PASS CSS namespace: operation vb(double)
 PASS CSS namespace: operation vmin(double)
 PASS CSS namespace: operation vmax(double)
+FAIL CSS namespace: operation svw(double) assert_own_property: namespace object missing operation "svw" expected property "svw" missing
+FAIL CSS namespace: operation svh(double) assert_own_property: namespace object missing operation "svh" expected property "svh" missing
+FAIL CSS namespace: operation svi(double) assert_own_property: namespace object missing operation "svi" expected property "svi" missing
+FAIL CSS namespace: operation svb(double) assert_own_property: namespace object missing operation "svb" expected property "svb" missing
+FAIL CSS namespace: operation svmin(double) assert_own_property: namespace object missing operation "svmin" expected property "svmin" missing
+FAIL CSS namespace: operation svmax(double) assert_own_property: namespace object missing operation "svmax" expected property "svmax" missing
+FAIL CSS namespace: operation lvw(double) assert_own_property: namespace object missing operation "lvw" expected property "lvw" missing
+FAIL CSS namespace: operation lvh(double) assert_own_property: namespace object missing operation "lvh" expected property "lvh" missing
+FAIL CSS namespace: operation lvi(double) assert_own_property: namespace object missing operation "lvi" expected property "lvi" missing
+FAIL CSS namespace: operation lvb(double) assert_own_property: namespace object missing operation "lvb" expected property "lvb" missing
+FAIL CSS namespace: operation lvmin(double) assert_own_property: namespace object missing operation "lvmin" expected property "lvmin" missing
+FAIL CSS namespace: operation lvmax(double) assert_own_property: namespace object missing operation "lvmax" expected property "lvmax" missing
+FAIL CSS namespace: operation dvw(double) assert_own_property: namespace object missing operation "dvw" expected property "dvw" missing
+FAIL CSS namespace: operation dvh(double) assert_own_property: namespace object missing operation "dvh" expected property "dvh" missing
+FAIL CSS namespace: operation dvi(double) assert_own_property: namespace object missing operation "dvi" expected property "dvi" missing
+FAIL CSS namespace: operation dvb(double) assert_own_property: namespace object missing operation "dvb" expected property "dvb" missing
+FAIL CSS namespace: operation dvmin(double) assert_own_property: namespace object missing operation "dvmin" expected property "dvmin" missing
+FAIL CSS namespace: operation dvmax(double) assert_own_property: namespace object missing operation "dvmax" expected property "dvmax" missing
+PASS CSS namespace: operation cqw(double)
+PASS CSS namespace: operation cqh(double)
+PASS CSS namespace: operation cqi(double)
+PASS CSS namespace: operation cqb(double)
+PASS CSS namespace: operation cqmin(double)
+PASS CSS namespace: operation cqmax(double)
 PASS CSS namespace: operation cm(double)
 PASS CSS namespace: operation mm(double)
 PASS CSS namespace: operation Q(double)
