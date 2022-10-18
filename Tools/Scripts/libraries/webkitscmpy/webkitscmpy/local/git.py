@@ -790,13 +790,26 @@ class Git(Scm):
             message=message.rstrip() if include_log else None,
         )
 
-    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+    def commits(self, begin=None, end=None, include_log=True, include_identifier=True, scopes=None):
         begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+
+        in_scope = set()
+        for scope in scopes or []:
+            ran = run(
+                [self.executable(), 'log', '--pretty=%H', '{}..{}'.format(begin.hash, end.hash), '--', scope],
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8'
+            )
+            if not ran.returncode:
+                for line in ran.stdout.splitlines():
+                    in_scope.add(line)
 
         try:
             log = None
             log = subprocess.Popen(
-                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', '{}..{}'.format(begin.hash, end.hash), '--'],
+                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix',
+                 '{}..{}'.format(begin.hash, end.hash), '--'],
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -851,12 +864,14 @@ class Git(Scm):
                 # cached in previous.
                 else:
                     for cached in previous:
-                        yield cached
+                        if scopes is None or cached.hash in in_scope:
+                            yield cached
                     previous = [commit]
 
             for cached in previous:
                 cached.order += begin.order
-                yield cached
+                if scopes is None or cached.hash in in_scope:
+                    yield cached
         finally:
             if log and log.poll() is None:
                 log.kill()

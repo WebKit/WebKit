@@ -96,6 +96,8 @@ class Info(Command):
             sys.stderr.write('No repository provided\n')
             return 1
 
+        scopes = getattr(args, 'scopes', None)
+
         try:
             if '..' in reference:
                 if '...' in reference:
@@ -105,8 +107,20 @@ class Info(Command):
                 if len(references) > 2:
                     sys.stderr.write('Can only include two references in a range\n')
                     return 1
-                commits = [commit for commit in repository.commits(begin=dict(argument=references[0]), end=dict(argument=references[1]))]
+                kwargs_to_pass = dict(
+                    begin=dict(argument=references[0]),
+                    end=dict(argument=references[1]),
+                )
+                if scopes:
+                    if not isinstance(repository, local.Git):
+                        sys.stderr.write("Can only use the '--scope' argument on a native Git repository\n")
+                        return 1
+                    kwargs_to_pass['scopes'] = scopes
+                commits = [commit for commit in repository.commits(**kwargs_to_pass)]
             else:
+                if scopes:
+                    sys.stderr.write('Scope argument invalid when only one commit specified\n')
+                    return 1
                 commits = [repository.find(reference, include_log=args.include_log)]
 
         except (local.Scm.Exception, TypeError, ValueError) as exception:
@@ -136,6 +150,13 @@ class Find(Command):
             'argument', nargs=1,
             type=str, default=None,
             help='String representation of a commit or branch to be normalized',
+        )
+        parser.add_argument(
+            '--scope', '-s',
+            help='Filter queries for commit ranges to specific paths in the repository',
+            action='append',
+            dest='scopes',
+            default=None,
         )
 
     @classmethod

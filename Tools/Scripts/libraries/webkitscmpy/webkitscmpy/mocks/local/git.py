@@ -340,6 +340,18 @@ nothing to commit, working tree clean
                         ) for commit in list(self.rev_list(args[5]))
                     ])
                 )
+            ),
+            # We don't have modified files for our mock commits, so we assume that every scope
+            # applies to all odd commits
+            mocks.Subprocess.Route(
+                self.executable, 'log', '--pretty=%H', re.compile(r'.+'), '--', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join([
+                        commit.hash for commit in list(self.rev_list(args[3])) if commit.identifier % 2
+                    ])
+                )
             ), mocks.Subprocess.Route(
                 self.executable, 'log', re.compile(r'.+'),
                 cwd=self.path,
