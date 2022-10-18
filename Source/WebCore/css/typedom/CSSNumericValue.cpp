@@ -240,6 +240,19 @@ ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(String&& unit)
     return to(CSSUnitValue::parseUnit(unit));
 }
 
+// https://drafts.css-houdini.org/css-typed-om/#create-a-cssunitvalue-from-a-sum-value-item
+static RefPtr<CSSUnitValue> createCSSUnitValueFromAddend(CSSNumericValue::Addend addend)
+{
+    if (addend.units.size() > 1)
+        return nullptr;
+    if (addend.units.isEmpty())
+        return CSSUnitValue::create(addend.value, CSSUnitType::CSS_NUMBER);
+    auto unit = addend.units.begin();
+    if (unit->value != 1)
+        return nullptr;
+    return CSSUnitValue::create(addend.value, unit->key);
+}
+
 ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
@@ -252,17 +265,7 @@ ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
         return Exception { TypeError };
 
     auto& addend = (*sumValue)[0];
-    auto unconverted = [] (const auto& addend) -> RefPtr<CSSUnitValue> {
-        switch (addend.units.size()) {
-        case 0:
-            return CSSUnitValue::create(addend.value, CSSUnitType::CSS_NUMBER);
-        case 1:
-            return CSSUnitValue::create(addend.value, addend.units.begin()->key);
-        default:
-            break;
-        }
-        return nullptr;
-    } (addend);
+    auto unconverted = createCSSUnitValueFromAddend(addend);
     if (!unconverted)
         return Exception { TypeError };
 
@@ -272,12 +275,58 @@ ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
     return converted.releaseNonNull();
 }
 
+// https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum
 ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
 {
     UNUSED_PARAM(units);
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum
-    // FIXME: add impl.
-    return CSSMathSum::create(FixedVector<CSSNumberish> { 1.0 });
+    Vector<CSSUnitType> parsedUnits;
+    parsedUnits.reserveInitialCapacity(units.size());
+    for (auto& unit : units) {
+        auto parsedUnit = CSSUnitValue::parseUnit(unit);
+        if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
+            return Exception { SyntaxError, "Invalid unit parameter"_s };
+        parsedUnits.uncheckedAppend(parsedUnit);
+    }
+    auto sumValue = toSumValue();
+    if (!sumValue)
+        return Exception { TypeError, "Could not create a sum value"_s };
+
+    Vector<Ref<CSSNumericValue>> values;
+    values.reserveInitialCapacity(sumValue->size());
+    for (auto& addend : *sumValue) {
+        auto cssUnitValue = createCSSUnitValueFromAddend(addend);
+        if (!cssUnitValue)
+            return Exception { TypeError, "Could not create CSSUnitValue"_s };
+        values.uncheckedAppend(cssUnitValue.releaseNonNull());
+    }
+
+    WTFLogAlways("CHRIS: ParsedUnitSize: %lu, valuesSize: %lu", parsedUnits.size(), values.size());
+    if (parsedUnits.isEmpty()) {
+        std::sort(values.begin(), values.end(), [](auto& a, auto& b) {
+            WTFLogAlways("CHRIS: Comparing '%s' and '%s', result : %d", static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters(), strcmp(static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters()));
+            return strcmp(static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters()) < 0;
+        });
+        return CSSMathSum::create(WTFMove(values));
+    }
+
+    Vector<Ref<CSSNumericValue>> result;
+    for (auto& parsedUnit : parsedUnits) {
+        auto temp = CSSUnitValue::create(0, parsedUnit);
+        for (size_t i = 0; i < values.size();) {
+            auto value = static_reference_cast<CSSUnitValue>(values[i]);
+            if (auto convertedValue = value->convertTo(parsedUnit)) {
+                temp->setValue(temp->value() + convertedValue->value());
+                values.remove(i);
+            } else
+                ++i;
+        }
+        result.append(WTFMove(temp));
+    }
+
+    if (!values.isEmpty())
+        return Exception { TypeError, "Failed to convert all values"_s };
+
+    return CSSMathSum::create(WTFMove(result));
 }
 
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)

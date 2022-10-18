@@ -1,13 +1,13 @@
 
-FAIL Converting a CSSNumericValue to a sum with invalid units throws SyntaxError assert_throws_dom: function "() => CSS.px(1).toSum('px', 'lemon')" did not throw
+PASS Converting a CSSNumericValue to a sum with invalid units throws SyntaxError
 PASS Converting a CSSNumericValue with an invalid sum value to a sum throws TypeError
-FAIL Converting a CSSNumericValue with compound units to a sum throws TypeError assert_throws_js: function "() => new CSSMathProduct(CSS.px(1), CSS.px(1)).to('px')" did not throw
-FAIL Converting a CSSNumericValue to a sum with an incompatible unit throws TypeError assert_throws_js: function "() => CSS.px(1).toSum('number')" did not throw
-FAIL Converting a CSSNumericValue to a sum with units that are not addable throws TypeError assert_throws_js: function "() => CSS.px(1).toSum('px', 's')" did not throw
-FAIL Converting a CSSNumericValue with leftover units to a sum throws TypeError assert_throws_js: function "() => new CSSMathSum(CSS.px(1), CSS.em(1)).toSum('px')" did not throw
-FAIL Converting CSSNumericValue to a sum with its own unit returns itself assert_equals: expected "px" but got "number"
-FAIL Converting CSSNumericValue to a sum with no arguments returns all the units in sorted order assert_equals: expected 4 but got 1
-FAIL Converting CSSNumericValue to a sum with a relative unit converts correctly assert_approx_equals: expected 20 +/- 0.000001 but got 1
-FAIL Converting CSSNumericValue to a sum containing extra units returns zero for those units assert_equals: expected 3 but got 1
-FAIL CSSNumericValue.toSum converts greedily assert_equals: expected 2 but got 1
+PASS Converting a CSSNumericValue with compound units to a sum throws TypeError
+PASS Converting a CSSNumericValue to a sum with an incompatible unit throws TypeError
+PASS Converting a CSSNumericValue to a sum with units that are not addable throws TypeError
+PASS Converting a CSSNumericValue with leftover units to a sum throws TypeError
+PASS Converting CSSNumericValue to a sum with its own unit returns itself
+PASS Converting CSSNumericValue to a sum with no arguments returns all the units in sorted order
+PASS Converting CSSNumericValue to a sum with a relative unit converts correctly
+PASS Converting CSSNumericValue to a sum containing extra units returns zero for those units
+PASS CSSNumericValue.toSum converts greedily
 
