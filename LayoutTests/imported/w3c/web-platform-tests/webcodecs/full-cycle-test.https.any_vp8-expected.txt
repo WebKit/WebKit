@@ -1,3 +1,21 @@
+CONSOLE MESSAGE: TypeError: Type error
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
+
+Harness Error (FAIL), message = InvalidStateError: VideoDecoder is not configured
 
 FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
 

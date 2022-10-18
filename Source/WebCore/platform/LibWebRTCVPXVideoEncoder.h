@@ -41,10 +41,11 @@ public:
     enum class Type { VP8, VP9 };
     static void create(Type, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    LibWebRTCVPXVideoEncoder(Type, const Config&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    LibWebRTCVPXVideoEncoder(Type, OutputCallback&&, PostTaskCallback&&);
     ~LibWebRTCVPXVideoEncoder();
 
 private:
+    int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
     void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) final;
     void flush(Function<void()>&&) final;
     void reset() final;

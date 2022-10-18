@@ -86,9 +86,11 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
 
     m_state = WebCodecsCodecState::Configured;
     m_isKeyChunkRequired = true;
-    
+
     queueControlMessageAndProcess([this, config = WTFMove(config), identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
+        m_baseConfiguration = config;
+
         VideoEncoder::PostTaskCallback postTaskCallback;
         if (isMainThread()) {
             postTaskCallback = [](auto&& task) {
@@ -143,26 +145,27 @@ WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMeta
         return { };
 
     m_hasNewActiveConfiguration = false;
-    // FIXME: Provide more accurate decoder confgiuration
+
+    RefPtr<ArrayBuffer> arrayBuffer;
+    if (m_activeConfiguration.description) {
+        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(m_activeConfiguration.description->size(), 0);
+        RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
+        if (arrayBuffer)
+            memcpy(static_cast<uint8_t*>(arrayBuffer->data()), m_activeConfiguration.description->data(), m_activeConfiguration.description->size());
+    }
+
+    // FIXME: Provide more accurate decoder configuration
     WebCodecsVideoDecoderConfig config {
         WTFMove(m_activeConfiguration.codec),
-        { },
-        m_activeConfiguration.visibleWidth,
-        m_activeConfiguration.visibleHeight,
-        m_activeConfiguration.displayWidth,
-        m_activeConfiguration.displayHeight,
+        WTFMove(arrayBuffer),
+        m_activeConfiguration.visibleWidth ? m_activeConfiguration.visibleWidth : m_baseConfiguration.width,
+        m_activeConfiguration.visibleHeight ? m_activeConfiguration.visibleHeight : m_baseConfiguration.height,
+        m_activeConfiguration.displayWidth ? m_activeConfiguration.displayWidth : m_baseConfiguration.displayWidth,
+        m_activeConfiguration.displayHeight ? m_activeConfiguration.displayHeight : m_baseConfiguration.displayHeight,
         { },
         HardwareAcceleration::NoPreference,
         { }
     };
-    if (m_activeConfiguration.description) {
-        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(m_activeConfiguration.description->size(), 0);
-        RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
-        if (arrayBuffer) {
-            memcpy(static_cast<uint8_t*>(arrayBuffer->data()), m_activeConfiguration.description->data(), m_activeConfiguration.description->size());
-            config.description = WTFMove(arrayBuffer);
-        }
-    }
 
     return WebCodecsEncodedVideoChunkMetadata { WTFMove(config) };
 }

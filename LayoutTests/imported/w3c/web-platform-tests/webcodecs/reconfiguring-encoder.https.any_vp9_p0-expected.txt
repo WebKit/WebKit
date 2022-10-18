@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Error: assert_unreached: assert_equals: expected 800 but got 640 Reached unreachable code
 
-FAIL Reconfiguring encoder assert_equals: expected 16 but got 0
+Harness Error (FAIL), message = Error: assert_unreached: assert_equals: expected 800 but got 640 Reached unreachable code
+
+PASS Reconfiguring encoder
 
