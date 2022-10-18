@@ -83,7 +83,7 @@ public:
 
     void didFirstPaint();
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     enum class NetworkActivityReleaseReason { LoadCompleted, ScreenLocked };
     void releaseNetworkActivity(NetworkActivityReleaseReason);
 #endif
@@ -195,7 +195,7 @@ private:
     void didChangeWebProcessIsResponsive() override;
     void didSwapWebProcesses() override;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     void releaseNetworkActivityAfterLoadCompletion() { releaseNetworkActivity(NetworkActivityReleaseReason::LoadCompleted); }
 #endif
 
@@ -276,7 +276,7 @@ private:
         bool webViewDidUpdateHistoryTitleForURL : 1;
     } m_historyDelegateMethods;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_networkActivity;
     RunLoop::Timer<NavigationState> m_releaseNetworkActivityTimer;
 #endif

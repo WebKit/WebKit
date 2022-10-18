@@ -1069,11 +1069,17 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         connection()->setIgnoreInvalidMessageForTesting();
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (connection()) {
-        if (xpc_connection_t xpcConnection = connection()->xpcConnection())
+        if (xpc_connection_t xpcConnection = connection()->xpcConnection()) {
             m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
+#if PLATFORM(MAC)
+            if (!m_isSuspensionEnabled)
+                m_suspensionSuppressionAssertion = ProcessAssertion::create(xpc_connection_get_pid(connection()->xpcConnection()), "Suppress Suspension"_s, ProcessAssertionType::Foreground);
+#endif
+        }
     }
+
 #endif
 
 #if PLATFORM(COCOA)

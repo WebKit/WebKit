@@ -452,6 +452,10 @@ public:
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
     void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    void enableProcessSuspension();
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
@@ -689,6 +693,10 @@ private:
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
     bool m_isConnectedToHardwareConsole { true };
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    bool m_isSuspensionEnabled { false };
+    RefPtr<ProcessAssertion> m_suspensionSuppressionAssertion;
+#endif
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

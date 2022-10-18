@@ -100,7 +100,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_mainFrameID(mainFrameID)
     , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s).moveToUniquePtr())
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -222,7 +222,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 
     m_suspensionTimeoutTimer.stop();
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     m_suspensionActivity = nullptr;
 #endif
 

@@ -1110,6 +1110,11 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         enableProcessSwapOnCrossSiteNavigation = false;
 #endif
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
+        process->enableProcessSuspension();
+#endif
+
     bool wasProcessSwappingOnNavigationEnabled = m_configuration->processSwapsOnNavigation();
     m_configuration->setProcessSwapsOnNavigationFromExperimentalFeatures(enableProcessSwapOnCrossSiteNavigation);
     if (wasProcessSwappingOnNavigationEnabled != m_configuration->processSwapsOnNavigation())

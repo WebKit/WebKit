@@ -502,7 +502,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
     , m_geolocationPermissionRequestManager(*this)
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     , m_audibleActivityTimer(RunLoop::main(), this, &WebPageProxy::clearAudibleActivity)
 #endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
@@ -2386,7 +2386,7 @@ void WebPageProxy::updateThrottleState()
     else if (!m_pageIsUserObservableCount)
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (isViewVisible()) {
         if (!m_isVisibleActivity || !m_isVisibleActivity->isValid()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because the view is visible");
@@ -2423,7 +2423,7 @@ void WebPageProxy::updateThrottleState()
 #endif
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
 void WebPageProxy::clearAudibleActivity()
 {
     WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
@@ -2463,7 +2463,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
     if (m_waitingForDidUpdateActivityState)
         return;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     // Hail Mary check. Should not be possible (dispatchActivityStateChange should force async if not visible,
     // and if visible we should be holding an assertion) - but we should never block on a suspended process.
     if (!m_isVisibleActivity) {
@@ -4562,7 +4562,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
         return callbackFunction({ nullptr });
 
     ProcessThrottler::ActivityVariant activity;
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (pageClient().canTakeForegroundAssertions())
         activity = m_process->throttler().foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
 #endif

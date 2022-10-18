@@ -228,7 +228,7 @@ public:
     // Return whether the view is visible.
     virtual bool isViewVisible() = 0;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     virtual bool canTakeForegroundAssertions() = 0;
 #endif
 

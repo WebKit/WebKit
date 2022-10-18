@@ -183,7 +183,7 @@ private:
     String m_accessibilityPlugID;
     CompletionHandler<void(String&&)> m_accessibilityBindCompletionHandler;
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     UniqueRef<ProcessThrottler::ForegroundActivity> m_provisionalLoadActivity;
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

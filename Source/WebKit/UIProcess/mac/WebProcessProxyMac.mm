@@ -88,6 +88,14 @@ void WebProcessProxy::platformResumeProcess()
     // FIXME: Adopt RunningBoard on macOS to support process suspension.
 }
 
+#if USE(RUNNINGBOARD)
+void WebProcessProxy::enableProcessSuspension()
+{
+    m_isSuspensionEnabled = true;
+    m_suspensionSuppressionAssertion = nullptr;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

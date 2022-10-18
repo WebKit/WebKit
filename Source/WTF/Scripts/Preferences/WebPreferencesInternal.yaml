@@ -108,6 +108,20 @@ AutomaticLiveResizeEnabled:
       "HAVE(UIKIT_WEBKIT_INTERNALS)": true
       default: false
 
+BackgroundWebContentRunningBoardThrottlingEnabled:
+  type: bool
+  humanReadableName: "Enable background web content throttling via RunningBoard"
+  humanReadableDescription: "Enable background web content throttling via RunningBoard"
+  exposed: [ WebKit ]
+  condition: PLATFORM(MAC) && USE(RUNNINGBOARD)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 BlockIOKitInWebContentSandbox:
   type: bool
   humanReadableName: "IOKit blocking in the WebContent sandbox"
