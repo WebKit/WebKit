@@ -2519,6 +2519,9 @@ http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Failure ]
+http/tests/security/contentSecurityPolicy/prefetch-src/prefetch-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/prefetch-src/prefetch-blocked.html [ Skip ]
+http/tests/security/contentSecurityPolicy/prefetch-src/prefetch-blocked-by-default.html [ Skip ]
 
 # Crashes
 http/tests/misc/drag-not-loaded-image.html [ Skip ] # Crash
