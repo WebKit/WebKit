@@ -2112,7 +2112,7 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ Pass ImageOnlyFailure ]
 
 # rdar://80340581 ([ Monterey ] http/tests/preload/onload_event.html is a flaky failure)
-[ Monterey ] http/tests/preload/onload_event.html [ Pass Failure ]
+http/tests/preload/onload_event.html [ Pass Failure ]
 
 # rdar://80347712 ([ Monterey ] media/video-src-blob-replay.html is a flaky timeout)
 [ Monterey ] media/video-src-blob-replay.html [ Timeout ]

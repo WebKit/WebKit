@@ -28,6 +28,7 @@ namespace WebCore {
 String convertEnumerationToString(TestDefaultToJSONEnum);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestDefaultToJSONEnum);
 
+template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String&);
 template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJSONEnum>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestDefaultToJSONEnum>();
 

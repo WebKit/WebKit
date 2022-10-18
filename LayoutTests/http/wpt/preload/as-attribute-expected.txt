@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: <link rel=preload> cannot have the empty string as `as` value
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
+
+
+PASS Test preload as attribute values.
+

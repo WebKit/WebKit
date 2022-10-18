@@ -13,7 +13,7 @@ CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/white.m
 CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/sound_5.oga because it does not appear in the media-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/foo.vtt because it does not appear in the media-src directive of the Content Security Policy.
 CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
-CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: <link rel=preload> cannot have the empty string as `as` value
 
 PASS Makes sure that preload requests respect CSP
 

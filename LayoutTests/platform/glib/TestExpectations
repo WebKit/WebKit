@@ -128,6 +128,8 @@ fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
 fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
 fast/scrolling/rtl-scrollbars.html [ Pass ]
 
+http/tests/preload/onload_event.html [ Pass Failure ]
+
 http/tests/storageAccess/ [ Pass ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
 webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Failure ]
@@ -140,6 +142,11 @@ imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
 inspector/page/setScreenSizeOverride.html [ Pass ]
+
+# Might need rebasing.
+imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
 
 # Content Extensions
 http/tests/contentextensions [ Pass ]

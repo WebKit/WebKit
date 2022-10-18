@@ -118,24 +118,28 @@ template<> struct JSDOMWrapperConverterTraits<TestObj> {
 String convertEnumerationToString(TestObj::EnumType);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumType);
 
+template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(const String&);
 template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumType>();
 
 String convertEnumerationToString(TestObj::EnumTrailingComma);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumTrailingComma);
 
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(const String&);
 template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumTrailingComma>();
 
 String convertEnumerationToString(TestObj::Optional);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::Optional);
 
+template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(const String&);
 template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::Optional>();
 
 String convertEnumerationToString(AlternateEnumName);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, AlternateEnumName);
 
+template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(const String&);
 template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<AlternateEnumName>();
 
@@ -144,6 +148,7 @@ template<> const char* expectedEnumerationValues<AlternateEnumName>();
 String convertEnumerationToString(TestObj::EnumA);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumA);
 
+template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(const String&);
 template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumA>();
 
@@ -154,6 +159,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumA>();
 String convertEnumerationToString(TestObj::EnumB);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumB);
 
+template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(const String&);
 template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumB>();
 
@@ -164,6 +170,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumB>();
 String convertEnumerationToString(TestObj::EnumC);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumC);
 
+template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(const String&);
 template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumC>();
 
@@ -172,18 +179,21 @@ template<> const char* expectedEnumerationValues<TestObj::EnumC>();
 String convertEnumerationToString(TestObj::Kind);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::Kind);
 
+template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(const String&);
 template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::Kind>();
 
 String convertEnumerationToString(TestObj::Size);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::Size);
 
+template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(const String&);
 template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::Size>();
 
 String convertEnumerationToString(TestObj::Confidence);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::Confidence);
 
+template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(const String&);
 template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::Confidence>();
 

@@ -149,9 +149,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue.isEmpty())
         return TestObj::EnumType::EmptyString;
     static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumType> mappings[] = {
@@ -163,6 +162,11 @@ template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::EnumType>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumType>()
@@ -187,9 +191,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumTrailingComma> mappings[] = {
         { "enumValue1", TestObj::EnumTrailingComma::EnumValue1 },
         { "enumValue2", TestObj::EnumTrailingComma::EnumValue2 },
@@ -198,6 +201,11 @@ template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::E
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::EnumTrailingComma>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumTrailingComma>()
@@ -226,9 +234,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue.isEmpty())
         return TestObj::Optional::EmptyString;
     static constexpr std::pair<ComparableASCIILiteral, TestObj::Optional> mappings[] = {
@@ -240,6 +247,11 @@ template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::Optional>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Optional>()
@@ -264,9 +276,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, AlternateEnumName> mappings[] = {
         { "EnumValue2", AlternateEnumName::EnumValue2 },
         { "enumValue1", AlternateEnumName::EnumValue1 },
@@ -275,6 +286,11 @@ template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<AlternateEnumName>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<AlternateEnumName>()
@@ -299,9 +315,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumA> mappings[] = {
         { "A", TestObj::EnumA::A },
     };
@@ -309,6 +324,11 @@ template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSGlob
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::EnumA>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumA>()
@@ -335,9 +355,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumB> mappings[] = {
         { "B", TestObj::EnumB::B },
     };
@@ -345,6 +364,11 @@ template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSGlob
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::EnumB>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumB>()
@@ -371,9 +395,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumC> mappings[] = {
         { "C", TestObj::EnumC::C },
     };
@@ -381,6 +404,11 @@ template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSGlob
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::EnumC>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumC>()
@@ -407,9 +435,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::Kind> mappings[] = {
         { "dead", TestObj::Kind::Dead },
         { "quick", TestObj::Kind::Quick },
@@ -418,6 +445,11 @@ template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSGlobal
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::Kind>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Kind>()
@@ -442,9 +474,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::Size> mappings[] = {
         { "much-much-larger", TestObj::Size::MuchMuchLarger },
         { "small", TestObj::Size::Small },
@@ -453,6 +484,11 @@ template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSGlobal
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::Size>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Size>()
@@ -477,9 +513,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestObj::Confidence> mappings[] = {
         { "high", TestObj::Confidence::High },
         { "kinda-low", TestObj::Confidence::KindaLow },
@@ -488,6 +523,11 @@ template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confiden
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestObj::Confidence>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Confidence>()

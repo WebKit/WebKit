@@ -68,6 +68,7 @@ inline JSC::JSValue toJS(TestCallbackInterface* impl) { return impl ? toJS(*impl
 String convertEnumerationToString(TestCallbackInterface::Enum);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestCallbackInterface::Enum);
 
+template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(const String&);
 template<> std::optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestCallbackInterface::Enum>();
 
