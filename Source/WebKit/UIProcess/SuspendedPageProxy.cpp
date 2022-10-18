@@ -49,11 +49,11 @@ static HashSet<SuspendedPageProxy*>& allSuspendedPages()
     return map;
 }
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::CaptivePortalMode captivePortalMode)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode)
 {
     for (auto* suspendedPage : allSuspendedPages()) {
         auto& process = suspendedPage->process();
-        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated && process.captivePortalMode() == captivePortalMode && !process.wasTerminated())
+        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated && process.lockdownMode() == lockdownMode && !process.wasTerminated())
             return &process;
     }
     return nullptr;

@@ -202,8 +202,8 @@ public:
     void setRequiresUserActionForEditingControlsManager(bool value) { m_requiresUserActionForEditingControlsManager = value; }
 #endif
 
-    bool isCaptivePortalModeExplicitlySet() const;
-    bool captivePortalModeEnabled() const;
+    bool isLockdownModeExplicitlySet() const;
+    bool lockdownModeEnabled() const;
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }

@@ -219,16 +219,16 @@ void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLScheme
     m_urlSchemeHandlers.set(scheme, WTFMove(handler));
 }
 
-bool PageConfiguration::captivePortalModeEnabled() const
+bool PageConfiguration::lockdownModeEnabled() const
 {
     if (m_defaultWebsitePolicies)
-        return m_defaultWebsitePolicies->captivePortalModeEnabled();
-    return captivePortalModeEnabledBySystem();
+        return m_defaultWebsitePolicies->lockdownModeEnabled();
+    return lockdownModeEnabledBySystem();
 }
 
-bool PageConfiguration::isCaptivePortalModeExplicitlySet() const
+bool PageConfiguration::isLockdownModeExplicitlySet() const
 {
-    return m_defaultWebsitePolicies && m_defaultWebsitePolicies->isCaptivePortalModeExplicitlySet();
+    return m_defaultWebsitePolicies && m_defaultWebsitePolicies->isLockdownModeExplicitlySet();
 }
 
 #if ENABLE(APPLICATION_MANIFEST)

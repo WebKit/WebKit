@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(CaptivePortal, SVGFonts)
+TEST(LockdownMode, SVGFonts)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
@@ -47,7 +47,7 @@ TEST(CaptivePortal, SVGFonts)
     EXPECT_EQ(target2Result, referenceResult);
 }
 
-TEST(CaptivePortal, FontLoadingAPI)
+TEST(LockdownMode, FontLoadingAPI)
 {
     @autoreleasepool {
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);

@@ -926,7 +926,7 @@
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		4656F7BD27ACAA8D00CB3D7C /* WebSharedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4656F7BC27ACAA8100CB3D7C /* WebSharedWorker.h */; };
-		4659F25F275FF6B200BBB369 /* CaptivePortalModeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659F25E275FF6B200BBB369 /* CaptivePortalModeObserver.h */; };
+		4659F25F275FF6B200BBB369 /* LockdownModeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659F25E275FF6B200BBB369 /* LockdownModeObserver.h */; };
 		465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 465F4E05230B2E7C003CEDB7 /* StorageNamespaceIdentifier.h */; };
 		465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 465FA7232757D9180072362B /* WebLockRegistryProxy.h */; };
 		4668A0BC27AB605000C720BC /* WebSharedWorkerProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 4668A0BA27AB604000C720BC /* WebSharedWorkerProvider.h */; };
@@ -4772,7 +4772,7 @@
 		4656F7BA27ACAA8000CB3D7C /* WebSharedWorkerServerToContextConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebSharedWorkerServerToContextConnection.messages.in; sourceTree = "<group>"; };
 		4656F7BB27ACAA8100CB3D7C /* WebSharedWorker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorker.cpp; sourceTree = "<group>"; };
 		4656F7BC27ACAA8100CB3D7C /* WebSharedWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorker.h; sourceTree = "<group>"; };
-		4659F25E275FF6B200BBB369 /* CaptivePortalModeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptivePortalModeObserver.h; sourceTree = "<group>"; };
+		4659F25E275FF6B200BBB369 /* LockdownModeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockdownModeObserver.h; sourceTree = "<group>"; };
 		465F4E032307604E003CEDB7 /* StorageAreaImplIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageAreaImplIdentifier.h; sourceTree = "<group>"; };
 		465F4E05230B2E7C003CEDB7 /* StorageNamespaceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceIdentifier.h; sourceTree = "<group>"; };
 		465FA7232757D9180072362B /* WebLockRegistryProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebLockRegistryProxy.h; sourceTree = "<group>"; };
@@ -5891,10 +5891,10 @@
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
 		86AE2A9628D61EDD007F5A1C /* WebCoreArgumentCodersCocoa.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCoreArgumentCodersCocoa.serialization.in; sourceTree = "<group>"; };
 		86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusedElementInformation.serialization.in; sourceTree = "<group>"; };
+		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
 		86DD518B28EF028500DF2A58 /* TextFlags.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextFlags.serialization.in; sourceTree = "<group>"; };
 		86DD518C28EF204F00DF2A58 /* WebEvent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebEvent.serialization.in; sourceTree = "<group>"; };
 		86DD518F28EF28E800DF2A58 /* WebEventModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventModifier.h; sourceTree = "<group>"; };
-		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
 		86E67A21190F411800004AB7 /* ProcessThrottler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottler.h; sourceTree = "<group>"; };
 		86E67A22190F411800004AB7 /* ProcessThrottler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessThrottler.cpp; sourceTree = "<group>"; };
 		86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessAssertion.h; sourceTree = "<group>"; };
@@ -12000,7 +12000,6 @@
 				E1513C65166EABB200149FCB /* AuxiliaryProcessProxy.h */,
 				46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */,
 				46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */,
-				4659F25E275FF6B200BBB369 /* CaptivePortalModeObserver.h */,
 				07297F9C1C1711EA003F0735 /* DeviceIdHashSaltStorage.cpp */,
 				07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
@@ -12020,6 +12019,7 @@
 				5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */,
 				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
+				4659F25E275FF6B200BBB369 /* LockdownModeObserver.h */,
 				9ACC07B025C815D800DC6386 /* MediaKeySystemPermissionRequest.h */,
 				0F9FA7DA26CEFAD100872684 /* MediaKeySystemPermissionRequestManagerProxy.cpp */,
 				9ACC07B225C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h */,
@@ -14415,7 +14415,6 @@
 				41897ED81F415D8A0016FA42 /* CacheStorageEngine.h in Headers */,
 				41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */,
 				41897EDA1F415D8A0016FA42 /* CacheStorageEngineConnection.h in Headers */,
-				4659F25F275FF6B200BBB369 /* CaptivePortalModeObserver.h in Headers */,
 				2D478B91288F33A600F3B73A /* CGDisplayList.h in Headers */,
 				BCE579A62634836700F5C5E9 /* CGDisplayListImageBufferBackend.h in Headers */,
 				57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */,
@@ -14719,6 +14718,7 @@
 				57DCEDAD214C602C0016B847 /* LocalConnection.h in Headers */,
 				57DCEDAE214C60330016B847 /* LocalService.h in Headers */,
 				93E799CF2760497B0074008A /* LocalStorageManager.h in Headers */,
+				4659F25F275FF6B200BBB369 /* LockdownModeObserver.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				4193927828BE41C000162139 /* LSApplicationWorkspaceSPI.h in Headers */,

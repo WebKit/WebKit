@@ -167,7 +167,7 @@ RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
 void RemoteAudioDestinationManager::createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, CompletionHandler<void(const WebKit::RemoteAudioDestinationIdentifier)>&& completionHandler)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isCaptivePortalModeEnabled(), "Received a createAudioDestination() message from a CaptivePortal.");
+    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 
     auto newID = RemoteAudioDestinationIdentifier::generateThreadSafe();
     auto destination = makeUniqueRef<RemoteAudioDestination>(m_gpuConnectionToWebProcess, newID, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
@@ -177,7 +177,7 @@ void RemoteAudioDestinationManager::createAudioDestination(const String& inputDe
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isCaptivePortalModeEnabled(), "Received a deleteAudioDestination() message from a CaptivePortal.");
+    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a deleteAudioDestination() message from a webpage in Lockdown mode.");
 
     m_audioDestinations.remove(identifier);
     completionHandler();
@@ -188,7 +188,7 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
 
 void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isCaptivePortalModeEnabled(), "Received a startAudioDestination() message from a CaptivePortal.");
+    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a startAudioDestination() message from a webpage in Lockdown mode.");
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {
@@ -200,7 +200,7 @@ void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestination
 
 void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isCaptivePortalModeEnabled(), "Received a stopAudioDestination() message from a CaptivePortal.");
+    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a stopAudioDestination() message from a webpage in Lockdown mode.");
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {

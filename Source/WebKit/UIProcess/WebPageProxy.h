@@ -503,8 +503,8 @@ public:
 
     void addPreviouslyVisitedPath(const String&);
 
-    bool isCaptivePortalModeExplicitlySet() const { return m_isCaptivePortalModeExplicitlySet; }
-    bool shouldEnableCaptivePortalMode() const;
+    bool isLockdownModeExplicitlySet() const { return m_isLockdownModeExplicitlySet; }
+    bool shouldEnableLockdownMode() const;
 
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
@@ -3307,7 +3307,7 @@ private:
     bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
-    bool m_isCaptivePortalModeExplicitlySet { false };
+    bool m_isLockdownModeExplicitlySet { false };
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;
 

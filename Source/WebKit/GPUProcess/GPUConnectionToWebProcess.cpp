@@ -260,7 +260,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
 #endif
-    , m_isCaptivePortalModeEnabled(parameters.isCaptivePortalModeEnabled)
+    , m_isLockdownModeEnabled(parameters.isLockdownModeEnabled)
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
@@ -572,7 +572,7 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
 #if ENABLE(WEBGL)
 void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
 {
-    MESSAGE_CHECK(!isCaptivePortalModeEnabled());
+    MESSAGE_CHECK(!isLockdownModeEnabled());
 
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
@@ -587,7 +587,7 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
 
 void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 {
-    MESSAGE_CHECK(!isCaptivePortalModeEnabled());
+    MESSAGE_CHECK(!isLockdownModeEnabled());
 
     m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
     if (m_remoteGraphicsContextGLMap.isEmpty())

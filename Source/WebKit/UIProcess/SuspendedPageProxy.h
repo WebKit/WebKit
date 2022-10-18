@@ -58,7 +58,7 @@ public:
     SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, WebCore::FrameIdentifier mainFrameID, ShouldDelayClosingUntilFirstLayerFlush);
     ~SuspendedPageProxy();
 
-    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::CaptivePortalMode);
+    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode);
 
     WebPageProxy& page() const { return m_page; }
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }

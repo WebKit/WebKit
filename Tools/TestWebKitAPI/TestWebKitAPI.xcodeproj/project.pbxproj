@@ -529,7 +529,7 @@
 		7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0509401FB9F04400B33FB8 /* JSONValue.cpp */; };
 		7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */; };
 		7A32D74A1F02151500162C44 /* FileMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A32D7491F02151500162C44 /* FileMonitor.cpp */; };
-		7A33FF3027C82F8100D7E03E /* CaptivePortalPDF.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A33FF2F27C82F0B00D7E03E /* CaptivePortalPDF.html */; };
+		7A33FF3027C82F8100D7E03E /* LockdownModePDF.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A33FF2F27C82F0B00D7E03E /* LockdownModePDF.html */; };
 		7A33FF3427C8317D00D7E03E /* webkit-logo.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */; };
 		7A66BDB81EAF18D500CCC924 /* set-long-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A66BDB71EAF150100CCC924 /* set-long-title.html */; };
 		7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */; };
@@ -1467,7 +1467,6 @@
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
 				26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
 				F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */,
-				7A33FF3027C82F8100D7E03E /* CaptivePortalPDF.html in Copy Resources */,
 				2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */,
 				2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */,
 				9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */,
@@ -1690,6 +1689,7 @@
 				46C519E71D3563FD00DAA51A /* LocalStorageNullEntries.localstorage in Copy Resources */,
 				46C519E81D3563FD00DAA51A /* LocalStorageNullEntries.localstorage-shm in Copy Resources */,
 				7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */,
+				7A33FF3027C82F8100D7E03E /* LockdownModePDF.html in Copy Resources */,
 				2D2FE8DA231745C900B2E9C9 /* long-email-viewport.html in Copy Resources */,
 				C9E8EE7521DED94300797765 /* long-test.mp4 in Copy Resources */,
 				9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */,
@@ -2013,7 +2013,7 @@
 		1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "orthogonal-flow-available-size.html"; sourceTree = "<group>"; };
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		1CBEE26228F47FA9006D1A02 /* WKWebExtensionContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionContext.mm; sourceTree = "<group>"; };
-		1CC4C7492889072900A3B23D /* CaptivePortalModeFonts.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CaptivePortalModeFonts.mm; sourceTree = "<group>"; };
+		1CC4C7492889072900A3B23D /* LockdownModeFonts.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LockdownModeFonts.mm; sourceTree = "<group>"; };
 		1CC4C74A288909F600A3B23D /* WKPrinting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrinting.mm; sourceTree = "<group>"; };
 		1CC4C74B28890C5400A3B23D /* SVGFont.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = SVGFont.html; sourceTree = "<group>"; };
 		1CC4C74C28890CE100A3B23D /* Helvetica_light.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Helvetica_light.svg; sourceTree = "<group>"; };
@@ -2663,7 +2663,7 @@
 		7A0509401FB9F04400B33FB8 /* JSONValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONValue.cpp; sourceTree = "<group>"; };
 		7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-button-listener.html"; sourceTree = "<group>"; };
 		7A32D7491F02151500162C44 /* FileMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileMonitor.cpp; sourceTree = "<group>"; };
-		7A33FF2F27C82F0B00D7E03E /* CaptivePortalPDF.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CaptivePortalPDF.html; sourceTree = "<group>"; };
+		7A33FF2F27C82F0B00D7E03E /* LockdownModePDF.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LockdownModePDF.html; sourceTree = "<group>"; };
 		7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "webkit-logo.pdf"; sourceTree = "<group>"; };
 		7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashCountedSet.cpp; sourceTree = "<group>"; };
 		7A42ABD625CCD0F500980BCA /* WKWebViewLoadAPIs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewLoadAPIs.mm; sourceTree = "<group>"; };
@@ -3789,7 +3789,6 @@
 				5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */,
 				1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */,
 				1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */,
-				1CC4C7492889072900A3B23D /* CaptivePortalModeFonts.mm */,
 				5C23DF0A2245C9D700F454B6 /* Challenge.mm */,
 				5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */,
 				F422A3E8235ACA9B00CF00CA /* ClipboardTests.mm */,
@@ -3893,6 +3892,7 @@
 				46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */,
 				8C10AF96206467770018FD90 /* LocalStoragePersistence.mm */,
 				7A6A2C6F1DCCF87B00C0D085 /* LocalStorageQuirkTest.mm */,
+				1CC4C7492889072900A3B23D /* LockdownModeFonts.mm */,
 				07CC7DFD2266330800E39181 /* MediaBufferingPolicy.mm */,
 				95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */,
 				CD0370E224A44B7A00BA3CAE /* MediaLoading.mm */,
@@ -4467,7 +4467,6 @@
 				464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
 				F4E7A66227222BB100E74D36 /* canvas-image-data.html */,
-				7A33FF2F27C82F0B00D7E03E /* CaptivePortalPDF.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
 				2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */,
 				839AA35E21A26ACD00980DD6 /* client-side-redirect.html */,
@@ -4624,6 +4623,7 @@
 				46C519E31D35629600DAA51A /* LocalStorageNullEntries.localstorage */,
 				46C519E41D35629600DAA51A /* LocalStorageNullEntries.localstorage-shm */,
 				7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */,
+				7A33FF2F27C82F0B00D7E03E /* LockdownModePDF.html */,
 				0794742C25CB33B000C597EB /* media-remote.html */,
 				9B59F12920340854009E63D5 /* mso-list-compat-mode.html */,
 				9BCD4119206D5ED7001D71BE /* mso-list-on-h4.html */,

@@ -29,10 +29,10 @@
 #import "APINavigation.h"
 #import "AccessibilityPreferences.h"
 #import "AccessibilitySupportSPI.h"
-#import "CaptivePortalModeObserver.h"
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
 #import "LegacyCustomProtocolManagerClient.h"
+#import "LockdownModeObserver.h"
 #import "Logging.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
@@ -199,10 +199,10 @@ static void registerUserDefaultsIfNeeded()
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
 }
 
-static std::optional<bool>& cachedCaptivePortalModeEnabledGlobally()
+static std::optional<bool>& cachedLockdownModeEnabledGlobally()
 {
-    static std::optional<bool> cachedCaptivePortalModeEnabledGlobally;
-    return cachedCaptivePortalModeEnabledGlobally;
+    static std::optional<bool> cachedLockdownModeEnabledGlobally;
+    return cachedLockdownModeEnabledGlobally;
 }
 
 void WebProcessPool::updateProcessSuppressionState()
@@ -598,10 +598,10 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
 #endif
 
 #if PLATFORM(COCOA)
-void WebProcessPool::captivePortalModeConfigUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+void WebProcessPool::lockdownModeConfigUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     if (auto pool = extractWebProcessPool(observer))
-        pool->captivePortalModeStateChanged();
+        pool->lockdownModeStateChanged();
 }
 #endif
 
@@ -752,7 +752,7 @@ void WebProcessPool::registerNotificationObservers()
     });
 
 #if PLATFORM(COCOA)
-    addCFNotificationObserver(captivePortalModeConfigUpdateCallback, (__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification);
+    addCFNotificationObserver(lockdownModeConfigUpdateCallback, (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
 #endif
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
@@ -805,7 +805,7 @@ void WebProcessPool::unregisterNotificationObservers()
     m_powerSourceNotifier = nullptr;
     
 #if PLATFORM(COCOA)
-    removeCFNotificationObserver((__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification);
+    removeCFNotificationObserver((__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
 #endif
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
@@ -929,22 +929,22 @@ int webProcessThroughputQOS()
     return qos;
 }
 
-static WeakHashSet<CaptivePortalModeObserver>& captivePortalModeObservers()
+static WeakHashSet<LockdownModeObserver>& lockdownModeObservers()
 {
     RELEASE_ASSERT(isMainRunLoop());
-    static NeverDestroyed<WeakHashSet<CaptivePortalModeObserver>> observers;
+    static NeverDestroyed<WeakHashSet<LockdownModeObserver>> observers;
     return observers;
 }
 
-static std::optional<bool>& isCaptivePortalModeEnabledGloballyForTesting()
+static std::optional<bool>& isLockdownModeEnabledGloballyForTesting()
 {
     static NeverDestroyed<std::optional<bool>> enabledForTesting;
     return enabledForTesting;
 }
 
-static bool isCaptivePortalModeEnabledBySystemIgnoringCaching()
+static bool isLockdownModeEnabledBySystemIgnoringCaching()
 {
-    if (auto& enabledForTesting = isCaptivePortalModeEnabledGloballyForTesting())
+    if (auto& enabledForTesting = isLockdownModeEnabledGloballyForTesting())
         return *enabledForTesting;
 
     if (![_WKSystemPreferences isCaptivePortalModeEnabled])
@@ -963,66 +963,66 @@ static bool isCaptivePortalModeEnabledBySystemIgnoringCaching()
     return true;
 }
 
-void WebProcessPool::captivePortalModeStateChanged()
+void WebProcessPool::lockdownModeStateChanged()
 {
-    auto isNowEnabled = isCaptivePortalModeEnabledBySystemIgnoringCaching();
-    if (cachedCaptivePortalModeEnabledGlobally() != isNowEnabled) {
-        captivePortalModeObservers().forEach([](auto& observer) { observer.willChangeCaptivePortalMode(); });
-        cachedCaptivePortalModeEnabledGlobally() = isNowEnabled;
-        captivePortalModeObservers().forEach([](auto& observer) { observer.didChangeCaptivePortalMode(); });
+    auto isNowEnabled = isLockdownModeEnabledBySystemIgnoringCaching();
+    if (cachedLockdownModeEnabledGlobally() != isNowEnabled) {
+        lockdownModeObservers().forEach([](auto& observer) { observer.willChangeLockdownMode(); });
+        cachedLockdownModeEnabledGlobally() = isNowEnabled;
+        lockdownModeObservers().forEach([](auto& observer) { observer.didChangeLockdownMode(); });
     }
 
-    WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::captivePortalModeStateChanged() isNowEnabled=%d", isNowEnabled);
+    WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::lockdownModeStateChanged() isNowEnabled=%d", isNowEnabled);
 
     for (auto& process : m_processes) {
-        bool processHasCaptivePortalModeEnabled = process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Enabled;
-        if (processHasCaptivePortalModeEnabled == isNowEnabled)
+        bool processHasLockdownModeEnabled = process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
+        if (processHasLockdownModeEnabled == isNowEnabled)
             continue;
 
         for (auto& page : process->pages()) {
-            // When the captive portal mode changes globally at system level, we reload every page that relied on the system setting (rather
+            // When the Lockdown mode changes globally at system level, we reload every page that relied on the system setting (rather
             // than being explicitly opted in/out by the client app at navigation or PageConfiguration level).
-            if (page->isCaptivePortalModeExplicitlySet())
+            if (page->isLockdownModeExplicitlySet())
                 continue;
 
-            WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::captivePortalModeStateChanged() Reloading page with pageProxyID=%" PRIu64 " due to captive portal mode change", page->identifier().toUInt64());
+            WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::lockdownModeStateChanged() Reloading page with pageProxyID=%" PRIu64 " due to Lockdown mode change", page->identifier().toUInt64());
             page->reload({ });
         }
     }
 }
 
-void addCaptivePortalModeObserver(CaptivePortalModeObserver& observer)
+void addLockdownModeObserver(LockdownModeObserver& observer)
 {
-    // Make sure cachedCaptivePortalModeEnabledGlobally() gets initialized so captivePortalModeStateChanged() can track changes.
-    auto& cachedState = cachedCaptivePortalModeEnabledGlobally();
+    // Make sure cachedLockdownModeEnabledGlobally() gets initialized so lockdownModeStateChanged() can track changes.
+    auto& cachedState = cachedLockdownModeEnabledGlobally();
     if (!cachedState)
-        cachedState = isCaptivePortalModeEnabledBySystemIgnoringCaching();
+        cachedState = isLockdownModeEnabledBySystemIgnoringCaching();
 
-    captivePortalModeObservers().add(observer);
+    lockdownModeObservers().add(observer);
 }
 
-void removeCaptivePortalModeObserver(CaptivePortalModeObserver& observer)
+void removeLockdownModeObserver(LockdownModeObserver& observer)
 {
-    captivePortalModeObservers().remove(observer);
+    lockdownModeObservers().remove(observer);
 }
 
-bool captivePortalModeEnabledBySystem()
+bool lockdownModeEnabledBySystem()
 {
-    auto& cachedState = cachedCaptivePortalModeEnabledGlobally();
+    auto& cachedState = cachedLockdownModeEnabledGlobally();
     if (!cachedState)
-        cachedState = isCaptivePortalModeEnabledBySystemIgnoringCaching();
+        cachedState = isLockdownModeEnabledBySystemIgnoringCaching();
     return *cachedState;
 }
 
-void setCaptivePortalModeEnabledGloballyForTesting(std::optional<bool> enabledForTesting)
+void setLockdownModeEnabledGloballyForTesting(std::optional<bool> enabledForTesting)
 {
-    if (isCaptivePortalModeEnabledGloballyForTesting() == enabledForTesting)
+    if (isLockdownModeEnabledGloballyForTesting() == enabledForTesting)
         return;
 
-    isCaptivePortalModeEnabledGloballyForTesting() = enabledForTesting;
+    isLockdownModeEnabledGloballyForTesting() = enabledForTesting;
 
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->captivePortalModeStateChanged();
+        processPool->lockdownModeStateChanged();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1101,8 +1101,8 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
             networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
     });
 
-    if (key == WKCaptivePortalModeEnabledKey)
-        captivePortalModeStateChanged();
+    if (key == WKLockdownModeEnabledKey)
+        lockdownModeStateChanged();
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 

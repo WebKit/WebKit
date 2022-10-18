@@ -139,7 +139,7 @@ public:
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
-    bool isCaptivePortalModeEnabled() const { return m_isCaptivePortalModeEnabled; }
+    bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
 
     Logger& logger();
 
@@ -371,7 +371,7 @@ private:
 
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };
-    bool m_isCaptivePortalModeEnabled { false };
+    bool m_isLockdownModeEnabled { false };
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     UniqueRef<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;

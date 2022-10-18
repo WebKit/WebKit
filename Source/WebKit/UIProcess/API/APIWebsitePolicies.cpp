@@ -64,7 +64,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
     policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
-    policies->setCaptivePortalModeEnabled(m_captivePortalModeEnabled);
+    policies->setLockdownModeEnabled(m_lockdownModeEnabled);
     policies->setMouseEventPolicy(m_mouseEventPolicy);
     policies->setModalContainerObservationPolicy(m_modalContainerObservationPolicy);
     policies->setColorSchemePreference(m_colorSchemePreference);
@@ -118,9 +118,9 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     };
 }
 
-bool WebsitePolicies::captivePortalModeEnabled() const
+bool WebsitePolicies::lockdownModeEnabled() const
 {
-    return m_captivePortalModeEnabled ? *m_captivePortalModeEnabled : WebKit::captivePortalModeEnabledBySystem();
+    return m_lockdownModeEnabled ? *m_lockdownModeEnabled : WebKit::lockdownModeEnabledBySystem();
 }
 
 }

@@ -59,7 +59,7 @@ namespace WebKit {
 
 static const char* webContentServiceName(bool nonValidInjectedCodeAllowed, ProcessLauncher::Client* client)
 {
-    if (client && client->shouldEnableCaptivePortalMode())
+    if (client && client->shouldEnableLockdownMode())
         return "com.apple.WebKit.WebContent.CaptivePortal";
 
     return nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
@@ -164,7 +164,7 @@ void ProcessLauncher::launchProcess()
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
         if (m_client->shouldEnableSharedArrayBuffer())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
-        if (m_client->shouldEnableCaptivePortalMode())
+        if (m_client->shouldEnableLockdownMode())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-captive-portal-mode", true);
     }
 

@@ -146,7 +146,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::CaptivePortalMode captivePortalMode)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode)
 {
     auto it = m_processesPerRegistrableDomain.find(registrableDomain);
     if (it == m_processesPerRegistrableDomain.end())
@@ -155,7 +155,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
     if (it->value->process().websiteDataStore() != &dataStore)
         return nullptr;
 
-    if (it->value->process().captivePortalMode() != captivePortalMode)
+    if (it->value->process().lockdownMode() != lockdownMode)
         return nullptr;
 
     auto process = it->value->takeProcess();

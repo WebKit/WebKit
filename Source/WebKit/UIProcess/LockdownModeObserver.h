@@ -29,12 +29,12 @@
 
 namespace WebKit {
 
-class CaptivePortalModeObserver : public CanMakeWeakPtr<CaptivePortalModeObserver> {
+class LockdownModeObserver : public CanMakeWeakPtr<LockdownModeObserver> {
 public:
-    virtual ~CaptivePortalModeObserver() { }
+    virtual ~LockdownModeObserver() { }
 
-    virtual void willChangeCaptivePortalMode() = 0;
-    virtual void didChangeCaptivePortalMode() = 0;
+    virtual void willChangeLockdownMode() = 0;
+    virtual void didChangeLockdownMode() = 0;
 };
 
 } // namespace WebKit

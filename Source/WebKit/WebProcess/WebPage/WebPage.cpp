@@ -406,14 +406,6 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
-static void adjustCoreGraphicsForCaptivePortal()
-{
-#if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
-    CGEnterLockdownModeForPDF();
-    CGEnterLockdownModeForFonts();
-#endif
-}
-
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -4143,7 +4135,7 @@ bool WebPage::isParentProcessAWebBrowser() const
     return false;
 }
 
-static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferencesStore& store)
+static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferencesStore& store)
 {
     settings.setWebGLEnabled(false);
 #if ENABLE(WEBGL2)
@@ -4195,13 +4187,17 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
     settings.setSystemPreviewEnabled(false);
 #endif
 
-    settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInCaptivePortalModeKey()));
-    settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInCaptivePortalModeKey()));
-    settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInCaptivePortalModeKey()));
-    settings.setAllowedMediaAudioCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaAudioCodecIDsAllowedInCaptivePortalModeKey()));
-    settings.setAllowedMediaCaptionFormatTypes(store.getStringValueForKey(WebPreferencesKey::mediaCaptionFormatTypesAllowedInCaptivePortalModeKey()));
+    settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInLockdownModeKey()));
+    settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInLockdownModeKey()));
+    settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInLockdownModeKey()));
+    settings.setAllowedMediaAudioCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaAudioCodecIDsAllowedInLockdownModeKey()));
+    settings.setAllowedMediaCaptionFormatTypes(store.getStringValueForKey(WebPreferencesKey::mediaCaptionFormatTypesAllowedInLockdownModeKey()));
 
-    adjustCoreGraphicsForCaptivePortal();
+    // FIXME: This seems like an odd place to put logic for setting global state in CoreGraphics.
+#if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
+    CGEnterLockdownModeForPDF();
+    CGEnterLockdownModeForFonts();
+#endif
 }
 
 void WebPage::updatePreferences(const WebPreferencesStore& store)
@@ -4326,9 +4322,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
     // FIXME: This should be automated by adding a new field in WebPreferences*.yaml
-    // that indicates override state for captive portal mode. https://webkit.org/b/233100.
-    if (WebProcess::singleton().isCaptivePortalModeEnabled())
-        adjustSettingsForCaptivePortal(settings, store);
+    // that indicates override state for Lockdown mode. https://webkit.org/b/233100.
+    if (WebProcess::singleton().isLockdownModeEnabled())
+        adjustSettingsForLockdownMode(settings, store);
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     m_useARKitForModel = store.getBoolValueForKey(WebPreferencesKey::useARKitForModelKey());

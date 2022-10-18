@@ -144,9 +144,9 @@ public:
     };
 
     enum class ShouldLaunchProcess : bool { No, Yes };
-    enum class CaptivePortalMode : bool { Disabled, Enabled };
+    enum class LockdownMode : bool { Disabled, Enabled };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, CaptivePortalMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
     ~WebProcessProxy();
@@ -433,7 +433,7 @@ public:
     void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
 
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
-    CaptivePortalMode captivePortalMode() const { return m_captivePortalMode; }
+    LockdownMode lockdownMode() const { return m_lockdownMode; }
 
 #if PLATFORM(COCOA)
     std::optional<audit_token_t> auditToken() const;
@@ -453,7 +453,7 @@ public:
     void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
 protected:
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, CaptivePortalMode);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -473,7 +473,7 @@ protected:
     bool shouldConfigureJSCForTesting() const final;
     bool isJITEnabled() const final;
     bool shouldEnableSharedArrayBuffer() const final { return m_crossOriginMode == WebCore::CrossOriginMode::Isolated; }
-    bool shouldEnableCaptivePortalMode() const final { return m_captivePortalMode == CaptivePortalMode::Enabled; }
+    bool shouldEnableLockdownMode() const final { return m_lockdownMode == LockdownMode::Enabled; }
 
     void validateFreezerStatus();
 
@@ -638,7 +638,7 @@ private:
 
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
-    CaptivePortalMode m_captivePortalMode { CaptivePortalMode::Disabled };
+    LockdownMode m_lockdownMode { LockdownMode::Disabled };
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };

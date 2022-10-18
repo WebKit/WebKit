@@ -378,7 +378,7 @@ public:
     SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
 #endif
 
-    bool isCaptivePortalModeEnabled() const { return m_isCaptivePortalModeEnabled; }
+    bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
 
     void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
     bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
@@ -697,7 +697,7 @@ private:
 
     bool m_hasSuspendedPageProxy { false };
     bool m_isSuspending { false };
-    bool m_isCaptivePortalModeEnabled { false };
+    bool m_isLockdownModeEnabled { false };
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;

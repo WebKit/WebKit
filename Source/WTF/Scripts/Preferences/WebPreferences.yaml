@@ -1308,7 +1308,7 @@ MaxParseDuration:
     WebCore:
       default: -1
 
-MediaAudioCodecIDsAllowedInCaptivePortalMode:
+MediaAudioCodecIDsAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1326,7 +1326,7 @@ MediaCapabilitiesEnabled:
     WebCore:
       default: false
 
-MediaCaptionFormatTypesAllowedInCaptivePortalMode:
+MediaCaptionFormatTypesAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1334,7 +1334,7 @@ MediaCaptionFormatTypesAllowedInCaptivePortalMode:
     WebKit:
       default: '"c608,wvtt"'
 
-MediaCodecTypesAllowedInCaptivePortalMode:
+MediaCodecTypesAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1342,7 +1342,7 @@ MediaCodecTypesAllowedInCaptivePortalMode:
     WebKit:
       default: '"mp4a.40,avc1"'
 
-MediaContainerTypesAllowedInCaptivePortalMode:
+MediaContainerTypesAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1469,7 +1469,7 @@ MediaUserGestureInheritsFromDocument:
     WebCore:
       default: false
 
-MediaVideoCodecIDsAllowedInCaptivePortalMode:
+MediaVideoCodecIDsAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]

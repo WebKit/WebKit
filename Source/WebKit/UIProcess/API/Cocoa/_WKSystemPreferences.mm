@@ -35,7 +35,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 
 + (BOOL)isCaptivePortalModeEnabled
 {
-    auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKCaptivePortalModeEnabledKey.characters(), kCFStringEncodingUTF8));
+    auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8));
     auto preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if (preferenceValue.get() == kCFBooleanTrue)
         return true;
@@ -47,10 +47,10 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 
 + (void)setCaptivePortalModeEnabled:(BOOL)enabled
 {
-    auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKCaptivePortalModeEnabledKey.characters(), kCFStringEncodingUTF8));
+    auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8));
     CFPreferencesSetValue(key.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 }
 
 + (BOOL)isCaptivePortalModeIgnored:(NSString *)containerPath
@@ -84,7 +84,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     else
         [[NSFileManager defaultManager] removeItemAtPath:cpmconfigIgnoreFilePath error:NULL];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 #endif
 }
 

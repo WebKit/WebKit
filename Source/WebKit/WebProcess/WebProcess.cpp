@@ -578,8 +578,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
     ScriptExecutionContext::setCrossOriginMode(parameters.crossOriginMode);
-    m_isCaptivePortalModeEnabled = parameters.isCaptivePortalModeEnabled;
-    DeprecatedGlobalSettings::setArePDFImagesEnabled(!m_isCaptivePortalModeEnabled);
+    m_isLockdownModeEnabled = parameters.isLockdownModeEnabled;
+    DeprecatedGlobalSettings::setArePDFImagesEnabled(!m_isLockdownModeEnabled);
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices, parameters.hasRichContentServices);
