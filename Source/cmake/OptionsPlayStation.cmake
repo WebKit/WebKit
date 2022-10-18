@@ -39,6 +39,7 @@ list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
 find_library(C_STD_LIBRARY c)
 find_library(KERNEL_LIBRARY kernel)
 find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
+find_package(Threads REQUIRED)
 
 set(USE_WPE_BACKEND_PLAYSTATION OFF)
 set(PlayStationModule_TARGETS ICU::uc)
@@ -89,7 +90,6 @@ if (ENABLE_WEBCORE)
     find_package(OpenGLES2 REQUIRED)
     find_package(OpenSSL REQUIRED)
     find_package(PNG REQUIRED)
-    find_package(Threads REQUIRED)
 
     list(APPEND PlayStationModule_TARGETS
         CURL::libcurl
