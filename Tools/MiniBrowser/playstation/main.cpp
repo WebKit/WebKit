@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
     auto& app = Application::singleton();
     app.init(&applicationClient);
 
-    auto mainWindow = std::make_unique<MainWindow>(argc > 1 ? argv[1] : nullptr);
+    const std::vector<std::string> options(argv + 1, argv + argc);
+    auto mainWindow = std::make_unique<MainWindow>(options);
     mainWindow->setFocused();
     app.setRootWidget(std::move(mainWindow));
 

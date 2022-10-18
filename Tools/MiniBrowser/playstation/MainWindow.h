@@ -28,6 +28,7 @@
 #include <WebKit/WKBase.h>
 #include <list>
 #include <toolkitten/Widget.h>
+#include <vector>
 
 class TitleBar;
 class URLBar;
@@ -35,7 +36,7 @@ class WebViewWindow;
 
 class MainWindow final : public toolkitten::Widget {
 public:
-    MainWindow(const char*);
+    MainWindow(const std::vector<std::string>& options);
 
     WebViewWindow* activeWebView();
 
@@ -50,6 +51,7 @@ private:
     void setActiveWebView(WebViewWindow*);
     void switchActiveWebView(int delta);
     void closeWebView(WebViewWindow*);
+    void parseOptions(const std::vector<std::string>& options, std::string& requestedURL);
 
     TitleBar* m_titleBar { nullptr };
     URLBar* m_urlBar { nullptr };
