@@ -17,13 +17,13 @@ layer at (0,0) size 800x600
           RenderText {#text} at (7,7) size 330x176
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
-            text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "-"
+            text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2010}"
             text run at (7,73) width 209: "ting its body tucked away, "
-            text run at (215,73) width 37: "com" + hyphen string "-"
+            text run at (215,73) width 37: "com" + hyphen string "\x{2010}"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 228: "with its legs hanging down, "
             text run at (234,117) width 103: "but generally,"
-            text run at (7,139) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,139) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{2010}"
             text run at (7,161) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,0) size 344x240
         RenderBlock {P} at (0,16) size 344x18
@@ -39,13 +39,13 @@ layer at (0,0) size 800x600
           RenderText {#text} at (7,7) size 330x176
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
-            text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "-"
+            text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2010}"
             text run at (7,73) width 209: "ting its body tucked away, "
-            text run at (215,73) width 37: "com" + hyphen string "-"
+            text run at (215,73) width 37: "com" + hyphen string "\x{2010}"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 228: "with its legs hanging down, "
             text run at (234,117) width 103: "but generally,"
-            text run at (7,139) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,139) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{2010}"
             text run at (7,161) width 39: "ened."
       RenderBlock (floating) {DIV} at (4,240) size 344x240
         RenderBlock {P} at (0,16) size 344x18
