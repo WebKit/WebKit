@@ -300,10 +300,8 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
         values.uncheckedAppend(cssUnitValue.releaseNonNull());
     }
 
-    WTFLogAlways("CHRIS: ParsedUnitSize: %lu, valuesSize: %lu", parsedUnits.size(), values.size());
     if (parsedUnits.isEmpty()) {
         std::sort(values.begin(), values.end(), [](auto& a, auto& b) {
-            WTFLogAlways("CHRIS: Comparing '%s' and '%s', result : %d", static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters(), strcmp(static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters()));
             return strcmp(static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters()) < 0;
         });
         return CSSMathSum::create(WTFMove(values));
