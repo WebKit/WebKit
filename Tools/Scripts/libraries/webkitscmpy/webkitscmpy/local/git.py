@@ -702,7 +702,7 @@ class Git(Scm):
         branch_point = None
         # A commit is often on multiple branches, the canonical branch is the one with the highest priority
         if branch != default_branch:
-            branch = self.prioritize_branches(self.branches_for(hash))
+            branch = self.prioritize_branches(self.branches_for(hash), self.branch)
 
         if not identifier and include_identifier:
             cached_identifier = self.cache.to_identifier(hash=hash, branch=branch) if self.cache else None

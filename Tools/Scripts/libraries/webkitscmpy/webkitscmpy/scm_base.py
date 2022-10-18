@@ -114,7 +114,7 @@ class ScmBase(object):
     def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
         raise NotImplementedError()
 
-    def prioritize_branches(self, branches):
+    def prioritize_branches(self, branches, preferred_branch=None):
         if len(branches) == 1:
             return branches[0]
 
@@ -122,14 +122,17 @@ class ScmBase(object):
         if default_branch in branches:
             return default_branch
 
-        # We don't have enough information to determine a branch. We will attempt to first use the branch specified
-        # by the caller, then the one then checkout is currently on. If both those fail, we will pick one of the
-        # other branches. We prefer production branches first, then any branch which isn't explicitly labeled a
-        # dev branch. We then sort the list of candidate branches and pick the smallest
+        # We don't have enough information to determine a branch. We prefer production branches first,
+        # then any branch which isn't explicitly labeled a dev branch. If there are only dev branches,
+        # then we prefer the branch specified by the caller (usually the currently checked out branch).
+        # We then sort the list of candidate branches and pick the smallest.
+
         filtered_candidates = [candidate for candidate in branches if self.prod_branches.match(candidate)]
         if not filtered_candidates:
             filtered_candidates = [candidate for candidate in branches if not self.dev_branches.match(candidate)]
         if not filtered_candidates:
+            if preferred_branch and preferred_branch in branches:
+                return preferred_branch
             filtered_candidates = branches
         return sorted(filtered_candidates)[0]
 
