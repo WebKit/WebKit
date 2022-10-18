@@ -60,8 +60,8 @@ class GitHub(Scm):
                 title=data.get('title'),
                 body=data.get('body'),
                 author=self.repository.contributors.create((data.get('user') or data.get('author'))['login']),
-                head=data.get('head', {}).get('ref', data.get('headRefName')),
-                base=data.get('base', {}).get('ref', data.get('baseRefName')),
+                head=(data.get('head') or {}).get('ref', data.get('headRefName')),
+                base=(data.get('base') or {}).get('ref', data.get('baseRefName')),
                 opened=dict(
                     open=True,
                     closed=False,
@@ -70,7 +70,7 @@ class GitHub(Scm):
                 generator=self,
                 metadata=dict(
                     issue=issue,
-                    full_name=data.get('head', {}).get('repo', {}).get('full_name') or data.get('headRepository', {}).get('nameWithOwner')
+                    full_name=((data.get('head') or {}).get('repo') or {}).get('full_name') or (data.get('headRepository') or {}).get('nameWithOwner')
                 ), url='{}/pull/{}'.format(self.repository.url, data['number']),
                 draft=data.get('draft', data.get('isDraft', False)),
             )
