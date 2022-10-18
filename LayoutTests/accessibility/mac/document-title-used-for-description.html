@@ -2,33 +2,50 @@
 <html>
 <head>
 <title>FirstTitle</title>
-<script>
-var successfullyParsed = false;
-</script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var testOutput = "This tests that &lt;title&gt; will be used as the description for a web area.\n\n";
 
-    description("This tests that <title> will be used as the description for a web area.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
+    // Focusing the body is required so that we don't consider it to be ignored.
+    document.getElementById("body").focus();
 
-        document.getElementById("body").focus();
-        var webArea = window.accessibilityController.focusedElement;
-        shouldBe("webArea.description", "'AXDescription: FirstTitle'");
+    var webArea;
+    setTimeout(async function() {
+        await waitFor(() => {
+            webArea = accessibilityController.focusedElement;
+            return webArea;
+        })
+        testOutput += expect("webArea.description", "'AXDescription: FirstTitle'");
 
-        document.title = "SecondTitle";
-        shouldBe("webArea.description", "'AXDescription: SecondTitle'");
-    }
+        testOutput += "\nRemoving title element.\n";
+        document.getElementsByTagName("title")[0].remove();
+        await waitFor(() => !webArea.description.includes("FirstTitle"));
+        testOutput += expect("webArea.description", "'AXDescription: '");
 
-    successfullyParsed = true;
+        testOutput += "\nAdding new title element.\n";
+        const newTitle = document.createElement("title");
+        newTitle.innerHTML = "SecondTitle";
+        document.head.appendChild(newTitle);
+        await waitFor(() => webArea.description.includes("SecondTitle"));
+        testOutput += expect("webArea.description", "'AXDescription: SecondTitle'");
+
+        testOutput += "\nUsing document.title to update the title string.\n";
+        document.title = "ThirdTitle";
+        await waitFor(() => webArea.description.includes("ThirdTitle"));
+        testOutput += expect("webArea.description", "'AXDescription: ThirdTitle'");
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+
