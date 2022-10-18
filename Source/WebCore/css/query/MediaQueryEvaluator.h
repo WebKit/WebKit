@@ -24,25 +24,32 @@
 
 #pragma once
 
-#include "GenericMediaQueryParser.h"
+#include "GenericMediaQueryEvaluator.h"
 #include "MediaQuery.h"
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace MQ {
 
-class MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
+class MediaQueryEvaluator : public GenericMediaQueryEvaluator<MediaQueryEvaluator> {
 public:
-    MediaQueryParser(const CSSParserContext&);
+    MediaQueryEvaluator(const AtomString& mediaType, const Document&, const RenderStyle* rootElementStyle);
 
-    MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
-    std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);
+    bool evaluate(const MediaQueryList&) const;
+    bool evaluate(const MediaQuery&) const;
 
-    static Vector<MQ::FeatureSchema> featureSchemas();
-    static bool rejectInvalidFeatures() { return true; }
+    struct FeatureContext {
+        const Document& document;
+        const RenderStyle* rootElementStyle;
+    };
+    EvaluationResult evaluateFeature(const Feature&, const FeatureContext&) const;
+
+private:
+    const AtomString m_mediaType;
+    const FeatureContext m_featureContext;
 };
-
-void serialize(StringBuilder&, const MediaQueryList&);
-void serialize(StringBuilder&, const MediaQuery&);
 
 }
 }

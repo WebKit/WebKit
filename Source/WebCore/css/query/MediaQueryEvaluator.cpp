@@ -22,27 +22,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MediaQueryEvaluator.h"
 
-#include "GenericMediaQueryParser.h"
 #include "MediaQuery.h"
 
 namespace WebCore {
 namespace MQ {
 
-class MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
-public:
-    MediaQueryParser(const CSSParserContext&);
+MediaQueryEvaluator::MediaQueryEvaluator(const AtomString& mediaType, const Document& document, const RenderStyle* rootElementStyle)
+    : GenericMediaQueryEvaluator()
+    , m_mediaType(mediaType)
+    , m_featureContext({ document, rootElementStyle })
+{
+}
 
-    MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
-    std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);
+bool MediaQueryEvaluator::evaluate(const MediaQueryList& list) const
+{
+    for (auto& query : list) {
+        if (evaluate(query))
+            return true;
+    }
+    return false;
+}
 
-    static Vector<MQ::FeatureSchema> featureSchemas();
-    static bool rejectInvalidFeatures() { return true; }
-};
+bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
+{
+    bool isNegated = query.prefix && *query.prefix == Prefix::Not;
 
-void serialize(StringBuilder&, const MediaQueryList&);
-void serialize(StringBuilder&, const MediaQuery&);
+    auto mediaTypeMatches = [&] {
+        if (query.mediaType.isEmpty())
+            return true;
+        if (query.mediaType == "all"_s)
+            return true;
+        return query.mediaType == m_mediaType;
+    }();
+
+    if (!mediaTypeMatches)
+        return isNegated;
+
+    auto conditionMatches = [&] {
+        if (!query.condition)
+            return false;
+        return evaluateCondition(*query.condition, m_featureContext) == EvaluationResult::True;
+    }();
+
+    return conditionMatches != isNegated;
+}
+
+EvaluationResult MediaQueryEvaluator::evaluateFeature(const Feature&, const FeatureContext&) const
+{
+    return EvaluationResult::Unknown;
+}
+
 
 }
 }
