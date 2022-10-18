@@ -7321,6 +7321,7 @@
 		E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCaptionPreferencesDelegate.cpp; sourceTree = "<group>"; };
 		E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityPreferences.cpp; sourceTree = "<group>"; };
 		E3BCE878267252120011D8DB /* AccessibilityPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPreferences.h; sourceTree = "<group>"; };
+		E3C2BC93289CF8FB00ACC3E9 /* common.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
@@ -13996,10 +13997,19 @@
 		E36FEFFE27F36F34004BE21A /* Sandbox */ = {
 			isa = PBXGroup;
 			children = (
+				E3C2BC92289CF8B600ACC3E9 /* macOS */,
 				E36FF00227F36FBD004BE21A /* preferences.sb */,
 				E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */,
 			);
 			path = Sandbox;
+			sourceTree = "<group>";
+		};
+		E3C2BC92289CF8B600ACC3E9 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				E3C2BC93289CF8FB00ACC3E9 /* common.sb */,
+			);
+			path = macOS;
 			sourceTree = "<group>";
 		};
 		E404906F21DE65D70037F0DB /* mac */ = {

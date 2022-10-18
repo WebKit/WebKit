@@ -21,36 +21,107 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
+#if USE(SANDBOX_VERSION_2)
+(version 2)
+#else
 (version 1)
-(deny default (with partial-symbolication))
-(deny nvram*)
-(deny system-privilege)
-
-(allow system-audit file-read-metadata)
+#endif
+(deny default)
 
 (allow system-privilege (with grant)
     (require-all
         (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
         (require-entitlement "com.apple.private.network.socket-delegate")))
 
-;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
-
+#include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
-#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
-#include <WebKitAdditions/SystemContentSandbox-macos.defs>
-#endif
+#if USE(SANDBOX_VERSION_2)
+(with-filter (mac-policy-name "vnguard")
+    (allow system-mac-syscall (mac-syscall-number 1)))
 
-;; Utility functions for home directory relative path filters
-(define (home-regex home-relative-regex)
-  (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+(with-filter (mac-policy-name "Quarantine")
+    (allow system-mac-syscall (mac-syscall-number 80)))
 
-(define (home-subpath home-relative-subpath)
-    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+(allow system-fcntl
+    (fcntl-command
+        F_BARRIERFSYNC
+        F_DUPFD_CLOEXEC
+        F_GETCONFINED
+        F_GETFL
+        F_GETFD
+        F_GETPATH
+        F_GETPROTECTIONCLASS
+        F_OFD_GETLK
+        F_OFD_SETLK
+        F_OFD_SETLKWTIMEOUT
+        F_RDADVISE
+        F_SETCONFINED
+        F_SETFL
+        F_SETFD))
 
-(define (home-literal home-relative-literal)
-    (literal (string-append (param "HOME_DIR") home-relative-literal)))
+(allow process-codesigning-entitlements-der-blob-get)
+(allow process-codesigning-identity-get (target self))
+(allow process-codesigning-status-get)
+
+(allow socket-ioctl)
+
+(allow socket-option-set (with report))
+(allow socket-option-get (with report))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name
+            SO_DELEGATED
+            SO_DELEGATED_UUID
+            SO_NECP_ATTRIBUTES
+            SO_NECP_CLIENTUUID
+            SO_NECP_LISTENUUID
+            SO_NOSIGPIPE
+            SO_RCVBUF
+            SO_REUSEADDR
+            SO_REUSEPORT)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name SO_ERROR SO_NREAD)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name SO_DEBUG 513)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 7 20 25 27)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 25)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 27 61)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name 262 SO_REUSEPORT)))
+
+(allow socket-ioctl
+    (ioctl-command CTLIOCGINFO))
+
+(allow iokit-open-service (iokit-registry-entry-class "IOPMrootDomain"))
+
+(allow file-link
+    (extension-class "com.apple.app-sandbox.read-write")
+    (extension "com.apple.app-sandbox.read-write"))
+#endif // USE(SANDBOX_VERSION_2)
 
 #if PLATFORM(MAC)
 (deny mach-register (local-name-prefix ""))
@@ -246,28 +317,17 @@
 (allow file-read*
     ;; Basic system paths
     (subpath "/Library/Frameworks")
-    (subpath "/Library/Managed Preferences")
+    (subpath "/Library/Managed Preferences"))
 
-    ;; On-disk WebKit2 framework location, to account for debug installations
-    ;; outside of /System/Library/Frameworks
+;; On-disk WebKit2 framework location, to account for debug installations
+;; outside of /System/Library/Frameworks
+(allow file-read* file-test-existence
     (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
 
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
-;; Sandbox extensions
-(define (apply-read-and-issue-extension op path-filter)
-    (op file-read* path-filter)
-    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
-(define (apply-write-and-issue-extension op path-filter)
-    (op file-write* path-filter)
-    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
-(define (read-only-and-issue-extensions path-filter)
-    (apply-read-and-issue-extension allow path-filter))
-(define (read-write-and-issue-extensions path-filter)
-    (apply-read-and-issue-extension allow path-filter)
-    (apply-write-and-issue-extension allow path-filter))
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
@@ -276,9 +336,8 @@
 (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
-(allow iokit-open
-    (iokit-user-client-class "RootDomainUserClient") ; Used by PowerObserver
-)
+(allow IOKIT_OPEN_USER_CLIENT
+    (iokit-user-client-class "RootDomainUserClient")) ; Used by PowerObserver
 
 (deny mach-lookup 
     (global-name "com.apple.PowerManagement.control"))
@@ -312,7 +371,7 @@
 (allow mach-lookup (global-name "com.apple.webkit.webpushd.service"))
 (allow mach-lookup (global-name "org.webkit.webpushtestdaemon.service"))
 
-(deny mach-lookup (with no-log)
+(deny mach-lookup (with no-report)
     (global-name "com.apple.DiskArbitration.diskarbitrationd"))
 (with-filter (uid 0)
     (allow mach-lookup 
@@ -402,7 +461,7 @@
 ;; Reserve a namespace for additional protected extended attributes.
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
-(deny file-read* file-write* (with no-log)
+(deny file-read* file-write* (with no-report)
     ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
     (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
     (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
@@ -456,7 +515,7 @@
 (allow mach-lookup
     (global-name "com.apple.tccd"))
 
-(deny mach-lookup (with no-log)
+(deny mach-lookup (with no-report)
     (global-name "com.apple.tccd.system")
     (global-name "com.apple.CoreServices.coreservicesd")
     (global-name-prefix "com.apple.distributed_notifications"))
@@ -549,6 +608,7 @@
         SYS_kevent_id
         SYS_kevent_qos
         SYS_kqueue
+        SYS_link
         SYS_listxattr
         SYS_lseek
         SYS_lstat

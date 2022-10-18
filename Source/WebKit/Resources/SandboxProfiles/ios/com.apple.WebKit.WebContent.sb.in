@@ -960,7 +960,7 @@
     (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
 
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
-    (deny iokit-open-service)
+    (deny IOKIT_OPEN_SERVICE)
     (deny iokit-open (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
