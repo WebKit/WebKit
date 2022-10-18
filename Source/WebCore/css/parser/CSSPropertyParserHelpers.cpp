@@ -4534,6 +4534,19 @@ AtomString consumeFamilyNameRaw(CSSParserTokenRange& range)
     return concatenateFamilyName(range);
 }
 
+Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange& range)
+{
+    Vector<AtomString> result;
+    do {
+        auto name = consumeFamilyNameRaw(range);
+        if (name.isNull())
+            return { };
+        
+        result.append(name);
+    } while (consumeCommaIncludingWhitespace(range));
+    return result;
+}
+
 std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange& range)
 {
     return consumeIdentRangeRaw(range, CSSValueSerif, CSSValueWebkitBody);

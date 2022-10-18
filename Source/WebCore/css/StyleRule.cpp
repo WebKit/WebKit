@@ -25,6 +25,7 @@
 #include "CSSContainerRule.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontFeatureValuesRule.h"
 #include "CSSFontPaletteValuesRule.h"
 #include "CSSGroupingRule.h"
 #include "CSSImportRule.h"
@@ -76,6 +77,10 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRulePage>(*this));
     case StyleRuleType::FontFace:
         return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontFace>(*this));
+    case StyleRuleType::FontFeatureValues:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontFeatureValues>(*this));
+    case StyleRuleType::FontFeatureValuesBlock:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontFeatureValuesBlock>(*this));
     case StyleRuleType::FontPaletteValues:
         return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontPaletteValues>(*this));
     case StyleRuleType::Media:
@@ -144,6 +149,12 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSGr
         },
         [&](StyleRuleFontFace& rule) -> Ref<CSSRule> {
             return CSSFontFaceRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleFontFeatureValues& rule) -> Ref<CSSRule> {
+            return CSSFontFeatureValuesRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleFontFeatureValuesBlock& rule) -> Ref<CSSRule> {
+            return CSSFontFeatureValuesBlockRule::create(rule, parentSheet);
         },
         [&](StyleRuleFontPaletteValues& rule) -> Ref<CSSRule> {
             return CSSFontPaletteValuesRule::create(rule, parentSheet);
@@ -314,6 +325,25 @@ MutableStyleProperties& StyleRuleFontFace::mutableProperties()
     if (!is<MutableStyleProperties>(m_properties))
         m_properties = m_properties->mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
+}
+
+StyleRuleFontFeatureValues::StyleRuleFontFeatureValues(const Vector<AtomString>& fontFamilies, const FontFeatureValuesValue& value)
+    : StyleRuleBase(StyleRuleType::FontFeatureValues)
+    , m_fontFamilies(fontFamilies)
+    , m_value(value)
+{
+}
+
+StyleRuleFontFeatureValuesBlock::StyleRuleFontFeatureValuesBlock(FontFeatureValuesType type, const Vector<Tag>& tags)
+    : StyleRuleBase(StyleRuleType::FontFeatureValuesBlock)
+    , m_type(type)
+    , m_tags(tags)
+{
+}
+
+Ref<StyleRuleFontFeatureValues> StyleRuleFontFeatureValues::create(const Vector<AtomString>& fontFamilies, const FontFeatureValuesValue& values)
+{
+    return adoptRef(*new StyleRuleFontFeatureValues(fontFamilies, values));
 }
 
 Ref<StyleRuleFontPaletteValues> StyleRuleFontPaletteValues::create(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)

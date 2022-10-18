@@ -34,6 +34,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFamily.h"
+#include "CSSFontFeatureValuesRule.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
@@ -277,7 +278,7 @@ void CSSParserImpl::parseStyleSheetForInspector(const String& string, const CSSP
 
 static CSSParserImpl::AllowedRulesType computeNewAllowedRules(CSSParserImpl::AllowedRulesType allowedRules, StyleRuleBase* rule)
 {
-    if (!rule || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::CounterStyleRules || allowedRules == CSSParserImpl::NoRules)
+    if (!rule || allowedRules == CSSParserImpl::FontFeatureValuesRules || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::CounterStyleRules || allowedRules == CSSParserImpl::NoRules)
         return allowedRules;
     
     ASSERT(allowedRules <= CSSParserImpl::RegularRules);
@@ -305,6 +306,9 @@ bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleListType rule
         break;
     case KeyframesRuleList:
         allowedRules = KeyframeRules;
+        break;
+    case FontFeatureValuesRuleList:
+        allowedRules = FontFeatureValuesRules;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -375,8 +379,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
     if (allowedRules == NoRules)
         return nullptr;
 
-    ASSERT(allowedRules <= RegularRules);
-
     switch (id) {
     case CSSAtRuleMedia:
         return consumeMediaRule(prelude, block);
@@ -384,6 +386,15 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeSupportsRule(prelude, block);
     case CSSAtRuleFontFace:
         return consumeFontFaceRule(prelude, block);
+    case CSSAtRuleFontFeatureValues:
+        return consumeFontFeatureValuesRule(prelude, block);
+    case CSSAtRuleStyleset:
+    case CSSAtRuleStylistic:
+    case CSSAtRuleCharacterVariant:
+    case CSSAtRuleSwash:
+    case CSSAtRuleOrnaments:
+    case CSSAtRuleAnnotation:
+        return allowedRules == FontFeatureValuesRules ? consumeFontFeatureValuesRuleBlock(id, prelude, block) : nullptr;
     case CSSAtRuleFontPaletteValues:
         return consumeFontPaletteValuesRule(prelude, block);
     case CSSAtRuleWebkitKeyframes:
@@ -419,7 +430,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& r
     if (allowedRules == KeyframeRules)
         return consumeKeyframeStyleRule(prelude, block);
 
-    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
@@ -592,6 +602,157 @@ RefPtr<StyleRuleFontFace> CSSParserImpl::consumeFontFaceRule(CSSParserTokenRange
 
     consumeDeclarationList(block, StyleRuleType::FontFace);
     return StyleRuleFontFace::create(createStyleProperties(m_parsedProperties, m_context.mode));
+}
+
+static std::pair<FontFeatureValuesType, unsigned> fontFeatureValuesTypeMappings(CSSAtRuleID id)
+{
+    switch (id) {
+    // Note that values higher than 99 are valid for styleset, but don't map to any OpenType values and are ignored.
+    // cf https://developer.mozilla.org/en-US/docs/Web/CSS/@font-feature-values
+    case CSSAtRuleStyleset: return { FontFeatureValuesType::Styleset, 99 }; 
+    case CSSAtRuleStylistic: return { FontFeatureValuesType::Stylistic, 1 };
+    case CSSAtRuleCharacterVariant: return { FontFeatureValuesType::CharacterVariant, 2 };
+    case CSSAtRuleSwash: return { FontFeatureValuesType::Swash, 1 };
+    case CSSAtRuleOrnaments: return { FontFeatureValuesType::Ornaments, 1 };
+    case CSSAtRuleAnnotation: return { FontFeatureValuesType::Annotation, 1 };
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesRuleBlock(CSSAtRuleID id, CSSParserTokenRange prelude, CSSParserTokenRange range)
+{
+    // <feature-value-block> = <font-feature-value-type> { <declaration-list> }
+    // <font-feature-value-type> = @stylistic | @historical-forms | @styleset | @character-variant | @swash | @ornaments | @annotation
+
+    // Prelude should be empty.
+    if (!prelude.atEnd())
+        return { };
+    
+    // Block should be present.
+    if (range.atEnd())
+        return { };
+    
+    if (m_observerWrapper) {
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::FontFeatureValuesBlock, m_observerWrapper->startOffset(prelude));
+        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
+        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(range));
+        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(range));
+    }
+
+    auto [type, maxValues] = fontFeatureValuesTypeMappings(id);
+
+    auto consumeTag = [](CSSParserTokenRange range, unsigned maxValues) -> std::optional<Tag> {
+        if (range.peek().type() != IdentToken)
+            return { };
+        auto name = range.consumeIncludingWhitespace().value();
+        if (range.consume().type() != ColonToken)
+            return { };
+        range.consumeWhitespace();
+
+        Vector<int> values;
+        while (!range.atEnd()) {
+            auto value = CSSPropertyParserHelpers::consumeIntegerZeroAndGreater(range);
+            if (!value)
+                return { };
+            ASSERT(value->isInteger());
+            auto tagInteger = value->intValue();
+            values.append(tagInteger);
+            if (values.size() > maxValues)
+                return { };
+        }
+        if (values.isEmpty())
+            return { };
+        
+        return { Tag { name.toString(), values } };
+    };
+
+    Vector<Tag> tags;
+    while (!range.atEnd()) {
+        switch (range.peek().type()) {
+        case WhitespaceToken:
+        case SemicolonToken:
+            range.consume();
+            break;
+        case IdentToken: {
+            const CSSParserToken* declarationStart = &range.peek();
+
+            while (!range.atEnd() && range.peek().type() != SemicolonToken)
+                range.consumeComponentValue();
+
+            if (auto tag = consumeTag(range.makeSubRange(declarationStart, &range.peek()), maxValues))
+                tags.append(*tag);
+
+            break;
+        }
+        default: // Parse error, unexpected token in declaration list
+            while (!range.atEnd() && range.peek().type() != SemicolonToken)
+                range.consumeComponentValue();
+            break;
+        }
+    }
+    return StyleRuleFontFeatureValuesBlock::create(type, tags);
+}
+RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
+    // @font-feature-values <family-name># { <declaration-list> }
+
+    auto originalPrelude = prelude;
+    auto fontFamilies = CSSPropertyParserHelpers::consumeFamilyNameList(prelude);
+    if (fontFamilies.isEmpty() || !prelude.atEnd())
+        return nullptr;
+    
+    if (m_observerWrapper) {
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::FontFeatureValues, m_observerWrapper->startOffset(originalPrelude));
+        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
+        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
+    }
+
+    Vector<RefPtr<StyleRuleBase>> rules;
+    consumeRuleList(block, FontFeatureValuesRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
+        rules.append(rule);
+    });
+    rules.shrinkToFit();
+    
+    if (m_observerWrapper)
+        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
+
+    // Convert block rules to value (remove duplicates...etc)
+    FontFeatureValuesValue fontFeaturesValuesvalue;
+    auto currentTagsForType = [&fontFeaturesValuesvalue](FontFeatureValuesType type) -> Tags& {
+        switch (type) {
+        case FontFeatureValuesType::Styleset:
+            return fontFeaturesValuesvalue.styleset;
+        case FontFeatureValuesType::Stylistic:
+            return fontFeaturesValuesvalue.stylistic;
+        case FontFeatureValuesType::CharacterVariant:
+            return fontFeaturesValuesvalue.characterVariant;
+        case FontFeatureValuesType::Swash:
+            return fontFeaturesValuesvalue.swash;
+        case FontFeatureValuesType::Ornaments:
+            return fontFeaturesValuesvalue.ornaments;
+        case FontFeatureValuesType::Annotation:
+            return fontFeaturesValuesvalue.annotation;
+        }
+    };
+
+    auto upsertTag = [&currentTagsForType](FontFeatureValuesType type, Tag tag) {
+        auto& tags = currentTagsForType(type);
+        tags.set(tag.first, tag.second);
+    };
+    
+    for (auto block : rules) {
+        if (!block)
+            continue;
+        if (!block->isFontFeatureValuesBlockRule())
+            continue;
+        auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(*block);
+        for (auto tag : fontFeatureValuesBlockRule.tags())
+            upsertTag(fontFeatureValuesBlockRule.fontFeatureValuesType(), tag);
+    }
+
+    return StyleRuleFontFeatureValues::create(fontFamilies, fontFeaturesValuesvalue);
 }
 
 RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

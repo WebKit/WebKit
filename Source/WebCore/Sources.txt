@@ -756,6 +756,7 @@ css/CSSFontFaceSet.cpp
 css/CSSFontFaceSource.cpp
 css/CSSFontFaceSrcValue.cpp
 css/CSSFontFeatureValue.cpp
+css/CSSFontFeatureValuesRule.cpp
 css/CSSFontPaletteValuesOverrideColorsValue.cpp
 css/CSSFontPaletteValuesRule.cpp
 css/CSSFontSelector.cpp
@@ -3053,6 +3054,7 @@ JSCSSConditionRule.cpp
 JSCSSContainerRule.cpp
 JSCSSCounterStyleRule.cpp
 JSCSSFontFaceRule.cpp
+JSCSSFontFeatureValuesRule.cpp
 JSCSSFontPaletteValuesRule.cpp
 JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp

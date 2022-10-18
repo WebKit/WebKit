@@ -26,6 +26,7 @@
 #include "ContainerQuery.h"
 #include "FontPaletteValues.h"
 #include "StyleRuleType.h"
+#include <map>
 #include <variant>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -53,6 +54,8 @@ public:
     bool isCounterStyleRule() const { return type() == StyleRuleType::CounterStyle; }
     bool isFontFaceRule() const { return type() == StyleRuleType::FontFace; }
     bool isFontPaletteValuesRule() const { return type() == StyleRuleType::FontPaletteValues; }
+    bool isFontFeatureValuesRule() const { return type() == StyleRuleType::FontFeatureValues; }
+    bool isFontFeatureValuesBlockRule() const { return type() == StyleRuleType::FontFeatureValuesBlock; }
     bool isKeyframesRule() const { return type() == StyleRuleType::Keyframes; }
     bool isKeyframeRule() const { return type() == StyleRuleType::Keyframe; }
     bool isNamespaceRule() const { return type() == StyleRuleType::Namespace; }
@@ -177,6 +180,69 @@ private:
     AtomString m_name;
     AtomString m_fontFamily;
     FontPaletteValues m_fontPaletteValues;
+};
+
+using Tag = std::pair<String, Vector<int>>;
+using Tags = HashMap<String, Vector<int>>;
+
+struct FontFeatureValuesValue {
+    Tags styleset;
+    Tags stylistic;
+    Tags characterVariant;
+    Tags swash;
+    Tags ornaments;
+    Tags annotation;
+};
+
+enum class FontFeatureValuesType {
+    Styleset,
+    Stylistic,
+    CharacterVariant,
+    Swash,
+    Ornaments,
+    Annotation
+};
+
+class StyleRuleFontFeatureValuesBlock final : public StyleRuleBase {
+public:
+    static Ref<StyleRuleFontFeatureValuesBlock> create(FontFeatureValuesType type, const Vector<Tag>& tags)
+    {
+        return adoptRef(*new StyleRuleFontFeatureValuesBlock(type, tags));
+    }
+    
+    ~StyleRuleFontFeatureValuesBlock() = default;
+
+    FontFeatureValuesType fontFeatureValuesType() const { return m_type; }
+
+    Vector<Tag> tags() const { return m_tags; }
+
+    Ref<StyleRuleFontFeatureValuesBlock> copy() const { return adoptRef(*new StyleRuleFontFeatureValuesBlock(*this)); }
+private:
+    StyleRuleFontFeatureValuesBlock(FontFeatureValuesType, const Vector<Tag>&);
+    StyleRuleFontFeatureValuesBlock(const StyleRuleFontFeatureValuesBlock&) = default;
+
+    FontFeatureValuesType m_type;
+    Vector<Tag> m_tags;
+};
+
+class StyleRuleFontFeatureValues final : public StyleRuleBase {
+public:
+    static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, const FontFeatureValuesValue&);
+    
+    ~StyleRuleFontFeatureValues() = default;
+
+    const Vector<AtomString>& fontFamilies() const { return m_fontFamilies; }
+
+    const FontFeatureValuesValue& value() const { return m_value; }
+
+    Ref<StyleRuleFontFeatureValues> copy() const { return adoptRef(*new StyleRuleFontFeatureValues(*this)); }
+
+private:
+    StyleRuleFontFeatureValues(const Vector<AtomString>&, const FontFeatureValuesValue&);
+    StyleRuleFontFeatureValues(const StyleRuleFontFeatureValues&) = default;
+
+    Vector<AtomString> m_fontFamilies;
+    FontFeatureValuesValue m_value;
 };
 
 class StyleRulePage final : public StyleRuleBase {
@@ -351,6 +417,14 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleFontFace)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isFontFaceRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleFontFeatureValues)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isFontFeatureValuesRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleFontFeatureValuesBlock)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isFontFeatureValuesBlockRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleFontPaletteValues)
