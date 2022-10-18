@@ -28,6 +28,7 @@
 
 #include <mutex>
 #include <wtf/DataLog.h>
+#include <wtf/Deque.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/ThreadSpecific.h>
@@ -64,7 +65,8 @@ public:
 enum class DequeueResult {
     Ignore,
     RemoveAndContinue,
-    RemoveAndStop
+    RemoveAndStop,
+    Stop
 };
 
 struct Bucket {
@@ -74,14 +76,28 @@ public:
         : random(static_cast<unsigned>(bitwise_cast<intptr_t>(this))) // Cannot use default seed since that recurses into Lock.
     {
     }
-    
-    void enqueue(ThreadData* data)
+
+    void enqueue(void* data, const bool)
     {
+        if (!asyncQueue)
+            asyncQueue = makeUnique<Deque<std::unique_ptr<Waiter>>>();
+        asyncQueue->append(makeUnique<Waiter>(data));
+    }
+
+    void enqueue(ThreadData* data, const bool isAsyncMode = false)
+    {
+        if (isAsyncMode && hasAsyncQueue()) {
+            asyncQueue->append(makeUnique<Waiter>(data));
+            return;
+        }
+
         if (verbose)
             dataLog(toString(Thread::current(), ": enqueueing ", RawPointer(data), " with address = ", RawPointer(data->address), " onto ", RawPointer(this), "\n"));
         ASSERT(data->address);
         ASSERT(!data->nextInQueue);
-        
+
+        ++syncSize;
+
         if (queueTail) {
             queueTail->nextInQueue = data;
             queueTail = data;
@@ -92,8 +108,16 @@ public:
         queueTail = data;
     }
 
+    template<typename Functor, typename AsyncQueueFunctor>
+    void genericDequeue(const Functor& functor, const AsyncQueueFunctor& asyncQueueFunctor, const bool isAsyncMode = false)
+    {
+        genericDeSyncQueue(functor);
+        if (isAsyncMode && hasAsyncQueue())
+            asyncQueueFunctor(asyncQueue);
+    }
+
     template<typename Functor>
-    void genericDequeue(const Functor& functor)
+    void genericDeSyncQueue(const Functor& functor)
     {
         if (verbose)
             dataLog(toString(Thread::current(), ": dequeueing from bucket at ", RawPointer(this), "\n"));
@@ -162,6 +186,10 @@ public:
                 didDequeue = true;
                 *currentPtr = current->nextInQueue;
                 current->nextInQueue = nullptr;
+                --syncSize;
+                break;
+            case DequeueResult::Stop:
+                shouldContinue = false;
                 break;
             }
         }
@@ -179,10 +207,24 @@ public:
             [&] (ThreadData* element, bool) -> DequeueResult {
                 result = element;
                 return DequeueResult::RemoveAndStop;
-            });
+            },
+            [] (auto&) { });
         return result;
     }
 
+    size_t size()
+    {
+        return syncSize + (asyncQueue ? asyncQueue->size() : 0);
+    }
+
+    bool hasAsyncQueue()
+    {
+        return asyncQueue && !asyncQueue->isEmpty();
+    }
+
+    size_t syncSize { 0 };
+
+    // Only enqueue Waiters to queue until AsyncMode.
     ThreadData* queueHead { nullptr };
     ThreadData* queueTail { nullptr };
 
@@ -197,6 +239,24 @@ public:
     // Put some distane between buckets in memory. This is one of several mitigations against false
     // sharing.
     char padding[64];
+
+    // AsyncMode will be triggered when we enqueue the first AsyncWaiter in the Bucket.
+    // After that, all the following added Waiters and AsyncWaiters will be added to 
+    // asyncQueue. Once asyncQueue is empty, switch to SyncMode.
+    struct Waiter {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        Waiter(ThreadData* syncData) : isAsync(false) { u.sync = syncData; };
+        Waiter(void* asyncData) : isAsync(true) { u.async = asyncData; };
+
+        bool isAsync { false };
+        union {
+            ThreadData* sync;
+            void* async;
+        } u;
+    };
+
+    std::unique_ptr<Deque<std::unique_ptr<Waiter>>> asyncQueue;
 };
 
 struct Hashtable;
@@ -462,7 +522,7 @@ ThreadData* myThreadData()
 }
 
 template<typename Functor>
-bool enqueue(const void* address, const Functor& functor)
+bool enqueue(const void* address, const Functor& functor, const bool isAsyncMode = false)
 {
     unsigned hash = hashAddress(address);
 
@@ -492,12 +552,12 @@ bool enqueue(const void* address, const Functor& functor)
             continue;
         }
 
-        ThreadData* threadData = functor();
+        auto data = functor();
         bool result;
-        if (threadData) {
+        if (data) {
             if (verbose)
-                dataLog(toString(Thread::current(), ": proceeding to enqueue ", RawPointer(threadData), "\n"));
-            bucket->enqueue(threadData);
+                dataLog(toString(Thread::current(), ": proceeding to enqueue ", RawPointer(data), "\n"));
+            bucket->enqueue(data, isAsyncMode);
             result = true;
         } else
             result = false;
@@ -511,10 +571,10 @@ enum class BucketMode {
     IgnoreEmpty
 };
 
-template<typename DequeueFunctor, typename FinishFunctor>
+template<typename DequeueFunctor, typename DeAsyncQueueFunctor, typename FinishFunctor>
 bool dequeue(
     const void* address, BucketMode bucketMode, const DequeueFunctor& dequeueFunctor,
-    const FinishFunctor& finishFunctor)
+    const DeAsyncQueueFunctor& deAsyncQueueFunctor, const FinishFunctor& finishFunctor, const bool isAsyncMode = false)
 {
     unsigned hash = hashAddress(address);
 
@@ -548,7 +608,7 @@ bool dequeue(
             continue;
         }
 
-        bucket->genericDequeue(dequeueFunctor);
+        bucket->genericDequeue(dequeueFunctor, deAsyncQueueFunctor, isAsyncMode);
         bool result = !!bucket->queueHead;
         finishFunctor(result);
         bucket->lock.unlock();
@@ -562,7 +622,8 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
     const void* address,
     const ScopedLambda<bool()>& validation,
     const ScopedLambda<void()>& beforeSleep,
-    const TimeWithDynamicClockType& timeout)
+    const TimeWithDynamicClockType& timeout,
+    const bool isAsyncMode)
 {
     if (verbose)
         dataLog(toString(Thread::current(), ": parking.\n"));
@@ -581,7 +642,8 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
 
             me->address = address;
             return me;
-        });
+        },
+        isAsyncMode);
 
     if (!enqueueResult)
         return ParkResult();
@@ -626,7 +688,19 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
             }
             return DequeueResult::Ignore;
         },
-        [] (bool) { });
+        [&] (auto& asyncQueue) {
+            if (didDequeue || !isAsyncMode)
+                return;
+            asyncQueue->takeFirst([&](auto& waiter) {
+                if (!waiter->isAsync && waiter->u.sync == me) {
+                    didDequeue = true;
+                    return true;
+                }
+                return false;
+            });
+        },
+        [] (bool) { },
+        isAsyncMode);
     
     // If didDequeue is true, then we dequeued ourselves. This means that we were not unparked.
     // If didDequeue is false, then someone unparked us.
@@ -656,6 +730,35 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
     return result;
 }
 
+NEVER_INLINE void ParkingLot::parkAsyncImpl(const void* address, void* data)
+{
+    bool isAsyncMode = true;
+    enqueue(address, [&]() -> void* {
+        return data;
+    }, isAsyncMode);
+}
+
+NEVER_INLINE void ParkingLot::unparkAsyncImpl(const void* address, void* target, const ScopedLambda<void(void*)>& dataFunctor)
+{
+    bool isAsyncMode = true;
+    dequeue(
+        address, BucketMode::IgnoreEmpty,
+        [&] (ThreadData*, bool) {
+            return DequeueResult::Stop;
+        },
+        [&] (auto& asyncQueue) {
+            asyncQueue->takeFirst([&](auto& waiter) {
+                if (waiter->isAsync && waiter->u.async == target) {
+                    dataFunctor(waiter->u.async);
+                    return true;
+                }
+                return false;
+            });
+        },
+        [] (bool) { },
+        isAsyncMode);
+}
+
 NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
 {
     if (verbose)
@@ -679,6 +782,7 @@ NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
             result.didUnparkThread = true;
             return DequeueResult::RemoveAndStop;
         },
+        [] (auto&) { },
         [] (bool) { });
 
     if (!threadData) {
@@ -718,6 +822,7 @@ NEVER_INLINE void ParkingLot::unparkOneImpl(
             timeToBeFair = passedTimeToBeFair;
             return DequeueResult::RemoveAndStop;
         },
+        [] (auto&) { },
         [&] (bool mayHaveMoreThreads) {
             UnparkResult result;
             result.didUnparkThread = !!threadData;
@@ -745,6 +850,16 @@ NEVER_INLINE void ParkingLot::unparkOneImpl(
 
 NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned count)
 {
+    bool isAsyncMode = false;
+    return unparkCount(address, count, [](void*) { }, isAsyncMode);
+}
+
+NEVER_INLINE unsigned ParkingLot::unparkCountImpl(
+    const void* address,
+    unsigned count,
+    const ScopedLambda<void(void*)>& asyncWaiterFunctor,
+    const bool isAsyncMode)
+{
     if (!count)
         return 0;
     
@@ -752,6 +867,8 @@ NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned coun
         dataLog(toString(Thread::current(), ": unparking count = ", count, " from ", RawPointer(address), ".\n"));
     
     Vector<RefPtr<ThreadData>, 8> threadDatas;
+    Vector<std::unique_ptr<Bucket::Waiter>, 8> waiters;
+    unsigned notified = 0;
     dequeue(
         address,
         // FIXME: It seems like this ought to be EnsureNonEmpty if we follow what unparkOne() does,
@@ -763,13 +880,26 @@ NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned coun
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadDatas.append(element);
-            if (threadDatas.size() == count)
+            ++notified;
+            if (notified == count)
                 return DequeueResult::RemoveAndStop;
             return DequeueResult::RemoveAndContinue;
         },
-        [] (bool) { });
+        [&] (auto& asyncQueue) { 
+            if (notified == count)
+                return;
+            while (notified < count && !asyncQueue->isEmpty()) {
+                std::unique_ptr<Bucket::Waiter> waiter = asyncQueue->takeFirst();
+                waiters.append(WTFMove(waiter));
+                ++notified;
+            }
+        },
+        [] (bool) { },
+        isAsyncMode);
 
-    for (RefPtr<ThreadData>& threadData : threadDatas) {
+    RELEASE_ASSERT(notified == threadDatas.size() + waiters.size());
+
+    auto updateThreadData = [](RefPtr<ThreadData>& threadData) {
         if (verbose)
             dataLog(toString(Thread::current(), ": unparking ", RawPointer(threadData.get()), " with address ", RawPointer(threadData->address), "\n"));
         ASSERT(threadData->address);
@@ -778,12 +908,24 @@ NEVER_INLINE unsigned ParkingLot::unparkCount(const void* address, unsigned coun
             threadData->address = nullptr;
         }
         threadData->parkingCondition.signal();
+    };
+
+    for (RefPtr<ThreadData>& threadData : threadDatas)
+        updateThreadData(threadData);
+
+    for (auto& waiter : waiters) {
+        if (waiter->isAsync)
+            asyncWaiterFunctor(waiter->u.async);
+        else {
+            RefPtr<ThreadData> threadData = RefPtr<ThreadData>(waiter->u.sync);
+            updateThreadData(threadData);
+        }
     }
 
     if (verbose)
         dataLog(toString(Thread::current(), ": done unparking.\n"));
     
-    return threadDatas.size();
+    return notified;
 }
 
 NEVER_INLINE void ParkingLot::unparkAll(const void* address)
@@ -805,6 +947,33 @@ NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(Thread&, const
     }
     
     unlockHashtable(bucketsToUnlock);
+}
+
+NEVER_INLINE unsigned ParkingLot::bucketSize(const void* address)
+{
+    unsigned hash = hashAddress(address);
+
+    for (;;) {
+        Hashtable* myHashtable = ensureHashtable();
+        unsigned index = hash % myHashtable->size;
+        Atomic<Bucket*>& bucketPointer = myHashtable->data[index];
+        Bucket* bucket = bucketPointer.load();
+        if (!bucket)
+            return 0;
+
+        int size = 0;
+        bucket->lock.lock();
+
+        // At this point the hashtable could have rehashed under us.
+        if (hashtable.load() != myHashtable) {
+            bucket->lock.unlock();
+            continue;
+        }
+
+        size = bucket->size();
+        bucket->lock.unlock();
+        return size;
+    }
 }
 
 } // namespace WTF

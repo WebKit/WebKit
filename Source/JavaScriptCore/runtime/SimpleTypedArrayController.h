@@ -54,6 +54,7 @@ public:
     JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) final;
     void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) final;
     bool isAtomicsWaitAllowedOnCurrentThread() final;
+    bool isAtomicsWaitAsyncAllowedOnCurrentThread() final;
 
 private:
     class JSArrayBufferOwner final : public WeakHandleOwner {
@@ -64,6 +65,7 @@ private:
 
     JSArrayBufferOwner m_owner;
     bool m_allowAtomicsWait { false };
+    bool m_allowAtomicsWaitAsync { false };
 };
 
 } // namespace JSC

@@ -6,4 +6,6 @@ test(() => {
   const ta = new Int32Array(sab);
 
   assert_equals(Atomics.wait(ta, 0, 0, 10), "timed-out");
+
+  assert_equals(Atomics.waitAsync(ta, 0, 0, 0).value, "timed-out");
 }, `[[CanBlock]] in a ${self.constructor.name}`);

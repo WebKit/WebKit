@@ -56,6 +56,11 @@ bool WebCoreTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
     return m_allowAtomicsWait;
 }
 
+bool WebCoreTypedArrayController::isAtomicsWaitAsyncAllowedOnCurrentThread()
+{
+    return m_allowAtomicsWaitAsync;
+}
+
 bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char** reason)
 {
     if (UNLIKELY(reason))

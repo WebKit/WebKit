@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include "config.h"
+#include "WaiterListManager.h"
 
 namespace JSC {
 
-class ArrayBuffer;
-class CallFrame;
-class JSArrayBuffer;
-class JSGlobalObject;
-
-class TypedArrayController : public RefCounted<TypedArrayController> {
-public:
-    JS_EXPORT_PRIVATE TypedArrayController();
-    JS_EXPORT_PRIVATE virtual ~TypedArrayController();
-    
-    virtual JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) = 0;
-    virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) = 0;
-    virtual bool isAtomicsWaitAllowedOnCurrentThread() = 0;
-    virtual bool isAtomicsWaitAsyncAllowedOnCurrentThread() = 0;
-};
+WaiterListManager& WaiterListManager::singleton()
+{
+    static LazyNeverDestroyed<WaiterListManager> manager;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        manager.construct();
+    });
+    return manager;
+}
 
 } // namespace JSC

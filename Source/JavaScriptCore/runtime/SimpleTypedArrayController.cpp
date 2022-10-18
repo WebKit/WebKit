@@ -62,6 +62,11 @@ bool SimpleTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
     return m_allowAtomicsWait;
 }
 
+bool SimpleTypedArrayController::isAtomicsWaitAsyncAllowedOnCurrentThread()
+{
+    return m_allowAtomicsWaitAsync;
+}
+
 bool SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char** reason)
 {
     if (UNLIKELY(reason))

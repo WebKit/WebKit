@@ -77,13 +77,26 @@ public:
         const void* address,
         const ValidationFunctor& validation,
         const BeforeSleepFunctor& beforeSleep,
-        const TimeWithDynamicClockType& timeout)
+        const TimeWithDynamicClockType& timeout,
+        const bool isAsyncMode = false)
     {
         return parkConditionallyImpl(
             address,
             scopedLambdaRef<bool()>(validation),
             scopedLambdaRef<void()>(beforeSleep),
-            timeout);
+            timeout,
+            isAsyncMode);
+    }
+
+    static void parkAsync(const void* address, void* data)
+    {
+        parkAsyncImpl(address, data);
+    }
+
+    template<typename Functor>
+    static void unparkAsync(const void* address, void* target, Functor functor)
+    {
+        unparkAsyncImpl(address, target, scopedLambdaRef<void(void*)>(functor));
     }
 
     // Simple version of parkConditionally() that covers the most common case: you want to park
@@ -140,6 +153,16 @@ public:
     
     WTF_EXPORT_PRIVATE static unsigned unparkCount(const void* address, unsigned count);
 
+    template<typename AsyncWaiterFunctor>
+    WTF_EXPORT_PRIVATE static unsigned unparkCount(
+        const void* address,
+        unsigned count,
+        const AsyncWaiterFunctor& asyncWaiterFunctor,
+        const bool isAsyncMode = false)
+    {
+        return unparkCountImpl(address, count, scopedLambdaRef<void(void*)>(asyncWaiterFunctor), isAsyncMode);
+    }
+
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);
 
@@ -162,13 +185,26 @@ public:
         forEachImpl(scopedLambdaRef<void(Thread&, const void*)>(func));
     }
 
+    WTF_EXPORT_PRIVATE static unsigned bucketSize(const void* address);
+
 private:
     WTF_EXPORT_PRIVATE static ParkResult parkConditionallyImpl(
         const void* address,
         const ScopedLambda<bool()>& validation,
         const ScopedLambda<void()>& beforeSleep,
-        const TimeWithDynamicClockType& timeout);
+        const TimeWithDynamicClockType& timeout,
+        const bool isAsyncMode = false);
     
+    WTF_EXPORT_PRIVATE static void parkAsyncImpl(const void* address, void* data);
+
+    WTF_EXPORT_PRIVATE static void unparkAsyncImpl(const void* address, void* target, const ScopedLambda<void(void*)>& functor);
+
+    WTF_EXPORT_PRIVATE static unsigned unparkCountImpl(
+        const void* address,
+        unsigned count,
+        const ScopedLambda<void(void*)>& asyncWaiterFunctor,
+        const bool isAsyncMode = false);
+
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
         const void* address, const ScopedLambda<intptr_t(UnparkResult)>& callback);
 

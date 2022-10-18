@@ -62,5 +62,7 @@ JSC_DECLARE_JIT_OPERATION(operationAtomicsStore, EncodedJSValue, (JSGlobalObject
 JSC_DECLARE_JIT_OPERATION(operationAtomicsSub, EncodedJSValue, (JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand));
 JSC_DECLARE_JIT_OPERATION(operationAtomicsXor, EncodedJSValue, (JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand));
 
+JS_EXPORT_PRIVATE EncodedJSValue getWaiterListSize(JSGlobalObject*, CallFrame*);
+
 } // namespace JSC
 

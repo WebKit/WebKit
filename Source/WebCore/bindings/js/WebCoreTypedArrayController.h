@@ -42,6 +42,7 @@ public:
     JSC::JSArrayBuffer* toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
     void registerWrapper(JSC::JSGlobalObject*, ArrayBuffer*, JSC::JSArrayBuffer*) override;
     bool isAtomicsWaitAllowedOnCurrentThread() override;
+    bool isAtomicsWaitAsyncAllowedOnCurrentThread() override;
 
     JSC::WeakHandleOwner* wrapperOwner() { return &m_owner; }
 
@@ -54,6 +55,7 @@ private:
 
     JSArrayBufferOwner m_owner;
     bool m_allowAtomicsWait;
+    bool m_allowAtomicsWaitAsync;
 };
 
 } // namespace WebCore

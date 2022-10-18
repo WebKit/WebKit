@@ -8,4 +8,8 @@ test(() => {
   assert_throws_js(TypeError, () => {
     Atomics.wait(ta, 0, 0, 10);
   });
+
+  assert_throws_js(TypeError, () => {
+    Atomics.waitAsync(ta, 0, 0, 10);
+  });
 }, `[[CanBlock]] in a ${self.constructor.name}`);
