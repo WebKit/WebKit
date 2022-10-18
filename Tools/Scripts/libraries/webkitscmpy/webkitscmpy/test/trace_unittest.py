@@ -70,25 +70,25 @@ class TestRelationship(TestCase):
 
     def test_follow_up(self):
         self.assertEqual(
-            ('follow-up', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
+            ('follow-up to', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Fix following 1230@main (0123456789ab)',
             ))
         )
         self.assertEqual(
-            ('follow-up', ['1230@main']), Relationship.parse(Commit(
+            ('follow-up to', ['1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Follow-up 1230@main, it broke the build',
             ))
         )
         self.assertEqual(
-            ('follow-up', ['1230@main']), Relationship.parse(Commit(
+            ('follow-up to', ['1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='REGRESSION 1230@main',
             ))
         )
         self.assertEqual(
-            ('follow-up', ['1230@main']), Relationship.parse(Commit(
+            ('follow-up to', ['1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Test-addition (1230@main)',
             ))
@@ -136,11 +136,11 @@ class TestCommitsStory(TestCase):
         self.assertEqual(story.by_issue, {})
         self.assertEqual(
             [str(rel) for rel in story.relations.get('1230@main', [])],
-            ['1234@main follow-up by'],
+            ['1234@main followed-up by'],
         )
         self.assertEqual(
             [str(rel) for rel in story.relations.get('0123456789ab', [])],
-            ['1234@main follow-up by'],
+            ['1234@main followed-up by'],
         )
 
 
@@ -160,7 +160,7 @@ class TestTrace(testing.PathTestCase):
             ))
         self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
-    def test_revert(self):
+    def test_revert_a(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
             repo.head = Commit(
                 hash='deadbeef1234', revision=10, identifier='6@main',
@@ -176,6 +176,120 @@ class TestTrace(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             '6@main | deadbeef1234 | Reverts 5@main\n    reverts 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_revert_b(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Revert [5@main]', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | Revert [5@main]\n    reverts 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_follow_up_a(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Follow-up 5@main', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | Follow-up 5@main\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_follow_up_b(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Follow up to 5@main', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | Follow up to 5@main\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_follow_up_c(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Followup fix to 5@main', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | Followup fix to 5@main\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_regression(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='REGRESSION (5@main) Fix the build', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | REGRESSION (5@main) Fix the build\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_gardening(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='[Gardening]: REGRESSION 5@main', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | [Gardening]: REGRESSION 5@main\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
 
