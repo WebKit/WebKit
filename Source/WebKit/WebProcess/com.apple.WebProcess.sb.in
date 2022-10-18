@@ -2347,6 +2347,21 @@
     )
 )
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
+;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
+(deny user-preference-read (with enable-state-flag "BlockIOKitInWebContentSandbox")
+    (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
+
+(with-filter (state-flag "BlockIOKitInWebContentSandbox")
+    (deny iokit-open-service (with telemetry-backtrace))
+    (deny iokit-open-user-client (with telemetry-backtrace))
+    (deny mach-lookup (with telemetry-backtrace)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.mach"))
+            (xpc-service-name "com.apple.MTLCompilerService"))))
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
 (deny darwin-notification-post)
 (allow darwin-notification-post
