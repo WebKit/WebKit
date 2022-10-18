@@ -1,7 +1,16 @@
-This tests that
+This tests that <title> will be used as the description for a web area.
 
-PASS webArea.description is 'AXDescription: FirstTitle'
-PASS webArea.description is 'AXDescription: SecondTitle'
+PASS: webArea.description === 'AXDescription: FirstTitle'
+
+Removing title element.
+PASS: webArea.description === 'AXDescription: '
+
+Adding new title element.
+PASS: webArea.description === 'AXDescription: SecondTitle'
+
+Using document.title to update the title string.
+PASS: webArea.description === 'AXDescription: ThirdTitle'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

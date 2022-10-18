@@ -187,6 +187,7 @@ public:
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void onSelectedChanged(Node*);
+    void onTitleChange(Document&);
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
@@ -649,6 +650,7 @@ inline void AXObjectCache::autofillTypeChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
+inline void AXObjectCache::onTitleChange(Document&) { }
 inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node*, Node*) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }

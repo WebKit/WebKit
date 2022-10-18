@@ -1435,6 +1435,11 @@ void AXObjectCache::onSelectedChanged(Node* node)
         selectedChildrenChanged(node);
 }
 
+void AXObjectCache::onTitleChange(Document& document)
+{
+    postNotification(get(&document), nullptr, AXTextChanged);
+}
+
 #ifndef NDEBUG
 void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
 {

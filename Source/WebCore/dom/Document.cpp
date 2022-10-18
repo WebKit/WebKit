@@ -1710,6 +1710,11 @@ void Document::updateTitle(const StringWithDirection& title)
         });
         m_updateTitleTaskScheduled = true;
     }
+
+#if ENABLE(ACCESSIBILITY)
+    if (auto* cache = existingAXObjectCache())
+        cache->onTitleChange(*this);
+#endif
 }
 
 void Document::updateTitleFromTitleElement()
