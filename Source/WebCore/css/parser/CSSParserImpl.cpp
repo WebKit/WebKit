@@ -37,6 +37,7 @@
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSParserIdioms.h"
 #include "CSSParserObserver.h"
 #include "CSSParserObserverWrapper.h"
 #include "CSSParserSelector.h"

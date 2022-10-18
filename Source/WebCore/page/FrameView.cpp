@@ -82,6 +82,7 @@
 #include "ProgressTracker.h"
 #include "Quirks.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderFlexibleBox.h"
 #include "RenderIFrame.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
