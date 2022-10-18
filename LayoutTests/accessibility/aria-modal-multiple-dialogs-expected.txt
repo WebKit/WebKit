@@ -22,6 +22,10 @@ PASS: background accessible: false
 PASS: #dialog1 accessible: true
 PASS: #dialog2 accessible: false
 
+Focusing on background.
+
+PASS: background accessible: true
+
 Moving focus back to first descendant of #dialog2.
 
 PASS: background accessible: false
