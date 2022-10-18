@@ -494,24 +494,24 @@ PASS CSS namespace: operation vi(double)
 PASS CSS namespace: operation vb(double)
 PASS CSS namespace: operation vmin(double)
 PASS CSS namespace: operation vmax(double)
-FAIL CSS namespace: operation svw(double) assert_own_property: namespace object missing operation "svw" expected property "svw" missing
-FAIL CSS namespace: operation svh(double) assert_own_property: namespace object missing operation "svh" expected property "svh" missing
-FAIL CSS namespace: operation svi(double) assert_own_property: namespace object missing operation "svi" expected property "svi" missing
-FAIL CSS namespace: operation svb(double) assert_own_property: namespace object missing operation "svb" expected property "svb" missing
-FAIL CSS namespace: operation svmin(double) assert_own_property: namespace object missing operation "svmin" expected property "svmin" missing
-FAIL CSS namespace: operation svmax(double) assert_own_property: namespace object missing operation "svmax" expected property "svmax" missing
-FAIL CSS namespace: operation lvw(double) assert_own_property: namespace object missing operation "lvw" expected property "lvw" missing
-FAIL CSS namespace: operation lvh(double) assert_own_property: namespace object missing operation "lvh" expected property "lvh" missing
-FAIL CSS namespace: operation lvi(double) assert_own_property: namespace object missing operation "lvi" expected property "lvi" missing
-FAIL CSS namespace: operation lvb(double) assert_own_property: namespace object missing operation "lvb" expected property "lvb" missing
-FAIL CSS namespace: operation lvmin(double) assert_own_property: namespace object missing operation "lvmin" expected property "lvmin" missing
-FAIL CSS namespace: operation lvmax(double) assert_own_property: namespace object missing operation "lvmax" expected property "lvmax" missing
-FAIL CSS namespace: operation dvw(double) assert_own_property: namespace object missing operation "dvw" expected property "dvw" missing
-FAIL CSS namespace: operation dvh(double) assert_own_property: namespace object missing operation "dvh" expected property "dvh" missing
-FAIL CSS namespace: operation dvi(double) assert_own_property: namespace object missing operation "dvi" expected property "dvi" missing
-FAIL CSS namespace: operation dvb(double) assert_own_property: namespace object missing operation "dvb" expected property "dvb" missing
-FAIL CSS namespace: operation dvmin(double) assert_own_property: namespace object missing operation "dvmin" expected property "dvmin" missing
-FAIL CSS namespace: operation dvmax(double) assert_own_property: namespace object missing operation "dvmax" expected property "dvmax" missing
+PASS CSS namespace: operation svw(double)
+PASS CSS namespace: operation svh(double)
+PASS CSS namespace: operation svi(double)
+PASS CSS namespace: operation svb(double)
+PASS CSS namespace: operation svmin(double)
+PASS CSS namespace: operation svmax(double)
+PASS CSS namespace: operation lvw(double)
+PASS CSS namespace: operation lvh(double)
+PASS CSS namespace: operation lvi(double)
+PASS CSS namespace: operation lvb(double)
+PASS CSS namespace: operation lvmin(double)
+PASS CSS namespace: operation lvmax(double)
+PASS CSS namespace: operation dvw(double)
+PASS CSS namespace: operation dvh(double)
+PASS CSS namespace: operation dvi(double)
+PASS CSS namespace: operation dvb(double)
+PASS CSS namespace: operation dvmin(double)
+PASS CSS namespace: operation dvmax(double)
 PASS CSS namespace: operation cqw(double)
 PASS CSS namespace: operation cqh(double)
 PASS CSS namespace: operation cqi(double)
