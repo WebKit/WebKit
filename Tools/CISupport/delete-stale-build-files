@@ -98,10 +98,10 @@ def deleteWindowsStaleFiles():
                            '/cygdrive/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/sym/DumpRenderTreeLib.pdb']
     for directory in directoriesToDelete:
         try:
-            print(f'Removing: {directory}')
+            print('Removing: {}'.format(directory))
             shutil.rmtree(directory)
         except OSError as e:
-            print(f'Failed to remove: {directory}, error: {e}')
+            print('Failed to remove: {}, error: {}'.format(directory, e))
             continue
         print('Done')
 
