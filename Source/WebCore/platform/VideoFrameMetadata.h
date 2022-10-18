@@ -45,72 +45,7 @@ struct VideoFrameMetadata {
     std::optional<double> captureTime;
     std::optional<double> receiveTime;
     std::optional<unsigned> rtpTimestamp;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoFrameMetadata> decode(Decoder&);
 };
-
-template<class Encoder>
-inline void VideoFrameMetadata::encode(Encoder& encoder) const
-{
-    encoder << presentationTime << expectedDisplayTime << width << height << mediaTime << presentedFrames << processingDuration << captureTime << receiveTime << rtpTimestamp;
-}
-
-template<class Decoder>
-inline std::optional<VideoFrameMetadata> VideoFrameMetadata::decode(Decoder& decoder)
-{
-    std::optional<double> presentationTime;
-    decoder >> presentationTime;
-    if (!presentationTime)
-        return std::nullopt;
-
-    std::optional<double> expectedDisplayTime;
-    decoder >> expectedDisplayTime;
-    if (!expectedDisplayTime)
-        return std::nullopt;
-
-    std::optional<unsigned> width;
-    decoder >> width;
-    if (!width)
-        return std::nullopt;
-
-    std::optional<unsigned> height;
-    decoder >> height;
-    if (!height)
-        return std::nullopt;
-
-    std::optional<double> mediaTime;
-    decoder >> mediaTime;
-    if (!mediaTime)
-        return std::nullopt;
-
-    std::optional<unsigned> presentedFrames;
-    decoder >> presentedFrames;
-    if (!presentedFrames)
-        return std::nullopt;
-
-    std::optional<std::optional<double>> processingDuration;
-    decoder >> processingDuration;
-    if (!processingDuration)
-        return std::nullopt;
-
-    std::optional<std::optional<double>> captureTime;
-    decoder >> captureTime;
-    if (!captureTime)
-        return std::nullopt;
-
-    std::optional<std::optional<double>> receiveTime;
-    decoder >> receiveTime;
-    if (!receiveTime)
-        return std::nullopt;
-
-    std::optional<std::optional<unsigned>> rtpTimestamp;
-    decoder >> rtpTimestamp;
-    if (!rtpTimestamp)
-        return std::nullopt;
-
-    return VideoFrameMetadata { *presentationTime, *expectedDisplayTime, *width, *height, *mediaTime, *presentedFrames, *processingDuration, *captureTime, *receiveTime, *rtpTimestamp };
-}
 
 }
 

@@ -954,4 +954,51 @@ struct WebCore::AudioConfiguration {
     std::optional<uint64_t> bitrate;
     std::optional<uint32_t> samplerate;
     std::optional<bool> spatialRendering;
- };
+};
+
+[Nested] enum class WebCore::Cookie::SameSitePolicy : uint8_t {
+    None
+    Lax
+    Strict
+};
+
+struct WebCore::Cookie {
+    String name;
+    String value;
+    String domain;
+    String path;
+    double created;
+    std::optional<double> expires;
+    bool httpOnly;
+    bool secure;
+    bool session;
+    String comment;
+    URL commentURL;
+    Vector<uint16_t> ports;
+    WebCore::Cookie::SameSitePolicy sameSite;
+};
+
+#if ENABLE(VIDEO)
+struct WebCore::VideoFrameMetadata {
+    double presentationTime;
+    double expectedDisplayTime;
+
+    unsigned width;
+    unsigned height;
+    double mediaTime;
+
+    unsigned presentedFrames;
+    std::optional<double> processingDuration;
+
+    std::optional<double> captureTime;
+    std::optional<double> receiveTime;
+    std::optional<unsigned> rtpTimestamp;
+};
+#endif // ENABLE(VIDEO)
+
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::NavigationPreloadState {
+    bool enabled;
+    String headerValue;
+};
+#endif // ENABLE(SERVICE_WORKER)

@@ -467,12 +467,22 @@ std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(
 #if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::NavigationPreloadState>::encode(Encoder& encoder, const WebCore::NavigationPreloadState& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.enabled;
+    encoder << instance.headerValue;
 }
 
 std::optional<WebCore::NavigationPreloadState> Coder<WebCore::NavigationPreloadState>::decode(Decoder& decoder)
 {
-    return WebCore::NavigationPreloadState::decode(decoder);
+    std::optional<bool> enabled;
+    decoder >> enabled;
+    if (!enabled)
+        return { };
+
+    std::optional<String> headerValue;
+    decoder >> headerValue;
+    if (!headerValue)
+        return { };
+    return { { *enabled, WTFMove(*headerValue) } };
 }
 #endif
 
