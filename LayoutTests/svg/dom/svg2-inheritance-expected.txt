@@ -4,9 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS SVGAElement inherits SVGGraphicsElement
-PASS SVGAltGlyphDefElement inherits SVGElement
-PASS SVGAltGlyphElement inherits SVGTextPositioningElement
-PASS SVGAltGlyphItemElement inherits SVGElement
 PASS SVGAngle inherits Object
 PASS SVGAnimateColorElement inherits SVGAnimationElement
 PASS SVGAnimateElement inherits SVGAnimationElement
@@ -31,25 +28,15 @@ PASS SVGCircleElement inherits SVGGeometryElement
 FAIL SVGClipPathElement should inherit SVGDefinitionElement but got SVGGraphicsElement instead
 FAIL SVGColorProfileElement is not defined
 FAIL SVGColorProfileRule is not defined
-PASS SVGCursorElement inherits SVGElement
 PASS SVGDefsElement inherits SVGGraphicsElement
 PASS SVGDescElement inherits SVGElement
 PASS SVGElement inherits Element
 PASS SVGEllipseElement inherits SVGGeometryElement
-PASS SVGFontElement inherits SVGElement
-PASS SVGFontFaceElement inherits SVGElement
-PASS SVGFontFaceFormatElement inherits SVGElement
-PASS SVGFontFaceNameElement inherits SVGElement
-PASS SVGFontFaceSrcElement inherits SVGElement
-PASS SVGFontFaceUriElement inherits SVGElement
 PASS SVGForeignObjectElement inherits SVGGraphicsElement
 PASS SVGGElement inherits SVGGraphicsElement
 PASS SVGGeometryElement inherits SVGGraphicsElement
-PASS SVGGlyphElement inherits SVGElement
-PASS SVGGlyphRefElement inherits SVGElement
 PASS SVGGradientElement inherits SVGElement
 PASS SVGGraphicsElement inherits SVGElement
-PASS SVGHKernElement inherits SVGElement
 PASS SVGImageElement inherits SVGGraphicsElement
 PASS SVGLength inherits Object
 PASS SVGLengthList inherits Object
@@ -65,7 +52,6 @@ FAIL SVGMeshGradientElement is not defined
 FAIL SVGMeshPatchElement is not defined
 FAIL SVGMeshRowElement is not defined
 PASS SVGMetadataElement inherits SVGElement
-PASS SVGMissingGlyphElement inherits SVGElement
 PASS SVGNumber inherits Object
 PASS SVGNumberList inherits Object
 PASS SVGPathElement inherits SVGGeometryElement
@@ -107,7 +93,6 @@ PASS SVGStringList inherits Object
 PASS SVGStyleElement inherits SVGElement
 PASS SVGSwitchElement inherits SVGGraphicsElement
 PASS SVGSymbolElement inherits SVGGraphicsElement
-PASS SVGTRefElement inherits SVGTextPositioningElement
 PASS SVGTSpanElement inherits SVGTextPositioningElement
 PASS SVGTextContentElement inherits SVGGraphicsElement
 PASS SVGTextElement inherits SVGTextPositioningElement
@@ -117,7 +102,6 @@ PASS SVGTitleElement inherits SVGElement
 PASS SVGTransform inherits Object
 PASS SVGTransformList inherits Object
 PASS SVGUseElement inherits SVGGraphicsElement
-PASS SVGVKernElement inherits SVGElement
 PASS SVGViewElement inherits SVGElement
 PASS SVGViewSpec inherits Object
 FAIL TimeEvent is not defined

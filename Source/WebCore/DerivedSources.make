@@ -1362,9 +1362,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/storage/StorageEvent.idl \
     $(WebCore)/svg/Document+SVG.idl \
     $(WebCore)/svg/SVGAElement.idl \
-    $(WebCore)/svg/SVGAltGlyphDefElement.idl \
-    $(WebCore)/svg/SVGAltGlyphElement.idl \
-    $(WebCore)/svg/SVGAltGlyphItemElement.idl \
     $(WebCore)/svg/SVGAngle.idl \
     $(WebCore)/svg/SVGAnimateColorElement.idl \
     $(WebCore)/svg/SVGAnimateElement.idl \
@@ -1386,7 +1383,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGCircleElement.idl \
     $(WebCore)/svg/SVGClipPathElement.idl \
     $(WebCore)/svg/SVGComponentTransferFunctionElement.idl \
-    $(WebCore)/svg/SVGCursorElement.idl \
     $(WebCore)/svg/SVGDefsElement.idl \
     $(WebCore)/svg/SVGDescElement.idl \
     $(WebCore)/svg/SVGElement.idl \
@@ -1419,20 +1415,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGFilterElement.idl \
     $(WebCore)/svg/SVGFilterPrimitiveStandardAttributes.idl \
     $(WebCore)/svg/SVGFitToViewBox.idl \
-    $(WebCore)/svg/SVGFontElement.idl \
-    $(WebCore)/svg/SVGFontFaceElement.idl \
-    $(WebCore)/svg/SVGFontFaceFormatElement.idl \
-    $(WebCore)/svg/SVGFontFaceNameElement.idl \
-    $(WebCore)/svg/SVGFontFaceSrcElement.idl \
-    $(WebCore)/svg/SVGFontFaceUriElement.idl \
     $(WebCore)/svg/SVGForeignObjectElement.idl \
     $(WebCore)/svg/SVGGElement.idl \
     $(WebCore)/svg/SVGGeometryElement.idl \
-    $(WebCore)/svg/SVGGlyphElement.idl \
-    $(WebCore)/svg/SVGGlyphRefElement.idl \
     $(WebCore)/svg/SVGGradientElement.idl \
     $(WebCore)/svg/SVGGraphicsElement.idl \
-    $(WebCore)/svg/SVGHKernElement.idl \
     $(WebCore)/svg/SVGImageElement.idl \
     $(WebCore)/svg/SVGLength.idl \
     $(WebCore)/svg/SVGLengthList.idl \
@@ -1443,7 +1430,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGMaskElement.idl \
     $(WebCore)/svg/SVGMatrix.idl \
     $(WebCore)/svg/SVGMetadataElement.idl \
-    $(WebCore)/svg/SVGMissingGlyphElement.idl \
     $(WebCore)/svg/SVGNumber.idl \
     $(WebCore)/svg/SVGNumberList.idl \
     $(WebCore)/svg/SVGPathElement.idl \
@@ -1486,7 +1472,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGStyleElement.idl \
     $(WebCore)/svg/SVGSwitchElement.idl \
     $(WebCore)/svg/SVGSymbolElement.idl \
-    $(WebCore)/svg/SVGTRefElement.idl \
     $(WebCore)/svg/SVGTSpanElement.idl \
     $(WebCore)/svg/SVGTests.idl \
     $(WebCore)/svg/SVGTextContentElement.idl \
@@ -1499,7 +1484,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/SVGURIReference.idl \
     $(WebCore)/svg/SVGUnitTypes.idl \
     $(WebCore)/svg/SVGUseElement.idl \
-    $(WebCore)/svg/SVGVKernElement.idl \
     $(WebCore)/svg/SVGViewElement.idl \
     $(WebCore)/svg/SVGViewSpec.idl \
     $(WebCore)/svg/SVGZoomAndPan.idl \

@@ -1,16 +1,33 @@
 
+PASS SVGAltGlyphElement interface must be removed
+PASS SVGAltGlyphDefElement interface must be removed
+PASS SVGAltGlyphItemElement interface must be removed
 PASS SVGAnimatedPathData interface must be removed
 PASS SVGColor interface must be removed
+PASS SVGColorProfileElement interface must be removed
+PASS SVGColorProfileRule interface must be removed
+PASS SVGCursorElement interface must be removed
 FAIL SVGDocument interface must be removed assert_false: expected false got true
 PASS SVGElementInstanceList interface must be removed
 PASS SVGExternalResourcesRequired interface must be removed
+PASS SVGFontElement interface must be removed
+PASS SVGFontFaceElement interface must be removed
+PASS SVGFontFaceSrcElement interface must be removed
+PASS SVGFontFaceUriElement interface must be removed
+PASS SVGFontFaceFormatElement interface must be removed
+PASS SVGGlyphElement interface must be removed
+PASS SVGGlyphRefElement interface must be removed
+PASS SVGHKernElement interface must be removed
 PASS SVGICCColor interface must be removed
 PASS SVGLangSpace interface must be removed
 PASS SVGLocatable interface must be removed
+PASS SVGMissingGlyphElement interface must be removed
 PASS SVGTransformable interface must be removed
+PASS SVGTRefElement interface must be removed
 PASS SVGPaint interface must be removed
 FAIL SVGPathSeg interface must be removed assert_false: expected false got true
 PASS SVGStylable interface must be removed
+PASS SVGVKernElement interface must be removed
 FAIL SVGViewSpec interface must be removed assert_false: expected false got true
 PASS SVGZoomEvent interface must be removed
 PASS GetSVGDocument mixin interface must not be exposed

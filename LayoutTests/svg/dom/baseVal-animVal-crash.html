@@ -6,9 +6,9 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 function go() {
-    var oSVGAltGlyphElement = document.createElementNS("http://www.w3.org/2000/svg", "altGlyph");
+    var oSVGTextElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
     var oSvgMaskElement = document.createElementNS("http://www.w3.org/2000/svg", "mask");
-    var oSvgLengthList = oSVGAltGlyphElement.dy.baseVal;
+    var oSvgLengthList = oSVGTextElement.dy.baseVal;
     oSvgLengthList.appendItem(oSvgMaskElement.width.animVal);
     gc();
     oSvgLengthList.appendItem(oSvgMaskElement.width.animVal);

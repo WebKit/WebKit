@@ -1534,9 +1534,6 @@ $(PROJECT_DIR)/storage/Storage.idl
 $(PROJECT_DIR)/storage/StorageEvent.idl
 $(PROJECT_DIR)/svg/Document+SVG.idl
 $(PROJECT_DIR)/svg/SVGAElement.idl
-$(PROJECT_DIR)/svg/SVGAltGlyphDefElement.idl
-$(PROJECT_DIR)/svg/SVGAltGlyphElement.idl
-$(PROJECT_DIR)/svg/SVGAltGlyphItemElement.idl
 $(PROJECT_DIR)/svg/SVGAngle.idl
 $(PROJECT_DIR)/svg/SVGAnimateColorElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateElement.idl
@@ -1558,7 +1555,6 @@ $(PROJECT_DIR)/svg/SVGAnimationElement.idl
 $(PROJECT_DIR)/svg/SVGCircleElement.idl
 $(PROJECT_DIR)/svg/SVGClipPathElement.idl
 $(PROJECT_DIR)/svg/SVGComponentTransferFunctionElement.idl
-$(PROJECT_DIR)/svg/SVGCursorElement.idl
 $(PROJECT_DIR)/svg/SVGDefsElement.idl
 $(PROJECT_DIR)/svg/SVGDescElement.idl
 $(PROJECT_DIR)/svg/SVGElement.idl
@@ -1591,20 +1587,11 @@ $(PROJECT_DIR)/svg/SVGFETurbulenceElement.idl
 $(PROJECT_DIR)/svg/SVGFilterElement.idl
 $(PROJECT_DIR)/svg/SVGFilterPrimitiveStandardAttributes.idl
 $(PROJECT_DIR)/svg/SVGFitToViewBox.idl
-$(PROJECT_DIR)/svg/SVGFontElement.idl
-$(PROJECT_DIR)/svg/SVGFontFaceElement.idl
-$(PROJECT_DIR)/svg/SVGFontFaceFormatElement.idl
-$(PROJECT_DIR)/svg/SVGFontFaceNameElement.idl
-$(PROJECT_DIR)/svg/SVGFontFaceSrcElement.idl
-$(PROJECT_DIR)/svg/SVGFontFaceUriElement.idl
 $(PROJECT_DIR)/svg/SVGForeignObjectElement.idl
 $(PROJECT_DIR)/svg/SVGGElement.idl
 $(PROJECT_DIR)/svg/SVGGeometryElement.idl
-$(PROJECT_DIR)/svg/SVGGlyphElement.idl
-$(PROJECT_DIR)/svg/SVGGlyphRefElement.idl
 $(PROJECT_DIR)/svg/SVGGradientElement.idl
 $(PROJECT_DIR)/svg/SVGGraphicsElement.idl
-$(PROJECT_DIR)/svg/SVGHKernElement.idl
 $(PROJECT_DIR)/svg/SVGImageElement.idl
 $(PROJECT_DIR)/svg/SVGLength.idl
 $(PROJECT_DIR)/svg/SVGLengthList.idl
@@ -1615,7 +1602,6 @@ $(PROJECT_DIR)/svg/SVGMarkerElement.idl
 $(PROJECT_DIR)/svg/SVGMaskElement.idl
 $(PROJECT_DIR)/svg/SVGMatrix.idl
 $(PROJECT_DIR)/svg/SVGMetadataElement.idl
-$(PROJECT_DIR)/svg/SVGMissingGlyphElement.idl
 $(PROJECT_DIR)/svg/SVGNumber.idl
 $(PROJECT_DIR)/svg/SVGNumberList.idl
 $(PROJECT_DIR)/svg/SVGPathElement.idl
@@ -1658,7 +1644,6 @@ $(PROJECT_DIR)/svg/SVGStringList.idl
 $(PROJECT_DIR)/svg/SVGStyleElement.idl
 $(PROJECT_DIR)/svg/SVGSwitchElement.idl
 $(PROJECT_DIR)/svg/SVGSymbolElement.idl
-$(PROJECT_DIR)/svg/SVGTRefElement.idl
 $(PROJECT_DIR)/svg/SVGTSpanElement.idl
 $(PROJECT_DIR)/svg/SVGTests.idl
 $(PROJECT_DIR)/svg/SVGTextContentElement.idl
@@ -1671,7 +1656,6 @@ $(PROJECT_DIR)/svg/SVGTransformList.idl
 $(PROJECT_DIR)/svg/SVGURIReference.idl
 $(PROJECT_DIR)/svg/SVGUnitTypes.idl
 $(PROJECT_DIR)/svg/SVGUseElement.idl
-$(PROJECT_DIR)/svg/SVGVKernElement.idl
 $(PROJECT_DIR)/svg/SVGViewElement.idl
 $(PROJECT_DIR)/svg/SVGViewSpec.idl
 $(PROJECT_DIR)/svg/SVGZoomAndPan.idl

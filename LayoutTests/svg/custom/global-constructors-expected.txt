@@ -102,12 +102,22 @@ PASS SVGTextContentElement.toString() is "function SVGTextContentElement() {\n  
 PASS SVGTextPositioningElement.toString() is "function SVGTextPositioningElement() {\n    [native code]\n}"
 PASS SVGTextElement.toString() is "function SVGTextElement() {\n    [native code]\n}"
 PASS SVGTSpanElement.toString() is "function SVGTSpanElement() {\n    [native code]\n}"
-PASS SVGTRefElement.toString() is "function SVGTRefElement() {\n    [native code]\n}"
+FAIL SVGTRefElement.toString() should be function SVGTRefElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGTRefElement
 PASS SVGTextPathElement.toString() is "function SVGTextPathElement() {\n    [native code]\n}"
-PASS SVGAltGlyphElement.toString() is "function SVGAltGlyphElement() {\n    [native code]\n}"
-PASS SVGAltGlyphDefElement.toString() is "function SVGAltGlyphDefElement() {\n    [native code]\n}"
-PASS SVGAltGlyphItemElement.toString() is "function SVGAltGlyphItemElement() {\n    [native code]\n}"
-PASS SVGGlyphRefElement.toString() is "function SVGGlyphRefElement() {\n    [native code]\n}"
+FAIL SVGAltGlyphElement.toString() should be function SVGAltGlyphElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGAltGlyphElement
+FAIL SVGAltGlyphDefElement.toString() should be function SVGAltGlyphDefElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGAltGlyphDefElement
+FAIL SVGAltGlyphItemElement.toString() should be function SVGAltGlyphItemElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGAltGlyphItemElement
+FAIL SVGGlyphRefElement.toString() should be function SVGGlyphRefElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGGlyphRefElement
 PASS SVGMarkerElement.toString() is "function SVGMarkerElement() {\n    [native code]\n}"
 FAIL SVGColorProfileElement.toString() should be function SVGColorProfileElement() {
     [native code]
@@ -151,7 +161,9 @@ PASS SVGFEOffsetElement.toString() is "function SVGFEOffsetElement() {\n    [nat
 PASS SVGFESpecularLightingElement.toString() is "function SVGFESpecularLightingElement() {\n    [native code]\n}"
 PASS SVGFETileElement.toString() is "function SVGFETileElement() {\n    [native code]\n}"
 PASS SVGFETurbulenceElement.toString() is "function SVGFETurbulenceElement() {\n    [native code]\n}"
-PASS SVGCursorElement.toString() is "function SVGCursorElement() {\n    [native code]\n}"
+FAIL SVGCursorElement.toString() should be function SVGCursorElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGCursorElement
 PASS SVGAElement.toString() is "function SVGAElement() {\n    [native code]\n}"
 PASS SVGViewElement.toString() is "function SVGViewElement() {\n    [native code]\n}"
 PASS SVGScriptElement.toString() is "function SVGScriptElement() {\n    [native code]\n}"
@@ -165,16 +177,36 @@ PASS SVGAnimateMotionElement.toString() is "function SVGAnimateMotionElement() {
 PASS SVGMPathElement.toString() is "function SVGMPathElement() {\n    [native code]\n}"
 PASS SVGAnimateColorElement.toString() is "function SVGAnimateColorElement() {\n    [native code]\n}"
 PASS SVGAnimateTransformElement.toString() is "function SVGAnimateTransformElement() {\n    [native code]\n}"
-PASS SVGFontElement.toString() is "function SVGFontElement() {\n    [native code]\n}"
-PASS SVGGlyphElement.toString() is "function SVGGlyphElement() {\n    [native code]\n}"
-PASS SVGMissingGlyphElement.toString() is "function SVGMissingGlyphElement() {\n    [native code]\n}"
-PASS SVGHKernElement.toString() is "function SVGHKernElement() {\n    [native code]\n}"
-PASS SVGVKernElement.toString() is "function SVGVKernElement() {\n    [native code]\n}"
-PASS SVGFontFaceElement.toString() is "function SVGFontFaceElement() {\n    [native code]\n}"
-PASS SVGFontFaceSrcElement.toString() is "function SVGFontFaceSrcElement() {\n    [native code]\n}"
-PASS SVGFontFaceUriElement.toString() is "function SVGFontFaceUriElement() {\n    [native code]\n}"
-PASS SVGFontFaceFormatElement.toString() is "function SVGFontFaceFormatElement() {\n    [native code]\n}"
-PASS SVGFontFaceNameElement.toString() is "function SVGFontFaceNameElement() {\n    [native code]\n}"
+FAIL SVGFontElement.toString() should be function SVGFontElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFontElement
+FAIL SVGGlyphElement.toString() should be function SVGGlyphElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGGlyphElement
+FAIL SVGMissingGlyphElement.toString() should be function SVGMissingGlyphElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGMissingGlyphElement
+FAIL SVGHKernElement.toString() should be function SVGHKernElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGHKernElement
+FAIL SVGVKernElement.toString() should be function SVGVKernElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGVKernElement
+FAIL SVGFontFaceElement.toString() should be function SVGFontFaceElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFontFaceElement
+FAIL SVGFontFaceSrcElement.toString() should be function SVGFontFaceSrcElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFontFaceSrcElement
+FAIL SVGFontFaceUriElement.toString() should be function SVGFontFaceUriElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFontFaceUriElement
+FAIL SVGFontFaceFormatElement.toString() should be function SVGFontFaceFormatElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFontFaceFormatElement
+FAIL SVGFontFaceNameElement.toString() should be function SVGFontFaceNameElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFontFaceNameElement
 FAIL SVGDefinitionSrcElement.toString() should be function SVGDefinitionSrcElement() {
     [native code]
 }. Threw exception ReferenceError: Can't find variable: SVGDefinitionSrcElement

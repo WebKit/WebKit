@@ -3860,9 +3860,6 @@ JSSQLTransaction.cpp
 JSSQLTransactionCallback.cpp
 JSSQLTransactionErrorCallback.cpp
 JSSVGAElement.cpp
-JSSVGAltGlyphDefElement.cpp
-JSSVGAltGlyphElement.cpp
-JSSVGAltGlyphItemElement.cpp
 JSSVGAngle.cpp
 JSSVGAnimateColorElement.cpp
 JSSVGAnimateElement.cpp
@@ -3884,7 +3881,6 @@ JSSVGAnimationElement.cpp
 JSSVGCircleElement.cpp
 JSSVGClipPathElement.cpp
 JSSVGComponentTransferFunctionElement.cpp
-JSSVGCursorElement.cpp
 JSSVGDefsElement.cpp
 JSSVGDescElement.cpp
 JSSVGElement.cpp
@@ -3917,20 +3913,11 @@ JSSVGFETurbulenceElement.cpp
 JSSVGFilterElement.cpp
 JSSVGFilterPrimitiveStandardAttributes.cpp
 JSSVGFitToViewBox.cpp
-JSSVGFontElement.cpp
-JSSVGFontFaceElement.cpp
-JSSVGFontFaceFormatElement.cpp
-JSSVGFontFaceNameElement.cpp
-JSSVGFontFaceSrcElement.cpp
-JSSVGFontFaceUriElement.cpp
 JSSVGForeignObjectElement.cpp
 JSSVGGElement.cpp
 JSSVGGeometryElement.cpp
-JSSVGGlyphElement.cpp
-JSSVGGlyphRefElement.cpp
 JSSVGGradientElement.cpp
 JSSVGGraphicsElement.cpp
-JSSVGHKernElement.cpp
 JSSVGImageElement.cpp
 JSSVGLength.cpp
 JSSVGLengthList.cpp
@@ -3941,7 +3928,6 @@ JSSVGMarkerElement.cpp
 JSSVGMaskElement.cpp
 JSSVGMatrix.cpp
 JSSVGMetadataElement.cpp
-JSSVGMissingGlyphElement.cpp
 JSSVGNumber.cpp
 JSSVGNumberList.cpp
 JSSVGPathElement.cpp
@@ -3984,7 +3970,6 @@ JSSVGStringList.cpp
 JSSVGStyleElement.cpp
 JSSVGSwitchElement.cpp
 JSSVGSymbolElement.cpp
-JSSVGTRefElement.cpp
 JSSVGTSpanElement.cpp
 JSSVGTests.cpp
 JSSVGTextContentElement.cpp
@@ -3997,7 +3982,6 @@ JSSVGTransformList.cpp
 JSSVGURIReference.cpp
 JSSVGUnitTypes.cpp
 JSSVGUseElement.cpp
-JSSVGVKernElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp

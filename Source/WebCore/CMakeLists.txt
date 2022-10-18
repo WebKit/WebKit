@@ -1366,9 +1366,6 @@ set(WebCore_NON_SVG_IDL_FILES
 set(WebCore_SVG_IDL_FILES
     svg/Document+SVG.idl
     svg/SVGAElement.idl
-    svg/SVGAltGlyphDefElement.idl
-    svg/SVGAltGlyphElement.idl
-    svg/SVGAltGlyphItemElement.idl
     svg/SVGAngle.idl
     svg/SVGAnimateColorElement.idl
     svg/SVGAnimateElement.idl
@@ -1390,7 +1387,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGCircleElement.idl
     svg/SVGClipPathElement.idl
     svg/SVGComponentTransferFunctionElement.idl
-    svg/SVGCursorElement.idl
     svg/SVGDefsElement.idl
     svg/SVGDescElement.idl
     svg/SVGElement.idl
@@ -1423,20 +1419,11 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGFilterElement.idl
     svg/SVGFilterPrimitiveStandardAttributes.idl
     svg/SVGFitToViewBox.idl
-    svg/SVGFontElement.idl
-    svg/SVGFontFaceElement.idl
-    svg/SVGFontFaceFormatElement.idl
-    svg/SVGFontFaceNameElement.idl
-    svg/SVGFontFaceSrcElement.idl
-    svg/SVGFontFaceUriElement.idl
     svg/SVGForeignObjectElement.idl
     svg/SVGGElement.idl
     svg/SVGGeometryElement.idl
-    svg/SVGGlyphElement.idl
-    svg/SVGGlyphRefElement.idl
     svg/SVGGradientElement.idl
     svg/SVGGraphicsElement.idl
-    svg/SVGHKernElement.idl
     svg/SVGImageElement.idl
     svg/SVGLength.idl
     svg/SVGLengthList.idl
@@ -1447,7 +1434,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGMaskElement.idl
     svg/SVGMatrix.idl
     svg/SVGMetadataElement.idl
-    svg/SVGMissingGlyphElement.idl
     svg/SVGNumber.idl
     svg/SVGNumberList.idl
     svg/SVGPathElement.idl
@@ -1490,7 +1476,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGStyleElement.idl
     svg/SVGSwitchElement.idl
     svg/SVGSymbolElement.idl
-    svg/SVGTRefElement.idl
     svg/SVGTSpanElement.idl
     svg/SVGTests.idl
     svg/SVGTextContentElement.idl
@@ -1503,7 +1488,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGURIReference.idl
     svg/SVGUnitTypes.idl
     svg/SVGUseElement.idl
-    svg/SVGVKernElement.idl
     svg/SVGViewElement.idl
     svg/SVGViewSpec.idl
     svg/SVGZoomAndPan.idl
