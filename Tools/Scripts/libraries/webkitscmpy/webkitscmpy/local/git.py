@@ -309,6 +309,7 @@ class Git(Scm):
         'webkitscmpy.history': ['when-user-owned', 'disabled', 'always', 'never'],
         'webkitscmpy.update-fork': ['true', 'false'],
         'webkitscmpy.auto-check': ['true', 'false'],
+        'webkitscmpy.auto-create-commit': ['true', 'false'],
     }
     CONFIG_LOCATIONS = ['global', 'repository', 'project']
 
