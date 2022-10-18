@@ -157,8 +157,7 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float ho
 RenderObject::HighlightState LineBox::ellipsisSelectionState() const
 {
     auto lastLeafBox = this->lastLeafBox();
-    ASSERT(lastLeafBox);
-    if (!lastLeafBox->isText())
+    if (!lastLeafBox || !lastLeafBox->isText())
         return RenderObject::HighlightState::None;
 
     auto& text = downcast<InlineIterator::TextBox>(*lastLeafBox);
