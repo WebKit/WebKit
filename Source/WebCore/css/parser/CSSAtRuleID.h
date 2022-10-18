@@ -50,6 +50,14 @@ enum CSSAtRuleID {
     CSSAtRuleLayer,
     CSSAtRuleContainer,
 
+    CSSAtRuleFontFeatureValues,
+    CSSAtRuleStylistic,
+    CSSAtRuleStyleset,
+    CSSAtRuleCharacterVariant,
+    CSSAtRuleSwash,
+    CSSAtRuleOrnaments,
+    CSSAtRuleAnnotation,
+
     CSSAtRuleFontPaletteValues,
 };
 

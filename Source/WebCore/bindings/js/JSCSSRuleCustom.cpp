@@ -29,6 +29,7 @@
 #include "CSSContainerRule.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontFeatureValuesRule.h"
 #include "CSSFontPaletteValuesRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
@@ -43,6 +44,7 @@
 #include "JSCSSContainerRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
+#include "JSCSSFontFeatureValuesRule.h"
 #include "JSCSSFontPaletteValuesRule.h"
 #include "JSCSSImportRule.h"
 #include "JSCSSKeyframeRule.h"
@@ -81,6 +83,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSFontFaceRule>(globalObject, WTFMove(rule));
     case StyleRuleType::FontPaletteValues:
         return createWrapper<CSSFontPaletteValuesRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::FontFeatureValues:
+        return createWrapper<CSSFontFeatureValuesRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Page:
         return createWrapper<CSSPageRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Import:
@@ -104,6 +108,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:
+    case StyleRuleType::FontFeatureValuesBlock:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
     RELEASE_ASSERT_NOT_REACHED();

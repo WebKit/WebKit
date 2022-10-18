@@ -14,19 +14,19 @@ PASS CSSFontFaceRule must be primary interface of cssFontFaceRule
 PASS Stringification of cssFontFaceRule
 PASS CSSFontFaceRule interface: cssFontFaceRule must inherit property "style" with the proper type
 FAIL CSSRule interface: cssFontFaceRule must inherit property "FONT_FEATURE_VALUES_RULE" with the proper type assert_inherits: property "FONT_FEATURE_VALUES_RULE" not found in prototype chain
-FAIL CSSFontFeatureValuesRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface object length assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface object name assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute fontFamily assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute annotation assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute ornaments assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute stylistic assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute swash assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute characterVariant assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
-FAIL CSSFontFeatureValuesRule interface: attribute styleset assert_own_property: self does not have own property "CSSFontFeatureValuesRule" expected property "CSSFontFeatureValuesRule" missing
+PASS CSSFontFeatureValuesRule interface: existence and properties of interface object
+PASS CSSFontFeatureValuesRule interface object length
+PASS CSSFontFeatureValuesRule interface object name
+PASS CSSFontFeatureValuesRule interface: existence and properties of interface prototype object
+PASS CSSFontFeatureValuesRule interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSFontFeatureValuesRule interface: existence and properties of interface prototype object's @@unscopables property
+FAIL CSSFontFeatureValuesRule interface: attribute fontFamily assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL CSSFontFeatureValuesRule interface: attribute annotation assert_true: The prototype object must have a property "annotation" expected true got false
+FAIL CSSFontFeatureValuesRule interface: attribute ornaments assert_true: The prototype object must have a property "ornaments" expected true got false
+FAIL CSSFontFeatureValuesRule interface: attribute stylistic assert_true: The prototype object must have a property "stylistic" expected true got false
+FAIL CSSFontFeatureValuesRule interface: attribute swash assert_true: The prototype object must have a property "swash" expected true got false
+FAIL CSSFontFeatureValuesRule interface: attribute characterVariant assert_true: The prototype object must have a property "characterVariant" expected true got false
+FAIL CSSFontFeatureValuesRule interface: attribute styleset assert_true: The prototype object must have a property "styleset" expected true got false
 FAIL CSSFontFeatureValuesMap interface: existence and properties of interface object assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 FAIL CSSFontFeatureValuesMap interface object length assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 FAIL CSSFontFeatureValuesMap interface object name assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
