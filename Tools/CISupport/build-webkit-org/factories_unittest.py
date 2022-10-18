@@ -951,7 +951,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-8-Release-Build': [
+        'Apple-watchOS-9-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -962,7 +962,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-Simulator-8-Release-Build': [
+        'Apple-watchOS-Simulator-9-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

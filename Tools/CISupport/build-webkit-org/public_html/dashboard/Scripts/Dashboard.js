@@ -37,6 +37,8 @@ Dashboard = {
         tvOS15Device: { name: "tvos-15", readableName: "TvOS 15", order: 25 },
         tvOS14Simulator: { name: "tvos-simulator-14", readableName: "TvOS Simulator 14", order: 26 },
         tvOS14Device: { name: "tvos-14", readableName: "TvOS 14", order: 27 },
+        watchOS9Simulator: { name: "watchos-simulator-9", readableName: "WatchOS Simulator 9", order: 40 },
+        watchOS9Device: { name: "watchos-9", readableName: "WatchOS 9", order: 41 },
         watchOS8Simulator: { name: "watchos-simulator-8", readableName: "WatchOS Simulator 8", order: 40 },
         watchOS8Device: { name: "watchos-8", readableName: "WatchOS 8", order: 41 },
         watchOS7Simulator: { name: "watchos-simulator-7", readableName: "WatchOS Simulator 7", order: 42 },
