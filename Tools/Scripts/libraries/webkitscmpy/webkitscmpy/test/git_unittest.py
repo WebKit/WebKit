@@ -562,6 +562,17 @@ CommitDate: {time_c}
                 ['Source/main.cpp', 'Source/main.h'],
             )
 
+    def test_merge_base(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            self.assertEqual(
+                str(local.Git(self.path).merge_base('main', 'branch-b')),
+                '2@main',
+            )
+            self.assertEqual(
+                str(local.Git(self.path).merge_base('branch-a', 'branch-b')),
+                '2@main',
+            )
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
