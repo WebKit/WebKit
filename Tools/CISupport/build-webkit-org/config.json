@@ -78,10 +78,10 @@
                     { "name": "bot667", "platform": "ios-simulator-16"},
                     { "name": "bot664", "platform": "ios-simulator-16"},
 
-                    { "name": "bot607", "platform": "tvos-15" },
-                    { "name": "bot608", "platform": "tvos-simulator-15" },
                     { "name": "bot609", "platform": "watchos-9" },
                     { "name": "bot672", "platform": "watchos-simulator-9" },
+                    { "name": "bot607", "platform": "tvos-16" },
+                    { "name": "bot608", "platform": "tvos-simulator-16" },
 
                     { "name": "bot545", "platform": "win" },
                     { "name": "bot546", "platform": "win" },
@@ -365,13 +365,13 @@
                       "workernames": ["bot664"]
                     },
                     {
-                      "name": "Apple-tvOS-15-Release-Build", "factory": "BuildFactory",
-                      "platform": "tvos-15", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple-tvOS-16-Release-Build", "factory": "BuildFactory",
+                      "platform": "tvos-16", "configuration": "release", "architectures": ["arm64"],
                       "workernames": ["bot607"]
                     },
                     {
-                      "name": "Apple-tvOS-Simulator-15-Release-Build", "factory": "BuildFactory",
-                      "platform": "tvos-simulator-15", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple-tvOS-Simulator-16-Release-Build", "factory": "BuildFactory",
+                      "platform": "tvos-simulator-16", "configuration": "release", "architectures": ["arm64"],
                       "workernames": ["bot608"]
                     },
                     {
@@ -745,11 +745,11 @@
                     { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-16", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-16-Simulator-Release-Build", "Apple-iOS-16-Simulator-Debug-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "tvos-15", "branch": "main", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-tvOS-15-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-16", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-16-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-15", "branch": "main", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-tvOS-Simulator-15-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-16", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-Simulator-16-Release-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "watchos-9", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-watchOS-9-Release-Build"]

@@ -929,7 +929,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-tvOS-15-Release-Build': [
+        'Apple-tvOS-16-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -940,7 +940,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-tvOS-Simulator-15-Release-Build': [
+        'Apple-tvOS-Simulator-16-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

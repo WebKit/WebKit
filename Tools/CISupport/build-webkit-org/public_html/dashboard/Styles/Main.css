@@ -211,6 +211,16 @@ table.queue-grid tr.platform.ios-15 img.logo {
     content: url(../Images/IOS15.png);
 }
 
+table.queue-grid tr.platform.tvos-simulator-16 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/TvOS16Simulator.png);
+}
+
+table.queue-grid tr.platform.tvos-16 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/TvOS16.png);
+}
+
 table.queue-grid tr.platform.tvos-simulator-15 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: url(../Images/TvOS15Simulator.png);

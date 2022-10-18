@@ -33,6 +33,8 @@ Dashboard = {
         iOS15Device: { name: "ios-15", readableName: "iOS 15", order: 16 },
         iOS14Simulator: { name: "ios-simulator-14", readableName: "iOS 14 Simulator", order: 17 },
         iOS14Device: { name: "ios-14", readableName: "iOS 14", order: 18 },
+        tvOS16Simulator: { name: "tvos-simulator-16", readableName: "TvOS Simulator 16", order: 24 },
+        tvOS165Device: { name: "tvos-16", readableName: "TvOS 16", order: 25 },
         tvOS15Simulator: { name: "tvos-simulator-15", readableName: "TvOS Simulator 15", order: 24 },
         tvOS15Device: { name: "tvos-15", readableName: "TvOS 15", order: 25 },
         tvOS14Simulator: { name: "tvos-simulator-14", readableName: "TvOS Simulator 14", order: 26 },
