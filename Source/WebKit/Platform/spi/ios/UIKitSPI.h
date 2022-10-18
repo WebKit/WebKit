@@ -1453,12 +1453,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 #if USE(UICONTEXTMENU)
 
-@interface UIAction (IPI)
-- (void)_performActionWithSender:(id)sender;
-@end
-
-#if HAVE(LINK_PREVIEW)
-
 @interface UIContextMenuConfiguration (IPI)
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
@@ -1476,8 +1470,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIContextMenuInteraction (IPI)
 @property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
 @end
-
-#endif // HAVE(LINK_PREVIEW)
 
 #endif // USE(UICONTEXTMENU)
 

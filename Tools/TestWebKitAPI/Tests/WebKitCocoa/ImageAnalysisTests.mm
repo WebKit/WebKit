@@ -400,7 +400,7 @@ static void invokeRemoveBackgroundAction(TestWKWebView *webView)
 
     auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    [[menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()] _performActionWithSender:nil];
+    [[menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()] performWithSender:nil target:nil];
     [webView waitForNextPresentationUpdate];
 }
 

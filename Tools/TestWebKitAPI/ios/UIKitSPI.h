@@ -299,10 +299,6 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 - (void)selectionChanged;
 @end
 
-@interface UIAction ()
-- (void)_performActionWithSender:(id)sender;
-@end
-
 typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
     _UITextSearchMatchMethodContains,
     _UITextSearchMatchMethodStartsWith,
