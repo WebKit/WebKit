@@ -95,6 +95,10 @@ function updateResultWithEvent(event) {
     event.preventDefault();
 }
 
+function clearOutput() {
+    output.value = "";
+}
+
 function setCustomData(event) {
     if (!writeCustomData)
         return true;

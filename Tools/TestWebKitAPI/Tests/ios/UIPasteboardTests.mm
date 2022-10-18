@@ -34,6 +34,7 @@
 #import "UIKitSPI.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIPasteboard.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -331,6 +332,30 @@ TEST(UIPasteboardTests, DataTransferURIListContainsMultipleURLs)
     EXPECT_WK_STREQ("https://www.apple.com/\nhttps://webkit.org/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
     EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
 }
+
+TEST(UIPasteboardTests, PasteDataBackedURL)
+{
+    auto webView = setUpWebViewForPasteboardTests(@"dump-datatransfer-types");
+    auto *urlToCopy = [NSURL URLWithString:@"https://webkit.org/"];
+    auto *pasteboard = UIPasteboard.generalPasteboard;
+
+    auto checkPastedURL = [&] {
+        [webView stringByEvaluatingJavaScript:@"destination.focus()"];
+        [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
+        checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+            @"paste" : @{ @"text/uri-list" : urlToCopy.absoluteString }
+        });
+    };
+
+    [pasteboard setData:urlToCopy.dataRepresentation forPasteboardType:UTTypeURL.identifier];
+    checkPastedURL();
+
+    [webView stringByEvaluatingJavaScript:@"clearOutput()"];
+
+    [pasteboard setValue:urlToCopy.absoluteString forPasteboardType:UTTypeURL.identifier];
+    checkPastedURL();
+}
+
 
 TEST(UIPasteboardTests, ValidPreferredPresentationSizeForImage)
 {
