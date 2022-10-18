@@ -181,7 +181,10 @@ class Trace(Command):
                 if commits_story:
                     found = commits_story.by_ref.get(ref, None)
                 if not found:
-                    found = repository.find(ref)
+                    try:
+                        found = repository.find(ref)
+                    except ValueError:
+                        continue
                 if not found:
                     continue
                 if commits_story:
