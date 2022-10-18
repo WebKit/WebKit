@@ -47,25 +47,28 @@ class InstallGitLFS(Command):
     VERSION_RE = re.compile(r'^git-lfs/(?P<version>\d+\.\d+\.\d+) \(.*\)')
 
     @classmethod
-    def url(cls):
+    def url(cls, mirror_resolver_func=None):
+        _url = None
         from whichcraft import which
         if platform.system() == 'Darwin':
             # x86_64 compiled version works better with VPN, if Rosetta is installed, prefer it even on Apple Silicon
             if platform.machine() == 'arm64' and not which('rosetta'):
-                return '{url}/v{version}/git-lfs-darwin-arm64-v{version}.zip'.format(url=cls.BASE_URL, version=cls.VERSION)
-            return '{url}/v{version}/git-lfs-darwin-amd64-v{version}.zip'.format(url=cls.BASE_URL, version=cls.VERSION)
-
+                _url = '{url}/v{version}/git-lfs-darwin-arm64-v{version}.zip'.format(url=cls.BASE_URL, version=cls.VERSION)
+            else:
+                _url = '{url}/v{version}/git-lfs-darwin-amd64-v{version}.zip'.format(url=cls.BASE_URL, version=cls.VERSION)
+        _url = mirror_resolver_func(_url) if _url and callable(mirror_resolver_func) else _url
         # FIXME: Determine URLs for non-Darwin installs
-        return None
+        return _url
 
     @classmethod
-    def install(cls):
-        if not cls.url():
+    def install(cls, mirror_resolver_func=None):
+        url = cls.url(mirror_resolver_func=mirror_resolver_func)
+        if not url:
             sys.stderr.write('No `git lfs` install implemented for the current platform\n')
             return False
 
-        log.info("Downloading `git lfs` from '{}'...".format(cls.url()))
-        response = requests.get(cls.url(), allow_redirects=True)
+        log.info("Downloading `git lfs` from '{}'...".format(url))
+        response = requests.get(url, allow_redirects=True)
         log.info("Downloading finished, status code '{}'".format(response.status_code))
 
         if response.status_code != 200:
@@ -121,6 +124,10 @@ class InstallGitLFS(Command):
             dest='configure',
             default=None,
         )
+        parser.set_defaults(
+            mirror_resolver_func=None,
+        )
+
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -143,7 +150,7 @@ class InstallGitLFS(Command):
 
         if args.overwrite or ran.returncode or version != cls.VERSION:
             print('Installing `git lfs` version {}'.format(cls.VERSION))
-            if not cls.install():
+            if not cls.install(mirror_resolver_func=args.mirror_resolver_func):
                 sys.stderr.write("Failed to install `git lfs` on this machine\n")
                 return 1
         else:
