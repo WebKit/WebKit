@@ -67,8 +67,15 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
 
     bool hasSd = !minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined();
     bool hasFd = !minimumFractionDigitsValue.isUndefined() || !maximumFractionDigitsValue.isUndefined();
-    bool needSd = hasSd || roundingPriority != IntlRoundingPriority::Auto;
-    bool needFd = (!hasSd && notation != IntlNotation::Compact) || roundingPriority != IntlRoundingPriority::Auto;
+
+    bool needSd = true;
+    bool needFd = true;
+
+    if (roundingPriority == IntlRoundingPriority::Auto) {
+        needSd = hasSd;
+        if (hasSd || (!hasFd && notation == IntlNotation::Compact))
+            needFd = false;
+    }
 
     if (needSd) {
         if (hasSd) {
