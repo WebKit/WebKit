@@ -537,7 +537,7 @@ void ThemeAdwaita::setAccentColor(const Color& color)
 
 Color ThemeAdwaita::accentColor()
 {
-    return m_accentColor.isValid() ? m_accentColor : SRGBA<uint8_t> { 52, 132, 228 };
+    return m_accentColor;
 }
 
 } // namespace WebCore

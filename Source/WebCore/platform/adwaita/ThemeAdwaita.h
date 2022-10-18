@@ -60,7 +60,7 @@ private:
 
     static Color focusColor(const Color&);
 
-    Color m_accentColor;
+    Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
 };
 
 } // namespace WebCore
