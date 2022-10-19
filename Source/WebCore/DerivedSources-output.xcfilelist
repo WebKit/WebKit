@@ -39,6 +39,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTMLNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTTPHeaderNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTTPHeaderNames.gperf
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/HTTPHeaderNames.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/IDLFileNamesList.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.idl
