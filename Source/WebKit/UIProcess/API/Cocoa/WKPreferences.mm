@@ -992,14 +992,14 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->domTimersThrottlingEnabled();
 }
 
-- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
+- (void)_setWebArchiveTestingModeEnabled:(BOOL)enabled
 {
-    _preferences->setWebArchiveDebugModeEnabled(enabled);
+    _preferences->setWebArchiveTestingModeEnabled(enabled);
 }
 
-- (BOOL)_webArchiveDebugModeEnabled
+- (BOOL)_webArchiveTestingModeEnabled
 {
-    return _preferences->webArchiveDebugModeEnabled();
+    return _preferences->webArchiveTestingModeEnabled();
 }
 
 - (void)_setLocalFileContentSniffingEnabled:(BOOL)enabled
@@ -1656,6 +1656,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 - (BOOL)_subpixelCSSOMElementMetricsEnabled
+{
+    return NO;
+}
+
+- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_webArchiveDebugModeEnabled
 {
     return NO;
 }

@@ -1228,6 +1228,21 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
 }
 #endif
 
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+bool DocumentLoader::isLoadingRemoteArchive() const
+{
+#if ENABLE(MHTML)
+    return m_archive && m_archive->shouldOverrideBaseURL();
+#else
+    bool isQuickLookPreview = false;
+#if USE(QUICK_LOOK)
+    isQuickLookPreview = isQuickLookPreviewURL(m_response.url());
+#endif // QUICK_LOOK
+    return m_archive && !m_frame->settings().webArchiveTestingModeEnabled() && !isQuickLookPreview;
+#endif // !MHTML
+}
+#endif // WEBARCHIVE || MHTML
+
 void DocumentLoader::commitData(const SharedBuffer& data)
 {
     if (!m_gotFirstByte) {
@@ -1255,9 +1270,21 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             return;
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        if (m_archive && m_archive->shouldOverrideBaseURL())
-            document.setBaseURLOverride(m_archive->mainResource()->url());
-#endif
+        if (isLoadingRemoteArchive()) {
+            auto& url { m_archive->mainResource()->url() };
+            if (m_archive->shouldOverrideBaseURL())
+                document.setBaseURLOverride(url);
+#if ENABLE(WEB_ARCHIVE)
+            constexpr auto webArchivePrefix { "webarchive+"_s };
+            if (url.protocol().startsWith(webArchivePrefix)) {
+                auto unprefixedScheme { url.protocol().substring(webArchivePrefix.length()) };
+                if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(unprefixedScheme.toStringWithoutCopying()))
+                    document.securityOrigin().grantLoadLocalResources();
+            }
+#endif // WEB_ARCHIVE
+        }
+#endif // WEB_ARCHIVE || MHTML
+
 #if ENABLE(SERVICE_WORKER)
         if (m_canUseServiceWorkers) {
             if (!document.securityOrigin().isOpaque()) {
@@ -1812,12 +1839,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
     if (!m_archive)
         return false;
 
-#if ENABLE(WEB_ARCHIVE)
-    // The idea of WebArchiveDebugMode is that we should fail instead of trying to fetch from the network.
-    // Returning true ensures the caller will not try to fetch from the network.
-    if (m_frame->settings().webArchiveDebugModeEnabled() && responseMIMEType() == "application/x-webarchive"_s)
-        return true;
-#endif
+    DOCUMENTLOADER_RELEASE_LOG("scheduleArchiveLoad: Failed to unarchive subresource");
 
     // If we want to load from the archive only, then we should always return true so that the caller
     // does not try to fetch from the network.
