@@ -118,8 +118,6 @@ public:
 
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
 
-    FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) final;
-
     void drawFocusRing(const Vector<FloatRect>&, float, float, const Color&) final;
     void drawFocusRing(const Path&, float, float, const Color&) final;
 #if PLATFORM(MAC)

@@ -105,8 +105,6 @@ private:
 
     void applyDeviceScaleFactor(float) override;
 
-    WebCore::FloatRect roundToDevicePixels(const WebCore::FloatRect&, WebCore::GraphicsContext::RoundingMode) override;
-
     void append(std::unique_ptr<PaintingOperation>&&);
     PaintingOperations& m_commandList;
 

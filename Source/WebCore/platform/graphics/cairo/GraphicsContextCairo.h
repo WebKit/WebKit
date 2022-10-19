@@ -108,8 +108,6 @@ public:
     
     RenderingMode renderingMode() const final;
 
-    FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) final;
-
     cairo_t* cr() const;
     Vector<float>& layers();
     void pushImageMask(cairo_surface_t*, const FloatRect&);

@@ -275,8 +275,6 @@ private:
 
     WEBCORE_EXPORT void applyDeviceScaleFactor(float) final;
 
-    WEBCORE_EXPORT FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) final;
-
     void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextState&);
 

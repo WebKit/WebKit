@@ -600,12 +600,6 @@ void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
     recordApplyDeviceScaleFactor(deviceScaleFactor);
 }
 
-FloatRect Recorder::roundToDevicePixels(const FloatRect& rect, GraphicsContext::RoundingMode)
-{
-    WTFLogAlways("GraphicsContext::roundToDevicePixels() is not yet compatible with DisplayList::Recorder.");
-    return rect;
-}
-
 const Recorder::ContextState& Recorder::currentState() const
 {
     ASSERT(m_stateStack.size());

@@ -441,13 +441,6 @@ AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDevi
     return m_primaryContext.getCTM(includeDeviceScale);
 }
 
-FloatRect BifurcatedGraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
-{
-    auto roundedRect = m_primaryContext.roundToDevicePixels(rect, roundingMode);
-    VERIFY_STATE_SYNCHRONIZATION();
-    return roundedRect;
-}
-
 void BifurcatedGraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
     m_primaryContext.drawFocusRing(rects, width, offset, color);

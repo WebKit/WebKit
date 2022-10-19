@@ -1169,11 +1169,6 @@ void CairoOperationRecorder::applyDeviceScaleFactor(float)
 {
 }
 
-FloatRect CairoOperationRecorder::roundToDevicePixels(const FloatRect& rect, GraphicsContext::RoundingMode)
-{
-    return rect;
-}
-
 void CairoOperationRecorder::append(std::unique_ptr<PaintingOperation>&& command)
 {
     m_commandList.append(WTFMove(command));

@@ -192,7 +192,6 @@ public:
         RoundAllSides,
         RoundOriginAndDimensions
     };
-    virtual FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) = 0;
     WEBCORE_EXPORT static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     // Shapes
