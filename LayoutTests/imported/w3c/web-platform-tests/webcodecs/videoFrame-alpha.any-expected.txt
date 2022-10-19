@@ -1,4 +1,4 @@
 
-FAIL OffscreenCanvas source preserves alpha promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL ImageBitmap source preserves alpha promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL OffscreenCanvas source preserves alpha assert_equals: expected 4278190335 but got 0
+FAIL ImageBitmap source preserves alpha assert_equals: expected 4278190335 but got 0
 

@@ -584,6 +584,17 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 
 #endif // ENABLE(VIDEO)
 
+#if ENABLE(WEB_CODECS)
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<WebCodecsVideoFrame>& argument)
+{
+    if (!argument)
+        return std::nullopt;
+    return {{ JSON::Value::create(0), RecordingSwizzleType::Image }};
+}
+
+#endif // ENABLE(WEB_CODECS)
+
 #if ENABLE(WEBGL)
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(std::optional<WebGLRenderingContextBase::BufferDataSource>& argument)

@@ -578,6 +578,17 @@ void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destinat
 }
 #endif
 
+#if ENABLE(WEB_CODECS)
+void Recorder::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
+{
+    if (!frame.isRemoteProxy()) {
+        GraphicsContext::paintVideoFrame(frame, destination, shouldDiscardAlpha);
+        return;
+    }
+    // FIXME: Implement recording.
+}
+#endif
+
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     // We modify the state directly here instead of calling GraphicsContext::scale()

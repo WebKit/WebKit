@@ -600,6 +600,13 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
 }
 #endif
 
+#if ENABLE(WEB_CODECS)
+void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
+{
+    frame.paintInContext(*this, destination, shouldDiscardAlpha);
+}
+#endif
+
 void NullGraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
 {
 }

@@ -47,22 +47,23 @@ class ImageBuffer;
 class NativeImage;
 class OffscreenCanvas;
 
-using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
-#if ENABLE(CSS_TYPED_OM)
-    , RefPtr<CSSStyleImageValue>
-#endif
-#if ENABLE(OFFSCREEN_CANVAS)
-    , RefPtr<OffscreenCanvas>
-#endif
-#if ENABLE(VIDEO)
-    , RefPtr<HTMLVideoElement>
-#endif
-    >;
-
 class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame> {
 public:
     ~WebCodecsVideoFrame();
 
+    using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
+#if ENABLE(CSS_TYPED_OM)
+        , RefPtr<CSSStyleImageValue>
+#endif
+#if ENABLE(OFFSCREEN_CANVAS)
+        , RefPtr<OffscreenCanvas>
+#endif
+#if ENABLE(VIDEO)
+        , RefPtr<HTMLVideoElement>
+#endif
+    >;
+
+    enum class AlphaOption { Keep, Discard };
     struct Init {
         std::optional<uint64_t> duration;
         std::optional<int64_t> timestamp;
@@ -125,6 +126,7 @@ public:
 
     void setDisplaySize(size_t, size_t);
     void setVisibleRect(const DOMRectInit&);
+    bool shoudlDiscardAlpha() const { return m_format && (*m_format == VideoPixelFormat::RGBX || *m_format == VideoPixelFormat::BGRX); }
 
 private:
     static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);

@@ -70,6 +70,7 @@
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
+#include "WebCodecsVideoFrame.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -1419,6 +1420,13 @@ static inline FloatSize size(CSSStyleImageValue& image)
 }
 #endif
 
+#if ENABLE(WEB_CODECS)
+static inline FloatSize size(const WebCodecsVideoFrame& frame)
+{
+    return FloatSize { static_cast<float>(frame.displayWidth()), static_cast<float>(frame.displayHeight()) };
+}
+#endif
+
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& image, float dx, float dy)
 {
     return WTF::switchOn(image,
@@ -1427,6 +1435,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& im
             LayoutSize sourceRectSize = size(*imageElement, ImageSizeType::BeforeDevicePixelRatio);
             return this->drawImage(*imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, destRectSize.width(), destRectSize.height() });
         },
+#if ENABLE(WEB_CODECS)
+        [&] (RefPtr<WebCodecsVideoFrame>& videoFrame) -> ExceptionOr<void> {
+            auto rectSize = size(*videoFrame);
+            return this->drawImage(*videoFrame, FloatRect { 0, 0, rectSize.width(), rectSize.height() }, FloatRect { dx, dy, rectSize.width(), rectSize.height() });
+        },
+#endif
         [&] (auto& element) -> ExceptionOr<void> {
             FloatSize elementSize = size(*element);
             return this->drawImage(*element, FloatRect { 0, 0, elementSize.width(), elementSize.height() }, FloatRect { dx, dy, elementSize.width(), elementSize.height() });
@@ -1513,6 +1527,26 @@ static std::pair<FloatRect, FloatRect> normalizeSourceAndDestination(const Float
 
     return srcDstRect;
 }
+
+#if ENABLE(WEB_CODECS)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& frame, const FloatRect&, const FloatRect& dstRect)
+{
+    if (frame.isDetached())
+        return Exception { InvalidStateError, "frame is detached"_s };
+
+    auto* context = drawingContext();
+    if (!context)
+        return { };
+
+    auto internalFrame = frame.internalFrame();
+    if (!internalFrame)
+        return { };
+
+    context->paintVideoFrame(*internalFrame, dstRect, frame.shoudlDiscardAlpha());
+
+    return { };
+}
+#endif
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage* cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
 {
@@ -2025,6 +2059,17 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     return RefPtr<CanvasPattern> { CanvasPattern::create({ imageBuffer.releaseNonNull() }, repeatX, repeatY, originClean) };
 }
 
+#endif
+
+#if ENABLE(WEB_CODECS)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(WebCodecsVideoFrame& frame, bool repeatX, bool repeatY)
+{
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(repeatX);
+    UNUSED_PARAM(repeatY);
+    // FIXME: Implement.
+    return Exception { TypeError };
+}
 #endif
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(ImageBitmap&, bool, bool)

@@ -28,10 +28,12 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "CVUtilities.h"
+#include "GraphicsContext.h"
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
+#include "PixelBufferConformerCV.h"
 #include "ProcessIdentity.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/cf/AudioToolboxSoftLink.h>
@@ -377,6 +379,18 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
     }
 
     callback({ });
+}
+
+void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, bool shouldDiscardAlpha)
+{
+    // FIXME: Handle alpha discarding.
+    UNUSED_PARAM(shouldDiscardAlpha);
+
+    // FIXME: It is not efficient to create a conformer everytime. We might want to make it more efficient, for instance by storing it in GraphicsContext.
+    auto conformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+    auto image = NativeImage::create(conformer->createImageFromPixelBuffer(pixelBuffer()));
+    FloatRect imageRect { FloatPoint::zero(), image->size() };
+    context.drawNativeImage(*image, presentationSize(), destination, imageRect);
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)

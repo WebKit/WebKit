@@ -54,7 +54,7 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
 }
 
 // https://html.spec.whatwg.org/multipage/canvas.html#check-the-usability-of-the-image-argument
-static std::optional<Exception> checkImageUsability(const CanvasImageSource& source)
+static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::CanvasImageSource& source)
 {
     return switchOn(source,
     [] (const RefPtr<HTMLImageElement>& imageElement) -> std::optional<Exception> {
@@ -109,7 +109,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         return WTFMove(*exception);
 
     return switchOn(source,
-    [&] (const RefPtr<HTMLImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<HTMLImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
 
@@ -120,7 +120,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         return initializeFrameWithResourceAndSize(image.releaseNonNull(), WTFMove(init));
     },
 #if ENABLE(CSS_TYPED_OM)
-    [&] (const RefPtr<CSSStyleImageValue>& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<CSSStyleImageValue>& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
 
@@ -132,14 +132,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
     },
 #endif
 #if ENABLE(VIDEO)
-    [&] (const RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         RefPtr<VideoFrame> videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
         if (!videoFrame)
             return Exception { InvalidStateError,  "Video element has no video frame"_s };
         return initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
     },
 #endif
-    [&] (const RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
 
@@ -149,11 +149,10 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         auto videoFrame = canvas->toVideoFrame();
         if (!videoFrame)
             return Exception { InvalidStateError,  "Canvas has no frame"_s };
-
         return initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
     },
 #if ENABLE(OFFSCREEN_CANVAS)
-    [&] (const RefPtr<OffscreenCanvas>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<OffscreenCanvas>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
 
@@ -167,7 +166,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         return create(*imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
     },
 #endif // ENABLE(OFFSCREEN_CANVAS)
-    [&] (const RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
 

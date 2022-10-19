@@ -94,6 +94,11 @@ RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
     // FIXME: Add support.
     return nullptr;
 }
+
+void VideoFrame::paintInContext(GraphicsContext&, const FloatRect&, bool)
+{
+    // FIXME: Add support.
+}
 #endif
 
 }
