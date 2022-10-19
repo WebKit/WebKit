@@ -719,27 +719,28 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
     // Convert block rules to value (remove duplicates...etc)
-    FontFeatureValuesValue fontFeaturesValuesvalue;
-    auto currentTagsForType = [&fontFeaturesValuesvalue](FontFeatureValuesType type) -> Tags& {
+    FontFeatureValuesValue fontFeatureValuesValue;
+    auto upsertTag = [&fontFeatureValuesValue](FontFeatureValuesType type, Tag tag) {
         switch (type) {
         case FontFeatureValuesType::Styleset:
-            return fontFeaturesValuesvalue.styleset;
+            fontFeatureValuesValue.styleset.set(tag.first, tag.second);
+            break;
         case FontFeatureValuesType::Stylistic:
-            return fontFeaturesValuesvalue.stylistic;
+            fontFeatureValuesValue.stylistic.set(tag.first, tag.second);
+            break;
         case FontFeatureValuesType::CharacterVariant:
-            return fontFeaturesValuesvalue.characterVariant;
+            fontFeatureValuesValue.characterVariant.set(tag.first, tag.second);
+            break;
         case FontFeatureValuesType::Swash:
-            return fontFeaturesValuesvalue.swash;
+            fontFeatureValuesValue.swash.set(tag.first, tag.second);
+            break;
         case FontFeatureValuesType::Ornaments:
-            return fontFeaturesValuesvalue.ornaments;
+            fontFeatureValuesValue.ornaments.set(tag.first, tag.second);
+            break;
         case FontFeatureValuesType::Annotation:
-            return fontFeaturesValuesvalue.annotation;
+            fontFeatureValuesValue.annotation.set(tag.first, tag.second);
+            break;
         }
-    };
-
-    auto upsertTag = [&currentTagsForType](FontFeatureValuesType type, Tag tag) {
-        auto& tags = currentTagsForType(type);
-        tags.set(tag.first, tag.second);
     };
     
     for (auto block : rules) {
@@ -752,7 +753,7 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
             upsertTag(fontFeatureValuesBlockRule.fontFeatureValuesType(), tag);
     }
 
-    return StyleRuleFontFeatureValues::create(fontFamilies, fontFeaturesValuesvalue);
+    return StyleRuleFontFeatureValues::create(fontFamilies, fontFeatureValuesValue);
 }
 
 RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
