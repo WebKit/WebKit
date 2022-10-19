@@ -29,6 +29,7 @@
 #include "HTTPHeaderNames.h"
 #include "Logging.h"
 #include "PublicSuffix.h"
+#include "RegistrableDomain.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
@@ -800,6 +801,11 @@ String ResourceRequestBase::partitionName(const String& domain)
 #endif
     return emptyString();
 #endif
+}
+
+bool ResourceRequestBase::isThirdParty() const
+{
+    return !areRegistrableDomainsEqual(url(), firstPartyForCookies());
 }
 
 }

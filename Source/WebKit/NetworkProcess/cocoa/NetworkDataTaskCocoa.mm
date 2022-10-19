@@ -59,7 +59,7 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
 namespace WebKit {
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *) { }
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool /* isThirdParty */) { }
 }
 #endif
 
@@ -191,7 +191,7 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking(const Web
     if (isTopLevelNavigation() || !shouldApplyCookiePolicyForThirdPartyCNAMECloaking())
         return;
 
-    if (isThirdPartyRequest(request)) {
+    if (request.isThirdParty()) {
         m_task.get()._cookieTransformCallback = nil;
         return;
     }
@@ -370,7 +370,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
 
     if (parameters.networkConnectionIntegrityEnabled)
-        enableNetworkConnectionIntegrity(mutableRequest.get());
+        enableNetworkConnectionIntegrity(mutableRequest.get(), request.isThirdParty());
 
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
