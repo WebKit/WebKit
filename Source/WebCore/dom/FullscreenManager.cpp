@@ -41,6 +41,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
@@ -520,7 +521,7 @@ bool FullscreenManager::didExitFullscreen()
 
     m_fullscreenElement = nullptr;
     m_pendingFullscreenElement = nullptr;
-    scheduleFullStyleRebuild();
+    document().scheduleFullStyleRebuild();
 
     // When webkitCancelFullscreen is called, we call webkitExitFullscreen on the topDocument(). That
     // means that the events will be queued there. So if we have no events here, start the timer on
@@ -614,14 +615,13 @@ void FullscreenManager::setAnimatingFullscreen(bool flag)
 {
     if (m_isAnimatingFullscreen == flag)
         return;
-    m_isAnimatingFullscreen = flag;
 
     INFO_LOG(LOGIDENTIFIER, flag);
 
-    if (m_fullscreenElement && m_fullscreenElement->isDescendantOf(document())) {
-        m_fullscreenElement->invalidateStyleForSubtree();
-        scheduleFullStyleRebuild();
-    }
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_fullscreenElement)
+        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassAnimatingFullScreenTransition, flag } });
+    m_isAnimatingFullscreen = flag;
 }
 
 bool FullscreenManager::areFullscreenControlsHidden() const
@@ -636,12 +636,10 @@ void FullscreenManager::setFullscreenControlsHidden(bool flag)
 
     INFO_LOG(LOGIDENTIFIER, flag);
 
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_fullscreenElement)
+        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassFullScreenControlsHidden, flag } });
     m_areFullscreenControlsHidden = flag;
-
-    if (m_fullscreenElement && m_fullscreenElement->isDescendantOf(document())) {
-        m_fullscreenElement->invalidateStyleForSubtree();
-        scheduleFullStyleRebuild();
-    }
 }
 
 void FullscreenManager::clear()

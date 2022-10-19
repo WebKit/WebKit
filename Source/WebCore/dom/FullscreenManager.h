@@ -52,7 +52,6 @@ public:
     Frame* frame() const { return m_document.frame(); }
     Element* documentElement() const { return m_document.documentElement(); }
     Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }
-    void scheduleFullStyleRebuild() { m_document.scheduleFullStyleRebuild(); }
 
     // W3C Fullscreen API
     Element* fullscreenElement() const { return !m_fullscreenElementStack.isEmpty() ? m_fullscreenElementStack.last().get() : nullptr; }
