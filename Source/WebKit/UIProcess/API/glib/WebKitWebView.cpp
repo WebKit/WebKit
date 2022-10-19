@@ -539,7 +539,7 @@ static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* 
         return TRUE;
     }
 
-    if (webkit_response_policy_decision_is_mime_type_supported(WEBKIT_RESPONSE_POLICY_DECISION(decision)))
+    if (webkit_response_policy_decision_is_mime_type_supported(WEBKIT_RESPONSE_POLICY_DECISION(decision)) || webkit_uri_response_get_status_code(response) == SOUP_STATUS_NO_CONTENT)
         webkit_policy_decision_use(decision);
     else
         webkit_policy_decision_ignore(decision);
