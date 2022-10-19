@@ -83,6 +83,27 @@ static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
     return true;
 }
 
+static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoderConfig& config)
+{
+    Span<const uint8_t> description;
+    if (config.description) {
+        auto* data = std::visit([](auto& buffer) -> const uint8_t* {
+            return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;
+        }, *config.description);
+        auto length = std::visit([](auto& buffer) -> size_t {
+            return buffer ? buffer->byteLength() : 0;
+        }, *config.description);
+        if (length)
+            description = { data, length };
+    }
+
+    return {
+        description,
+        config.codedWidth.value_or(0),
+        config.codedHeight.value_or(0)
+    };
+}
+
 ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&& config)
 {
     if (!isValidDecoderConfig(config))
@@ -108,18 +129,8 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&&
                 });
             };
         }
-        Span<const uint8_t> description;
-        if (config.description) {
-            BufferSource buffer { WTFMove(*config.description) };
-            if (buffer.length())
-                description = { buffer.data(), buffer.length() };
-        }
-        VideoDecoder::Config videoDecoderConfig {
-            description,
-            config.codedWidth.value_or(0),
-            config.codedHeight.value_or(0)
-        };
-        VideoDecoder::create(config.codec, videoDecoderConfig, [this, weakedThis = WeakPtr { *this }](auto&& result) {
+
+        VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [this, weakedThis = WeakPtr { *this }](auto&& result) {
             if (!weakedThis)
                 return;
 
@@ -209,14 +220,30 @@ ExceptionOr<void> WebCodecsVideoDecoder::close()
     return closeDecoder(Exception { AbortError, "Close called"_s });
 }
 
-void WebCodecsVideoDecoder::isConfigSupported(WebCodecsVideoDecoderConfig&& config, Ref<DeferredPromise>&& promise)
+void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
     if (!isValidDecoderConfig(config)) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
         return;
     }
-    // FIXME: Implement accurate checks.
-    promise->resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { true, WTFMove(config) });
+
+    auto* promisePtr = promise.ptr();
+    context.addDeferredPromise(WTFMove(promise));
+
+    auto videoDecoderConfig = createVideoDecoderConfig(config);
+    Vector<uint8_t> description { videoDecoderConfig.description };
+    VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [identifier = context.identifier(), config = config.isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto&& result) mutable {
+        ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto& context) mutable {
+            if (auto promise = context.takeDeferredPromise(promisePtr)) {
+                if (description.size())
+                    config.description = RefPtr { JSC::ArrayBuffer::create(description.data(), description.size()) };
+                promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { success, WTFMove(config) });
+            }
+        });
+    }, [](auto&&) {
+    }, [] (auto&& task) {
+        task();
+    });
 }
 
 ExceptionOr<void> WebCodecsVideoDecoder::closeDecoder(Exception&& exception)

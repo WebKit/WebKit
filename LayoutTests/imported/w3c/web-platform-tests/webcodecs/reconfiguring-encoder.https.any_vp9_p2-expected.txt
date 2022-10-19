@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: Not supported Reached unreachable code
 
-FAIL Reconfiguring encoder promise_test: Unhandled rejection with value: object "InvalidStateError: VideoEncoder is not configured"
+PASS Reconfiguring encoder
 

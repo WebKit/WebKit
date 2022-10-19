@@ -68,7 +68,7 @@ public:
     ExceptionOr<void> reset();
     ExceptionOr<void> close();
 
-    static void isConfigSupported(WebCodecsVideoEncoderConfig&&, Ref<DeferredPromise>&&);
+    static void isConfigSupported(ScriptExecutionContext&, WebCodecsVideoEncoderConfig&&, Ref<DeferredPromise>&&);
 
     using RefCounted::ref;
     using RefCounted::deref;

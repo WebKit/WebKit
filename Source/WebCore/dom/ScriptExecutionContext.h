@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "CrossOriginMode.h"
 #include "DOMTimer.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SecurityContext.h"
 #include "ServiceWorkerIdentifier.h"
@@ -321,6 +322,9 @@ public:
     WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
     WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);
 
+    void addDeferredPromise(Ref<DeferredPromise>&& promise) { m_deferredPromises.add(WTFMove(promise)); }
+    RefPtr<DeferredPromise> takeDeferredPromise(DeferredPromise* promise) { return m_deferredPromises.take(promise); }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -406,6 +410,7 @@ private:
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
 
     HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
+    HashSet<Ref<DeferredPromise>> m_deferredPromises;
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);
