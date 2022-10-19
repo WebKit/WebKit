@@ -45,13 +45,14 @@
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
+#include "RenderVideo.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
-
+#include <wtf/TypeCasts.h>
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplaced);
@@ -382,7 +383,14 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 
     return false;
 }
-    
+
+static bool isVideoWithDefaultObjectSize(const RenderReplaced* maybeVideo)
+{
+    if (auto* video = dynamicDowncast<RenderVideo>(maybeVideo))
+        return video->hasDefaultObjectSize();
+    return false;
+} 
+
 void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* contentRenderer, FloatSize& constrainedSize, double& intrinsicRatio) const
 {
     FloatSize intrinsicSize;
@@ -425,10 +433,17 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
     // function was added, since all it has done is make the code more unclear.
     constrainedSize = intrinsicSize;
     if (intrinsicRatio && !intrinsicSize.isEmpty() && style().logicalWidth().isAuto() && style().logicalHeight().isAuto()) {
-        // We can't multiply or divide by 'intrinsicRatio' here, it breaks tests, like fast/images/zoomed-img-size.html, which
-        // can only be fixed once subpixel precision is available for things like intrinsicWidth/Height - which include zoom!
-        constrainedSize.setWidth(RenderBox::computeReplacedLogicalHeight() * intrinsicSize.width() / intrinsicSize.height());
-        constrainedSize.setHeight(RenderBox::computeReplacedLogicalWidth() * intrinsicSize.height() / intrinsicSize.width());
+        if (isVideoWithDefaultObjectSize(this)) {
+            LayoutUnit width = RenderBox::computeReplacedLogicalWidth();
+            constrainedSize.setWidth(width);
+            LayoutUnit height = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), intrinsicRatio, BoxSizing::ContentBox, adjustBorderBoxLogicalWidthForBoxSizing(width, LengthType::Fixed));
+            constrainedSize.setHeight(height.round() - verticalBorderAndPaddingExtent());
+        } else {
+            // We can't multiply or divide by 'intrinsicRatio' here, it breaks tests, like fast/images/zoomed-img-size.html, which
+            // can only be fixed once subpixel precision is available for things like intrinsicWidth/Height - which include zoom!
+            constrainedSize.setWidth(RenderBox::computeReplacedLogicalHeight() * intrinsicSize.width() / intrinsicSize.height());
+            constrainedSize.setHeight(RenderBox::computeReplacedLogicalWidth() * intrinsicSize.height() / intrinsicSize.width());
+        }
     }
 }
 
@@ -489,7 +504,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
 
     if (style().hasAspectRatio()) {
         intrinsicRatio = style().logicalAspectRatio();
-        if (style().aspectRatioType() == AspectRatioType::Ratio)
+        if (style().aspectRatioType() == AspectRatioType::Ratio || isVideoWithDefaultObjectSize(this))
             return;
     }
     // Figure out if we need to compute an intrinsic ratio.

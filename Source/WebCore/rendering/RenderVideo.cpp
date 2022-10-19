@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "MediaPlayer.h"
+#include "MediaPlayerEnums.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
@@ -132,7 +133,7 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
             return size;
     }
 
-    if (videoElement().shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource().errorOccurred())
+    if (hasPosterFrameSize())
         return m_cachedImageSize;
 
     // <video> in standalone media documents should not use the default 300x150
@@ -285,7 +286,7 @@ void RenderVideo::updatePlayer()
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
-    return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred), shouldComputePreferred);
 }
 
 LayoutUnit RenderVideo::minimumReplacedHeight() const 
@@ -322,6 +323,21 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return player->hasAvailableVideoFrame();
 
     return false;
+}
+
+bool RenderVideo::hasVideoMetadata() const
+{
+    return videoElement().player() && videoElement().player()->readyState() >= MediaPlayerEnums::ReadyState::HaveMetadata;
+}
+
+bool RenderVideo::hasPosterFrameSize() const
+{
+    return videoElement().shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource().errorOccurred();
+}
+
+bool RenderVideo::hasDefaultObjectSize() const
+{
+    return !hasVideoMetadata() && !hasPosterFrameSize() && !shouldApplySizeContainment();
 }
 
 } // namespace WebCore
