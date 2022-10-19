@@ -441,7 +441,7 @@ inline const LChar* StringView::characters8() const
 
 inline const UChar* StringView::characters16() const
 {
-    ASSERT(!is8Bit());
+    ASSERT(!is8Bit() || isEmpty());
     ASSERT(underlyingStringIsValid());
     return static_cast<const UChar*>(m_characters);
 }
