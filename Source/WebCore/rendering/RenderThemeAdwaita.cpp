@@ -41,12 +41,16 @@
 #include "TimeRanges.h"
 #include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
+#include <wtf/text/Base64.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
 #endif
 
-#include <wtf/text/Base64.h>
+#if PLATFORM(WIN)
+#include "WebCoreBundleWin.h"
+#include <wtf/FileSystem.h>
+#endif
 
 namespace WebCore {
 
@@ -228,11 +232,21 @@ String RenderThemeAdwaita::mediaControlsStyleSheet()
 
 String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
+#if USE(GLIB)
     auto path = makeString("/org/webkit/media-controls/", iconName, '.', iconType);
     auto data = adoptGRef(g_resources_lookup_data(path.latin1().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return emptyString();
     return base64EncodeToString(g_bytes_get_data(data.get(), nullptr), g_bytes_get_size(data.get()));
+#elif PLATFORM(WIN)
+    auto path = webKitBundlePath(iconName, iconType, "media-controls"_s);
+    auto data = FileSystem::readEntireFile(path);
+    if (!data)
+        return { };
+    return base64EncodeToString(data->data(), data->size());
+#else
+    return { };
+#endif
 }
 
 String RenderThemeAdwaita::mediaControlsFormattedStringForDuration(double durationInSeconds)

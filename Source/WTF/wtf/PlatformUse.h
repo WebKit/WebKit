@@ -272,7 +272,7 @@
 #define USE_CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE 1
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(WPE) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(WPE) || PLATFORM(GTK) || PLATFORM(WIN_CAIRO)
 /* FIXME: This really needs a descriptive name, this "new theme" was added in 2008. */
 #define USE_NEW_THEME 1
 #endif

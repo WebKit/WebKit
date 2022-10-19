@@ -317,14 +317,18 @@ void ScrollbarThemeAdwaita::paintScrollCorner(ScrollableArea& scrollableArea, Gr
 
 ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
-    gboolean warpSlider = FALSE;
+    bool warpSlider = false;
     switch (pressedPart) {
     case BackTrackPart:
     case ForwardTrackPart:
 #if PLATFORM(GTK)
-        g_object_get(gtk_settings_get_default(),
-            "gtk-primary-button-warps-slider",
-            &warpSlider, nullptr);
+        warpSlider = [] {
+            gboolean gtkWarpsSlader = FALSE;
+            g_object_get(gtk_settings_get_default(),
+                "gtk-primary-button-warps-slider",
+                &gtkWarpsSlader, nullptr);
+            return gtkWarpsSlader;
+        }();
 #endif
         // The shift key or middle/right button reverses the sense.
         if (event.shiftKey() || event.button() != LeftButton)

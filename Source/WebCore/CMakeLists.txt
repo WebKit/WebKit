@@ -1724,7 +1724,6 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/fullscreen.css
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/mathml.css
-    ${WEBCORE_DIR}/css/mediaControls.css
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
@@ -2145,16 +2144,22 @@ set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.css"
 )
 
-if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
+if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE" OR WTF_PLATFORM_WIN_CAIRO)
     list(APPEND MODERN_MEDIA_CONTROLS_STYLE_SHEETS
         "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-overrides.css"
     )
 endif ()
 
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
+    set(CAT_PROGRAM ${CMAKE_COMMAND} -E cat)
+else ()
+    set(CAT_PROGRAM cat)
+endif ()
+
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     DEPENDS ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS}
-    COMMAND cat ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+    COMMAND ${CAT_PROGRAM} ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     VERBATIM)
 
 set(MODERN_MEDIA_CONTROLS_SCRIPTS
@@ -2237,7 +2242,7 @@ set(MODERN_MEDIA_CONTROLS_SCRIPTS
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     DEPENDS ${MODERN_MEDIA_CONTROLS_SCRIPTS}
-    COMMAND cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+    COMMAND ${CAT_PROGRAM} ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     VERBATIM)
 
 # Modules that the bindings generator scripts may use
