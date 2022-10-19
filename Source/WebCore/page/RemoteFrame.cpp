@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-RemoteFrame::RemoteFrame(Page& page, GlobalFrameIdentifier&& frameIdentifier)
-    : AbstractFrame(page, nullptr)
+RemoteFrame::RemoteFrame(Page& page, FrameIdentifier frameID, GlobalFrameIdentifier&& frameIdentifier)
+    : AbstractFrame(page, frameID, nullptr)
     , m_identifier(WTFMove(frameIdentifier))
 {
 }

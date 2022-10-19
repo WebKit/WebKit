@@ -33,8 +33,9 @@
 
 namespace WebCore {
 
-AbstractFrame::AbstractFrame(Page& page, HTMLFrameOwnerElement* ownerElement)
+AbstractFrame::AbstractFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement)
     : m_page(page)
+    , m_frameID(frameID)
     , m_treeNode(*this, ownerElement ? ownerElement->document().frame() : nullptr)
     , m_windowProxy(WindowProxy::create(*this))
 {

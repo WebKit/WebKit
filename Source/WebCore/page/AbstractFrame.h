@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include "FrameTree.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -49,17 +50,19 @@ public:
     const WindowProxy& windowProxy() const { return m_windowProxy; }
     AbstractDOMWindow* window() const { return virtualWindow(); }
     FrameTree& tree() const { return m_treeNode; }
+    FrameIdentifier frameID() const { return m_frameID; }
     WEBCORE_EXPORT Page* page() const;
     WEBCORE_EXPORT void detachFromPage();
 
 protected:
-    AbstractFrame(Page&, HTMLFrameOwnerElement*);
+    AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*);
     void resetWindowProxy();
 
 private:
     virtual AbstractDOMWindow* virtualWindow() const = 0;
 
     WeakPtr<Page> m_page;
+    const FrameIdentifier m_frameID;
     mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;
 };

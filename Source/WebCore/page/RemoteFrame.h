@@ -39,9 +39,9 @@ class RemoteDOMWindow;
 // and FrameTree::m_thisFrame is an AbstractFrame&. Otherwise we will have some invalid pointer use.
 class RemoteFrame final : public AbstractFrame {
 public:
-    static Ref<RemoteFrame> create(Page& page, GlobalFrameIdentifier&& frameIdentifier)
+    static Ref<RemoteFrame> create(Page& page, FrameIdentifier frameID, GlobalFrameIdentifier&& frameIdentifier)
     {
-        return adoptRef(* new RemoteFrame(page, WTFMove(frameIdentifier)));
+        return adoptRef(*new RemoteFrame(page, frameID, WTFMove(frameIdentifier)));
     }
     ~RemoteFrame();
 
@@ -54,7 +54,7 @@ public:
     AbstractFrame* opener() const { return m_opener.get(); }
 
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, GlobalFrameIdentifier&&);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, GlobalFrameIdentifier&&);
 
     bool isRemoteFrame() const final { return true; }
     bool isLocalFrame() const final { return false; }
