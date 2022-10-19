@@ -272,8 +272,7 @@ public:
         setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>(createSharedTask<WasmBoundsCheckGeneratorFunction>(functor)));
     }
 
-    JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
-    JS_EXPORT_PRIVATE RegisterSet mutableFPRs();
+    JS_EXPORT_PRIVATE RegisterSetBuilder mutableGPRs();
 
     void setNeedsPCToOriginMap();
     bool needsPCToOriginMap() { return m_needsPCToOriginMap; }

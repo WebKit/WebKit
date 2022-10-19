@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,31 @@
 
 #pragma once
 
-#if ENABLE(JIT)
+#include "Width.h"
 
-#include "SnippetParams.h"
+namespace WTF {
 
-namespace JSC {
-
-struct AccessGenerationState;
-
-class AccessCaseSnippetParams final : public SnippetParams {
-public:
-    AccessCaseSnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : SnippetParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
-    {
+void printInternal(PrintStream& out, JSC::Width width)
+{
+    switch (width) {
+    case JSC::Width8:
+        out.print("8");
+        return;
+    case JSC::Width16:
+        out.print("16");
+        return;
+    case JSC::Width32:
+        out.print("32");
+        return;
+    case JSC::Width64:
+        out.print("64");
+        return;
+    case JSC::Width128:
+        out.print("128");
+        return;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
-
-    class SlowPathCallGenerator {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual ~SlowPathCallGenerator() { }
-        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&) = 0;
-    };
-
-    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&);
-
-private:
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) final;
-    SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
-#undef JSC_DEFINE_CALL_OPERATIONS
-    Vector<std::unique_ptr<SlowPathCallGenerator>> m_generators;
-};
-
 }
 
-#endif
+} // namespace WTF

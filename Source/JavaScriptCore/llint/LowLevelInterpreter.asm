@@ -779,8 +779,8 @@ const CalleeRegisterSaveSize = CalleeSaveRegisterCount * MachineRegisterSize
 const VMEntryTotalFrameSize = (CalleeRegisterSaveSize + sizeof VMEntryRecord + StackAlignment - 1) & ~StackAlignmentMask
 
 macro pushCalleeSaves()
-    # Note: Only registers that are in RegisterSet::calleeSaveRegisters(),
-    # but are not in RegisterSet::vmCalleeSaveRegisters() need to be saved here,
+    # Note: Only registers that are in RegisterSetBuilder::calleeSaveRegisters(),
+    # but are not in RegisterSetBuilder::vmCalleeSaveRegisters() need to be saved here,
     # i.e.: only those registers that are callee save in the C ABI, but are not
     # callee save in the JIT ABI.
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64

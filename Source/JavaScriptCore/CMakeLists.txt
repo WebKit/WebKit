@@ -897,6 +897,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/SpillRegistersMode.h
     jit/TagRegistersMode.h
     jit/ThunkGenerator.h
+    jit/Width.h
 
     llint/LLIntOpcode.h
 

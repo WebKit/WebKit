@@ -1451,10 +1451,10 @@ void testSpillDefSmallerThanUse()
 
     // Make sure arg64 is on the stack.
     PatchpointValue* forceSpill = root->appendNew<PatchpointValue>(proc, Int64, Origin());
-    RegisterSet clobberSet = RegisterSet::allGPRs();
-    clobberSet.exclude(RegisterSet::stackRegisters());
-    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberSet.clear(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
+    RegisterSetBuilder clobberSet = RegisterSetBuilder::allGPRs();
+    clobberSet.exclude(RegisterSetBuilder::stackRegisters());
+    clobberSet.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    clobberSet.remove(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
     forceSpill->clobberLate(clobberSet);
     forceSpill->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1478,9 +1478,9 @@ void testSpillUseLargerThanDef()
     BasicBlock* elseCase = proc.addBlock();
     BasicBlock* tail = proc.addBlock();
 
-    RegisterSet clobberSet = RegisterSet::allGPRs();
-    clobberSet.exclude(RegisterSet::stackRegisters());
-    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
+    RegisterSetBuilder clobberSet = RegisterSetBuilder::allGPRs();
+    clobberSet.exclude(RegisterSetBuilder::stackRegisters());
+    clobberSet.exclude(RegisterSetBuilder::reservedHardwareRegisters());
 
     Value* condition = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
@@ -1510,7 +1510,7 @@ void testSpillUseLargerThanDef()
     forceSpill->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            clobberSet.forEach([&] (Reg reg) {
+            clobberSet.buildAndValidate().forEach([&] (Reg reg) {
                 jit.move(CCallHelpers::TrustedImm64(0xffffffffffffffff), reg.gpr());
             });
         });
@@ -1550,13 +1550,13 @@ void testLateRegister()
     // to use that LateRegister as the result for the first patchpoint. But of course it can not do that.
     // So it must issue a mov after the first patchpoint from the first's result into the second's input.
 
-    RegisterSet regs = RegisterSet::allGPRs();
-    regs.exclude(RegisterSet::stackRegisters());
-    regs.exclude(RegisterSet::reservedHardwareRegisters());
+    RegisterSetBuilder regs = RegisterSetBuilder::allGPRs();
+    regs.exclude(RegisterSetBuilder::stackRegisters());
+    regs.exclude(RegisterSetBuilder::reservedHardwareRegisters());
     Vector<Value*> lateUseArgs;
     unsigned result = 0;
     for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-        if (!regs.get(reg))
+        if (!regs.buildAndValidate().contains(reg, IgnoreVectors))
             continue;
         result++;
         if (reg == GPRInfo::regT0)
@@ -1569,7 +1569,7 @@ void testLateRegister()
     {
         unsigned i = 0;
         for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-            if (!regs.get(reg))
+            if (!regs.buildAndValidate().contains(reg, IgnoreVectors))
                 continue;
             if (reg == GPRInfo::regT0)
                 continue;
@@ -1657,7 +1657,7 @@ void testInterpreter()
     polyJump->effects = Effects();
     polyJump->effects.terminal = true;
     polyJump->appendSomeRegister(opcode);
-    polyJump->clobber(RegisterSet::macroScratchRegisters());
+    polyJump->clobber(RegisterSetBuilder::macroClobberedRegisters());
     polyJump->numGPScratchRegisters = 2;
     dispatch->appendSuccessor(FrequentedBlock(addToDataPointer));
     dispatch->appendSuccessor(FrequentedBlock(addToCodePointer));
@@ -2366,7 +2366,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
 
     root->appendSuccessor(success);
     root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
@@ -2391,7 +2391,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
 
     Vector<Value*> args;
     {
-        RegisterSet fillAllGPRsSet = proc.mutableGPRs();
+        RegisterSetBuilder fillAllGPRsSet = proc.mutableGPRs();
         for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
             args.append(success->appendNew<Const32Value>(proc, Origin(), i));
     }
@@ -2447,7 +2447,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
 
     PatchpointValue* patchpoint = one->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
     patchpoint->append(arg, ValueRep::SomeRegister);
 
     one->appendSuccessor(success);
@@ -2475,7 +2475,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
 
     Vector<Value*> args;
     {
-        RegisterSet fillAllGPRsSet = proc.mutableGPRs();
+        RegisterSetBuilder fillAllGPRsSet = proc.mutableGPRs();
         for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
             args.append(success->appendNew<Const32Value>(proc, Origin(), i));
     }
@@ -2532,7 +2532,7 @@ void testPatchpointTerminalReturnValue(bool successIsRare)
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
 
     if (successIsRare) {
         root->appendSuccessor(FrequentedBlock(success, FrequencyClass::Rare));

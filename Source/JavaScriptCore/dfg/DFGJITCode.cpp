@@ -114,24 +114,24 @@ void JITCode::reconstruct(CallFrame* callFrame, CodeBlock* codeBlock, CodeOrigin
         result[i] = recoveries[i].recover(callFrame);
 }
 
-RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
+RegisterSetBuilder JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
 {
     for (OSRExit& exit : m_osrExit) {
         if (exit.isExceptionHandler() && exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
             Operands<ValueRecovery> valueRecoveries;
             reconstruct(codeBlock, exit.m_codeOrigin, exit.m_streamIndex, valueRecoveries);
-            RegisterSet liveAtOSRExit;
+            RegisterSetBuilder liveAtOSRExit;
             for (size_t index = 0; index < valueRecoveries.size(); ++index) {
                 const ValueRecovery& recovery = valueRecoveries[index];
                 if (recovery.isInRegisters()) {
                     if (recovery.isInGPR())
-                        liveAtOSRExit.set(recovery.gpr());
+                        liveAtOSRExit.add(recovery.gpr(), IgnoreVectors);
                     else if (recovery.isInFPR())
-                        liveAtOSRExit.set(recovery.fpr());
+                        liveAtOSRExit.add(recovery.fpr(), IgnoreVectors);
 #if USE(JSVALUE32_64)
                     else if (recovery.isInJSValueRegs()) {
-                        liveAtOSRExit.set(recovery.payloadGPR());
-                        liveAtOSRExit.set(recovery.tagGPR());
+                        liveAtOSRExit.add(recovery.payloadGPR(), IgnoreVectors);
+                        liveAtOSRExit.add(recovery.tagGPR(), IgnoreVectors);
                     }
 #endif
                     else

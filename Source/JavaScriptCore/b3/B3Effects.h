@@ -66,7 +66,7 @@ struct Effects {
     // having other pinned registers that are mutable, then you can use ArgumentReg. Also note that
     // nobody will stop you from making this get out-of-sync with your clobbered register sets in
     // Patchpoint. It's recommended that you err on the side of being conservative.
-    // FIXME: Explore making these be RegisterSets. That's mainly hard because it would be awkward to
+    // FIXME: Explore making these be RegisterSetBuilders. That's mainly hard because it would be awkward to
     // reconcile with StackmapValue's support for clobbered regs.
     // https://bugs.webkit.org/show_bug.cgi?id=163173
     bool readsPinned { false };

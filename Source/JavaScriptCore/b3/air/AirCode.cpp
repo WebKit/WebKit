@@ -67,33 +67,35 @@ Code::Code(Procedure& proc)
     forEachBank(
         [&](Bank bank) {
             Vector<Reg> volatileRegs;
+            Vector<Reg> fullCalleeSaveRegs;
             Vector<Reg> calleeSaveRegs;
-            RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
-            all.exclude(RegisterSet::stackRegisters());
-            all.exclude(RegisterSet::reservedHardwareRegisters());
-            RegisterSet calleeSave = RegisterSet::calleeSaveRegisters();
-            all.forEach(
+            RegisterSetBuilder all = bank == GP ? RegisterSetBuilder::allGPRs() : RegisterSetBuilder::allFPRs();
+            all.exclude(RegisterSetBuilder::stackRegisters());
+            all.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+            auto calleeSave = RegisterSetBuilder::calleeSaveRegisters();
+            all.buildAndValidate().forEach(
                 [&] (Reg reg) {
-                    if (!calleeSave.get(reg))
+                    if (!calleeSave.contains(reg, IgnoreVectors))
                         volatileRegs.append(reg);
-                });
-            all.forEach(
-                [&] (Reg reg) {
-                    if (calleeSave.get(reg))
+                    if (calleeSave.contains(reg, conservativeWidth(reg)))
+                        fullCalleeSaveRegs.append(reg);
+                    else if (calleeSave.contains(reg, conservativeWidthWithoutVectors(reg)))
                         calleeSaveRegs.append(reg);
                 });
             if (Options::airRandomizeRegs()) {
                 WeakRandom random(Options::airRandomizeRegsSeed() ? Options::airRandomizeRegsSeed() : weakRandom->getUint32());
                 shuffleVector(volatileRegs, [&] (unsigned limit) { return random.getUint32(limit); });
                 shuffleVector(calleeSaveRegs, [&] (unsigned limit) { return random.getUint32(limit); });
+                shuffleVector(fullCalleeSaveRegs, [&] (unsigned limit) { return random.getUint32(limit); });
             }
             Vector<Reg> result;
             result.appendVector(volatileRegs);
+            result.appendVector(fullCalleeSaveRegs);
             result.appendVector(calleeSaveRegs);
             setRegsInPriorityOrder(bank, result);
         });
 
-    m_pinnedRegs.set(MacroAssembler::framePointerRegister);
+    m_pinnedRegs.add(MacroAssembler::framePointerRegister, IgnoreVectors);
 }
 
 Code::~Code()
@@ -122,7 +124,7 @@ void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
     forEachBank(
         [&] (Bank bank) {
             for (Reg reg : regsInPriorityOrder(bank))
-                m_mutableRegs.set(reg);
+                m_mutableRegs.add(reg, IgnoreVectors);
         });
 }
 
@@ -131,23 +133,16 @@ void Code::pinRegister(Reg reg)
     Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).bank());
     ASSERT(regs.contains(reg));
     regs.removeFirst(reg);
-    m_mutableRegs.clear(reg);
+    m_mutableRegs.remove(reg);
     ASSERT(!regs.contains(reg));
-    m_pinnedRegs.set(reg);
+    m_pinnedRegs.add(reg, IgnoreVectors);
 }
 
 RegisterSet Code::mutableGPRs()
 {
-    RegisterSet result = m_mutableRegs;
-    result.filter(RegisterSet::allGPRs());
-    return result;
-}
-
-RegisterSet Code::mutableFPRs()
-{
-    RegisterSet result = m_mutableRegs;
-    result.filter(RegisterSet::allFPRs());
-    return result;
+    RegisterSetBuilder result = m_mutableRegs.toRegisterSet();
+    result.filter(RegisterSetBuilder::allGPRs());
+    return result.buildAndValidate();
 }
 
 bool Code::needsUsedRegisters() const
@@ -218,8 +213,10 @@ std::optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
 void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOffsetList, StackSlot* slot)
 {
     m_uncorrectedCalleeSaveRegisterAtOffsetList = WTFMove(registerAtOffsetList);
-    for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList)
-        m_calleeSaveRegisters.set(registerAtOffset.reg());
+    for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList) {
+        ASSERT(registerAtOffset.width() == Width64);
+        m_calleeSaveRegisters.add(registerAtOffset.reg(), registerAtOffset.width());
+    }
     m_calleeSaveStackSlot = slot;
 }
 

@@ -368,25 +368,25 @@ void SpeculativeJIT::typeCheck(JSValueSource source, Edge edge, SpeculatedType t
     speculationCheck(exitKind, source, edge.node(), jumpListToFail);
 }
 
-RegisterSet SpeculativeJIT::usedRegisters()
+RegisterSetBuilder SpeculativeJIT::usedRegisters()
 {
-    RegisterSet result;
+    RegisterSetBuilder result;
     
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg gpr = GPRInfo::toRegister(i);
         if (m_gprs.isInUse(gpr))
-            result.set(gpr);
+            result.add(gpr, IgnoreVectors);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg fpr = FPRInfo::toRegister(i);
         if (m_fprs.isInUse(fpr))
-            result.set(fpr);
+            result.add(fpr, IgnoreVectors);
     }
     
     // FIXME: This is overly conservative. We could subtract out those callee-saves that we
     // actually saved.
     // https://bugs.webkit.org/show_bug.cgi?id=185686
-    result.merge(RegisterSet::stubUnavailableRegisters());
+    result.merge(RegisterSetBuilder::stubUnavailableRegisters());
     
     return result;
 }
@@ -1183,7 +1183,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSet usedRegisters = this->usedRegisters();
+        RegisterSetBuilder usedRegisters = this->usedRegisters();
 
         auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
         JITDelByIdGenerator gen(
@@ -1264,7 +1264,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSet usedRegisters = this->usedRegisters();
+        RegisterSetBuilder usedRegisters = this->usedRegisters();
 
         auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
         JITDelByValGenerator gen(
@@ -1341,7 +1341,7 @@ void SpeculativeJIT::compileInById(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
     JITInByIdGenerator gen(
         m_jit.codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
@@ -1396,7 +1396,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
     JITInByValGenerator gen(
         m_jit.codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
@@ -1451,7 +1451,7 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
     JITInByValGenerator gen(
         m_jit.codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, type, usedRegisters,
@@ -2763,7 +2763,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-        RegisterSet usedRegisters = this->usedRegisters();
+        RegisterSetBuilder usedRegisters = this->usedRegisters();
         bool isDirect = node->op() == PutByValDirect;
         PutKind putKind = isDirect ? PutKind::Direct : PutKind::NotDirect;
         ECMAMode ecmaMode = node->ecmaMode();
@@ -4168,7 +4168,7 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs baseRegs
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
     const bool baseIsKnownCell = m_state.forNode(m_graph.child(node, 0)).isType(SpecCell);
@@ -4360,7 +4360,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
 
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
     JITPutByValGenerator gen(
@@ -4442,7 +4442,7 @@ void SpeculativeJIT::compileCheckPrivateBrand(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
     if (needsTypeCheck(node->child1(), SpecCell))
@@ -4498,7 +4498,7 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
 
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
@@ -4650,7 +4650,7 @@ void SpeculativeJIT::compileInstanceOfForCells(Node* node, JSValueRegs valueRegs
     CallSiteIndex callSiteIndex = m_jit.addCallSite(codeOrigin);
     
     bool prototypeIsKnownObject = m_state.forNode(node->child2()).isType(SpecObject | ~SpecCell);
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();
     JITInstanceOfGenerator gen(
         m_jit.codeBlock(), stubInfo, JITType::DFGJIT, node->origin.semantic, callSiteIndex, usedRegisters, resultGPR,
@@ -13901,7 +13901,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
 
 void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, MacroAssembler::JumpList& slowCases)
 {
-    RELEASE_ASSERT(RegisterSet(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
+    RELEASE_ASSERT(RegisterSetBuilder(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
     ASSERT((1 << 3) == sizeof(JSValue));
     m_jit.zeroExtend32ToWord(sizeGPR, scratch1);
     m_jit.lshift32(TrustedImm32(3), scratch1);
@@ -16095,17 +16095,17 @@ void SpeculativeJIT::compileProfileType(Node* node)
 
 void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, PutKind putKind, ECMAMode ecmaMode, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
-    RegisterSet usedRegisters = this->usedRegisters();
+    RegisterSetBuilder usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
-        usedRegisters.set(baseGPR, false);
-        usedRegisters.set(valueRegs, false);
+        usedRegisters.remove(baseGPR);
+        usedRegisters.remove(valueRegs);
         if (stubInfoGPR != InvalidGPRReg)
-            usedRegisters.set(stubInfoGPR, false);
+            usedRegisters.remove(stubInfoGPR);
         if (scratchGPR != InvalidGPRReg)
-            usedRegisters.set(scratchGPR, false);
+            usedRegisters.remove(scratchGPR);
         if (scratch2GPR != InvalidGPRReg)
-            usedRegisters.set(scratch2GPR, false);
+            usedRegisters.remove(scratch2GPR);
     }
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();

@@ -76,11 +76,11 @@ namespace {
 struct Regs {
     Regs()
     {
-        special = RegisterSet::stackRegisters();
-        special.merge(RegisterSet::reservedHardwareRegisters());
+        special = RegisterSetBuilder::stackRegisters();
+        special.merge(RegisterSetBuilder::reservedHardwareRegisters());
 
         first = MacroAssembler::firstRegister();
-        while (special.get(first))
+        while (special.contains(first, IgnoreVectors))
             first = MacroAssembler::nextRegister(first);
     }
 
@@ -88,7 +88,7 @@ struct Regs {
     {
         auto next = MacroAssembler::nextRegister(current);
         for (; next <= MacroAssembler::lastRegister(); next = MacroAssembler::nextRegister(next)) {
-            if (!special.get(next))
+            if (!special.contains(next, IgnoreVectors))
                 break;
         }
         return next;
@@ -121,9 +121,9 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
 
     // Get all of the other GPRs out of the way.
     for (MacroAssembler::RegisterID reg = firstToSaveGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (regs.special.get(reg))
+        if (regs.special.contains(reg, IgnoreVectors))
             continue;
-        spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+        spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)), conservativeWidthWithoutVectors(reg) });
     }
     spooler.finalizeGPR();
     
@@ -137,9 +137,9 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     
     // Finally save all FPR's.
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (regs.special.get(reg))
+        if (regs.special.contains(reg, IgnoreVectors))
             continue;
-        spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+        spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)), conservativeWidthWithoutVectors(reg) });
     }
     spooler.finalizeFPR();
 }
@@ -156,9 +156,9 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
 
     // Restore all FPR's.
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (regs.special.get(reg))
+        if (regs.special.contains(reg, IgnoreVectors))
             continue;
-        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)), conservativeWidthWithoutVectors(reg) });
     }
     spooler.finalizeFPR();
     
@@ -171,9 +171,9 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     GPRReg firstToRestoreGPR = regs.nextRegister(baseGPR);
 #endif
     for (MacroAssembler::RegisterID reg = firstToRestoreGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (regs.special.get(reg))
+        if (regs.special.contains(reg, IgnoreVectors))
             continue;
-        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)), conservativeWidthWithoutVectors(reg) });
     }
     spooler.finalizeGPR();
 

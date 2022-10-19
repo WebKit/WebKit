@@ -44,13 +44,13 @@ void Inst::forEach(const Functor& functor)
         });
 }
 
-inline RegisterSet Inst::extraClobberedRegs()
+inline RegisterSetBuilder Inst::extraClobberedRegs()
 {
     ASSERT(kind.opcode == Patch);
     return args[0].special()->extraClobberedRegs(*this);
 }
 
-inline RegisterSet Inst::extraEarlyClobberedRegs()
+inline RegisterSetBuilder Inst::extraEarlyClobberedRegs()
 {
     ASSERT(kind.opcode == Patch);
     return args[0].special()->extraEarlyClobberedRegs(*this);
@@ -84,23 +84,23 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
 
     Arg::Role regDefRole;
     
-    auto reportReg = [&] (Reg reg) {
+    auto reportReg = [&] (Reg reg, Width width) {
         Bank bank = reg.isGPR() ? GP : FP;
-        functor(Thing(reg), regDefRole, bank, conservativeWidth(bank));
+        functor(Thing(reg), regDefRole, bank, width);
     };
 
     if (prevInst && prevInst->kind.opcode == Patch) {
         regDefRole = Arg::Def;
-        prevInst->extraClobberedRegs().forEach(reportReg);
+        prevInst->extraClobberedRegs().buildWithLowerBits().forEachWithWidth(reportReg);
     }
 
     if (nextInst && nextInst->kind.opcode == Patch) {
         regDefRole = Arg::EarlyDef;
-        nextInst->extraEarlyClobberedRegs().forEach(reportReg);
+        nextInst->extraEarlyClobberedRegs().buildWithLowerBits().forEachWithWidth(reportReg);
     }
 }
 
-inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)
+inline void Inst::reportUsedRegisters(const RegisterSetBuilder& usedRegisters)
 {
     ASSERT(kind.opcode == Patch);
     args[0].special()->reportUsedRegisters(*this, usedRegisters);

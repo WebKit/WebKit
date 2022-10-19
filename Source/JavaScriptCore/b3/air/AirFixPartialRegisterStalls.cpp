@@ -208,21 +208,21 @@ void fixPartialRegisterStalls(Code& code)
             Inst& inst = block->at(i);
 
             if (hasPartialXmmRegUpdate(inst)) {
-                RegisterSet defs;
-                RegisterSet uses;
-                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width) {
-                    if (tmp.isFPR()) {
+                RegisterSetBuilder defs;
+                RegisterSetBuilder uses;
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width width) {
+                    if (tmp.isFPR() && width <= Width64) {
                         if (Arg::isAnyDef(role))
-                            defs.set(tmp.fpr());
+                            defs.add(tmp.fpr(), IgnoreVectors);
                         if (Arg::isAnyUse(role))
-                            uses.set(tmp.fpr());
+                            uses.add(tmp.fpr(), IgnoreVectors);
                     }
                 });
                 // We only care about values we define but not use. Otherwise we have to wait
                 // for the value to be resolved anyway.
                 defs.exclude(uses);
 
-                defs.forEach([&] (Reg reg) {
+                defs.buildWithLowerBits().forEach([&] (Reg reg) {
                     if (localDistance.distance[MacroAssembler::fpRegisterIndex(reg.fpr())] < minimumSafeDistance)
                         insertionSet.insert(i, MoveZeroToDouble, inst.origin, Tmp(reg));
                 });

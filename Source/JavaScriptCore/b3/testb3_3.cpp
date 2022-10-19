@@ -3522,12 +3522,12 @@ void testStorePartial8BitRegisterOnX86()
     patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::regT6) };
 
     // Give the allocator a good reason not to use any other register.
-    RegisterSet clobberSet = RegisterSet::allGPRs();
-    clobberSet.exclude(RegisterSet::stackRegisters());
-    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberSet.clear(GPRInfo::regT3);
-    clobberSet.clear(GPRInfo::regT2);
-    clobberSet.clear(GPRInfo::regT6);
+    RegisterSetBuilder clobberSet = RegisterSetBuilder::allGPRs();
+    clobberSet.exclude(RegisterSetBuilder::stackRegisters());
+    clobberSet.exclude(RegisterSetBuilder::reservedHardwareRegisters());
+    clobberSet.remove(GPRInfo::regT3);
+    clobberSet.remove(GPRInfo::regT2);
+    clobberSet.remove(GPRInfo::regT6);
     patchpoint->clobberLate(clobberSet);
 
     // Set EDI.

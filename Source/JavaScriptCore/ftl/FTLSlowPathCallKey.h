@@ -56,7 +56,7 @@ public:
 
     SlowPathCallKey() = default;
     
-    SlowPathCallKey(const RegisterSet& set, CodePtr<CFunctionPtrTag> callTarget, uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, size_t offset, int32_t indirectOffset)
+    SlowPathCallKey(const ScalarRegisterSet& set, CodePtr<CFunctionPtrTag> callTarget, uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, size_t offset, int32_t indirectOffset)
         : m_numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled(numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled)
         , m_offset(offset)
         , m_usedRegisters(set)
@@ -81,13 +81,13 @@ public:
         return nullptr;
     }
     size_t offset() const { return m_offset; }
-    const RegisterSet& usedRegisters() const { return m_usedRegisters; }
+    const ScalarRegisterSet& usedRegisters() const { return m_usedRegisters; }
     RegisterSet argumentRegistersIfClobberingCheckIsEnabled() const
     {
         RELEASE_ASSERT(Options::clobberAllRegsInFTLICSlowPath());
         RegisterSet argumentRegisters;
         for (uint8_t i = 0; i < numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled(); ++i)
-            argumentRegisters.set(GPRInfo::toArgumentRegister(i));
+            argumentRegisters.add(GPRInfo::toArgumentRegister(i), IgnoreVectors);
         return argumentRegisters;
     }
     int32_t indirectOffset() const
@@ -151,7 +151,7 @@ private:
     size_t m_numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled : 8 { 0 };
     size_t m_type : 2 { static_cast<size_t>(Type::Empty) };
     size_t m_offset : 54 { 0 };
-    RegisterSet m_usedRegisters;
+    ScalarRegisterSet m_usedRegisters;
 };
 
 

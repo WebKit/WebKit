@@ -1189,6 +1189,8 @@ private:
                 return MoveDouble;
             }
             break;
+        case Width128:
+            break;
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1346,7 +1348,7 @@ private:
             }
             case ValueRep::LateRegister:
             case ValueRep::Register:
-                stackmap->earlyClobbered().clear(value.rep().reg());
+                stackmap->earlyClobbered().remove(value.rep().reg());
                 arg = Tmp(value.rep().reg());
                 append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), arg);
                 break;
@@ -1855,6 +1857,8 @@ private:
                             left.consume(*this), right.consume(*this)));
                     }
                     return Inst();
+                case Width128:
+                    break;
                 }
                 ASSERT_NOT_REACHED();
             },
@@ -1885,6 +1889,8 @@ private:
                             left.consume(*this), right.consume(*this)));
                     }
                     return Inst();
+                case Width128:
+                    break;
                 }
                 ASSERT_NOT_REACHED();
             },
@@ -1933,8 +1939,11 @@ private:
                             left.consume(*this), right.consume(*this), tmp(m_value)));
                     }
                     return Inst();
+                case Width128:
+                    break;
                 }
                 ASSERT_NOT_REACHED();
+                return Inst();
             },
             [this] (
                 Width width, const Arg& resCond,
@@ -1957,8 +1966,11 @@ private:
                             left.consume(*this), right.consume(*this), tmp(m_value)));
                     }
                     return Inst();
+                case Width128:
+                    break;
                 }
                 ASSERT_NOT_REACHED();
+                return Inst();
             },
             [this] (const Arg& doubleCond, ArgPromise& left, ArgPromise& right) -> Inst {
                 if (isValidForm(CompareDouble, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp)) {
@@ -2024,6 +2036,8 @@ private:
                     return createSelectInstruction(config.moveConditionally32, relCond, left, right);
                 case Width64:
                     return createSelectInstruction(config.moveConditionally64, relCond, left, right);
+                case Width128:
+                    break;
                 }
                 ASSERT_NOT_REACHED();
             },
@@ -2039,6 +2053,8 @@ private:
                     return createSelectInstruction(config.moveConditionallyTest32, resCond, left, right);
                 case Width64:
                     return createSelectInstruction(config.moveConditionallyTest64, resCond, left, right);
+                case Width128:
+                    break;
                 }
                 ASSERT_NOT_REACHED();
             },
@@ -2314,6 +2330,9 @@ private:
                 case Width32:
                 case Width64:
                     break;
+                case Width128:
+                    ASSERT_NOT_REACHED();
+                    break;
                 }
             }
             append(relaxedMoveForType(atomic->accessType()), expectedValueTmp, valueResultTmp);
@@ -2329,6 +2348,9 @@ private:
                     break;
                 case Width64:
                     appendTrapping(Air::Branch64, Arg::relCond(MacroAssembler::Equal), valueResultTmp, expectedValueTmp);
+                    break;
+                case Width128:
+                    ASSERT_NOT_REACHED();
                     break;
                 }
                 m_blockToBlock[m_block]->setSuccessors(success, failure);
@@ -2487,6 +2509,9 @@ private:
                 break;
             case Width64:
                 prepareOpcode = Move;
+                break;
+            case Width128:
+                ASSERT_NOT_REACHED();
                 break;
             }
         } else {
@@ -3840,7 +3865,7 @@ private:
             fillStackmap(inst, patchpointValue, 0);
             for (auto& constraint : patchpointValue->resultConstraints) {
                 if (constraint.isReg())
-                    patchpointValue->lateClobbered().clear(constraint.reg());
+                    patchpointValue->lateClobbered().remove(constraint.reg());
             }
 
             for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)

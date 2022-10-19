@@ -58,7 +58,7 @@ public:
     
     void validateReferences(const TrackedReferences&) override;
 
-    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
+    RegisterSetBuilder liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
 
     std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
 

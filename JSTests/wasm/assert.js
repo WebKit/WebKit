@@ -180,11 +180,11 @@ const printExn = (e) => {
     print(e.stack);
 };
 
-export const asyncTest = (promise) => asyncTestImpl(promise, harnessCall(asyncTestPassed), printExn);
+export const asyncTest = (promise) => asyncTestImpl(promise, harnessCall(() => asyncTestPassed()), printExn);
 export const asyncTestEq = (promise, expected) => {
     const thenCheck = (value) => {
         if (value === expected)
-            return harnessCall(asyncTestPassed);
+            return harnessCall(() => asyncTestPassed());
         print("Failed: got ", value, " but expected ", expected);
 
     }

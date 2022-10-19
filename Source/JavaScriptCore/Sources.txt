@@ -701,6 +701,7 @@ jit/SetupVarargsFrame.cpp
 jit/SlowPathCall.cpp
 jit/TagRegistersMode.cpp
 jit/ThunkGenerators.cpp
+jit/Width.cpp
 
 llint/LLIntCLoop.cpp
 llint/LLIntData.cpp

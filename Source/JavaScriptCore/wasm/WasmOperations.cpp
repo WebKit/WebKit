@@ -177,9 +177,9 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     loadValuesIntoBuffer(context, osrEntryData.values(), buffer);
 
     // 2. Restore callee saves.
-    RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
+    auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
     for (const RegisterAtOffset& entry : *callee.calleeSaveRegisters()) {
-        if (dontRestoreRegisters.get(entry.reg()))
+        if (dontRestoreRegisters.contains(entry.reg(), IgnoreVectors))
             continue;
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = *bitwise_cast<UCPURegister*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
@@ -586,12 +586,12 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         RETURN_IF_EXCEPTION(scope, void());
 
         auto rep = wasmCallInfo.results[index];
-        if (rep.isGPR())
-            registerResults[registerResultOffsets.find(rep.jsr().payloadGPR())->offset() / sizeof(uint64_t)] = unboxedValue;
-        else if (rep.isFPR())
-            registerResults[registerResultOffsets.find(rep.fpr())->offset() / sizeof(uint64_t)] = unboxedValue;
+        if (rep.location.isGPR())
+            registerResults[registerResultOffsets.find(rep.location.jsr().payloadGPR())->offset() / sizeof(uint64_t)] = unboxedValue;
+        else if (rep.location.isFPR())
+            registerResults[registerResultOffsets.find(rep.location.fpr())->offset() / sizeof(uint64_t)] = unboxedValue;
         else
-            calleeFramePointer[rep.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
+            calleeFramePointer[rep.location.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
     }
 }
 
@@ -616,7 +616,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
 
     for (unsigned i = 0; i < signature->returnCount(); ++i) {
-        ValueLocation loc = wasmCallInfo.results[i];
+        ValueLocation loc = wasmCallInfo.results[i].location;
         JSValue value;
         if (loc.isGPR()) {
 #if USE(JSVALE32_64)

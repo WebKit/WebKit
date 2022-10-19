@@ -407,7 +407,7 @@ public:
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR);
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const RegisterSet& skipList);
 
-    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSet::stubUnavailableRegisters());
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSetBuilder::stubUnavailableRegisters());
 
     void emitMaterializeTagCheckRegisters()
     {
@@ -1307,7 +1307,7 @@ public:
         };
 
         for (GPRReg reg : registers) {
-            if (!preserved.contains(reg))
+            if (!preserved.contains(reg, IgnoreVectors))
                 return reg;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1330,17 +1330,19 @@ public:
     static void constructRegisterSet(RegisterSet& set, JSValueRegs regs, Regs... args)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            set.set(regs.tagGPR());
+            set.add(regs.tagGPR(), IgnoreVectors);
         if (regs.payloadGPR() != InvalidGPRReg)
-            set.set(regs.payloadGPR());
+            set.add(regs.payloadGPR(), IgnoreVectors);
         constructRegisterSet(set, args...);
     }
 
     template<typename... Regs>
     static void constructRegisterSet(RegisterSet& set, GPRReg reg, Regs... args)
     {
-        if (reg != InvalidGPRReg)
-            set.set(reg);
+        if (reg != InvalidGPRReg) {
+            ASSERT(!Reg(reg).isFPR());
+            set.add(reg, IgnoreVectors);
+        }
         constructRegisterSet(set, args...);
     }
 

@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"
+#include "Width.h"
 
 namespace JSC {
 
@@ -94,6 +95,7 @@ public:
     void execute(const RegisterAtOffset& entry)
     {
         RELEASE_ASSERT(RegDispatch<RegType>::hasSameType(entry.reg()));
+        ASSERT(entry.width() == pointerWidth() || entry.width() == Width64);
         auto& jit = m_jit;
         JIT_COMMENT(jit, "Execute Spooler: ", entry);
 
@@ -157,9 +159,9 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
+    ALWAYS_INLINE void loadGPR(const RegisterAtOffset& entry) { ASSERT(bytesForWidth(entry.width()) == sizeof(CPURegister)); execute<GPRReg>(entry); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
+    ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 private:
@@ -206,9 +208,9 @@ public:
         : Base(jit, baseGPR)
     { }
 
-    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { execute<GPRReg>(entry); }
+    ALWAYS_INLINE void storeGPR(const RegisterAtOffset& entry) { ASSERT(bytesForWidth(entry.width()) == sizeof(CPURegister)); execute<GPRReg>(entry); }
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
-    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { execute<FPRReg>(entry); }
+    ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
 
 private:

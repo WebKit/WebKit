@@ -63,6 +63,7 @@ public:
         , m_dst(dst)
         , m_width(width)
     {
+        ASSERT(width < Width128);
     }
 
     const Arg& src() const { return m_src; }

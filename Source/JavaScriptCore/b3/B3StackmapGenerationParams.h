@@ -65,7 +65,7 @@ public:
     
     // This tells you the registers that were used.
     // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
-    const RegisterSet& usedRegisters() const;
+    const RegisterSetBuilder& usedRegisters() const;
 
     // This is a useful helper if you want to do register allocation inside of a patchpoint. The
     // usedRegisters() set is not directly useful for this purpose because:
@@ -79,14 +79,14 @@ public:
     // This gives you the used register set that's useful for allocating scratch registers. This set
     // is defined as:
     //
-    //     (usedRegisters() | (RegisterSet::calleeSaveRegisters() - proc.calleeSaveRegisters()))
+    //     (usedRegisters() | (RegisterSetBuilder::calleeSaveRegisters() - proc.calleeSaveRegisters()))
     //     - gpScratchRegisters - fpScratchRegisters
     //
     // I.e. it is like usedRegisters() but also includes unsaved callee-saves and excludes scratch
     // registers.
     //
     // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
-    JS_EXPORT_PRIVATE RegisterSet unavailableRegisters() const;
+    JS_EXPORT_PRIVATE RegisterSetBuilder unavailableRegisters() const;
 
     GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
     FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }

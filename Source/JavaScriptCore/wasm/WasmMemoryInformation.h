@@ -49,15 +49,15 @@ public:
 
     static const PinnedRegisterInfo& get();
 
-    RegisterSet toSave(MemoryMode mode) const
+    RegisterSetBuilder toSave(MemoryMode mode) const
     {
-        RegisterSet result;
+        RegisterSetBuilder result;
         if (baseMemoryPointer != InvalidGPRReg)
-            result.set(baseMemoryPointer);
+            result.add(baseMemoryPointer, IgnoreVectors);
         if (wasmContextInstancePointer != InvalidGPRReg)
-            result.set(wasmContextInstancePointer);
+            result.add(wasmContextInstancePointer, IgnoreVectors);
         if (mode == MemoryMode::BoundsChecking && boundsCheckingSizeRegister != InvalidGPRReg)
-            result.set(boundsCheckingSizeRegister);
+            result.add(boundsCheckingSizeRegister, IgnoreVectors);
         return result;
     }
 

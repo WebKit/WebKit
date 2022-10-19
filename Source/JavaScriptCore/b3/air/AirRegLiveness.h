@@ -42,7 +42,7 @@ namespace JSC { namespace B3 { namespace Air {
 // This makes the code sufficiently different that it didn't make sense to try to share code.
 class RegLiveness {
     struct Actions {
-        Actions() { }
+        Actions() = default;
         
         RegisterSet use;
         RegisterSet def;
@@ -70,7 +70,7 @@ public:
         
         bool isLive(Reg reg) const
         {
-            return m_workset.contains(reg);
+            return m_workset.contains(reg, IgnoreVectors);
         }
         
     protected:
@@ -90,7 +90,9 @@ public:
         
         void execute(unsigned instIndex)
         {
-            m_workset.exclude(m_actions[instIndex + 1].def);
+            m_actions[instIndex + 1].def.forEach([&] (Reg r) {
+                m_workset.remove(r);
+            });
             m_workset.merge(m_actions[instIndex].use);
         }
         

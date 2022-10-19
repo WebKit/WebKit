@@ -78,16 +78,16 @@ private:
 #endif
 
     Vector<Reg> m_registers[numBanks];
-    RegisterSet m_availableRegs[numBanks];
+    ScalarRegisterSet m_availableRegs[numBanks];
     size_t m_globalInstIndex;
     IndexMap<Reg, Tmp>* m_currentAllocation { nullptr };
     TmpMap<size_t> m_liveRangeEnd;
     HashMap<size_t, Vector<Tmp, 2>> m_tmpsToRelease;
     RegisterSet m_namedUsedRegs;
     RegisterSet m_namedDefdRegs;
-    RegisterSet m_earlyClobber;
-    RegisterSet m_lateClobber;
-    RegisterSet m_clobberedToClear;
+    RegisterSetBuilder m_earlyClobber;
+    RegisterSetBuilder m_lateClobber;
+    RegisterSetBuilder m_clobberedToClear;
     RegisterSet m_allowedRegisters;
     std::unique_ptr<UnifiedTmpLiveness> m_liveness;
 

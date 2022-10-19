@@ -74,7 +74,7 @@ void TmpWidth::recompute(Code& code)
     };
     
     // Assume the worst for registers.
-    RegisterSet::allRegisters().forEach(
+    RegisterSetBuilder::allRegisters().forEach(
         [&] (Reg reg) {
             assumeTheWorst(Tmp(reg));
         });

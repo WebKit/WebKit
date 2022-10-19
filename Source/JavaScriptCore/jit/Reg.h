@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -50,48 +50,48 @@ namespace JSC {
 
 class Reg {
 public:
-    Reg()
+    constexpr Reg()
         : m_index(invalid())
     {
     }
 
-    Reg(WTF::HashTableDeletedValueType)
+    constexpr Reg(WTF::HashTableDeletedValueType)
         : m_index(deleted())
     {
     }
-    
-    Reg(MacroAssembler::RegisterID reg)
+
+    constexpr Reg(MacroAssembler::RegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
     {
     }
-    
-    Reg(MacroAssembler::FPRegisterID reg)
+
+    constexpr Reg(MacroAssembler::FPRegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
     {
     }
-    
-    static Reg fromIndex(unsigned index)
+
+    static constexpr Reg fromIndex(unsigned index)
     {
         Reg result;
         result.m_index = index;
         return result;
     }
-    
-    static Reg first()
+
+    static constexpr Reg first()
     {
         Reg result;
         result.m_index = 0;
         return result;
     }
-    
-    static Reg last()
+
+    static constexpr Reg last()
     {
         Reg result;
         result.m_index = MacroAssembler::numberOfRegisters() + MacroAssembler::numberOfFPRegisters() - 1;
         return result;
     }
-    
-    Reg next() const
+
+    constexpr Reg next() const
     {
         ASSERT(!!*this);
         if (*this == last())
@@ -100,79 +100,79 @@ public:
         result.m_index = m_index + 1;
         return result;
     }
-    
-    unsigned index() const { return m_index; }
 
-    static unsigned maxIndex()
+    constexpr unsigned index() const { return m_index; }
+
+    static constexpr unsigned maxIndex()
     {
         return last().index();
     }
-    
-    bool isSet() const { return m_index != invalid(); }
-    explicit operator bool() const { return isSet(); }
 
-    bool isHashTableDeletedValue() const { return m_index == deleted(); }
-    
-    bool isGPR() const
+    constexpr bool isSet() const { return m_index != invalid(); }
+    constexpr explicit operator bool() const { return isSet(); }
+
+    constexpr bool isHashTableDeletedValue() const { return m_index == deleted(); }
+
+    constexpr bool isGPR() const
     {
         return m_index < MacroAssembler::numberOfRegisters();
     }
-    
-    bool isFPR() const
+
+    constexpr bool isFPR() const
     {
         return (m_index - MacroAssembler::numberOfRegisters()) < MacroAssembler::numberOfFPRegisters();
     }
-    
-    MacroAssembler::RegisterID gpr() const
+
+    constexpr MacroAssembler::RegisterID gpr() const
     {
         ASSERT(isGPR());
         return static_cast<MacroAssembler::RegisterID>(MacroAssembler::firstRegister() + m_index);
     }
-    
-    MacroAssembler::FPRegisterID fpr() const
+
+    constexpr MacroAssembler::FPRegisterID fpr() const
     {
         ASSERT(isFPR());
         return static_cast<MacroAssembler::FPRegisterID>(
             MacroAssembler::firstFPRegister() + (m_index - MacroAssembler::numberOfRegisters()));
     }
-    
-    bool operator==(const Reg& other) const
+
+    constexpr bool operator==(const Reg& other) const
     {
         return m_index == other.m_index;
     }
-    
-    bool operator!=(const Reg& other) const
+
+    constexpr bool operator!=(const Reg& other) const
     {
         return m_index != other.m_index;
     }
-    
-    bool operator<(const Reg& other) const
+
+    constexpr bool operator<(const Reg& other) const
     {
         return m_index < other.m_index;
     }
-    
-    bool operator>(const Reg& other) const
+
+    constexpr bool operator>(const Reg& other) const
     {
         return m_index > other.m_index;
     }
-    
-    bool operator<=(const Reg& other) const
+
+    constexpr bool operator<=(const Reg& other) const
     {
         return m_index <= other.m_index;
     }
-    
-    bool operator>=(const Reg& other) const
+
+    constexpr bool operator>=(const Reg& other) const
     {
         return m_index >= other.m_index;
     }
-    
-    unsigned hash() const
+
+    constexpr unsigned hash() const
     {
         return m_index;
     }
-    
+
     const char* debugName() const;
-    
+
     void dump(PrintStream&) const;
 
     class AllRegsIterable {
@@ -213,14 +213,14 @@ public:
         iterator end() const { return iterator(Reg()); }
     };
 
-    static AllRegsIterable all() { return AllRegsIterable(); }
+    static constexpr AllRegsIterable all() { return AllRegsIterable(); }
 
 private:
-    static uint8_t invalid() { return 0xff; }
+    static constexpr uint8_t invalid() { return (1 << 7) - 1; }
 
-    static uint8_t deleted() { return 0xfe; }
-    
-    uint8_t m_index;
+    static constexpr uint8_t deleted() { return invalid() - 1; }
+
+    unsigned m_index : 7;
 };
 
 struct RegHash {

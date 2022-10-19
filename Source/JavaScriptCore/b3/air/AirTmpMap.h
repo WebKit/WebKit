@@ -60,8 +60,8 @@ public:
     template<typename... Args>
     void clear(const Args&... args)
     {
-        m_gp.clear(args...);
-        m_fp.clear(args...);
+        m_gp.remove(args...);
+        m_fp.remove(args...);
     }
     
     const Value& operator[](Tmp tmp) const
