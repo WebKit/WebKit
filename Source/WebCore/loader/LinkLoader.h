@@ -69,6 +69,7 @@ public:
     static bool isSupportedType(CachedResource::Type, const String& mimeType, Document&);
 
     void triggerEvents(const CachedResource&);
+    void triggerError();
     void cancelLoad();
 
 private:
