@@ -184,6 +184,19 @@ RefPtr<VideoFrame> VideoFrame::createI420(Span<const uint8_t> buffer, size_t wid
 #endif
 }
 
+static void copyPlane(uint8_t* destination, const uint8_t* source, uint64_t sourceStride, const ComputedPlaneLayout& spanPlaneLayout, const Function<void(uint8_t*, const uint8_t*, size_t)>& copyRow)
+{
+    uint64_t sourceOffset = spanPlaneLayout.sourceTop * sourceStride;
+    sourceOffset += spanPlaneLayout.sourceLeftBytes;
+    uint64_t destinationOffset = spanPlaneLayout.destinationOffset;
+    uint64_t rowBytes = spanPlaneLayout.sourceWidthBytes;
+    for (size_t cptr = 0; cptr < spanPlaneLayout.sourceHeight; ++cptr) {
+        copyRow(destination + destinationOffset, source + sourceOffset, rowBytes);
+        sourceOffset += sourceStride;
+        destinationOffset += spanPlaneLayout.destinationStride;
+    }
+}
+
 static Vector<PlaneLayout> copyRGBData(Span<uint8_t> span, const ComputedPlaneLayout& spanPlaneLayout, CVPixelBufferRef pixelBuffer, const Function<void(uint8_t*, const uint8_t*, size_t)>& copyRow)
 {
     auto result = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
@@ -202,19 +215,11 @@ static Vector<PlaneLayout> copyRGBData(Span<uint8_t> span, const ComputedPlaneLa
         return { };
     }
 
-    auto height = CVPixelBufferGetHeight(pixelBuffer);
     auto width = CVPixelBufferGetWidth(pixelBuffer);
     auto bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
 
     PlaneLayout planeLayout { spanPlaneLayout.destinationOffset, spanPlaneLayout.destinationStride ? spanPlaneLayout.destinationStride : 4 * width };
-
-    auto* destination = span.data() + planeLayout.offset;
-    auto* source = planeA;
-    for (size_t cptr = 0; cptr < height; ++cptr) {
-        copyRow(destination, source, width);
-        destination += planeLayout.stride;
-        source += bytesPerRow;
-    }
+    copyPlane(span.data(), planeA, bytesPerRow, spanPlaneLayout, copyRow);
 
     Vector<PlaneLayout> planeLayouts;
     planeLayouts.append(planeLayout);
@@ -245,32 +250,20 @@ static Vector<PlaneLayout> copyNV12(Span<uint8_t> span, const ComputedPlaneLayou
     }
 
     auto widthY = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0);
-    auto heightY = CVPixelBufferGetHeightOfPlane(pixelBuffer, 0);
     auto bytesPerRowY = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
     PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
 
-    auto* destination = span.data() + planeLayoutY.offset;
-    auto* source = planeY;
-    size_t size = bytesPerRowY < planeLayoutY.stride ? bytesPerRowY : planeLayoutY.stride;
-    for (size_t cptr = 0; cptr < heightY; ++cptr) {
+    copyPlane(span.data(), planeY, bytesPerRowY, spanPlaneLayoutY, [](auto* destination, auto* source, auto size) {
         std::memcpy(destination, source, size);
-        destination += planeLayoutY.stride;
-        source += bytesPerRowY;
-    }
+    });
 
     auto widthUV = CVPixelBufferGetWidthOfPlane(pixelBuffer, 1);
-    auto heightUV = CVPixelBufferGetHeightOfPlane(pixelBuffer, 1);
     auto bytesPerRowUV = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
     PlaneLayout planeLayoutUV { spanPlaneLayoutUV.destinationOffset, spanPlaneLayoutUV.destinationStride ? spanPlaneLayoutUV.destinationStride : widthUV };
 
-    destination = span.data() + planeLayoutUV.offset;
-    source = planeUV;
-    size = bytesPerRowUV < planeLayoutUV.stride ? bytesPerRowUV : planeLayoutUV.stride;
-    for (size_t cptr = 0; cptr < heightUV; ++cptr) {
+    copyPlane(span.data(), planeUV, bytesPerRowUV, spanPlaneLayoutUV, [](auto* destination, auto* source, auto size) {
         std::memcpy(destination, source, size);
-        destination += planeLayoutUV.stride;
-        source += bytesPerRowUV;
-    }
+    });
 
     Vector<PlaneLayout> planeLayouts;
     planeLayouts.append(planeLayoutY);
@@ -278,41 +271,85 @@ static Vector<PlaneLayout> copyNV12(Span<uint8_t> span, const ComputedPlaneLayou
     return planeLayouts;
 }
 
+static Vector<PlaneLayout> copyI420(Span<uint8_t> span, const ComputedPlaneLayout& spanPlaneLayoutY, const ComputedPlaneLayout& spanPlaneLayoutU, const ComputedPlaneLayout& spanPlaneLayoutV, CVPixelBufferRef pixelBuffer)
+{
+    auto result = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    if (result != kCVReturnSuccess) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo lock failed: %d", result);
+        return { };
+    }
+
+    auto scope = makeScopeExit([&pixelBuffer] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    });
+
+    auto* planeY = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+    if (!planeY) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane Y is null");
+        return { };
+    }
+    auto* planeUV = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+    if (!planeUV) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo plane UV is null");
+        return { };
+    }
+
+    auto widthY = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0);
+    auto bytesPerRowY = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
+
+    copyPlane(span.data(), planeY, bytesPerRowY, spanPlaneLayoutY, [](auto* destination, auto* source, auto size) {
+        std::memcpy(destination, source, size);
+    });
+
+    auto widthUV = CVPixelBufferGetWidthOfPlane(pixelBuffer, 1);
+    auto bytesPerRowUV = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+
+    PlaneLayout planeLayoutU { spanPlaneLayoutU.destinationOffset, spanPlaneLayoutU.destinationStride ? spanPlaneLayoutU.destinationStride : widthUV / 2 };
+    PlaneLayout planeLayoutV { spanPlaneLayoutV.destinationOffset, spanPlaneLayoutV.destinationStride ? spanPlaneLayoutV.destinationStride : widthUV / 2 };
+
+    // We store I420 as NV12, so we need to recompute the spanPlaneLayoutUV from spanPlaneLayoutU.
+    auto spanPlaneLayoutUV = spanPlaneLayoutU;
+    spanPlaneLayoutUV.sourceLeftBytes += spanPlaneLayoutUV.sourceLeftBytes;
+    spanPlaneLayoutUV.sourceWidthBytes += spanPlaneLayoutUV.sourceWidthBytes;
+
+    auto* destinationU = span.data() + spanPlaneLayoutU.destinationOffset;
+    auto* destinationV = span.data() + spanPlaneLayoutV.destinationOffset;
+    copyPlane(nullptr, planeUV, bytesPerRowUV, spanPlaneLayoutUV, [&destinationU, &destinationV, strideU = planeLayoutU.stride, strideV = planeLayoutV.stride](auto*, auto* source, auto size) {
+        auto* destU = destinationU;
+        auto* destV = destinationV;
+        for (size_t cptr = 0; cptr < size;) {
+            *destU++ = source[cptr++];
+            *destV++ = source[cptr++];
+        }
+        destinationU += strideU;
+        destinationV += strideV;
+    });
+
+    Vector<PlaneLayout> planeLayouts;
+    planeLayouts.append(planeLayoutY);
+    planeLayouts.append(planeLayoutU);
+    planeLayouts.append(planeLayoutV);
+    return planeLayouts;
+}
+
 void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
+    // FIXME: We should get the pixel buffer and copy the bytes asynchronously.
     if (format == VideoPixelFormat::NV12) {
-        // FIXME: We should get the pixel buffer asynchronously if possible.
         callback(copyNV12(span, computedPlaneLayout[0], computedPlaneLayout[1], this->pixelBuffer()));
         return;
     }
 
     if (format == VideoPixelFormat::I420) {
-#if USE(LIBWEBRTC)
-        webrtc::I420BufferLayout layout {
-            computedPlaneLayout[0].destinationOffset, computedPlaneLayout[0].destinationStride,
-            computedPlaneLayout[1].destinationOffset, computedPlaneLayout[1].destinationStride,
-            computedPlaneLayout[2].destinationOffset, computedPlaneLayout[2].destinationStride
-        };
-        // FIXME: We should get the pixel buffer asynchronously if possible.
-        if (!webrtc::copyPixelBufferInI420Buffer(span.data(), span.size(), this->pixelBuffer(), layout)) {
-            callback({ });
-            return;
-        }
-
-        Vector<PlaneLayout> planeLayouts;
-        planeLayouts.append({ layout.offsetY, layout.strideY });
-        planeLayouts.append({ layout.offsetU, layout.strideU });
-        planeLayouts.append({ layout.offsetV, layout.strideV });
-        callback(WTFMove(planeLayouts));
+        callback(copyI420(span, computedPlaneLayout[0], computedPlaneLayout[1], computedPlaneLayout[2], this->pixelBuffer()));
         return;
-#endif
     }
 
     if (format == VideoPixelFormat::RGBA) {
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        // FIXME: We should get the pixel buffer asynchronously if possible.
         auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
             size_t i = 0;
             while (pixelCount-- > 0) {
@@ -332,7 +369,6 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        // FIXME: We should get the pixel buffer asynchronously if possible.
         auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
             std::memcpy(destination, source, pixelCount * 4);
         });
@@ -340,7 +376,6 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         return;
     }
 
-    // FIXME: Add support for NV12 and I420.
     callback({ });
 }
 

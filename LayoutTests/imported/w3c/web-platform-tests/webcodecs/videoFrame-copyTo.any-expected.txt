@@ -13,6 +13,13 @@ PASS Test address overflow.
 PASS Test codedRect.
 PASS Test empty rect.
 PASS Test unaligned rect.
-FAIL Test left crop. assert_equals: buffer contents at index 0 expected 3 but got 1
+PASS Test left crop I420.
+PASS Test left crop NV12.
+PASS Test left crop RGBA.
+PASS Test left crop BGRA.
+PASS Test top crop I420.
+PASS Test top crop NV12.
+PASS Test top crop RGBA.
+PASS Test top crop BGRA.
 PASS Test invalid rect.
 
