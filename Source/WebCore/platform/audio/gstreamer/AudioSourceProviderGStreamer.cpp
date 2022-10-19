@@ -254,7 +254,7 @@ void AudioSourceProviderGStreamer::setClient(WeakPtr<AudioSourceProviderClient>&
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient, client());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient.get(), client());
 #endif
     bool previousClientWasValid = !!m_client;
     m_client = WTFMove(newClient);
