@@ -81,6 +81,20 @@ WorkerOrWorkletThread::~WorkerOrWorkletThread()
     workerOrWorkletThreads().remove(this);
 }
 
+void WorkerOrWorkletThread::dispatch(Function<void()>&& func)
+{
+    runLoop().postTask([func = WTFMove(func)](auto&) mutable {
+        func();
+    });
+}
+
+#if ASSERT_ENABLED
+void WorkerOrWorkletThread::assertIsCurrent() const
+{
+    return WTF::assertIsCurrent(*thread());
+}
+#endif
+
 void WorkerOrWorkletThread::startRunningDebuggerTasks()
 {
     ASSERT(!m_pausedForDebugger);

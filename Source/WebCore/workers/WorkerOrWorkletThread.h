@@ -29,6 +29,7 @@
 #include "WorkerThreadMode.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -42,9 +43,14 @@ namespace WebCore {
 class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
 
-class WorkerOrWorkletThread : public ThreadSafeRefCounted<WorkerOrWorkletThread> {
+class WorkerOrWorkletThread : public SerialFunctionDispatcher, public ThreadSafeRefCounted<WorkerOrWorkletThread> {
 public:
     virtual ~WorkerOrWorkletThread();
+
+    void dispatch(Function<void()>&&) final;
+#if ASSERT_ENABLED
+    void assertIsCurrent() const final;
+#endif
 
     Thread* thread() const { return m_thread.get(); }
 
