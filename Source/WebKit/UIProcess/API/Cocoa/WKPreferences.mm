@@ -1598,6 +1598,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->interactionRegionInlinePadding();
 }
 
+- (void)_setMediaPreferredFullscreenWidth:(double)width
+{
+    _preferences->setMediaPreferredFullscreenWidth(width);
+}
+
+- (double)_mediaPreferredFullscreenWidth
+{
+    return _preferences->mediaPreferredFullscreenWidth();
+}
+
 @end
 
 @implementation WKPreferences (WKDeprecated)

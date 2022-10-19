@@ -1421,6 +1421,16 @@ MediaEnabled:
     WebCore:
       default: true
 
+MediaPreferredFullscreenWidth:
+  type: double
+  defaultValue:
+    WebKitLegacy:
+      default: 960
+    WebKit:
+      default: 960
+    WebCore:
+      default: 960
+
 MediaPreloadingEnabled:
   type: bool
   defaultValue:
