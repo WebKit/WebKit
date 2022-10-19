@@ -257,6 +257,14 @@ bool RenderLayerScrollableArea::requestScrollPositionUpdate(const ScrollPosition
     return false;
 }
 
+bool RenderLayerScrollableArea::requestStartKeyboardAnimation(ScrollDirection direction, ScrollGranularity granularity)
+{
+  if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
+      return scrollingCoordinator->requestStartKeyboardAnimation(*this, direction, granularity);
+
+  return false;
+}
+
 bool RenderLayerScrollableArea::requestAnimatedScrollToPosition(const ScrollPosition& destinationPosition, ScrollClamping clamping)
 {
 #if ENABLE(ASYNC_SCROLLING)

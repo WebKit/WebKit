@@ -1982,6 +1982,7 @@ platform/ScreenOrientationManager.cpp
 platform/ScreenOrientationProvider.cpp
 platform/ScrollAlignment.cpp
 platform/ScrollAnimation.cpp
+platform/ScrollAnimationKeyboard.cpp
 platform/ScrollAnimationKinetic.cpp
 platform/ScrollAnimationMomentum.cpp
 platform/ScrollAnimationSmooth.cpp

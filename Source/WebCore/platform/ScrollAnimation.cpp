@@ -37,6 +37,7 @@ TextStream& operator<<(TextStream& ts, ScrollAnimation::Type animationType)
     case ScrollAnimation::Type::Kinetic: ts << "kinetic"; break;
     case ScrollAnimation::Type::Momentum: ts << "momentum"; break;
     case ScrollAnimation::Type::RubberBand: ts << "rubber-band"; break;
+    case ScrollAnimation::Type::Keyboard: ts << "keyboard"; break;
     }
     return ts;
 }

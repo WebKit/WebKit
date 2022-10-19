@@ -57,6 +57,7 @@ public:
         Kinetic,
         Momentum,
         RubberBand,
+        Keyboard,
     };
 
     ScrollAnimation(Type animationType, ScrollAnimationClient& client)

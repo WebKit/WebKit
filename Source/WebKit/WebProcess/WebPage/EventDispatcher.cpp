@@ -100,14 +100,14 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
 {
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 
-    ensureOnMainRunLoop([pageID] {
-        if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
-            if (auto* corePage = webPage->corePage()) {
-                if (auto* keyboardScrollingAnimator = corePage->currentKeyboardScrollingAnimator())
-                    keyboardScrollingAnimator->stopScrollingImmediately();
-            }
-        }
-    });
+    // ensureOnMainRunLoop([pageID] {
+    //     if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
+    //         if (auto* corePage = webPage->corePage()) {
+    //             if (auto* keyboardScrollingAnimator = corePage->currentKeyboardScrollingAnimator())
+    //                 keyboardScrollingAnimator->stopScrollingImmediately();
+    //         }
+    //     }
+    // });
     
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     do {

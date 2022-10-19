@@ -4360,19 +4360,19 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent& event)
 
 void EventHandler::stopKeyboardScrolling()
 {
-    auto animator = m_frame.page()->currentKeyboardScrollingAnimator();
-    if (animator)
-        animator->handleKeyUpEvent();
+    // auto animator = m_frame.page()->currentKeyboardScrollingAnimator();
+    // if (animator)
+    //     animator->handleKeyUpEvent();
 }
 
-bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, ScrollDirection direction, ScrollGranularity granularity)
+bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator*, ScrollDirection direction, ScrollGranularity granularity, ScrollableArea& scrollableArea)
 {
-    if (animator && animator->beginKeyboardScrollGesture(direction, granularity)) {
-        m_frame.page()->setCurrentKeyboardScrollingAnimator(animator);
-        return true;
-    }
-
-    return false;
+    // if (animator && animator->beginKeyboardScrollGesture(direction, granularity)) {
+    //     m_frame.page()->setCurrentKeyboardScrollingAnimator(animator);
+    //     return true;
+    // }
+    scrollableArea.beginKeyboardScroll(direction, granularity);
+    return true;
 }
 
 bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direction, ScrollGranularity granularity)
@@ -4382,7 +4382,7 @@ bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direct
         return false;
 
     auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
-    return beginKeyboardScrollGesture(animator, direction, granularity);
+    return beginKeyboardScrollGesture(animator, direction, granularity, view->scrollAnimator().scrollableArea());
 }
 
 bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox)
@@ -4392,7 +4392,7 @@ bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection 
         return false;
 
     auto* animator = scrollableArea->scrollAnimator().keyboardScrollingAnimator();
-    return beginKeyboardScrollGesture(animator, direction, granularity);
+    return beginKeyboardScrollGesture(animator, direction, granularity, *scrollableArea);
 }
 
 bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox)

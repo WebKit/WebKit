@@ -103,6 +103,7 @@ private:
     WEBCORE_EXPORT void frameViewWillBeDetached(FrameView&) override;
 
     WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const ScrollPosition&, ScrollType, ScrollClamping) final;
+    WEBCORE_EXPORT bool requestStartKeyboardAnimation(ScrollableArea&, ScrollDirection, ScrollGranularity) final;
     WEBCORE_EXPORT bool requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping) final;
     WEBCORE_EXPORT void stopAnimatedScroll(ScrollableArea&) final;
 

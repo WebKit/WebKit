@@ -56,36 +56,6 @@ RectEdges<bool> KeyboardScrollingAnimator::scrollableDirectionsFromPosition(Floa
     return edges;
 }
 
-static BoxSide boxSideForDirection(ScrollDirection direction)
-{
-    switch (direction) {
-    case ScrollDirection::ScrollUp:
-        return BoxSide::Top;
-    case ScrollDirection::ScrollDown:
-        return BoxSide::Bottom;
-    case ScrollDirection::ScrollLeft:
-        return BoxSide::Left;
-    case ScrollDirection::ScrollRight:
-        return BoxSide::Right;
-    }
-    ASSERT_NOT_REACHED();
-    return BoxSide::Top;
-}
-
-static FloatSize perpendicularAbsoluteUnitVector(ScrollDirection direction)
-{
-    switch (direction) {
-    case ScrollDirection::ScrollUp:
-    case ScrollDirection::ScrollDown:
-        return { 1, 0 };
-    case ScrollDirection::ScrollLeft:
-    case ScrollDirection::ScrollRight:
-        return { 0, 1 };
-    }
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(const KeyboardEvent& event)
 {
     auto* platformEvent = event.underlyingPlatformEvent();
@@ -174,112 +144,65 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
     return granularity;
 }
 
-void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime currentTime)
-{
-    auto force = FloatSize { };
-    auto axesToApplySpring = FloatSize { 1, 1 };
-    KeyboardScrollParameters params = KeyboardScrollParameters::parameters();
+// void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime currentTime)
+// {
+//     auto force = FloatSize { };
+//     auto axesToApplySpring = FloatSize { 1, 1 };
+//     KeyboardScrollParameters params = KeyboardScrollParameters::parameters();
 
-    if (m_currentKeyboardScroll) {
-        auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
-        auto direction = m_currentKeyboardScroll->direction;
+//     if (m_currentKeyboardScroll) {
+//         auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
+//         auto direction = m_currentKeyboardScroll->direction;
 
-        if (scrollableDirections.at(boxSideForDirection(direction))) {
-            // Apply the scrolling force. Only apply the spring in the perpendicular axis,
-            // otherwise it drags against the direction of motion.
-            axesToApplySpring = perpendicularAbsoluteUnitVector(direction);
-            force = m_currentKeyboardScroll->force;
-        } else {
-            // The scroll view cannot scroll in this direction, and is rubber-banding.
-            // Apply a constant and significant force; otherwise, the force for a
-            // single-line increment is not strong enough to rubber-band perceptibly.
-            force = unitVectorForScrollDirection(direction).scaled(params.rubberBandForce);
-        }
+//         if (scrollableDirections.at(boxSideForDirection(direction))) {
+//             // Apply the scrolling force. Only apply the spring in the perpendicular axis,
+//             // otherwise it drags against the direction of motion.
+//             axesToApplySpring = perpendicularAbsoluteUnitVector(direction);
+//             force = m_currentKeyboardScroll->force;
+//         } else {
+//             // The scroll view cannot scroll in this direction, and is rubber-banding.
+//             // Apply a constant and significant force; otherwise, the force for a
+//             // single-line increment is not strong enough to rubber-band perceptibly.
+//             force = unitVectorForScrollDirection(direction).scaled(params.rubberBandForce);
+//         }
 
-        if (fabs(m_velocity.width()) >= fabs(m_currentKeyboardScroll->maximumVelocity.width()))
-            force.setWidth(0);
+//         if (fabs(m_velocity.width()) >= fabs(m_currentKeyboardScroll->maximumVelocity.width()))
+//             force.setWidth(0);
 
-        if (fabs(m_velocity.height()) >= fabs(m_currentKeyboardScroll->maximumVelocity.height()))
-            force.setHeight(0);
-    }
+//         if (fabs(m_velocity.height()) >= fabs(m_currentKeyboardScroll->maximumVelocity.height()))
+//             force.setHeight(0);
+//     }
 
-    ScrollPosition idealPosition = m_scrollAnimator.scrollableArea().constrainedScrollPosition(IntPoint(m_currentKeyboardScroll ? m_scrollAnimator.currentPosition() : m_idealPosition));
-    FloatSize displacement = m_scrollAnimator.currentPosition() - idealPosition;
+//     ScrollPosition idealPosition = m_scrollAnimator.scrollableArea().constrainedScrollPosition(IntPoint(m_currentKeyboardScroll ? m_scrollAnimator.currentPosition() : m_idealPosition));
+//     FloatSize displacement = m_scrollAnimator.currentPosition() - idealPosition;
 
-    auto springForce = -displacement.scaled(params.springStiffness) - m_velocity.scaled(params.springDamping);
-    force += springForce * axesToApplySpring;
+//     auto springForce = -displacement.scaled(params.springStiffness) - m_velocity.scaled(params.springDamping);
+//     force += springForce * axesToApplySpring;
 
-    float frameDuration = (currentTime - m_timeAtLastFrame).value();
-    m_timeAtLastFrame = currentTime;
+//     float frameDuration = (currentTime - m_timeAtLastFrame).value();
+//     m_timeAtLastFrame = currentTime;
 
-    FloatSize acceleration = force.scaled(1. / params.springMass);
-    m_velocity += acceleration.scaled(frameDuration);
-    FloatPoint newPosition = m_scrollAnimator.currentPosition() + m_velocity.scaled(frameDuration);
+//     FloatSize acceleration = force.scaled(1. / params.springMass);
+//     m_velocity += acceleration.scaled(frameDuration);
+//     FloatPoint newPosition = m_scrollAnimator.currentPosition() + m_velocity.scaled(frameDuration);
 
-    m_scrollAnimator.scrollToPositionWithoutAnimation(newPosition);
+//     m_scrollAnimator.scrollToPositionWithoutAnimation(newPosition);
 
-    // Stop the spring if it reaches the ideal position.
-    FloatSize newDisplacement = newPosition - idealPosition;
-    if (axesToApplySpring.width() && displacement.width() * newDisplacement.width() < 0)
-        m_velocity.setWidth(0);
-    if (axesToApplySpring.height() && displacement.height() * newDisplacement.height() < 0)
-        m_velocity.setHeight(0);
+//     // Stop the spring if it reaches the ideal position.
+//     FloatSize newDisplacement = newPosition - idealPosition;
+//     if (axesToApplySpring.width() && displacement.width() * newDisplacement.width() < 0)
+//         m_velocity.setWidth(0);
+//     if (axesToApplySpring.height() && displacement.height() * newDisplacement.height() < 0)
+//         m_velocity.setHeight(0);
 
-    if (!m_scrollTriggeringKeyIsPressed && m_velocity.diagonalLengthSquared() < 1) {
-        m_scrollController.didStopKeyboardScrolling();
-        m_velocity = { };
-    }
-}
+//     if (!m_scrollTriggeringKeyIsPressed && m_velocity.diagonalLengthSquared() < 1) {
+//         m_scrollController.didStopKeyboardScrolling();
+//         m_velocity = { };
+//     }
+// }
 
-float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, ScrollGranularity granularity) const
-{
-    auto scrollbar = m_scrollAnimator.scrollableArea().scrollbarForDirection(direction);
-    if (!scrollbar)
-        return false;
-
-    float step = 0;
-    switch (granularity) {
-    case ScrollGranularity::Line:
-        step = scrollbar->lineStep();
-        break;
-    case ScrollGranularity::Page:
-        step = scrollbar->pageStep();
-        break;
-    case ScrollGranularity::Document:
-        step = scrollbar->totalSize();
-        break;
-    case ScrollGranularity::Pixel:
-        step = scrollbar->pixelStep();
-        break;
-    }
-
-    auto axis = axisFromDirection(direction);
-    if (granularity == ScrollGranularity::Page && axis == ScrollEventAxis::Vertical)
-        step = m_scrollAnimator.scrollableArea().adjustVerticalPageScrollStepForFixedContent(step);
-
-    return step;
-}
-
-std::optional<KeyboardScroll> KeyboardScrollingAnimator::makeKeyboardScroll(ScrollDirection direction, ScrollGranularity granularity) const
-{
-    float distance = scrollDistance(direction, granularity);
-
-    if (!distance)
-        return std::nullopt;
-
-    KeyboardScroll scroll;
-
-    scroll.offset = unitVectorForScrollDirection(direction).scaled(distance);
-    scroll.granularity = granularity;
-    scroll.direction = direction;
-    scroll.maximumVelocity = scroll.offset.scaled(KeyboardScrollParameters::parameters().maximumVelocityMultiplier);
-    scroll.force = scroll.maximumVelocity.scaled(KeyboardScrollParameters::parameters().springMass / KeyboardScrollParameters::parameters().timeToMaximumVelocity);
-
-    return scroll;
-}
-
-bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity)
-{
+ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity)
+ {
     auto scroll = makeKeyboardScroll(direction, granularity);
     if (!scroll)
         return false;
@@ -310,65 +233,65 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     m_scrollController.willBeginKeyboardScrolling();
 
     return true;
-}
+ }
 
-static ScrollPosition farthestPointInDirection(FloatPoint a, FloatPoint b, ScrollDirection direction)
-{
-    switch (direction) {
-    case ScrollDirection::ScrollUp:
-        return ScrollPosition(a.x(), std::min(a.y(), b.y()));
-    case ScrollDirection::ScrollDown:
-        return ScrollPosition(a.x(), std::max(a.y(), b.y()));
-    case ScrollDirection::ScrollLeft:
-        return ScrollPosition(std::min(a.x(), b.x()), a.y());
-    case ScrollDirection::ScrollRight:
-        return ScrollPosition(std::max(a.x(), b.x()), a.y());
-    }
+// static ScrollPosition farthestPointInDirection(FloatPoint a, FloatPoint b, ScrollDirection direction)
+// {
+//     switch (direction) {
+//     case ScrollDirection::ScrollUp:
+//         return ScrollPosition(a.x(), std::min(a.y(), b.y()));
+//     case ScrollDirection::ScrollDown:
+//         return ScrollPosition(a.x(), std::max(a.y(), b.y()));
+//     case ScrollDirection::ScrollLeft:
+//         return ScrollPosition(std::min(a.x(), b.x()), a.y());
+//     case ScrollDirection::ScrollRight:
+//         return ScrollPosition(std::max(a.x(), b.x()), a.y());
+//     }
 
-    ASSERT_NOT_REACHED();
-    return { };
-}
+//     ASSERT_NOT_REACHED();
+//     return { };
+// }
 
-void KeyboardScrollingAnimator::stopKeyboardScrollAnimation()
-{
-    if (!m_currentKeyboardScroll)
-        return;
+// void KeyboardScrollingAnimator::stopKeyboardScrollAnimation()
+// {
+//     if (!m_currentKeyboardScroll)
+//         return;
 
-    auto params = KeyboardScrollParameters::parameters();
+//     auto params = KeyboardScrollParameters::parameters();
 
-    // Determine the settling position of the spring, conserving the system's current energy.
-    // Kinetic = elastic potential
-    // 1/2 * m * v^2 = 1/2 * k * x^2
-    // x = sqrt(v^2 * m / k)
-    auto displacementMagnitudeSquared = (m_velocity * m_velocity).scaled(params.springMass / params.springStiffness);
-    FloatSize displacement = {
-        std::copysign(sqrt(displacementMagnitudeSquared.width()), m_velocity.width()),
-        std::copysign(sqrt(displacementMagnitudeSquared.height()), m_velocity.height())
-    };
+//     // Determine the settling position of the spring, conserving the system's current energy.
+//     // Kinetic = elastic potential
+//     // 1/2 * m * v^2 = 1/2 * k * x^2
+//     // x = sqrt(v^2 * m / k)
+//     auto displacementMagnitudeSquared = (m_velocity * m_velocity).scaled(params.springMass / params.springStiffness);
+//     FloatSize displacement = {
+//         std::copysign(sqrt(displacementMagnitudeSquared.width()), m_velocity.width()),
+//         std::copysign(sqrt(displacementMagnitudeSquared.height()), m_velocity.height())
+//     };
 
-    // If the spring would settle before the minimum travel distance
-    // for an instantaneous tap, move the settling position of the spring
-    // out to that point.
-    ScrollPosition farthestPoint = farthestPointInDirection(m_scrollAnimator.currentPosition() + displacement, m_idealPositionForMinimumTravel, m_currentKeyboardScroll->direction);
-    m_idealPosition = m_scrollAnimator.scrollableArea().constrainedScrollPosition(farthestPoint);
+//     // If the spring would settle before the minimum travel distance
+//     // for an instantaneous tap, move the settling position of the spring
+//     // out to that point.
+//     ScrollPosition farthestPoint = farthestPointInDirection(m_scrollAnimator.currentPosition() + displacement, m_idealPositionForMinimumTravel, m_currentKeyboardScroll->direction);
+//     m_idealPosition = m_scrollAnimator.scrollableArea().constrainedScrollPosition(farthestPoint);
 
-    m_currentKeyboardScroll = std::nullopt;
-}
+//     m_currentKeyboardScroll = std::nullopt;
+// }
 
-void KeyboardScrollingAnimator::handleKeyUpEvent()
-{
-    if (!m_scrollTriggeringKeyIsPressed)
-        return;
+// void KeyboardScrollingAnimator::handleKeyUpEvent()
+// {
+//     if (!m_scrollTriggeringKeyIsPressed)
+//         return;
 
-    stopKeyboardScrollAnimation();
-    m_scrollTriggeringKeyIsPressed = false;
-}
+//     stopKeyboardScrollAnimation();
+//     m_scrollTriggeringKeyIsPressed = false;
+// }
 
-void KeyboardScrollingAnimator::stopScrollingImmediately()
-{
-    m_scrollTriggeringKeyIsPressed = false;
-    m_scrollController.didStopKeyboardScrolling();
-    m_velocity = { };
-}
+// void KeyboardScrollingAnimator::stopScrollingImmediately()
+// {
+//     m_scrollTriggeringKeyIsPressed = false;
+//     m_scrollController.didStopKeyboardScrolling();
+//     m_velocity = { };
+// }
 
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimationMomentum.h"
 #include "ScrollAnimationSmooth.h"
+#include "ScrollAnimationKeyboard.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include <wtf/text/TextStream.h>
@@ -91,6 +92,21 @@ void ScrollingEffectsController::willBeginKeyboardScrolling()
 void ScrollingEffectsController::didStopKeyboardScrolling()
 {
     setIsAnimatingKeyboardScrolling(false);
+}
+
+bool ScrollingEffectsController::startKeyboardScroll(ScrollDirection direction, ScrollGranularity granularity)
+{
+    if (m_currentAnimation)
+        m_currentAnimation->stop();
+
+    m_currentAnimation = makeUnique<ScrollAnimationKeyboard>(*this);
+    bool started = downcast<ScrollAnimationKeyboard>(*m_currentAnimation).startKeyboardScroll(direction, granularity);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startAnimatedScrollToDestination " << *m_currentAnimation << " started " << started);
+    return started;
+}
+
+void ScrollingEffectsController::setKeyboardScrollData(const KeyboardScrollData&)
+{
 }
 
 bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset)
@@ -210,7 +226,7 @@ void ScrollingEffectsController::stopKeyboardScrolling()
     if (!m_isAnimatingKeyboardScrolling)
         return;
 
-    m_client.keyboardScrollingAnimator()->handleKeyUpEvent();
+    // m_client.keyboardScrollingAnimator()->handleKeyUpEvent();
 }
 
 void ScrollingEffectsController::contentsSizeChanged()
@@ -483,12 +499,12 @@ void ScrollingEffectsController::stopScrollSnapAnimation()
     setIsAnimatingScrollSnap(false);
 }
 
-void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(MonotonicTime currentTime)
+void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(MonotonicTime)
 {
-    if (!m_isAnimatingKeyboardScrolling)
-        return;
-
-    m_client.keyboardScrollingAnimator()->updateKeyboardScrollPosition(currentTime);
+//    if (!m_isAnimatingKeyboardScrolling)
+//        return;
+//
+//    m_client.keyboardScrollingAnimator()->updateKeyboardScrollPosition(currentTime);
 }
 
 void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& scrollOffset)

@@ -53,6 +53,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollData(stateNode.requestedScrollData())
+    , m_keyboardScrollData(stateNode.keyboardScrollData())
 #if ENABLE(SCROLLING_THREAD)
     , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
 #endif
@@ -198,6 +199,12 @@ void ScrollingStateScrollingNode::setSynchronousScrollingReasons(OptionSet<Synch
     setPropertyChanged(Property::ReasonsForSynchronousScrolling);
 }
 #endif
+
+void ScrollingStateScrollingNode::setKeyboardScrollData(const KeyboardScrollData& scrollData)
+{
+    m_keyboardScrollData = scrollData;
+    setPropertyChanged(Property::KeyboardScrollData);
+}
 
 void ScrollingStateScrollingNode::setRequestedScrollData(const RequestedScrollData& scrollData)
 {
