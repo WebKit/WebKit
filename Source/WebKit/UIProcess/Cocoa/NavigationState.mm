@@ -104,7 +104,7 @@ NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
-#if USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
     , m_releaseNetworkActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityAfterLoadCompletion)
 #endif
 {
@@ -1366,7 +1366,7 @@ void NavigationState::willChangeIsLoading()
     [m_webView willChangeValueForKey:@"loading"];
 }
 
-#if USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
 void NavigationState::releaseNetworkActivity(NetworkActivityReleaseReason reason)
 {
     if (!m_networkActivity)
@@ -1387,13 +1387,11 @@ void NavigationState::releaseNetworkActivity(NetworkActivityReleaseReason reason
 
 void NavigationState::didChangeIsLoading()
 {
-#if USE(RUNNINGBOARD)
-    if (m_webView->_page->pageLoadState().isLoading()) {
 #if PLATFORM(IOS_FAMILY)
+    if (m_webView->_page->pageLoadState().isLoading()) {
         // We do not start a network activity if a load starts after the screen has been locked.
         if ([UIApp isSuspendedUnderLock])
             return;
-#endif
 
         if (m_releaseNetworkActivityTimer.isActive()) {
             RELEASE_LOG(ProcessSuspension, "%p - NavigationState keeps its process network assertion because a new page load started", this);
@@ -1518,7 +1516,7 @@ void NavigationState::didChangeWebProcessIsResponsive()
 
 void NavigationState::didSwapWebProcesses()
 {
-#if USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
     // Transfer our background assertion from the old process to the new one.
     if (m_networkActivity)
         m_networkActivity = m_webView->_page->process().throttler().backgroundActivity("Page Load"_s).moveToUniquePtr();

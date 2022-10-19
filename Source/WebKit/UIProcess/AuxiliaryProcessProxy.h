@@ -201,6 +201,9 @@ private:
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    RefPtr<ProcessAssertion> m_lifetimeAssertion;
+#endif
 };
 
 template<typename T>

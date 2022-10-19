@@ -2700,9 +2700,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     static bool isInHardwareKeyboardMode();
-#endif
-
-#if USE(RUNNINGBOARD)
     void clearAudibleActivity();
 #endif
 
@@ -2888,7 +2885,7 @@ private:
 #if PLATFORM(MACCATALYST)
     bool m_isListeningForUserFacingStateChangeNotification { false };
 #endif
-#if USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
     bool m_allowsMediaDocumentInlinePlayback { false };
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;
