@@ -536,6 +536,11 @@ CompilationResult Plan::finalize()
     ASSERT(m_vm->heap.isDeferred());
 
     CompilationResult result = [&] {
+        if (m_finalizer->isFailed()) {
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("failed"));
+            return CompilationFailed;
+        }
+
         if (!isStillValidOnMainThread() || !isStillValid()) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
             return CompilationInvalidated;
