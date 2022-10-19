@@ -4032,4 +4032,16 @@ ScreenOrientationManager* Page::screenOrientationManager() const
     return m_screenOrientationManager.get();
 }
 
+URL Page::sanitizeForCopyOrShare(const URL& url) const
+{
+    return chrome().client().sanitizeForCopyOrShare(url);
+}
+
+String Page::sanitizeForCopyOrShare(const String& urlString) const
+{
+    if (auto url = URL { urlString }; url.isValid())
+        return sanitizeForCopyOrShare(WTFMove(url)).string();
+    return urlString;
+}
+
 } // namespace WebCore

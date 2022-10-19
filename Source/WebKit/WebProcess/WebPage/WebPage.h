@@ -1479,6 +1479,8 @@ public:
 
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
 
+    URL sanitizeForCopyOrShare(const URL&) const;
+
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(WebCore::Element&, WebCore::TextRecognitionOptions&&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { });
     void updateWithTextRecognitionResult(const WebCore::TextRecognitionResult&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
@@ -2544,6 +2546,10 @@ inline void WebPage::prepareToRunModalJavaScriptDialog() { }
 
 #if !PLATFORM(MAC)
 inline bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const { return false; }
+#endif
+
+#if !PLATFORM(COCOA)
+inline URL WebPage::sanitizeForCopyOrShare(const URL& url) const { return url; }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

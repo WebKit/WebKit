@@ -58,6 +58,7 @@
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
+#include <wtf/URL.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetContext.h"
@@ -539,8 +540,10 @@ public:
     virtual void handleSelectionServiceClick(FrameSelection&, const Vector<String>&, const IntPoint&) { }
     virtual bool hasRelevantSelectionServices(bool /*isTextOnly*/) const { return false; }
     virtual void handleImageServiceClick(const IntPoint&, Image&, HTMLImageElement&) { }
-    virtual void handlePDFServiceClick(const IntPoint&, HTMLAttachmentElement&) { };
+    virtual void handlePDFServiceClick(const IntPoint&, HTMLAttachmentElement&) { }
 #endif
+
+    virtual URL sanitizeForCopyOrShare(const URL& url) const { return url; }
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
 

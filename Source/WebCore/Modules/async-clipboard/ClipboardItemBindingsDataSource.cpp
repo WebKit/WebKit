@@ -30,6 +30,7 @@
 #include "Blob.h"
 #include "Clipboard.h"
 #include "ClipboardItem.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoader.h"
@@ -39,6 +40,7 @@
 #include "JSBlob.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
 #include "PasteboardCustomData.h"
 #include "SharedBuffer.h"
 #include "markup.h"
@@ -132,7 +134,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
     m_numberOfPendingClipboardTypes = m_itemPromises.size();
     m_itemTypeLoaders = m_itemPromises.map([&] (auto& typeAndItem) {
         auto type = typeAndItem.key;
-        auto itemTypeLoader = ClipboardItemTypeLoader::create(type, [this, protectedItem = Ref { m_item }] {
+        auto itemTypeLoader = ClipboardItemTypeLoader::create(destination, type, [this, protectedItem = Ref { m_item }] {
             ASSERT(m_numberOfPendingClipboardTypes);
             if (!--m_numberOfPendingClipboardTypes)
                 invokeCompletionHandler();
@@ -228,9 +230,10 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
     completionHandler(WTFMove(customData));
 }
 
-ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::ClipboardItemTypeLoader(const String& type, CompletionHandler<void()>&& completionHandler)
+ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::ClipboardItemTypeLoader(Clipboard& writingDestination, const String& type, CompletionHandler<void()>&& completionHandler)
     : m_type(type)
     , m_completionHandler(WTFMove(completionHandler))
+    , m_writingDestination(writingDestination)
 {
 }
 
@@ -261,16 +264,39 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFail(Exception
     invokeCompletionHandler();
 }
 
+String ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::dataAsString() const
+{
+    if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
+        auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
+        return String::fromUTF8(buffer->data(), buffer->size());
+    }
+
+    if (std::holds_alternative<String>(m_data))
+        return std::get<String>(m_data);
+
+    return { };
+}
+
 void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNeeded()
 {
-    if (m_type == "text/html"_s) {
-        String markupToSanitize;
-        if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
-            auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
-            markupToSanitize = String::fromUTF8(buffer->data(), buffer->size());
-        } else if (std::holds_alternative<String>(m_data))
-            markupToSanitize = std::get<String>(m_data);
+    if (m_type == textPlainContentTypeAtom() || m_type == "text/uri-list"_s) {
+        RefPtr document = documentFromClipboard(m_writingDestination.get());
+        if (!document)
+            return;
 
+        auto* page = document->page();
+        if (!page)
+            return;
+
+        auto urlStringToSanitize = dataAsString();
+        if (urlStringToSanitize.isEmpty())
+            return;
+
+        m_data = { page->sanitizeForCopyOrShare(urlStringToSanitize) };
+    }
+
+    if (m_type == "text/html"_s) {
+        auto markupToSanitize = dataAsString();
         if (markupToSanitize.isEmpty())
             return;
 

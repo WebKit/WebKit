@@ -42,6 +42,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "Image.h"
+#include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Settings.h"
@@ -236,7 +237,7 @@ bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const
     return m_pasteboard->fileContentState() == Pasteboard::FileContentState::MayContainFilePaths;
 }
 
-void DataTransfer::setData(const String& type, const String& data)
+void DataTransfer::setData(Document& document, const String& type, const String& data)
 {
     if (!canWriteData())
         return;
@@ -245,12 +246,12 @@ void DataTransfer::setData(const String& type, const String& data)
         return;
 
     auto normalizedType = normalizeType(type);
-    setDataFromItemList(normalizedType, data);
+    setDataFromItemList(document, normalizedType, data);
     if (m_itemList)
         m_itemList->didSetStringData(normalizedType);
 }
 
-void DataTransfer::setDataFromItemList(const String& type, const String& data)
+void DataTransfer::setDataFromItemList(Document& document, const String& type, const String& data)
 {
     ASSERT(canWriteData());
     RELEASE_ASSERT(is<StaticPasteboard>(*m_pasteboard));
@@ -269,6 +270,11 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
             sanitizedData = url.string();
     } else if (type == textPlainContentTypeAtom())
         sanitizedData = data; // Nothing to sanitize.
+
+    if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
+        if (auto* page = document.page())
+            sanitizedData = page->sanitizeForCopyOrShare(sanitizedData);
+    }
 
     if (sanitizedData != data)
         downcast<StaticPasteboard>(*m_pasteboard).writeStringInCustomData(type, data);

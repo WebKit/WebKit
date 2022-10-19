@@ -648,6 +648,15 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageCocoaAdditions.mm>)
+#include <WebKitAdditions/WebPageCocoaAdditions.mm>
+#else
+URL WebPage::sanitizeForCopyOrShare(const URL& url) const
+{
+    return url;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

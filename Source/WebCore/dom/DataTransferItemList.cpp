@@ -65,7 +65,7 @@ static bool shouldExposeTypeInItemList(const String& type)
     return DeprecatedGlobalSettings::customPasteboardDataEnabled() || Pasteboard::isSafeTypeForDOMToReadAndWrite(type);
 }
 
-ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& data, const String& type)
+ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& document, const String& data, const String& type)
 {
     if (!m_dataTransfer.canWriteData())
         return nullptr;
@@ -80,7 +80,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& da
     if (!shouldExposeTypeInItemList(lowercasedType))
         return nullptr;
 
-    m_dataTransfer.setDataFromItemList(lowercasedType, data);
+    m_dataTransfer.setDataFromItemList(document, lowercasedType, data);
     ASSERT(m_items);
     m_items->append(DataTransferItem::create(*this, lowercasedType));
     return m_items->last().ptr();
