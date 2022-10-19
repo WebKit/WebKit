@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSourceProvider_h
-#define AudioSourceProvider_h
+#pragma once
+
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ public:
     virtual void provideInput(AudioBus* bus, size_t framesToProcess) = 0;
 
     // If a client is set, we call it back when the audio format is available or changes.
-    virtual void setClient(AudioSourceProviderClient*) { };
+    virtual void setClient(WeakPtr<AudioSourceProviderClient>&&) { };
 
     virtual bool isHandlingAVPlayer() const { return false; }
 
@@ -49,5 +50,3 @@ public:
 };
 
 } // WebCore
-
-#endif // AudioSourceProvider_h

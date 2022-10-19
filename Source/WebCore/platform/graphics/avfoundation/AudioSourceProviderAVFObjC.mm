@@ -146,12 +146,12 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
         PAL::AudioConverterConvertComplexBuffer(m_converter.get(), framesToProcess, m_list.get(), m_list.get());
 }
 
-void AudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
+void AudioSourceProviderAVFObjC::setClient(WeakPtr<AudioSourceProviderClient>&& client)
 {
     if (m_client == client)
         return;
     destroyMixIfNeeded();
-    m_client = client;
+    m_client = WTFMove(client);
     createMixIfNeeded();
 }
 

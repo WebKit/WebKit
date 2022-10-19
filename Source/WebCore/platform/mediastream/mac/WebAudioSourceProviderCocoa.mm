@@ -55,12 +55,12 @@ WebAudioSourceProviderCocoa::~WebAudioSourceProviderCocoa()
 {
 }
 
-void WebAudioSourceProviderCocoa::setClient(AudioSourceProviderClient* client)
+void WebAudioSourceProviderCocoa::setClient(WeakPtr<AudioSourceProviderClient>&& client)
 {
     if (m_client == client)
         return;
-    m_client = client;
-    hasNewClient(client);
+    m_client = WTFMove(client);
+    hasNewClient(m_client.get());
 }
 
 void WebAudioSourceProviderCocoa::provideInput(AudioBus* bus, size_t framesToProcess)
