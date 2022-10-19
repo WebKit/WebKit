@@ -136,7 +136,7 @@ static const unsigned maxlocalStoragePrewarmingCount { 5 };
 
 static inline float parentPageZoomFactor(Frame* frame)
 {
-    Frame* parent = frame->tree().parent();
+    Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->pageZoomFactor();
@@ -144,7 +144,7 @@ static inline float parentPageZoomFactor(Frame* frame)
 
 static inline float parentTextZoomFactor(Frame* frame)
 {
-    Frame* parent = frame->tree().parent();
+    Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->textZoomFactor();
@@ -175,7 +175,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
 #endif
 
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
-    if (Frame* parent = tree().parent(); parent && parent->activeDOMObjectsAndAnimationsSuspended())
+    if (Frame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 }
 
@@ -617,15 +617,18 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     }
 
     // Subframes of the one we're printing don't lay out to the page size.
-    for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->setPrinting(printing, FloatSize(), FloatSize(), 0, shouldAdjustViewSize);
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
+            localFrame->setPrinting(printing, FloatSize(), FloatSize(), 0, shouldAdjustViewSize);
+    }
 }
 
 bool Frame::shouldUsePrintingLayout() const
 {
     // Only top frame being printed should be fit to page size.
     // Subframes should be constrained by parents only.
-    return m_doc->printing() && (!tree().parent() || !tree().parent()->m_doc->printing());
+    auto* parent = dynamicDowncast<LocalFrame>(tree().parent());
+    return m_doc->printing() && (!parent || !parent->m_doc->printing());
 }
 
 FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize)
@@ -755,7 +758,7 @@ void Frame::clearTimers()
 
 void Frame::willDetachPage()
 {
-    if (Frame* parent = tree().parent())
+    if (Frame* parent = dynamicDowncast<LocalFrame>(tree().parent()))
         parent->loader().checkLoadComplete();
 
     for (auto& observer : m_destructionObservers)
@@ -959,8 +962,10 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 
     document->resolveStyle(Document::ResolveStyleType::Rebuild);
 
-    for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
+            localFrame->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+    }
 
     if (FrameView* view = this->view()) {
         if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
@@ -1027,8 +1032,10 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
 
 void Frame::deviceOrPageScaleFactorChanged()
 {
-    for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->deviceOrPageScaleFactorChanged();
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
+            localFrame->deviceOrPageScaleFactorChanged();
+    }
 
     if (RenderView* root = contentRenderer())
         root->compositor().deviceOrPageScaleFactorChanged();
@@ -1037,7 +1044,7 @@ void Frame::deviceOrPageScaleFactorChanged()
 void Frame::dropChildren()
 {
     ASSERT(isMainFrame());
-    while (Frame* child = tree().firstChild())
+    while (auto* child = tree().firstChild())
         tree().removeChild(*child);
 }
 

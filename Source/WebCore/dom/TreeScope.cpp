@@ -473,11 +473,11 @@ Element* TreeScope::findAnchor(StringView name)
     return nullptr;
 }
 
-static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)
+static Element* focusedFrameOwnerElement(AbstractFrame* focusedFrame, Frame* currentFrame)
 {
     for (; focusedFrame; focusedFrame = focusedFrame->tree().parent()) {
         if (focusedFrame->tree().parent() == currentFrame)
-            return focusedFrame->ownerElement();
+            return is<LocalFrame>(focusedFrame) ? downcast<LocalFrame>(focusedFrame)->ownerElement() : nullptr;
     }
     return nullptr;
 }

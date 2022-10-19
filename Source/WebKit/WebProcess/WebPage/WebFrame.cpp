@@ -175,9 +175,12 @@ WebPage* WebFrame::page() const
     return nullptr;
 }
 
-WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
+WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
 {
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (!localFrame)
+        return nullptr;
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(localFrame->loader().client());
     if (!webFrameLoaderClient)
         return nullptr;
 
@@ -364,12 +367,14 @@ String WebFrame::contentsAsString() const
 
     if (isFrameSet()) {
         StringBuilder builder;
-        for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        for (AbstractFrame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
             if (!builder.isEmpty())
                 builder.append(' ');
 
             WebFrame* webFrame = WebFrame::fromCoreFrame(*child);
             ASSERT(webFrame);
+            if (!webFrame)
+                continue;
 
             builder.append(webFrame->contentsAsString());
         }
@@ -494,9 +499,11 @@ Ref<API::Array> WebFrame::childFrames()
     Vector<RefPtr<API::Object>> vector;
     vector.reserveInitialCapacity(size);
 
-    for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (AbstractFrame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         WebFrame* webFrame = WebFrame::fromCoreFrame(*child);
         ASSERT(webFrame);
+        if (!webFrame)
+            continue;
         vector.uncheckedAppend(webFrame);
     }
 

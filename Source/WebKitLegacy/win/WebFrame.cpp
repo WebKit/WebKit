@@ -727,7 +727,7 @@ HRESULT WebFrame::findFrameNamed(_In_ BSTR name, _COM_Outptr_opt_ IWebFrame** fr
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    Frame* foundFrame = coreFrame->tree().find(AtomString(name, SysStringLen(name)), *coreFrame);
+    auto* foundFrame = dynamicDowncast<LocalFrame>(coreFrame->tree().find(AtomString(name, SysStringLen(name)), *coreFrame));
     if (!foundFrame)
         return S_OK;
 
@@ -746,9 +746,10 @@ HRESULT WebFrame::parentFrame(_COM_Outptr_opt_ IWebFrame** frame)
     *frame = nullptr;
 
     HRESULT hr = S_OK;
-    if (Frame* coreFrame = core(this))
-        if (WebFrame* webFrame = kit(coreFrame->tree().parent()))
+    if (auto* coreFrame = core(this)) {
+        if (WebFrame* webFrame = kit(dynamicDowncast<LocalFrame>(coreFrame->tree().parent())))
             hr = webFrame->QueryInterface(IID_IWebFrame, (void**) frame);
+    }
 
     return hr;
 }
@@ -757,7 +758,7 @@ class EnumChildFrames final : public IEnumVARIANT
 {
 public:
     EnumChildFrames(Frame* f)
-        : m_frame(f), m_curChild(f ? f->tree().firstChild() : nullptr)
+        : m_frame(f), m_curChild(f ? dynamicDowncast<LocalFrame>(f->tree().firstChild()) : nullptr)
     {
     }
 
@@ -807,7 +808,7 @@ public:
         V_VT(rgVar) = VT_UNKNOWN;
         V_UNKNOWN(rgVar) = unknown;
 
-        m_curChild = m_curChild->tree().nextSibling();
+        m_curChild = dynamicDowncast<LocalFrame>(m_curChild->tree().nextSibling());
         if (pCeltFetched)
             *pCeltFetched = 1;
         return S_OK;
@@ -818,7 +819,7 @@ public:
         if (!m_frame)
             return S_FALSE;
         for (unsigned i = 0; i < celt && m_curChild; i++)
-            m_curChild = m_curChild->tree().nextSibling();
+            m_curChild = dynamicDowncast<LocalFrame>(m_curChild->tree().nextSibling());
         return m_curChild ? S_OK : S_FALSE;
     }
 
@@ -826,7 +827,7 @@ public:
     {
         if (!m_frame)
             return S_FALSE;
-        m_curChild = m_frame->tree().firstChild();
+        m_curChild = dynamicDowncast<LocalFrame>(m_frame->tree().firstChild());
         return S_OK;
     }
 
@@ -2001,7 +2002,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
 void WebFrame::unmarkAllMisspellings()
 {
     Frame* coreFrame = core(this);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = dynamicDowncast<LocalFrame>(frame->tree().traverseNext(coreFrame))) {
         Document *doc = frame->document();
         if (!doc)
             return;
@@ -2013,7 +2014,7 @@ void WebFrame::unmarkAllMisspellings()
 void WebFrame::unmarkAllBadGrammar()
 {
     Frame* coreFrame = core(this);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = dynamicDowncast<LocalFrame>(frame->tree().traverseNext(coreFrame))) {
         Document *doc = frame->document();
         if (!doc)
             return;

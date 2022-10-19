@@ -49,6 +49,7 @@ class Array;
 }
 
 namespace WebCore {
+class AbstractFrame;
 class CertificateInfo;
 class Frame;
 class HTMLFrameOwnerElement;
@@ -81,7 +82,7 @@ public:
 
     WebPage* page() const;
 
-    static WebFrame* fromCoreFrame(const WebCore::Frame&);
+    static WebFrame* fromCoreFrame(const WebCore::AbstractFrame&);
     WebCore::Frame* coreFrame() const;
 
     FrameInfoData info() const;

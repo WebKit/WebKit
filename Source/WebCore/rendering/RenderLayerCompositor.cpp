@@ -645,8 +645,11 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlushIncludingSubf
     updateScrollCoordinatedLayersAfterFlush();
 
     auto& frame = m_renderView.frameView().frame();
-    for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
-        auto* view = subframe->contentRenderer();
+    for (AbstractFrame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(subframe);
+        if (!localFrame)
+            continue;
+        auto* view = localFrame->contentRenderer();
         if (!view)
             continue;
 
@@ -2325,7 +2328,10 @@ void RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump()
     updateEventRegions();
 
     for (auto* child = frameView.frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
-        if (auto* renderer = child->contentRenderer())
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        if (auto* renderer = localChild->contentRenderer())
             renderer->compositor().updateEventRegions();
     }
 
@@ -2529,8 +2535,11 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 
 void RenderLayerCompositor::invalidateEventRegionForAllFrames()
 {
-    for (auto* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* view = frame->contentRenderer())
+    for (AbstractFrame* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* view = localFrame->contentRenderer())
             view->compositor().invalidateEventRegionForAllLayers();
     }
 }

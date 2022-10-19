@@ -447,8 +447,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         if (Frame* frame = this->frame()) {
             if (!MixedContentChecker::canRunInsecureContent(*frame, m_document->securityOrigin(), url))
                 return false;
-            Frame& top = frame->tree().top();
-            if (&top != frame && !MixedContentChecker::canRunInsecureContent(top, top.document()->securityOrigin(), url))
+            auto& top = frame->tree().top();
+            auto* localTop = dynamicDowncast<LocalFrame>(top);
+            if (&top != frame && localTop && !MixedContentChecker::canRunInsecureContent(*localTop, localTop->document()->securityOrigin(), url))
                 return false;
         }
         break;
@@ -468,8 +469,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         if (Frame* frame = this->frame()) {
             if (!MixedContentChecker::canDisplayInsecureContent(*frame, m_document->securityOrigin(), contentTypeFromResourceType(type), url, MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes))
                 return false;
-            Frame& topFrame = frame->tree().top();
-            if (!MixedContentChecker::canDisplayInsecureContent(topFrame, topFrame.document()->securityOrigin(), contentTypeFromResourceType(type), url))
+            auto& topFrame = frame->tree().top();
+            auto* localTopFrame = dynamicDowncast<LocalFrame>(topFrame);
+            if (!localTopFrame || !MixedContentChecker::canDisplayInsecureContent(*localTopFrame, localTopFrame->document()->securityOrigin(), contentTypeFromResourceType(type), url))
                 return false;
         }
         break;
@@ -1019,7 +1021,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     case Use:
         ASSERT(resource);
         if (request.options().mode == FetchOptions::Mode::Navigate && !frame.isMainFrame()) {
-            if (auto* parentDocument = frame.tree().parent() ? frame.tree().parent()->document() : nullptr) {
+            auto* localParentFrame = dynamicDowncast<LocalFrame>(frame.tree().parent());
+            if (auto* parentDocument = localParentFrame ? localParentFrame->document() : nullptr) {
                 auto coep = parentDocument->crossOriginEmbedderPolicy().value;
                 if (auto error = validateCrossOriginResourcePolicy(coep, parentDocument->securityOrigin(), request.resourceRequest().url(), resource->response(), ForNavigation::Yes))
                     return makeUnexpected(WTFMove(*error));

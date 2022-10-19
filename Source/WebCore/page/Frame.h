@@ -361,6 +361,11 @@ private:
     UniqueRef<EventHandler> m_eventHandler;
 };
 
+using LocalFrame = Frame;
+
+// FIXME: Remove after WebKitAdditions transitions to this change.
+#define WEBCORE_HAS_LOCAL_FRAME 1
+
 inline NavigationScheduler& Frame::navigationScheduler() const
 {
     return m_navigationScheduler.get();

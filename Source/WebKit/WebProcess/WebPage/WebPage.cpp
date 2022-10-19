@@ -1976,7 +1976,10 @@ static std::optional<FrameTreeNodeData> frameTreeNodeData(Frame& frame)
     if (auto* webFrame = WebFrame::fromCoreFrame(frame)) {
         Vector<FrameTreeNodeData> children;
         for (auto* childFrame = frame.tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-            if (auto childInfo = frameTreeNodeData(*childFrame))
+            auto* localChild = dynamicDowncast<LocalFrame>(childFrame);
+            if (!localChild)
+                continue;
+            if (auto childInfo = frameTreeNodeData(*localChild))
                 children.append(WTFMove(*childInfo));
         }
         info = FrameTreeNodeData {
@@ -3941,8 +3944,10 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
         auto& coreWorld = newWorld->coreWorld();
-        for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree().traverseNext())
-            frame->loader().client().dispatchGlobalObjectAvailable(coreWorld);
+        for (RefPtr<AbstractFrame> frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            if (RefPtr<LocalFrame> localFrame = dynamicDowncast<LocalFrame>(frame.get()))
+                localFrame->loader().client().dispatchGlobalObjectAvailable(coreWorld);
+        }
     }
 
     runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](const IPC::DataReference& result, const std::optional<WebCore::ExceptionDetails>& exception) mutable {
@@ -3962,7 +3967,7 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
         break;
     case ContentAsStringIncludesChildFrames::Yes:
         StringBuilder builder;
-        for (RefPtr frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+        for (RefPtr<AbstractFrame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
             if (auto webFrame = WebFrame::fromCoreFrame(*frame))
                 builder.append(builder.isEmpty() ? "" : "\n\n", webFrame->contentsAsString());
         }
@@ -3983,11 +3988,14 @@ void WebPage::getRenderTreeExternalRepresentation(CompletionHandler<void(const S
     callback(renderTreeExternalRepresentation());
 }
 
-static Frame* frameWithSelection(Page* page)
+static LocalFrame* frameWithSelection(Page* page)
 {
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->selection().isRange())
-            return frame;
+    for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (localFrame->selection().isRange())
+            return localFrame;
     }
     return nullptr;
 }
@@ -4350,14 +4358,17 @@ void WebPage::setDataDetectionResults(NSArray *detectionResults)
 
 void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
-    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr document = frame->document();
+    for (RefPtr<AbstractFrame> frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
         if (!document)
             continue;
 
         DataDetection::removeDataDetectedLinksInDocument(*document);
 
-        if (auto* results = frame->dataDetectionResultsIfExists()) {
+        if (auto* results = localFrame->dataDetectionResultsIfExists()) {
             // FIXME: It seems odd that we're clearing out all data detection results here,
             // instead of only data detectors that correspond to links.
             results->setDocumentLevelResults({ });
@@ -4369,13 +4380,16 @@ void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetection
 void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDetectorTypes, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
     DataDetectionResult mainFrameResult;
-    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr document = frame->document();
+    for (RefPtr<AbstractFrame> frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
         if (!document)
             continue;
         auto results = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionContext.get()));
-        frame->dataDetectionResults().setDocumentLevelResults(results.get());
-        if (frame->isMainFrame())
+        localFrame->dataDetectionResults().setDocumentLevelResults(results.get());
+        if (localFrame->isMainFrame())
             mainFrameResult.results = WTFMove(results);
     }
     completionHandler(WTFMove(mainFrameResult));
@@ -5205,16 +5219,22 @@ void WebPage::changeSpellingToWord(const String& word)
 
 void WebPage::unmarkAllMisspellings()
 {
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* document = localFrame->document())
             document->markers().removeMarkers(DocumentMarker::Spelling);
     }
 }
 
 void WebPage::unmarkAllBadGrammar()
 {
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (Document* document = localFrame->document())
             document->markers().removeMarkers(DocumentMarker::Grammar);
     }
 }
@@ -6070,8 +6090,12 @@ static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
             return true;
     }
 
-    for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
-        FrameView* frameView = frame->view();
+    for (AbstractFrame* frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+
+        FrameView* frameView = localFrame->view();
         if (!frameView)
             continue;
 
@@ -6079,8 +6103,7 @@ static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
         if (!scrollableAreas)
             continue;
 
-        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
-            ScrollableArea* scrollableArea = *it;
+        for (auto* scrollableArea : *scrollableAreas) {
             if (!scrollableArea->scrollbarsCanBeActive())
                 continue;
 
@@ -8172,8 +8195,11 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::Ha
 void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
 {
     m_appHighlightsVisible = appHighlightVisibility;
-    for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
-        if (RefPtr document = frame->document())
+    for (RefPtr<AbstractFrame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        if (RefPtr document = localFrame->document())
             document->appHighlightRegister().setHighlightVisibility(appHighlightVisibility);
     }
 }

@@ -2002,7 +2002,7 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
     RefPtr frame { document->frame() };
     if (!frame)
         return;
-    RefPtr parent { frame->tree().parent() };
+    RefPtr parent { dynamicDowncast<LocalFrame>(frame->tree().parent()) };
     if (!parent)
         return;
     Page* page = m_document->page();

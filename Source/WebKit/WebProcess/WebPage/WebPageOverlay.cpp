@@ -28,6 +28,7 @@
 
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/Frame.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/NeverDestroyed.h>

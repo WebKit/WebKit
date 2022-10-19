@@ -337,8 +337,12 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(DataDetectorH
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
     Vector<SimpleRange> phoneNumberRanges;
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
-        phoneNumberRanges.appendVector(frame->editor().detectedTelephoneNumberRanges());
+    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        phoneNumberRanges.appendVector(localFrame->editor().detectedTelephoneNumberRanges());
+    }
 
     if (phoneNumberRanges.isEmpty()) {
         removeAllPotentialHighlightsOfType(DataDetectorHighlight::Type::TelephoneNumber);

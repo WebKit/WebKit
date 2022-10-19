@@ -455,7 +455,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame& frame)
 
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     for (unsigned i = 0; i < frame.tree().childCount(); ++i) {
-        if (auto childFrameArchive = create(*frame.tree().child(i)))
+        auto* localChild = dynamicDowncast<LocalFrame>(frame.tree().child(i));
+        if (!localChild)
+            continue;
+        if (auto childFrameArchive = create(*localChild))
             subframeArchives.append(childFrameArchive.releaseNonNull());
     }
 

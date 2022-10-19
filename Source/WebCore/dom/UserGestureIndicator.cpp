@@ -60,13 +60,19 @@ UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGesture
         return;
 
     for (auto* ancestorFrame = documentFrame->tree().parent(); ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
-        if (auto* ancestorDocument = ancestorFrame->document())
+        auto* localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame);
+        if (!localAncestor)
+            continue;
+        if (auto* ancestorDocument = localAncestor->document())
             m_documentsImpactedByUserGesture.add(*ancestorDocument);
     }
 
     auto& documentOrigin = document->securityOrigin();
-    for (auto* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
-        auto* frameDocument = frame->document();
+    for (AbstractFrame* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* frameDocument = localFrame->document();
         if (frameDocument && documentOrigin.isSameOriginDomain(frameDocument->securityOrigin()))
             m_documentsImpactedByUserGesture.add(*frameDocument);
     }
@@ -109,8 +115,12 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
         document->topDocument().setUserDidInteractWithPage(true);
         if (auto* frame = document->frame()) {
             if (!frame->hasHadUserInteraction()) {
-                for (; frame; frame = frame->tree().parent())
-                    frame->setHasHadUserInteraction();
+                for (AbstractFrame *ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
+                    auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor);
+                    if (!localAncestor)
+                        continue;
+                    localAncestor->setHasHadUserInteraction();
+                }
             }
         }
 

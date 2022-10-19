@@ -77,11 +77,16 @@ void WebContextMenuClient::searchWithSpotlight()
 
     Frame& mainFrame = m_page->corePage()->mainFrame();
 
-    Frame* selectionFrame = &mainFrame;
-    for (; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
-        if (selectionFrame->selection().isRange())
-            break;
-    }
+    LocalFrame* selectionFrame = [&] () -> LocalFrame* {
+        for (AbstractFrame* selectionFrame = &mainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(selectionFrame);
+            if (!localFrame)
+                continue;
+            if (localFrame->selection().isRange())
+                return localFrame;
+        }
+        return nullptr;
+    }();
     if (!selectionFrame)
         selectionFrame = &mainFrame;
 

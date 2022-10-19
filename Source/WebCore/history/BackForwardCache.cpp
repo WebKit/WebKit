@@ -180,8 +180,11 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         isCacheable = false;
     }
 
-    for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (!canCacheFrame(*child, diagnosticLoggingClient, indentLevel + 1))
+    for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        if (!canCacheFrame(*localChild, diagnosticLoggingClient, indentLevel + 1))
             isCacheable = false;
     }
     
@@ -395,7 +398,10 @@ static void setBackForwardCacheState(Page& page, Document::BackForwardCacheState
 // Note that destruction happens bottom-up so that the main frame's tree dies last.
 static void destroyRenderTree(Frame& mainFrame)
 {
-    for (Frame* frame = mainFrame.tree().traversePrevious(CanWrap::Yes); frame; frame = frame->tree().traversePrevious(CanWrap::No)) {
+    for (auto* abstractFrame = mainFrame.tree().traversePrevious(CanWrap::Yes); abstractFrame; abstractFrame = abstractFrame->tree().traversePrevious(CanWrap::No)) {
+        auto* frame = dynamicDowncast<LocalFrame>(abstractFrame);
+        if (!frame)
+            continue;
         if (!frame->document())
             continue;
         auto& document = *frame->document();
@@ -418,8 +424,12 @@ static void firePageHideEventRecursively(Frame& frame)
 
     frame.loader().stopLoading(UnloadEventPolicy::UnloadAndPageHide);
 
-    for (RefPtr<Frame> child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        firePageHideEventRecursively(*child);
+    for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        RefPtr localChild = dynamicDowncast<LocalFrame>(child.get());
+        if (!localChild)
+            continue;
+        firePageHideEventRecursively(*localChild);
+    }
 }
 
 std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSuspension forceSuspension)

@@ -1222,8 +1222,11 @@ ExceptionOr<void> Internals::suspendAnimations() const
         return Exception { InvalidAccessError };
 
     document->ensureTimelinesController().suspendAnimations();
-    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
+    for (AbstractFrame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* document = localFrame->document())
             document->ensureTimelinesController().suspendAnimations();
     }
 
@@ -1237,8 +1240,11 @@ ExceptionOr<void> Internals::resumeAnimations() const
         return Exception { InvalidAccessError };
 
     document->ensureTimelinesController().resumeAnimations();
-    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
+    for (AbstractFrame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* document = localFrame->document())
             document->ensureTimelinesController().resumeAnimations();
     }
 
@@ -2931,9 +2937,15 @@ unsigned Internals::numberOfScrollableAreas()
     if (frame->view()->scrollableAreas())
         count += frame->view()->scrollableAreas()->size();
 
-    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (child->view() && child->view()->scrollableAreas())
-            count += child->view()->scrollableAreas()->size();
+    for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        auto* frameView = localChild->view();
+        if (!frameView)
+            continue;
+        if (frameView->scrollableAreas())
+            count += frameView->scrollableAreas()->size();
     }
 
     return count;

@@ -153,11 +153,14 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
 
     // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
     for (auto* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
-        auto* subframeView = subframe->view();
+        auto* localSubframe = dynamicDowncast<LocalFrame>(subframe);
+        if (!localSubframe)
+            continue;
+        auto* subframeView = localSubframe->view();
         if (!subframeView)
             continue;
 
-        EventTrackingRegions subframeRegion = absoluteEventTrackingRegionsForFrame(*subframe);
+        EventTrackingRegions subframeRegion = absoluteEventTrackingRegionsForFrame(*localSubframe);
         // Map from the frame document to our document.
         IntPoint offset = subframeView->contentsToContainingViewContents(IntPoint());
 
@@ -326,8 +329,11 @@ void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameVie
 
 void ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames()
 {
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* frameView = frame->view()) {
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* frameView = localFrame->view()) {
             if (coordinatesScrollingForFrameView(*frameView))
                 updateSynchronousScrollingReasons(*frameView);
         }

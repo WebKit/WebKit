@@ -229,8 +229,12 @@ void PageSerializer::serializeFrame(Frame* frame)
         }
     }
 
-    for (Frame* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling())
-        serializeFrame(childFrame);
+    for (AbstractFrame* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
+        if (!localFrame)
+            continue;
+        serializeFrame(localFrame);
+    }
 }
 
 void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL& url)

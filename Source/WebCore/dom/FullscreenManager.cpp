@@ -195,8 +195,11 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
 
         // A descendant browsing context's document has a non-empty fullscreen element stack.
         bool descendentHasNonEmptyStack = false;
-        for (Frame* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
-            if (descendant->document()->fullscreenManager().fullscreenElement()) {
+        for (AbstractFrame* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(descendant);
+            if (!localFrame)
+                continue;
+            if (localFrame->document()->fullscreenManager().fullscreenElement()) {
                 descendentHasNonEmptyStack = true;
                 break;
             }
@@ -328,9 +331,12 @@ void FullscreenManager::exitFullscreen()
     // element stack (if any), ordered so that the child of the doc is last and the document furthest
     // away from the doc is first.
     Deque<RefPtr<Document>> descendants;
-    for (Frame* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
-        if (descendant->document()->fullscreenManager().fullscreenElement())
-            descendants.prepend(descendant->document());
+    for (AbstractFrame* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(descendant);
+        if (!localFrame)
+            continue;
+        if (localFrame->document()->fullscreenManager().fullscreenElement())
+            descendants.prepend(localFrame->document());
     }
 
     // 4. For each descendant in descendants, empty descendant's fullscreen element stack, and queue a

@@ -202,7 +202,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             ASSERT(policyContainerFromHistory);
             document->inheritPolicyContainerFrom(*policyContainerFromHistory);
         } else if (url == aboutSrcDocURL()) {
-            auto* parentFrame = m_frame->tree().parent();
+            auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
             if (parentFrame && parentFrame->document()) {
                 document->inheritPolicyContainerFrom(parentFrame->document()->policyContainer());
                 document->contentSecurityPolicy()->updateSourceSelf(parentFrame->document()->securityOrigin());
@@ -244,7 +244,7 @@ TextResourceDecoder& DocumentWriter::decoder()
         m_decoder = TextResourceDecoder::create(m_mimeType,
             m_frame->settings().defaultTextEncodingName(),
             m_frame->settings().usesEncodingDetector());
-        Frame* parentFrame = m_frame->tree().parent();
+        auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
         // Set the hint encoding to the parent frame encoding only if
         // the parent and the current frames share the security origin.
         // We impose this condition because somebody can make a child frame

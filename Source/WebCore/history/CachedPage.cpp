@@ -83,8 +83,12 @@ static void firePageShowAndPopStateEvents(Page& page)
     // Dispatching JavaScript events can cause frame destruction.
     auto& mainFrame = page.mainFrame();
     Vector<Ref<Frame>> childFrames;
-    for (auto* child = mainFrame.tree().traverseNextInPostOrder(CanWrap::Yes); child; child = child->tree().traverseNextInPostOrder(CanWrap::No))
-        childFrames.append(*child);
+    for (auto* child = mainFrame.tree().traverseNextInPostOrder(CanWrap::Yes); child; child = child->tree().traverseNextInPostOrder(CanWrap::No)) {
+        auto* localChild = downcast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        childFrames.append(*localChild);
+    }
 
     for (auto& child : childFrames) {
         if (!child->tree().isDescendantOf(&mainFrame))

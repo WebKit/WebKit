@@ -3911,8 +3911,11 @@ void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
 void WebPage::resetTextAutosizing()
 {
 #if ENABLE(TEXT_AUTOSIZING)
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        Document* document = frame->document();
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* document = localFrame->document();
         if (!document || !document->renderView())
             continue;
         document->renderView()->resetTextAutosizing();

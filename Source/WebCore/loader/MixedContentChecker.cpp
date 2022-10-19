@@ -132,9 +132,10 @@ std::optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const
         if (frame->isMainFrame())
             break;
 
-        frame = frame->tree().parent();
-        RELEASE_ASSERT_WITH_MESSAGE(frame, "Should never have a parentless non main frame");
-        document = frame->document();
+        auto* parentFrame = frame->tree().parent();
+        RELEASE_ASSERT_WITH_MESSAGE(parentFrame, "Should never have a parentless non main frame");
+        if (auto* localParentFrame = dynamicDowncast<LocalFrame>(parentFrame))
+            document = localParentFrame->document();
     }
     
     return std::nullopt;

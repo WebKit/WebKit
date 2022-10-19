@@ -76,8 +76,10 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
 
         Vector<String> ancestorOrigins;
         if (auto* frame = document->frame()) {
-            for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent())
-                ancestorOrigins.append(ancestor->document()->securityOrigin().toString());
+            for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
+                if (auto* ancestorFrame = dynamicDowncast<LocalFrame>(ancestor))
+                    ancestorOrigins.append(ancestorFrame->document()->securityOrigin().toString());
+            }
         }
 
         return {

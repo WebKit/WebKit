@@ -360,14 +360,17 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
 
     RefPtr mainFrameView = m_webPage->corePage()->mainFrame().view();
 
-    for (auto* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr document = frame->document();
+    for (AbstractFrame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
         if (!document)
             continue;
 
         for (auto rect : document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::TextMatch)) {
-            if (!frame->isMainFrame())
-                rect = mainFrameView->windowToContents(frame->view()->contentsToWindow(enclosingIntRect(rect)));
+            if (!localFrame->isMainFrame())
+                rect = mainFrameView->windowToContents(localFrame->view()->contentsToWindow(enclosingIntRect(rect)));
 
             if (rect.isEmpty() || !rect.intersects(clipRect))
                 continue;
@@ -385,7 +388,7 @@ WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const 
     if (range.frameIdentifier.isEmpty())
         return mainFrame.document();
 
-    if (auto* frame = mainFrame.tree().find(AtomString { range.frameIdentifier }, mainFrame))
+    if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame.tree().find(AtomString { range.frameIdentifier }, mainFrame)))
         return frame->document();
 
     return nullptr;

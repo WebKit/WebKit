@@ -220,9 +220,12 @@ void FrameLoader::HistoryController::saveDocumentState()
 // history item.
 void FrameLoader::HistoryController::saveDocumentAndScrollState()
 {
-    for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
-        frame->loader().history().saveDocumentState();
-        frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
+    for (AbstractFrame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        localFrame->loader().history().saveDocumentState();
+        localFrame->loader().history().saveScrollPositionAndViewStateToItem(localFrame->loader().history().currentItem());
     }
 }
 
@@ -432,7 +435,7 @@ void FrameLoader::HistoryController::updateForRedirectWithLockedBackForwardList(
         // The client redirect replaces the current history item.
         updateCurrentItem();
     } else {
-        Frame* parentFrame = m_frame.tree().parent();
+        auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame.tree().parent());
         if (parentFrame && parentFrame->loader().history().currentItem())
             parentFrame->loader().history().currentItem()->setChildItem(createItem());
     }
@@ -539,8 +542,12 @@ void FrameLoader::HistoryController::recursiveUpdateForCommit()
     }
 
     // Iterate over the rest of the tree
-    for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        child->loader().history().recursiveUpdateForCommit();
+    for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        localChild->loader().history().recursiveUpdateForCommit();
+    }
 }
 
 void FrameLoader::HistoryController::updateForSameDocumentNavigation()
@@ -583,8 +590,12 @@ void FrameLoader::HistoryController::recursiveUpdateForSameDocumentNavigation()
     m_provisionalItem = nullptr;
 
     // Iterate over the rest of the tree.
-    for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        child->loader().history().recursiveUpdateForSameDocumentNavigation();
+    for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        localChild->loader().history().recursiveUpdateForSameDocumentNavigation();
+    }
 }
 
 void FrameLoader::HistoryController::updateForFrameLoadCompleted()
@@ -621,8 +632,12 @@ bool FrameLoader::HistoryController::currentItemShouldBeReplaced() const
 void FrameLoader::HistoryController::clearPreviousItem()
 {
     m_previousItem = nullptr;
-    for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        child->loader().history().clearPreviousItem();
+    for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        localChild->loader().history().clearPreviousItem();
+    }
 }
 
 void FrameLoader::HistoryController::setProvisionalItem(HistoryItem* item)
@@ -706,15 +721,18 @@ Ref<HistoryItem> FrameLoader::HistoryController::createItemTree(Frame& targetFra
             bfItem->setDocumentSequenceNumber(m_previousItem->documentSequenceNumber());
         }
 
-        for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-            FrameLoader& childLoader = child->loader();
+        for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+            auto* localChild = dynamicDowncast<LocalFrame>(child);
+            if (!localChild)
+                continue;
+            FrameLoader& childLoader = localChild->loader();
             bool hasChildLoaded = childLoader.frameHasLoaded();
 
             // If the child is a frame corresponding to an <object> element that never loaded,
             // we don't want to create a history item, because that causes fallback content
             // to be ignored on reload.
             
-            if (!(!hasChildLoaded && child->ownerElement() && is<HTMLObjectElement>(child->ownerElement())))
+            if (!(!hasChildLoaded && localChild->ownerElement() && is<HTMLObjectElement>(localChild->ownerElement())))
                 bfItem->addChildItem(childLoader.history().createItemTree(targetFrame, clipAtTarget));
         }
     }
@@ -743,7 +761,7 @@ void FrameLoader::HistoryController::recursiveSetProvisionalItem(HistoryItem& it
         if (!fromChildItem)
             continue;
 
-        if (auto* childFrame = m_frame.tree().child(childFrameName))
+        if (auto* childFrame = dynamicDowncast<LocalFrame>(m_frame.tree().child(childFrameName)))
             childFrame->loader().history().recursiveSetProvisionalItem(childItem, fromChildItem);
     }
 }
@@ -765,7 +783,7 @@ void FrameLoader::HistoryController::recursiveGoToItem(HistoryItem& item, Histor
         if (!fromChildItem)
             continue;
 
-        if (Frame* childFrame = m_frame.tree().child(childFrameName))
+        if (auto* childFrame = dynamicDowncast<LocalFrame>(m_frame.tree().child(childFrameName)))
             childFrame->loader().history().recursiveGoToItem(childItem, fromChildItem, type, shouldTreatAsContinuingLoad);
     }
 }

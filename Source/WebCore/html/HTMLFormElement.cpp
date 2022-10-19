@@ -531,8 +531,8 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
         
         if (!m_attributes.action().isEmpty()) {
             if (RefPtr<Frame> f = document().frame()) {
-                Frame& topFrame = f->tree().top();
-                MixedContentChecker::checkFormForMixedContent(topFrame, topFrame.document()->securityOrigin(), document().completeURL(m_attributes.action()));
+                if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
+                    MixedContentChecker::checkFormForMixedContent(*topFrame, topFrame->document()->securityOrigin(), document().completeURL(m_attributes.action()));
             }
         }
     } else if (name == targetAttr)

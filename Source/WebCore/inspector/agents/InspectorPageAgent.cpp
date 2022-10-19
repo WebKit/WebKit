@@ -305,9 +305,12 @@ Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJSON(const Ca
 
 Frame* InspectorPageAgent::findFrameWithSecurityOrigin(Page& page, const String& originRawString)
 {
-    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document()->securityOrigin().toRawString() == originRawString)
-            return frame;
+    for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (localFrame->document()->securityOrigin().toRawString() == originRawString)
+            return localFrame;
     }
     return nullptr;
 }
@@ -550,12 +553,15 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> InspectorPag
 {
     ListHashSet<Cookie> allRawCookies;
 
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        Document* document = frame->document();
+    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* document = localFrame->document();
         if (!document || !document->page())
             continue;
 
-        for (auto& url : allResourcesURLsForFrame(frame)) {
+        for (auto& url : allResourcesURLsForFrame(localFrame)) {
             Vector<Cookie> rawCookiesForURLInDocument;
             if (!document->page()->cookieJar().getRawCookies(*document, url, rawCookiesForURLInDocument))
                 continue;
@@ -658,11 +664,17 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& 
     if (!cookie)
         return makeUnexpected(errorString);
 
-    for (auto* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document()) {
-            if (auto* page = document->page())
-                page->cookieJar().setRawCookie(*document, cookie.value());
-        }
+    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* document = localFrame->document();
+        if (!document)
+            continue;
+        auto* page = document->page();
+        if (!page)
+            continue;
+        page->cookieJar().setRawCookie(*document, cookie.value());
     }
 
     return { };
@@ -671,11 +683,17 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& 
 Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const String& cookieName, const String& url)
 {
     URL parsedURL({ }, url);
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document()) {
-            if (auto* page = document->page())
-                page->cookieJar().deleteCookie(*document, parsedURL, cookieName, [] { });
-        }
+    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* document = localFrame->document();
+        if (!document)
+            continue;
+        auto* page = document->page();
+        if (!page)
+            continue;
+        page->cookieJar().deleteCookie(*document, parsedURL, cookieName, [] { });
     }
 
     return { };
@@ -769,12 +787,15 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> Inspec
     auto searchStringType = (isRegex && *isRegex) ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
     auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive && *caseSensitive, searchStringType);
 
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        for (auto* cachedResource : cachedResourcesForFrame(frame)) {
+    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        for (auto* cachedResource : cachedResourcesForFrame(localFrame)) {
             if (auto textContent = InspectorNetworkAgent::textContentForCachedResource(*cachedResource)) {
                 int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
                 if (matchesCount)
-                    result->addItem(buildObjectForSearchResult(frameId(frame), cachedResource->url().string(), matchesCount));
+                    result->addItem(buildObjectForSearchResult(frameId(localFrame), cachedResource->url().string(), matchesCount));
             }
         }
     }
@@ -961,7 +982,7 @@ Ref<Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
         .setSecurityOrigin(frame->document()->securityOrigin().toRawString())
         .release();
     if (frame->tree().parent())
-        frameObject->setParentId(frameId(frame->tree().parent()));
+        frameObject->setParentId(frameId(dynamicDowncast<LocalFrame>(frame->tree().parent())));
     if (frame->ownerElement()) {
         String name = frame->ownerElement()->getNameAttribute();
         if (name.isEmpty())
@@ -1003,12 +1024,15 @@ Ref<Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTr
     }
 
     RefPtr<JSON::ArrayOf<Protocol::Page::FrameResourceTree>> childrenArray;
-    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!childrenArray) {
             childrenArray = JSON::ArrayOf<Protocol::Page::FrameResourceTree>::create();
             result->setChildFrames(*childrenArray);
         }
-        childrenArray->addItem(buildObjectForFrameTree(child));
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        childrenArray->addItem(buildObjectForFrameTree(localChild));
     }
     return result;
 }

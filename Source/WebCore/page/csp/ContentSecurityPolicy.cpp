@@ -531,7 +531,7 @@ bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& u
 {
     if (overrideContentSecurityPolicy)
         return true;
-    Frame& topFrame = frame.tree().top();
+    auto& topFrame = frame.tree().top();
     if (&frame == &topFrame)
         return true;
     String sourceURL;
