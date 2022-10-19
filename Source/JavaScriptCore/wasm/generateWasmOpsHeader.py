@@ -264,6 +264,7 @@ struct Type {
         FOR_EACH_WASM_TYPE(CREATE_CASE)
         #undef CREATE_CASE
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
