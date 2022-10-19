@@ -140,4 +140,4 @@ class BugzillaPatchFetcher():
 
     @classmethod
     def filter_valid_patches(cls, patch_ids):
-        return list(filter(lambda p: Change.is_valid_change_id(p), patch_ids))
+        return [p for p in patch_ids if Change.is_valid_change_id(p)]
