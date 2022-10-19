@@ -903,6 +903,7 @@ private:
 #if !ENABLE(LIBPAS_JIT_HEAP)
         void release(const LockHolder& locker, MetaAllocatorHandle& handle) final
         {
+            AssemblyCommentRegistry::singleton().unregisterCodeRange(handle.start().untaggedPtr(), handle.end().untaggedPtr());
             m_fixedAllocator.handleWillBeReleased(locker, handle);
             Base::release(locker, handle);
         }
