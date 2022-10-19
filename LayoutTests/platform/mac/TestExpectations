@@ -2308,6 +2308,9 @@ webkit.org/b/237166 [ BigSur+ ] webgl/pending/conformance/textures/misc/tex-imag
 # macOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
 
+# Test failures due to framework bugs that occur only with --accelerated-drawing flag turned on
+webkit.org/b/236904 svg/gradients/spreadMethodClose2.svg [ Pass ImageOnlyFailure ]
+
 # fractional pixel diff between modern and legacy line layout.
 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
 
