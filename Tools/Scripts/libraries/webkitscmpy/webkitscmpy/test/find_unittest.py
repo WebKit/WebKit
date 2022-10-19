@@ -361,6 +361,53 @@ Identifier: 3@trunk
 '''.format(datetime.fromtimestamp(1601684700).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
+    def test_scope_single(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(1, program.main(
+                args=('find', 'HEAD', '--scope', 'some/dir'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), 'Scope argument invalid when only one commit specified\n')
+
+    def test_scope_git(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('find', '1@main..HEAD', '--scope', 'some/dir', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '5@main | d8bce26fa65c | Patch Series\n3@main | 1abe25b443e9 | 4th commit\n',
+        )
+
+    def test_scope_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
+            self.assertEqual(1, program.main(
+                args=('find', '1@main..HEAD', '--scope', 'some/dir'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "Can only use the '--scope' argument on a native Git repository\n")
+
+    def test_scope_github_remote(self):
+        with OutputCapture() as captured, mocks.remote.GitHub():
+            self.assertEqual(1, program.main(
+                args=('-C', 'https://github.example.com/WebKit/WebKit', 'find', '1@main..HEAD', '--scope', 'some/dir'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "Can only use the '--scope' argument on a native Git repository\n")
+
+    def test_scope_bitbucket_remote(self):
+        with OutputCapture() as captured, mocks.remote.BitBucket():
+            self.assertEqual(1, program.main(
+                args=('-C', 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit', 'find', '1@main..HEAD', '--scope', 'some/dir'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "Can only use the '--scope' argument on a native Git repository\n")
+
 
 class TestInfo(testing.TestCase):
     path = '/mock/repository'
