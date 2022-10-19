@@ -114,6 +114,8 @@ inline Element* TreeScopeOrderedMap::get(const AtomStringImpl& key, const TreeSc
 
     // We know there's at least one node that matches; iterate to find the first one.
     for (auto& element : descendantsOfType<Element>(scope.rootNode())) {
+        if (!element.isInTreeScope())
+            continue;
         if (!keyMatches(key, element))
             continue;
         entry.element = &element;
