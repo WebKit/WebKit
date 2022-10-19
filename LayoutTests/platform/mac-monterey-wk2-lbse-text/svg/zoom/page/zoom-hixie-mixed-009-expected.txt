@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x435
+  RenderBlock {html} at (0,0) size 800x435.36
+    RenderBody {body} at (11.52,14.39) size 776.97x406.58
+      RenderBlock {p} at (0,0) size 776.97x26 [color=#000080]
+        RenderText {#text} at (0,0) size 659x26
+          text run at (0,0) width 659: "The word \"TEST \" should appear twice below, the same size each time."
+      RenderBlock (anonymous) at (0,40.39) size 776.97x179
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {div} at (0,233.78) size 576x172.80 [color=#000080] [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 344x166
+          text run at (0,0) width 344: "TEST"
+layer at (12,55) size 576x173 backgroundClip at (12,55) size 576x172.80 clip at (12,55) size 576x172.80 scrollWidth 480 scrollHeight 144
+  RenderSVGRoot {svg} at (0,0) size 576x172.80
+layer at (11.52,54.78) size 576x173 backgroundClip at (11.52,54.78) size 576x172.80 clip at (11.52,54.78) size 576x172.80
+  RenderSVGViewportContainer at (0,0) size 576x172.80
+layer at (11.52,54.78) size 60x12
+  RenderSVGRect {rect} at (0,0) size 60x12 [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
+layer at (11.52,54.78) size 60x10 scrollHeight 13
+  RenderSVGForeignObject {foreignObject} at (0,0) size 60x10
+    RenderBlock {div} at (0,0) size 60x13 [color=#000080]
+      RenderText {#text} at (0,0) size 24x13
+        text run at (0,0) width 24: "TEST"

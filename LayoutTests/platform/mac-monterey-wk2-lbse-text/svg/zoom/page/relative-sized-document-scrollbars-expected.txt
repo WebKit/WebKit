@@ -1,0 +1,8 @@
+layer at (0,0) size 1356x1011 backgroundClip at (0,0) size 1356.47x1010.88 clip at (0,0) size 1356.47x1010.88
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 1356x1011 backgroundClip at (0,0) size 1356.47x1010.88 clip at (0,0) size 1356.47x1010.88 scrollWidth 942 scrollHeight 702
+  RenderSVGRoot {svg} at (0,0) size 1356.47x1010.88
+layer at (0,0) size 1357x1011 backgroundClip at (0,0) size 1356.47x1010.88 clip at (0,0) size 1356.47x1010.88
+  RenderSVGViewportContainer at (0,0) size 1356.47x1010.88
+layer at (7.84,5.84) size 771x575
+  RenderSVGRect {rect} at (7.84,5.84) size 769.31x573.31 [stroke={[type=SOLID] [color=#000000]}] [x=7.85] [y=5.85] [width=769.29] [height=573.30]

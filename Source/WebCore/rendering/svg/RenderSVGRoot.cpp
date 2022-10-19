@@ -145,8 +145,15 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
     if (isEmbeddedThroughFrameContainingSVGDocument())
         return containingBlock()->availableLogicalWidth();
 
-    // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
+    // Standalone SVG / SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
+    auto result = RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
+    if (svgSVGElement().hasIntrinsicWidth())
+        return result;
+
+    // Percentage units are not scaled, Length(100, %) resolves to 100% of the unzoomed RenderView content size.
+    // However for SVGs purposes we need to always include zoom in the RenderSVGRoot boundaries.
+    result *= style().effectiveZoom();
+    return result;
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
@@ -159,7 +166,14 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit>
         return containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding);
 
     // Standalone SVG / SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
+    auto result = RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
+    if (svgSVGElement().hasIntrinsicHeight())
+        return result;
+
+    // Percentage units are not scaled, Length(100, %) resolves to 100% of the unzoomed RenderView content size.
+    // However for SVGs purposes we need to always include zoom in the RenderSVGRoot boundaries.
+    result *= style().effectiveZoom();
+    return result;
 }
 
 bool RenderSVGRoot::updateLayoutSizeIfNeeded()
@@ -167,7 +181,7 @@ bool RenderSVGRoot::updateLayoutSizeIfNeeded()
     auto previousSize = size();
     updateLogicalWidth();
     updateLogicalHeight();
-    return selfNeedsLayout() || (svgSVGElement().hasRelativeLengths() && previousSize != size());
+    return selfNeedsLayout() || previousSize != size();
 }
 
 void RenderSVGRoot::layout()
@@ -410,6 +424,17 @@ bool RenderSVGRoot::paintingAffectedByExternalOffset() const
     return false;
 }
 
+void RenderSVGRoot::updateFromElement()
+{
+    RenderReplaced::updateFromElement();
+
+    // Changing SVG zoom / pan properties (or page scale) triggers an updateFromElement() call
+    // from SVGSVGElement. Forward to the anonymous viewport container, as it is responsible
+    // to update the layer transform to reflect the new scale/translation.
+    if (auto* viewportContainer = this->viewportContainer())
+        viewportContainer->updateFromElement();
+}
+
 void RenderSVGRoot::updateFromStyle()
 {
     RenderReplaced::updateFromStyle();
@@ -426,6 +451,8 @@ void RenderSVGRoot::updateFromStyle()
         setHasTransformRelatedProperty();
         setHasSVGTransform();
     }
+
+    updateFromElement();
 }
 
 void RenderSVGRoot::updateLayerTransform()
@@ -503,13 +530,6 @@ FloatSize RenderSVGRoot::computeViewportSize() const
     FloatSize result = contentBoxRect().size();
     result.setWidth(result.width() + verticalScrollbarWidth());
     result.setHeight(result.height() + horizontalScrollbarHeight());
-
-    if (!isEmbeddedThroughFrameContainingSVGDocument()) {
-        auto zoom = style().effectiveZoom();
-        if (zoom != 1)
-            result.scale(svgSVGElement().hasIntrinsicWidth() ? 1 : zoom, svgSVGElement().hasIntrinsicHeight() ? 1 : zoom);
-    }
-
     return result;
 }
 
@@ -612,15 +632,6 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFr
     auto clipRect = borderBoxRectInFragment(fragment);
     clipRect.setLocation(location + clipRect.location() + toLayoutSize(contentBoxLocation()));
     clipRect.setSize(clipRect.size() - LayoutSize(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent()));
-
-    if (!isEmbeddedThroughFrameContainingSVGDocument()) {
-        auto zoom = style().effectiveZoom();
-        if (zoom != 1) {
-            const auto& svgSVGElement = downcast<RenderSVGRoot>(*this).svgSVGElement();
-            clipRect.scale(svgSVGElement.hasIntrinsicWidth() ? 1 : zoom, svgSVGElement.hasIntrinsicHeight() ? 1 : zoom);
-        }
-    }
-
     return clipRect;
 }
 

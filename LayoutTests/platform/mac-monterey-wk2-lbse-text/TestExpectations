@@ -70,6 +70,7 @@ svg/filters/feConvolveMatrix-negative-orderX.svg                                
 svg/filters/feConvolveMatrix-negative-orderY.svg                                       [ ImageOnlyFailure ]
 svg/filters/feConvolveMatrix-non-integral-order.svg                                    [ ImageOnlyFailure ]
 svg/filters/feConvolveMatrix-zero-divisor.svg                                          [ ImageOnlyFailure ]
+svg/filters/feDiffuseLighting-bottomRightPixel.html                                    [ ImageOnlyFailure ]
 svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox.svg        [ ImageOnlyFailure ]
 svg/filters/feDiffuseLighting-feSpotLight-dynamic-update.svg                           [ ImageOnlyFailure ]
 svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg         [ ImageOnlyFailure ]
@@ -182,10 +183,11 @@ svg/paint-order/paint-order-stroke-marker.svg     [ ImageOnlyFailure ]
 svg/paint-order/paint-order-stroke.svg            [ ImageOnlyFailure ]
 
 # SVGImage support incomplete
-svg/as-image/image-respects-pageScaleFactor-change.html [ ImageOnlyFailure ]
-svg/as-image/same-image-two-instances.html              [ ImageOnlyFailure ]
-svg/as-image/svg-as-image-with-relative-size.html       [ ImageOnlyFailure ]
-svg/custom/use-image-in-g.svg                           [ ImageOnlyFailure ]
+svg/as-image/image-respects-pageScaleFactor-change.html   [ ImageOnlyFailure ]
+svg/as-image/same-image-two-instances.html                [ ImageOnlyFailure ]
+svg/as-image/svg-as-image-with-relative-size.html         [ ImageOnlyFailure ]
+svg/custom/use-image-in-g.svg                             [ ImageOnlyFailure ]
+svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ ImageOnlyFailure ]
 
 # SVG document w/o viewBox + <img> sizing differs to FF/Chrome
 svg/as-background-image/background-image-preserveaspectRatio-support.html [ ImageOnlyFailure ]
@@ -218,30 +220,9 @@ svg/zoom/page/zoom-zoom-coords.xhtml                        [ Failure ]
 # General repainting issue
 svg/custom/js-repaint-rect-on-path-with-stroke.svg [ Failure ]
 
-# Panning issues
-svg/custom/pan-direction.svg [ Failure ]
-
 # General placement issue with foreignObject (HTML renderers at different position than in legacy, due to LayoutUnit transition)
 # Affects all tests in svg/dynamic-updates... need to fix the underlying issue first with top priority, to enable these tests too.
 svg/dynamic-updates [ Skip ]
-
-# Page zoom issues
-svg/zoom/page/absolute-sized-document-no-scrollbars.svg          [ Failure ]
-svg/zoom/page/absolute-sized-document-scrollbars.svg             [ Failure ]
-svg/zoom/page/relative-sized-document-scrollbars.svg             [ Failure ]
-svg/zoom/page/zoom-coords-viewattr-01-b.svg                      [ Failure ]
-svg/zoom/page/zoom-foreign-content.svg                           [ Failure ]
-svg/zoom/page/zoom-foreignObject.svg                             [ Failure ]
-svg/zoom/page/zoom-hixie-mixed-008.xml                           [ Failure ]
-svg/zoom/page/zoom-hixie-mixed-009.xml                           [ Failure ]
-svg/zoom/page/zoom-hixie-rendering-model-004.xhtml               [ Failure ]
-svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm              [ Failure ]
-svg/zoom/page/zoom-svg-as-object.html                            [ Failure ]
-svg/zoom/page/zoom-svg-float-border-padding.xml                  [ Failure ]
-svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Failure ]
-svg/zoom/page/zoom-svg-through-object-with-auto-size.html        [ Failure ]
-svg/zoom/page/zoom-svg-through-object-with-override-size.html    [ Failure ]
-svg/zoom/text/zoom-hixie-mixed-008.xml                           [ ImageOnlyFailure ]
 
 # No gradients
 svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg                         [ ImageOnlyFailure ]
@@ -334,6 +315,7 @@ svg/wicd/test-scalable-background-image1.xhtml                    [ ImageOnlyFai
 svg/wicd/test-scalable-background-image2.xhtml                    [ ImageOnlyFailure ]
 svg/zoom/page/zoom-background-image-tiled.html                    [ ImageOnlyFailure ]
 svg/zoom/page/zoom-svg-as-background-with-relative-size.html      [ ImageOnlyFailure ]
+svg/zoom/page/zoom-svg-through-object-with-override-size.html     [ ImageOnlyFailure ]
 
 # No patterns
 svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg                    [ ImageOnlyFailure ]
@@ -624,7 +606,6 @@ svg/custom/object-no-size-attributes.xhtml                                    [ 
 svg/custom/object-sizing-no-width-height.xhtml                                [ Failure ]
 svg/custom/object-sizing.xhtml                                                [ Failure ]
 svg/wicd/sizing-flakiness.html                                                [ ImageOnlyFailure ]
-svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html                     [ Failure ]
 
 # CSS 'mix-blend-mode' broken
 svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]

@@ -1,0 +1,21 @@
+layer at (0,0) size 1628x1213 backgroundClip at (0,0) size 1627.77x1213.05 clip at (0,0) size 1627.77x1213.05
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 1628x1213 backgroundClip at (0,0) size 1627.77x1213.05 clip at (0,0) size 1627.77x1213.05 scrollWidth 942 scrollHeight 702
+  RenderSVGRoot {svg} at (0,0) size 1627.77x1213.05
+layer at (0,0) size 1628x1214 backgroundClip at (0,0) size 1627.77x1213.05 clip at (0,0) size 1627.77x1213.05
+  RenderSVGViewportContainer at (0,0) size 1627.77x1213.05
+layer at (0,0) size 800x600
+  RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
+    RenderText {#text} at (0,0) size 0x0
+layer at (0,0) size 300x150
+  RenderSVGRoot {svg} at (0,0) size 300x150
+layer at (0,0) size 300x150
+  RenderSVGViewportContainer at (0,0) size 300x150
+layer at (0,0) size 99x99
+  RenderSVGRect {rect} at (0,0) size 99x99 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=99.00] [height=99.00]
+layer at (0,0) size 800x600
+  RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
+    RenderBlock {html} at (0,0) size 800x99
+      RenderBlock {div} at (0,0) size 99x99 [bgcolor=#FF0000]
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

@@ -139,6 +139,18 @@ void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
 
 void SVGSVGElement::updateCurrentTranslate()
 {
+    auto* renderer = this->renderer();
+    if (!renderer)
+        return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        renderer->updateFromElement();
+        updateSVGRendererForElementChange();
+        return;
+    }
+#endif
+
     updateSVGRendererForElementChange();
     if (parentNode() == &document() && document().renderView())
         document().renderView()->repaint();

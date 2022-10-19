@@ -102,6 +102,7 @@ private:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateFromStyle() final;
+    void updateFromElement() final;
     void updateLayerTransform() final;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;

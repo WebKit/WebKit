@@ -38,6 +38,7 @@ public:
 
     SVGSVGElement& svgSVGElement() const;
     FloatRect viewport() const { return { { }, viewportSize() }; }
+    FloatSize viewportSize() const { return m_viewport.size(); }
 
     void updateFromStyle() final;
     void updateFromElement() final;
@@ -52,15 +53,14 @@ private:
     bool updateLayoutSizeIfNeeded() final;
     std::optional<FloatRect> overridenObjectBoundingBoxWithoutTransformations() const final { return std::make_optional(viewport()); }
 
-    FloatPoint viewportLocation() const { return m_viewport.location(); }
     FloatPoint computeViewportLocation() const;
-
-    FloatSize viewportSize() const { return m_viewport.size(); }
     FloatSize computeViewportSize() const;
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
     LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const final;
     void updateLayerTransform() final;
+
+    bool needsHasSVGTransformFlag() const;
 
     AffineTransform m_supplementalLayerTransform;
     FloatRect m_viewport;

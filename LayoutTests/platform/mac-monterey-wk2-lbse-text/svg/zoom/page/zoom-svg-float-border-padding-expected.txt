@@ -1,0 +1,31 @@
+layer at (0,0) size 785x767 backgroundClip at (0,0) size 785x766.84 clip at (0,0) size 785x766.84
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x767 backgroundClip at (0,0) size 785x766.84 clip at (0,0) size 785x766.84
+  RenderBlock {html} at (0,0) size 785x766.84
+    RenderBody {body} at (11.52,11.52) size 761.97x732.30
+      RenderBlock (anonymous) at (0,0) size 761.97x52
+        RenderText {#text} at (0,0) size 747x52
+          text run at (0,0) width 352: "The two blocks should look identical. "
+          text run at (351,0) width 396: "One uses an SVG, and the other just uses a"
+          text run at (0,26) width 175: "normal HTML div."
+      RenderBlock {p} at (0,75.03) size 761.97x26
+        RenderText {#text} at (0,0) size 517x26
+          text run at (0,0) width 517: "There should be a red, white and blue pattern below this"
+      RenderBlock {p} at (0,353.63) size 761.97x26
+        RenderText {#text} at (0,0) size 516x26
+          text run at (0,0) width 516: "There should be a red, white and blue pattern above this"
+      RenderBlock {hr} at (0,402.66) size 761.97x2 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,427.69) size 761.97x26
+        RenderText {#text} at (0,0) size 517x26
+          text run at (0,0) width 517: "There should be a red, white and blue pattern below this"
+      RenderBlock (floating) {div} at (14.39,491.11) size 200.80x200.80 [border: (14px solid #FF0000)]
+        RenderBlock {div} at (28.39,28.39) size 144x144 [bgcolor=#0000FF]
+      RenderBlock {p} at (0,706.30) size 761.97x26
+        RenderText {#text} at (0,0) size 516x26
+          text run at (0,0) width 516: "There should be a red, white and blue pattern above this"
+layer at (26,150) size 201x201 backgroundClip at (26,150) size 200.78x200.78 clip at (54.39,178.39) size 144x144 scrollWidth 144 scrollHeight 144
+  RenderSVGRoot {svg} at (14.39,138.45) size 200.78x200.78 [border: (14px solid #FF0000)]
+layer at (54.30,178.36) size 145x145 backgroundClip at (54.30,178.36) size 144x144 clip at (54.30,178.36) size 144x144
+  RenderSVGViewportContainer at (28.39,28.39) size 144x144
+layer at (54.30,178.36) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
