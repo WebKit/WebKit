@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <meta name="fuzzy" content="maxDifference=0-1;totalPixels=24900-25600" />
+    <meta name="fuzzy" content="maxDifference=1;totalPixels=24900-25700" />
     <linearGradient id="base-grad" x1="0" y1="0" x2="50%" y2="0">
         <stop stop-color="green" offset="0"/>
         <stop stop-color="green" offset="0.5"/>

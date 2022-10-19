@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-656"/>
     <defs>
         <!-- a => b => a -->
         <pattern id="a" x="0" y="0" width=".25" height=".25">
