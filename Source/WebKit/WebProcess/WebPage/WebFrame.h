@@ -203,7 +203,7 @@ public:
 private:
     WebFrame(WebPage&);
 
-    WeakPtr<WebCore::Frame> m_coreFrame;
+    WeakPtr<WebCore::AbstractFrame> m_coreFrame;
     WeakPtr<WebPage> m_page;
 
     struct PolicyCheck {

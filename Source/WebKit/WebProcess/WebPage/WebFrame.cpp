@@ -116,14 +116,14 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 
     m_coreFrame = coreFrame;
     m_coreFrame->tree().setName(nullAtom());
-    m_coreFrame->init();
+    coreFrame.init();
 }
 
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frame = create(page);
     auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
-    frame->m_coreFrame = coreFrame;
+    frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
     frame->m_frameID = coreFrame->frameID();
@@ -148,7 +148,8 @@ WebFrame::WebFrame(WebPage& page)
 
 WebFrameLoaderClient* WebFrame::frameLoaderClient() const
 {
-    return m_coreFrame ? static_cast<WebFrameLoaderClient*>(&m_coreFrame->loader().client()) : nullptr;
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    return localFrame ? static_cast<WebFrameLoaderClient*>(&localFrame->loader().client()) : nullptr;
 }
 
 WebFrame::~WebFrame()
@@ -189,7 +190,7 @@ WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
 
 WebCore::Frame* WebFrame::coreFrame() const
 {
-    return m_coreFrame.get();
+    return dynamicDowncast<LocalFrame>(m_coreFrame.get());
 }
 
 FrameInfoData WebFrame::info() const
@@ -200,7 +201,7 @@ FrameInfoData WebFrame::info() const
         isMainFrame(),
         // FIXME: This should use the full request.
         ResourceRequest(url()),
-        SecurityOriginData::fromFrame(m_coreFrame.get()),
+        SecurityOriginData::fromFrame(dynamicDowncast<LocalFrame>(m_coreFrame.get())),
         m_coreFrame ? m_coreFrame->tree().name().string() : String(),
         frameID(),
         parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
@@ -285,7 +286,8 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
 
     m_policyDownloadID = policyDecision.downloadID;
     if (policyDecision.navigationID) {
-        if (WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_coreFrame->loader().policyDocumentLoader()))
+        auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+        if (WebDocumentLoader* documentLoader = localFrame ? static_cast<WebDocumentLoader*>(localFrame->loader().policyDocumentLoader()) : nullptr)
             documentLoader->setNavigationID(policyDecision.navigationID);
     }
 
@@ -335,23 +337,25 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
 
 void WebFrame::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, uint64_t requestID)
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return;
-    if (auto* document = m_coreFrame->document())
+    if (auto* document = localFrame->document())
         document->addConsoleMessage(messageSource, messageLevel, message, requestID);
 }
 
 String WebFrame::source() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
-    Document* document = m_coreFrame->document();
+    Document* document = localFrame->document();
     if (!document)
         return String();
     TextResourceDecoder* decoder = document->decoder();
     if (!decoder)
         return String();
-    DocumentLoader* documentLoader = m_coreFrame->loader().activeDocumentLoader();
+    DocumentLoader* documentLoader = localFrame->loader().activeDocumentLoader();
     if (!documentLoader)
         return String();
     RefPtr<FragmentedSharedBuffer> mainResourceData = documentLoader->mainResourceData();
@@ -362,7 +366,8 @@ String WebFrame::source() const
 
 String WebFrame::contentsAsString() const 
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
 
     if (isFrameSet()) {
@@ -382,7 +387,7 @@ String WebFrame::contentsAsString() const
         return builder.toString();
     }
 
-    auto document = m_coreFrame->document();
+    auto document = localFrame->document();
     if (!document)
         return String();
 
@@ -395,18 +400,20 @@ String WebFrame::contentsAsString() const
 
 String WebFrame::selectionAsString() const 
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
 
-    return m_coreFrame->displayStringModifiedByEncoding(m_coreFrame->editor().selectedText());
+    return localFrame->displayStringModifiedByEncoding(localFrame->editor().selectedText());
 }
 
 IntSize WebFrame::size() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return IntSize();
 
-    FrameView* frameView = m_coreFrame->view();
+    FrameView* frameView = localFrame->view();
     if (!frameView)
         return IntSize();
 
@@ -415,10 +422,11 @@ IntSize WebFrame::size() const
 
 bool WebFrame::isFrameSet() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
 
-    Document* document = m_coreFrame->document();
+    Document* document = localFrame->document();
     if (!document)
         return false;
     return document->isFrameSet();
@@ -426,10 +434,11 @@ bool WebFrame::isFrameSet() const
 
 bool WebFrame::isMainFrame() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
 
-    return m_coreFrame->isMainFrame();
+    return localFrame->isMainFrame();
 }
 
 String WebFrame::name() const
@@ -442,10 +451,11 @@ String WebFrame::name() const
 
 URL WebFrame::url() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return { };
 
-    auto* documentLoader = m_coreFrame->loader().documentLoader();
+    auto* documentLoader = localFrame->loader().documentLoader();
     if (!documentLoader)
         return { };
 
@@ -454,10 +464,11 @@ URL WebFrame::url() const
 
 CertificateInfo WebFrame::certificateInfo() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return { };
 
-    DocumentLoader* documentLoader = m_coreFrame->loader().documentLoader();
+    DocumentLoader* documentLoader = localFrame->loader().documentLoader();
     if (!documentLoader)
         return { };
 
@@ -466,21 +477,23 @@ CertificateInfo WebFrame::certificateInfo() const
 
 String WebFrame::innerText() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
 
-    if (!m_coreFrame->document()->documentElement())
+    if (!localFrame->document()->documentElement())
         return String();
 
-    return m_coreFrame->document()->documentElement()->innerText();
+    return localFrame->document()->documentElement()->innerText();
 }
 
 WebFrame* WebFrame::parentFrame() const
 {
-    if (!m_coreFrame || !m_coreFrame->ownerElement())
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame || !localFrame->ownerElement())
         return nullptr;
 
-    auto* frame = m_coreFrame->ownerElement()->document().frame();
+    auto* frame = localFrame->ownerElement()->document().frame();
     if (!frame)
         return nullptr;
 
@@ -512,51 +525,57 @@ Ref<API::Array> WebFrame::childFrames()
 
 String WebFrame::layerTreeAsText() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return emptyString();
 
-    return m_coreFrame->contentRenderer()->compositor().layerTreeAsText();
+    return localFrame->contentRenderer()->compositor().layerTreeAsText();
 }
 
 unsigned WebFrame::pendingUnloadCount() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return 0;
 
-    return m_coreFrame->document()->domWindow()->pendingUnloadEventListeners();
+    return localFrame->document()->domWindow()->pendingUnloadEventListeners();
 }
 
 bool WebFrame::allowsFollowingLink(const URL& url) const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return true;
-        
-    return m_coreFrame->document()->securityOrigin().canDisplay(url);
+
+    return localFrame->document()->securityOrigin().canDisplay(url);
 }
 
 JSGlobalContextRef WebFrame::jsContext()
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return nullptr;
 
-    return toGlobalRef(m_coreFrame->script().globalObject(mainThreadNormalWorld()));
+    return toGlobalRef(localFrame->script().globalObject(mainThreadNormalWorld()));
 }
 
 JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return nullptr;
 
-    return toGlobalRef(m_coreFrame->script().globalObject(world->coreWorld()));
+    return toGlobalRef(localFrame->script().globalObject(world->coreWorld()));
 }
 
 JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScriptWorld* world)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (!m_coreFrame || !m_coreFrame->page())
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame || !localFrame->page())
         return nullptr;
 
-    return toGlobalRef(m_coreFrame->page()->serviceWorkerGlobalObject(world->coreWorld()));
+    return toGlobalRef(localFrame->page()->serviceWorkerGlobalObject(world->coreWorld()));
 #else
     UNUSED_PARAM(world);
     return nullptr;
@@ -567,11 +586,12 @@ void WebFrame::setAccessibleName(const AtomString& accessibleName)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    
-    if (!m_coreFrame)
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return;
 
-    auto* document = m_coreFrame->document();
+    auto* document = localFrame->document();
     if (!document)
         return;
     
@@ -583,11 +603,12 @@ void WebFrame::setAccessibleName(const AtomString& accessibleName)
 }
 
 IntRect WebFrame::contentBounds() const
-{    
-    if (!m_coreFrame)
+{
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return IntRect();
     
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -596,10 +617,11 @@ IntRect WebFrame::contentBounds() const
 
 IntRect WebFrame::visibleContentBounds() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return IntRect();
     
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -609,10 +631,11 @@ IntRect WebFrame::visibleContentBounds() const
 
 IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return IntRect();
     
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -622,10 +645,11 @@ IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
 
 IntSize WebFrame::scrollOffset() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return IntSize();
     
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return IntSize();
 
@@ -634,10 +658,11 @@ IntSize WebFrame::scrollOffset() const
 
 bool WebFrame::hasHorizontalScrollbar() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
 
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return false;
 
@@ -646,10 +671,11 @@ bool WebFrame::hasHorizontalScrollbar() const
 
 bool WebFrame::hasVerticalScrollbar() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
 
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return false;
 
@@ -658,18 +684,20 @@ bool WebFrame::hasVerticalScrollbar() const
 
 RefPtr<InjectedBundleHitTestResult> WebFrame::hitTest(const IntPoint point, OptionSet<HitTestRequest::Type> types) const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return nullptr;
 
-    return InjectedBundleHitTestResult::create(m_coreFrame->eventHandler().hitTestResultAtPoint(point, types));
+    return InjectedBundleHitTestResult::create(localFrame->eventHandler().hitTestResultAtPoint(point, types));
 }
 
 bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha)
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
 
-    FrameView* view = m_coreFrame->view();
+    FrameView* view = localFrame->view();
     if (!view)
         return false;
 
@@ -687,19 +715,21 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
 
 bool WebFrame::containsAnyFormElements() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
     
-    auto* document = m_coreFrame->document();
+    auto* document = localFrame->document();
     return document && childrenOfType<HTMLFormElement>(*document).first();
 }
 
 bool WebFrame::containsAnyFormControls() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return false;
     
-    auto* document = m_coreFrame->document();
+    auto* document = localFrame->document();
     if (!document)
         return false;
 
@@ -712,10 +742,11 @@ bool WebFrame::containsAnyFormControls() const
 
 void WebFrame::stopLoading()
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return;
 
-    m_coreFrame->loader().stopForUserCancel();
+    localFrame->loader().stopForUserCancel();
 }
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
@@ -732,10 +763,11 @@ WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JS
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle* cssStyleDeclarationHandle, InjectedBundleScriptWorld* world)
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
+    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, cssStyleDeclarationHandle->coreCSSStyleDeclaration()));
@@ -743,10 +775,11 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle* 
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
 {
-    if (!m_coreFrame)
-        return 0;
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
+        return nullptr;
 
-    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
+    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, nodeHandle->coreNode()));
@@ -754,10 +787,11 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, Inj
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, InjectedBundleScriptWorld* world)
 {
-    if (!m_coreFrame)
-        return 0;
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
+        return nullptr;
 
-    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
+    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, rangeHandle->coreRange()));
@@ -773,10 +807,11 @@ String WebFrame::counterValue(JSObjectRef element)
 
 String WebFrame::provisionalURL() const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
 
-    DocumentLoader* provisionalDocumentLoader = m_coreFrame->loader().provisionalDocumentLoader();
+    DocumentLoader* provisionalDocumentLoader = localFrame->loader().provisionalDocumentLoader();
     if (!provisionalDocumentLoader)
         return String();
 
@@ -785,10 +820,11 @@ String WebFrame::provisionalURL() const
 
 String WebFrame::suggestedFilenameForResourceWithURL(const URL& url) const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
 
-    DocumentLoader* loader = m_coreFrame->loader().documentLoader();
+    DocumentLoader* loader = localFrame->loader().documentLoader();
     if (!loader)
         return String();
 
@@ -806,10 +842,11 @@ String WebFrame::suggestedFilenameForResourceWithURL(const URL& url) const
 
 String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return String();
 
-    DocumentLoader* loader = m_coreFrame->loader().documentLoader();
+    DocumentLoader* loader = localFrame->loader().documentLoader();
     if (!loader)
         return String();
 
@@ -827,15 +864,16 @@ String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
 
 void WebFrame::setTextDirection(const String& direction)
 {
-    if (!m_coreFrame)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
         return;
 
     if (direction == "auto"_s)
-        m_coreFrame->editor().setBaseWritingDirection(WritingDirection::Natural);
+        localFrame->editor().setBaseWritingDirection(WritingDirection::Natural);
     else if (direction == "ltr"_s)
-        m_coreFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
+        localFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
     else if (direction == "rtl"_s)
-        m_coreFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
+        localFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 
 void WebFrame::documentLoaderDetached(uint64_t navigationID)
@@ -893,7 +931,10 @@ bool WebFrame::shouldEnableInAppBrowserPrivacyProtections()
 
 std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBoundDomain() const
 {
-    return fromCoreFrame(m_coreFrame->mainFrame())->isNavigatingToAppBoundDomain();
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
+        return std::nullopt;
+    return fromCoreFrame(localFrame->mainFrame())->isNavigatingToAppBoundDomain();
 }
 #endif
     
