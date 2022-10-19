@@ -827,7 +827,7 @@ static void testDownloadEphemeralContext(Test* test, gconstpointer)
     g_file_delete(destFile.get(), nullptr, nullptr);
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -858,7 +858,9 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
+#endif // PLATFORM(GTK) && !USE(GTK4)
 
+#if PLATFORM(GTK)
 static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
 {
     test->showInWindow();
