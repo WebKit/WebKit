@@ -1,9 +1,4 @@
-CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/style-src/resources/style-src.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/style-src/resources/style-src.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
-
-Harness Error (TIMEOUT), message = null
 
 PASS Test error event fires on stylesheet link
-NOTRUN Test error event fires on inline style
+PASS Test error event fires on inline style
 Lorem ipsum

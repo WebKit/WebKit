@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Refused to load the stylesheet 'http://localhost:8000/security/contentSecurityPolicy/resources/style-set-red.css' because it violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'".
-
-A test paragraph
-
-This is a testharness.js-based test.
-PASS Style element has error on bad style nonce
-Harness: the test ran to completion.
-
