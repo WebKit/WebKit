@@ -57,8 +57,10 @@
 #include "JSNavigator.h"
 #include "JSRTCCertificate.h"
 #include "JSRTCDataChannel.h"
+#include "JSWebCodecsEncodedVideoChunk.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
+#include "WebCodecsEncodedVideoChunk.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/BigIntObject.h>
@@ -204,6 +206,9 @@ enum SerializationTag {
     RTCDataChannelTransferTag = 50,
 #endif
     DOMExceptionTag = 51,
+#if ENABLE(WEB_CODECS)
+    WebCodecsEncodedVideoChunkTag = 52,
+#endif
     ErrorTag = 255
 };
 
@@ -417,8 +422,9 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | ImageBitmapTag <originClean:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> DestinationColorSpace <byteLength:uint32_t>(<imageByteData:uint8_t>)
  *    | OffscreenCanvasTransferTag <value:uint32_t>
  *    | WasmMemoryTag <value:uint32_t>
- *    | RTCDataChannelTransferTag <processIdentifier:uint64_t><rtcDataChannelIdentifier:uint64_t><label:String>
+ *    | RTCDataChannelTransferTag <identifier:uint32_t>
  *    | DOMExceptionTag <message:String> <name:String>
+ *    | WebCodecsEncodedVideoChunkTag <identifier:uint32_t>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -626,6 +632,9 @@ public:
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
+#if ENABLE(WEB_CODECS)
+            Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
+#endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
@@ -638,6 +647,9 @@ public:
 #endif
 #if ENABLE(WEB_RTC)
             rtcDataChannels,
+#endif
+#if ENABLE(WEB_CODECS)
+            serializedVideoChunks,
 #endif
 #if ENABLE(WEBASSEMBLY)
             wasmModules,
@@ -673,6 +685,9 @@ private:
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
+#if ENABLE(WEB_CODECS)
+            Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
+#endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
@@ -687,6 +702,9 @@ private:
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
         , m_wasmMemoryHandles(wasmMemoryHandles)
+#endif
+#if ENABLE(WEB_CODECS)
+        , m_serializedVideoChunks(serializedVideoChunks)
 #endif
     {
         write(CurrentVersion);
@@ -1167,6 +1185,21 @@ private:
         code = SerializationReturnCode::DataCloneError;
     }
 #endif
+#if ENABLE(WEB_CODECS)
+    void dumpWebCodecsEncodedVideoChunk(JSObject* obj)
+    {
+        auto& videoChunk = jsCast<JSWebCodecsEncodedVideoChunk*>(obj)->wrapped();
+
+        auto index = m_serializedVideoChunks.find(&videoChunk.storage());
+        if (index == notFound) {
+            index = m_serializedVideoChunks.size();
+            m_serializedVideoChunks.append(&videoChunk.storage());
+        }
+
+        write(WebCodecsEncodedVideoChunkTag);
+        write(static_cast<uint32_t>(index));
+    }
+#endif
 
     void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
     {
@@ -1349,6 +1382,9 @@ private:
                 Vector<URLKeepingBlobAlive> dummyBlobHandles;
                 Vector<RefPtr<MessagePort>> dummyMessagePorts;
                 Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
+#if ENABLE(WEB_CODECS)
+                Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> dummyVideoChunks;
+#endif
 #if ENABLE(WEBASSEMBLY)
                 WasmModuleArray dummyModules;
                 WasmMemoryHandleArray dummyMemoryHandles;
@@ -1360,6 +1396,9 @@ private:
 #endif
 #if ENABLE(WEB_RTC)
                     { },
+#endif
+#if ENABLE(WEB_CODECS)
+                    dummyVideoChunks,
 #endif
 #if ENABLE(WEBASSEMBLY)
                     dummyModules,
@@ -1452,6 +1491,12 @@ private:
                 dumpDOMException(obj, code);
                 return true;
             }
+#if ENABLE(WEB_CODECS)
+            if (obj->inherits<JSWebCodecsEncodedVideoChunk>()) {
+                dumpWebCodecsEncodedVideoChunk(obj);
+                return true;
+            }
+#endif
 
             return false;
         }
@@ -1896,6 +1941,9 @@ private:
     WasmModuleArray& m_wasmModules;
     WasmMemoryHandleArray& m_wasmMemoryHandles;
 #endif
+#if ENABLE(WEB_CODECS)
+    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& m_serializedVideoChunks;
+#endif
 };
 
 SerializationReturnCode CloneSerializer::serialize(JSValue in)
@@ -2190,6 +2238,9 @@ public:
         , WasmModuleArray* wasmModules
         , WasmMemoryHandleArray* wasmMemoryHandles
 #endif
+#if ENABLE(WEB_CODECS)
+        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+#endif
         )
     {
         if (!buffer.size())
@@ -2204,6 +2255,9 @@ public:
 #if ENABLE(WEBASSEMBLY)
             , wasmModules
             , wasmMemoryHandles
+#endif
+#if ENABLE(WEB_CODECS)
+            , WTFMove(serializedVideoChunks)
 #endif
             );
         if (!deserializer.isValid())
@@ -2262,6 +2316,9 @@ private:
         , WasmModuleArray* wasmModules = nullptr
         , WasmMemoryHandleArray* wasmMemoryHandles = nullptr
 #endif
+#if ENABLE(WEB_CODECS)
+        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
+#endif
         )
         : CloneBase(lexicalGlobalObject)
         , m_globalObject(globalObject)
@@ -2287,6 +2344,10 @@ private:
         , m_wasmModules(wasmModules)
         , m_wasmMemoryHandles(wasmMemoryHandles)
 #endif
+#if ENABLE(WEB_CODECS)
+        , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
+        , m_videoChunks(m_serializedVideoChunks.size())
+#endif
     {
         if (!read(m_version))
             m_version = 0xFFFFFFFF;
@@ -2302,6 +2363,9 @@ private:
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules
         , WasmMemoryHandleArray* wasmMemoryHandles
+#endif
+#if ENABLE(WEB_CODECS)
+        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -2330,6 +2394,10 @@ private:
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
         , m_wasmMemoryHandles(wasmMemoryHandles)
+#endif
+#if ENABLE(WEB_CODECS)
+        , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
+        , m_videoChunks(m_serializedVideoChunks.size())
 #endif
     {
         if (!read(m_version))
@@ -3372,6 +3440,23 @@ private:
     }
 #endif
 
+#if ENABLE(WEB_CODECS)
+    JSValue readWebCodecsEncodedVideoChunk()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_serializedVideoChunks.size()) {
+            fail();
+            return JSValue();
+        }
+
+        if (!m_videoChunks[index])
+            m_videoChunks[index] = WebCodecsEncodedVideoChunk::create(m_serializedVideoChunks.at(index).releaseNonNull());
+
+        return getJSValue(m_videoChunks[index].get());
+    }
+#endif
+
     JSValue readImageBitmap()
     {
         uint8_t serializationState;
@@ -3864,6 +3949,10 @@ private:
         case RTCDataChannelTransferTag:
             return readRTCDataChannel();
 #endif
+#if ENABLE(WEB_CODECS)
+        case WebCodecsEncodedVideoChunkTag:
+            return readWebCodecsEncodedVideoChunk();
+#endif
         case DOMExceptionTag:
             return readDOMException();
 
@@ -3908,6 +3997,10 @@ private:
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray* const m_wasmModules;
     WasmMemoryHandleArray* const m_wasmMemoryHandles;
+#endif
+#if ENABLE(WEB_CODECS)
+    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
+    Vector<RefPtr<WebCodecsEncodedVideoChunk>> m_videoChunks;
 #endif
 
     String blobFilePathForBlobURL(const String& blobURL)
@@ -4111,11 +4204,17 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
+#if ENABLE(WEB_CODECS)
+    , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+#endif
         )
     : m_data(WTFMove(buffer))
     , m_arrayBufferContentsArray(WTFMove(arrayBufferContentsArray))
 #if ENABLE(WEB_RTC)
     , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
+#endif
+#if ENABLE(WEB_CODECS)
+    , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
 #endif
 {
     m_memoryCost = computeMemoryCost();
@@ -4132,6 +4231,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , std::unique_ptr<WasmModuleArray> wasmModulesArray
         , std::unique_ptr<WasmMemoryHandleArray> wasmMemoryHandlesArray
 #endif
+#if ENABLE(WEB_CODECS)
+        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+#endif
         )
     : m_data(WTFMove(buffer))
     , m_arrayBufferContentsArray(WTFMove(arrayBufferContentsArray))
@@ -4146,6 +4248,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #if ENABLE(WEBASSEMBLY)
     , m_wasmModulesArray(WTFMove(wasmModulesArray))
     , m_wasmMemoryHandlesArray(WTFMove(wasmMemoryHandlesArray))
+#endif
+#if ENABLE(WEB_CODECS)
+    , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
 #endif
     , m_blobHandles(crossThreadCopy(WTFMove(blobHandles)))
 {
@@ -4183,12 +4288,17 @@ size_t SerializedScriptValue::computeMemoryCost() const
             cost += channel->memoryCost();
     }
 #endif
-
 #if ENABLE(WEBASSEMBLY)
     // We are not supporting WebAssembly Module memory estimation yet.
     if (m_wasmMemoryHandlesArray) {
         for (auto& content : *m_wasmMemoryHandlesArray)
             cost += content->size();
+    }
+#endif
+#if ENABLE(WEB_CODECS)
+    for (auto& chunk : m_serializedVideoChunks) {
+        if (chunk)
+            cost += chunk->memoryCost();
     }
 #endif
 
@@ -4399,12 +4509,18 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     WasmMemoryHandleArray wasmMemoryHandles;
 #endif
     std::unique_ptr<ArrayBufferContentsArray> sharedBuffers = makeUnique<ArrayBufferContentsArray>();
+#if ENABLE(WEB_CODECS)
+    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+#endif
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         offscreenCanvases,
 #endif
 #if ENABLE(WEB_RTC)
         dataChannels,
+#endif
+#if ENABLE(WEB_CODECS)
+        serializedVideoChunks,
 #endif
 #if ENABLE(WEBASSEMBLY)
         wasmModules,
@@ -4445,6 +4561,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #if ENABLE(WEBASSEMBLY)
                 , makeUnique<WasmModuleArray>(wasmModules)
                 , context == SerializationContext::WorkerPostMessage ? makeUnique<WasmMemoryHandleArray>(wasmMemoryHandles) : nullptr
+#endif
+#if ENABLE(WEB_CODECS)
+                , WTFMove(serializedVideoChunks)
 #endif
                 ));
 }
@@ -4506,6 +4625,9 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModulesArray.get()
         , m_wasmMemoryHandlesArray.get()
+#endif
+#if ENABLE(WEB_CODECS)
+        , WTFMove(m_serializedVideoChunks)
 #endif
         );
     if (throwExceptions == SerializationErrorMode::Throwing)

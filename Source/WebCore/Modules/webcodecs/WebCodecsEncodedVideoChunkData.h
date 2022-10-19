@@ -27,23 +27,18 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "WebCodecsEncodedVideoChunkType.h"
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-enum class WebCodecsEncodedVideoChunkType {
-    Key,
-    Delta
+struct WebCodecsEncodedVideoChunkData {
+    WebCodecsEncodedVideoChunkType type { WebCodecsEncodedVideoChunkType::Key };
+    int64_t timestamp { 0 };
+    std::optional<uint64_t> duration { 0 };
+    Vector<uint8_t> buffer;
 };
 
 }
 
-namespace WTF {
-template<> struct EnumTraits<WebCore::WebCodecsEncodedVideoChunkType> {
-    using values = EnumValues<
-        WebCore::WebCodecsEncodedVideoChunkType,
-        WebCore::WebCodecsEncodedVideoChunkType::Key,
-        WebCore::WebCodecsEncodedVideoChunkType::Delta
-    >;
-};
-
-}
-#endif
+#endif // ENABLE(WEB_CODECS)

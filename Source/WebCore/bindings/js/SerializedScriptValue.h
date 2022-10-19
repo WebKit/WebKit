@@ -37,6 +37,10 @@
 #include <wtf/Gigacage.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WEB_CODECS)
+#include "WebCodecsEncodedVideoChunk.h"
+#endif
+
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 
@@ -57,6 +61,10 @@ class MessagePort;
 class ImageBitmapBacking;
 class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
+#if ENABLE(WEB_CODECS)
+class WebCodecsEncodedVideoChunk;
+class WebCodecsEncodedVideoChunkStorage;
+#endif
 
 enum class SerializationErrorMode { NonThrowing, Throwing };
 enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage };
@@ -115,6 +123,9 @@ private:
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
 #endif
+#if ENABLE(WEB_CODECS)
+        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
+#endif
         );
 
     SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
@@ -127,6 +138,9 @@ private:
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> = nullptr
         , std::unique_ptr<WasmMemoryHandleArray> = nullptr
+#endif
+#if ENABLE(WEB_CODECS)
+        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
 #endif
         );
 
@@ -145,6 +159,9 @@ private:
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
     std::unique_ptr<WasmMemoryHandleArray> m_wasmMemoryHandlesArray;
+#endif
+#if ENABLE(WEB_CODECS)
+    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
 #endif
     Vector<URLKeepingBlobAlive> m_blobHandles;
     size_t m_memoryCost { 0 };
@@ -170,6 +187,12 @@ void SerializedScriptValue::encode(Encoder& encoder) const
     encoder << static_cast<uint64_t>(m_detachedRTCDataChannels.size());
     for (const auto &channel : m_detachedRTCDataChannels)
         encoder << *channel;
+#endif
+
+#if ENABLE(WEB_CODECS)
+    encoder << static_cast<uint64_t>(m_serializedVideoChunks.size());
+    for (const auto &videoChunk : m_serializedVideoChunks)
+        encoder << videoChunk->data();
 #endif
 }
 
@@ -227,10 +250,27 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
         detachedRTCDataChannels.append(makeUnique<DetachedRTCDataChannel>(WTFMove(*detachedRTCDataChannel)));
     }
 #endif
+#if ENABLE(WEB_CODECS)
+    uint64_t serializedVideoChunksSize;
+    if (!decoder.decode(serializedVideoChunksSize))
+        return nullptr;
+
+    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+    while (serializedVideoChunksSize--) {
+        std::optional<WebCodecsEncodedVideoChunkData> videoChunkData;
+        decoder >> videoChunkData;
+        if (!videoChunkData)
+            return nullptr;
+        serializedVideoChunks.append(WebCodecsEncodedVideoChunkStorage::create(WTFMove(*videoChunkData)));
+    }
+#endif
 
     return adoptRef(*new SerializedScriptValue(WTFMove(data), WTFMove(arrayBufferContentsArray)
 #if ENABLE(WEB_RTC)
         , WTFMove(detachedRTCDataChannels)
+#endif
+#if ENABLE(WEB_CODECS)
+        , WTFMove(serializedVideoChunks)
 #endif
         ));
 }

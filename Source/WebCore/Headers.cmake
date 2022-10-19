@@ -411,6 +411,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/webauthn/fido/U2fCommandConstructor.h
     Modules/webauthn/fido/U2fResponseConverter.h
 
+    Modules/webcodecs/WebCodecsEncodedVideoChunk.h
+    Modules/webcodecs/WebCodecsEncodedVideoChunkData.h
+    Modules/webcodecs/WebCodecsEncodedVideoChunkType.h
+
     Modules/webdatabase/DatabaseDetails.h
     Modules/webdatabase/DatabaseManager.h
     Modules/webdatabase/DatabaseManagerClient.h
