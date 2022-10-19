@@ -304,13 +304,10 @@ MediaTime MediaTime::operator*(int32_t rhs) const
         return positiveInfiniteTime();
     }
 
+    if (hasDoubleValue())
+        return MediaTime::createWithDouble(m_timeValueAsDouble * rhs);
+
     MediaTime a = *this;
-
-    if (a.hasDoubleValue()) {
-        a.m_timeValueAsDouble *= rhs;
-        return a;
-    }
-
     while (!safeMultiply(a.m_timeValue, rhs, a.m_timeValue)) {
         if (a.m_timeScale == 1)
             return signum(a.m_timeValue) == signum(rhs) ? positiveInfiniteTime() : negativeInfiniteTime();
