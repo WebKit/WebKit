@@ -87,18 +87,18 @@ macro(WEBKIT_ADD_TARGET_CXX_FLAGS _target)
 endmacro()
 
 
-option(DEVELOPER_MODE_FATAL_WARNINGS "Build with warnings as errors if DEVELOPER_MODE is also enabled" OFF)
-if (DEVELOPER_MODE AND DEVELOPER_MODE_FATAL_WARNINGS)
+option(DEVELOPER_MODE_FATAL_WARNINGS "Build with warnings as errors if DEVELOPER_MODE is also enabled" ON)
+if (TRUE) # FIXME: this is just for debugging on EWS
     if (MSVC)
         set(FATAL_WARNINGS_FLAG /WX)
-    else ()
+    elseif (COMPILER_IS_GCC_OR_CLANG)
         set(FATAL_WARNINGS_FLAG -Werror)
     endif ()
 
-    check_cxx_compiler_flag(${FATAL_WARNINGS_FLAG} CXX_COMPILER_SUPPORTS_WERROR)
-    if (CXX_COMPILER_SUPPORTS_WERROR)
-        set(DEVELOPER_MODE_CXX_FLAGS ${FATAL_WARNINGS_FLAG})
-    endif ()
+    # Note we do not attempt to test whether the fatal warning flag is supported
+    # because any warning would cause the test to fail. We also do not add it to
+    # global flags because it could cause all subsequent tests to fail.
+    set(DEVELOPER_MODE_CXX_FLAGS ${FATAL_WARNINGS_FLAG})
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
