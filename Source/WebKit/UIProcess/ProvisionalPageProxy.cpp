@@ -96,7 +96,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     if (suspendedPage) {
         ASSERT(&suspendedPage->process() == m_process.ptr());
         suspendedPage->unsuspend();
-        m_mainFrame = WebFrameProxy::create(m_page, m_process, suspendedPage->mainFrameID());
+        m_mainFrame = &suspendedPage->mainFrame();
     }
 
     initializeWebPage(websitePolicies);
