@@ -232,16 +232,6 @@ OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesFor
 }
 #endif
 
-void ScrollingTreeMac::lockLayersForHitTesting()
-{
-    m_layerHitTestMutex.lock();
-}
-
-void ScrollingTreeMac::unlockLayersForHitTesting()
-{
-    m_layerHitTestMutex.unlock();
-}
-
 void ScrollingTreeMac::didCompleteRenderingUpdate()
 {
     bool hasActiveCATransaction = [CATransaction currentState];

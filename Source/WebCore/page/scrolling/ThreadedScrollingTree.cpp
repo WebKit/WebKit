@@ -339,6 +339,16 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, s
 }
 #endif
 
+void ThreadedScrollingTree::lockLayersForHitTesting()
+{
+    m_layerHitTestMutex.lock();
+}
+
+void ThreadedScrollingTree::unlockLayersForHitTesting()
+{
+    m_layerHitTestMutex.unlock();
+}
+
 bool ThreadedScrollingTree::scrollingThreadIsActive()
 {
     return hasProcessedWheelEventsRecently() || hasNodeWithActiveScrollAnimations();

@@ -116,7 +116,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeNicosia::scrollingNodeForPoint(FloatPoint
     if (!rootScrollingNode)
         return nullptr;
 
-    LayerTreeHitTestLocker layerLocker(m_scrollingCoordinator.get());
+    Locker layerLocker { m_layerHitTestMutex };
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeNicosia*>(rootScrollingNode)->rootContentsLayer();
     Vector<RefPtr<CompositionLayer>> layersAtPoint;

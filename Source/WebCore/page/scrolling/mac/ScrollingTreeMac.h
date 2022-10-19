@@ -62,14 +62,8 @@ private:
     void registerForPlatformRenderingUpdateCallback();
     void applyLayerPositionsInternal() final WTF_REQUIRES_LOCK(m_treeLock);
 
-    void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
-    void unlockLayersForHitTesting() final WTF_RELEASES_LOCK(m_layerHitTestMutex);
-
     void didCompleteRenderingUpdate() final;
 
-    // This lock protects the CALayer/PlatformCALayer tree.
-    mutable Lock m_layerHitTestMutex;
-    
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 };
 
