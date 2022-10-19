@@ -31,13 +31,21 @@ from webkitbugspy import Tracker
 COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-/]*'
 COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
 CHERRY_PICK_RE = re.compile(r'[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF))
-REVERT_RE = re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF))
+REVERT_RE = [
+    re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Reverts? \[{}\]'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Reverts? \({}\)'.format(COMPOUND_COMMIT_REF)),
+]
 FOLLOW_UP_FIXES_RE = [
     re.compile(r'Fix following {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Follow-? ?up fix to {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Follow-? ?up fix {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Follow-? ?up to {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Follow-? ?up {}'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'\[?[Gg]ardening\]?:? REGRESSION \(?{}\)?'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'REGRESSION ?\(?{}\)?'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\[?[Gg]ardening\]?:? REGRESSION \({}\)'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\[?[Gg]ardening\]?:? REGRESSION {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'REGRESSION ?\({}\)'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'REGRESSION ?{}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'\[?[Gg]ardening\]?:? [Tt]est-? ?[Aa]ddition \(?{}\)?'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'[Tt]est-? ?[Aa]ddition \(?{}\)?'.format(COMPOUND_COMMIT_REF)),
 ]
@@ -49,7 +57,7 @@ class Relationship(object):
         'references', 'referenced by',
         'cherry-picked', 'original',
         'reverts', 'reverted by',
-        'follow-up', 'follow-up by',
+        'follow-up to', 'followed-up by',
     )
     REFERENCES, REFERENCED_BY, \
         CHERRY_PICK, ORIGINAL, \
@@ -79,7 +87,7 @@ class Relationship(object):
 
         for type, regexes in {
             cls.ORIGINAL: [CHERRY_PICK_RE],
-            cls.REVERTS: [REVERT_RE],
+            cls.REVERTS: REVERT_RE,
             cls.FOLLOW_UP: FOLLOW_UP_FIXES_RE,
         }.items():
             for regex in regexes:
