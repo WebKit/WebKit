@@ -76,8 +76,22 @@ void CSSMathClamp::serialize(StringBuilder& builder, OptionSet<SerializationArgu
 
 auto CSSMathClamp::toSumValue() const -> std::optional<SumValue>
 {
-    // FIXME: Implement.
-    return std::nullopt;
+    auto validateSumValue = [](const std::optional<SumValue>& sumValue, const UnitMap* expectedUnits) {
+        return sumValue && sumValue->size() == 1 && (!expectedUnits || *expectedUnits == sumValue->first().units);
+    };
+
+    auto lower = m_lower->toSumValue();
+    if (!validateSumValue(lower, nullptr))
+        return std::nullopt;
+    auto value = m_value->toSumValue();
+    if (!validateSumValue(value, &lower->first().units))
+        return std::nullopt;
+    auto upper = m_upper->toSumValue();
+    if (!validateSumValue(upper, &lower->first().units))
+        return std::nullopt;
+
+    value->first().value = std::max(lower->first().value, std::min(value->first().value, upper->first().value));
+    return value;
 }
 
 bool CSSMathClamp::equals(const CSSNumericValue& other) const
