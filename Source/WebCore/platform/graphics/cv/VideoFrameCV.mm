@@ -389,9 +389,6 @@ void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& desti
     // FIXME: It is not efficient to create a conformer everytime. We might want to make it more efficient, for instance by storing it in GraphicsContext.
     auto conformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
     auto image = NativeImage::create(conformer->createImageFromPixelBuffer(pixelBuffer()));
-    if (!image)
-        return;
-
     FloatRect imageRect { FloatPoint::zero(), image->size() };
     context.drawNativeImage(*image, presentationSize(), destination, imageRect);
 }

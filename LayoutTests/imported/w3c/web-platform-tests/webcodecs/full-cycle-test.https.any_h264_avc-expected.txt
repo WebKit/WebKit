@@ -1,11 +1,6 @@
-CONSOLE MESSAGE: DataError: Key frame is required
-CONSOLE MESSAGE: DataError: Key frame is required
+CONSOLE MESSAGE: TypeError: Type error
+CONSOLE MESSAGE: TypeError: Type error
+CONSOLE MESSAGE: TypeError: Type error
 
-Harness Error (FAIL), message = DataError: Key frame is required
-
-TIMEOUT Encoding and decoding cycle Test timed out
-
-Harness Error (FAIL), message = DataError: Key frame is required
-
-TIMEOUT Encoding and decoding cycle Test timed out
+FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
 

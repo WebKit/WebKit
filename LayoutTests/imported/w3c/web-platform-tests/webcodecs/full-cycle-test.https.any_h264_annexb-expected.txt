@@ -1,4 +1,7 @@
-CONSOLE MESSAGE: Error: assert_unreached: Decoder failure Reached unreachable code
+CONSOLE MESSAGE: TypeError: Type error
+CONSOLE MESSAGE: TypeError: Type error
+CONSOLE MESSAGE: TypeError: Type error
+CONSOLE MESSAGE: TypeError: Type error
 
-FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "AbortError: aborting flush as decoder is reset"
+FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "InvalidStateError: VideoDecoder is not configured"
 

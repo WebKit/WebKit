@@ -120,7 +120,6 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
             }
             setInternalEncoder(WTFMove(result.value()));
             m_isMessageQueueBlocked = false;
-            m_hasNewActiveConfiguration = true;
             processControlMessageQueue();
         }, [this, weakThis = WeakPtr { *this }](auto&& configuration) {
             if (!weakThis)
@@ -153,10 +152,18 @@ WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMeta
 
     m_hasNewActiveConfiguration = false;
 
+    RefPtr<ArrayBuffer> arrayBuffer;
+    if (m_activeConfiguration.description) {
+        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(m_activeConfiguration.description->size(), 0);
+        RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
+        if (arrayBuffer)
+            memcpy(static_cast<uint8_t*>(arrayBuffer->data()), m_activeConfiguration.description->data(), m_activeConfiguration.description->size());
+    }
+
     // FIXME: Provide more accurate decoder configuration
     WebCodecsVideoDecoderConfig config {
-        !m_activeConfiguration.codec.isEmpty() ? WTFMove(m_activeConfiguration.codec) : String { m_baseConfiguration.codec },
-        { },
+        WTFMove(m_activeConfiguration.codec),
+        WTFMove(arrayBuffer),
         m_activeConfiguration.visibleWidth ? m_activeConfiguration.visibleWidth : m_baseConfiguration.width,
         m_activeConfiguration.visibleHeight ? m_activeConfiguration.visibleHeight : m_baseConfiguration.height,
         m_activeConfiguration.displayWidth ? m_activeConfiguration.displayWidth : m_baseConfiguration.displayWidth,
@@ -165,16 +172,6 @@ WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMeta
         HardwareAcceleration::NoPreference,
         { }
     };
-
-    RefPtr<ArrayBuffer> arrayBuffer;
-    if (m_activeConfiguration.description && m_activeConfiguration.description->size()) {
-        auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(m_activeConfiguration.description->size(), 1);
-        RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
-        if (arrayBuffer) {
-            memcpy(static_cast<uint8_t*>(arrayBuffer->data()), m_activeConfiguration.description->data(), m_activeConfiguration.description->size());
-            config.description = WTFMove(arrayBuffer);
-        }
-    }
 
     return WebCodecsEncodedVideoChunkMetadata { WTFMove(config) };
 }

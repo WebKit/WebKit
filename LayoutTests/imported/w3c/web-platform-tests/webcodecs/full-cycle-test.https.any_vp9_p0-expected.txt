@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: TypeError: Config is not valid
+CONSOLE MESSAGE: TypeError: Type error
 CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
 CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
 CONSOLE MESSAGE: InvalidStateError: VideoDecoder is not configured
