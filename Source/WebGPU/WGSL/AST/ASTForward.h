@@ -25,42 +25,52 @@
 
 #pragma once
 
-#include "ASTExpression.h"
-#include "ASTTypeDecl.h"
-
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
-
 namespace WGSL::AST {
 
-// A CallableExpression expresses a "function" call, which consists of a target to be called,
-// and a list of arguments. The target does not necesserily have to be a function identifier,
-// but can also be a type, in which the whole call is a type conversion expression. The exact
-// kind of expression can only be resolved during semantic analysis.
-class CallableExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+class ShaderModule;
+class GlobalDirective;
 
-public:
-    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Expression::List&& arguments)
-        : Expression(span)
-        , m_target(WTFMove(target))
-        , m_arguments(WTFMove(arguments))
-    {
-    }
+class Attribute;
+class BindingAttribute;
+class BuiltinAttribute;
+class GroupAttribute;
+class LocationAttribute;
+class StageAttribute;
 
-    Kind kind() const override { return Kind::CallableExpression; }
-    TypeDecl& target() { return m_target; }
-    Expression::List& arguments() { return m_arguments; }
+class Decl;
+class FunctionDecl;
+class StructDecl;
+class VariableDecl;
 
-private:
-    // If m_target is a NamedType, it could either be a:
-    //   * Type that does not accept parameters (bool, i32, u32, ...)
-    //   * Identifier that refers to a type alias.
-    //   * Identifier that refers to a function.
-    UniqueRef<TypeDecl> m_target;
-    Expression::List m_arguments;
-};
+class Expression;
+class AbstractFloatLiteral;
+class AbstractIntLiteral;
+class ArrayAccess;
+class BoolLiteral;
+class CallableExpression;
+class Float32Literal;
+class IdentifierExpression;
+class Int32Literal;
+class StructureAccess;
+class Uint32Literal;
+class UnaryExpression;
+
+class Statement;
+class AssignmentStatement;
+class CompoundStatement;
+class ReturnStatement;
+class VariableStatement;
+
+class TypeDecl;
+class ArrayType;
+class NamedType;
+class ParameterizedType;
+
+class Parameter;
+class StructMember;
+class VariableQualifier;
+
+enum class AccessMode : uint8_t;
+enum class StorageClass : uint8_t;
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(CallableExpression, isCallableExpression())
