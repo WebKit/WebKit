@@ -70,7 +70,7 @@ public:
     using PostTaskCallback = Function<void(Function<void()>&&)>;
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
-    using CreateCallback = Function<void(CreateResult&&)>;
+    using CreateCallback = CompletionHandler<void(CreateResult&&)>;
 
     using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);

@@ -50,9 +50,6 @@ struct WebCodecsVideoEncoderConfig {
     BitrateMode bitrateMode { BitrateMode::Variable };
     LatencyMode latencyMode { LatencyMode::Quality };
     std::optional<AvcEncoderConfig> avc;
-
-    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTFMove(codec).isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTFMove(scalabilityMode).isolatedCopy(), bitrateMode, latencyMode, avc }; }
-    WebCodecsVideoEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, scalabilityMode.isolatedCopy(), bitrateMode, latencyMode, avc }; }
 };
 
 }

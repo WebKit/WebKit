@@ -76,12 +76,6 @@ static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
     return true;
 }
 
-static VideoEncoder::Config createVideoEncoderConfig(const WebCodecsVideoEncoderConfig& config)
-{
-    bool useAnnexB = config.avc && config.avc->format == AvcBitstreamFormat::Annexb;
-    return { config.width, config.height, useAnnexB, config.bitrate.value_or(0), config.framerate.value_or(0), config.latencyMode == LatencyMode::Realtime };
-}
-
 ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&& config)
 {
     if (!isValidEncoderConfig(config))
@@ -109,8 +103,8 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
                 });
             };
         }
-
-        VideoEncoder::create(config.codec, createVideoEncoderConfig(config), [this, weakThis = WeakPtr { *this }](auto&& result) {
+        bool useAnnexB = config.avc && config.avc->format == AvcBitstreamFormat::Annexb;
+        VideoEncoder::create(config.codec, { config.width, config.height, useAnnexB, config.bitrate.value_or(0), config.framerate.value_or(0), config.latencyMode == LatencyMode::Realtime }, [this, weakThis = WeakPtr { *this }](auto&& result) {
             if (!weakThis)
                 return;
 
@@ -233,7 +227,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::close()
     return closeEncoder(Exception { AbortError, "Close called"_s });
 }
 
-void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config, Ref<DeferredPromise>&& promise)
+void WebCodecsVideoEncoder::isConfigSupported(WebCodecsVideoEncoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
     if (!isValidEncoderConfig(config)) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
@@ -244,19 +238,8 @@ void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    auto* promisePtr = promise.ptr();
-    context.addDeferredPromise(WTFMove(promise));
-
-    VideoEncoder::create(config.codec, createVideoEncoderConfig(config), [identifier = context.identifier(), config = config.isolatedCopy(), promisePtr](auto&& result) mutable {
-        ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopy(), promisePtr](auto& context) mutable {
-            if (auto promise = context.takeDeferredPromise(promisePtr))
-                promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { success, WTFMove(config) });
-        });
-    }, [](auto&&) {
-    }, [](auto&&) {
-    }, [] (auto&& task) {
-        task();
-    });
+    // FIXME: Implement accurate checks.
+    promise->resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { true, WTFMove(config) });
 }
 
 ExceptionOr<void> WebCodecsVideoEncoder::closeEncoder(Exception&& exception)
