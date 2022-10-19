@@ -53,6 +53,12 @@ public:
     bool isFixedNode() const { return nodeType() == ScrollingNodeType::Fixed; }
     bool isStickyNode() const { return nodeType() == ScrollingNodeType::Sticky; }
     bool isPositionedNode() const { return nodeType() == ScrollingNodeType::Positioned; }
+#if PLATFORM(COCOA)
+    bool isPositionedNodeCocoa() const { return isPositionedNode(); }
+#endif
+#if USE(NICOSIA)
+    bool isPositionedNodeNicosia() const { return isPositionedNode(); }
+#endif
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
     bool isFrameScrollingNode() const { return nodeType() == ScrollingNodeType::MainFrame || nodeType() == ScrollingNodeType::Subframe; }
     bool isFrameHostingNode() const { return nodeType() == ScrollingNodeType::FrameHosting; }

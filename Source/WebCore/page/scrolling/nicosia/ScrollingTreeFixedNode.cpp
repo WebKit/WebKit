@@ -38,7 +38,7 @@
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeOverflowScrollProxyNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
-#include "ScrollingTreePositionedNode.h"
+#include "ScrollingTreePositionedNodeNicosia.h"
 #include "ScrollingTreeStickyNodeNicosia.h"
 #include <wtf/text/TextStream.h>
 
@@ -101,7 +101,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
             }
 
             if (is<ScrollingTreePositionedNode>(*ancestor)) {
-                auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
+                auto& positioningAncestor = downcast<ScrollingTreePositionedNodeNicosia>(*ancestor);
                 // See if sticky node already handled this positioning node.
                 // FIXME: Include positioning node information to sticky/fixed node to avoid these tests.
                 if (lastStickyNode && lastStickyNode->layer() == positioningAncestor.layer())

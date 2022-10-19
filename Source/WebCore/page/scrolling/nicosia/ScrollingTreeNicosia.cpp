@@ -37,7 +37,7 @@
 #include "ScrollingTreeFrameScrollingNodeNicosia.h"
 #include "ScrollingTreeOverflowScrollProxyNode.h"
 #include "ScrollingTreeOverflowScrollingNodeNicosia.h"
-#include "ScrollingTreePositionedNode.h"
+#include "ScrollingTreePositionedNodeNicosia.h"
 #include "ScrollingTreeStickyNodeNicosia.h"
 
 namespace WebCore {
@@ -69,7 +69,7 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
     case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNodeNicosia::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
-        return ScrollingTreePositionedNode::create(*this, nodeID);
+        return ScrollingTreePositionedNodeNicosia::create(*this, nodeID);
     }
 
     RELEASE_ASSERT_NOT_REACHED();

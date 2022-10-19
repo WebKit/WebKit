@@ -35,7 +35,7 @@
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
-#import "ScrollingTreePositionedNode.h"
+#import "ScrollingTreePositionedNodeCocoa.h"
 #import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
@@ -97,7 +97,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
             }
 
             if (is<ScrollingTreePositionedNode>(*ancestor)) {
-                auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
+                auto& positioningAncestor = downcast<ScrollingTreePositionedNodeCocoa>(*ancestor);
                 // See if sticky node already handled this positioning node.
                 // FIXME: Include positioning node information to sticky/fixed node to avoid these tests.
                 if (lastStickyNode && lastStickyNode->layer() == positioningAncestor.layer())

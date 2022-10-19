@@ -230,7 +230,7 @@ page/mac/WheelEventDeltaFilterMac.mm
 page/scrolling/cocoa/ScrollingStateNode.mm
 page/scrolling/cocoa/ScrollingTreeFixedNode.mm
 page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm
-page/scrolling/cocoa/ScrollingTreePositionedNode.mm
+page/scrolling/cocoa/ScrollingTreePositionedNodeCocoa.mm
 page/scrolling/cocoa/ScrollingTreeStickyNodeCocoa.mm
 page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
