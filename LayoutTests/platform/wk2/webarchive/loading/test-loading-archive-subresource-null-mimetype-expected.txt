@@ -6,11 +6,11 @@ frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 resources/subresource-null-mimetype.webarchive - willSendRequest <NSURLRequest URL resources/subresource-null-mimetype.webarchive, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
 resources/subresource-null-mimetype.webarchive - didReceiveResponse <NSURLResponse resources/subresource-null-mimetype.webarchive, http status code 0>
 frame "<!--frame1-->" - didCommitLoadForFrame
-test.png - willSendRequest <NSURLRequest URL test.png, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
+webarchive+file:///test.png - willSendRequest <NSURLRequest URL webarchive+file:///test.png, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 resources/subresource-null-mimetype.webarchive - didFinishLoading
-test.png - didReceiveResponse <NSURLResponse test.png, http status code 0>
-test.png - didFinishLoading
+webarchive+file:///test.png - didReceiveResponse <NSURLResponse webarchive+file:///test.png, http status code 0>
+webarchive+file:///test.png - didFinishLoading
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame
