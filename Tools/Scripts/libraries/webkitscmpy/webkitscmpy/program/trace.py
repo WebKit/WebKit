@@ -205,14 +205,6 @@ class Trace(Command):
         if not commits_story:
             return result
 
-        type = Relationship.REFERENCES
-        for issue in CommitsStory.issues_for(commit):
-            for candidate in commits_story.by_issue.get(issue.link, []):
-                if str(candidate) in tracked:
-                    continue
-                tracked.add(str(candidate))
-                result.append(Relationship(candidate, type))
-
         references = [str(commit)]
         if commit.hash:
             references.append(commit.hash[:Commit.HASH_LABEL_SIZE])
@@ -224,6 +216,15 @@ class Trace(Command):
                     continue
                 tracked.add(str(candidate.commit))
                 result.append(candidate)
+
+        type = Relationship.REFERENCES
+        for issue in CommitsStory.issues_for(commit):
+            for candidate in commits_story.by_issue.get(issue.link, []):
+                if str(candidate) in tracked:
+                    continue
+                tracked.add(str(candidate))
+                result.append(Relationship(candidate, type))
+
         return result
 
     @classmethod
