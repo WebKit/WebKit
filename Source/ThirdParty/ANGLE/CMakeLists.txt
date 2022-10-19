@@ -242,16 +242,8 @@ endif ()
 if (COMPILER_IS_GCC_OR_CLANG)
     foreach (angle_target ANGLE EGL GLESv2)
         if (TARGET ${angle_target})
-            WEBKIT_ADD_TARGET_CXX_FLAGS(${angle_target}
-                -Wno-cast-align
-                -Wno-class-memaccess
-                -Wno-dangling-pointer
-                -Wno-extra
-                -Wno-suggest-attribute=format
-                -Wno-undef
-                -Wno-unused-parameter
-                -Wno-return-type
-                -Wno-comment)
+            WEBKIT_ADD_TARGET_C_FLAGS(${angle_target} -w)
+            WEBKIT_ADD_TARGET_CXX_FLAGS(${angle_target} -w)
         endif ()
     endforeach ()
 endif ()
