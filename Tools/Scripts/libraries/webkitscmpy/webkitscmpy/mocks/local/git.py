@@ -608,6 +608,10 @@ nothing to commit, working tree clean
                     returncode=0,
                 ) if args[4] in self.remotes else mocks.ProcessCompletion(returncode=128, stderr="fatal: branch '{}' does not exist".format(args[4])),
             ), mocks.Subprocess.Route(
+                self.executable, 'merge-base', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.merge_base(args[2], args[3]),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -1246,4 +1250,24 @@ nothing to commit, working tree clean
         return mocks.ProcessCompletion(
             returncode=0,
             stdout='Updated Git hooks.\nGit LFS initialized.\n',
+        )
+
+    def merge_base(self, *refs):
+        objs = [self.find(ref) for ref in refs]
+        for i in [0, 1]:
+            if not refs[i] or not objs[i]:
+                return mocks.ProcessCompletion(
+                    returncode=128,
+                    stderr='fatal: Not a valid object name {}\n'.format(refs[i]),
+                )
+        if objs[0].branch != objs[1].branch:
+            for i in [0, 1]:
+                if objs[i].branch == self.default_branch:
+                    continue
+                objs[i] = self.commits[self.default_branch][objs[i].branch_point - 1]
+
+        base = objs[0] if objs[0].identifier < objs[1].identifier else objs[1]
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout='{}\n'.format(base.hash),
         )

@@ -1125,3 +1125,16 @@ class Git(Scm):
             if argument in self.branches_for(remote=remote):
                 return remote
         return None
+
+    def merge_base(self, ref_a, ref_b, include_log=True, include_identifier=True):
+        a = self.find(ref_a, include_log=False, include_identifier=False)
+        b = self.find(ref_b, include_log=False, include_identifier=False)
+        if not a or not b:
+            return None
+        result = run(
+            [self.executable(), 'merge-base', a.hash, b.hash],
+            capture_output=True, encoding='utf-8', cwd=self.path,
+        )
+        if result.returncode:
+            return None
+        return self.commit(hash=result.stdout.rstrip(), include_log=include_log, include_identifier=include_identifier)
