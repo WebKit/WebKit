@@ -53,6 +53,9 @@ public:
     bool failedToLoadPosterImage() const;
 
     void updateFromElement() final;
+    bool hasVideoMetadata() const;
+    bool hasPosterFrameSize() const;
+    bool hasDefaultObjectSize() const;
 
 private:
     void willBeDestroyed() override;

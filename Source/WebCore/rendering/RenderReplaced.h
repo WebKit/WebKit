@@ -54,6 +54,8 @@ public:
 
     double computeIntrinsicAspectRatio() const;
 
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
+
 protected:
     RenderReplaced(Element&, RenderStyle&&);
     RenderReplaced(Element&, RenderStyle&&, const LayoutSize& intrinsicSize);
@@ -61,7 +63,6 @@ protected:
 
     void layout() override;
 
-    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
 
