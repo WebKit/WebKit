@@ -22,12 +22,12 @@ list(APPEND WebCore_SOURCES
 
     page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
     page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeFixedNode.cpp
+    page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.cpp
     page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreePositionedNode.cpp
+    page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
