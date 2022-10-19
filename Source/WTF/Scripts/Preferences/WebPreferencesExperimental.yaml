@@ -507,6 +507,19 @@ CanvasColorSpaceEnabled:
     WebCore:
       default: false
 
+CanvasFiltersEnabled:
+   type: bool
+   webcoreOnChange: setNeedsRelayoutAllFrames
+   humanReadableName: "Canvas Filters"
+   humanReadableDescription: "Canvas Filters"
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
+
 CompressionStreamEnabled:
   type: bool
   humanReadableName: "Compression Stream API"
