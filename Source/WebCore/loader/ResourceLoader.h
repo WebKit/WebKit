@@ -52,7 +52,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 class CachedResource;
 class DocumentLoader;
-class Frame;
+class LocalFrame;
 class FrameLoader;
 class LegacyPreviewLoader;
 class NetworkLoadMetrics;
@@ -152,7 +152,7 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    const Frame* frame() const { return m_frame.get(); }
+    const LocalFrame* frame() const { return m_frame.get(); }
 
     const ResourceLoaderOptions& options() const { return m_options; }
 
@@ -162,7 +162,7 @@ public:
     bool isPDFJSResourceLoad() const;
 
 protected:
-    ResourceLoader(Frame&, ResourceLoaderOptions);
+    ResourceLoader(LocalFrame&, ResourceLoaderOptions);
 
     void didFinishLoadingOnePart(const NetworkLoadMetrics&);
     void cleanupForError(const ResourceError&);
@@ -179,7 +179,7 @@ protected:
     virtual void willSendRequestInternal(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&);
 
     RefPtr<ResourceHandle> m_handle;
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
     RefPtr<DocumentLoader> m_documentLoader;
     ResourceResponse m_response;
     ResourceLoadTiming m_loadTiming;

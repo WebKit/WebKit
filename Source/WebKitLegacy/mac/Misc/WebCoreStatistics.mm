@@ -292,7 +292,7 @@ static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOption
 
 - (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
-    Frame* coreFrame = _private->coreFrame;
+    LocalFrame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return -1;
 
@@ -301,7 +301,7 @@ static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOption
 
 - (void)printToCGContext:(CGContextRef)cgContext pageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
-    Frame* coreFrame = _private->coreFrame;
+    LocalFrame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return;
 

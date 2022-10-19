@@ -228,14 +228,14 @@ CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
     return m_documentResources.get(url.string()).get();
 }
 
-Frame* CachedResourceLoader::frame() const
+LocalFrame* CachedResourceLoader::frame() const
 {
     return m_documentLoader ? m_documentLoader->frame() : nullptr;
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::requestImage(CachedResourceRequest&& request, ImageLoading imageLoading)
 {
-    if (Frame* frame = this->frame()) {
+    if (LocalFrame* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
             if (Document* document = frame->document())
                 request.upgradeInsecureRequestIfNeeded(*document);
@@ -444,7 +444,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::CSSStyleSheet:
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
-        if (Frame* frame = this->frame()) {
+        if (LocalFrame* frame = this->frame()) {
             if (!MixedContentChecker::canRunInsecureContent(*frame, m_document->securityOrigin(), url))
                 return false;
             auto& top = frame->tree().top();
@@ -466,7 +466,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::SVGFontResource:
     case CachedResource::Type::FontResource: {
         // These resources can corrupt only the frame's pixels.
-        if (Frame* frame = this->frame()) {
+        if (LocalFrame* frame = this->frame()) {
             if (!MixedContentChecker::canDisplayInsecureContent(*frame, m_document->securityOrigin(), contentTypeFromResourceType(type), url, MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes))
                 return false;
             auto& topFrame = frame->tree().top();
@@ -768,7 +768,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceW
     return resourceHandle;
 }
 
-static inline void logMemoryCacheResourceRequest(Frame* frame, const String& key, const String& description)
+static inline void logMemoryCacheResourceRequest(LocalFrame* frame, const String& key, const String& description)
 {
     if (!frame || !frame->page())
         return;
@@ -809,7 +809,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     request.updateAcceptEncodingHeader();
 }
 
-static FetchOptions::Destination destinationForType(CachedResource::Type type, Frame& frame)
+static FetchOptions::Destination destinationForType(CachedResource::Type type, LocalFrame& frame)
 {
     switch (type) {
     case CachedResource::Type::MainResource:
@@ -1172,7 +1172,7 @@ static void logRevalidation(const String& reason, DiagnosticLoggingClient& logCl
     logClient.logDiagnosticMessage(DiagnosticLoggingKeys::cachedResourceRevalidationReasonKey(), reason, ShouldSample::Yes);
 }
 
-static void logResourceRevalidationDecision(CachedResource::RevalidationDecision reason, const Frame* frame)
+static void logResourceRevalidationDecision(CachedResource::RevalidationDecision reason, const LocalFrame* frame)
 {
     if (!frame || !frame->page())
         return;
@@ -1443,7 +1443,7 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
 
 CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const URL& url) const
 {
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     if (!frame)
         return CachePolicy::Verify;
 

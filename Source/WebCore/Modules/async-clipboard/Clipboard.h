@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ClipboardItem;
 class DeferredPromise;
-class Frame;
+class LocalFrame;
 class Navigator;
 class Pasteboard;
 class PasteboardCustomData;
@@ -48,7 +48,7 @@ public:
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    Frame* frame() const;
+    LocalFrame* frame() const;
     Navigator* navigator();
 
     using RefCounted::ref;

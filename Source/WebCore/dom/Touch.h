@@ -36,11 +36,11 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 
 class Touch : public RefCounted<Touch> {
 public:
-    static Ref<Touch> create(Frame* frame, EventTarget* target,
+    static Ref<Touch> create(LocalFrame* frame, EventTarget* target,
             unsigned identifier, int screenX, int screenY, int pageX, int pageY,
             int radiusX, int radiusY, float rotationAngle, float force)
     {
@@ -64,7 +64,7 @@ public:
     Ref<Touch> cloneWithNewTarget(EventTarget*) const;
 
 private:
-    Touch(Frame* frame, EventTarget* target, unsigned identifier,
+    Touch(LocalFrame*, EventTarget*, unsigned identifier,
             int screenX, int screenY, int pageX, int pageY,
             int radiusX, int radiusY, float rotationAngle, float force);
 

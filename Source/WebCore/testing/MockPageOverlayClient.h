@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Page;
 enum class LayerTreeAsTextOptions : uint16_t;
 
@@ -54,7 +54,7 @@ private:
     void didMoveToPage(PageOverlay&, Page*) override;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    void didScrollFrame(PageOverlay&, Frame&) override;
+    void didScrollFrame(PageOverlay&, LocalFrame&) override;
 
     bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) override;
     bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;

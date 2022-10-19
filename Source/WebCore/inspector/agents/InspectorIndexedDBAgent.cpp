@@ -536,7 +536,7 @@ Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::disable()
     return { };
 }
 
-static Protocol::ErrorStringOr<Document*> documentFromFrame(Frame* frame)
+static Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFrame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
     if (!document)
@@ -558,7 +558,7 @@ static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* doc
     return idbFactory;
 }
 
-static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(Frame* frame, Document*& out_document, IDBFactory*& out_idbFactory, BackendDispatcher::CallbackBase& callback)
+static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(LocalFrame* frame, Document*& outDocument, IDBFactory*& outIDBFactory, BackendDispatcher::CallbackBase& callback)
 {
     Protocol::ErrorStringOr<Document*> document = documentFromFrame(frame);
     if (!document.has_value()) {
@@ -572,8 +572,8 @@ static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(Frame* frame, Documen
         return false;
     }
     
-    out_document = document.value();
-    out_idbFactory = idbFactory.value();
+    outDocument = document.value();
+    outIDBFactory = idbFactory.value();
     return true;
 }
     

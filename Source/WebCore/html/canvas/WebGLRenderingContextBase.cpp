@@ -504,7 +504,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
     if (canvasElement) {
         Document& document = canvasElement->document();
-        RefPtr<Frame> frame = document.frame();
+        RefPtr<LocalFrame> frame = document.frame();
         if (!frame)
             return nullptr;
 
@@ -5552,7 +5552,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!canvas)
         return;
 
-    RefPtr<Frame> frame = canvas->document().frame();
+    RefPtr<LocalFrame> frame = canvas->document().frame();
     if (!frame)
         return;
 

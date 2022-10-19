@@ -177,13 +177,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     
 bool AccessibilityObject::caretBrowsingEnabled() const
 {
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     return frame && frame->settings().caretBrowsingEnabled();
 }
 
 void AccessibilityObject::setCaretBrowsingEnabled(bool on)
 {
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     if (!frame)
         return;
     frame->settings().setCaretBrowsingEnabled(on);

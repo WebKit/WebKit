@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
-class Frame;
+class LocalFrame;
 
 };
 

@@ -128,7 +128,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         }
 
         PageConsoleClient* console = nullptr;
-        Frame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame();
+        LocalFrame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame();
         if (frame && frame->page())
             console = &frame->page()->console();
         xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);

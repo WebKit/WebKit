@@ -109,7 +109,7 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     if (!hash)
         return InsideLink::InsideVisited;
 
-    Frame* frame = element.document().frame();
+    LocalFrame* frame = element.document().frame();
     if (!frame)
         return InsideLink::InsideUnvisited;
 

@@ -37,7 +37,7 @@ DOMWindowProperty::DOMWindowProperty(DOMWindow* window)
 {
 }
 
-Frame* DOMWindowProperty::frame() const
+LocalFrame* DOMWindowProperty::frame() const
 {
     return m_window ? m_window->frame() : nullptr;
 }

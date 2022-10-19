@@ -237,7 +237,7 @@ static void removeAllBeforeUnloadEventListeners(DOMWindow* domWindow)
 static bool allowsBeforeUnloadListeners(DOMWindow* window)
 {
     ASSERT_ARG(window, window);
-    Frame* frame = window->frame();
+    LocalFrame* frame = window->frame();
     if (!frame)
         return false;
     if (!frame->page())
@@ -354,7 +354,7 @@ FloatRect DOMWindow::adjustWindowRect(Page& page, const FloatRect& pendingChange
     return window;
 }
 
-bool DOMWindow::allowPopUp(Frame& firstFrame)
+bool DOMWindow::allowPopUp(LocalFrame& firstFrame)
 {
     if (DocumentLoader* documentLoader = firstFrame.loader().documentLoader()) {
         // If pop-up policy was set during navigation, use it. If not, use the global settings.
@@ -376,7 +376,7 @@ bool DOMWindow::allowPopUp()
     return frame && allowPopUp(*frame);
 }
 
-bool DOMWindow::canShowModalDialog(const Frame& frame)
+bool DOMWindow::canShowModalDialog(const LocalFrame& frame)
 {
     // Override support for layout testing purposes.
     if (auto* document = frame.document()) {
@@ -594,7 +594,7 @@ CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
     return *m_customElementRegistry;
 }
 
-static ExceptionOr<SelectorQuery&> selectorQueryInFrame(Frame* frame, const String& selectors)
+static ExceptionOr<SelectorQuery&> selectorQueryInFrame(LocalFrame* frame, const String& selectors)
 {
     if (!frame)
         return Exception { NotSupportedError };
@@ -2211,7 +2211,7 @@ void DOMWindow::decrementScrollEventListenersCount()
 {
     Document* document = this->document();
     if (!--m_scrollEventListenerCount && document == &document->topDocument()) {
-        Frame* frame = this->frame();
+        LocalFrame* frame = this->frame();
         if (frame && frame->page() && document->backForwardCacheState() == Document::NotInBackForwardCache)
             frame->page()->chrome().client().setNeedsScrollNotifications(*frame, false);
     }
@@ -2355,7 +2355,7 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     event.setEventPhase(Event::AT_TARGET);
     event.resetBeforeDispatch();
 
-    RefPtr<Frame> protectedFrame;
+    RefPtr<LocalFrame> protectedFrame;
     bool hasListenersForEvent = false;
     if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
         protectedFrame = frame();
@@ -2540,15 +2540,15 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow& activeWindow, const String& ur
     return true;
 }
 
-ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures& initialWindowFeatures, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const Function<void(DOMWindow&)>& prepareDialogFunction)
+ExceptionOr<RefPtr<LocalFrame>> DOMWindow::createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures& initialWindowFeatures, DOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, const Function<void(DOMWindow&)>& prepareDialogFunction)
 {
     RefPtr activeFrame = activeWindow.frame();
     if (!activeFrame)
-        return RefPtr<Frame> { nullptr };
+        return RefPtr<LocalFrame> { nullptr };
 
     RefPtr activeDocument = activeWindow.document();
     if (!activeDocument)
-        return RefPtr<Frame> { nullptr };
+        return RefPtr<LocalFrame> { nullptr };
 
     URL completedURL = urlString.isEmpty() ? URL({ }, emptyString()) : firstFrame.document()->completeURL(urlString);
     if (!completedURL.isEmpty() && !completedURL.isValid())
@@ -2572,7 +2572,7 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
     bool created;
     auto newFrame = WebCore::createWindow(*activeFrame, openerFrame, WTFMove(frameLoadRequest), windowFeatures, created);
     if (!newFrame)
-        return RefPtr<Frame> { nullptr };
+        return RefPtr<LocalFrame> { nullptr };
 
     bool noopener = windowFeatures.noopener || windowFeatures.noreferrer;
     if (!noopener)
@@ -2582,7 +2582,7 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
         newFrame->page()->setOpenedByDOM();
 
     if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL.string()))
-        return noopener ? RefPtr<Frame> { nullptr } : newFrame;
+        return noopener ? RefPtr<LocalFrame> { nullptr } : newFrame;
 
     if (prepareDialogFunction)
         prepareDialogFunction(*newFrame->document()->domWindow());
@@ -2600,9 +2600,9 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
 
     // Navigating the new frame could result in it being detached from its page by a navigation policy delegate.
     if (!newFrame->page())
-        return RefPtr<Frame> { nullptr };
+        return RefPtr<LocalFrame> { nullptr };
 
-    return noopener ? RefPtr<Frame> { nullptr } : newFrame;
+    return noopener ? RefPtr<LocalFrame> { nullptr } : newFrame;
 }
 
 ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlStringToOpen, const AtomString& frameName, const String& windowFeaturesString)
@@ -2658,7 +2658,7 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
 
     // Get the target frame for the special cases of _top and _parent.
     // In those cases, we schedule a location change right now and return early.
-    RefPtr<Frame> targetFrame;
+    RefPtr<LocalFrame> targetFrame;
     if (isTopTargetFrameName(frameName))
         targetFrame = dynamicDowncast<LocalFrame>(&frame->tree().top());
     else if (isParentTargetFrameName(frameName)) {
@@ -2724,7 +2724,7 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
     auto dialogFrameOrException = createWindow(urlString, emptyAtom(), parseDialogFeatures(dialogFeaturesString, screenAvailableRect(frame->view())), activeWindow, *firstFrame, *frame, prepareDialogFunction);
     if (dialogFrameOrException.hasException())
         return;
-    RefPtr<Frame> dialogFrame = dialogFrameOrException.releaseReturnValue();
+    RefPtr<LocalFrame> dialogFrame = dialogFrameOrException.releaseReturnValue();
     if (!dialogFrame)
         return;
     dialogFrame->page()->chrome().runModal();
@@ -2742,7 +2742,7 @@ void DOMWindow::disableSuddenTermination()
         page->chrome().disableSuddenTermination();
 }
 
-Frame* DOMWindow::frame() const
+LocalFrame* DOMWindow::frame() const
 {
     auto* document = this->document();
     return document ? document->frame() : nullptr;

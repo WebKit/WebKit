@@ -484,7 +484,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     using SourceSite = PCM::SourceSite;
     using AttributionDestinationSite = PCM::AttributionDestinationSite;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr<LocalFrame> frame = document().frame();
     auto* page = document().page();
     if (!frame || !page || page->sessionID().isEphemeral()
         || !document().settings().privateClickMeasurementEnabled()
@@ -554,7 +554,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 {
     event.setDefaultHandled();
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr<LocalFrame> frame = document().frame();
     if (!frame)
         return;
 

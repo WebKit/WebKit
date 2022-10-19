@@ -464,7 +464,7 @@ public:
 private:
     JSGlobalObject& m_globalObject;
     CallFrame& m_callFrame;
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
 };
 
 inline void DialogHandler::dialogCreated(DOMWindow& dialog)
@@ -667,7 +667,7 @@ void JSDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
     createDataProperty(&lexicalGlobalObject, builtinNames(lexicalGlobalObject.vm()).openDatabasePublicName(), value, shouldThrow);
 }
 
-JSDOMWindow& mainWorldGlobalObject(Frame& frame)
+JSDOMWindow& mainWorldGlobalObject(LocalFrame& frame)
 {
     // FIXME: What guarantees the result of jsWindowProxy() is non-null?
     // FIXME: What guarantees the result of window() is non-null?

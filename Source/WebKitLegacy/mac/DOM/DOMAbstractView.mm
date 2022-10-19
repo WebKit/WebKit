@@ -38,7 +38,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/WindowProxy.h>
 
-#define IMPL reinterpret_cast<WebCore::Frame*>(_internal)
+#define IMPL reinterpret_cast<WebCore::LocalFrame*>(_internal)
 
 @implementation DOMAbstractView
 
@@ -74,7 +74,7 @@ WebCore::DOMWindow* core(DOMAbstractView *wrapper)
         return 0;
     if (!wrapper->_internal)
         return 0;
-    return reinterpret_cast<WebCore::Frame*>(wrapper->_internal)->document()->domWindow();
+    return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->domWindow();
 }
 
 DOMAbstractView *kit(WebCore::DOMWindow* value)
@@ -83,7 +83,7 @@ DOMAbstractView *kit(WebCore::DOMWindow* value)
 
     if (!value)
         return nil;
-    WebCore::Frame* frame = value->frame();
+    WebCore::LocalFrame* frame = value->frame();
     if (!frame)
         return nil;
     if (DOMAbstractView *wrapper = getDOMWrapper(frame))

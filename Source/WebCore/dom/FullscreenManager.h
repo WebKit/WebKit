@@ -49,7 +49,7 @@ public:
     const Document& document() const { return m_document; }
     Document& topDocument() const { return m_document.topDocument(); }
     Page* page() const { return m_document.page(); }
-    Frame* frame() const { return m_document.frame(); }
+    LocalFrame* frame() const { return m_document.frame(); }
     Element* documentElement() const { return m_document.documentElement(); }
     Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }
     void scheduleFullStyleRebuild() { m_document.scheduleFullStyleRebuild(); }

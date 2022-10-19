@@ -130,7 +130,7 @@ PlatformPageClient Chrome::platformPageClient() const
     return m_client.platformPageClient();
 }
 
-void Chrome::contentsSizeChanged(Frame& frame, const IntSize& size) const
+void Chrome::contentsSizeChanged(LocalFrame& frame, const IntSize& size) const
 {
     m_client.contentsSizeChanged(frame, size);
 }
@@ -185,12 +185,12 @@ void Chrome::focusedElementChanged(Element* element) const
     m_client.focusedElementChanged(element);
 }
 
-void Chrome::focusedFrameChanged(Frame* frame) const
+void Chrome::focusedFrameChanged(LocalFrame* frame) const
 {
     m_client.focusedFrameChanged(frame);
 }
 
-Page* Chrome::createWindow(Frame& frame, const WindowFeatures& features, const NavigationAction& action) const
+Page* Chrome::createWindow(LocalFrame& frame, const WindowFeatures& features, const NavigationAction& action) const
 {
     Page* newPage = m_client.createWindow(frame, features, action);
     if (!newPage)
@@ -276,7 +276,7 @@ bool Chrome::canRunBeforeUnloadConfirmPanel()
     return m_client.canRunBeforeUnloadConfirmPanel();
 }
 
-bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
+bool Chrome::runBeforeUnloadConfirmPanel(const String& message, LocalFrame& frame)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -290,7 +290,7 @@ void Chrome::closeWindow()
     m_client.closeWindow();
 }
 
-void Chrome::runJavaScriptAlert(Frame& frame, const String& message)
+void Chrome::runJavaScriptAlert(LocalFrame& frame, const String& message)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -302,7 +302,7 @@ void Chrome::runJavaScriptAlert(Frame& frame, const String& message)
     m_client.runJavaScriptAlert(frame, displayMessage);
 }
 
-bool Chrome::runJavaScriptConfirm(Frame& frame, const String& message)
+bool Chrome::runJavaScriptConfirm(LocalFrame& frame, const String& message)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -312,7 +312,7 @@ bool Chrome::runJavaScriptConfirm(Frame& frame, const String& message)
     return m_client.runJavaScriptConfirm(frame, frame.displayStringModifiedByEncoding(message));
 }
 
-bool Chrome::runJavaScriptPrompt(Frame& frame, const String& prompt, const String& defaultValue, String& result)
+bool Chrome::runJavaScriptPrompt(LocalFrame& frame, const String& prompt, const String& defaultValue, String& result)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -328,7 +328,7 @@ bool Chrome::runJavaScriptPrompt(Frame& frame, const String& prompt, const Strin
     return ok;
 }
 
-void Chrome::setStatusbarText(Frame& frame, const String& status)
+void Chrome::setStatusbarText(LocalFrame& frame, const String& status)
 {
     m_client.setStatusbarText(frame.displayStringModifiedByEncoding(status));
 }
@@ -402,7 +402,7 @@ void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirect
     }
 }
 
-bool Chrome::print(Frame& frame)
+bool Chrome::print(LocalFrame& frame)
 {
     // FIXME: This should have PageGroupLoadDeferrer, like runModal() or runJavaScriptAlert(), because it's no different from those.
 
@@ -466,7 +466,7 @@ std::unique_ptr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserCl
 
 #endif
 
-void Chrome::runOpenPanel(Frame& frame, FileChooser& fileChooser)
+void Chrome::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 {
     notifyPopupOpeningObservers();
     m_client.runOpenPanel(frame, fileChooser);
@@ -587,7 +587,7 @@ bool Chrome::requiresFullscreenForVideoPlayback()
     return m_client.requiresFullscreenForVideoPlayback();
 }
 
-void Chrome::didReceiveDocType(Frame& frame)
+void Chrome::didReceiveDocType(LocalFrame& frame)
 {
 #if !PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(frame);

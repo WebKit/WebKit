@@ -680,7 +680,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         }
 
         if (nodeDocument && textRange) {
-            if (Frame* frame = nodeDocument->frame()) {
+            if (LocalFrame* frame = nodeDocument->frame()) {
                 // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
                 if (frame->document() != nodeDocument)
                     return { };
@@ -1850,7 +1850,7 @@ bool AccessibilityRenderObject::setValue(const String& string)
     
     // We should use the editor's insertText to mimic typing into the field.
     // Also only do this when the field is in editing mode.
-    if (Frame* frame = renderer.document().frame()) {
+    if (LocalFrame* frame = renderer.document().frame()) {
         Editor& editor = frame->editor();
         if (element.shouldUseInputMethod()) {
             editor.clearText();
@@ -2188,8 +2188,8 @@ bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const 
     
     VisibleSelection newSelection = VisibleSelection(range.start, range.end);
     if (Document* newSelectionDocument = newSelection.base().document()) {
-        if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
-            Frame* frame = this->frame();
+        if (RefPtr<LocalFrame> newSelectionFrame = newSelectionDocument->frame()) {
+            LocalFrame* frame = this->frame();
             if (!frame || (newSelectionFrame != frame && newSelectionDocument != frame->document()))
                 return true;
         }
@@ -2329,7 +2329,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         Widget* widget = downcast<RenderWidget>(*renderer).widget();
         if (!is<FrameView>(widget))
             break;
-        Frame& frame = downcast<FrameView>(*widget).frame();
+        LocalFrame& frame = downcast<FrameView>(*widget).frame();
         renderView = frame.document()->renderView();
 #if PLATFORM(MAC)
         frameView = downcast<FrameView>(widget);
@@ -2915,7 +2915,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     FrameView* frameView = downcast<SVGImage>(*image).frameView();
     if (!frameView)
         return nullptr;
-    Frame& frame = frameView->frame();
+    LocalFrame& frame = frameView->frame();
     
     Document* document = frame.document();
     if (!is<SVGDocument>(document))

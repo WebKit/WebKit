@@ -36,8 +36,8 @@ template<CrossOriginObject> void addCrossOriginOwnPropertyNames(JSC::JSGlobalObj
 
 bool handleCommonCrossOriginProperties(JSC::JSObject* thisObject, JSC::VM&, JSC::PropertyName, JSC::PropertySlot&);
 
-JSDOMWindow& mainWorldGlobalObject(Frame&);
-JSDOMWindow* mainWorldGlobalObject(Frame*);
+JSDOMWindow& mainWorldGlobalObject(LocalFrame&);
+JSDOMWindow* mainWorldGlobalObject(LocalFrame*);
 
 inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
 {
@@ -49,7 +49,7 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
     return static_cast<const JSDOMWindow*>(globalObject);
 }
 
-inline JSDOMWindow* mainWorldGlobalObject(Frame* frame)
+inline JSDOMWindow* mainWorldGlobalObject(LocalFrame* frame)
 {
     return frame ? &mainWorldGlobalObject(*frame) : nullptr;
 }

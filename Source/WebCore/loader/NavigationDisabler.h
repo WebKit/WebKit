@@ -32,7 +32,7 @@ namespace WebCore {
 class NavigationDisabler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NavigationDisabler(Frame* frame)
+    NavigationDisabler(LocalFrame* frame)
         : m_frame(frame)
     {
         if (frame)
@@ -53,13 +53,13 @@ public:
         }
     }
 
-    static bool isNavigationAllowed(Frame& frame)
+    static bool isNavigationAllowed(LocalFrame& frame)
     {
         return !frame.mainFrame().m_navigationDisableCount && !s_globalNavigationDisableCount;
     }
 
 private:
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
 
     static unsigned s_globalNavigationDisableCount;
 };

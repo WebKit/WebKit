@@ -230,7 +230,7 @@ IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCor
     if (!node)
         return IntRect();
 
-    Frame* frame = node->document().frame();
+    LocalFrame* frame = node->document().frame();
     if (!frame)
         return IntRect();
 

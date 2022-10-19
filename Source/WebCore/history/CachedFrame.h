@@ -52,7 +52,7 @@ public:
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
-    CachedFrameBase(Frame&);
+    CachedFrameBase(LocalFrame&);
     ~CachedFrameBase();
 
     void pruneDetachedChildFrames();
@@ -71,7 +71,7 @@ protected:
 class CachedFrame : private CachedFrameBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit CachedFrame(Frame&);
+    explicit CachedFrame(LocalFrame&);
 
     void open();
     void clear();

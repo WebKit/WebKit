@@ -363,7 +363,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramHighlighted(
 }
 #endif // ENABLE(WEBGL)
 
-void InspectorCanvasAgent::frameNavigated(Frame& frame)
+void InspectorCanvasAgent::frameNavigated(LocalFrame& frame)
 {
     if (frame.isMainFrame()) {
         reset();

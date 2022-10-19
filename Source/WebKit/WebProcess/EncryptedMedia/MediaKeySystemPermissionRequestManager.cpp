@@ -51,7 +51,7 @@ MediaKeySystemPermissionRequestManager::MediaKeySystemPermissionRequestManager(W
 void MediaKeySystemPermissionRequestManager::startMediaKeySystemRequest(MediaKeySystemRequest& request)
 {
     Document* document = request.document();
-    Frame* frame = document ? document->frame() : nullptr;
+    LocalFrame* frame = document ? document->frame() : nullptr;
 
     if (!frame || !document->page()) {
         request.deny(emptyString());

@@ -99,13 +99,13 @@ class FrameLoader final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
-    FrameLoader(Frame&, UniqueRef<FrameLoaderClient>&&);
+    FrameLoader(LocalFrame&, UniqueRef<FrameLoaderClient>&&);
     ~FrameLoader();
 
     WEBCORE_EXPORT void init();
     void initForSynthesizedDocument(const URL&);
 
-    Frame& frame() const { return m_frame; }
+    LocalFrame& frame() const { return m_frame; }
 
     class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
@@ -141,8 +141,8 @@ public:
 
     void retryAfterFailedCacheOnlyMainResourceLoad();
 
-    static void reportLocalLoadFailed(Frame*, const String& url);
-    static void reportBlockedLoadFailed(Frame&, const URL&);
+    static void reportLocalLoadFailed(LocalFrame*, const String& url);
+    static void reportBlockedLoadFailed(LocalFrame&, const URL&);
 
     // FIXME: These are all functions which stop loads. We have too many.
     void stopAllLoadersAndCheckCompleteness();
@@ -244,9 +244,9 @@ public:
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;
 
-    WEBCORE_EXPORT Frame* opener();
-    WEBCORE_EXPORT const Frame* opener() const;
-    WEBCORE_EXPORT void setOpener(Frame*);
+    WEBCORE_EXPORT LocalFrame* opener();
+    WEBCORE_EXPORT const LocalFrame* opener() const;
+    WEBCORE_EXPORT void setOpener(LocalFrame*);
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
 
     void resetMultipleFormSubmissionProtection();
@@ -275,7 +275,7 @@ public:
     void advanceStatePastInitialEmptyDocument();
 
     // FIXME: should return RefPtr.
-    WEBCORE_EXPORT Frame* findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
+    WEBCORE_EXPORT LocalFrame* findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
 
     void applyUserAgentIfNeeded(ResourceRequest&);
 
@@ -397,7 +397,7 @@ private:
     void requestFromDelegate(ResourceRequest&, ResourceLoaderIdentifier&, ResourceError&);
 
     WEBCORE_EXPORT void detachChildren();
-    void closeAndRemoveChild(Frame&);
+    void closeAndRemoveChild(LocalFrame&);
 
     void loadInSameDocument(URL, RefPtr<SerializedScriptValue> stateObject, const SecurityOrigin* requesterOrigin, bool isNewNavigation);
 
@@ -425,7 +425,7 @@ private:
     HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     // SubframeLoader specific.
-    void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
+    void loadURLIntoChildFrame(const URL&, const String& referer, LocalFrame*);
     void started();
 
     // PolicyChecker specific.
@@ -434,7 +434,7 @@ private:
 
     bool preventsParentFromBeingComplete(const AbstractFrame&) const;
 
-    Frame& m_frame;
+    LocalFrame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;
@@ -485,8 +485,8 @@ private:
     bool m_shouldCallCheckCompleted;
     bool m_shouldCallCheckLoadComplete;
 
-    WeakPtr<Frame> m_opener;
-    WeakHashSet<Frame> m_openedFrames;
+    WeakPtr<LocalFrame> m_opener;
+    WeakHashSet<LocalFrame> m_openedFrames;
 
     bool m_loadingFromCachedPage;
 
@@ -521,6 +521,6 @@ private:
 //
 // FIXME: Consider making this function part of an appropriate class (not FrameLoader)
 // and moving it to a more appropriate location.
-RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequest&&, WindowFeatures&, bool& created);
+RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, FrameLoadRequest&&, WindowFeatures&, bool& created);
 
 } // namespace WebCore

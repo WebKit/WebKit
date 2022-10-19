@@ -37,7 +37,7 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class Document;
-class Frame;
+class LocalFrame;
 class Page;
 class UserGestureEmulationScope;
 
@@ -60,7 +60,7 @@ public:
     void breakpointActionLog(JSC::JSGlobalObject*, const String& data);
 
     // InspectorInstrumentation
-    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
+    void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();

@@ -1245,7 +1245,7 @@ bool WebPage::hasPendingEditorStateUpdate() const
 EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 {
     // Ref the frame because this function may perform layout, which may cause frame destruction.
-    Ref<Frame> frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    Ref<LocalFrame> frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
     EditorState result;
 
@@ -1447,7 +1447,7 @@ Ref<API::Array> WebPage::trackedRepaintRects()
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)
+PluginView* WebPage::focusedPluginViewForFrame(LocalFrame& frame)
 {
     if (!is<PluginDocument>(frame.document()))
         return nullptr;
@@ -1459,7 +1459,7 @@ PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)
     return pluginViewForFrame(&frame);
 }
 
-PluginView* WebPage::pluginViewForFrame(Frame* frame)
+PluginView* WebPage::pluginViewForFrame(LocalFrame* frame)
 {
     if (!frame)
         return nullptr;
@@ -1544,7 +1544,7 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     
 void WebPage::clearMainFrameName()
 {
-    if (Frame* frame = mainFrame())
+    if (LocalFrame* frame = mainFrame())
         frame->tree().clearName();
 }
 
@@ -1868,7 +1868,7 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
 
 void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
 {
-    Frame* mainFrame = m_mainFrame->coreFrame();
+    LocalFrame* mainFrame = m_mainFrame->coreFrame();
     Document* mainFrameDocument = mainFrame->document();
     if (!mainFrameDocument)
         return;
@@ -1970,7 +1970,7 @@ WebPage& WebPage::fromCorePage(Page& page)
     return static_cast<WebChromeClient&>(page.chrome().client()).page();
 }
 
-static std::optional<FrameTreeNodeData> frameTreeNodeData(Frame& frame)
+static std::optional<FrameTreeNodeData> frameTreeNodeData(LocalFrame& frame)
 {
     std::optional<FrameTreeNodeData> info;
     if (auto* webFrame = WebFrame::fromCoreFrame(frame)) {
@@ -2104,7 +2104,7 @@ double WebPage::textZoomFactor() const
         return pluginView->pageScaleFactor();
 #endif
 
-    Frame* frame = m_mainFrame->coreFrame();
+    LocalFrame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
     return frame->textZoomFactor();
@@ -2119,7 +2119,7 @@ void WebPage::setTextZoomFactor(double zoomFactor)
     }
 #endif
 
-    Frame* frame = m_mainFrame->coreFrame();
+    LocalFrame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     frame->setTextZoomFactor(static_cast<float>(zoomFactor));
@@ -2132,7 +2132,7 @@ double WebPage::pageZoomFactor() const
         return pluginView->pageScaleFactor();
 #endif
 
-    Frame* frame = m_mainFrame->coreFrame();
+    LocalFrame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
     return frame->pageZoomFactor();
@@ -2147,7 +2147,7 @@ void WebPage::setPageZoomFactor(double zoomFactor)
     }
 #endif
 
-    Frame* frame = m_mainFrame->coreFrame();
+    LocalFrame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     frame->setPageZoomFactor(static_cast<float>(zoomFactor));
@@ -2223,7 +2223,7 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
     }
 #endif
 
-    Frame* frame = m_mainFrame->coreFrame();
+    LocalFrame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
@@ -2671,7 +2671,7 @@ void WebPage::setFooterBannerHeightForTesting(int height)
 void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& completionHandler)
 {
     ShareableBitmapHandle handle;
-    Frame* coreFrame = m_mainFrame->coreFrame();
+    LocalFrame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame) {
         completionHandler(handle);
         return;
@@ -2705,7 +2705,7 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
 RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double additionalScaleFactor, SnapshotOptions options)
 {
-    Frame* coreFrame = m_mainFrame->coreFrame();
+    LocalFrame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
         return nullptr;
 
@@ -2728,7 +2728,7 @@ RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double 
     return snapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView);
 }
 
-void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, Frame& frame, FrameView& frameView, GraphicsContext& graphicsContext)
+void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, LocalFrame& frame, FrameView& frameView, GraphicsContext& graphicsContext)
 {
     TraceScope snapshotScope(PaintSnapshotStart, PaintSnapshotEnd, options);
 
@@ -2792,7 +2792,7 @@ static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage
     return DestinationColorSpace::SRGB();
 }
 
-RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, Frame& frame, FrameView& frameView)
+RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, LocalFrame& frame, FrameView& frameView)
 {
     auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), snapshotColorSpace(options, *this), &m_page->chrome().client());
     if (!snapshot)
@@ -2806,7 +2806,7 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
 
 RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
-    Frame* coreFrame = m_mainFrame->coreFrame();
+    LocalFrame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
         return nullptr;
 
@@ -2874,7 +2874,7 @@ void WebPage::pageDidScroll()
 void WebPage::pageStoppedScrolling()
 {
     // Maintain the current history item's scroll position up-to-date.
-    if (Frame* frame = m_mainFrame->coreFrame())
+    if (LocalFrame* frame = m_mainFrame->coreFrame())
         frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
 }
 
@@ -3123,7 +3123,7 @@ void WebPage::contextMenuForKeyEvent()
 
 static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
 {
-    Frame& frame = page->corePage()->mainFrame();
+    LocalFrame& frame = page->corePage()->mainFrame();
     if (!frame.view())
         return false;
 
@@ -3219,7 +3219,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
 
 static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
-    Frame& frame = page->mainFrame();
+    LocalFrame& frame = page->mainFrame();
     if (!frame.view())
         return false;
 
@@ -3423,7 +3423,7 @@ void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, 
     if (!document->handlingTouchEvent())
         return;
 
-    Frame* touchEventTargetFrame = &mainFrame;
+    LocalFrame* touchEventTargetFrame = &mainFrame;
     while (auto subframe = touchEventTargetFrame->eventHandler().touchEventTargetSubframe())
         touchEventTargetFrame = subframe;
 
@@ -4004,7 +4004,7 @@ void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const std::opt
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
-    if (Frame* frame = frameWithSelection(m_page.get()))
+    if (LocalFrame* frame = frameWithSelection(m_page.get()))
         data = LegacyWebArchive::createFromSelection(frame)->rawDataRepresentation();
 #endif
 
@@ -4052,7 +4052,7 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
     callback(IPC::SharedBufferReference(WTFMove(buffer)));
 }
 
-static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
+static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(LocalFrame* frame, const URL& resourceURL)
 {
     DocumentLoader* loader = frame->loader().documentLoader();
     if (!loader)
@@ -5285,7 +5285,7 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
 }
 #endif
 
-void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
+void WebPage::replaceSelectionWithText(LocalFrame* frame, const String& text)
 {
     return frame->editor().replaceSelectionWithText(text, WebCore::Editor::SelectReplacement::Yes, WebCore::Editor::SmartReplace::No);
 }
@@ -5312,7 +5312,7 @@ void WebPage::restoreSelectionInFocusedEditableElement()
 
 bool WebPage::mainFrameHasCustomContentProvider() const
 {
-    if (Frame* frame = mainFrame()) {
+    if (LocalFrame* frame = mainFrame()) {
         WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
         ASSERT(webFrameLoaderClient);
         return webFrameLoaderClient->frameHasCustomContentProvider();
@@ -5632,7 +5632,7 @@ void WebPage::stopSpeaking()
 
 #if PLATFORM(MAC)
 
-RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
+RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(LocalFrame* coreFrame)
 {
     PluginView* pluginView = pluginViewForFrame(coreFrame);
     if (!pluginView)
@@ -5671,7 +5671,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
     if (!frame)
         return;
 
-    Frame* coreFrame = frame->coreFrame();
+    LocalFrame* coreFrame = frame->coreFrame();
     if (!coreFrame)
         return;
 
@@ -5796,7 +5796,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
 {
     PrintContextAccessScope scope { *this };
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
 
     RefPtr<WebImage> image;
 
@@ -5850,7 +5850,7 @@ void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo
 void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
 
     pdfPageData = adoptCF(CFDataCreateMutable(0, 0));
 
@@ -6083,7 +6083,7 @@ static bool hasEnabledHorizontalScrollbar(ScrollableArea* scrollableArea)
     return false;
 }
 
-static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
+static bool pageContainsAnyHorizontalScrollbars(LocalFrame* mainFrame)
 {
     if (FrameView* frameView = mainFrame->view()) {
         if (hasEnabledHorizontalScrollbar(frameView))
@@ -6132,14 +6132,14 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
     send(Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents(m_canShortCircuitHorizontalWheelEvents));
 }
 
-Frame* WebPage::mainFrame() const
+LocalFrame* WebPage::mainFrame() const
 {
     return m_page ? &m_page->mainFrame() : nullptr;
 }
 
 FrameView* WebPage::mainFrameView() const
 {
-    if (Frame* frame = mainFrame())
+    if (LocalFrame* frame = mainFrame())
         return frame->view();
     return nullptr;
 }
@@ -6286,9 +6286,9 @@ void WebPage::confirmCompositionAsync()
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 
-static Frame* targetFrameForEditing(WebPage& page)
+static LocalFrame* targetFrameForEditing(WebPage& page)
 {
-    Frame& targetFrame = page.corePage()->focusController().focusedOrMainFrame();
+    LocalFrame& targetFrame = page.corePage()->focusController().focusedOrMainFrame();
 
     Editor& editor = targetFrame.editor();
     if (!editor.canEdit())
@@ -6356,7 +6356,7 @@ void WebPage::didScrollSelection()
     didChangeSelectionOrOverflowScrollPosition();
 }
 
-void WebPage::didChangeSelection(Frame& frame)
+void WebPage::didChangeSelection(LocalFrame& frame)
 {
     didChangeSelectionOrOverflowScrollPosition();
 
@@ -6842,7 +6842,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
 #if ENABLE(META_VIEWPORT)
     resetViewportDefaultConfiguration(frame);
-    const Frame* coreFrame = frame->coreFrame();
+    const LocalFrame* coreFrame = frame->coreFrame();
     
     bool viewportChanged = false;
 
@@ -7121,7 +7121,7 @@ void WebPage::setScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
     m_page->mainFrame().view()->recalculateScrollbarOverlayStyle();
 }
 
-Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
+Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
 {
     Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
@@ -7143,7 +7143,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
     return documentLoader;
 }
 
-void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Frame& frame)
+void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, LocalFrame& frame)
 {
     if (m_pendingNavigationID && frame.isMainFrame()) {
         documentLoader.setNavigationID(m_pendingNavigationID);
@@ -7177,7 +7177,7 @@ void WebPage::getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&
 #endif
 }
 
-void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
+void WebPage::didChangeScrollOffsetForFrame(LocalFrame* frame)
 {
     if (!frame->isMainFrame())
         return;

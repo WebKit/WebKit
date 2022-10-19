@@ -581,7 +581,7 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
         return createDragImageFromImage(m_dragImage->image(), ImageOrientation::None);
 
     if (m_dragImageElement) {
-        if (Frame* frame = m_dragImageElement->document().frame())
+        if (LocalFrame* frame = m_dragImageElement->document().frame())
             return createDragImageForNode(*frame, *m_dragImageElement);
     }
 

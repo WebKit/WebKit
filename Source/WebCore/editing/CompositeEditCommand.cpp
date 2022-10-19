@@ -225,7 +225,7 @@ bool EditCommandComposition::areRootEditabledElementsConnected()
 void EditCommandComposition::unapply()
 {
     ASSERT(m_document);
-    RefPtr<Frame> frame = m_document->frame();
+    RefPtr<LocalFrame> frame = m_document->frame();
     if (!frame)
         return;
 
@@ -266,7 +266,7 @@ void EditCommandComposition::unapply()
 void EditCommandComposition::reapply()
 {
     ASSERT(m_document);
-    RefPtr<Frame> frame = m_document->frame();
+    RefPtr<LocalFrame> frame = m_document->frame();
     if (!frame)
         return;
 

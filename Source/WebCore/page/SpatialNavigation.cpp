@@ -51,7 +51,7 @@ static bool areRectsPartiallyAligned(FocusDirection, const LayoutRect&, const La
 static bool areRectsMoreThanFullScreenApart(FocusDirection, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize);
 static bool isRectInDirection(FocusDirection, const LayoutRect&, const LayoutRect&);
 static void deflateIfOverlapped(LayoutRect&, LayoutRect&);
-static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRect&);
+static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const LayoutRect&);
 static void entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
 static bool isScrollableNode(const Node*);
 
@@ -87,7 +87,7 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
     isOffscreenAfterScrolling = hasOffscreenRect(visibleNode, direction);
 }
 
-bool isSpatialNavigationEnabled(const Frame* frame)
+bool isSpatialNavigationEnabled(const LocalFrame* frame)
 {
     return (frame && frame->settings().spatialNavigationEnabled());
 }
@@ -332,7 +332,7 @@ bool hasOffscreenRect(Node* node, FocusDirection direction)
     return !containerViewportRect.intersects(rect);
 }
 
-bool scrollInDirection(Frame* frame, FocusDirection direction)
+bool scrollInDirection(LocalFrame* frame, FocusDirection direction)
 {
     ASSERT(frame);
 
@@ -469,7 +469,7 @@ bool canScrollInDirection(const Node* container, FocusDirection direction)
     }
 }
 
-bool canScrollInDirection(const Frame* frame, FocusDirection direction)
+bool canScrollInDirection(const LocalFrame* frame, FocusDirection direction)
 {
     if (!frame->view())
         return false;
@@ -501,7 +501,7 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
 }
 
 // FIXME: This is completely broken. This should be deleted and callers should be calling ScrollView::contentsToWindow() instead.
-static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRect& initialRect)
+static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const LayoutRect& initialRect)
 {
     LayoutRect rect = initialRect;
     for (AbstractFrame* frame = initialFrame; frame; frame = frame->tree().parent()) {
@@ -539,7 +539,7 @@ LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
     return rect;
 }
 
-LayoutRect frameRectInAbsoluteCoordinates(Frame* frame)
+LayoutRect frameRectInAbsoluteCoordinates(LocalFrame* frame)
 {
     return rectToAbsoluteCoordinates(frame, frame->view()->visibleContentRect());
 }

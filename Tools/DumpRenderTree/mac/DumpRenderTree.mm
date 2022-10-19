@@ -178,7 +178,7 @@ static RetainPtr<NSString> toNS(const std::string& string)
 
 #if !PLATFORM(IOS_FAMILY)
 @interface WebView (WebViewInternalForTesting)
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 #endif
 
@@ -1780,7 +1780,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
         WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
 
 #if !PLATFORM(IOS_FAMILY)
-    if (WebCore::Frame* frame = [webView _mainCoreFrame])
+    if (WebCore::LocalFrame* frame = [webView _mainCoreFrame])
         WebCoreTestSupport::clearWheelEventTestMonitor(*frame);
 #endif
 

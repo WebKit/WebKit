@@ -122,7 +122,7 @@ class EditorClient;
 class Element;
 class FocusController;
 class FormData;
-class Frame;
+class LocalFrame;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
@@ -295,8 +295,8 @@ public:
 
     EditorClient& editorClient() { return m_editorClient.get(); }
 
-    Frame& mainFrame() { return m_mainFrame.get(); }
-    const Frame& mainFrame() const { return m_mainFrame.get(); }
+    LocalFrame& mainFrame() { return m_mainFrame.get(); }
+    const LocalFrame& mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -378,8 +378,8 @@ public:
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
-    void progressEstimateChanged(Frame&) const;
-    void progressFinished(Frame&) const;
+    void progressEstimateChanged(LocalFrame&) const;
+    void progressFinished(LocalFrame&) const;
     BackForwardController& backForward() const { return *m_backForwardController; }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
@@ -926,8 +926,8 @@ public:
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
-    static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
-    void forEachFrame(const Function<void(Frame&)>&);
+    static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
+    void forEachFrame(const Function<void(LocalFrame&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
     const HashSet<String>& maskedURLSchemes() const { return m_maskedURLSchemes; }
@@ -1061,7 +1061,7 @@ private:
     const std::unique_ptr<ProgressTracker> m_progress;
 
     const std::unique_ptr<BackForwardController> m_backForwardController;
-    Ref<Frame> m_mainFrame;
+    Ref<LocalFrame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 

@@ -30,7 +30,7 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class Frame;
+class LocalFrame;
 struct SimpleRange;
 }
 
@@ -58,8 +58,8 @@ struct EditingRange {
     // (notFound, 0) is notably valid.
     bool isValid() const { return location + length >= location; }
 
-    static std::optional<WebCore::SimpleRange> toRange(WebCore::Frame&, const EditingRange&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
-    static EditingRange fromRange(WebCore::Frame&, const std::optional<WebCore::SimpleRange>&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
+    static std::optional<WebCore::SimpleRange> toRange(WebCore::LocalFrame&, const EditingRange&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
+    static EditingRange fromRange(WebCore::LocalFrame&, const std::optional<WebCore::SimpleRange>&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
 
 #if defined(__OBJC__)
     EditingRange(NSRange range)

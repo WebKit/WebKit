@@ -55,9 +55,9 @@ private:
     unsigned length() override;
     String key(unsigned index) override;
     String item(const String& key) override;
-    void setItem(WebCore::Frame& sourceFrame, const String& key, const String& value, bool& quotaException) override;
-    void removeItem(WebCore::Frame& sourceFrame, const String& key) override;
-    void clear(WebCore::Frame& sourceFrame) override;
+    void setItem(WebCore::LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException) override;
+    void removeItem(WebCore::LocalFrame& sourceFrame, const String& key) override;
+    void clear(WebCore::LocalFrame& sourceFrame) override;
     bool contains(const String& key) override;
     WebCore::StorageType storageType() const override;
     size_t memoryBytesUsedByCache() override;

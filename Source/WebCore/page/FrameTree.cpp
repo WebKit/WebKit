@@ -37,7 +37,7 @@
 namespace WebCore {
 
 FrameTree::FrameTree(AbstractFrame& thisFrame, AbstractFrame* parentFrame)
-    : m_thisFrame(static_cast<Frame&>(thisFrame))
+    : m_thisFrame(static_cast<LocalFrame&>(thisFrame))
     , m_parent(parentFrame)
 {
 }
@@ -538,7 +538,7 @@ static void printFrames(const WebCore::AbstractFrame& frame, const WebCore::Abst
     } else
         printIndent(indent);
 
-    auto* localFrame = dynamicDowncast<WebCore::Frame>(frame);
+    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
     if (!localFrame) {
         printf("RemoteFrame %p\n", &frame);
         return;

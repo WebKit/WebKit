@@ -201,7 +201,7 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
     if (!m_node)
         return nullptr;
 
-    Frame* frame = m_node->document().frame();
+    LocalFrame* frame = m_node->document().frame();
     if (!frame)
         return nullptr;
 
@@ -412,7 +412,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
     if (!m_node || !m_node->isDocumentNode())
         return nullptr;
 
-    Frame* frame = downcast<Document>(*m_node).frame();
+    LocalFrame* frame = downcast<Document>(*m_node).frame();
     if (!frame)
         return nullptr;
 
@@ -424,7 +424,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
     if (!is<HTMLFrameElement>(m_node))
         return nullptr;
 
-    Frame* frame = downcast<HTMLFrameElement>(*m_node).contentFrame();
+    LocalFrame* frame = downcast<HTMLFrameElement>(*m_node).contentFrame();
     if (!frame)
         return nullptr;
 
@@ -436,7 +436,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
     if (!is<HTMLIFrameElement>(m_node))
         return nullptr;
 
-    Frame* frame = downcast<HTMLIFrameElement>(*m_node).contentFrame();
+    LocalFrame* frame = downcast<HTMLIFrameElement>(*m_node).contentFrame();
     if (!frame)
         return nullptr;
 

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Page;
 class PlatformMouseEvent;
 
@@ -65,7 +65,7 @@ public:
     void didChangeSettings();
     WEBCORE_EXPORT void didChangeDeviceScaleFactor();
     void didChangeViewExposedRect();
-    void didScrollFrame(Frame&);
+    void didScrollFrame(LocalFrame&);
 
     void didChangeOverlayFrame(PageOverlay&);
     void didChangeOverlayBackgroundColor(PageOverlay&);

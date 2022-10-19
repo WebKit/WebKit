@@ -40,7 +40,7 @@ OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
 
 namespace WebCore {
-class Frame;
+class LocalFrame;
 class HTMLPlugInElement;
 }
 
@@ -56,7 +56,7 @@ class PluginView final : public WebCore::PluginViewBase {
 public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 
-    WebCore::Frame* frame() const;
+    WebCore::LocalFrame* frame() const;
 
     bool isBeingDestroyed() const;
 

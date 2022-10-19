@@ -134,7 +134,7 @@ static Element* effectiveElementForNode(Node& node)
 
 static void buildRendererHighlight(RenderObject* renderer, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    Frame* containingFrame = renderer->document().frame();
+    LocalFrame* containingFrame = renderer->document().frame();
     if (!containingFrame)
         return;
 
@@ -308,7 +308,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
     if (!shapeOutsideInfo)
         return;
 
-    Frame* containingFrame = node.document().frame();
+    LocalFrame* containingFrame = node.document().frame();
     if (!containingFrame)
         return;
 
@@ -1428,7 +1428,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     float gridStartY = rowPositions[0];
     float gridEndY = rowPositions[rowPositions.size() - 1];
 
-    Frame* containingFrame = node->document().frame();
+    LocalFrame* containingFrame = node->document().frame();
     if (!containingFrame)
         return { };
     FrameView* containingView = containingFrame->view();
@@ -1779,7 +1779,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     auto itemsAtStartOfLine = m_page.inspectorController().ensureDOMAgent().flexibleBoxRendererCachedItemsAtStartOfLine(renderFlex);
 
-    Frame* containingFrame = node->document().frame();
+    LocalFrame* containingFrame = node->document().frame();
     if (!containingFrame)
         return { };
     FrameView* containingView = containingFrame->view();

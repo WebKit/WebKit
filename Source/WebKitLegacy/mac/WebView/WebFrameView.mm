@@ -128,7 +128,7 @@ enum {
     return [[self _scrollView] verticalLineScroll];
 }
 
-- (NakedPtr<WebCore::Frame>)_web_frame
+- (NakedPtr<WebCore::LocalFrame>)_web_frame
 {
     return core(_private->webFrame);
 }
@@ -412,14 +412,14 @@ enum {
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    WebCore::Frame *frame = core([self webFrame]);
+    WebCore::LocalFrame *frame = core([self webFrame]);
     if (WebCore::FrameView *view = frame? frame->view() : 0)
         view->setCanHaveScrollbars(flag);
 }
 
 - (BOOL)allowsScrolling
 {
-    WebCore::Frame *frame = core([self webFrame]);
+    WebCore::LocalFrame *frame = core([self webFrame]);
     if (WebCore::FrameView *view = frame? frame->view() : 0)
         return view->canHaveScrollbars();
     return YES;

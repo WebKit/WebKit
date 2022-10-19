@@ -45,7 +45,7 @@ public:
     WebResourceLoadObserver(WebCore::ResourceLoadStatistics::IsEphemeral);
     ~WebResourceLoadObserver();
 
-    void logSubresourceLoading(const WebCore::Frame*, const WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse, FetchDestinationIsScriptLike) final;
+    void logSubresourceLoading(const WebCore::LocalFrame*, const WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse, FetchDestinationIsScriptLike) final;
     void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL) final;
     void logUserInteractionWithReducedTimeResolution(const WebCore::Document&) final;
     void logFontLoad(const WebCore::Document&, const String& familyName, bool loadStatus) final;

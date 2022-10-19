@@ -40,7 +40,7 @@ class AnimationEffect;
 class DeclarativeAnimation;
 class Element;
 class Event;
-class Frame;
+class LocalFrame;
 class KeyframeEffect;
 class Page;
 class WebAnimation;
@@ -74,7 +74,7 @@ public:
     void didChangeWebAnimationEffectTarget(WebAnimation&);
     void didCreateWebAnimation(WebAnimation&);
     void willDestroyWebAnimation(WebAnimation&);
-    void frameNavigated(Frame&);
+    void frameNavigated(LocalFrame&);
 
 private:
     String findAnimationId(WebAnimation&);

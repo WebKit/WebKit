@@ -51,7 +51,7 @@ class Array;
 namespace WebCore {
 class AbstractFrame;
 class CertificateInfo;
-class Frame;
+class LocalFrame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
@@ -75,15 +75,15 @@ public:
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
     ~WebFrame();
 
-    void initWithCoreMainFrame(WebPage&, WebCore::Frame&);
+    void initWithCoreMainFrame(WebPage&, WebCore::LocalFrame&);
 
-    // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
+    // Called when the FrameLoaderClient (and therefore the WebCore::LocalFrame) is being torn down.
     void invalidate();
 
     WebPage* page() const;
 
     static WebFrame* fromCoreFrame(const WebCore::AbstractFrame&);
-    WebCore::Frame* coreFrame() const;
+    WebCore::LocalFrame* coreFrame() const;
 
     FrameInfoData info() const;
     WebCore::FrameIdentifier frameID() const;
@@ -203,7 +203,7 @@ public:
 private:
     WebFrame(WebPage&);
 
-    WeakPtr<WebCore::Frame> m_coreFrame;
+    WeakPtr<WebCore::LocalFrame> m_coreFrame;
     WeakPtr<WebPage> m_page;
 
     struct PolicyCheck {

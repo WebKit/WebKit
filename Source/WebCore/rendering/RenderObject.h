@@ -506,7 +506,7 @@ public:
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document& document() const { return m_node.document(); }
-    Frame& frame() const;
+    LocalFrame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }
 
@@ -1022,7 +1022,7 @@ private:
 #endif
 };
 
-inline Frame& RenderObject::frame() const
+inline LocalFrame& RenderObject::frame() const
 {
     return *document().frame();
 }
@@ -1030,7 +1030,7 @@ inline Frame& RenderObject::frame() const
 inline Page& RenderObject::page() const
 {
     // The render tree will always be torn down before Frame is disconnected from Page,
-    // so it's safe to assume Frame::page() is non-null as long as there are live RenderObjects.
+    // so it's safe to assume LocalFrame::page() is non-null as long as there are live RenderObjects.
     ASSERT(frame().page());
     return *frame().page();
 }

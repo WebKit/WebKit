@@ -74,7 +74,7 @@ static inline void logBackForwardCacheFailureDiagnosticMessage(Page* page, const
     logBackForwardCacheFailureDiagnosticMessage(page->diagnosticLoggingClient(), reason);
 }
 
-static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
+static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
 {
     PCLOG("+---");
     FrameLoader& frameLoader = frame.loader();
@@ -396,7 +396,7 @@ static void setBackForwardCacheState(Page& page, Document::BackForwardCacheState
 // When entering back/forward cache, tear down the render tree before setting the in-cache flag.
 // This maintains the invariant that render trees are never present in the back/forward cache.
 // Note that destruction happens bottom-up so that the main frame's tree dies last.
-static void destroyRenderTree(Frame& mainFrame)
+static void destroyRenderTree(LocalFrame& mainFrame)
 {
     for (auto* abstractFrame = mainFrame.tree().traversePrevious(CanWrap::Yes); abstractFrame; abstractFrame = abstractFrame->tree().traversePrevious(CanWrap::No)) {
         auto* frame = dynamicDowncast<LocalFrame>(abstractFrame);
@@ -410,7 +410,7 @@ static void destroyRenderTree(Frame& mainFrame)
     }
 }
 
-static void firePageHideEventRecursively(Frame& frame)
+static void firePageHideEventRecursively(LocalFrame& frame)
 {
     auto* document = frame.document();
     if (!document)

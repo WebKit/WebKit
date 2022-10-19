@@ -63,7 +63,7 @@ WebFrame* InjectedBundleHitTestResult::frame() const
     if (!node)
         return nullptr;
 
-    Frame* frame = node->document().frame();
+    LocalFrame* frame = node->document().frame();
     if (!frame)
         return nullptr;
 
@@ -72,7 +72,7 @@ WebFrame* InjectedBundleHitTestResult::frame() const
 
 WebFrame* InjectedBundleHitTestResult::targetFrame() const
 {
-    Frame* frame = m_hitTestResult.targetFrame();
+    LocalFrame* frame = m_hitTestResult.targetFrame();
     if (!frame)
         return nullptr;
 
@@ -152,7 +152,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
     if (!webFrame)
         return imageRect;
     
-    Frame* coreFrame = webFrame->coreFrame();
+    LocalFrame* coreFrame = webFrame->coreFrame();
     if (!coreFrame)
         return imageRect;
     

@@ -52,8 +52,8 @@ namespace WebCore {
     class Document;
     class DocumentLoader;
     class Element;
-    class Frame;
-    class Frame;
+    class LocalFrame;
+    class LocalFrame;
     class HistoryItem;
     class HTMLElement;
     class HTMLFrameOwnerElement;
@@ -69,8 +69,8 @@ enum class WebRangeIsRelativeTo : uint8_t {
     Paragraph,
 };
 
-WebCore::Frame* core(WebFrame *);
-WebFrame *kit(WebCore::Frame *);
+WebCore::LocalFrame* core(WebFrame *);
+WebFrame *kit(WebCore::LocalFrame *);
 
 WebCore::Page* core(WebView *);
 WebView *kit(WebCore::Page*);
@@ -86,7 +86,7 @@ WebView *getWebView(WebFrame *webFrame);
 
 @interface WebFramePrivate : NSObject {
 @public
-    NakedPtr<WebCore::Frame> coreFrame;
+    NakedPtr<WebCore::LocalFrame> coreFrame;
     RetainPtr<WebFrameView> webFrameView;
     std::unique_ptr<WebScriptDebugger> scriptDebugger;
     id internalLoadDelegate;
@@ -107,7 +107,7 @@ WebView *getWebView(WebFrame *webFrame);
 @interface WebFrame (WebInternal)
 
 + (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const WTF::AtomString&)name frameView:(WebFrameView *)frameView;
-+ (Ref<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WTF::AtomString&)name frameView:(WebFrameView *)frameView;
++ (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WTF::AtomString&)name frameView:(WebFrameView *)frameView;
 - (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
 
 - (void)_clearCoreFrame;

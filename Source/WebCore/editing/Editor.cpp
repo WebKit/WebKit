@@ -3643,7 +3643,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
     return resultRange.collapsed() ? std::nullopt : std::make_optional(resultRange);
 }
 
-static bool isFrameInRange(Frame& frame, const SimpleRange& range)
+static bool isFrameInRange(LocalFrame& frame, const SimpleRange& range)
 {
     for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
         if (&ownerElement->document() == &range.start.document())

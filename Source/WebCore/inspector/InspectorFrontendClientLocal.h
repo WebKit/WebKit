@@ -41,7 +41,7 @@ namespace WebCore {
 
 class Color;
 class FloatRect;
-class Frame;
+class LocalFrame;
 class InspectorController;
 class InspectorBackendDispatchTask;
 class InspectorFrontendHost;
@@ -124,7 +124,7 @@ public:
 
     WEBCORE_EXPORT void showConsole();
 
-    WEBCORE_EXPORT void showMainResourceForFrame(Frame*);
+    WEBCORE_EXPORT void showMainResourceForFrame(LocalFrame*);
 
     WEBCORE_EXPORT void showResources();
 

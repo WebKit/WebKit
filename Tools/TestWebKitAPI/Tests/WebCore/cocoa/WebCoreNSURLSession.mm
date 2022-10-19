@@ -99,7 +99,7 @@ static NSURL *resourceURL = [[NSBundle mainBundle] URLForResource:@"test" withEx
 using namespace WebCore;
 
 @interface WebView (WebViewInternalForTesting)
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 
 namespace TestWebKitAPI {

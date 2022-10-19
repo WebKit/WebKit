@@ -79,10 +79,10 @@ private:
 
     void didBeginEditing() final;
     void respondToChangedContents() final;
-    void respondToChangedSelection(WebCore::Frame*) final;
+    void respondToChangedSelection(WebCore::LocalFrame*) final;
     void didEndUserTriggeredSelectionChanges() final;
     void updateEditorStateAfterLayoutIfEditabilityChanged() final;
-    void discardedComposition(WebCore::Frame*) final;
+    void discardedComposition(WebCore::LocalFrame*) final;
     void canceledComposition() final;
     void didUpdateComposition() final;
     void didEndEditing() final;
@@ -96,8 +96,8 @@ private:
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const String& originIdentifier) final;
 
-    bool canCopyCut(WebCore::Frame*, bool defaultValue) const final;
-    bool canPaste(WebCore::Frame*, bool defaultValue) const final;
+    bool canCopyCut(WebCore::LocalFrame*, bool defaultValue) const final;
+    bool canPaste(WebCore::LocalFrame*, bool defaultValue) const final;
     bool canUndo() const final;
     bool canRedo() const final;
     
@@ -143,10 +143,10 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    bool executePendingEditorCommands(WebCore::Frame&, const Vector<WTF::String>&, bool);
-    bool handleGtkEditorCommand(WebCore::Frame&, const String& command, bool);
+    bool executePendingEditorCommands(WebCore::LocalFrame&, const Vector<WTF::String>&, bool);
+    bool handleGtkEditorCommand(WebCore::LocalFrame&, const String& command, bool);
     void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);
-    void updateGlobalSelection(WebCore::Frame*);
+    void updateGlobalSelection(WebCore::LocalFrame*);
 #endif
 
     TextCheckerClient* textChecker() final { return this; }

@@ -141,7 +141,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     performDictionaryLookupForRange(*frame, range, options, TextIndicatorPresentationTransition::Bounce);
 }
 
-void WebPage::performDictionaryLookupForSelection(Frame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
+void WebPage::performDictionaryLookupForSelection(LocalFrame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
     auto result = DictionaryLookup::rangeForSelection(selection);
     if (!result)
@@ -157,12 +157,12 @@ void WebPage::performDictionaryLookupOfCurrentSelection()
     performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
     
-void WebPage::performDictionaryLookupForRange(Frame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+void WebPage::performDictionaryLookupForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
 {
     send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, options, presentationTransition)));
 }
 
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
 {
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -372,7 +372,7 @@ void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
 
 RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize, SnapshotOptions options)
 {
-    Frame* coreFrame = m_mainFrame->coreFrame();
+    LocalFrame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
         return nullptr;
 
@@ -434,7 +434,7 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 #endif
 }
 
-void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& result) const
+void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState& result) const
 {
     if (result.isMissingPostLayoutData)
         return;

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Element;
 class RenderBox;
 class RenderScrollbarPart;
@@ -41,7 +41,7 @@ class RenderStyle;
 class RenderScrollbar final : public Scrollbar {
 public:
     friend class Scrollbar;
-    static Ref<Scrollbar> createCustomScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);
+    static Ref<Scrollbar> createCustomScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, LocalFrame* owningFrame = nullptr);
     virtual ~RenderScrollbar();
 
     RenderBox* owningRenderer() const;
@@ -61,7 +61,7 @@ public:
     std::unique_ptr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId) const;
 
 private:
-    RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame*);
+    RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, LocalFrame*);
 
     bool isOverlayScrollbar() const override { return false; }
 
@@ -85,7 +85,7 @@ private:
     // FrameView which this Element pointer can in no way keep alive. See webkit bug 80610.
     RefPtr<Element> m_ownerElement;
 
-    WeakPtr<Frame> m_owningFrame;
+    WeakPtr<LocalFrame> m_owningFrame;
     HashMap<unsigned, RenderPtr<RenderScrollbarPart>> m_parts;
 };
 

@@ -621,7 +621,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEven
     return false;
 }
 
-void ServicesOverlayController::didScrollFrame(PageOverlay&, Frame& frame)
+void ServicesOverlayController::didScrollFrame(PageOverlay&, LocalFrame& frame)
 {
     if (frame.isMainFrame())
         return;
@@ -652,7 +652,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
         m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().firstRectForRange(highlight.range())));
 }
 
-Frame& ServicesOverlayController::mainFrame() const
+LocalFrame& ServicesOverlayController::mainFrame() const
 {
     return m_page.mainFrame();
 }

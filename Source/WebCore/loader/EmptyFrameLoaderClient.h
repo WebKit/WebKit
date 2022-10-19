@@ -92,7 +92,7 @@ private:
     void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) final;
     void dispatchDidReachVisuallyNonEmptyState() final;
 
-    Frame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy) final;
+    LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy) final;
     void dispatchShow() final;
 
     void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String&, FramePolicyFunction&&) final;
@@ -170,7 +170,7 @@ private:
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(SecurityOrigin&, const URL&) final;
     void didDetectXSS(const URL&, bool) final;
-    RefPtr<Frame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
+    RefPtr<LocalFrame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
     RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
     ObjectContentType objectContentType(const URL&, const String&) final;

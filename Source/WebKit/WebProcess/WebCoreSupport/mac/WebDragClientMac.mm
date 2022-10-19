@@ -66,7 +66,7 @@ using DragImage = NSImage *;
 using DragImage = CGImageRef;
 #endif
 
-static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
+static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, LocalFrame& frame)
 {
     auto bitmap = ShareableBitmap::create(size, { screenColorSpace(frame.mainFrame().view()) });
     if (!bitmap)
@@ -86,7 +86,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, LocalFrame& frame)
 {
     auto& image = dragItem.image;
 
@@ -124,7 +124,7 @@ static WebCore::CachedImage* cachedImage(Element& element)
     return image;
 }
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     ASSERT(pasteboardName == String(NSPasteboardNameDrag));
 
@@ -179,7 +179,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
 #else
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);

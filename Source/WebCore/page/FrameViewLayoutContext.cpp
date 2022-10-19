@@ -624,7 +624,7 @@ void FrameViewLayoutContext::checkLayoutState()
 }
 #endif
 
-Frame& FrameViewLayoutContext::frame() const
+LocalFrame& FrameViewLayoutContext::frame() const
 {
     return view().frame();
 }

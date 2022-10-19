@@ -62,9 +62,9 @@ public:
     void didFinishTransition(const Element&, CSSPropertyID);
     void didRemoveTransition(const Element&, CSSPropertyID);
 
-    WEBCORE_EXPORT static void didRecognizeLongPress(Frame& mainFrame);
-    WEBCORE_EXPORT static void didPreventDefaultForEvent(Frame& mainFrame);
-    WEBCORE_EXPORT static void didCancelPotentialTap(Frame& mainFrame);
+    WEBCORE_EXPORT static void didRecognizeLongPress(LocalFrame& mainFrame);
+    WEBCORE_EXPORT static void didPreventDefaultForEvent(LocalFrame& mainFrame);
+    WEBCORE_EXPORT static void didCancelPotentialTap(LocalFrame& mainFrame);
 
     void didSuspendActiveDOMObjects();
     void willDetachPage();

@@ -49,7 +49,7 @@ class FileChooser;
 class FileIconLoader;
 class FloatRect;
 class Element;
-class Frame;
+class LocalFrame;
 class Geolocation;
 class HitTestResult;
 class IntPoint;
@@ -107,7 +107,7 @@ public:
     void scrollContainingScrollViewsToRevealRect(const IntRect&) const;
     void scrollMainFrameToRevealRect(const IntRect&) const;
 
-    void contentsSizeChanged(Frame&, const IntSize&) const;
+    void contentsSizeChanged(LocalFrame&, const IntSize&) const;
 
     WEBCORE_EXPORT void setWindowRect(const FloatRect&) const;
     WEBCORE_EXPORT FloatRect windowRect() const;
@@ -121,9 +121,9 @@ public:
     void takeFocus(FocusDirection) const;
 
     void focusedElementChanged(Element*) const;
-    void focusedFrameChanged(Frame*) const;
+    void focusedFrameChanged(LocalFrame*) const;
 
-    WEBCORE_EXPORT Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) const;
+    WEBCORE_EXPORT Page* createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&) const;
     WEBCORE_EXPORT void show() const;
 
     bool canRunModal() const;
@@ -144,18 +144,18 @@ public:
     void setResizable(bool) const;
 
     bool canRunBeforeUnloadConfirmPanel();
-    bool runBeforeUnloadConfirmPanel(const String& message, Frame&);
+    bool runBeforeUnloadConfirmPanel(const String& message, LocalFrame&);
 
     void closeWindow();
 
-    void runJavaScriptAlert(Frame&, const String&);
-    bool runJavaScriptConfirm(Frame&, const String&);
-    bool runJavaScriptPrompt(Frame&, const String& message, const String& defaultValue, String& result);
-    WEBCORE_EXPORT void setStatusbarText(Frame&, const String&);
+    void runJavaScriptAlert(LocalFrame&, const String&);
+    bool runJavaScriptConfirm(LocalFrame&, const String&);
+    bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result);
+    WEBCORE_EXPORT void setStatusbarText(LocalFrame&, const String&);
 
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
-    WEBCORE_EXPORT bool print(Frame&);
+    WEBCORE_EXPORT bool print(LocalFrame&);
 
     WEBCORE_EXPORT void enableSuddenTermination();
     WEBCORE_EXPORT void disableSuddenTermination();
@@ -176,7 +176,7 @@ public:
     void storeAppHighlight(AppHighlight&&) const;
 #endif
 
-    void runOpenPanel(Frame&, FileChooser&);
+    void runOpenPanel(LocalFrame&, FileChooser&);
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&&);
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
@@ -200,7 +200,7 @@ public:
     void setDispatchViewportDataDidChangeSuppressed(bool dispatchViewportDataDidChangeSuppressed) { m_isDispatchViewportDataDidChangeSuppressed = dispatchViewportDataDidChangeSuppressed; }
 #endif
 
-    void didReceiveDocType(Frame&);
+    void didReceiveDocType(LocalFrame&);
 
     void registerPopupOpeningObserver(PopupOpeningObserver&);
     void unregisterPopupOpeningObserver(PopupOpeningObserver&);

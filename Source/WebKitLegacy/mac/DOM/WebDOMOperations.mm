@@ -92,7 +92,7 @@ using namespace JSC;
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
-    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](Frame& subframe) -> bool {
+    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](LocalFrame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
     })]);
 
@@ -155,7 +155,7 @@ using namespace JSC;
 
 - (WebFrame *)webFrame
 {
-    Frame* frame = core(self)->frame();
+    LocalFrame* frame = core(self)->frame();
     if (!frame)
         return nil;
     return kit(frame);

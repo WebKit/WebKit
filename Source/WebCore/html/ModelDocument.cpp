@@ -137,7 +137,7 @@ void ModelDocumentParser::finish()
     document()->finishedParsing();
 }
 
-ModelDocument::ModelDocument(Frame* frame, const Settings& settings, const URL& url)
+ModelDocument::ModelDocument(LocalFrame* frame, const Settings& settings, const URL& url)
     : HTMLDocument(frame, settings, url, { }, { DocumentClass::Model })
 {
     if (frame)

@@ -47,7 +47,7 @@
 namespace WebCore {
 using namespace JSC;
 
-ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
+ScriptCachedFrameData::ScriptCachedFrameData(LocalFrame& frame)
 {
     JSLockHolder lock(commonVM());
 
@@ -65,7 +65,7 @@ ScriptCachedFrameData::~ScriptCachedFrameData()
     clear();
 }
 
-void ScriptCachedFrameData::restore(Frame& frame)
+void ScriptCachedFrameData::restore(LocalFrame& frame)
 {
     JSLockHolder lock(commonVM());
 

@@ -110,7 +110,7 @@ void WebDragClient::didConcludeEditDrag()
 {
 }
 
-static WebHTMLView *getTopHTMLView(Frame* frame)
+static WebHTMLView *getTopHTMLView(LocalFrame* frame)
 {
     ASSERT(frame);
     ASSERT(frame->page());
@@ -134,7 +134,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:kit(action) fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name()]];
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, LocalFrame& frame)
 {
     auto& dragImage = dragItem.image;
     auto dragLocationInContentCoordinates = dragItem.dragLocationInContentCoordinates;
@@ -171,7 +171,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Fra
         ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-void WebDragClient::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& mouseDownPosition, const IntPoint& mouseDraggedPosition, DataTransfer& dataTransfer, DragSourceAction dragSourceAction)
+void WebDragClient::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPoint& mouseDownPosition, const IntPoint& mouseDraggedPosition, DataTransfer& dataTransfer, DragSourceAction dragSourceAction)
 {
     ASSERT(!dataTransfer.pasteboard().hasData());
 
@@ -195,7 +195,7 @@ void WebDragClient::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& m
     [topWebHTMLView.get() beginDraggingSessionWithItems:@[ draggingItem.get() ] event:event source:topWebHTMLView.get()];
 }
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& title, WebCore::Frame* frame)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& title, WebCore::LocalFrame* frame)
 {
     ASSERT(pasteboardName);
     [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:[kit(&element) webArchive] source:getTopHTMLView(frame)];
@@ -225,15 +225,15 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(WebCore::DragItem, DataTransfer&, Frame&)
+void WebDragClient::startDrag(WebCore::DragItem, DataTransfer&, LocalFrame&)
 {
 }
 
-void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
+void WebDragClient::beginDrag(DragItem, LocalFrame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
 {
 }
 
-void WebDragClient::declareAndWriteDragImage(const String&, Element&, const URL&, const String&, WebCore::Frame*)
+void WebDragClient::declareAndWriteDragImage(const String&, Element&, const URL&, const String&, WebCore::LocalFrame*)
 {
 }
 
@@ -260,16 +260,16 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame&)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, LocalFrame&)
 {
     [m_webView _startDrag:dragItem];
 }
 
-void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
+void WebDragClient::beginDrag(DragItem, LocalFrame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
 {
 }
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);

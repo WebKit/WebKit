@@ -147,7 +147,7 @@ void WebPage::platformDetach()
     [m_mockAccessibilityElement setWebPage:nullptr];
 }
 
-void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
+void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     getPlatformEditorStateCommon(frame, result);
 
@@ -188,7 +188,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
 void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)
 {
-    Frame* frame = m_page->focusController().focusedFrame();
+    LocalFrame* frame = m_page->focusController().focusedFrame();
     if (!frame)
         return;
 
@@ -244,17 +244,17 @@ static String commandNameForSelectorName(const String& selectorName)
     return selectorName.left(selectorNameLength - 1);
 }
 
-static Frame* frameForEvent(KeyboardEvent* event)
+static LocalFrame* frameForEvent(KeyboardEvent* event)
 {
     ASSERT(event->target());
-    Frame* frame = downcast<Node>(event->target())->document().frame();
+    LocalFrame* frame = downcast<Node>(event->target())->document().frame();
     ASSERT(frame);
     return frame;
 }
 
 bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
 {
-    Frame& frame = event ? *frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
+    LocalFrame& frame = event ? *frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
     ASSERT(frame.page() == corePage());
 
     bool eventWasHandled = false;
@@ -331,7 +331,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 
 void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& completionHandler)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    LocalFrame& frame = m_page->focusController().focusedOrMainFrame();
 
     const VisibleSelection& selection = frame.selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
@@ -423,7 +423,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
 {
     // First give accessibility a chance to handle the event.
-    Frame* frame = frameForEvent(event);
+    LocalFrame* frame = frameForEvent(event);
     frame->eventHandler().handleKeyboardSelectionMovementForAccessibility(*event);
     if (event->defaultHandled())
         return true;
@@ -485,7 +485,7 @@ void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& ele
 
 void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    LocalFrame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (auto* pluginView = focusedPluginViewForFrame(frame)) {
         String selection = pluginView->getSelectionString();
@@ -613,7 +613,7 @@ void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameI
 {
     ASSERT(resultPageRects.isEmpty());
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
     RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame) : 0;
     if ([pdfDocument allowsPrinting]) {
         NSUInteger pageCount = [pdfDocument pageCount];

@@ -473,7 +473,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdenti
         return;
     }
 
-    WebCore::Frame* coreFrame = frame->coreFrame();
+    WebCore::LocalFrame* coreFrame = frame->coreFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -529,7 +529,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
         return;
     }
 
-    WebCore::Frame* coreFrameFromElement = downcast<WebCore::HTMLFrameElementBase>(*coreElement).contentFrame();
+    WebCore::LocalFrame* coreFrameFromElement = downcast<WebCore::HTMLFrameElementBase>(*coreElement).contentFrame();
     if (!coreFrameFromElement) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -561,7 +561,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    WebCore::Frame* coreFrame = frame->coreFrame();
+    WebCore::LocalFrame* coreFrame = frame->coreFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;

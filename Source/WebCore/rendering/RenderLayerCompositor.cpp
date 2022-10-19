@@ -775,7 +775,7 @@ void RenderLayerCompositor::updateEventRegions()
 #endif
 }
 
-static std::optional<ScrollingNodeID> frameHostingNodeForFrame(Frame& frame)
+static std::optional<ScrollingNodeID> frameHostingNodeForFrame(LocalFrame& frame)
 {
     if (!frame.document() || !frame.view())
         return { };

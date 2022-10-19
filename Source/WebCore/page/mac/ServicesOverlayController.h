@@ -57,7 +57,7 @@ private:
     void didMoveToPage(PageOverlay&, Page*) override;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    void didScrollFrame(PageOverlay&, Frame&) override;
+    void didScrollFrame(PageOverlay&, LocalFrame&) override;
 
     void createOverlayIfNeeded();
     void handleClick(const IntPoint&, DataDetectorHighlight&);
@@ -86,7 +86,7 @@ private:
 
     Vector<SimpleRange> telephoneNumberRangesForFocusedFrame();
 
-    Frame& mainFrame() const;
+    LocalFrame& mainFrame() const;
     Page& page() const { return m_page; }
 
     Page& m_page;

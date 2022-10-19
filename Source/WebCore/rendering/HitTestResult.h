@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class Element;
-class Frame;
+class LocalFrame;
 class HTMLMediaElement;
 class Image;
 class Node;
@@ -81,7 +81,7 @@ public:
     // The hit-tested point in the coordinates of the innerNode frame, the frame containing innerNode.
     const LayoutPoint& pointInInnerNodeFrame() const { return m_pointInInnerNodeFrame; }
     IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
-    WEBCORE_EXPORT Frame* innerNodeFrame() const;
+    WEBCORE_EXPORT LocalFrame* innerNodeFrame() const;
 
     // The hit-tested point in the coordinates of the inner node.
     const LayoutPoint& localPoint() const { return m_localPoint; }
@@ -91,7 +91,7 @@ public:
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
-    WEBCORE_EXPORT Frame* targetFrame() const;
+    WEBCORE_EXPORT LocalFrame* targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT String selectedText() const;
     WEBCORE_EXPORT String spellingToolTip(TextDirection&) const;

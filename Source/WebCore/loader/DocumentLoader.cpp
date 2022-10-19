@@ -321,7 +321,7 @@ void DocumentLoader::stopLoading()
     if (!m_frame)
         return;
 
-    RefPtr<Frame> protectedFrame(m_frame.get());
+    RefPtr<LocalFrame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
     // In some rare cases, calling FrameLoader::stopLoading could cause isLoading() to return false.
@@ -1189,7 +1189,7 @@ void DocumentLoader::commitLoad(const SharedBuffer& data)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
-    RefPtr<Frame> protectedFrame(m_frame.get());
+    RefPtr<LocalFrame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
     commitIfReady();
@@ -1478,7 +1478,7 @@ ColorSchemePreference DocumentLoader::colorSchemePreference() const
     return m_colorSchemePreference;
 }
 
-void DocumentLoader::attachToFrame(Frame& frame)
+void DocumentLoader::attachToFrame(LocalFrame& frame)
 {
     if (m_frame == &frame)
         return;
@@ -1511,7 +1511,7 @@ void DocumentLoader::detachFromFrame()
     else
         ASSERT_WITH_MESSAGE(m_frame, "detachFromFrame() is being called on a DocumentLoader that has never attached to any Frame");
 #endif
-    RefPtr<Frame> protectedFrame(m_frame.get());
+    RefPtr<LocalFrame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
     // It never makes sense to have a document loader that is detached from its
@@ -2064,7 +2064,7 @@ bool DocumentLoader::maybeLoadEmpty()
 }
 
 #if ENABLE(SERVICE_WORKER)
-static bool canUseServiceWorkers(Frame* frame)
+static bool canUseServiceWorkers(LocalFrame* frame)
 {
     if (!frame || !frame->settings().serviceWorkersEnabled())
         return false;

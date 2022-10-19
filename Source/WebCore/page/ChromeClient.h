@@ -103,7 +103,7 @@ class Element;
 class FileChooser;
 class FileIconLoader;
 class FloatRect;
-class Frame;
+class LocalFrame;
 class Geolocation;
 class GraphicsLayer;
 class GraphicsLayerFactory;
@@ -167,14 +167,14 @@ public:
     virtual void takeFocus(FocusDirection) = 0;
 
     virtual void focusedElementChanged(Element*) = 0;
-    virtual void focusedFrameChanged(Frame*) = 0;
+    virtual void focusedFrameChanged(LocalFrame*) = 0;
 
     // The Frame pointer provides the ChromeClient with context about which
     // Frame wants to create the new Page. Also, the newly created window
     // should not be shown to the user until the ChromeClient of the newly
     // created Page has its show method called.
     // The ChromeClient should not load the request.
-    virtual Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) = 0;
+    virtual Page* createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&) = 0;
     virtual void show() = 0;
 
     virtual bool canRunModal() = 0;
@@ -198,13 +198,13 @@ public:
     virtual void addMessageWithArgumentsToConsole(MessageSource, MessageLevel, const String& message, Span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID) { UNUSED_PARAM(message); UNUSED_PARAM(messageArguments); UNUSED_PARAM(lineNumber); UNUSED_PARAM(columnNumber); UNUSED_PARAM(sourceID); }
 
     virtual bool canRunBeforeUnloadConfirmPanel() = 0;
-    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame&) = 0;
+    virtual bool runBeforeUnloadConfirmPanel(const String& message, LocalFrame&) = 0;
 
     virtual void closeWindow() = 0;
 
-    virtual void runJavaScriptAlert(Frame&, const String&) = 0;
-    virtual bool runJavaScriptConfirm(Frame&, const String&) = 0;
-    virtual bool runJavaScriptPrompt(Frame&, const String& message, const String& defaultValue, String& result) = 0;
+    virtual void runJavaScriptAlert(LocalFrame&, const String&) = 0;
+    virtual bool runJavaScriptConfirm(LocalFrame&, const String&) = 0;
+    virtual bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result) = 0;
     virtual void setStatusbarText(const String&) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
@@ -240,7 +240,7 @@ public:
     virtual void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const { }
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
-    virtual void contentsSizeChanged(Frame&, const IntSize&) const = 0;
+    virtual void contentsSizeChanged(LocalFrame&, const IntSize&) const = 0;
     virtual void intrinsicContentsSizeChanged(const IntSize&) const = 0;
 
     virtual void scrollContainingScrollViewsToRevealRect(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
@@ -250,7 +250,7 @@ public:
     virtual void unavailablePluginButtonClicked(Element&, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags, const String& toolTip, TextDirection) = 0;
 
-    virtual void print(Frame&, const StringWithDirection&) = 0;
+    virtual void print(LocalFrame&, const StringWithDirection&) = 0;
 
     virtual Color underlayColor() const { return Color(); }
 
@@ -262,7 +262,7 @@ public:
     virtual WebCore::HighlightVisibility appHighlightsVisiblility() const { return HighlightVisibility::Hidden; };
 #endif
 
-    virtual void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) = 0;
+    virtual void exceededDatabaseQuota(LocalFrame&, const String& databaseName, DatabaseDetails) = 0;
 
     // Callback invoked when the application cache fails to save a cache object
     // because storing it would grow the database file past its defined maximum
@@ -289,9 +289,9 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual void didReceiveMobileDocType(bool) = 0;
-    virtual void setNeedsScrollNotifications(Frame&, bool) = 0;
-    virtual void didFinishContentChangeObserving(Frame&, WKContentChange) = 0;
-    virtual void notifyRevealedSelectionByScrollingFrame(Frame&) = 0;
+    virtual void setNeedsScrollNotifications(LocalFrame&, bool) = 0;
+    virtual void didFinishContentChangeObserving(LocalFrame&, WKContentChange) = 0;
+    virtual void notifyRevealedSelectionByScrollingFrame(LocalFrame&) = 0;
 
     enum LayoutType { NormalLayout, Scroll };
     virtual void didLayout(LayoutType = NormalLayout) = 0;
@@ -342,7 +342,7 @@ public:
 
     virtual void setTextIndicator(const TextIndicatorData&) const = 0;
 
-    virtual void runOpenPanel(Frame&, FileChooser&) = 0;
+    virtual void runOpenPanel(LocalFrame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback) { callback(std::nullopt); }
     
@@ -372,7 +372,7 @@ public:
     virtual RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const { return nullptr; }
 
     // Pass nullptr as the GraphicsLayer to detatch the root layer.
-    virtual void attachRootGraphicsLayer(Frame&, GraphicsLayer*) = 0;
+    virtual void attachRootGraphicsLayer(LocalFrame&, GraphicsLayer*) = 0;
     virtual void attachViewOverlayGraphicsLayer(GraphicsLayer*) = 0;
     // Sets a flag to specify that the next time content is drawn to the window,
     // the changes appear on the screen in synchrony with updates to GraphicsLayers.
@@ -512,7 +512,7 @@ public:
     virtual String plugInExtraStyleSheet() const { return String(); }
     virtual String plugInExtraScript() const { return String(); }
 
-    virtual void didAssociateFormControls(const Vector<RefPtr<Element>>&, Frame&) { };
+    virtual void didAssociateFormControls(const Vector<RefPtr<Element>>&, LocalFrame&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };
 
     virtual void didAddHeaderLayer(GraphicsLayer&) { }
@@ -573,13 +573,13 @@ public:
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
 #if ENABLE(TRACKING_PREVENTION)
-    virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, Frame&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
-    virtual void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, Frame&, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler) { completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, WTFMove(topFrameDomain), WTFMove(subFrameDomain) }); }
+    virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, LocalFrame&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame&, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler) { completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, WTFMove(topFrameDomain), WTFMove(subFrameDomain) }); }
     virtual bool hasPageLevelStorageAccess(const RegistrableDomain& /*topLevelDomain*/, const RegistrableDomain& /*resourceDomain*/) const { return false; }
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    virtual void shouldAllowDeviceOrientationAndMotionAccess(Frame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }
+    virtual void shouldAllowDeviceOrientationAndMotionAccess(LocalFrame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }
 #endif
 
     virtual void didInsertMenuElement(HTMLMenuElement&) { }

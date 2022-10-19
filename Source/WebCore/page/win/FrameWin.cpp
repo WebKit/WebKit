@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight)
+void computePageRectsForFrame(LocalFrame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight)
 {
     PrintContext printContext(frame);
     float pageHeight = 0;
@@ -45,7 +45,7 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
     outPages = printContext.pageRects();
 }
 
-GDIObject<HBITMAP> imageFromSelection(Frame* frame, bool forceBlackText)
+GDIObject<HBITMAP> imageFromSelection(LocalFrame* frame, bool forceBlackText)
 {
     frame->document()->updateLayout();
 

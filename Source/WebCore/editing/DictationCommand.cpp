@@ -90,7 +90,7 @@ DictationCommand::DictationCommand(Document& document, const String& text, const
 
 void DictationCommand::insertText(Document& document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
 {
-    RefPtr<Frame> frame = document.frame();
+    RefPtr<LocalFrame> frame = document.frame();
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection().selection();

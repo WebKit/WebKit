@@ -258,7 +258,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     }
     case ScriptType::ImportMap: {
         // If the element’s node document's acquiring import maps is false, then queue a task to fire an event named error at the element, and return.
-        RefPtr<Frame> frame = m_element.document().frame();
+        RefPtr<LocalFrame> frame = m_element.document().frame();
         if (!frame || !frame->script().isAcquiringImportMaps()) {
             m_element.document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, element = Ref<Element>(m_element)] {
                 dispatchErrorEvent();
@@ -395,7 +395,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     return true;
 }
 
-bool ScriptElement::requestImportMap(Frame& frame, const String& sourceURL)
+bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
@@ -464,7 +464,7 @@ void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
     ASSERT(m_alreadyStarted);
     ASSERT(scriptType() == ScriptType::ImportMap);
 
-    RefPtr<Frame> frame = m_element.document().frame();
+    RefPtr<LocalFrame> frame = m_element.document().frame();
 
     auto scopedExit = WTF::makeScopeExit([&] {
         if (frame)

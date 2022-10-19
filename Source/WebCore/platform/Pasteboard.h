@@ -65,7 +65,7 @@ class SharedBuffer;
 class DocumentFragment;
 class DragData;
 class Element;
-class Frame;
+class LocalFrame;
 class PasteboardStrategy;
 class FragmentedSharedBuffer;
 
@@ -249,9 +249,9 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    RefPtr<DocumentFragment> documentFragment(Frame&, const SimpleRange&, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+    RefPtr<DocumentFragment> documentFragment(LocalFrame&, const SimpleRange&, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
     void writeImage(Element&, const URL&, const String& title); // FIXME: Layering violation.
-    void writeSelection(const SimpleRange&, bool canSmartCopyOrDelete, Frame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
+    void writeSelection(const SimpleRange&, bool canSmartCopyOrDelete, LocalFrame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK)
@@ -322,7 +322,7 @@ private:
 
 #if PLATFORM(WIN)
     void finishCreatingPasteboard();
-    void writeRangeToDataObject(const SimpleRange&, Frame&); // FIXME: Layering violation.
+    void writeRangeToDataObject(const SimpleRange&, LocalFrame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
     std::optional<PasteboardCustomData> readPasteboardCustomData();

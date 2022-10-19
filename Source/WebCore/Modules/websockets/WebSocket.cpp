@@ -307,7 +307,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     if (is<Document>(context)) {
         Document& document = downcast<Document>(context);
-        RefPtr<Frame> frame = document.frame();
+        RefPtr<LocalFrame> frame = document.frame();
         // FIXME: make the mixed content check equivalent to the non-document mixed content check currently in WorkerThreadableWebSocketChannel::Bridge::connect()
         if (!frame || !MixedContentChecker::canRunInsecureContent(*frame, document.securityOrigin(), m_url)) {
             failAsynchronously();

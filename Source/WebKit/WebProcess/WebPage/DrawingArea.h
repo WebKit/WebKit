@@ -52,7 +52,7 @@ class Decoder;
 namespace WebCore {
 class DestinationColorSpace;
 class DisplayRefreshMonitor;
-class Frame;
+class LocalFrame;
 class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;

@@ -40,7 +40,7 @@ class DOMStorageFrontendDispatcher;
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Page;
 class SecurityOrigin;
 class Storage;
@@ -72,7 +72,7 @@ public:
     static Ref<Inspector::Protocol::DOMStorage::StorageId> storageId(const SecurityOrigin&, bool isLocalStorage);
 
 private:
-    RefPtr<StorageArea> findStorageArea(Inspector::Protocol::ErrorString&, Ref<JSON::Object>&& storageId, Frame*&);
+    RefPtr<StorageArea> findStorageArea(Inspector::Protocol::ErrorString&, Ref<JSON::Object>&& storageId, LocalFrame*&);
 
     std::unique_ptr<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;

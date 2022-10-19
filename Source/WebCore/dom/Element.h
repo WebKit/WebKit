@@ -60,7 +60,7 @@ class Document;
 class ElementAnimationRareData;
 class ElementData;
 class ElementRareData;
-class Frame;
+class LocalFrame;
 class HTMLDocument;
 class IntSize;
 class JSCustomElementInterface;
@@ -731,7 +731,7 @@ protected:
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:
-    Frame* documentFrameWithNonNullView() const;
+    LocalFrame* documentFrameWithNonNullView() const;
 
     bool isTextNode() const;
 

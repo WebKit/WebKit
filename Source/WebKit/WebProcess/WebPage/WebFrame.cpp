@@ -106,7 +106,7 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
+void WebFrame::initWithCoreMainFrame(WebPage& page, LocalFrame& coreFrame)
 {
     ASSERT(!m_frameID);
     m_frameID = coreFrame.frameID();
@@ -122,7 +122,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frame = create(page);
-    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
+    auto coreFrame = LocalFrame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
     frame->m_coreFrame = coreFrame;
 
     ASSERT(!frame->m_frameID);
@@ -187,7 +187,7 @@ WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
     return &webFrameLoaderClient->webFrame();
 }
 
-WebCore::Frame* WebFrame::coreFrame() const
+WebCore::LocalFrame* WebFrame::coreFrame() const
 {
     return m_coreFrame.get();
 }
@@ -720,13 +720,13 @@ void WebFrame::stopLoading()
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
-    auto* coreFrame = Frame::fromJSContext(context);
+    auto* coreFrame = LocalFrame::fromJSContext(context);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
 WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
 {
-    auto* coreFrame = Frame::contentFrameFromWindowOrFrameElement(context, value);
+    auto* coreFrame = LocalFrame::contentFrameFromWindowOrFrameElement(context, value);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
@@ -847,7 +847,7 @@ void WebFrame::documentLoaderDetached(uint64_t navigationID)
 #if PLATFORM(COCOA)
 RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
 {
-    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](Frame& frame) -> bool {
+    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](LocalFrame& frame) -> bool {
         if (!callback)
             return true;
 

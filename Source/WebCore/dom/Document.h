@@ -144,7 +144,7 @@ class FloatRect;
 class FontFaceSet;
 class FontLoadRequest;
 class FormController;
-class Frame;
+class LocalFrame;
 class FrameSelection;
 class FrameView;
 class FullscreenManager;
@@ -363,7 +363,7 @@ public:
     using EventTarget::WeakPtrImplType;
 
     inline static Ref<Document> create(const Settings&, const URL&);
-    static Ref<Document> createNonRenderedPlaceholder(Frame&, const URL&);
+    static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);
 
     virtual ~Document();
@@ -752,7 +752,7 @@ public:
     WEBCORE_EXPORT void setRTCNetworkManager(Ref<RTCNetworkManager>&&);
 #endif
 
-    bool canNavigate(Frame* targetFrame, const URL& destinationURL = URL());
+    bool canNavigate(LocalFrame* targetFrame, const URL& destinationURL = URL());
 
     bool usesStyleBasedEditability() const;
     void setHasElementUsingStyleBasedEditability();
@@ -1719,7 +1719,7 @@ public:
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
+    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
@@ -1818,8 +1818,8 @@ private:
     void invalidateDOMCookieCache();
     void didLoadResourceSynchronously(const URL&) final;
 
-    bool canNavigateInternal(Frame& targetFrame);
-    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
+    bool canNavigateInternal(LocalFrame& targetFrame);
+    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL);
 
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;

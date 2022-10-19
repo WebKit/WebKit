@@ -191,7 +191,7 @@ void ContextMenuController::didDismissContextMenu()
         m_menuProvider->didDismissContextMenu();
 }
 
-static void openNewWindow(const URL& urlToLoad, Frame& frame, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     Page* oldPage = frame.page();
     if (!oldPage)
@@ -210,7 +210,7 @@ static void openNewWindow(const URL& urlToLoad, Frame& frame, Event* event, Shou
 
 #if PLATFORM(GTK)
 
-static void insertUnicodeCharacter(UChar character, Frame& frame)
+static void insertUnicodeCharacter(UChar character, LocalFrame& frame)
 {
     String text(&character, 1);
     if (!frame.editor().shouldInsertText(text, frame.selection().selection().toNormalizedRange(), EditorInsertAction::Typed))
@@ -236,7 +236,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     if (!frame)
         return;
 
-    Ref<Frame> protector(*frame);
+    Ref<LocalFrame> protector(*frame);
     RefPtr<Event> eventForLoadRequests = [&]() -> Event* {
 #if PLATFORM(COCOA)
         if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ContextMenuTriggersLinkActivationNavigationType))
@@ -419,7 +419,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         m_client.lookUpInDictionary(frame);
         break;
     case ContextMenuItemTagOpenLink:
-        if (Frame* targetFrame = m_context.hitTestResult().targetFrame()) {
+        if (LocalFrame* targetFrame = m_context.hitTestResult().targetFrame()) {
             ResourceRequest resourceRequest { m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer() };
             FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), WTFMove(resourceRequest), { }, InitiatedByMainFrame::Unknown };
             frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
@@ -1267,7 +1267,7 @@ void ContextMenuController::addDebuggingItems()
     if (!node)
         return;
 
-    Frame* frame = node->document().frame();
+    LocalFrame* frame = node->document().frame();
     if (!frame)
         return;
 
@@ -1300,7 +1300,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
     if (item.type() == SeparatorType)
         return;
     
-    Frame* frame = m_context.hitTestResult().innerNonSharedNode()->document().frame();
+    LocalFrame* frame = m_context.hitTestResult().innerNonSharedNode()->document().frame();
     if (!frame)
         return;
 
@@ -1616,7 +1616,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
 
-void ContextMenuController::showContextMenuAt(Frame& frame, const IntPoint& clickPoint)
+void ContextMenuController::showContextMenuAt(LocalFrame& frame, const IntPoint& clickPoint)
 {
     clearContextMenu();
     
@@ -1643,7 +1643,7 @@ void ContextMenuController::showImageControlsMenu(Event& event)
 
 #if ENABLE(PDFJS)
 
-void ContextMenuController::performPDFJSAction(Frame& frame, const String& action)
+void ContextMenuController::performPDFJSAction(LocalFrame& frame, const String& action)
 {
     auto* pdfDocument = dynamicDowncast<PDFDocument>(frame.ownerElement()->document());
     if (pdfDocument)

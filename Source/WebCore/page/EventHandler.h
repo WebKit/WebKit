@@ -69,7 +69,7 @@ class Element;
 class Event;
 class EventTarget;
 class FloatQuad;
-class Frame;
+class LocalFrame;
 class FrameView;
 class HTMLFrameSetElement;
 class HitTestResult;
@@ -128,7 +128,7 @@ enum class ImmediateActionStage : uint8_t {
 class EventHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit EventHandler(Frame&);
+    explicit EventHandler(LocalFrame&);
     ~EventHandler();
 
     void clear();
@@ -191,8 +191,8 @@ public:
     IntPoint targetPositionInWindowForSelectionAutoscroll() const;
     bool shouldUpdateAutoscroll();
 
-    static RefPtr<Frame> subframeForTargetNode(Node*);
-    static RefPtr<Frame> subframeForHitTestResult(const MouseEventWithHitTestResults&);
+    static RefPtr<LocalFrame> subframeForTargetNode(Node*);
+    static RefPtr<LocalFrame> subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
     WEBCORE_EXPORT bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
     WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
@@ -231,7 +231,7 @@ public:
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchMap&, float, float);
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
     bool dispatchSimulatedTouchEvent(IntPoint location);
-    Frame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
+    LocalFrame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
     const TouchArray& touches() const { return m_touches; }
 #endif
 
@@ -467,11 +467,11 @@ private:
     
     bool mouseMovementExceedsThreshold(const FloatPoint&, int pointsThreshold) const;
 
-    bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame&);
-    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame&, HitTestResult* = nullptr);
-    bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame&);
+    bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, LocalFrame&);
+    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, LocalFrame&, HitTestResult* = nullptr);
+    bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, LocalFrame&);
 
-    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame&, HitTestResult* = nullptr);
+    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, LocalFrame&, HitTestResult* = nullptr);
 
     bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, Scrollbar*);
 
@@ -546,7 +546,7 @@ private:
     bool canMouseDownStartSelect(const MouseEventWithHitTestResults&);
     bool mouseDownMayStartSelect() const;
     
-    Frame& m_frame;
+    LocalFrame& m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;
 #if ENABLE(IMAGE_ANALYSIS)
@@ -578,7 +578,7 @@ private:
     RefPtr<Element> m_capturingMouseEventsElement;
     RefPtr<Element> m_elementUnderMouse;
     RefPtr<Element> m_lastElementUnderMouse;
-    RefPtr<Frame> m_lastMouseMoveEventSubframe;
+    RefPtr<LocalFrame> m_lastMouseMoveEventSubframe;
     WeakPtr<Scrollbar> m_lastScrollbarUnderMouse;
     Cursor m_currentMouseCursor;
 
@@ -645,7 +645,7 @@ private:
     unsigned m_touchIdentifierForPrimaryTouch { 0 };
 
     TouchArray m_touches;
-    RefPtr<Frame> m_touchEventTargetSubframe;
+    RefPtr<LocalFrame> m_touchEventTargetSubframe;
 #endif
 
 #if PLATFORM(COCOA)

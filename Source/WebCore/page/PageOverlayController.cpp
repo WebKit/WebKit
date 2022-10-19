@@ -322,7 +322,7 @@ void PageOverlayController::didChangeViewExposedRect()
     m_page.scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
-void PageOverlayController::didScrollFrame(Frame& frame)
+void PageOverlayController::didScrollFrame(LocalFrame& frame)
 {
     for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
         if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View || !frame.isMainFrame())

@@ -469,7 +469,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
             m_page->settings().setLayerBasedSVGEngineEnabled(observer->layerBasedSVGEngineEnabled());
 #endif
 
-        Frame& frame = m_page->mainFrame();
+        LocalFrame& frame = m_page->mainFrame();
         frame.setView(FrameView::create(frame));
         frame.init();
         FrameLoader& loader = frame.loader();

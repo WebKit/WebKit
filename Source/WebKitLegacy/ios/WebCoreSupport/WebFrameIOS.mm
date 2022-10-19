@@ -73,7 +73,7 @@ using namespace WebCore;
 
 //-------------------
 
-- (WebCore::Frame *)coreFrame
+- (WebCore::LocalFrame *)coreFrame
 {
     return _private->coreFrame;
 }

@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebContextMenuClient::lookUpInDictionary(Frame* frame)
+void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
     m_page->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
@@ -63,7 +63,7 @@ void WebContextMenuClient::stopSpeaking()
     m_page->stopSpeaking();
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
 {
     String searchString = frame->editor().selectedText().stripWhiteSpace();
     m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
@@ -75,7 +75,7 @@ void WebContextMenuClient::searchWithSpotlight()
     // Isn't there any function in WebCore that can do this?
     // If not, can we find a place in WebCore to put this?
 
-    Frame& mainFrame = m_page->corePage()->mainFrame();
+    LocalFrame& mainFrame = m_page->corePage()->mainFrame();
 
     LocalFrame* selectionFrame = [&] () -> LocalFrame* {
         for (AbstractFrame* selectionFrame = &mainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {

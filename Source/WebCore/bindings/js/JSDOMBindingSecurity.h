@@ -34,10 +34,10 @@ class JSGlobalObject;
 namespace WebCore {
 
 class DOMWindow;
-class Frame;
+class LocalFrame;
 class Node;
 
-void printErrorMessageForFrame(Frame*, const String& message);
+void printErrorMessageForFrame(LocalFrame*, const String& message);
 
 enum SecurityReportingOption { DoNotReportSecurityError, LogSecurityError, ThrowSecurityError };
 
@@ -52,8 +52,8 @@ bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow&, SecurityRepo
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow&, String& message);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow*, SecurityReportingOption = LogSecurityError);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow*, String& message);
-bool shouldAllowAccessToFrame(JSC::JSGlobalObject*, Frame*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToFrame(JSC::JSGlobalObject&, Frame&, String& message);
+bool shouldAllowAccessToFrame(JSC::JSGlobalObject*, LocalFrame*, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToFrame(JSC::JSGlobalObject&, LocalFrame&, String& message);
 bool shouldAllowAccessToNode(JSC::JSGlobalObject&, Node*);
 
 }

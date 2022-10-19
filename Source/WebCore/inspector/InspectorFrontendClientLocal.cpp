@@ -264,7 +264,7 @@ void InspectorFrontendClientLocal::changeSheetRect(const FloatRect& rect)
 
 void InspectorFrontendClientLocal::openURLExternally(const String& url)
 {
-    Frame& mainFrame = m_inspectedPageController->inspectedPage().mainFrame();
+    LocalFrame& mainFrame = m_inspectedPageController->inspectedPage().mainFrame();
 
     UserGestureIndicator indicator { ProcessingUserGesture, mainFrame.document() };
 
@@ -386,7 +386,7 @@ void InspectorFrontendClientLocal::showResources()
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
 }
 
-void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
+void InspectorFrontendClientLocal::showMainResourceForFrame(LocalFrame* frame)
 {
     String frameId = m_inspectedPageController->ensurePageAgent().frameId(frame);
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameId) });

@@ -105,7 +105,7 @@ WebLoaderStrategy::~WebLoaderStrategy()
 {
 }
 
-void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
+void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
     if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
         if (auto* document = frame.mainFrame().document()) {
@@ -123,7 +123,7 @@ void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, Res
     });
 }
 
-void WebLoaderStrategy::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
+void WebLoaderStrategy::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
     NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler), frame = Ref { frame }] (RefPtr<NetscapePlugInStreamLoader>&& loader) mutable {
         if (loader)
@@ -301,7 +301,7 @@ bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoad
 }
 #endif
 
-static void addParametersShared(const Frame* frame, NetworkResourceLoadParameters& parameters, bool isMainFrameNavigation = false)
+static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadParameters& parameters, bool isMainFrameNavigation = false)
 {
     parameters.crossOriginAccessControlCheckEnabled = CrossOriginAccessControlCheckDisabler::singleton().crossOriginAccessControlCheckEnabled();
     parameters.hadMainFrameMainResourcePrivateRelayed = WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed();
@@ -623,7 +623,7 @@ void WebLoaderStrategy::networkProcessCrashed()
         preconnectCompletionHandler(internalError(URL()));
 }
 
-static bool shouldClearReferrerOnHTTPSToHTTPRedirect(Frame* frame)
+static bool shouldClearReferrerOnHTTPSToHTTPRedirect(LocalFrame* frame)
 {
     if (frame) {
         if (auto* document = frame->document())
@@ -765,7 +765,7 @@ void WebLoaderStrategy::pageLoadCompleted(Page& page)
         networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page).identifier()), 0);
 }
 
-void WebLoaderStrategy::browsingContextRemoved(Frame& frame)
+void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
 {
     ASSERT(frame.page());
     auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
@@ -781,7 +781,7 @@ bool WebLoaderStrategy::usePingLoad() const
     return !DeprecatedGlobalSettings::fetchAPIKeepAliveEnabled();
 }
 
-void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)
+void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     auto* document = frame.document();

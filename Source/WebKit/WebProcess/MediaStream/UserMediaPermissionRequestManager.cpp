@@ -49,7 +49,7 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
 {
     Document* document = request.document();
-    Frame* frame = document ? document->frame() : nullptr;
+    LocalFrame* frame = document ? document->frame() : nullptr;
 
     if (!frame || !document->page()) {
         request.deny(UserMediaRequest::OtherFailure, emptyString());

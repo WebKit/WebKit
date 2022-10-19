@@ -360,7 +360,7 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
             endPosition = positionForIndex(innerText.get(), end);
     }
 
-    if (RefPtr<Frame> frame = document().frame())
+    if (RefPtr<LocalFrame> frame = document().frame())
         frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus, revealMode, intent);
 
     return m_cachedSelectionStart != previousSelectionStart || m_cachedSelectionEnd != previousSelectionEnd || m_cachedSelectionDirection != previousSelectionDirection;
@@ -407,7 +407,7 @@ unsigned HTMLTextFormControlElement::selectionStart() const
 unsigned HTMLTextFormControlElement::computeSelectionStart() const
 {
     ASSERT(isTextField());
-    RefPtr<Frame> frame = document().frame();
+    RefPtr<LocalFrame> frame = document().frame();
     if (!frame)
         return 0;
 
@@ -426,7 +426,7 @@ unsigned HTMLTextFormControlElement::selectionEnd() const
 unsigned HTMLTextFormControlElement::computeSelectionEnd() const
 {
     ASSERT(isTextField());
-    RefPtr<Frame> frame = document().frame();
+    RefPtr<LocalFrame> frame = document().frame();
     if (!frame)
         return 0;
 
@@ -464,7 +464,7 @@ const AtomString& HTMLTextFormControlElement::selectionDirection() const
 TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirection() const
 {
     ASSERT(isTextField());
-    RefPtr<Frame> frame = document().frame();
+    RefPtr<LocalFrame> frame = document().frame();
     if (!frame)
         return SelectionHasNoDirection;
 

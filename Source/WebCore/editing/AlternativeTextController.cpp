@@ -222,7 +222,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     if (auto client = alternativeTextClient())
         client->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, corrected, correction);
 
-    RefPtr<Frame> protector(m_document.frame());
+    RefPtr<LocalFrame> protector(m_document.frame());
     m_document.updateLayout();
 
     m_document.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered);

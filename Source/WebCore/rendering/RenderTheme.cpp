@@ -940,7 +940,7 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
         delegate = downcast<SliderThumbElement>(*element).hostInput();
 
     Document& document = delegate->document();
-    Frame* frame = document.frame();
+    LocalFrame* frame = document.frame();
     return delegate == document.focusedElement() && frame && frame->selection().isFocusedAndActive();
 }
 

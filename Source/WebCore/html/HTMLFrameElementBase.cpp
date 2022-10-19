@@ -94,7 +94,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (shouldLoadFrameLazily())
         return;
 
-    RefPtr<Frame> parentFrame = document().frame();
+    RefPtr<LocalFrame> parentFrame = document().frame();
     if (!parentFrame)
         return;
 
@@ -161,7 +161,7 @@ void HTMLFrameElementBase::didFinishInsertingNode()
 void HTMLFrameElementBase::didAttachRenderers()
 {
     if (RenderWidget* part = renderWidget()) {
-        if (RefPtr<Frame> frame = contentFrame())
+        if (RefPtr<LocalFrame> frame = contentFrame())
             part->setWidget(frame->view());
     }
 }

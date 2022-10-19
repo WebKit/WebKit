@@ -1262,7 +1262,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     BOOL retval = NO;
     BOOL notFound = NO;
     RetainPtr<NSFileWrapper> fileWrapper;
-    Frame* frame = element.document().frame();
+    LocalFrame* frame = element.document().frame();
     DocumentLoader *dataSource = frame->loader().frameHasLoaded() ? frame->loader().documentLoader() : 0;
     BOOL ignoreOrientation = YES;
 

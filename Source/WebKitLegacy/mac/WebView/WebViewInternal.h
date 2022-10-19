@@ -56,7 +56,7 @@
 namespace WebCore {
 class Element;
 class Event;
-class Frame;
+class LocalFrame;
 class HTMLMediaElement;
 class HTMLVideoElement;
 class KeyboardEvent;
@@ -134,7 +134,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 + (BOOL)shouldIncludeInWebKitStatistics;
 
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 - (WebFrame *)_selectedOrMainFrame;
 
 - (void)_clearCredentials;

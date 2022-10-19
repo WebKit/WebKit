@@ -716,7 +716,7 @@ Document* Internals::contextDocument() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-Frame* Internals::frame() const
+LocalFrame* Internals::frame() const
 {
     if (!contextDocument())
         return nullptr;
@@ -2453,7 +2453,7 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     if (!document.frame() || !document.frame()->view())
         return Exception { InvalidAccessError };
 
-    Frame* frame = document.frame();
+    LocalFrame* frame = document.frame();
     FrameView* frameView = document.view();
     RenderView* renderView = document.renderView();
     if (!renderView)
@@ -2556,7 +2556,7 @@ String Internals::parserMetaData(JSC::JSValue code)
 void Internals::updateEditorUINowIfScheduled()
 {
     if (Document* document = contextDocument()) {
-        if (Frame* frame = document->frame())
+        if (LocalFrame* frame = document->frame())
             frame->editor().updateEditorUINowIfScheduled();
     }
 }
@@ -2933,7 +2933,7 @@ unsigned Internals::numberOfScrollableAreas()
         return 0;
 
     unsigned count = 0;
-    Frame* frame = document->frame();
+    LocalFrame* frame = document->frame();
     if (frame->view()->scrollableAreas())
         count += frame->view()->scrollableAreas()->size();
 

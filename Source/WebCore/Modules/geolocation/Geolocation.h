@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class GeoNotifier;
 class GeolocationError;
 class Navigator;
@@ -75,7 +75,7 @@ public:
     bool shouldBlockGeolocationRequests();
 
     Navigator* navigator();
-    WEBCORE_EXPORT Frame* frame() const;
+    WEBCORE_EXPORT LocalFrame* frame() const;
 
 private:
     explicit Geolocation(Navigator&);

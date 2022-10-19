@@ -74,7 +74,7 @@ namespace WebCore {
 
 class AuthenticationChallenge;
 class Credential;
-class Frame;
+class LocalFrame;
 class NetworkingContext;
 class ProtectionSpace;
 class ResourceError;

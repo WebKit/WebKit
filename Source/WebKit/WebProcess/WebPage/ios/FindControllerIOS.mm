@@ -52,7 +52,7 @@ const int cornerRadius = 3;
 const int totalHorizontalMargin = 1;
 const int totalVerticalMargin = 1;
 
-static OptionSet<TextIndicatorOption> findTextIndicatorOptions(const Frame& frame)
+static OptionSet<TextIndicatorOption> findTextIndicatorOptions(const LocalFrame& frame)
 {
     OptionSet<TextIndicatorOption> options { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, TextIndicatorOption::DoNotClipToVisibleRect };
     if (auto selectedRange = frame.selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
@@ -90,7 +90,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     context.drawImage(*indicatorImage, overlay.bounds());
 }
 
-bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
+bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
     if (m_findIndicatorOverlay) {
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);

@@ -419,9 +419,9 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Frame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter)
 {
-    Frame* frame = node.document().frame();
+    LocalFrame* frame = node.document().frame();
     if (!frame)
         return create();
 
@@ -443,7 +443,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Fram
     return create(markupString, *frame, nodeList, WTFMove(frameFilter));
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame& frame)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
 {
     auto* documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
@@ -480,7 +480,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-static void addSubresourcesForAttachmentElementsIfNecessary(Frame& frame, const Vector<Node*>& nodes, Vector<Ref<ArchiveResource>>& subresources)
+static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, const Vector<Node*>& nodes, Vector<Ref<ArchiveResource>>& subresources)
 {
     if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         return;
@@ -514,7 +514,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(Frame& frame, const 
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, Function<bool(Frame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, const Vector<Node*>& nodes, Function<bool(LocalFrame&)>&& frameFilter)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -534,7 +534,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
 
     for (auto& nodePtr : nodes) {
         Node& node = *nodePtr;
-        Frame* childFrame;
+        LocalFrame* childFrame;
         if ((is<HTMLFrameElementBase>(node) || is<HTMLObjectElement>(node))
             && (childFrame = downcast<HTMLFrameOwnerElement>(node).contentFrame())) {
             if (frameFilter && !frameFilter(*childFrame))
@@ -595,7 +595,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
     return create(mainResource.releaseNonNull(), WTFMove(subresources), WTFMove(subframeArchives));
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
+RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame)
 {
     if (!frame)
         return nullptr;

@@ -145,7 +145,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringB
         return;
 
     const HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
-    Frame* frame = frameOwner.contentFrame();
+    LocalFrame* frame = frameOwner.contentFrame();
     if (!frame)
         return;
 
@@ -174,7 +174,7 @@ void PageSerializer::serialize(Page& page)
     serializeFrame(&page.mainFrame());
 }
 
-void PageSerializer::serializeFrame(Frame* frame)
+void PageSerializer::serializeFrame(LocalFrame* frame)
 {
     Document* document = frame->document();
     URL url = document->url();
@@ -320,7 +320,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
     }
 }
 
-URL PageSerializer::urlForBlankFrame(Frame* frame)
+URL PageSerializer::urlForBlankFrame(LocalFrame* frame)
 {
     auto iterator = m_blankFrameURLs.find(frame);
     if (iterator != m_blankFrameURLs.end())

@@ -64,7 +64,7 @@ XSLTProcessor::~XSLTProcessor()
 }
 
 Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
-    const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame)
+    const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, LocalFrame* frame)
 {
     Ref<Document> ownerDocument(sourceNode->document());
     bool sourceIsDocument = (sourceNode == &ownerDocument.get());

@@ -42,7 +42,7 @@ enum class DOMPasteAccessResponse : uint8_t;
 class SharedBuffer;
 class DocumentFragment;
 class Element;
-class Frame;
+class LocalFrame;
 class KeyboardEvent;
 class Node;
 class FragmentedSharedBuffer;
@@ -93,7 +93,7 @@ public:
 
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
-    virtual void respondToChangedSelection(Frame*) = 0;
+    virtual void respondToChangedSelection(LocalFrame*) = 0;
     virtual void didEndUserTriggeredSelectionChanges() = 0;
     virtual void updateEditorStateAfterLayoutIfEditabilityChanged() = 0;
     virtual void didEndEditing() = 0;
@@ -107,7 +107,7 @@ public:
 
     // Notify an input method that a composition was voluntarily discarded by WebCore, so that it could clean up too.
     // This function is not called when a composition is closed per a request from an input method.
-    virtual void discardedComposition(Frame*) = 0;
+    virtual void discardedComposition(LocalFrame*) = 0;
     virtual void canceledComposition() = 0;
     virtual void didUpdateComposition() = 0;
 
@@ -115,8 +115,8 @@ public:
     virtual void registerRedoStep(UndoStep&) = 0;
     virtual void clearUndoRedoOperations() = 0;
 
-    virtual bool canCopyCut(Frame*, bool defaultValue) const = 0;
-    virtual bool canPaste(Frame*, bool defaultValue) const = 0;
+    virtual bool canCopyCut(LocalFrame*, bool defaultValue) const = 0;
+    virtual bool canPaste(LocalFrame*, bool defaultValue) const = 0;
     virtual bool canUndo() const = 0;
     virtual bool canRedo() const = 0;
     

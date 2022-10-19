@@ -65,7 +65,7 @@ typedef enum {
 // is enclosed depends on the given direction, using the same rule as -[WebVisiblePosition withinTextUnitOfGranularity:inDirectionAtBoundary:].
 - (DOMRange *)enclosingTextUnitOfGranularity:(WebTextGranularity)granularity inDirectionIfAtBoundary:(WebTextAdjustmentDirection)direction;
 
-// Uses fine-tuned logic originally from WebCore::Frame::moveSelectionToStartOrEndOfCurrentWord
+// Uses fine-tuned logic originally from WebCore::LocalFrame::moveSelectionToStartOrEndOfCurrentWord
 - (WebVisiblePosition *)positionAtStartOrEndOfWord;
 
 - (BOOL)isEditable;

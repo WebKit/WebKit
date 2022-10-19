@@ -40,9 +40,9 @@ private:
     void didChangeEstimatedProgress() override;
 #endif
 
-    void progressStarted(WebCore::Frame& originatingProgressFrame) override;
-    void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) override;
-    void progressFinished(WebCore::Frame& originatingProgressFrame) override;
+    void progressStarted(WebCore::LocalFrame& originatingProgressFrame) override;
+    void progressEstimateChanged(WebCore::LocalFrame& originatingProgressFrame) override;
+    void progressFinished(WebCore::LocalFrame& originatingProgressFrame) override;
 
     WebView *m_webView;
 };

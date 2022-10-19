@@ -501,7 +501,7 @@ void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
         unbindAnimation(animationId);
 }
 
-void InspectorAnimationAgent::frameNavigated(Frame& frame)
+void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
 {
     if (frame.isMainFrame()) {
         reset();

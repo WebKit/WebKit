@@ -53,7 +53,7 @@ private:
     }
 };
 
-SinkDocument::SinkDocument(Frame& frame, const URL& url)
+SinkDocument::SinkDocument(LocalFrame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { })
 {
     setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);

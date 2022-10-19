@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 
 class DOMWindowProperty {
 public:
-    WEBCORE_EXPORT Frame* frame() const;
+    WEBCORE_EXPORT LocalFrame* frame() const;
     DOMWindow* window() const;
 
 protected:

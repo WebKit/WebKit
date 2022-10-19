@@ -65,7 +65,7 @@ private:
     void didMoveToPage(PageOverlay&, Page*) override { }
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect&) override { }
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    void didScrollFrame(PageOverlay&, Frame&) override { }
+    void didScrollFrame(PageOverlay&, LocalFrame&) override { }
 
     void initialize();
 

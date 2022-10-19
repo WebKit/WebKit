@@ -60,7 +60,7 @@ static inline void addVisitedLink(Page& page, const URL& url)
     page.visitedLinkStore().addVisitedLink(page, computeSharedStringHash(url.string()));
 }
 
-FrameLoader::HistoryController::HistoryController(Frame& frame)
+FrameLoader::HistoryController::HistoryController(LocalFrame& frame)
     : m_frame(frame)
     , m_frameLoadComplete(true)
     , m_defersLoading(false)
@@ -701,7 +701,7 @@ Ref<HistoryItem> FrameLoader::HistoryController::createItem()
     return item;
 }
 
-Ref<HistoryItem> FrameLoader::HistoryController::createItemTree(Frame& targetFrame, bool clipAtTarget)
+Ref<HistoryItem> FrameLoader::HistoryController::createItemTree(LocalFrame& targetFrame, bool clipAtTarget)
 {
     Ref<HistoryItem> bfItem = createItem();
     if (!m_frameLoadComplete)

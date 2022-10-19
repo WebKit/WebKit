@@ -97,23 +97,23 @@ void InspectorInstrumentation::lastFrontendDeleted()
     platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(false);
 }
 
-static Frame* frameForScriptExecutionContext(ScriptExecutionContext* context)
+static LocalFrame* frameForScriptExecutionContext(ScriptExecutionContext* context)
 {
-    Frame* frame = nullptr;
+    LocalFrame* frame = nullptr;
     if (is<Document>(*context))
         frame = downcast<Document>(*context).frame();
     return frame;
 }
 
-static Frame* frameForScriptExecutionContext(ScriptExecutionContext& context)
+static LocalFrame* frameForScriptExecutionContext(ScriptExecutionContext& context)
 {
-    Frame* frame = nullptr;
+    LocalFrame* frame = nullptr;
     if (is<Document>(context))
         frame = downcast<Document>(context).frame();
     return frame;
 }
 
-void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, DOMWrapperWorld& world)
+void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, DOMWrapperWorld& world)
 {
     if (auto* pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
         pageDebuggerAgent->didClearWindowObjectInWorld(frame, world);
@@ -482,13 +482,13 @@ void InspectorInstrumentation::eventDidResetAfterDispatchImpl(InstrumentingAgent
         domAgent->eventDidResetAfterDispatch(event);
 }
 
-void InspectorInstrumentation::willEvaluateScriptImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const String& url, int lineNumber, int columnNumber)
+void InspectorInstrumentation::willEvaluateScriptImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, const String& url, int lineNumber, int columnNumber)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->willEvaluateScript(url, lineNumber, columnNumber, frame);
 }
 
-void InspectorInstrumentation::didEvaluateScriptImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::didEvaluateScriptImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->didEvaluateScript(frame);
@@ -514,13 +514,13 @@ void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumenti
         timelineAgent->didFireTimer();
 }
 
-void InspectorInstrumentation::didInvalidateLayoutImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::didInvalidateLayoutImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->didInvalidateLayout(frame);
 }
 
-void InspectorInstrumentation::willLayoutImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::willLayoutImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->willLayout(frame);
@@ -534,7 +534,7 @@ void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingA
         pageAgent->didLayout();
 }
 
-void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->willComposite(frame);
@@ -706,7 +706,7 @@ void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents&
         networkAgent->didReceiveScriptResponse(identifier);
 }
 
-void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (!frame.isMainFrame())
         return;
@@ -715,7 +715,7 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgent
         pageAgent->domContentEventFired();
 }
 
-void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents& instrumentingAgents, LocalFrame* frame)
 {
     if (!frame || !frame->isMainFrame())
         return;
@@ -724,13 +724,13 @@ void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents& instrumen
         pageAgent->loadEventFired();
 }
 
-void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->frameDetached(frame);
 }
 
-void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, DocumentLoader* loader)
+void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, DocumentLoader* loader)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
@@ -793,7 +793,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
     }
 }
 
-void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->frameDocumentUpdated(frame);
@@ -808,7 +808,7 @@ void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents& 
         inspectorPageAgent->loaderDetachedFromFrame(loader);
 }
 
-void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (frame.isMainFrame()) {
         if (auto* pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
@@ -821,7 +821,7 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
         inspectorPageAgent->frameStartedLoading(frame);
 }
 
-void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (frame.isMainFrame()) {
         if (auto* pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
@@ -832,13 +832,13 @@ void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& inst
         inspectorPageAgent->frameStoppedLoading(frame);
 }
 
-void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, Seconds delay)
+void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, Seconds delay)
 {
     if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
         inspectorPageAgent->frameScheduledNavigation(frame, delay);
 }
 
-void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
         inspectorPageAgent->frameClearedScheduledNavigation(frame);
@@ -944,7 +944,7 @@ void InspectorInstrumentation::takeHeapSnapshotImpl(InstrumentingAgents& instrum
         consoleAgent->takeHeapSnapshot(title);
 }
 
-void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, JSC::JSGlobalObject* exec, const String& label)
+void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
@@ -973,7 +973,7 @@ void InspectorInstrumentation::logConsoleTimingImpl(InstrumentingAgents& instrum
         consoleAgent->logTiming(exec, label, WTFMove(arguments));
 }
 
-void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, JSC::JSGlobalObject* exec, const String& label)
+void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
@@ -993,7 +993,7 @@ void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instru
         consoleAgent->stopTiming(exec, label);
 }
 
-void InspectorInstrumentation::consoleTimeStampImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, Ref<ScriptArguments>&& arguments)
+void InspectorInstrumentation::consoleTimeStampImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, Ref<ScriptArguments>&& arguments)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent()) {
         String message;
@@ -1217,7 +1217,7 @@ void InspectorInstrumentation::networkStateChangedImpl(InstrumentingAgents& inst
         applicationCacheAgent->networkStateChanged();
 }
 
-void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (auto* applicationCacheAgent = instrumentingAgents.enabledApplicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(&frame);

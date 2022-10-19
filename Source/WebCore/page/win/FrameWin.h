@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class IntRect;
 
-GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&);
-GDIObject<HBITMAP> imageFromSelection(Frame*, bool forceBlackText);
-void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
+GDIObject<HBITMAP> imageFromRect(const LocalFrame*, IntRect&);
+GDIObject<HBITMAP> imageFromSelection(LocalFrame*, bool forceBlackText);
+void computePageRectsForFrame(LocalFrame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
 
 } // namespace WebCore

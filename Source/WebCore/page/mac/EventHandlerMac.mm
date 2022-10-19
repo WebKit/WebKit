@@ -385,7 +385,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     return true;
 }
     
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -682,7 +682,7 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event, NSEvent* corr
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static bool frameHasPlatformWidget(const Frame& frame)
+static bool frameHasPlatformWidget(const LocalFrame& frame)
 {
     if (FrameView* frameView = frame.view()) {
         if (frameView->platformWidget())
@@ -692,7 +692,7 @@ static bool frameHasPlatformWidget(const Frame& frame)
     return false;
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -703,7 +703,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -719,7 +719,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -904,7 +904,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
     }
 #endif
 
-    Ref<Frame> protectedFrame(m_frame);
+    Ref<LocalFrame> protectedFrame(m_frame);
 
     if (!m_frame.page())
         return false;

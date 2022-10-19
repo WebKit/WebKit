@@ -225,7 +225,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    Frame* frame = m_geolocation->frame();
+    LocalFrame* frame = m_geolocation->frame();
     if (!frame)
         return;
     auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()]);

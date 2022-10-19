@@ -799,11 +799,11 @@ void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
 
 ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)
 {
-    Frame* frame = extensionFrameElement.contentFrame();
+    LocalFrame* frame = extensionFrameElement.contentFrame();
     if (!frame)
         return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
 
-    Ref<Frame> protectedFrame(*frame);
+    Ref<LocalFrame> protectedFrame(*frame);
 
     JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
     if (!frameGlobalObject)

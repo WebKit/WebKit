@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
-class Frame;
+class LocalFrame;
 
 class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public DOMWindow::Observer {
 public:
@@ -50,7 +50,7 @@ public:
     void willDestroyGlobalObjectInFrame() final;
     void willDetachGlobalObjectFromFrame() final;
 
-    WEBCORE_EXPORT Frame* frame() const;
+    WEBCORE_EXPORT LocalFrame* frame() const;
     DOMWrapperWorld& world() const { return m_world; }
 
 private:
@@ -58,7 +58,7 @@ private:
 
     WeakPtr<DOMWindow, WeakPtrImplWithEventTargetData> m_window;
     Ref<DOMWrapperWorld> m_world;
-    RefPtr<Frame> m_disconnectedFrame;
+    RefPtr<LocalFrame> m_disconnectedFrame;
     bool m_wasDetached;
 };
 

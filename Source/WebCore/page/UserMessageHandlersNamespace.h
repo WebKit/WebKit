@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class UserMessageHandler;
 class DOMWrapperWorld;
 
 class UserMessageHandlersNamespace : public RefCounted<UserMessageHandlersNamespace>, public FrameDestructionObserver, public UserContentProviderInvalidationClient {
 public:
-    static Ref<UserMessageHandlersNamespace> create(Frame& frame, UserContentProvider& userContentProvider)
+    static Ref<UserMessageHandlersNamespace> create(LocalFrame& frame, UserContentProvider& userContentProvider)
     {
         return adoptRef(*new UserMessageHandlersNamespace(frame, userContentProvider));
     }
@@ -55,7 +55,7 @@ public:
     UserMessageHandler* namedItem(DOMWrapperWorld&, const AtomString&);
 
 private:
-    explicit UserMessageHandlersNamespace(Frame&, UserContentProvider&);
+    explicit UserMessageHandlersNamespace(LocalFrame&, UserContentProvider&);
 
     // UserContentProviderInvalidationClient
     void didInvalidate(UserContentProvider&) override;

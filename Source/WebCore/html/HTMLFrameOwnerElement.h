@@ -35,11 +35,11 @@ class HTMLFrameOwnerElement : public HTMLElement {
 public:
     virtual ~HTMLFrameOwnerElement();
 
-    Frame* contentFrame() const { return m_contentFrame.get(); }
+    LocalFrame* contentFrame() const { return m_contentFrame.get(); }
     WEBCORE_EXPORT WindowProxy* contentWindow() const;
     WEBCORE_EXPORT Document* contentDocument() const;
 
-    void setContentFrame(Frame&);
+    void setContentFrame(LocalFrame&);
     void clearContentFrame();
 
     void disconnectContentFrame();
@@ -73,7 +73,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isFrameOwnerElement() const final { return true; }
 
-    WeakPtr<Frame> m_contentFrame;
+    WeakPtr<LocalFrame> m_contentFrame;
     SandboxFlags m_sandboxFlags { SandboxNone };
 };
 

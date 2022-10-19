@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class SecurityOrigin;
 
 struct SecurityOriginData {
@@ -46,7 +46,7 @@ struct SecurityOriginData {
     {
     }
     
-    WEBCORE_EXPORT static SecurityOriginData fromFrame(Frame*);
+    WEBCORE_EXPORT static SecurityOriginData fromFrame(LocalFrame*);
     static SecurityOriginData fromURL(const URL& url)
     {
         return SecurityOriginData {

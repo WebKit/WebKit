@@ -191,7 +191,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
     return Pagination::BottomToTopPaginated;
 }
 
-FrameView::FrameView(Frame& frame)
+FrameView::FrameView(LocalFrame& frame)
     : m_frame(frame)
     , m_layoutContext(*this)
     , m_updateEmbeddedObjectsTimer(*this, &FrameView::updateEmbeddedObjectsTimerFired)
@@ -222,7 +222,7 @@ FrameView::FrameView(Frame& frame)
 
 }
 
-Ref<FrameView> FrameView::create(Frame& frame)
+Ref<FrameView> FrameView::create(LocalFrame& frame)
 {
     Ref<FrameView> view = adoptRef(*new FrameView(frame));
     if (frame.page() && frame.page()->isVisible())
@@ -230,7 +230,7 @@ Ref<FrameView> FrameView::create(Frame& frame)
     return view;
 }
 
-Ref<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize)
+Ref<FrameView> FrameView::create(LocalFrame& frame, const IntSize& initialSize)
 {
     Ref<FrameView> view = adoptRef(*new FrameView(frame));
     view->Widget::setFrameRect(IntRect(view->location(), initialSize));
@@ -964,7 +964,7 @@ void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
     renderView()->compositor().updateScrollSnapPropertiesWithFrameView(*this);
 }
 
-bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
+bool FrameView::flushCompositingStateForThisFrame(const LocalFrame& rootFrameForFlush)
 {
     if (DeprecatedGlobalSettings::layoutFormattingContextEnabled()) {
         if (auto* view = existingDisplayView())
@@ -1301,7 +1301,7 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
         cache->postNotification(layoutRoot.get(), AXObjectCache::AXLayoutComplete);
 #endif
 
-    frame().invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::Layout);
+    frame().invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::Layout);
     document->invalidateRenderingDependentRegions();
 
     updateCanBlitOnScrollRecursively();
@@ -3092,7 +3092,7 @@ bool FrameView::shouldLayoutAfterContentsResized() const
 void FrameView::updateContentsSize()
 {
     // We check to make sure the view is attached to a frame() as this method can
-    // be triggered before the view is attached by Frame::createView(...) setting
+    // be triggered before the view is attached by LocalFrame::createView(...) setting
     // various values such as setScrollBarModes(...) for example.  An ASSERT is
     // triggered when a view is layout before being attached to a frame().
     if (!frame().view())
@@ -4213,7 +4213,7 @@ float FrameView::visibleContentScaleFactor() const
         return 1;
 
     Page* page = frame().page();
-    // FIXME: This !delegatesScaling() is confusing, and the opposite behavior to Frame::frameScaleFactor().
+    // FIXME: This !delegatesScaling() is confusing, and the opposite behavior to LocalFrame::frameScaleFactor().
     // This function should probably be renamed to delegatedPageScaleFactor().
     if (!page || !page->delegatesScaling())
         return 1;
@@ -5457,8 +5457,8 @@ void FrameView::resetTrackedRepaints()
 
 String FrameView::trackedRepaintRectsAsText() const
 {
-    Frame& frame = this->frame();
-    Ref<Frame> protector(frame);
+    LocalFrame& frame = this->frame();
+    Ref<LocalFrame> protector(frame);
 
     if (auto* document = frame.document())
         document->updateLayout();

@@ -31,7 +31,7 @@ namespace WebCore {
 class FTPDirectoryDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(FTPDirectoryDocument);
 public:
-    static Ref<FTPDirectoryDocument> create(Frame* frame, const Settings& settings, const URL& url)
+    static Ref<FTPDirectoryDocument> create(LocalFrame* frame, const Settings& settings, const URL& url)
     {
         auto document = adoptRef(*new FTPDirectoryDocument(frame, settings, url));
         document->addToContextsMap();
@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    FTPDirectoryDocument(Frame*, const Settings&, const URL&);
+    FTPDirectoryDocument(LocalFrame*, const Settings&, const URL&);
     Ref<DocumentParser> createParser() override;
 };
 

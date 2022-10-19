@@ -2437,7 +2437,7 @@ static bool fastDocumentTeardownEnabled()
 
     [self _clearDelegates];
 
-    // Fix for problems such as <rdar://problem/5774587> Crash closing tab in WebCore::Frame::page() from -[WebCoreFrameBridge pauseTimeouts]
+    // Fix for problems such as <rdar://problem/5774587> Crash closing tab in WebCore::LocalFrame::page() from -[WebCoreFrameBridge pauseTimeouts]
     WebThreadRun(^{
 #endif
 
@@ -2543,7 +2543,7 @@ static bool fastDocumentTeardownEnabled()
     }
 #endif
 #if PLATFORM(IOS_FAMILY)
-    // Fix for problems such as <rdar://problem/5774587> Crash closing tab in WebCore::Frame::page() from -[WebCoreFrameBridge pauseTimeouts]
+    // Fix for problems such as <rdar://problem/5774587> Crash closing tab in WebCore::LocalFrame::page() from -[WebCoreFrameBridge pauseTimeouts]
     });
 #endif
 }
@@ -4023,7 +4023,7 @@ IGNORE_WARNINGS_END
     ASSERT(WebThreadIsLocked());
 
     if (auto* coreFrame = [self _mainCoreFrame])
-        coreFrame->viewportOffsetChanged(WebCore::Frame::IncrementalScrollOffset);
+        coreFrame->viewportOffsetChanged(WebCore::LocalFrame::IncrementalScrollOffset);
 }
 
 - (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)domNode isUserScroll:(BOOL)userScroll
@@ -8796,7 +8796,7 @@ FORWARD(toggleUnderline)
 }
 #endif
 
-- (WebCore::Frame*)_mainCoreFrame
+- (WebCore::LocalFrame*)_mainCoreFrame
 {
     return (_private && _private->page) ? &_private->page->mainFrame() : 0;
 }

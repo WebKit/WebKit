@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class ApplicationCacheHost;
-class Frame;
+class LocalFrame;
 
 class DOMApplicationCache final : public RefCounted<DOMApplicationCache>, public EventTarget, public DOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(DOMApplicationCache);

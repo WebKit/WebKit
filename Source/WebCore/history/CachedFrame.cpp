@@ -57,7 +57,7 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
 
-CachedFrameBase::CachedFrameBase(Frame& frame)
+CachedFrameBase::CachedFrameBase(LocalFrame& frame)
     : m_document(frame.document())
     , m_documentLoader(frame.loader().documentLoader())
     , m_view(frame.view())
@@ -138,7 +138,7 @@ void CachedFrameBase::restore()
     frame->view()->didRestoreFromBackForwardCache();
 }
 
-CachedFrame::CachedFrame(Frame& frame)
+CachedFrame::CachedFrame(LocalFrame& frame)
     : CachedFrameBase(frame)
 {
 #ifndef NDEBUG

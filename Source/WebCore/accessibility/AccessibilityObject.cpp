@@ -362,7 +362,7 @@ bool AccessibilityObject::hasMisspelling() const
     if (!node())
         return false;
     
-    Frame* frame = node()->document().frame();
+    LocalFrame* frame = node()->document().frame();
     if (!frame)
         return false;
     
@@ -397,7 +397,7 @@ std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRan
     if (!node)
         return std::nullopt;
 
-    Frame* frame = node->document().frame();
+    LocalFrame* frame = node->document().frame();
     if (!frame)
         return std::nullopt;
 
@@ -686,7 +686,7 @@ static std::optional<SimpleRange> rangeClosestToRange(const SimpleRange& referen
 
 std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
 {
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     if (!frame)
         return std::nullopt;
     
@@ -970,7 +970,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     if (operation.textRanges.isEmpty())
         return result;
 
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     if (!frame)
         return result;
 
@@ -1128,7 +1128,7 @@ bool AccessibilityObject::press()
     Element* actionElem = actionElement();
     if (!actionElem)
         return false;
-    if (Frame* f = actionElem->document().frame())
+    if (LocalFrame* f = actionElem->document().frame())
         f->loader().resetMultipleFormSubmissionProtection();
     
     // Hit test at this location to determine if there is a sub-node element that should act
@@ -1180,19 +1180,19 @@ bool AccessibilityObject::dispatchTouchEvent()
     return false;
 }
 
-Frame* AccessibilityObject::frame() const
+LocalFrame* AccessibilityObject::frame() const
 {
     Node* node = this->node();
     return node ? node->document().frame() : nullptr;
 }
 
-Frame* AccessibilityObject::mainFrame() const
+LocalFrame* AccessibilityObject::mainFrame() const
 {
     Document* document = topDocument();
     if (!document)
         return nullptr;
     
-    Frame* frame = document->frame();
+    LocalFrame* frame = document->frame();
     if (!frame)
         return nullptr;
     
@@ -3742,13 +3742,13 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
 #if PLATFORM(COCOA)
 bool AccessibilityObject::preventKeyboardDOMEventDispatch() const
 {
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     return frame && frame->settings().preventKeyboardDOMEventDispatch();
 }
 
 void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 {
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     if (!frame)
         return;
     frame->settings().setPreventKeyboardDOMEventDispatch(on);

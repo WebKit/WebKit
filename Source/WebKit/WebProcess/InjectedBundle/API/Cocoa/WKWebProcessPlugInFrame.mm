@@ -153,7 +153,7 @@
     return coreFrame->document()->securityOrigin().toString();
 }
 
-static RetainPtr<NSArray> collectIcons(WebCore::Frame* frame, OptionSet<WebCore::LinkIconType> iconTypes)
+static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<WebCore::LinkIconType> iconTypes)
 {
     if (!frame)
         return @[];

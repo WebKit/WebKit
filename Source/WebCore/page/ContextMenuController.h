@@ -67,7 +67,7 @@ public:
     const HitTestResult& hitTestResult() const { return m_context.hitTestResult(); }
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
-    void showContextMenuAt(Frame&, const IntPoint& clickPoint);
+    void showContextMenuAt(LocalFrame&, const IntPoint& clickPoint);
 #endif
     
 #if ENABLE(SERVICE_CONTROLS)
@@ -93,7 +93,7 @@ private:
 #endif
 
 #if ENABLE(PDFJS)
-    void performPDFJSAction(Frame&, const String& action);
+    void performPDFJSAction(LocalFrame&, const String& action);
 #endif
 
     Page& m_page;

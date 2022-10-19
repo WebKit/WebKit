@@ -106,14 +106,14 @@ void WebChromeClientIOS::focus()
     [[webView() _UIDelegateForwarder] webViewFocus:webView()];
 }
 
-void WebChromeClientIOS::runJavaScriptAlert(Frame& frame, const WTF::String& message)
+void WebChromeClientIOS::runJavaScriptAlert(LocalFrame& frame, const WTF::String& message)
 {
     WebThreadLockPushModal();
     [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptAlertPanelWithMessage:message initiatedByFrame:kit(&frame)];
     WebThreadLockPopModal();
 }
 
-bool WebChromeClientIOS::runJavaScriptConfirm(Frame& frame, const WTF::String& message)
+bool WebChromeClientIOS::runJavaScriptConfirm(LocalFrame& frame, const WTF::String& message)
 {
     WebThreadLockPushModal();
     bool result = [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:kit(&frame)];
@@ -121,7 +121,7 @@ bool WebChromeClientIOS::runJavaScriptConfirm(Frame& frame, const WTF::String& m
     return result;
 }
 
-bool WebChromeClientIOS::runJavaScriptPrompt(Frame& frame, const WTF::String& prompt, const WTF::String& defaultText, WTF::String& result)
+bool WebChromeClientIOS::runJavaScriptPrompt(LocalFrame& frame, const WTF::String& prompt, const WTF::String& defaultText, WTF::String& result)
 {
     WebThreadLockPushModal();
     result = [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:kit(&frame)];
@@ -129,7 +129,7 @@ bool WebChromeClientIOS::runJavaScriptPrompt(Frame& frame, const WTF::String& pr
     return !result.isNull();
 }
 
-void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
+void WebChromeClientIOS::runOpenPanel(LocalFrame&, FileChooser& chooser)
 {
     auto& settings = chooser.settings();
     BOOL allowMultipleFiles = settings.allowsMultipleFiles;
@@ -172,12 +172,12 @@ void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
         [[webView() _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView()];
 }
 
-void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame& frame, bool flag)
+void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::LocalFrame& frame, bool flag)
 {
     [[webView() _UIKitDelegateForwarder] webView:webView() needsScrollNotifications:[NSNumber numberWithBool:flag] forFrame:kit(&frame)];
 }
 
-void WebChromeClientIOS::didFinishContentChangeObserving(WebCore::Frame& frame, WKContentChange observedContentChange)
+void WebChromeClientIOS::didFinishContentChangeObserving(WebCore::LocalFrame& frame, WKContentChange observedContentChange)
 {
     if (!frame.document())
         return;
@@ -235,7 +235,7 @@ void WebChromeClientIOS::dispatchDisabledAdaptationsDidChange(const OptionSet<We
 {
 }
 
-void WebChromeClientIOS::notifyRevealedSelectionByScrollingFrame(WebCore::Frame& frame)
+void WebChromeClientIOS::notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame& frame)
 {
     [[webView() _UIKitDelegateForwarder] revealedSelectionByScrollingWebFrame:kit(&frame)];
 }
@@ -305,7 +305,7 @@ RefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(WebCo
     return adoptRef(new SearchPopupMenuIOS(&client));
 }
 
-void WebChromeClientIOS::attachRootGraphicsLayer(Frame&, GraphicsLayer* graphicsLayer)
+void WebChromeClientIOS::attachRootGraphicsLayer(LocalFrame&, GraphicsLayer* graphicsLayer)
 {
     // FIXME: for non-root frames we rely on RenderView positioning the root layer,
     // which is a hack. <rdar://problem/5906146>
