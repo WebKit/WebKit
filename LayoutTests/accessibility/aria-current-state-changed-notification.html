@@ -30,8 +30,13 @@
         });
 
         var item2 = accessibilityController.accessibleElementById("item2");
+        // iOS doesn't really have the notion of a "supported" attribute, so don't test it on that platform.
+        if (accessibilityController.platformName !== "ios")
+            shouldBe("item2.isAttributeSupported('AXARIACurrent')", "true");
         shouldBe("item2.currentStateValue", "'page'");
         var item3 = accessibilityController.accessibleElementById("item3");
+        if (accessibilityController.platformName !== "ios")
+            shouldBe("item3.isAttributeSupported('AXARIACurrent')", "false");
         shouldBe("item3.currentStateValue", "'false'");
 
         debug("Setting aria-current to false on item2.");
@@ -40,6 +45,8 @@
             await waitFor(() => {
                 return notificationCount == 1;
             });
+            if (accessibilityController.platformName !== "ios")
+                shouldBe("item2.isAttributeSupported('AXARIACurrent')", "false");
             shouldBe("item2.currentStateValue", "'false'");
             shouldBe("item3.currentStateValue", "'false'");
 
@@ -49,6 +56,8 @@
                 return notificationCount == 2;
             });
             shouldBe("item2.currentStateValue", "'false'");
+            if (accessibilityController.platformName !== "ios")
+                shouldBe("item3.isAttributeSupported('AXARIACurrent')", "true");
             shouldBe("item3.currentStateValue", "'page'");
 
             document.getElementById("content").style.visibility = "hidden";
