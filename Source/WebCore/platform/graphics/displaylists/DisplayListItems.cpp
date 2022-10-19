@@ -102,7 +102,7 @@ SetState::SetState(const GraphicsContextState& state)
 
 void SetState::apply(GraphicsContext& context)
 {
-    context.updateState(m_state);
+    context.mergeLastChanges(m_state);
 }
 
 void SetLineCap::apply(GraphicsContext& context) const

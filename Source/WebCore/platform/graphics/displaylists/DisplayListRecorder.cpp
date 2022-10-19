@@ -112,7 +112,7 @@ const GraphicsContextState& Recorder::state() const
 
 void Recorder::didUpdateState(GraphicsContextState& state)
 {
-    currentState().state.mergeChanges(state, currentState().lastDrawingState);
+    currentState().state.mergeLastChanges(state, currentState().lastDrawingState);
     state.didApplyChanges();
 }
 

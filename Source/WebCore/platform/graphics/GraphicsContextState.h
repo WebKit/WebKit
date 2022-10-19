@@ -127,7 +127,8 @@ public:
 #endif
     
     bool containsOnlyInlineChanges() const;
-    void mergeChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeLastChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeAllChanges(const GraphicsContextState&);
 
     void didBeginTransparencyLayer();
     void didEndTransparencyLayer(float originalOpacity);

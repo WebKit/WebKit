@@ -571,11 +571,11 @@ bool BifurcatedGraphicsContext::supportsInternalLinks() const
 
 void BifurcatedGraphicsContext::didUpdateState(GraphicsContextState& state)
 {
-    // This calls updateState() instead of didUpdateState() so that changes
+    // This calls mergeLastChanges() instead of didUpdateState() so that changes
     // are also applied to each context's GraphicsContextState, so that code
     // internal to the child contexts that reads from the state gets the right values.
-    m_primaryContext.updateState(state);
-    m_secondaryContext.updateState(state);
+    m_primaryContext.mergeLastChanges(state);
+    m_secondaryContext.mergeLastChanges(state);
     state.didApplyChanges();
 
     VERIFY_STATE_SYNCHRONIZATION();

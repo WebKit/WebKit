@@ -159,7 +159,8 @@ public:
 #endif
 
     virtual const GraphicsContextState& state() const { return m_state; }
-    void updateState(GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeLastChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeAllChanges(const GraphicsContextState&);
 
     // Called *after* any change to GraphicsContextState; generally used to propagate changes
     // to the platform context's state.
