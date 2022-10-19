@@ -691,6 +691,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceOrientation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceOrientation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+FileSystemAccess.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+FileSystemAccess.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+RequestIdleCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+RequestIdleCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Selection.cpp
@@ -745,6 +747,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDirectoryPickerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDirectoryPickerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CSSOMView.cpp
@@ -921,6 +925,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileList.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFilePickerAcceptType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFilePickerAcceptType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFilePickerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFilePickerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileReader.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileReader.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileReaderSync.cpp
@@ -943,6 +951,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemFileHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemFileHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemPermissionMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemPermissionMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.cpp
@@ -1849,6 +1859,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvas.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvas.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpenFilePickerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpenFilePickerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorNode.cpp
@@ -2515,6 +2527,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGViewSpec.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGViewSpec.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSaveFilePickerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSaveFilePickerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenOrientation.cpp
@@ -2947,6 +2961,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRWebGLLayer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRWebGLLayer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWellKnownDirectory.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWellKnownDirectory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWheelEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWheelEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers+Gamepad.cpp

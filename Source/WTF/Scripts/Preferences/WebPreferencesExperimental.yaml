@@ -759,6 +759,18 @@ FileSystemAccessEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+FileSystemAccessFilePickerEnabled:
+  type: bool
+  humanReadableName: "File System Access API: File Picker"
+  humanReadableDescription: "Enable File Picker from File System Access API"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+
 FocusVisibleEnabled:
   type: bool
   humanReadableName: ":focus-visible pseudo-class"

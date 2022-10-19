@@ -596,7 +596,10 @@ namespace WebCore {
     macro(setBody) \
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
+    macro(showDirectoryPicker) \
     macro(showModalDialog) \
+    macro(showOpenFilePicker) \
+    macro(showSaveFilePicker) \
     macro(SpeechSynthesis) \
     macro(SpeechSynthesisErrorEvent) \
     macro(SpeechSynthesisEvent) \
