@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -42,8 +42,10 @@
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSShadowValue.h"
+#include "ColorFromPrimitiveValue.h"
 #include "Document.h"
 #include "ElementInlines.h"
+#include "FilterOperationsBuilder.h"
 #include "FontCache.h"
 #include "HTMLElement.h"
 #include "RenderTheme.h"
@@ -144,167 +146,9 @@ RefPtr<StyleImage> BuilderState::createStyleImage(CSSValue& value)
     return nullptr;
 }
 
-static FilterOperation::OperationType filterOperationForType(CSSValueID type)
+std::optional<FilterOperations> BuilderState::createFilterOperations(const CSSValue& inValue)
 {
-    switch (type) {
-    case CSSValueUrl:
-        return FilterOperation::REFERENCE;
-    case CSSValueGrayscale:
-        return FilterOperation::GRAYSCALE;
-    case CSSValueSepia:
-        return FilterOperation::SEPIA;
-    case CSSValueSaturate:
-        return FilterOperation::SATURATE;
-    case CSSValueHueRotate:
-        return FilterOperation::HUE_ROTATE;
-    case CSSValueInvert:
-        return FilterOperation::INVERT;
-    case CSSValueAppleInvertLightness:
-        return FilterOperation::APPLE_INVERT_LIGHTNESS;
-    case CSSValueOpacity:
-        return FilterOperation::OPACITY;
-    case CSSValueBrightness:
-        return FilterOperation::BRIGHTNESS;
-    case CSSValueContrast:
-        return FilterOperation::CONTRAST;
-    case CSSValueBlur:
-        return FilterOperation::BLUR;
-    case CSSValueDropShadow:
-        return FilterOperation::DROP_SHADOW;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return FilterOperation::NONE;
-}
-
-bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations)
-{
-    // FIXME: Move this code somewhere else.
-
-    ASSERT(outOperations.isEmpty());
-
-    if (is<CSSPrimitiveValue>(inValue)) {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
-        if (primitiveValue.valueID() == CSSValueNone)
-            return true;
-    }
-
-    if (!is<CSSValueList>(inValue))
-        return false;
-
-    FilterOperations operations;
-    for (auto& currentValue : downcast<CSSValueList>(inValue)) {
-        if (is<CSSPrimitiveValue>(currentValue)) {
-            auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
-            if (!primitiveValue.isURI())
-                continue;
-
-            auto filterURL = primitiveValue.stringValue();
-            auto fragment = document().completeURL(filterURL).fragmentIdentifier().toAtomString();
-            operations.operations().append(ReferenceFilterOperation::create(filterURL, WTFMove(fragment)));
-            continue;
-        }
-
-        if (!is<CSSFunctionValue>(currentValue))
-            continue;
-
-        auto& filterValue = downcast<CSSFunctionValue>(currentValue.get());
-        FilterOperation::OperationType operationType = filterOperationForType(filterValue.name());
-
-        // Check that all parameters are primitive values, with the
-        // exception of drop shadow which has a CSSShadowValue parameter.
-        const CSSPrimitiveValue* firstValue = nullptr;
-        if (operationType != FilterOperation::DROP_SHADOW) {
-            bool haveNonPrimitiveValue = false;
-            for (unsigned j = 0; j < filterValue.length(); ++j) {
-                if (!is<CSSPrimitiveValue>(*filterValue.itemWithoutBoundsCheck(j))) {
-                    haveNonPrimitiveValue = true;
-                    break;
-                }
-            }
-            if (haveNonPrimitiveValue)
-                continue;
-            if (filterValue.length())
-                firstValue = downcast<CSSPrimitiveValue>(filterValue.itemWithoutBoundsCheck(0));
-        }
-
-        switch (operationType) {
-        case FilterOperation::GRAYSCALE:
-        case FilterOperation::SEPIA:
-        case FilterOperation::SATURATE: {
-            double amount = 1;
-            if (filterValue.length() == 1) {
-                amount = firstValue->doubleValue();
-                if (firstValue->isPercentage())
-                    amount /= 100;
-            }
-
-            operations.operations().append(BasicColorMatrixFilterOperation::create(amount, operationType));
-            break;
-        }
-        case FilterOperation::HUE_ROTATE: {
-            double angle = 0;
-            if (filterValue.length() == 1)
-                angle = firstValue->computeDegrees();
-
-            operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
-            break;
-        }
-        case FilterOperation::INVERT:
-        case FilterOperation::BRIGHTNESS:
-        case FilterOperation::CONTRAST:
-        case FilterOperation::OPACITY: {
-            double amount = 1;
-            if (filterValue.length() == 1) {
-                amount = firstValue->doubleValue();
-                if (firstValue->isPercentage())
-                    amount /= 100;
-            }
-
-            operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
-            break;
-        }
-        case FilterOperation::APPLE_INVERT_LIGHTNESS: {
-            operations.operations().append(InvertLightnessFilterOperation::create());
-            break;
-        }
-        case FilterOperation::BLUR: {
-            Length stdDeviation = Length(0, LengthType::Fixed);
-            if (filterValue.length() >= 1)
-                stdDeviation = convertToFloatLength(firstValue, cssToLengthConversionData());
-            if (stdDeviation.isUndefined())
-                return false;
-
-            operations.operations().append(BlurFilterOperation::create(stdDeviation));
-            break;
-        }
-        case FilterOperation::DROP_SHADOW: {
-            if (filterValue.length() != 1)
-                return false;
-
-            const auto* cssValue = filterValue.itemWithoutBoundsCheck(0);
-            if (!is<CSSShadowValue>(cssValue))
-                continue;
-
-            const auto& item = downcast<CSSShadowValue>(*cssValue);
-            int x = item.x->computeLength<int>(cssToLengthConversionData());
-            int y = item.y->computeLength<int>(cssToLengthConversionData());
-            IntPoint location(x, y);
-            int blur = item.blur ? item.blur->computeLength<int>(cssToLengthConversionData()) : 0;
-            auto color = item.color ? colorFromPrimitiveValueWithResolvedCurrentColor(*item.color) : m_style.color();
-
-            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
-            break;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-    outOperations = operations;
-    return true;
+    return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
 }
 
 bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)
@@ -322,37 +166,14 @@ bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiv
 
 StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink) const
 {
-    if (value.isRGBColor())
-        return value.color();
-
-    auto identifier = value.valueID();
-    switch (identifier) {
-    case CSSValueInternalDocumentTextColor:
-        return { document().textColor() };
-    case CSSValueWebkitLink:
-        return { (element() && element()->isLink() && forVisitedLink == ForVisitedLink::Yes) ? document().visitedLinkColor() : document().linkColor() };
-    case CSSValueWebkitActivelink:
-        return { document().activeLinkColor() };
-    case CSSValueWebkitFocusRingColor:
-        return { RenderTheme::singleton().focusRingColor(document().styleColorOptions(&m_style)) };
-    case CSSValueCurrentcolor:
-        return StyleColor::currentColor();
-    default:
-        return { StyleColor::colorFromKeyword(identifier, document().styleColorOptions(&m_style)) };
-    }
+    if (!element() || !element()->isLink())
+        forVisitedLink = ForVisitedLink::No;
+    return { WebCore::Style::colorFromPrimitiveValue(document(), m_style, value, forVisitedLink) };
 }
 
 Color BuilderState::colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPrimitiveValue& value) const
 {
-    // FIXME: 'currentcolor' should be resolved at use time to make it inherit correctly. https://bugs.webkit.org/show_bug.cgi?id=210005
-    if (StyleColor::isCurrentColor(value)) {
-        // Color is an inherited property so depending on it effectively makes the property inherited.
-        m_style.setHasExplicitlyInheritedProperties();
-        m_style.setDisallowsFastPathInheritance();
-        return m_style.color();
-    }
-
-    return colorFromPrimitiveValue(value).absoluteColor();
+    return WebCore::Style::colorFromPrimitiveValueWithResolvedCurrentColor(document(), m_style, value);
 }
 
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)

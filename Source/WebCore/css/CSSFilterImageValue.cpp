@@ -142,8 +142,10 @@ void CSSFilterImageValue::filterImageChanged(const IntRect&)
 
 void CSSFilterImageValue::createFilterOperations(Style::BuilderState& builderState)
 {
-    m_filterOperations.clear();
-    builderState.createFilterOperations(m_filterValue, m_filterOperations);
+    if (auto filterOperations = builderState.createFilterOperations(m_filterValue))
+        m_filterOperations = WTFMove(*filterOperations);
+    else
+        m_filterOperations.clear();
 }
 
 void CSSFilterImageValue::FilterSubimageObserverProxy::imageChanged(CachedImage*, const IntRect* rect)

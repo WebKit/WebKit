@@ -2674,8 +2674,10 @@ storage/StorageQuotaManager.cpp
 style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
+style/ColorFromPrimitiveValue.cpp
 style/ContainerQueryEvaluator.cpp
 style/ElementRuleCollector.cpp
+style/FilterOperationsBuilder.cpp
 style/HasSelectorFilter.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
