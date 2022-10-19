@@ -54,6 +54,7 @@ public:
     void didExplicitOpen(const URL&);
     void didReceiveServerRedirectForProvisionalLoad(const URL&);
     void didFailProvisionalLoad();
+    void didSuspend();
 
     void didCommitLoad();
     void didFinishLoad();
