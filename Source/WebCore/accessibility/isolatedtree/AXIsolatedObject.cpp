@@ -150,7 +150,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
 #endif
     setProperty(AXPropertyName::LinkRelValue, object.linkRelValue().isolatedCopy());
     setProperty(AXPropertyName::CurrentState, static_cast<int>(object.currentState()));
-    setProperty(AXPropertyName::CurrentValue, object.currentValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsCurrent, object.supportsCurrent());
     setProperty(AXPropertyName::KeyShortcutsValue, object.keyShortcutsValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsSetSize, object.supportsSetSize());

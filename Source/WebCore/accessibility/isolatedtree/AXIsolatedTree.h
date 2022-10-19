@@ -91,7 +91,6 @@ enum class AXPropertyName : uint16_t {
     ComputedRoleString,
     Contents,
     CurrentState,
-    CurrentValue,
     DatetimeAttributeValue,
     DecrementButton,
     Description,

@@ -2178,27 +2178,6 @@ AccessibilityCurrentState AccessibilityObject::currentState() const
     return AccessibilityCurrentState::True;
 }
 
-String AccessibilityObject::currentValue() const
-{
-    switch (currentState()) {
-    case AccessibilityCurrentState::False:
-        return "false"_s;
-    case AccessibilityCurrentState::Page:
-        return "page"_s;
-    case AccessibilityCurrentState::Step:
-        return "step"_s;
-    case AccessibilityCurrentState::Location:
-        return "location"_s;
-    case AccessibilityCurrentState::Time:
-        return "time"_s;
-    case AccessibilityCurrentState::Date:
-        return "date"_s;
-    default:
-    case AccessibilityCurrentState::True:
-        return "true"_s;
-    }
-}
-
 bool AccessibilityObject::isModalDescendant(Node* modalNode) const
 {
     Node* node = this->node();

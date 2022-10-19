@@ -223,7 +223,6 @@ private:
     String linkRelValue() const override { return stringAttributeValue(AXPropertyName::LinkRelValue); }
     Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override { return static_cast<AccessibilityCurrentState>(intAttributeValue(AXPropertyName::CurrentState)); }
-    String currentValue() const override { return stringAttributeValue(AXPropertyName::CurrentValue); }
     bool supportsCurrent() const override { return boolAttributeValue(AXPropertyName::SupportsCurrent); }
     const String keyShortcutsValue() const override { return stringAttributeValue(AXPropertyName::KeyShortcutsValue); }
     bool supportsSetSize() const override { return boolAttributeValue(AXPropertyName::SupportsSetSize); }

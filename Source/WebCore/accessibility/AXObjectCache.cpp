@@ -3678,7 +3678,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;
         case AXCurrentStateChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::CurrentValue);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CurrentState);
             break;
         case AXColumnCountChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXColumnCount);

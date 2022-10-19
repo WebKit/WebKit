@@ -320,7 +320,6 @@ public:
     String linkRelValue() const override;
     Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override;
-    String currentValue() const override;
     bool supportsCurrent() const override;
     const String keyShortcutsValue() const override;
 
