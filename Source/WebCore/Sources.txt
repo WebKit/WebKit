@@ -1912,6 +1912,7 @@ page/scrolling/ScrollingStateStickyNode.cpp
 page/scrolling/ScrollingStateTree.cpp
 page/scrolling/ScrollingThread.cpp
 page/scrolling/ScrollingTree.cpp
+page/scrolling/ScrollingTreeFixedNode.cpp
 page/scrolling/ScrollingTreeFrameHostingNode.cpp
 page/scrolling/ScrollingTreeFrameScrollingNode.cpp
 page/scrolling/ScrollingTreeGestureState.cpp

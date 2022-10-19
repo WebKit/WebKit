@@ -30,8 +30,6 @@
 #include "ScrollingTreePositionedNode.h"
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS CALayer;
-
 namespace WebCore {
 
 class ScrollingTreePositionedNodeCocoa : public ScrollingTreePositionedNode {
@@ -40,14 +38,14 @@ public:
 
     virtual ~ScrollingTreePositionedNodeCocoa();
 
-    CALayer *layer() const { return m_layer.get(); }
-
 private:
     ScrollingTreePositionedNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
 
     void applyLayerPositions() override;
+
+    CALayer *layer() const override { return m_layer.get(); }
 
     RetainPtr<CALayer> m_layer;
 };

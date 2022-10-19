@@ -45,7 +45,7 @@
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
-#import <WebCore/ScrollingTreePositionedNodeCocoa.h>
+#import <WebCore/ScrollingTreePositionedNode.h>
 #import <tuple>
 
 namespace WebKit {
@@ -189,7 +189,7 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
             stationaryScrollContainerIDs.append(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
         }
 
-        if (auto* layerNode = RemoteLayerTreeNode::forCALayer(downcast<ScrollingTreePositionedNodeCocoa>(positionedNode.get()).layer())) {
+        if (auto* layerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer())) {
             layerNode->setStationaryScrollContainerIDs(WTFMove(stationaryScrollContainerIDs));
             m_layersWithScrollingRelations.add(layerNode->layerID());
         }

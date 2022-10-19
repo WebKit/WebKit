@@ -112,7 +112,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/nicosia/texmap/NicosiaImageBackingTextureMapperImpl.cpp
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        page/scrolling/nicosia/ScrollingTreeFixedNode.h
+        page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.h
         page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.h
 
         platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h

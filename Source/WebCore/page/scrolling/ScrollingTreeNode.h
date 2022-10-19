@@ -54,9 +54,11 @@ public:
     bool isStickyNode() const { return nodeType() == ScrollingNodeType::Sticky; }
     bool isPositionedNode() const { return nodeType() == ScrollingNodeType::Positioned; }
 #if PLATFORM(COCOA)
+    bool isFixedNodeCocoa() const { return isFixedNode(); }
     bool isPositionedNodeCocoa() const { return isPositionedNode(); }
 #endif
 #if USE(NICOSIA)
+    bool isFixedNodeNicosia() const { return isFixedNode(); }
     bool isPositionedNodeNicosia() const { return isPositionedNode(); }
 #endif
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }

@@ -27,6 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "PlatformLayer.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingTreeNode.h"
 
@@ -39,6 +40,8 @@ public:
     const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
 
     FloatSize scrollDeltaSinceLastCommit() const;
+
+    virtual PlatformLayer* layer() const = 0;
 
 protected:
     ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);

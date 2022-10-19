@@ -30,6 +30,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "PlatformLayer.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingTreeNode.h"
 #include <wtf/RefPtr.h>
@@ -41,6 +42,8 @@ public:
     virtual ~ScrollingTreeStickyNode();
 
     FloatSize scrollDeltaSinceLastCommit() const;
+
+    virtual PlatformLayer* layer() const = 0;
 
 protected:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);

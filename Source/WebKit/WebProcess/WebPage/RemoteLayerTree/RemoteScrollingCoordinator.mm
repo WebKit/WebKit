@@ -42,7 +42,7 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/ScrollingTreeFixedNode.h>
+#import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
 

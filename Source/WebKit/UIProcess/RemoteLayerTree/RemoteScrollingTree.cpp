@@ -30,7 +30,7 @@
 
 #include "RemoteLayerTreeHost.h"
 #include "RemoteScrollingCoordinatorProxy.h"
-#include <WebCore/ScrollingTreeFixedNode.h>
+#include <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #include <WebCore/ScrollingTreeFrameHostingNode.h>
 #include <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #include <WebCore/ScrollingTreePositionedNodeCocoa.h>
@@ -129,14 +129,14 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
     case ScrollingNodeType::OverflowProxy:
         return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
-        return ScrollingTreeFixedNode::create(*this, nodeID);
+        return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
         return ScrollingTreePositionedNodeCocoa::create(*this, nodeID);
     }
     ASSERT_NOT_REACHED();
-    return ScrollingTreeFixedNode::create(*this, nodeID);
+    return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
 }
 
 void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
