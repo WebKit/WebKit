@@ -2952,7 +2952,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
 
     auto& [renderImage, image] = *rendererAndImage;
     info.isImage = true;
-    info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+    info.imageURL = page.sanitizeForCopyOrShare(element.document().completeURL(renderImage.cachedImage()->url().string()));
     info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();
     info.elementContainsImageOverlay = is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element));
@@ -2996,7 +2996,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     if (linkElement && !info.isImageOverlayText) {
         info.isLink = true;
-        info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
+        info.url = page.sanitizeForCopyOrShare(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))));
 
         linkIndicatorPositionInformation(page, *linkElement, request, info);
 #if ENABLE(DATA_DETECTION)
@@ -3019,7 +3019,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
             if (request.includeImageData) {
                 if (auto rendererAndImage = imageRendererAndImage(element)) {
                     auto& [renderImage, image] = *rendererAndImage;
-                    info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+                    info.imageURL = page.sanitizeForCopyOrShare(element.document().completeURL(renderImage.cachedImage()->url().string()));
                     info.imageMIMEType = image.mimeType();
                     info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
                 }
