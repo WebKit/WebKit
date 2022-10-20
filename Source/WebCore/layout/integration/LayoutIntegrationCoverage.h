@@ -97,7 +97,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 57,
     // Unused                                    = 1LLU  << 58,
     // Unused                                    = 1LLU  << 59,
-    BoxDecorationBreakClone                      = 1LLU  << 60,
+    // Unused                                    = 1LLU  << 60,
     FlowIsUnsupportedListItem                    = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62
 };
