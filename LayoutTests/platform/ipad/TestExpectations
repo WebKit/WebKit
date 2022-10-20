@@ -128,3 +128,5 @@ imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Fail
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Failure ]
 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Failure ]
+
+webkit.org/b/245803 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
