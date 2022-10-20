@@ -3627,34 +3627,6 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         else if (!renderer.isOutOfFlowPositioned())
             renderer.clearNeedsLayout();
 
-        if (is<RenderReplaced>(renderer)) {
-            layoutFormattingContextLineLayout.updateReplacedDimensions(downcast<RenderReplaced>(renderer));
-            continue;
-        }
-        if (is<RenderTable>(renderer)) {
-            layoutFormattingContextLineLayout.updateInlineTableDimensions(downcast<RenderTable>(renderer));
-            continue;
-        }
-        if (is<RenderListMarker>(renderer)) {
-            layoutFormattingContextLineLayout.updateListMarkerDimensions(downcast<RenderListMarker>(renderer));
-            continue;
-        }
-        if (is<RenderListItem>(renderer)) {
-            layoutFormattingContextLineLayout.updateListItemDimensions(downcast<RenderListItem>(renderer));
-            continue;
-        }
-        if (is<RenderBlock>(renderer)) {
-            layoutFormattingContextLineLayout.updateInlineBlockDimensions(downcast<RenderBlock>(renderer));
-            continue;
-        }
-        if (is<RenderLineBreak>(renderer)) {
-            layoutFormattingContextLineLayout.updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
-            continue;
-        }
-        if (is<RenderInline>(renderer)) {
-            layoutFormattingContextLineLayout.updateInlineBoxDimensions(downcast<RenderInline>(renderer));
-            continue;
-        }
         if (is<RenderCounter>(renderer)) {
             // The counter content gets updated unconventionally by involving computePreferredLogicalWidths() (see RenderCounter::updateCounter())
             // Here we assume that every time the content of a counter changes, we already handled the update by re-constructing the associated InlineTextBox (see BoxTree::buildTreeForInlineContent).
@@ -3663,6 +3635,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             continue;
         }
     }
+
+    layoutFormattingContextLineLayout.updateInlineContentDimensions();
 
     auto contentBoxTop = borderAndPaddingBefore();
 
@@ -4496,18 +4470,7 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     if (!modernLineLayout())
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
 
-    auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
-    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-        auto& renderer = *walker.current();
-        if (renderer.isText() || is<RenderLineBreak>(renderer))
-            continue;
-        if (is<RenderInline>(renderer)) {
-            layoutFormattingContextLineLayout.updateInlineBoxDimensions(downcast<RenderInline>(renderer));
-            continue;
-        }
-        // FIXME: Add other, inline level box cases.
-        ASSERT_NOT_IMPLEMENTED_YET();
-    }
+    modernLineLayout()->updateInlineContentDimensions();
 
     std::tie(minLogicalWidth, maxLogicalWidth) = modernLineLayout()->computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())

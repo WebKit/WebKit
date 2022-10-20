@@ -36,6 +36,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InlineInvalidation.h"
+#include "InlineWalker.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
@@ -356,6 +357,42 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
     boxGeometry.setHorizontalMargin(horizontalLogicalMargin(renderInline, isLeftToRightInlineDirection, writingMode == WritingMode::TopToBottom, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
     boxGeometry.setBorder(logicalBorder(renderInline, isLeftToRightInlineDirection, writingMode, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
     boxGeometry.setPadding(logicalPadding(renderInline, isLeftToRightInlineDirection, writingMode, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
+}
+
+void LineLayout::updateInlineContentDimensions()
+{
+    for (auto walker = InlineWalker(flow()); !walker.atEnd(); walker.advance()) {
+        auto& renderer = *walker.current();
+
+        if (is<RenderReplaced>(renderer)) {
+            updateReplacedDimensions(downcast<RenderReplaced>(renderer));
+            continue;
+        }
+        if (is<RenderTable>(renderer)) {
+            updateInlineTableDimensions(downcast<RenderTable>(renderer));
+            continue;
+        }
+        if (is<RenderListMarker>(renderer)) {
+            updateListMarkerDimensions(downcast<RenderListMarker>(renderer));
+            continue;
+        }
+        if (is<RenderListItem>(renderer)) {
+            updateListItemDimensions(downcast<RenderListItem>(renderer));
+            continue;
+        }
+        if (is<RenderBlock>(renderer)) {
+            updateInlineBlockDimensions(downcast<RenderBlock>(renderer));
+            continue;
+        }
+        if (is<RenderLineBreak>(renderer)) {
+            updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
+            continue;
+        }
+        if (is<RenderInline>(renderer)) {
+            updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+            continue;
+        }
+    }
 }
 
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
