@@ -95,7 +95,22 @@ public:
 #if PLATFORM(COCOA)
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
-        m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
+        auto newRingBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
+
+        if (!m_isPlaying) {
+            m_ringBuffer = WTFMove(newRingBuffer);
+            return;
+        }
+
+        // Synchronously stop the render thread before replacing the ring buffer, then restart.
+        stop();
+        ASSERT(!m_isPlaying);
+        if (m_isPlaying)
+            return;
+
+        m_ringBuffer = WTFMove(newRingBuffer);
+        start();
+        ASSERT(m_isPlaying);
     }
 #endif
 
