@@ -205,7 +205,6 @@ contents = wasm.header + """
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "Width.h"
 #include <cstdint>
 #include <wtf/PrintStream.h>
 
