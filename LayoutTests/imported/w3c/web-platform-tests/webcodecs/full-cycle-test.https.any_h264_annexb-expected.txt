@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: Decoder failure Reached unreachable code
 
-FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "AbortError: aborting flush as decoder is reset"
+PASS Encoding and decoding cycle
 

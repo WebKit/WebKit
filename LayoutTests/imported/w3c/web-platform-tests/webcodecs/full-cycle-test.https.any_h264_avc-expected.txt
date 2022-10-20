@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: DataError: Key frame is required
-CONSOLE MESSAGE: DataError: Key frame is required
 
-Harness Error (FAIL), message = DataError: Key frame is required
-
-TIMEOUT Encoding and decoding cycle Test timed out
-
-Harness Error (FAIL), message = DataError: Key frame is required
-
-TIMEOUT Encoding and decoding cycle Test timed out
+PASS Encoding and decoding cycle
 

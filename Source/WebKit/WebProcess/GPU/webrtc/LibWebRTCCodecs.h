@@ -122,14 +122,17 @@ public:
         bool hasSentInitialEncodeRates { false };
         bool useAnnexB { true };
         bool isRealtime { true };
+        Deque<Function<void()>> flushCallbacks WTF_GUARDED_BY_LOCK(flushCallbacksLock);
+        Lock flushCallbacksLock;
     };
 
     Encoder* createEncoder(VideoCodecType, const std::map<std::string, std::string>&);
-    void createEncoderAndWaitUntilReady(VideoCodecType, const std::map<std::string, std::string>&, bool useAnnexB, bool isRealtime, Function<void(Encoder&)>&&);
+    void createEncoderAndWaitUntilReady(VideoCodecType, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, uint32_t timestamp, bool shouldEncodeAsKeyFrame);
     int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);
+    void flushEncoder(Encoder&, Function<void()>&&);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
     void registerEncodedVideoFrameCallback(Encoder&, EncoderCallback&&);
     void registerEncoderDescriptionCallback(Encoder&, DescriptionCallback&&);
@@ -155,6 +158,7 @@ private:
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
     void completedDecodingCV(VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
     void completedEncoding(VideoEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
+    void flushEncoderCompleted(VideoEncoderIdentifier);
     void setEncodingDescription(WebKit::VideoEncoderIdentifier, IPC::DataReference&&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
@@ -170,7 +174,7 @@ private:
     WorkQueue& workQueue() const { return m_queue; }
 
     Decoder* createDecoderInternal(VideoCodecType, Function<void(Decoder&)>&&);
-    Encoder* createEncoderInternal(VideoCodecType, const std::map<std::string, std::string>&, bool useAnnexB, bool isRealtime, Function<void(Encoder&)>&&);
+    Encoder* createEncoderInternal(VideoCodecType, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&&);
     template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation, MediaTime, uint32_t);
 
 private:

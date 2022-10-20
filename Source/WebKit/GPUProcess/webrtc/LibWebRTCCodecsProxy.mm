@@ -297,6 +297,19 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
 #endif
 }
 
+void LibWebRTCCodecsProxy::flushEncoder(VideoEncoderIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    auto* encoder = findEncoder(identifier);
+    if (!encoder) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+
+    webrtc::flushLocalEncoder(encoder->webrtcEncoder);
+    m_connection->send(Messages::LibWebRTCCodecs::FlushEncoderCompleted { identifier }, 0);
+}
+
 void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)
 {
     assertIsCurrent(workQueue());

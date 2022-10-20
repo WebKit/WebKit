@@ -463,12 +463,12 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(VideoCodecType type, co
     return createEncoderInternal(type, parameters, true, true, [](auto&) { });
 }
 
-void LibWebRTCCodecs::createEncoderAndWaitUntilReady(VideoCodecType type, const std::map<std::string, std::string>& parameters, bool useAnnexB, bool isRealtime, Function<void(Encoder&)>&& callback)
+void LibWebRTCCodecs::createEncoderAndWaitUntilReady(VideoCodecType type, const std::map<std::string, std::string>& parameters, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&& callback)
 {
-    createEncoderInternal(type, parameters, useAnnexB, isRealtime, WTFMove(callback));
+    createEncoderInternal(type, parameters, isRealtime, useAnnexB, WTFMove(callback));
 }
 
-LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const std::map<std::string, std::string>& formatParameters, bool useAnnexB, bool isRealtime, Function<void(Encoder&)>&& callback)
+LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&& callback)
 {
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
@@ -571,6 +571,33 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
 int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const WebCore::VideoFrame& frame, uint32_t timestamp, bool shouldEncodeAsKeyFrame)
 {
     return encodeFrameInternal(encoder, frame, shouldEncodeAsKeyFrame, frame.rotation(), frame.presentationTime(), timestamp);
+}
+
+void LibWebRTCCodecs::flushEncoder(Encoder& encoder, Function<void()>&& callback)
+{
+    Locker locker { m_encodersConnectionLock };
+    auto* connection = encoderConnection(encoder);
+    if (!connection) {
+        callback();
+        return;
+    }
+
+    connection->send(Messages::LibWebRTCCodecsProxy::FlushEncoder { encoder.identifier }, 0);
+    Locker flushLocker { encoder.flushCallbacksLock };
+    encoder.flushCallbacks.append(WTFMove(callback));
+}
+
+void LibWebRTCCodecs::flushEncoderCompleted(VideoEncoderIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+
+    auto* encoder = m_encoders.get(identifier);
+    if (!encoder)
+        return;
+
+    Locker flushLocker { encoder->flushCallbacksLock };
+    if (!encoder->flushCallbacks.isEmpty())
+        encoder->flushCallbacks.takeFirst()();
 }
 
 void LibWebRTCCodecs::registerEncodeFrameCallback(Encoder& encoder, void* encodedImageCallback)

@@ -50,6 +50,7 @@
 - (void)setLowLatency:(bool)lowLatencyEnabled;
 - (void)setUseAnnexB:(bool)useAnnexB;
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback;
+- (void)flush;
 @end
 
 @implementation WK_RTCLocalVideoH264H265Encoder {
@@ -122,6 +123,14 @@
         return;
     }
     [m_h265Encoder setDescriptionCallback:callback];
+}
+
+- (void)flush {
+    if (m_h264Encoder) {
+        [m_h264Encoder flush];
+        return;
+    }
+    [m_h265Encoder flush];
 }
 @end
 
@@ -404,6 +413,12 @@ void setLocalEncoderLowLatency(LocalEncoder localEncoder, bool isLowLatencyEnabl
 {
     auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder setLowLatency:isLowLatencyEnabled];
+}
+
+void flushLocalEncoder(LocalEncoder localEncoder)
+{
+    auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
+    [encoder flush];
 }
 
 }
