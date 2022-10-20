@@ -65,6 +65,7 @@ class CachedScript;
 class CSSFontSelector;
 class CSSValuePool;
 class DatabaseContext;
+class DeferredPromise;
 class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
@@ -321,6 +322,9 @@ public:
     WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
     WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);
 
+    void addDeferredPromise(Ref<DeferredPromise>&&);
+    RefPtr<DeferredPromise> takeDeferredPromise(DeferredPromise*);
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -406,6 +410,7 @@ private:
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
 
     HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
+    HashSet<Ref<DeferredPromise>> m_deferredPromises;
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);

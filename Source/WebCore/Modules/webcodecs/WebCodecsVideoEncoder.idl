@@ -43,7 +43,7 @@
     undefined reset();
     undefined close();
 
-    static Promise<WebCodecsVideoEncoderSupport> isConfigSupported(WebCodecsVideoEncoderConfig config);
+    [CallWith=CurrentScriptExecutionContext] static Promise<WebCodecsVideoEncoderSupport> isConfigSupported(WebCodecsVideoEncoderConfig config);
 };
 
 [
