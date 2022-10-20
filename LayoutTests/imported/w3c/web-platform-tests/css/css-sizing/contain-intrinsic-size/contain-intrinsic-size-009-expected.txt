@@ -4,20 +4,20 @@ FAIL .test 1 assert_equals:
 <select multiple="" class="test cis-both" data-expected-client-width="55" data-expected-client-height="66"></select>
 clientWidth expected 55 but got 4
 FAIL .test 2 assert_equals:
-<select multiple="" class="test cis-width" data-expected-client-width="55" data-expected-client-height="52"></select>
+<select multiple="" class="test cis-width" data-expected-client-width="55" data-expected-client-height="55"></select>
 clientWidth expected 55 but got 4
 FAIL .test 3 assert_equals:
-<select multiple="" size="1" class="test cis-width" data-expected-client-width="55" data-expected-client-height="13"></select>
-clientWidth expected 55 but got 4
-FAIL .test 4 assert_equals:
-<select multiple="" size="10" class="test cis-width" data-expected-client-width="55" data-expected-client-height="130"></select>
-clientWidth expected 55 but got 4
-FAIL .test 5 assert_equals:
 <select multiple="" class="test cis-height" data-expected-client-height="66" data-expected-client-width="4"></select>
 clientHeight expected 66 but got 55
-FAIL .test 6 assert_equals:
+FAIL .test 4 assert_equals:
+<select multiple="" size="1" class="test cis-width" data-expected-client-width="55" data-expected-client-height="13"></select>
+clientWidth expected 55 but got 4
+FAIL .test 5 assert_equals:
 <select multiple="" size="1" class="test cis-height" data-expected-client-height="66" data-expected-client-width="4"></select>
 clientHeight expected 66 but got 13
+FAIL .test 6 assert_equals:
+<select multiple="" size="10" class="test cis-width" data-expected-client-width="55" data-expected-client-height="139"></select>
+clientWidth expected 55 but got 4
 FAIL .test 7 assert_equals:
 <select multiple="" size="10" class="test cis-height" data-expected-client-height="66" data-expected-client-width="4"></select>
 clientHeight expected 66 but got 139
