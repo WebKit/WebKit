@@ -29,6 +29,7 @@
 
 #import <CoreSVG/CGSVGDocument.h>
 #import <UIKit/NSTextAlternatives.h>
+#import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItem_Private.h>
@@ -735,6 +736,10 @@ typedef enum {
 - (void)setOperation:(UINavigationControllerOperation)operation;
 @optional
 - (UIWindow *)window;
+@end
+
+@interface UIActivityViewController ()
+@property (nonatomic) BOOL allowsCustomPresentationStyle;
 @end
 
 typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
