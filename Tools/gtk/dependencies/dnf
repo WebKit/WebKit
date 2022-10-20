@@ -26,8 +26,7 @@ PACKAGES+=(
     libv4l-devel
     libvorbis-devel
     libvpx-devel
-    libwayland-client-devel
-    libwayland-server-devel
+    wayland-devel
     libXt-devel
     libXtst-devel
     mesa-libGL-devel
@@ -48,8 +47,8 @@ PACKAGES+=(
     dbus-x11
     hunspell-en
     hunspell-en-GB
-    pygobject3-base
-    python2-yaml
+    python3-gobject
+    python3-yaml
     weston-devel
     xorg-x11-server-Xvfb
 
@@ -62,10 +61,9 @@ PACKAGES+=(
     gobject-introspection
     icon-naming-utils
     itstool
-    libcroco-devel
     libdrm-devel
     libepoxy-devel
-    libevdev-dev
+    libevdev-devel
     libgpg-error-devel
     libinput-devel
     libp11-devel

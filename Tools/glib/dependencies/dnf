@@ -43,7 +43,7 @@ PACKAGES=(
     perl-CGI
     psmisc
     pulseaudio-utils
-    python2-psutil
+    python3-psutil
     rubygem-highline
     rubygem-json
 
@@ -53,7 +53,7 @@ PACKAGES=(
 
     # These are dependencies necessary for building the jhbuild.
     expat-devel
-    fdk-aac-devel
+    fdk-aac-free-devel
     git
     gsettings-desktop-schemas-devel
     gyp
