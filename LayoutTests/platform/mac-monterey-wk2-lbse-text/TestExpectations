@@ -37,6 +37,7 @@ svg/W3C-SVG-1.1/filters-specular-01-f.svg                                       
 svg/W3C-SVG-1.1/filters-tile-01-b.svg                                                  [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-turb-02-f.svg                                                  [ ImageOnlyFailure ]
 svg/batik/filters/filterRegions.svg                                                    [ ImageOnlyFailure ]
+svg/batik/text/smallFonts.svg                                                          [ ImageOnlyFailure ]
 svg/batik/text/textEffect3.svg                                                         [ ImageOnlyFailure ]
 svg/batik/text/textFeatures.svg                                                        [ ImageOnlyFailure ]
 svg/custom/feComponentTransfer-Discrete.svg                                            [ Failure ]
@@ -324,7 +325,6 @@ svg/W3C-SVG-1.1/pservers-pattern-01-b.svg                       [ ImageOnlyFailu
 svg/batik/paints/patternPreserveAspectRatioA.svg                [ ImageOnlyFailure ]
 svg/batik/paints/patternRegionA.svg                             [ ImageOnlyFailure ]
 svg/batik/paints/patternRegions.svg                             [ ImageOnlyFailure ]
-svg/batik/text/smallFonts.svg                                   [ ImageOnlyFailure ]
 svg/custom/href-svg-namespace-static.svg                        [ ImageOnlyFailure ]
 svg/custom/js-late-pattern-and-object-creation.svg              [ Failure ]
 svg/custom/js-late-pattern-creation.svg                         [ Failure ]
@@ -509,28 +509,8 @@ svg/repaint/text-mask-update.svg                       [ ImageOnlyFailure ]
 svg/transforms/text-with-mask-with-svg-transform.svg   [ Failure ]
 svg/zoom/page/zoom-mask-with-percentages.svg           [ Failure ]
 
-# Text rendering ignores SVG 'transform' attribute (e.g. <text transform="rotate(... " is not transformed during rendering)
-svg/as-background-image/svg-as-background-5.html       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1-SE/types-dom-01-b.svg                  [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-24-t.svg                  [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/fonts-kern-01-t.svg                    [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/types-basicDOM-01-b.svg                [ ImageOnlyFailure ]
-svg/animations/animate-text-nested-transforms.html     [ Skip ]
-svg/carto.net/window.svg                               [ ImageOnlyFailure ]
-svg/custom/SVGPoint-matrixTransform.svg                [ ImageOnlyFailure ]
-svg/custom/pointer-events-text-css-transform.svg       [ Failure ]
-svg/custom/text-repaint-including-stroke.svg           [ Failure ]
-svg/custom/use-event-handler-on-referenced-element.svg [ Failure ]
-svg/custom/use-event-handler-on-use-element.svg        [ Failure ]
-svg/hixie/perf/003.xml                                 [ ImageOnlyFailure ]
-svg/text/append-text-node-to-tspan.html                [ ImageOnlyFailure ]
-svg/text/modify-text-node-in-tspan.html                [ ImageOnlyFailure ]
-svg/text/remove-text-node-from-tspan.html              [ ImageOnlyFailure ]
-svg/text/remove-tspan-from-text.html                   [ ImageOnlyFailure ]
-svg/text/scaled-font.svg                               [ Failure ]
-svg/text/scaling-font-with-geometric-precision.html    [ Failure ]
-
 # Hit testing / text selection issues
+svg/custom/pointer-events-text-css-transform.svg          [ Failure ]
 svg/custom/focus-event-handling.xhtml                     [ Failure ]
 svg/custom/mouse-move-on-svg-root-standalone.svg          [ Failure ]
 svg/custom/mouse-move-on-svg-root.xhtml                   [ Failure ]
@@ -561,14 +541,7 @@ svg/text/select-x-list-with-tspans-4.svg                  [ Failure ]
 svg/text/selection-doubleclick.svg                        [ ImageOnlyFailure ]
 
 # Text rendering placement issues (text renders at wrong location)
-svg/W3C-SVG-1.1/animate-elem-46-t.svg      [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/extend-namespace-01-f.svg  [ ImageOnlyFailure ]
-svg/batik/text/textAnchor2.svg             [ ImageOnlyFailure ]
-svg/batik/text/textAnchor3.svg             [ ImageOnlyFailure ]
-svg/batik/text/textLayout2.svg             [ ImageOnlyFailure ]
 svg/carto.net/tabgroup.svg                 [ ImageOnlyFailure ]
-svg/text/text-hkern-on-vertical-text.svg   [ ImageOnlyFailure ]
-svg/text/text-vkern-on-horizontal-text.svg [ ImageOnlyFailure ]
 
 # Transforming inner svg elements has issues
 svg/transforms/svgsvgelement-transform.svg [ ImageOnlyFailure ]
@@ -581,15 +554,13 @@ svg/custom/focus-ring.svg         [ Failure ]
 svg/custom/rgba-color-outline.svg [ ImageOnlyFailure ]
 svg/text/text-outline-rgba.html   [ ImageOnlyFailure ]
 
-# Text rendering visually different ('screen font size scaling factor' probably differs between LBSE/legacy)
+# Text rendering visually different
 svg/foreignObject/text-tref-02-b.svg       [ ImageOnlyFailure ]
 svg/hittest/text-multiple-dx-values.svg    [ ImageOnlyFailure ]
 svg/hittest/text-with-multiple-tspans.svg  [ ImageOnlyFailure ]
 svg/hittest/text-with-text-path.svg        [ ImageOnlyFailure ]
-svg/text/font-size-below-point-five-2.svg  [ ImageOnlyFailure ]
-svg/text/monospace-text-size-in-img.html   [ ImageOnlyFailure ]
-svg/text/text-repaint-rects.xhtml          [ ImageOnlyFailure ]
 svg/text/text-rescale.html                 [ ImageOnlyFailure ]
+svg/text/scaled-font.svg                   [ ImageOnlyFailure ]
 
 # Text rendering has issues with CSS 'visibility'
 svg/batik/text/textProperties2.svg [ ImageOnlyFailure ]
@@ -606,6 +577,9 @@ svg/custom/object-no-size-attributes.xhtml                                    [ 
 svg/custom/object-sizing-no-width-height.xhtml                                [ Failure ]
 svg/custom/object-sizing.xhtml                                                [ Failure ]
 svg/wicd/sizing-flakiness.html                                                [ ImageOnlyFailure ]
+
+# Opacity clipping placement issue
+svg/as-background-image/svg-as-background-5.html [ ImageOnlyFailure ]
 
 # CSS 'mix-blend-mode' broken
 svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]

@@ -209,6 +209,7 @@ void SVGGraphicsElement::didAttachRenderers()
 
 Path SVGGraphicsElement::toClipPath()
 {
+    // FIXME: [LBSE] Stop mutating the path here.
     Path path = pathFromGraphicsElement(this);
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());

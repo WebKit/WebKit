@@ -144,11 +144,11 @@ layer at (0.89,7.23) size 6x1
       RenderSVGInlineText {#text} at (0,0) size 3x1
         chunk 1 text run 1 at (0.90,7.90) startOffset 0 endOffset 21 width 2.54: "and placed on a path."
 layer at (0,-0.73) size 3x1 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 2.58x0.94
+  RenderSVGTransformableContainer {g} at (0,0) size 2.61x0.94
 layer at (0,-0.73) size 3x1 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,0) size 3x1 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 3x1
-      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 2.58: "Shadow"
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 2.60: "Shadow"
 layer at (0,-0.73) size 3x1 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,0) size 3x1 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 3x1

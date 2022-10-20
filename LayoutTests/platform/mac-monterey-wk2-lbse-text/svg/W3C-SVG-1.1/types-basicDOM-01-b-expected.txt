@@ -10,11 +10,11 @@ layer at (-50,-50) size 452x353 backgroundClip at (0,0) size 480x360 clip at (0,
   RenderSVGTransformableContainer {g} at (0,0) size 451.11x352.77
 layer at (-50,-50) size 452x205 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 451.11x204.61
-layer at (30,131.59) size 342x23
+layer at (30,131.27) size 342x24
   RenderSVGText {text} at (80,181) size 343x24 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 343x23
+    RenderSVGInlineText {#text} at (0,0) size 343x24
       chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 342.41: "Rotated Text for testing SVGLocatable"
-layer at (100,111.59) size 301x23
+layer at (100,111.73) size 301x23
   RenderSVGText {text} at (150,161) size 302x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 302x23
       chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 301.10: "Some other text with id 'otherText'"

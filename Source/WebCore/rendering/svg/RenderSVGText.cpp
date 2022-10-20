@@ -488,6 +488,12 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     return false;
 }
+
+void RenderSVGText::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    applySVGTransform(transform, textElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+}
 #endif
 
 VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInContents, const RenderFragmentContainer* fragment)
