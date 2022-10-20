@@ -914,7 +914,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
     }
 
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationContext::WindowPostMessage);
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 

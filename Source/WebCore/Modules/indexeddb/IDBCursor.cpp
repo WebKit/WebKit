@@ -126,7 +126,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue va
     // Transaction should be inactive during structured clone.
     Ref transaction = effectiveObjectStore().transaction();
     transaction->deactivate();
-    auto serializedValue = SerializedScriptValue::create(state, value);
+    auto serializedValue = SerializedScriptValue::create(state, value, SerializationForStorage::Yes);
     transaction->activate();
 
     if (UNLIKELY(scope.exception()))

@@ -639,7 +639,8 @@ public:
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
 #endif
-        Vector<URLKeepingBlobAlive>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
+        Vector<URLKeepingBlobAlive>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers,
+        SerializationForStorage forStorage)
     {
         CloneSerializer serializer(lexicalGlobalObject, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -655,7 +656,7 @@ public:
             wasmModules,
             wasmMemoryHandles,
 #endif
-            blobHandles, out, context, sharedBuffers);
+            blobHandles, out, context, sharedBuffers, forStorage);
         return serializer.serialize(value);
     }
 
@@ -692,7 +693,7 @@ private:
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
 #endif
-        Vector<URLKeepingBlobAlive>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
+        Vector<URLKeepingBlobAlive>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers, SerializationForStorage forStorage)
         : CloneBase(lexicalGlobalObject)
         , m_buffer(out)
         , m_blobHandles(blobHandles)
@@ -706,6 +707,7 @@ private:
 #if ENABLE(WEB_CODECS)
         , m_serializedVideoChunks(serializedVideoChunks)
 #endif
+        , m_forStorage(forStorage)
     {
         write(CurrentVersion);
         fillTransferMap(messagePorts, m_transferredMessagePorts);
@@ -1404,7 +1406,7 @@ private:
                     dummyModules,
                     dummyMemoryHandles,
 #endif
-                    dummyBlobHandles, serializedKey, SerializationContext::Default, dummySharedBuffers);
+                    dummyBlobHandles, serializedKey, SerializationContext::Default, dummySharedBuffers, m_forStorage);
                 rawKeySerializer.write(key);
                 Vector<uint8_t> wrappedKey;
                 if (!wrapCryptoKey(m_lexicalGlobalObject, serializedKey, wrappedKey))
@@ -1493,6 +1495,8 @@ private:
             }
 #if ENABLE(WEB_CODECS)
             if (obj->inherits<JSWebCodecsEncodedVideoChunk>()) {
+                if (m_forStorage == SerializationForStorage::Yes)
+                    return false;
                 dumpWebCodecsEncodedVideoChunk(obj);
                 return true;
             }
@@ -1944,6 +1948,7 @@ private:
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& m_serializedVideoChunks;
 #endif
+    SerializationForStorage m_forStorage;
 };
 
 SerializationReturnCode CloneSerializer::serialize(JSValue in)
@@ -4418,21 +4423,21 @@ static bool canDetachRTCDataChannels(const Vector<Ref<RTCDataChannel>>& channels
 }
 #endif
 
-RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::JSGlobalObject& globalObject, JSC::JSValue value, SerializationErrorMode throwExceptions, SerializationContext serializationContext)
+RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::JSGlobalObject& globalObject, JSC::JSValue value, SerializationForStorage forStorage, SerializationErrorMode throwExceptions, SerializationContext serializationContext)
 {
     Vector<RefPtr<MessagePort>> dummyPorts;
-    auto result = create(globalObject, value, { }, dummyPorts, throwExceptions, serializationContext);
+    auto result = create(globalObject, value, { }, dummyPorts, forStorage, throwExceptions, serializationContext);
     if (result.hasException())
         return nullptr;
     return result.releaseReturnValue();
 }
 
-ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalObject& globalObject, JSValue value, Vector<JSC::Strong<JSC::JSObject>>&& transferList, Vector<RefPtr<MessagePort>>& messagePorts, SerializationContext serializationContext)
+ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalObject& globalObject, JSValue value, Vector<JSC::Strong<JSC::JSObject>>&& transferList, Vector<RefPtr<MessagePort>>& messagePorts, SerializationForStorage forStorage, SerializationContext serializationContext)
 {
-    return create(globalObject, value, WTFMove(transferList), messagePorts, SerializationErrorMode::NonThrowing, serializationContext);
+    return create(globalObject, value, WTFMove(transferList), messagePorts, forStorage, SerializationErrorMode::NonThrowing, serializationContext);
 }
 
-ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalObject& lexicalGlobalObject, JSValue value, Vector<JSC::Strong<JSC::JSObject>>&& transferList, Vector<RefPtr<MessagePort>>& messagePorts, SerializationErrorMode throwExceptions, SerializationContext context)
+ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalObject& lexicalGlobalObject, JSValue value, Vector<JSC::Strong<JSC::JSObject>>&& transferList, Vector<RefPtr<MessagePort>>& messagePorts, SerializationForStorage forStorage, SerializationErrorMode throwExceptions, SerializationContext context)
 {
     VM& vm = lexicalGlobalObject.vm();
     Vector<RefPtr<JSC::ArrayBuffer>> arrayBuffers;
@@ -4526,7 +4531,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         wasmModules,
         wasmMemoryHandles,
 #endif
-        blobHandles, buffer, context, *sharedBuffers);
+        blobHandles, buffer, context, *sharedBuffers, forStorage);
 
     if (throwExceptions == SerializationErrorMode::Throwing)
         maybeThrowExceptionIfSerializationFailed(lexicalGlobalObject, code);

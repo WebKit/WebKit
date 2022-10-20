@@ -106,7 +106,7 @@ ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, 
         return Exception { InvalidStateError };
 
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(globalObject, messageValue, WTFMove(options.transfer), ports, SerializationContext::WorkerPostMessage);
+    auto messageData = SerializedScriptValue::create(globalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 

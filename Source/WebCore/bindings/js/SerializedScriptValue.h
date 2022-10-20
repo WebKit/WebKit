@@ -68,6 +68,7 @@ class WebCodecsEncodedVideoChunkStorage;
 
 enum class SerializationErrorMode { NonThrowing, Throwing };
 enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage };
+enum class SerializationForStorage : bool { No, Yes };
 
 using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 #if ENABLE(WEBASSEMBLY)
@@ -79,8 +80,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 public:
-    WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationContext = SerializationContext::Default);
-    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationErrorMode = SerializationErrorMode::Throwing, SerializationContext = SerializationContext::Default);
+    WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationForStorage = SerializationForStorage::No, SerializationContext = SerializationContext::Default);
+    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationForStorage = SerializationForStorage::No, SerializationErrorMode = SerializationErrorMode::Throwing, SerializationContext = SerializationContext::Default);
+    static RefPtr<SerializedScriptValue> convert(JSC::JSGlobalObject& globalObject, JSC::JSValue value) { return create(globalObject, value, SerializationForStorage::Yes); }
 
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(StringView);
 
@@ -118,7 +120,7 @@ public:
     WEBCORE_EXPORT ~SerializedScriptValue();
 
 private:
-    static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationErrorMode, SerializationContext);
+    static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationForStorage, SerializationErrorMode, SerializationContext);
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>&& = nullptr
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }

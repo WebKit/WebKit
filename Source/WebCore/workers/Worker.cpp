@@ -136,7 +136,7 @@ Worker::~Worker()
 ExceptionOr<void> Worker::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     Vector<RefPtr<MessagePort>> ports;
-    auto message = SerializedScriptValue::create(state, messageValue, WTFMove(options.transfer), ports, SerializationContext::WorkerPostMessage);
+    auto message = SerializedScriptValue::create(state, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (message.hasException())
         return message.releaseException();
 

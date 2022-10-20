@@ -49,7 +49,7 @@ JSC::JSValue cloneAcrossWorlds(JSC::JSGlobalObject& lexicalGlobalObject, const J
     if (isWorldCompatible(lexicalGlobalObject, value))
         return value;
     // FIXME: Is it best to handle errors by returning null rather than throwing an exception?
-    auto serializedValue = SerializedScriptValue::create(lexicalGlobalObject, value, SerializationErrorMode::NonThrowing);
+    auto serializedValue = SerializedScriptValue::create(lexicalGlobalObject, value, SerializationForStorage::No, SerializationErrorMode::NonThrowing);
     if (!serializedValue)
         return JSC::jsNull();
     // FIXME: Why is owner->globalObject() better than lexicalGlobalObject.lexicalGlobalObject() here?
