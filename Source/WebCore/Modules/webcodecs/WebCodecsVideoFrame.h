@@ -129,8 +129,8 @@ public:
     bool shoudlDiscardAlpha() const { return m_format && (*m_format == VideoPixelFormat::RGBX || *m_format == VideoPixelFormat::BGRX); }
 
 private:
-    static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
-    static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(Ref<NativeImage>&&, Init&&);
 
     RefPtr<VideoFrame> m_internalFrame;

@@ -33,15 +33,15 @@
 
 namespace WebCore {
 
-VideoPixelFormat convertVideoFramePixelFormat(uint32_t format)
+VideoPixelFormat convertVideoFramePixelFormat(uint32_t format, bool shouldDiscardAlpha)
 {
 #if PLATFORM(COCOA)
     if (format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
         return VideoPixelFormat::NV12;
     if (format == kCVPixelFormatType_32BGRA)
-        return VideoPixelFormat::BGRA;
+        return shouldDiscardAlpha ? VideoPixelFormat::BGRX : VideoPixelFormat::BGRA;
     if (format == kCVPixelFormatType_32ARGB)
-        return VideoPixelFormat::RGBA;
+        return shouldDiscardAlpha ? VideoPixelFormat::RGBX : VideoPixelFormat::RGBA;
     ASSERT_NOT_REACHED();
 #else
     UNUSED_PARAM(format);

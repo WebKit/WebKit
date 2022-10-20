@@ -307,13 +307,18 @@ static VideoPixelFormat computeVideoPixelFormat(VideoPixelFormat baseFormat, boo
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-from-other-frame
-Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init)
 {
-    // FIXME: Call https://w3c.github.io/webcodecs/#validate-videoframeinit
+    auto codedWidth = videoFrame->m_codedWidth;
+    auto codedHeight = videoFrame->m_codedHeight;
+    auto format = computeVideoPixelFormat(videoFrame->m_format.value_or(VideoPixelFormat::I420), init.alpha == WebCodecsAlphaOption::Discard);
+    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
+        return Exception { TypeError,  "VideoFrameInit is not valid"_s };
+
     auto result = adoptRef(*new WebCodecsVideoFrame);
     result->m_internalFrame = videoFrame->m_internalFrame;
     if (videoFrame->m_format)
-        result->m_format = computeVideoPixelFormat(*videoFrame->m_format, init.alpha == WebCodecsAlphaOption::Discard);
+        result->m_format = format;
 
     result->m_codedWidth = videoFrame->m_codedWidth;
     result->m_codedHeight = videoFrame->m_codedHeight;
@@ -327,17 +332,19 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<
     return result;
 }
 
-Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<VideoFrame>&& internalVideoFrame, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<VideoFrame>&& internalVideoFrame, Init&& init)
 {
-    // FIXME: Call https://w3c.github.io/webcodecs/#validate-videoframeinit
-    // FIXME: Implement alpha discarding.
+    auto codedWidth = internalVideoFrame->presentationSize().width();
+    auto codedHeight = internalVideoFrame->presentationSize().height();
+    auto format = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat(), init.alpha == WebCodecsAlphaOption::Discard);
+    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
+        return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame);
     result->m_internalFrame = WTFMove(internalVideoFrame);
-    result->m_format = convertVideoFramePixelFormat(result->m_internalFrame->pixelFormat());
-
-    result->m_codedWidth = result->m_internalFrame->presentationSize().width();
-    result->m_codedHeight = result->m_internalFrame->presentationSize().height();
+    result->m_format = format;
+    result->m_codedWidth = codedWidth;
+    result->m_codedHeight = codedHeight;
 
     initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_codedWidth), static_cast<double>(result->m_codedHeight) }, result->m_codedWidth, result->m_codedHeight);
 
@@ -355,14 +362,17 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     if (!internalVideoFrame)
         return Exception { TypeError,  "image has no resource"_s };
 
-    // FIXME: Call https://w3c.github.io/webcodecs/#validate-videoframeinit
-    // FIXME: Implement alpha discarding.
+    auto codedWidth = image->size().width();
+    auto codedHeight = image->size().height();
+    auto format = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat(), init.alpha == WebCodecsAlphaOption::Discard);
+    if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
+        return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame);
     result->m_internalFrame = WTFMove(internalVideoFrame);
-    result->m_format = convertVideoFramePixelFormat(result->m_internalFrame->pixelFormat());
-    result->m_codedWidth = image->size().width();
-    result->m_codedHeight = image->size().height();
+    result->m_format = format;
+    result->m_codedWidth = codedWidth;
+    result->m_codedHeight = codedHeight;
 
     initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_codedWidth), static_cast<double>(result->m_codedHeight) }, result->m_codedWidth, result->m_codedHeight);
 

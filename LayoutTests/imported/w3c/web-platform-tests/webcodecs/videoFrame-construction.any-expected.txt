@@ -10,9 +10,7 @@ PASS Test constructing w/ unusable image argument throws: HAVE_NOTHING <video>.
 PASS Test constructing w/ unusable image argument throws: emtpy Canvas.
 PASS Test constructing w/ unusable image argument throws: closed ImageBitmap.
 PASS Test constructing w/ unusable image argument throws: closed VideoFrame.
-FAIL Test invalid CanvasImageSource constructed VideoFrames assert_throws_js: negative visibleRect x function "() => new VideoFrame(
-          image,
-          {timestamp: 10, visibleRect: {x: -1, y: 0, width: 10, height: 10}})" did not throw
+PASS Test invalid CanvasImageSource constructed VideoFrames
 PASS Test visibleRect metadata override where source display size = visible size
 PASS Test visibleRect metadata override where source display width = 2 * visible width (anamorphic)
 PASS Test visibleRect metadata override where source display size = 2 * visible size for both width and height
@@ -30,5 +28,5 @@ PASS Test we can construct a VideoFrame from an offscreen canvas.
 PASS Test I420 VideoFrame with odd visible size
 FAIL Test I420A VideoFrame and alpha={keep,discard} VideoPixelFormat is not supported
 PASS Test RGBA, BGRA VideoFrames with alpha={keep,discard}
-FAIL Test a VideoFrame constructed from canvas can drop the alpha channel. assert_true: plane format should not have alpha: BGRA expected true got false
+PASS Test a VideoFrame constructed from canvas can drop the alpha channel.
 
