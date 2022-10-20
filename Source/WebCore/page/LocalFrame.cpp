@@ -178,6 +178,11 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
 
 void LocalFrame::init()
 {
+    // This hack enables the experimental WebAPIsInShadowRealm WebCore feature to turn on ShadowRealms in JSC,
+    // exposing the feature to imported w3c tests.
+    // FIXME: Remove this once the feature is fully shipping. https://bugs.webkit.org/show_bug.cgi?id=246827
+    if (!JSC::Options::useShadowRealm() && settings().webAPIsInShadowRealmEnabled())
+        JSC::Options::setOption("useShadowRealm=1");
     checkedLoader()->init();
 }
 
