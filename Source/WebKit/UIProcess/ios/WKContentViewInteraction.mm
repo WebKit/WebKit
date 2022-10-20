@@ -2038,9 +2038,11 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     auto gestures = [NSMutableArray arrayWithCapacity:7];
     [gestures addObjectsFromArray:self._touchStartDeferringGestures];
     [gestures addObjectsFromArray:self._touchEndDeferringGestures];
-    [gestures addObject:_touchMoveDeferringGestureRecognizer.get()];
+    if (_touchMoveDeferringGestureRecognizer)
+        [gestures addObject:_touchMoveDeferringGestureRecognizer.get()];
 #if ENABLE(IMAGE_ANALYSIS)
-    [gestures addObject:_imageAnalysisDeferringGestureRecognizer.get()];
+    if (_imageAnalysisDeferringGestureRecognizer)
+        [gestures addObject:_imageAnalysisDeferringGestureRecognizer.get()];
 #endif
     return gestures;
 }

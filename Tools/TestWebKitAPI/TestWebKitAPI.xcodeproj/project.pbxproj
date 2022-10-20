@@ -1163,6 +1163,7 @@
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
 		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
 		F48D6C10224B377000E3E2FB /* PreferredContentMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */; };
+		F49153762901CEED004E2E97 /* CustomContentViewGestures.mm in Sources */ = {isa = PBXBuildFile; fileRef = F491536E2901CEED004E2E97 /* CustomContentViewGestures.mm */; };
 		F491DBAE281DE0E80081705F /* image-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F491DBAD281DE0980081705F /* image-controls.html */; };
 		F494B36A263120780060A310 /* TextServicesTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F494B369263120780060A310 /* TextServicesTests.mm */; };
 		F49992C6248DABFD00034167 /* overflow-hidden.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F49992C5248DABE400034167 /* overflow-hidden.html */; };
@@ -3395,6 +3396,7 @@
 		F4856CA21E6498A8009D7EE7 /* attachment-element.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "attachment-element.html"; sourceTree = "<group>"; };
 		F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransfer-setDragImage.html"; sourceTree = "<group>"; };
 		F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferredContentMode.mm; sourceTree = "<group>"; };
+		F491536E2901CEED004E2E97 /* CustomContentViewGestures.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomContentViewGestures.mm; sourceTree = "<group>"; };
 		F491DBAD281DE0980081705F /* image-controls.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-controls.html"; sourceTree = "<group>"; };
 		F493247C1F44DF8D006F4336 /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		F494B369263120780060A310 /* TextServicesTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextServicesTests.mm; sourceTree = "<group>"; };
@@ -4307,6 +4309,7 @@
 				F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */,
 				F46C45C327D42A2F00ECED2C /* ApplicationStateTracking.mm */,
 				F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */,
+				F491536E2901CEED004E2E97 /* CustomContentViewGestures.mm */,
 				44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */,
 				F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */,
 				A11E7DA224A17C7D00026745 /* ElementActionTests.mm */,
@@ -6132,6 +6135,7 @@
 				572B404421781B43000AD43E /* CtapResponseTest.cpp in Sources */,
 				7AC7B57020D9BA5B002C09A0 /* CustomBundleObject.mm in Sources */,
 				7AC7B56D20D9769F002C09A0 /* CustomBundleParameter.mm in Sources */,
+				F49153762901CEED004E2E97 /* CustomContentViewGestures.mm in Sources */,
 				7CCE7F291A411B1000447C4C /* CustomProtocolsInvalidScheme.mm in Sources */,
 				7CCE7F2A1A411B1000447C4C /* CustomProtocolsSyncXHRTest.mm in Sources */,
 				7CCE7F2B1A411B1000447C4C /* CustomProtocolsTest.mm in Sources */,
