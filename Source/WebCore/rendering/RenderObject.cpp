@@ -1285,9 +1285,10 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         stream << "  (" << inlineOffset.width() << ", " << inlineOffset.height() << ")";
     }
 
-    stream << " renderer->(" << this << ")";
+    stream << " renderer (" << this << ")";
+    stream << " layout box (" << layoutBox() << ")";
     if (node()) {
-        stream << " node->(" << node() << ")";
+        stream << " node (" << node() << ")";
         if (node()->isTextNode()) {
             String value = node()->nodeValue();
             stream << " length->(" << value.length() << ")";
