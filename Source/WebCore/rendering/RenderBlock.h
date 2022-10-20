@@ -356,7 +356,6 @@ protected:
     void computePreferredLogicalWidths() override;
     
     std::optional<LayoutUnit> firstLineBaseline() const override;
-    std::optional<LayoutUnit> lastLineBaseline() const override;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
     // Delay updating scrollbars until endAndCommitUpdateScrollInfoAfterLayoutTransaction() is called. These functions are used
