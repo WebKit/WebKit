@@ -208,10 +208,6 @@ contents = wasm.header + """
 #include <cstdint>
 #include <wtf/PrintStream.h>
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
-#include "B3Type.h"
-#endif
-
 namespace JSC {
 
 enum class Width : uint8_t;
@@ -288,19 +284,6 @@ inline bool isValidTypeKind(Int i)
     return false;
 }
 #undef CREATE_CASE
-
-#if ENABLE(WEBASSEMBLY_B3JIT)
-#define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
-inline B3::Type toB3Type(Type type)
-{
-    switch (type.kind) {
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return B3::Void;
-}
-#undef CREATE_CASE
-#endif
 
 #define CREATE_CASE(name, ...) case TypeKind::name: return #name;
 inline const char* makeString(TypeKind kind)

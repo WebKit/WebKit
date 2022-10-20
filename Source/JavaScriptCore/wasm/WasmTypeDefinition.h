@@ -40,6 +40,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
+#include "B3Type.h"
+#endif
+
 namespace JSC {
 
 namespace Wasm {
@@ -58,6 +62,19 @@ inline Width Type::width() const
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
+
+#if ENABLE(WEBASSEMBLY_B3JIT)
+#define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
+inline B3::Type toB3Type(Type type)
+{
+    switch (type.kind) {
+    FOR_EACH_WASM_TYPE(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return B3::Void;
+}
+#undef CREATE_CASE
+#endif
 
 constexpr size_t typeKindSizeInBytes(TypeKind kind)
 {
