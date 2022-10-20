@@ -18,8 +18,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (67,4) size 35x19
             text run at (67,4) width 35: "world"
         RenderText {#text} at (0,0) size 0x0
-layer at (10,103) size 59x20
-  RenderBlock {DIV} at (2,3) size 59x20
+layer at (11,103) size 57x20
+  RenderBlock {DIV} at (3,3) size 57x20
     RenderText {#text} at (0,0) size 33x20
       text run at (0,0) width 33: "hello"
-caret: position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body
+selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body

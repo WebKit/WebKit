@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 64x16
               text run at (0,0) width 64: "Details3"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,20) size 784x22
-        RenderButton {INPUT} at (0,0) size 43x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-          RenderBlock (anonymous) at (8,3) size 27x16
+      RenderBlock (anonymous) at (0,20) size 784x25
+        RenderButton {INPUT} at (0,0) size 43x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 27x16
             RenderText at (0,0) size 27x16
               text run at (0,0) width 27: "click"
         RenderText {#text} at (0,0) size 0x0

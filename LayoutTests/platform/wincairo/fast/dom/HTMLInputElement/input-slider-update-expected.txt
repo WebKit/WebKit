@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderSlider {INPUT} at (2,2) size 129x15 [color=#C4C4C4] [bgcolor=#FFFFFF]
-        RenderFlexibleBox {DIV} at (0,0) size 129x15
-          RenderBlock {DIV} at (0,0) size 129x15
-            RenderBlock {DIV} at (122,0) size 7x15
+      RenderSlider {INPUT} at (2,2) size 129x20 [color=#909090] [bgcolor=#FFFFFF]
+        RenderFlexibleBox {DIV} at (0,0) size 129x20
+          RenderBlock {DIV} at (0,0) size 129x20
+            RenderBlock {DIV} at (109,0) size 20x20
       RenderText {#text} at (0,0) size 0x0

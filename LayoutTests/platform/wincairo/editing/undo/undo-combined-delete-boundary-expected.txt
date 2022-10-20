@@ -1,5 +1,3 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
-EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -35,7 +33,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (90,14) size 30x26
               text run at (90,14) width 30: "rd "
           RenderText {#text} at (120,14) size 722x55
-            text run at (120,14) width 616: "should be selected, since the test deleted it a character at a time "
+            text run at (120,14) width 610: "should be selected, since the test deleted it a character at a time"
+            text run at (730,14) width 6: " "
             text run at (14,42) width 208: "and then did an undo."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

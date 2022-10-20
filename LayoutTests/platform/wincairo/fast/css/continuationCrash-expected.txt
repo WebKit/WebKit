@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,41) size 784x21
         RenderText {#text} at (0,0) size 164x19
           text run at (0,0) width 164: "Click the following buttons."
-      RenderBlock {OL} at (0,77) size 784x183
+      RenderBlock {OL} at (0,77) size 784x186
         RenderListItem {LI} at (40,0) size 744x20
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 184x19
@@ -46,21 +46,21 @@ layer at (0,0) size 800x600
           RenderListMarker at (-21,0) size 16x19: "8"
           RenderText {#text} at (0,0) size 191x19
             text run at (0,0) width 191: "2. 3. will not crash Safari either."
-        RenderBlock (anonymous) at (40,160) size 744x22
-          RenderButton {INPUT} at (0,0) size 144x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-            RenderBlock (anonymous) at (8,3) size 128x16
+        RenderBlock (anonymous) at (40,160) size 744x25
+          RenderButton {INPUT} at (0,0) size 144x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 128x16
               RenderText at (0,0) size 128x16
                 text run at (0,0) width 128: "1. Set outline property"
-          RenderText {#text} at (144,1) size 4x19
-            text run at (144,1) width 4: " "
-          RenderButton {INPUT} at (148,0) size 149x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-            RenderBlock (anonymous) at (8,3) size 133x16
+          RenderText {#text} at (144,2) size 4x19
+            text run at (144,2) width 4: " "
+          RenderButton {INPUT} at (148,0) size 149x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 133x16
               RenderText at (0,0) size 133x16
                 text run at (0,0) width 133: "2. Set display property"
-          RenderText {#text} at (297,1) size 4x19
-            text run at (297,1) width 4: " "
-          RenderButton {INPUT} at (301,0) size 166x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-            RenderBlock (anonymous) at (8,3) size 150x16
+          RenderText {#text} at (297,2) size 4x19
+            text run at (297,2) width 4: " "
+          RenderButton {INPUT} at (301,0) size 166x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 150x16
               RenderText at (0,0) size 150x16
                 text run at (0,0) width 150: "3. Replace span-element"
           RenderText {#text} at (0,0) size 0x0

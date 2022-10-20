@@ -21,13 +21,13 @@ layer at (0,0) size 800x600
           text run at (102,4) width 4: " "
         RenderTextControl {INPUT} at (106,0) size 63x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (10,103) size 59x20
-  RenderBlock {DIV} at (2,3) size 59x20
+layer at (11,103) size 57x20
+  RenderBlock {DIV} at (3,3) size 57x20
     RenderText {#text} at (0,0) size 33x20
       text run at (0,0) width 33: "hello"
-layer at (116,103) size 59x20
-  RenderBlock {DIV} at (2,3) size 59x20
+layer at (117,103) size 57x20
+  RenderBlock {DIV} at (3,3) size 57x20
     RenderText {#text} at (0,0) size 51x20
       text run at (0,0) width 51: "WebKit"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of child 5 {DIV} of body
-selection end:   position 3 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of child 5 {DIV} of body
+selection end:   position 2 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of child 5 {DIV} of body
