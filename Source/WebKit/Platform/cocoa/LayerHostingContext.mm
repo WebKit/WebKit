@@ -34,6 +34,12 @@
 
 namespace WebKit {
 
+static String& renderServerName()
+{
+    static NeverDestroyed<String> serverName;
+    return serverName;
+}
+
 std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(const MachSendRight& serverPort)
 {
     auto layerHostingContext = makeUnique<LayerHostingContext>();
@@ -60,18 +66,22 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     // Use a very large display ID to ensure that the context is never put on-screen 
     // without being explicitly parented. See <rdar://problem/16089267> for details.
-    layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{
+    auto contextOptions = @{
         kCAContextSecure: @(options.canShowWhileLocked),
 #if HAVE(CORE_ANIMATION_RENDER_SERVER)
         kCAContextIgnoresHitTest : @YES,
         kCAContextDisplayId : @10000
 #endif
-    }];
+    };
+    
+    layerHostingContext->m_context = [CAContext remoteContextWithOptions:contextOptions];
 #elif !PLATFORM(MACCATALYST)
-    [CAContext setAllowsCGSConnections:NO];
-    layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{
+    auto contextOptions = @{
+        kCAContextPortName : (renderServerName().isEmpty() ? @"com.apple.CARenderServer" : (NSString *)renderServerName()),
         kCAContextCIFilterBehavior :  @"ignore",
-    }];
+    };
+    [CAContext setAllowsCGSConnections:NO];
+    layerHostingContext->m_context = [CAContext remoteContextWithOptions:contextOptions];
 #else
     layerHostingContext->m_context = [CAContext contextWithCGSConnection:CGSMainConnectionID() options:@{
         kCAContextCIFilterBehavior : @"ignore",
@@ -156,6 +166,11 @@ void LayerHostingContext::setFencePort(mach_port_t fencePort)
 MachSendRight LayerHostingContext::createFencePort()
 {
     return MachSendRight::adopt([m_context createFencePort]);
+}
+
+void LayerHostingContext::setServerName(const char* serverName)
+{
+    renderServerName() = String::fromUTF8(serverName);
 }
 
 } // namespace WebKit

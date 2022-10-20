@@ -90,6 +90,8 @@ public:
     // with this context is desired.
     WTF::MachSendRight createFencePort();
 
+    static void setServerName(const char*);
+
 private:
     LayerHostingMode m_layerHostingMode;
     RetainPtr<CAContext> m_context;

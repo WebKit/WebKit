@@ -225,6 +225,7 @@ typedef struct _CARenderUpdate CARenderUpdate;
 CARenderCGContext *CARenderCGNew(uint32_t feature_flags);
 CARenderUpdate* CARenderUpdateBegin(void* buffer, size_t, CFTimeInterval, const CVTimeStamp*, uint32_t finished_seed, const CGRect* bounds);
 bool CARenderServerStart();
+bool CARenderServerRegister(const char *name);
 mach_port_t CARenderServerGetPort();
 void CARenderCGDestroy(CARenderCGContext*);
 void CARenderCGRender(CARenderCGContext*, CARenderUpdate*, CGContextRef);
