@@ -263,13 +263,14 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
 // https://w3c.github.io/webcodecs/#videoframe-initialize-visible-rect-and-display-size
 void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame& frame, const WebCodecsVideoFrame::Init& init, const DOMRectInit& defaultVisibleRect, size_t defaultDisplayWidth, size_t defaultDisplayHeight)
 {
-    frame.setVisibleRect(init.visibleRect);
+    auto visibleRect = init.visibleRect.value_or(defaultVisibleRect);
+    frame.setVisibleRect(visibleRect);
     if (init.displayWidth && init.displayHeight)
         frame.setDisplaySize(*init.displayWidth, *init.displayHeight);
     else {
         auto widthScale = defaultDisplayWidth / defaultVisibleRect.width;
         auto heightScale = defaultDisplayHeight / defaultVisibleRect.height;
-        frame.setDisplaySize(init.visibleRect.width * widthScale, init.visibleRect.height * heightScale);
+        frame.setDisplaySize(visibleRect.width * widthScale, visibleRect.height * heightScale);
     }
 }
 

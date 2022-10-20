@@ -69,7 +69,7 @@ public:
         std::optional<int64_t> timestamp;
         WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Keep };
 
-        DOMRectInit visibleRect;
+        std::optional<DOMRectInit> visibleRect;
 
         std::optional<size_t> displayWidth;
         std::optional<size_t> displayHeight;

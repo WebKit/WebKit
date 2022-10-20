@@ -41,6 +41,7 @@ namespace WebCore {
 
 class Blob;
 class CanvasBase;
+class CSSStyleImageValue;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -53,7 +54,10 @@ class OffscreenCanvas;
 #endif
 class PendingImageBitmap;
 class ScriptExecutionContext;
-class CSSStyleImageValue;
+#if ENABLE(WEB_CODECS)
+class WebCodecsVideoFrame;
+#endif
+
 struct ImageBitmapOptions;
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -73,6 +77,9 @@ public:
 #endif
 #if ENABLE(CSS_TYPED_OM)
         RefPtr<CSSStyleImageValue>,
+#endif
+#if ENABLE(WEB_CODECS)
+        RefPtr<WebCodecsVideoFrame>,
 #endif
         RefPtr<Blob>,
         RefPtr<ImageData>
@@ -126,6 +133,9 @@ private:
     static void createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #if ENABLE(OFFSCREEN_CANVAS)
     static void createPromise(ScriptExecutionContext&, RefPtr<OffscreenCanvas>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+#endif
+#if ENABLE(WEB_CODECS)
+    static void createPromise(ScriptExecutionContext&, RefPtr<WebCodecsVideoFrame>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #endif
     static void createPromise(ScriptExecutionContext&, CanvasBase&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);

@@ -1,11 +1,11 @@
 
-FAIL Test we can construct a VideoFrame. assert_equals: visibleRect.width expected 32 but got 0
+PASS Test we can construct a VideoFrame.
 FAIL Test closed VideoFrame. assert_equals: timestamp expected (object) null but got (number) 0
 PASS Test we can construct a VideoFrame with a negative timestamp.
 PASS Test that timestamp is required when constructing VideoFrame from ImageBitmap
 PASS Test that timestamp is required when constructing VideoFrame from OffscreenCanvas
 PASS Test that timestamp is NOT required when constructing VideoFrame from another VideoFrame
-FAIL Test we can construct an odd-sized VideoFrame. assert_equals: visibleRect.width expected 1 but got 0
+PASS Test we can construct an odd-sized VideoFrame.
 PASS Test constructing w/ unusable image argument throws: HAVE_NOTHING <video>.
 PASS Test constructing w/ unusable image argument throws: emtpy Canvas.
 PASS Test constructing w/ unusable image argument throws: closed ImageBitmap.
@@ -17,7 +17,7 @@ PASS Test visibleRect metadata override where source display size = visible size
 PASS Test visibleRect metadata override where source display width = 2 * visible width (anamorphic)
 PASS Test visibleRect metadata override where source display size = 2 * visible size for both width and height
 PASS Test visibleRect + display size metadata override
-FAIL Test display size metadata override assert_equals: expected 32 but got 0
+PASS Test display size metadata override
 PASS Test invalid buffer constructed VideoFrames
 PASS Test Uint8Array(ArrayBuffer) constructed I420 VideoFrame
 PASS Test ArrayBuffer constructed I420 VideoFrame
@@ -26,7 +26,7 @@ FAIL Test buffer constructed I420+Alpha VideoFrame VideoPixelFormat is not suppo
 PASS Test buffer constructed NV12 VideoFrame
 PASS Test buffer constructed RGB VideoFrames
 PASS Test VideoFrame constructed VideoFrame
-FAIL Test we can construct a VideoFrame from an offscreen canvas. assert_equals: expected 16 but got 0
+PASS Test we can construct a VideoFrame from an offscreen canvas.
 PASS Test I420 VideoFrame with odd visible size
 FAIL Test I420A VideoFrame and alpha={keep,discard} VideoPixelFormat is not supported
 PASS Test RGBA, BGRA VideoFrames with alpha={keep,discard}
