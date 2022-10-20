@@ -62,6 +62,7 @@ public:
     void canonicalizeUnit();
 
     const CSSPrimitiveValue& value() const { return m_value.get(); }
+    double doubleValue(CSSUnitType) const final;
 
 private:
     bool isZero() const final;
@@ -69,7 +70,6 @@ private:
     Type type() const final { return CssCalcPrimitiveValue; }
 
     std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData&) const final;
-    double doubleValue(CSSUnitType) const final;
 
     double computeLengthPx(const CSSToLengthConversionData&) const final;
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const final;

@@ -1,8 +1,8 @@
 
-FAIL Normalizing a <number> returns a number CSSUnitValue Not implemented Error
-FAIL Normalizing a <percentage> returns a percent CSSUnitValue Not implemented Error
-FAIL Normalizing a <dimension> returns a CSSUnitValue with the correct unit Not implemented Error
-FAIL Normalizing a <number> with a unitless zero returns 0 Not implemented Error
-FAIL Normalizing a <calc> returns simplified expression Not implemented Error
+PASS Normalizing a <number> returns a number CSSUnitValue
+PASS Normalizing a <percentage> returns a percent CSSUnitValue
+PASS Normalizing a <dimension> returns a CSSUnitValue with the correct unit
+PASS Normalizing a <number> with a unitless zero returns 0
+FAIL Normalizing a <calc> returns simplified expression assert_approx_equals: expected 4 +/- 0.000001 but got 1
 PASS Normalizing a <dimension> with a unitless zero returns 0px
 
