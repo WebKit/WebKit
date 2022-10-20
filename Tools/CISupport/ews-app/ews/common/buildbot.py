@@ -20,8 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from future.utils import lrange
-
 import logging
 import os
 import re
@@ -36,7 +34,7 @@ _log = logging.getLogger(__name__)
 
 class Buildbot():
     # Buildbot status codes referenced from https://github.com/buildbot/buildbot/blob/master/master/buildbot/process/results.py
-    ALL_RESULTS = lrange(7)
+    ALL_RESULTS = list(range(7))
     SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED = ALL_RESULTS
     icons_for_queues_mapping = {}
     queue_name_by_shortname_mapping = {}
