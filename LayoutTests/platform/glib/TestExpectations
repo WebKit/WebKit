@@ -317,6 +317,10 @@ imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radi
 # GLIB PASS since r281724
 imported/mozilla/svg/as-image/border-image-simple-1.html [ Pass ]
 
+fast/css/accent-color/checkbox.html [ Pass ]
+fast/css/accent-color/progress.html [ Pass ]
+fast/css/accent-color/radio.html [ Pass ]
+fast/css/accent-color/range.html [ Pass ]
 fast/css/accent-color/text.html [ Pass ]
 
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.

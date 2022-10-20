@@ -31,12 +31,6 @@ imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 
-fast/css/accent-color/checkbox.html [ Pass ]
-fast/css/accent-color/progress.html [ Pass ]
-fast/css/accent-color/radio.html [ Pass ]
-fast/css/accent-color/range.html [ Pass ]
-fast/css/accent-color/text.html [ Pass ]
-
 # Some Apple ports don't support RTL scrollbars.
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
