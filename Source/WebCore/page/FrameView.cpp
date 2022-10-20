@@ -4357,7 +4357,7 @@ void FrameView::notifyAllFramesThatContentAreaWillPaint() const
 
     for (auto* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
-        if (!child)
+        if (!localChild)
             continue;
         if (auto* frameView = localChild->view())
             frameView->notifyScrollableAreasThatContentAreaWillPaint();

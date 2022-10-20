@@ -362,6 +362,9 @@ AbstractFrame* FrameTree::firstRenderedChild() const
         return child;
 
     while ((child = child->tree().nextSibling())) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
         if (localChild->ownerRenderer())
             return child;
     }
