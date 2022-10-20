@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Reg.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -114,26 +113,6 @@ inline Width canonicalWidth(Width width)
 inline bool isCanonicalWidth(Width width)
 {
     return width >= Width32;
-}
-
-ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
-{
-    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
-}
-
-ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
-{
-    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
-}
-
-ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)
-{
-    return bytesForWidth(conservativeWidth(reg));
-}
-
-ALWAYS_INLINE constexpr unsigned conservativeRegisterBytesWithoutVectors(const Reg reg)
-{
-    return bytesForWidth(conservativeWidthWithoutVectors(reg));
 }
 
 } // namespace JSC

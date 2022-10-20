@@ -28,6 +28,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "MacroAssembler.h"
+#include "Width.h"
 
 namespace JSC {
 
@@ -228,6 +229,26 @@ struct RegHash {
     static bool equal(const Reg& a, const Reg& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
+
+ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
+}
+
+ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
+{
+    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
+}
+
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)
+{
+    return bytesForWidth(conservativeWidth(reg));
+}
+
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytesWithoutVectors(const Reg reg)
+{
+    return bytesForWidth(conservativeWidthWithoutVectors(reg));
+}
 
 } // namespace JSC
 
