@@ -2553,10 +2553,10 @@ void WebPageProxy::updateFontAttributesAfterEditorStateChange()
 {
     m_cachedFontAttributesAtSelectionStart.reset();
 
-    if (m_editorState.isMissingPostLayoutData)
+    if (m_editorState.isMissingPostLayoutData())
         return;
 
-    if (auto fontAttributes = m_editorState.postLayoutData().fontAttributes) {
+    if (auto fontAttributes = m_editorState.postLayoutData->fontAttributes) {
         m_uiClient->didChangeFontAttributes(*fontAttributes);
         m_cachedFontAttributesAtSelectionStart = WTFMove(fontAttributes);
     }

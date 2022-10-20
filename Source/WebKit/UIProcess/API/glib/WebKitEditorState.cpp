@@ -118,11 +118,11 @@ WebKitEditorState* webkitEditorStateCreate(WebPageProxy& page)
 
 void webkitEditorStateChanged(WebKitEditorState* editorState, const EditorState& newState)
 {
-    if (newState.isMissingPostLayoutData)
+    if (newState.isMissingPostLayoutData())
         return;
 
     unsigned typingAttributes = WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE;
-    const auto& postLayoutData = newState.postLayoutData();
+    const auto& postLayoutData = *newState.postLayoutData;
     if (postLayoutData.typingAttributes & AttributeBold)
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD;
     if (postLayoutData.typingAttributes & AttributeItalics)

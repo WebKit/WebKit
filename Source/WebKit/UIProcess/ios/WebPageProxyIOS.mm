@@ -1117,7 +1117,7 @@ void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const
 
 void WebPageProxy::dispatchDidUpdateEditorState()
 {
-    if (!m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement || m_editorState.isMissingPostLayoutData)
+    if (!m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement || m_editorState.isMissingPostLayoutData())
         return;
 
     pageClient().didUpdateEditorState();
@@ -1176,11 +1176,11 @@ WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() co
     if (m_editorState.selectionIsNone)
         return { };
 
-    if (m_editorState.isMissingPostLayoutData)
+    if (m_editorState.isMissingPostLayoutData())
         return { };
 
     WebCore::FloatRect bounds;
-    auto& postLayoutData = m_editorState.postLayoutData();
+    auto& postLayoutData = *m_editorState.postLayoutData;
     if (m_editorState.selectionIsRange) {
         for (auto& geometry : postLayoutData.selectionGeometries)
             bounds.unite(geometry.rect());

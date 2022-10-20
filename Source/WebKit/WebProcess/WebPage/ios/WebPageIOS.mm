@@ -286,10 +286,10 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
     getPlatformEditorStateCommon(frame, result);
 
-    if (result.isMissingPostLayoutData)
+    if (result.isMissingPostLayoutData())
         return;
     ASSERT(frame.view());
-    auto& postLayoutData = result.postLayoutData();
+    auto& postLayoutData = *result.postLayoutData;
     Ref view = *frame.view();
 
     if (frame.editor().hasComposition()) {

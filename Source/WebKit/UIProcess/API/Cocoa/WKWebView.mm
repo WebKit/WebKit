@@ -1781,10 +1781,10 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
 {
-    if (state.isMissingPostLayoutData)
+    if (state.isMissingPostLayoutData())
         return @{ @"post-layout-data" : @NO };
 
-    auto& postLayoutData = state.postLayoutData();
+    auto& postLayoutData = *state.postLayoutData;
     return @{
         @"post-layout-data" : @YES,
         @"bold": postLayoutData.typingAttributes & WebKit::AttributeBold ? @YES : @NO,

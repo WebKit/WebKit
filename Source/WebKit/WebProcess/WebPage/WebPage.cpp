@@ -1292,15 +1292,13 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
         document->updateLayout(); // May cause document destruction
 
     if (auto* frameView = document->view(); frameView && !frameView->needsLayout()) {
-        result.isMissingPostLayoutData = false;
-
-        auto& postLayoutData = result.postLayoutData();
-        postLayoutData.canCut = editor.canCut();
-        postLayoutData.canCopy = editor.canCopy();
-        postLayoutData.canPaste = editor.canPaste();
-
+        if (!result.postLayoutData)
+            result.postLayoutData = std::optional<EditorState::PostLayoutData> { EditorState::PostLayoutData { } };
+        result.postLayoutData->canCut = editor.canCut();
+        result.postLayoutData->canCopy = editor.canCopy();
+        result.postLayoutData->canPaste = editor.canPaste();
         if (m_needsFontAttributes)
-            postLayoutData.fontAttributes = editor.fontAttributesAtSelectionStart();
+            result.postLayoutData->fontAttributes = editor.fontAttributesAtSelectionStart();
     }
 
     getPlatformEditorState(frame, result);
@@ -6975,7 +6973,7 @@ void WebPage::sendEditorStateUpdate()
     // next layer tree commit to compute and send the complete EditorState over.
     auto state = editorState();
     send(Messages::WebPageProxy::EditorStateChanged(state));
-    if (state.isMissingPostLayoutData && !shouldAvoidComputingPostLayoutDataForEditorState())
+    if (state.isMissingPostLayoutData() && !shouldAvoidComputingPostLayoutDataForEditorState())
         scheduleFullEditorStateUpdate();
 }
 
