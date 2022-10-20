@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmOps.h"
+#include "Width.h"
 #include "WriteBarrier.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashSet.h>
@@ -47,6 +48,16 @@ using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
 using RecursionGroupCount = uint32_t;
 using ProjectionIndex = uint32_t;
+
+inline Width Type::width() const
+{
+    switch (kind) {
+#define CREATE_CASE(name, id, b3type, inc, wasmName, width, ...) case TypeKind::name: return widthForBytes(width / 8);
+    FOR_EACH_WASM_TYPE(CREATE_CASE)
+#undef CREATE_CASE
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 constexpr size_t typeKindSizeInBytes(TypeKind kind)
 {

@@ -205,7 +205,6 @@ contents = wasm.header + """
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "Width.h"
 #include <cstdint>
 #include <wtf/PrintStream.h>
 
@@ -213,7 +212,11 @@ contents = wasm.header + """
 #include "B3Type.h"
 #endif
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+enum class Width : uint8_t;
+
+namespace Wasm {
 
 static constexpr unsigned expectedVersionNumber = """ + wasm.expectedVersionNumber + """;
 
@@ -257,15 +260,7 @@ struct Type {
         }
     }
 
-    Width width() const
-    {
-        switch (kind) {
-        #define CREATE_CASE(name, id, b3type, inc, wasmName, width, ...) case TypeKind::name: return widthForBytes(width / 8);
-        FOR_EACH_WASM_TYPE(CREATE_CASE)
-        #undef CREATE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    Width width() const;
 
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
 
