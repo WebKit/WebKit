@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NotificationManagerMessageHandlerMessages.h"
+#include "PeriodicalResponsivenessTimer.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemoteWorkerType.h"
@@ -281,6 +282,9 @@ private:
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, LockdownMode lockdownMode)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_backgroundResponsivenessTimer(*this)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    , m_periodicalResponsivenessTimer(makeUnique<PeriodicalResponsivenessTimer>(*this))
+#endif
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
@@ -2313,6 +2317,33 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
     ts << ", " << process.throttler();
 
     return ts;
+}
+
+void WebProcessProxy::restartPeriodicalResponsivenessTimer()
+{
+    if (!m_periodicalResponsivenessTimer)
+        return;
+
+    m_periodicalResponsivenessTimer->restart();
+}
+
+void WebProcessProxy::startOrStopPeriodicalResponsivenessTimer()
+{
+    if (!m_periodicalResponsivenessTimer)
+        return;
+
+    bool shouldBeStopped = true;
+    for (auto& page : m_pageMap.values()) {
+        if (page->isPlayingMedia() || page->isViewVisible()) {
+            shouldBeStopped = false;
+            break;
+        }
+    }
+
+    if (shouldBeStopped)
+        m_periodicalResponsivenessTimer->stop();
+    else
+        m_periodicalResponsivenessTimer->start();
 }
 
 } // namespace WebKit

@@ -2280,6 +2280,12 @@ void WebPageProxy::viewDidEnterWindow()
     }
 }
 
+bool WebPageProxy::isPlayingMedia() const
+{
+    const MediaProducerMediaStateFlags playingMediaMask { MediaProducerMediaState::IsPlayingAudio, MediaProducerMediaState::IsPlayingVideo };
+    return !!(m_mediaState & playingMediaMask);
+}
+
 void WebPageProxy::dispatchActivityStateChange()
 {
 #if PLATFORM(COCOA)
@@ -2310,6 +2316,7 @@ void WebPageProxy::dispatchActivityStateChange()
         updateCurrentModifierState();
 
     if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)) {
+        m_process->startOrStopPeriodicalResponsivenessTimer();
         if (isViewVisible())
             viewIsBecomingVisible();
         else
@@ -10121,8 +10128,11 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 
     playingMediaMask.add(WebCore::MediaProducer::MediaCaptureMask);
-    if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
+    if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask)) {
+        m_process->startOrStopPeriodicalResponsivenessTimer();
+
         m_uiClient->isPlayingMediaDidChange(*this);
+    }
 
     if ((oldState.containsAny(MediaProducerMediaState::HasAudioOrVideo)) != (m_mediaState.containsAny(MediaProducerMediaState::HasAudioOrVideo)))
         videoControlsManagerDidChange();

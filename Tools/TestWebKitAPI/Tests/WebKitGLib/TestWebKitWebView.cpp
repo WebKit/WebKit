@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "WebKitTestServer.h"
+#include "WebKitWebViewInternal.h"
 #include "WebViewTest.h"
 #include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
@@ -1466,6 +1467,39 @@ static void testWebViewIsWebProcessResponsive(WebViewTest* test, gconstpointer)
     g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
 }
 
+static void testWebViewIsWebProcessUnresponsive(WebViewTest* test, gconstpointer)
+{
+    static const char* hangHTML =
+        "<html>"
+        " <body>"
+        "  <script>"
+        "   setTimeout(function() {"
+        "    var start = new Date().getTime();"
+        "    var end = start;"
+        "     while(end < start + 4000) {"
+        "      end = new Date().getTime();"
+        "     }"
+        "    }, 10);"
+        "  </script>"
+        " </body>"
+        "</html>";
+
+    g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+    test->loadHtml(hangHTML, nullptr);
+    test->waitUntilLoadFinished();
+    // Wait 20 milliseconds, so the js while loop kicks in and blocks the web process. Then restart the
+    // resposivenessTimer to speed up catching the js while loop, and after 3 seconds the web process will
+    // be marked as unresponsive.
+    test->wait(0.02);
+    webkitWebViewRestartWebProcessResponsivenessTimerForTesting(test->m_webView);
+    test->waitUntilIsWebProcessResponsiveChanged();
+    g_assert_false(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+
+    // Now that the process is unresponsive, terminate it.
+    test->m_expectedWebProcessCrash = true;
+    webkit_web_view_terminate_web_process(test->m_webView);
+}
+
 static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
 {
 #if PLATFORM(GTK)
@@ -2098,6 +2132,7 @@ void beforeAll()
     AudioRenderingWebViewTest::add("WebKitWebView", "external-audio-rendering", testWebViewExternalAudioRendering);
 #endif
     WebViewTest::add("WebKitWebView", "is-web-process-responsive", testWebViewIsWebProcessResponsive);
+    WebViewTest::add("WebKitWebView", "is-web-process-unresponsive", testWebViewIsWebProcessUnresponsive);
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-web-process", testWebViewTerminateWebProcess);
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-unresponsive-web-process", testWebViewTerminateUnresponsiveWebProcess);
     WebViewTest::add("WebKitWebView", "cors-allowlist", testWebViewCORSAllowlist);

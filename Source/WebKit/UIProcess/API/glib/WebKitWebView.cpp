@@ -5515,3 +5515,16 @@ webkit_web_view_get_default_content_security_policy(WebKitWebView* webView)
 
     return webView->priv->defaultContentSecurityPolicy.data();
 }
+
+void webkitWebViewRestartWebProcessResponsivenessTimerForTesting(WebKitWebView* webView)
+{
+    ASSERT(WEBKIT_IS_WEB_VIEW(webView));
+
+    auto& page = getPage(webView);
+
+    if (!page.hasRunningProcess())
+        return;
+
+    Ref protectedProcessProxy { page.process() };
+    protectedProcessProxy->restartPeriodicalResponsivenessTimer();
+}
