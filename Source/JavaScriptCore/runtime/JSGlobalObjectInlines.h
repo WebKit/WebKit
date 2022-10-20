@@ -62,6 +62,12 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSaneConcurrently(Struct
         && objectPrototypeIsSaneConcurrently(objectPrototypeStructure);
 }
 
+ALWAYS_INLINE bool JSGlobalObject::objectPrototypeChainIsSane()
+{
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    return m_objectPrototypeChainIsSaneWatchpointSet.isStillValid();
+}
+
 ALWAYS_INLINE bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
@@ -85,6 +91,23 @@ ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObs
     // executing concurrently.
 
     return arrayIteratorProtocolWatchpointSet().isStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
+}
+
+ALWAYS_INLINE bool JSGlobalObject::isArgumentsPrototypeIteratorProtocolFastAndNonObservable()
+{
+    // Since Arguments iteration uses ArrayIterator, we need to check the state of ArrayIteratorProtocolWatchpointSet.
+    // But we do not need to check isHavingABadTime() and array prototype's chain.
+    if (!arrayIteratorProtocolWatchpointSet().isStillValid())
+        return false;
+
+    if (isHavingABadTime())
+        return false;
+
+    // Since [[Prototype]] of arguments is Object.prototype, we do not need to check Array.prototype.
+    if (!objectPrototypeChainIsSane())
+        return false;
+
+    return true;
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType typedArrayType)

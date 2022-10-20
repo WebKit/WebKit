@@ -30,6 +30,7 @@
 #include "ArrayPrototypeInlines.h"
 #include "BytecodeStructs.h"
 #include "ClonedArguments.h"
+#include "CommonSlowPathsInlines.h"
 #include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
 #include "ErrorHandlingScope.h"
@@ -1377,16 +1378,14 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
     BEGIN();
 
     auto bytecode = pc->as<OpSpread>();
-    JSValue iterable = GET_C(bytecode.m_argument).jsValue();
+    JSValue iterableValue = GET_C(bytecode.m_argument).jsValue();
 
-    if (iterable.isCell() && isJSArray(iterable.asCell())) {
-        JSArray* array = jsCast<JSArray*>(iterable);
-        if (array->isIteratorProtocolFastAndNonObservable()) {
-            // JSImmutableButterfly::createFromArray does not consult the prototype chain,
-            // so we must be sure that not consulting the prototype chain would
-            // produce the same value during iteration.
-            RETURN(JSImmutableButterfly::createFromArray(globalObject, vm, array));
-        }
+    if (iterableValue.isCell()) {
+        JSCell* iterable = iterableValue.asCell();
+        auto* result = CommonSlowPaths::trySpreadFast(globalObject, iterable);
+        CHECK_EXCEPTION();
+        if (result)
+            RETURN(result);
     }
 
     JSArray* array;
@@ -1396,7 +1395,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
         ASSERT(callData.type != CallData::Type::None);
 
         MarkedArgumentBuffer arguments;
-        arguments.append(iterable);
+        arguments.append(iterableValue);
         ASSERT(!arguments.hasOverflowed());
         JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), arguments);
         CHECK_EXCEPTION();

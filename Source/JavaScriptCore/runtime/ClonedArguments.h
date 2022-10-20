@@ -37,6 +37,9 @@ namespace JSC {
 // properties of the object are populated. The only reason why we need a special class is to make
 // the object claim to be "Arguments" from a toString standpoint, and to avoid materializing the
 // caller/callee/@@iterator properties unless someone asks for them.
+
+static constexpr PropertyOffset clonedArgumentsLengthPropertyOffset = firstOutOfLineOffset;
+
 class ClonedArguments final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -48,6 +51,27 @@ public:
         static_assert(!CellType::needsDestruction);
         return &vm.clonedArgumentsSpace();
     }
+
+    uint64_t length(JSGlobalObject* globalObject) const
+    {
+        VM& vm = getVM(globalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        JSValue lengthValue;
+        if (LIKELY(!structure()->didTransition())) {
+            lengthValue = getDirect(clonedArgumentsLengthPropertyOffset);
+            if (LIKELY(lengthValue.isInt32()))
+                return std::max(lengthValue.asInt32(), 0);
+        } else {
+            lengthValue = get(globalObject, vm.propertyNames->length);
+            RETURN_IF_EXCEPTION(scope, 0);
+        }
+        RELEASE_AND_RETURN(scope, lengthValue.toLength(globalObject));
+    }
+
+    void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
+
+    JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
     
 private:
     ClonedArguments(VM&, Structure*, Butterfly*);
@@ -81,7 +105,5 @@ private:
     
     WriteBarrier<JSFunction> m_callee; // Set to nullptr when we materialize all of our special properties.
 };
-
-static constexpr PropertyOffset clonedArgumentsLengthPropertyOffset = firstOutOfLineOffset;
 
 } // namespace JSC

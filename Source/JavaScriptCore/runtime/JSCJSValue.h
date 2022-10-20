@@ -306,7 +306,7 @@ public:
     uint32_t toUInt32(JSGlobalObject*) const;
     uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
     size_t toTypedArrayIndex(JSGlobalObject*, const char* errorName) const;
-    double toLength(JSGlobalObject*) const;
+    uint64_t toLength(JSGlobalObject*) const;
 
     JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*) const;
     int64_t toBigInt64(JSGlobalObject*) const;

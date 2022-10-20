@@ -174,5 +174,21 @@ unsigned DirectArguments::mappedArgumentsSize()
     return WTF::roundUpToMultipleOf<8>(m_length ? m_length : 1);
 }
 
+bool DirectArguments::isIteratorProtocolFastAndNonObservable()
+{
+    Structure* structure = this->structure();
+    JSGlobalObject* globalObject = structure->globalObject();
+    if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
+        return false;
+
+    if (UNLIKELY(m_mappedArguments))
+        return false;
+
+    if (structure->didTransition())
+        return false;
+
+    return true;
+}
+
 } // namespace JSC
 

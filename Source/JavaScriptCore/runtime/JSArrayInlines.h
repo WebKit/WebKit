@@ -21,9 +21,12 @@
 
 #include "ArrayPrototype.h"
 #include "ButterflyInlines.h"
+#include "ClonedArguments.h"
+#include "DirectArguments.h"
 #include "Error.h"
 #include "JSArray.h"
 #include "JSCellInlines.h"
+#include "ScopedArguments.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -92,15 +95,25 @@ inline bool JSArray::canDoFastIndexedAccess()
     return true;
 }
 
-ALWAYS_INLINE double toLength(JSGlobalObject* globalObject, JSObject* obj)
+ALWAYS_INLINE uint64_t toLength(JSGlobalObject* globalObject, JSObject* object)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (LIKELY(isJSArray(obj)))
-        return jsCast<JSArray*>(obj)->length();
+    if (LIKELY(isJSArray(object)))
+        return jsCast<JSArray*>(object)->length();
 
-    JSValue lengthValue = obj->get(globalObject, vm.propertyNames->length);
-    RETURN_IF_EXCEPTION(scope, PNaN);
+    switch (object->type()) {
+    case DirectArgumentsType:
+        RELEASE_AND_RETURN(scope, jsCast<DirectArguments*>(object)->length(globalObject));
+    case ScopedArgumentsType:
+        RELEASE_AND_RETURN(scope, jsCast<ScopedArguments*>(object)->length(globalObject));
+    case ClonedArgumentsType:
+        RELEASE_AND_RETURN(scope, jsCast<ClonedArguments*>(object)->length(globalObject));
+    default:
+        break;
+    }
+    JSValue lengthValue = object->get(globalObject, vm.propertyNames->length);
+    RETURN_IF_EXCEPTION(scope, { });
     RELEASE_AND_RETURN(scope, lengthValue.toLength(globalObject));
 }
 

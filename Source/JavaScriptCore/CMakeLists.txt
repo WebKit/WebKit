@@ -933,6 +933,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     runtime/AbstractModuleRecord.h
     runtime/ArgList.h
+    runtime/ArgumentsMode.h
     runtime/ArityCheckMode.h
     runtime/ArrayConstructor.h
     runtime/ArrayBuffer.h
@@ -968,6 +969,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CatchScope.h
     runtime/CellSize.h
     runtime/ClassInfo.h
+    runtime/ClonedArguments.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
@@ -992,6 +994,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DeferredWorkTimer.h
     runtime/DefinePropertyAttributes.h
     runtime/DeletePropertySlot.h
+    runtime/DirectArguments.h
     runtime/DirectArgumentsOffset.h
     runtime/DirectEvalExecutable.h
     runtime/DisallowScope.h
@@ -1023,6 +1026,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/FunctionRareData.h
     runtime/FuzzerAgent.h
     runtime/Gate.h
+    runtime/GenericArguments.h
     runtime/GenericOffset.h
     runtime/GenericTypedArrayView.h
     runtime/GenericTypedArrayViewInlines.h
@@ -1088,11 +1092,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
-    runtime/JSMicrotask.h
+    runtime/JSLexicalEnvironment.h
     runtime/JSLock.h
     runtime/JSMap.h
     runtime/JSMapInlines.h
     runtime/JSMapIterator.h
+    runtime/JSMicrotask.h
     runtime/JSModuleLoader.h
     runtime/JSModuleRecord.h
     runtime/JSNativeStdFunction.h
@@ -1174,6 +1179,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/RuntimeType.h
     runtime/SamplingProfiler.h
     runtime/ScopeOffset.h
+    runtime/ScopedArguments.h
     runtime/ScopedArgumentsTable.h
     runtime/Scribble.h
     runtime/ScriptExecutable.h

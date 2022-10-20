@@ -59,6 +59,7 @@ JSString* jsString(VM&, Ref<AtomStringImpl>&&);
 JSString* jsString(VM&, Ref<StringImpl>&&);
 
 JSString* jsSingleCharacterString(VM&, UChar);
+JSString* jsSingleCharacterString(VM&, LChar);
 JSString* jsSubstring(VM&, const String&, unsigned offset, unsigned length);
 
 // Non-trivial strings are two or more characters long.
@@ -269,6 +270,7 @@ private:
     friend JSString* jsString(JSGlobalObject*, JSString*, JSString*, JSString*);
     friend JSString* jsString(JSGlobalObject*, const String&, const String&, const String&);
     friend JSString* jsSingleCharacterString(VM&, UChar);
+    friend JSString* jsSingleCharacterString(VM&, LChar);
     friend JSString* jsNontrivialString(VM&, const String&);
     friend JSString* jsNontrivialString(VM&, String&&);
     friend JSString* jsSubstring(VM&, const String&, unsigned, unsigned);
@@ -761,6 +763,14 @@ ALWAYS_INLINE JSString* jsSingleCharacterString(VM& vm, UChar c)
     if (c <= maxSingleCharacterString)
         return vm.smallStrings.singleCharacterString(c);
     return JSString::create(vm, StringImpl::create(&c, 1));
+}
+
+ALWAYS_INLINE JSString* jsSingleCharacterString(VM& vm, LChar c)
+{
+    if constexpr (validateDFGDoesGC)
+        vm.verifyCanGC();
+    ASSERT(maxSingleCharacterString >= 0xff);
+    return vm.smallStrings.singleCharacterString(c);
 }
 
 inline JSString* jsNontrivialString(VM& vm, const String& s)

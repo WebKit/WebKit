@@ -278,5 +278,68 @@ void ClonedArguments::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(ClonedArguments);
 
+void ClonedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    switch (this->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES: {
+        auto& butterfly = *this->butterfly();
+        auto data = butterfly.contiguous().data();
+        unsigned limit = std::min(length + offset, butterfly.vectorLength());
+        unsigned i;
+        for (i = offset; i < limit; ++i) {
+            JSValue value = data[i].get();
+            if (UNLIKELY(!value)) {
+                value = get(globalObject, i);
+                RETURN_IF_EXCEPTION(scope, void());
+            }
+            firstElementDest[i - offset] = value;
+        }
+        for (; i < length; ++i) {
+            firstElementDest[i - offset] = get(globalObject, i);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+        return;
+    }
+    default:
+        break;
+    }
+
+    unsigned i;
+    for (i = 0; i < length && canGetIndexQuickly(i + offset); ++i)
+        firstElementDest[i] = getIndexQuickly(i + offset);
+    for (; i < length; ++i) {
+        JSValue value = get(globalObject, i + offset);
+        RETURN_IF_EXCEPTION(scope, void());
+        firstElementDest[i] = value;
+    }
+}
+
+bool ClonedArguments::isIteratorProtocolFastAndNonObservable()
+{
+    Structure* structure = this->structure();
+    JSGlobalObject* globalObject = structure->globalObject();
+    if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
+        return false;
+
+    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing()))
+        return false;
+
+    // FIXME: We should relax this restriction, or reorganize ClonedArguments's @@iterator property materialization to go to this condition.
+    // Probably, we should make ClonedArguments more similar to DirectArguments, and tracking changes on them instead of using relatively plain objects.
+    if (structure->didTransition())
+        return false;
+
+    // Even though Structure is not transitioned, it is possible that length property is replaced with random value.
+    // To avoid side-effect, we need to ensure that this value is Int32.
+    JSValue lengthValue = getDirect(clonedArgumentsLengthPropertyOffset);
+    if (LIKELY(lengthValue.isInt32() && lengthValue.asInt32() >= 0))
+        return true;
+
+    return false;
+}
+
 } // namespace JSC
 
