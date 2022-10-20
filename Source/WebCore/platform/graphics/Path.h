@@ -217,56 +217,6 @@ public:
 #endif
 
 private:
-    class EncodedPathElementType {
-    public:
-        EncodedPathElementType()
-            : m_type(endOfPath)
-        {
-        }
-
-        EncodedPathElementType(PathElement::Type type)
-            : m_type(enumToUnderlyingType(type))
-        {
-            ASSERT(isValidPathElementType());
-        }
-
-        bool isEndOfPath() const { return m_type == endOfPath; }
-        bool isValidPathElementType() const { return isValidEnum<PathElement::Type>(m_type); }
-        bool isValid() const { return isValidPathElementType() || isEndOfPath(); }
-
-        PathElement::Type type() const
-        {
-            ASSERT(isValidPathElementType());
-            return static_cast<PathElement::Type>(m_type);
-        }
-
-        template <typename Encoder>
-        void encode(Encoder& encoder)
-        {
-            encoder << m_type;
-        }
-
-        template <typename Decoder>
-        static std::optional<EncodedPathElementType> decode(Decoder& decoder)
-        {
-            EncodedPathElementType type;
-            if (!decoder.decode(type.m_type))
-                return std::nullopt;
-
-            if (!type.isValid())
-                return std::nullopt;
-
-            return type;
-        }
-
-    private:
-        using UnderlyingType = std::underlying_type_t<PathElement::Type>;
-
-        static inline constexpr auto endOfPath = std::numeric_limits<UnderlyingType>::max();
-
-        UnderlyingType m_type;
-    };
-
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> DataType& inlineData();
     std::optional<FloatRect> fastBoundingRectFromInlineData() const;
@@ -326,8 +276,10 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
     }
 #endif
 
+    encoder << static_cast<uint64_t>(elementCount());
+
     apply([&](auto& element) {
-        encoder << EncodedPathElementType(element.type);
+        encoder << element.type;
 
         switch (element.type) {
         case PathElement::Type::MoveToPoint:
@@ -349,8 +301,6 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
             break;
         }
     });
-
-    encoder << EncodedPathElementType();
 }
 
 template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
@@ -370,17 +320,18 @@ template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
     }
 #endif
 
+    uint64_t numPoints;
+    if (!decoder.decode(numPoints))
+        return std::nullopt;
+
     path.clear();
 
-    while (true) {
-        EncodedPathElementType elementType;
+    for (uint64_t i = 0; i < numPoints; ++i) {
+        PathElement::Type elementType;
         if (!decoder.decode(elementType))
             return std::nullopt;
 
-        if (elementType.isEndOfPath())
-            break;
-
-        switch (elementType.type()) {
+        switch (elementType) {
         case PathElement::Type::MoveToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
