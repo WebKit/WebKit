@@ -704,16 +704,16 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLUniformLocation }};
 }
 
+#endif // ENABLE(WEBGL)
+
+#if ENABLE(WEBGL2)
+
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLVertexArrayObject* argument)
 {
     if (!argument)
         return std::nullopt;
     return {{ JSON::Value::create(0), RecordingSwizzleType::WebGLVertexArrayObject }};
 }
-
-#endif // ENABLE(WEBGL)
-
-#if ENABLE(WEBGL2)
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLTransformFeedback* argument)
 {
