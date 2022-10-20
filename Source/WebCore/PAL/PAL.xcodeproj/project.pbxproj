@@ -514,6 +514,23 @@
 		};
 /* End PBXBuildRule section */
 
+/* Begin PBXContainerItemProxy section */
+		1C4FAEA028FC83DC00FFE212 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE8F28FC83DC00FFE212;
+			remoteInfo = libavif;
+		};
+		1C9CD59828FC8D37005A2EAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C4FAE8E28FC83DC00FFE212;
+			remoteInfo = libavif;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		DDE992FF278D07A100F60D26 /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -676,6 +693,7 @@
 		1C36C52D2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDowncastConvertToBackingContext.h; sourceTree = "<group>"; };
 		1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		1C4876D71F8D7F4E00CCEEBD /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libavif.xcodeproj; path = libavif/libavif.xcodeproj; sourceTree = "<group>"; };
 		1C5C57B52757151D003B540D /* TextCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodec.cpp; sourceTree = "<group>"; };
 		1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUserDefined.cpp; sourceTree = "<group>"; };
 		1C5C57B82757151F003B540D /* TextCodecICU.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecICU.h; sourceTree = "<group>"; };
@@ -1203,6 +1221,7 @@
 		1C09D0341E31C32800725F18 = {
 			isa = PBXGroup;
 			children = (
+				1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */,
 				1C09D05C1E31C73300725F18 /* Configurations */,
 				DDE99321278D103900F60D26 /* Frameworks */,
 				1C09D03F1E31C32800725F18 /* pal */,
@@ -1369,6 +1388,14 @@
 				F46B8C4C26740918007A6554 /* VisionKitCoreSoftLink.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		1C4FAE9728FC83DC00FFE212 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEA128FC83DC00FFE212 /* libavif.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		1C5C57E527573105003B540D /* ios */ = {
@@ -2046,6 +2073,7 @@
 				DD20DD0627BC7F290093D175 /* PBXBuildRule */,
 			);
 			dependencies = (
+				1C9CD59928FC8D37005A2EAF /* PBXTargetDependency */,
 			);
 			name = PAL;
 			productName = PAL;
@@ -2083,12 +2111,28 @@
 			mainGroup = 1C09D0341E31C32800725F18;
 			productRefGroup = 1C09D03E1E31C32800725F18 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 1C4FAE9728FC83DC00FFE212 /* Products */;
+					ProjectRef = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				1C09D03C1E31C32800725F18 /* PAL */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		1C4FAEA128FC83DC00FFE212 /* libavif.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libavif.a;
+			remoteRef = 1C4FAEA028FC83DC00FFE212 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		DD20DE6627BC91B80093D175 /* (Legacy Build System) Nest Headers */ = {
@@ -2213,6 +2257,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1C9CD59928FC8D37005A2EAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libavif;
+			targetProxy = 1C9CD59828FC8D37005A2EAF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1C09D0461E31C32800725F18 /* Debug */ = {
