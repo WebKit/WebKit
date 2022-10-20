@@ -74,7 +74,7 @@ class Bugzilla():
 
     @classmethod
     def save_attachment(cls, attachment_id, attachment_data):
-        with open(Bugzilla.file_path_for_patch(attachment_id), 'w') as attachment_file:
+        with open(Bugzilla.file_path_for_patch(attachment_id), 'wb') as attachment_file:
             attachment_file.write(attachment_data)
 
     @classmethod
