@@ -2031,7 +2031,8 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     [gestures addObjectsFromArray:self._touchStartDeferringGestures];
     [gestures addObjectsFromArray:self._touchEndDeferringGestures];
 #if ENABLE(IMAGE_ANALYSIS)
-    [gestures addObject:_imageAnalysisDeferringGestureRecognizer.get()];
+    if (_imageAnalysisDeferringGestureRecognizer)
+        [gestures addObject:_imageAnalysisDeferringGestureRecognizer.get()];
 #endif
     return gestures;
 }
