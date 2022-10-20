@@ -2133,7 +2133,7 @@ bool RenderElement::createsNewFormattingContext() const
     if (isWritingModeRoot() && isBlockContainer())
         return true;
     return isInlineBlockOrInlineTable() || isFlexItemIncludingDeprecated()
-        || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isSVGForeignObject()
+        || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow()
         || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext();
 }
 
