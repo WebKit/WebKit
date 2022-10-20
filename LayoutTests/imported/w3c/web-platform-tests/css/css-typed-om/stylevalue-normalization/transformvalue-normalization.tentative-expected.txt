@@ -25,6 +25,6 @@ PASS Normalizing a skewX() returns a CSSSkewX
 PASS Normalizing a skewY() returns a CSSSkewY
 PASS Normalizing a perspective() returns a CSSPerspective
 PASS Normalizing a perspective(none) returns a CSSPerspective
-FAIL Normalizing a <transform-list> returns a CSSTransformValue containing all the transforms assert_equals: expected 7 but got 1
-FAIL Normalizing transforms with calc values contains CSSMathValues assert_equals: expected 2 but got 1
+PASS Normalizing a <transform-list> returns a CSSTransformValue containing all the transforms
+FAIL Normalizing transforms with calc values contains CSSMathValues assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
 

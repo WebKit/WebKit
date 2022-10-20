@@ -45,6 +45,7 @@
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTransformListValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
@@ -735,7 +736,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
     if (renderer) {
         TransformationMatrix transform;
         style.applyTransform(transform, renderer->transformReferenceBoxRect(style), { });
-        auto list = CSSValueList::createSpaceSeparated();
+        auto list = CSSTransformListValue::create();
         list->append(matrixTransformValue(transform, style));
         return list;
     }
@@ -746,7 +747,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
     if (valueType == ComputedStyleExtractor::PropertyValueType::Resolved)
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
-    auto list = CSSValueList::createSpaceSeparated();
+    auto list = CSSTransformListValue::create();
 
     auto translateLengthAsCSSValue = [&](const Length& length) {
         if (length.isZero())

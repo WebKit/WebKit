@@ -68,6 +68,7 @@
 #include "CSSShadowValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTransformListValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
@@ -171,6 +172,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSStepsTimingFunctionValue>(*this));
     case SpringTimingFunctionClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSSpringTimingFunctionValue>(*this));
+    case TransformListClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSTransformListValue>(*this));
     case UnicodeRangeClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSUnicodeRangeValue>(*this));
     case ValueListClass:

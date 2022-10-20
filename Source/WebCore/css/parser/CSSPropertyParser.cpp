@@ -64,6 +64,7 @@
 #include "CSSShadowValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTransformListValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSVariableParser.h"
 #include "CSSVariableReferenceValue.h"
@@ -2072,7 +2073,7 @@ static RefPtr<CSSValue> consumeTransform(CSSParserTokenRange& range, CSSParserMo
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    RefPtr<CSSTransformListValue> list = CSSTransformListValue::create();
     do {
         RefPtr<CSSValue> parsedTransformValue = consumeTransformValue(range, cssParserMode);
         if (!parsedTransformValue)

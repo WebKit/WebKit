@@ -809,6 +809,7 @@ css/CSSSupportsRule.cpp
 css/CSSTimingFunctionValue.cpp
 css/CSSToLengthConversionData.cpp
 css/CSSToStyleMap.cpp
+css/CSSTransformListValue.cpp
 css/CSSUnicodeRangeValue.cpp
 css/CSSUnits.cpp
 css/CSSValue.cpp
