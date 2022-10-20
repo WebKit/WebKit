@@ -1,8 +1,10 @@
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: The video frame has been detached.
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage2D: The video frame has been detached.
 
-FAIL texImage2D with 48x36 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
-FAIL texSubImage2D with 48x36 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
-FAIL texImage2D with 480x360 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
-FAIL texSubImage2D with 480x360 srgb VideoFrame. null is not an object (evaluating 'gl.VERTEX_SHADER')
-FAIL texImage2D with a closed VideoFrame. null is not an object (evaluating 'gl.texImage2D')
-FAIL texSubImage2D with a closed VideoFrame. null is not an object (evaluating 'gl.texSubImage2D')
+PASS texImage2D with 48x36 srgb VideoFrame.
+PASS texSubImage2D with 48x36 srgb VideoFrame.
+PASS texImage2D with 480x360 srgb VideoFrame.
+PASS texSubImage2D with 480x360 srgb VideoFrame.
+PASS texImage2D with a closed VideoFrame.
+PASS texSubImage2D with a closed VideoFrame.
 

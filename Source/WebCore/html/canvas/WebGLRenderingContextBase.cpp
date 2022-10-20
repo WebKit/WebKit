@@ -3557,8 +3557,11 @@ IntRect WebGLRenderingContextBase::getTexImageSourceSize(TexImageSource& source)
     }, [&](const RefPtr<HTMLVideoElement>& video) -> ExceptionOr<IntRect> {
         return IntRect(0, 0, video->videoWidth(), video->videoHeight());
 #endif // ENABLE(VIDEO)
-    }
-    );
+#if ENABLE(WEB_CODECS)
+    }, [&](const RefPtr<WebCodecsVideoFrame>& frame) -> ExceptionOr<IntRect> {
+        return IntRect(0, 0, frame->displayWidth(), frame->displayHeight());
+#endif // ENABLE(WEB_CODECS)
+    });
 
     ExceptionOr<IntRect> result = std::visit(visitor, source);
     if (result.hasException())
@@ -3763,6 +3766,29 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         return { };
     }
 #endif // ENABLE(VIDEO)
+#if ENABLE(WEB_CODECS)
+    , [&](const RefPtr<WebCodecsVideoFrame>& frame) -> ExceptionOr<void> {
+        if (frame->isDetached()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "The video frame has been detached.");
+            return { };
+        }
+
+        // FIXME: Implement remote video frame optimization.
+        auto internalFrame = frame->internalFrame();
+        IntSize frameSize { static_cast<int>(frame->displayWidth()), static_cast<int>(frame->displayHeight()) };
+        auto imageBuffer = m_generatedImageCache.imageBuffer(frameSize, DestinationColorSpace::SRGB());
+        if (!imageBuffer)
+            return { };
+
+        imageBuffer->context().paintVideoFrame(*internalFrame, { { }, frameSize }, true);
+        auto image = imageBuffer->copyImage(DontCopyBackingStore);
+        if (!image)
+            return { };
+
+        texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
+        return { };
+    }
+#endif // ENABLE(WEB_CODECS)
     );
 
     return std::visit(visitor, source);
