@@ -31,6 +31,7 @@
 #include "FontTaggedSettings.h"
 #include "HbUniquePtr.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include "text/TextFlags.h"
 #include <hb-ft.h>
 #include <hb-icu.h>
 #include <hb-ot.h>
@@ -176,191 +177,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     m_initialAdvance = toFloatSize(m_glyphOrigins[0]);
 }
 
-using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
-
-static void setFeatureSettingsFromVariants(const FontVariantSettings& variantSettings, FeaturesMap& features)
-{
-    switch (variantSettings.commonLigatures) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        features.set(fontFeatureTag("liga"), 1);
-        features.set(fontFeatureTag("clig"), 1);
-        break;
-    case FontVariantLigatures::No:
-        features.set(fontFeatureTag("liga"), 0);
-        features.set(fontFeatureTag("clig"), 0);
-        break;
-    }
-
-    switch (variantSettings.discretionaryLigatures) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        features.set(fontFeatureTag("dlig"), 1);
-        break;
-    case FontVariantLigatures::No:
-        features.set(fontFeatureTag("dlig"), 0);
-        break;
-    }
-
-    switch (variantSettings.historicalLigatures) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        features.set(fontFeatureTag("hlig"), 1);
-        break;
-    case FontVariantLigatures::No:
-        features.set(fontFeatureTag("hlig"), 0);
-        break;
-    }
-
-    switch (variantSettings.contextualAlternates) {
-    case FontVariantLigatures::Normal:
-        break;
-    case FontVariantLigatures::Yes:
-        features.set(fontFeatureTag("calt"), 1);
-        break;
-    case FontVariantLigatures::No:
-        features.set(fontFeatureTag("calt"), 0);
-        break;
-    }
-
-    switch (variantSettings.position) {
-    case FontVariantPosition::Normal:
-        break;
-    case FontVariantPosition::Subscript:
-        features.set(fontFeatureTag("subs"), 1);
-        break;
-    case FontVariantPosition::Superscript:
-        features.set(fontFeatureTag("sups"), 1);
-        break;
-    }
-
-    switch (variantSettings.caps) {
-    case FontVariantCaps::Normal:
-        break;
-    case FontVariantCaps::AllSmall:
-        features.set(fontFeatureTag("c2sc"), 1);
-        FALLTHROUGH;
-    case FontVariantCaps::Small:
-        features.set(fontFeatureTag("smcp"), 1);
-        break;
-    case FontVariantCaps::AllPetite:
-        features.set(fontFeatureTag("c2pc"), 1);
-        FALLTHROUGH;
-    case FontVariantCaps::Petite:
-        features.set(fontFeatureTag("pcap"), 1);
-        break;
-    case FontVariantCaps::Unicase:
-        features.set(fontFeatureTag("unic"), 1);
-        break;
-    case FontVariantCaps::Titling:
-        features.set(fontFeatureTag("titl"), 1);
-        break;
-    }
-
-    switch (variantSettings.numericFigure) {
-    case FontVariantNumericFigure::Normal:
-        break;
-    case FontVariantNumericFigure::LiningNumbers:
-        features.set(fontFeatureTag("lnum"), 1);
-        break;
-    case FontVariantNumericFigure::OldStyleNumbers:
-        features.set(fontFeatureTag("onum"), 1);
-        break;
-    }
-
-    switch (variantSettings.numericSpacing) {
-    case FontVariantNumericSpacing::Normal:
-        break;
-    case FontVariantNumericSpacing::ProportionalNumbers:
-        features.set(fontFeatureTag("pnum"), 1);
-        break;
-    case FontVariantNumericSpacing::TabularNumbers:
-        features.set(fontFeatureTag("tnum"), 1);
-        break;
-    }
-
-    switch (variantSettings.numericFraction) {
-    case FontVariantNumericFraction::Normal:
-        break;
-    case FontVariantNumericFraction::DiagonalFractions:
-        features.set(fontFeatureTag("frac"), 1);
-        break;
-    case FontVariantNumericFraction::StackedFractions:
-        features.set(fontFeatureTag("afrc"), 1);
-        break;
-    }
-
-    switch (variantSettings.numericOrdinal) {
-    case FontVariantNumericOrdinal::Normal:
-        break;
-    case FontVariantNumericOrdinal::Yes:
-        features.set(fontFeatureTag("ordn"), 1);
-        break;
-    }
-
-    switch (variantSettings.numericSlashedZero) {
-    case FontVariantNumericSlashedZero::Normal:
-        break;
-    case FontVariantNumericSlashedZero::Yes:
-        features.set(fontFeatureTag("zero"), 1);
-        break;
-    }
-
-    if (!variantSettings.alternates.isNormal()) {
-        auto values = variantSettings.alternates.values();
-        if (values.historicalForms)
-            features.set(fontFeatureTag("hist"), 1);
-        
-        // TODO: handle other tags.
-        // https://bugs.webkit.org/show_bug.cgi?id=246121
-    }
-
-    switch (variantSettings.eastAsianVariant) {
-    case FontVariantEastAsianVariant::Normal:
-        break;
-    case FontVariantEastAsianVariant::Jis78:
-        features.set(fontFeatureTag("jp78"), 1);
-        break;
-    case FontVariantEastAsianVariant::Jis83:
-        features.set(fontFeatureTag("jp83"), 1);
-        break;
-    case FontVariantEastAsianVariant::Jis90:
-        features.set(fontFeatureTag("jp90"), 1);
-        break;
-    case FontVariantEastAsianVariant::Jis04:
-        features.set(fontFeatureTag("jp04"), 1);
-        break;
-    case FontVariantEastAsianVariant::Simplified:
-        features.set(fontFeatureTag("smpl"), 1);
-        break;
-    case FontVariantEastAsianVariant::Traditional:
-        features.set(fontFeatureTag("trad"), 1);
-        break;
-    }
-
-    switch (variantSettings.eastAsianWidth) {
-    case FontVariantEastAsianWidth::Normal:
-        break;
-    case FontVariantEastAsianWidth::Full:
-        features.set(fontFeatureTag("fwid"), 1);
-        break;
-    case FontVariantEastAsianWidth::Proportional:
-        features.set(fontFeatureTag("pwid"), 1);
-        break;
-    }
-
-    switch (variantSettings.eastAsianRuby) {
-    case FontVariantEastAsianRuby::Normal:
-        break;
-    case FontVariantEastAsianRuby::Yes:
-        features.set(fontFeatureTag("ruby"), 1);
-        break;
-    }
-}
-
 static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontPlatformData& fontPlatformData)
 {
     FeaturesMap featuresToBeApplied;
@@ -379,7 +195,9 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
 
     // 3. Font features implied by the value of the ‘font-variant’ property, the related ‘font-variant’
     //    subproperties and any other CSS property that uses OpenType features.
-    setFeatureSettingsFromVariants(font.fontDescription().variantSettings(), featuresToBeApplied);
+    for (auto& feature : computeFeatureSettingsFromVariants(font.fontDescription().variantSettings()))
+        featuresToBeApplied.set(feature.key, feature.value);
+        
     featuresToBeApplied.set(fontFeatureTag("kern"), font.enableKerning() ? 1 : 0);
 
     // 4. Feature settings determined by properties other than ‘font-variant’ or ‘font-feature-settings’.
