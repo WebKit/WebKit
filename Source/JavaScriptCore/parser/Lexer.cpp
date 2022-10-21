@@ -1839,6 +1839,7 @@ ALWAYS_INLINE void Lexer<T>::parseCommentDirective()
     }
 }
 
+IGNORE_WARNINGS_BEGIN("unused-but-set-variable")
 template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::parseCommentDirectiveValue()
 {
     skipWhitespace();
@@ -1861,6 +1862,7 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
     }
     return { stringStart, length };
 }
+IGNORE_WARNINGS_END
 
 template <typename T>
 template <unsigned length>

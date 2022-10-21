@@ -45,6 +45,7 @@ VideoPixelFormat convertVideoFramePixelFormat(uint32_t format, bool shouldDiscar
     ASSERT_NOT_REACHED();
 #else
     UNUSED_PARAM(format);
+    UNUSED_PARAM(shouldDiscardAlpha);
 #endif
     return VideoPixelFormat::I420;
 }
