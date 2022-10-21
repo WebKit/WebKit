@@ -260,21 +260,12 @@ static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAtt
     SVGCharacterDataMap::iterator itLast = lastAttributes->characterDataMap().find(lastPosition + 1);
     bool firstPresent = itFirst != firstAttributes->characterDataMap().end();
     bool lastPresent = itLast != lastAttributes->characterDataMap().end();
-    if (!firstPresent && !lastPresent)
+    // We only want to perform the swap if both inline boxes are absolutely
+    // positioned.
+    if (!firstPresent || !lastPresent)
         return;
 
-    if (firstPresent && lastPresent) {
-        std::swap(itFirst->value, itLast->value);
-        return;
-    }
-
-    if (firstPresent && !lastPresent) {
-        lastAttributes->characterDataMap().set(lastPosition + 1, itFirst->value);
-        return;
-    }
-
-    // !firstPresent && lastPresent
-    firstAttributes->characterDataMap().set(firstPosition + 1, itLast->value);
+    std::swap(itFirst->value, itLast->value);
 }
 
 static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes*>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,
