@@ -74,7 +74,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-contrast-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-contrast-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-function-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-initial-canvastext.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001-ref.html
@@ -93,10 +92,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-percents-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-percents-02-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-percents-02.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-hwb.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-keywords.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity.html
@@ -392,7 +387,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-008.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-rounding-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgba-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgba-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgba-002-expected.html

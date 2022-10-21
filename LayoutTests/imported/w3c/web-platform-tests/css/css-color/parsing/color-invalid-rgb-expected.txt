@@ -1,0 +1,27 @@
+
+PASS e.style['color'] = "rgb(none, none, none)" should not set the property value
+PASS e.style['color'] = "rgba(none, none, none, none)" should not set the property value
+PASS e.style['color'] = "rgb(128, 0, none)" should not set the property value
+PASS e.style['color'] = "rgb(255, 255, 255, none)" should not set the property value
+PASS e.style['color'] = "rgb(10%, 50%, 0)" should not set the property value
+PASS e.style['color'] = "rgb(255, 50%, 0%)" should not set the property value
+PASS e.style['color'] = "rgb(0, 0 0)" should not set the property value
+PASS e.style['color'] = "rgb(0, 0, 0deg)" should not set the property value
+PASS e.style['color'] = "rgb(0, 0, light)" should not set the property value
+PASS e.style['color'] = "rgb()" should not set the property value
+PASS e.style['color'] = "rgb(0)" should not set the property value
+PASS e.style['color'] = "rgb(0, 0)" should not set the property value
+PASS e.style['color'] = "rgb(0%)" should not set the property value
+PASS e.style['color'] = "rgb(0%, 0%)" should not set the property value
+PASS e.style['color'] = "rgba(10%, 50%, 0, 1)" should not set the property value
+PASS e.style['color'] = "rgba(255, 50%, 0%, 1)" should not set the property value
+PASS e.style['color'] = "rgba(0, 0, 0 0)" should not set the property value
+PASS e.style['color'] = "rgba(0, 0, 0, 0deg)" should not set the property value
+PASS e.style['color'] = "rgba(0, 0, 0, light)" should not set the property value
+PASS e.style['color'] = "rgba()" should not set the property value
+PASS e.style['color'] = "rgba(0)" should not set the property value
+PASS e.style['color'] = "rgba(0, 0, 0, 0, 0)" should not set the property value
+PASS e.style['color'] = "rgba(0%)" should not set the property value
+PASS e.style['color'] = "rgba(0%, 0%)" should not set the property value
+PASS e.style['color'] = "rgba(0%, 0%, 0%, 0%, 0%)" should not set the property value
+

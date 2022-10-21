@@ -1,3 +1,0 @@
-
-PASS Tests that RGB channels are rounded appropriately
-
