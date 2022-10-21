@@ -1498,11 +1498,8 @@ TEST_F(WebPushDITPTest, NotificationClickExtendsITPCleanupTimerBy30Days)
     simulateNotificationClick();
     EXPECT_TRUE(hasPushSubscription());
 
-#if 0
-    // FIXME: won't work until https://bugs.webkit.org/show_bug.cgi?id=246468 is resolved.
     assertPushEventSucceeds(58 * days);
     EXPECT_TRUE(hasPushSubscription());
-#endif
 
     assertPushEventFails(61 * days);
     EXPECT_FALSE(hasPushSubscription());

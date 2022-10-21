@@ -128,7 +128,6 @@ constexpr auto getAllDomainsQuery = "SELECT registrableDomain FROM ObservedDomai
 constexpr auto getAllSubStatisticsUnderDomainQuery = "SELECT topFrameDomainID FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?"
     "UNION ALL SELECT topFrameDomainID FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"
     "UNION ALL SELECT toDomainID FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
-constexpr auto mostRecentWebPushInteractionTimeQuery = "SELECT mostRecentWebPushInteractionTime FROM ObservedDomains WHERE registrableDomain = ?"_s;
 
 // EXISTS for testing queries
 constexpr auto linkDecorationExistsQuery = "SELECT EXISTS (SELECT * FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? OR fromDomainID = ?)"_s;
@@ -712,7 +711,6 @@ void ResourceLoadStatisticsDatabaseStore::destroyStatements()
     m_removeAllDataStatement = nullptr;
     m_checkIfTableExistsStatement = nullptr;
     m_updateMostRecentWebPushInteractionTimeStatement = nullptr;
-    m_mostRecentWebPushInteractionTimeStatement = nullptr;
 }
 
 bool ResourceLoadStatisticsDatabaseStore::insertObservedDomain(const ResourceLoadStatistics& loadStatistics)
@@ -1874,21 +1872,6 @@ void ResourceLoadStatisticsDatabaseStore::setMostRecentWebPushInteractionTime(co
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setMostRecentWebPushInteractionTime failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
-}
-
-WallTime ResourceLoadStatisticsDatabaseStore::mostRecentWebPushInteractionTime(const RegistrableDomain& domain) const
-{
-    auto scopedStatement = this->scopedStatement(m_mostRecentWebPushInteractionTimeStatement, mostRecentWebPushInteractionTimeQuery, "mostRecentWebPushInteractionTime"_s);
-    if (!scopedStatement || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
-        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::mostRecentWebPushInteractionTime failed. Error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    if (scopedStatement->step() != SQLITE_ROW)
-        return { };
-
-    return WallTime::fromRawSeconds(scopedStatement->columnDouble(0));
 }
 
 Seconds ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp(const RegistrableDomain& subDomain, const TopFrameDomain& topFrameDomain) const
