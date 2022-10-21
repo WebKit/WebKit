@@ -32,6 +32,9 @@
 #include "Shared/Sandbox/preferences.sb"
 
 #if USE(SANDBOX_VERSION_2)
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5)))
+
 (with-filter (mac-policy-name "Quarantine")
     (allow system-mac-syscall (mac-syscall-number 180)))
 
@@ -51,6 +54,7 @@
 (allow process-codesigning-identity-get (target self))
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
+(allow iokit-open-service (iokit-user-client-class "AppleCLCD2"))
 
 (allow file-map-executable
     (subpath "/System/Library/Components")
@@ -65,6 +69,8 @@
 
 (deny darwin-notification-post (with no-report))
 (deny nvram-get (with no-report))
+
+(allow file-map-executable (with report))
 #endif // USE(SANDBOX_VERSION_2)
 
 ;;;
