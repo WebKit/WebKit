@@ -41,7 +41,7 @@ public:
     static void paintFocus(GraphicsContext&, const Path&, const Color&);
     static void paintFocus(GraphicsContext&, const Vector<FloatRect>&, const Color&, PaintRounded = PaintRounded::No);
     enum class ArrowDirection { Up, Down };
-    static void paintArrow(GraphicsContext&, ArrowDirection, bool);
+    static void paintArrow(GraphicsContext&, const FloatRect&, ArrowDirection, bool);
 
     virtual void platformColorsDidChange() { };
 
