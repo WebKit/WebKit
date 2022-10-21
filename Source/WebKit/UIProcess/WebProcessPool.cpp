@@ -632,6 +632,14 @@ Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websi
     initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed);
     m_processes.append(processProxy.copyRef());
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+    if (shouldCrashWhenCreatingWebProcess()) {
+        auto crashyProcessProxy = WebProcessProxy::createForWebContentCrashy(*this);
+        initializeNewWebProcess(crashyProcessProxy, nullptr);
+        m_processes.append(crashyProcessProxy.copyRef());
+    }
+#endif
+
     return processProxy;
 }
 

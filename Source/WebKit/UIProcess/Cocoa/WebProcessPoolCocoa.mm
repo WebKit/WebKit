@@ -128,6 +128,32 @@
 #include <WebCore/MediaAccessibilitySoftLink.h>
 #endif
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
+#include <WebKitAdditions/InternalBuildAdditions.h>
+#else
+static bool isInternalBuild()
+{
+    return false;
+}
+#endif
+
+#if __has_include(<WebKitAdditions/InternalCanaryState.h>)
+#include <WebKitAdditions/InternalCanaryState.h>
+#else
+static bool canaryInBaseState()
+{
+    return true;
+}
+#endif
+
+#include <OSAnalytics/OSASystemConfiguration_Public.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(OSAnalytics)
+
+SOFT_LINK_CLASS(OSAnalytics, OSASystemConfiguration)
+#endif
+
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -262,6 +288,24 @@ static void logProcessPoolState(const WebProcessPool& pool)
     }
 }
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+static bool determineIfWeShouldCrashWhenCreatingWebProcess()
+{
+    static bool shouldCrashResult { false };
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [&] {
+            if (isInternalBuild()
+                && ![[getOSASystemConfigurationClass() automatedDeviceGroup] isEqualToString:@"CanaryExperimentOptOut"]
+                && !canaryInBaseState())
+                shouldCrashResult = true;
+        });
+
+    return shouldCrashResult;
+}
+#endif
+
 void WebProcessPool::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
@@ -294,6 +338,17 @@ void WebProcessPool::platformInitialize()
                 logProcessPoolState(pool.get());
         });
     });
+
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+#if PLATFORM(IOS_FAMILY)
+    bool isSafari = WebCore::IOSApplication::isMobileSafari();
+#elif PLATFORM(MAC)
+    bool isSafari = WebCore::MacApplication::isSafari();
+#endif
+
+    if (isSafari)
+        m_shouldCrashWhenCreatingWebProcess = determineIfWeShouldCrashWhenCreatingWebProcess();
+#endif
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
