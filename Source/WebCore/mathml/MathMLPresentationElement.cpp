@@ -205,7 +205,7 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
     return attribute.value();
 }
 
-MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView string)
+MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView string, bool acceptLegacyMathMLLengths)
 {
     LengthType lengthType = LengthType::UnitLess;
     unsigned stringLength = string.length();
@@ -239,6 +239,9 @@ MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView s
     bool ok;
     float lengthValue = string.left(stringLength).toFloat(ok);
     if (!ok)
+        return Length();
+
+    if (!acceptLegacyMathMLLengths && lengthType == LengthType::UnitLess && string != "0"_s)
         return Length();
 
     Length length;
@@ -288,7 +291,7 @@ MathMLElement::Length MathMLPresentationElement::parseNamedSpace(StringView stri
     return length;
 }
 
-MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String& string)
+MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String& string, bool acceptLegacyMathMLLengths)
 {
     // The regular expression from the MathML Relax NG schema is as follows:
     //
@@ -307,9 +310,11 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
     // We consider the most typical case: a number followed by an optional unit.
     UChar firstChar = strippedLength[0];
     if (isASCIIDigit(firstChar) || firstChar == '-' || firstChar == '.')
-        return parseNumberAndUnit(strippedLength);
+        return parseNumberAndUnit(strippedLength, acceptLegacyMathMLLengths);
 
     // Otherwise, we try and parse a named space.
+    if (!acceptLegacyMathMLLengths)
+        return Length();
     return parseNamedSpace(strippedLength);
 }
 
@@ -317,7 +322,7 @@ const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const
 {
     if (length)
         return length.value();
-    length = parseMathMLLength(attributeWithoutSynchronization(name));
+    length = parseMathMLLength(attributeWithoutSynchronization(name), !document().settings().coreMathMLEnabled());
     return length.value();
 }
 

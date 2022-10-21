@@ -1,0 +1,105 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>minsize/maxsize - legacy length values</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#dictionary-based-attributes">
+<meta name="assert" content="Verify non-zero unitless and namedspaces are not support for minsize/maxsize.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/fonts.js"></script>
+<style>
+  math {
+      font: 25px/1 Ahem;
+  }
+  @font-face {
+      font-family: operators;
+      src: url("/fonts/math/operators.woff");
+  }
+  mo {
+      font-family: operators;
+  }
+</style>
+<script>
+  setup({ explicit_done: true });
+  window.addEventListener("load", () => { loadAllFonts().then(runTests); });
+
+  function runTests() {
+      var epsilon = 1;
+      var emToPx = 25;
+
+      test(function() {
+          let mo = document.getElementById("minsize_nonzero_unitless");
+          assert_approx_equals(mo.getBoundingClientRect().height, 1 * emToPx, epsilon);
+      }, `minsize does not accept nonzero unitless values`);
+
+      test(function() {
+          let mo = document.getElementById("maxsize_nonzero_unitless");
+          assert_approx_equals(mo.getBoundingClientRect().height, 5 * emToPx, epsilon);
+      }, `maxsize does not accept nonzero unitless values`);
+
+      test(function() {
+          let math = document.getElementById("maxsize_namedspace");
+          Array.from(math.getElementsByTagName("mo")).forEach(mo => {
+              assert_approx_equals(mo.getBoundingClientRect().height, 5 * emToPx, epsilon);
+          });
+      }, `maxsize does not accept namedspace values`);
+
+      done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+
+  <div>
+    <math>
+      <mrow>
+        <mspace width="1em" height="1em" style="background: blue"/>
+        <mo id="minsize_nonzero_unitless" minsize="5" stretchy="true" symmetric="false">⥯</mo>
+        <mn><!-- not space like --></mn>
+      </mrow>
+    </math>
+  </div>
+
+  <!-- Here we should be testing minsize with namedspaced values, but
+       these values are smaller than the unstretched 1em square so we
+       cannot really distintiguish with the case where the value is
+       ignored. So let's skip minsize_namedspace. -->
+
+  <div>
+    <math>
+      <mrow>
+        <mspace width="1em" height="5em" style="background: blue"/>
+        <mo id="maxsize_nonzero_unitless" maxsize="1" stretchy="true" symmetric="false">⥯</mo>
+        <mn><!-- not space like --></mn>
+      </mrow>
+    </math>
+ </div>
+
+  <div>
+    <math>
+      <mrow id="maxsize_namedspace">
+        <mspace width="1em" height="5em" style="background: blue"/>
+        <mo maxsize="veryverythinmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="verythinmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="thinmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="mediummathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="thickmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="verythickmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="veryverythickmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativeveryverythinmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativeverythinmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativethinmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativemediummathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativethickmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativeverythickmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mo maxsize="negativeveryverythickmathspace" stretchy="true" symmetric="false">⥯</mo>
+        <mn><!-- not space like --></mn>
+      </mrow>
+    </math>
+  </div>
+
+</body>
+</html>

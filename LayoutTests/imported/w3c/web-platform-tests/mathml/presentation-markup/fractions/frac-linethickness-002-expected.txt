@@ -9,7 +9,7 @@
 PASS Positive
 PASS Negative
 PASS Percentage
-FAIL Named space assert_approx_equals: expected 100 +/- 2 but got 3.875
+PASS Named space
 PASS Calc() expression
 FAIL Dynamic linethickness assert_approx_equals: attach expected 400 +/- 2 but got 100
 

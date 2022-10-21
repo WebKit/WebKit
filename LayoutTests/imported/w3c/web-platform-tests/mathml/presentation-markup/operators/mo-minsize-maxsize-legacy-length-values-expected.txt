@@ -1,0 +1,21 @@
+
+PASS minsize does not accept nonzero unitless values
+FAIL maxsize does not accept nonzero unitless values assert_approx_equals: expected 125 +/- 1 but got 25
+FAIL maxsize does not accept namedspace values assert_approx_equals: expected 125 +/- 1 but got 25
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+⥯
+

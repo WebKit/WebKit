@@ -1,0 +1,87 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>mo lspace/rspace - legacy length values</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#dictionary-based-attributes">
+<meta name="assert" content="Verify namedspace and nonzero unitless values are invalid on lspace/rspace.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/fonts.js"></script>
+<style>
+  math {
+      font: 25px/1 Ahem;
+  }
+</style>
+<script>
+  setup({ explicit_done: true });
+  window.addEventListener("load", () => { loadAllFonts().then(runTests); });
+
+  function runTests() {
+
+      let epsilon = 1;
+      let emToPx = 25;
+
+      Array.from(document.getElementsByClassName("test")).forEach(div => {
+          test(function() {
+              Array.from(div.getElementsByTagName('math')).forEach(math => {
+                  let mo = math.getElementsByTagName('mo')[0];
+                  let mnBefore = mo.previousElementSibling;
+                  let mnAfter = mo.nextElementSibling;
+                  let space = mnAfter.getBoundingClientRect().left - mnBefore.getBoundingClientRect().right;
+                  assert_approx_equals(space, 0.2777777777777778 * emToPx, epsilon, "default value of 0.2777777777777778em is used");
+              });
+          }, div.dataset.label);
+      });
+
+      done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+
+  <div class="test" data-label="nonzero unitless values for lspace are not supported">
+    <math><mn>X</mn><mo lspace="2" rspace="0"></mo><mn>X</mn></math>
+  </div>
+
+  <div class="test" data-label="nonzero unitless values for rspace are not supported">
+    <math><mn>X</mn><mo rspace="2" lspace="0"></mo><mn>X</mn></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for lspace are not supported">
+    <math><mn>X</mn><mo lspace="veryverythinmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="verythinmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="thinmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="mediummathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="thickmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="verythickmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="veryverythickmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativeveryverythinmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativeverythinmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativethinmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativemediummathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativethickmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativeverythickmathspace" rspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo lspace="negativeveryverythickmathspace" rspace="0"></mo><mn>X</mn></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for rspace are not supported">
+    <math><mn>X</mn><mo rspace="veryverythinmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="verythinmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="thinmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="mediummathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="thickmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="verythickmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="veryverythickmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativeveryverythinmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativeverythinmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativethinmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativemediummathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativethickmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativeverythickmathspace" lspace="0"></mo><mn>X</mn></math>
+    <math><mn>X</mn><mo rspace="negativeveryverythickmathspace" lspace="0"></mo><mn>X</mn></math>
+  </div>
+</body>
+</html>
