@@ -14,8 +14,7 @@
 #if !defined(WEBRTC_WEBKIT_BUILD)
 #include "third_party/crc32c/src/include/crc32c/crc32c.h"
 #else
-extern "C" uint32_t calculate_crc32c(uint32_t, const unsigned char*, unsigned int);
-extern "C" uint32_t sctp_finalize_crc32c(uint32_t);
+#include "third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h"
 #endif
 
 namespace dcsctp {
@@ -24,8 +23,7 @@ uint32_t GenerateCrc32C(rtc::ArrayView<const uint8_t> data) {
 #if !defined(WEBRTC_WEBKIT_BUILD)
   uint32_t crc32c = crc32c_value(data.data(), data.size());
 #else
-  uint32_t crc32c = calculate_crc32c(0xffffffff, const_cast<uint8_t*>(data.data()), (unsigned int)data.size());
-  crc32c = sctp_finalize_crc32c(crc32c);
+  uint32_t crc32c = usrsctp_crc32c(const_cast<uint8_t*>(data.data()), data.size());
 #endif
 
   // Byte swapping for little endian byte order:
