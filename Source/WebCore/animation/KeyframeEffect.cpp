@@ -1314,7 +1314,8 @@ void KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionCont
     if (!computedTiming.progress)
         return;
 
-    setAnimatedPropertiesInStyle(targetStyle, computedTiming.progress.value());
+    ASSERT(computedTiming.currentIteration);
+    setAnimatedPropertiesInStyle(targetStyle, *computedTiming.progress, *computedTiming.currentIteration);
 }
 
 bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accelerated accelerated) const
@@ -1428,9 +1429,9 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
     if (!renderer() || !animation())
         return;
 
-    auto progress = getComputedTiming().progress;
-    LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " getAnimatedStyle - progress " << progress);
-    if (!progress)
+    auto computedTiming = getComputedTiming();
+    LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " getAnimatedStyle - progress " << computedTiming.progress);
+    if (!computedTiming.progress)
         return;
 
     if (!animatedStyle) {
@@ -1440,10 +1441,11 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
             animatedStyle = RenderStyle::clonePtr(renderer()->style());
     }
 
-    setAnimatedPropertiesInStyle(*animatedStyle.get(), progress.value());
+    ASSERT(computedTiming.currentIteration);
+    setAnimatedPropertiesInStyle(*animatedStyle.get(), *computedTiming.progress, *computedTiming.currentIteration);
 }
 
-void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double iterationProgress)
+void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double iterationProgress,  double currentIteration)
 {
     auto& properties = m_blendingKeyframes.properties();
 
@@ -1596,6 +1598,20 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
                     auto endKeyframeCompositeOperation = endKeyframe.compositeOperation().value_or(m_compositeOperation);
                     if (endKeyframeCompositeOperation != CompositeOperation::Replace)
                         CSSPropertyAnimation::blendProperties(this, cssPropertyId, endKeyframeStyle, targetStyle, *endKeyframe.style(), 1, endKeyframeCompositeOperation);
+                }
+
+                // If this keyframe effect has an iteration composite operation of accumulate,
+                if (m_iterationCompositeOperation == IterationCompositeOperation::Accumulate) {
+                    // apply the following step current iteration times:
+                    for (auto i = 0; i < currentIteration; ++i) {
+                        // replace the property value of target property on keyframe with the result of combining the
+                        // property value on the final keyframe in property-specific keyframes (Va) with the property
+                        // value on keyframe (Vb) using the accumulation procedure defined for target property.
+                        if (!startKeyframe.key() && !hasImplicitZeroKeyframe)
+                            CSSPropertyAnimation::blendProperties(this, cssPropertyId, startKeyframeStyle, *endKeyframe.style(), startKeyframeStyle, 1, CompositeOperation::Accumulate);
+                        if (endKeyframe.key() == 1 && !hasImplicitOneKeyframe)
+                            CSSPropertyAnimation::blendProperties(this, cssPropertyId, endKeyframeStyle, *endKeyframe.style(), endKeyframeStyle, 1, CompositeOperation::Accumulate);
+                    }
                 }
             }
         }
@@ -1886,8 +1902,11 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         for (const auto& effect : effectStack->sortedEffects()) {
             if (this == effect.get())
                 break;
-            if (auto progress = effect->getComputedTiming().progress)
-                effect->setAnimatedPropertiesInStyle(*underlyingStyle, *progress);
+            auto computedTiming = effect->getComputedTiming();
+            if (computedTiming.progress) {
+                ASSERT(computedTiming.currentIteration);
+                effect->setAnimatedPropertiesInStyle(*underlyingStyle, *computedTiming.progress, *computedTiming.currentIteration);
+            }
         }
 
         KeyframeList explicitKeyframes(m_blendingKeyframes.animationName());

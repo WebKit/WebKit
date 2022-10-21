@@ -215,7 +215,7 @@ private:
     void addPendingAcceleratedAction(AcceleratedAction);
     bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
     void updateAcceleratedActions();
-    void setAnimatedPropertiesInStyle(RenderStyle&, double);
+    void setAnimatedPropertiesInStyle(RenderStyle&, double iterationProgress, double currentIteration);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
     TimingFunction* timingFunctionForBlendingKeyframe(const KeyframeValue&) const;
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
