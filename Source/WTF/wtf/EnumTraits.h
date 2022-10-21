@@ -79,4 +79,5 @@ constexpr auto enumToUnderlyingType(E e)
 
 }
 
+using WTF::enumToUnderlyingType;
 using WTF::isValidEnum;
