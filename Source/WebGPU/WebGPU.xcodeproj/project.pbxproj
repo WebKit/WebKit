@@ -80,6 +80,8 @@
 		3A7E164C28C57BB8003F49C9 /* ASTArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */; };
 		3AAE4EB428C56E9A00DA484B /* ASTUnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */; };
 		3ACCE80628FE1872004A0914 /* AST.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ACCE80528FE1872004A0914 /* AST.h */; };
+		3ADB94442900F7D700CFFDC2 /* ASTStringDumper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */; };
+		3ADB94452900F7D700CFFDC2 /* ASTStringDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */; };
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
@@ -329,6 +331,8 @@
 		3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayAccess.h; sourceTree = "<group>"; };
 		3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTUnaryExpression.h; sourceTree = "<group>"; };
 		3ACCE80528FE1872004A0914 /* AST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AST.h; sourceTree = "<group>"; };
+		3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTStringDumper.cpp; sourceTree = "<group>"; };
+		3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStringDumper.h; sourceTree = "<group>"; };
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
@@ -683,6 +687,8 @@
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
 				33EA186F27BC1E8A00A1DD52 /* ASTShaderModule.h */,
 				33EA187827BC22AA00A1DD52 /* ASTStatement.h */,
+				3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */,
+				3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */,
 				33EA188327BC268600A1DD52 /* ASTStructureAccess.h */,
 				33EA187327BC204900A1DD52 /* ASTStructureDecl.h */,
 				33EA186D27BC1D4C00A1DD52 /* ASTTypeDecl.h */,
@@ -734,6 +740,7 @@
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
 				33EA187027BC1E8A00A1DD52 /* ASTShaderModule.h in Headers */,
 				33EA187927BC22AA00A1DD52 /* ASTStatement.h in Headers */,
+				3ADB94452900F7D700CFFDC2 /* ASTStringDumper.h in Headers */,
 				33EA188427BC268600A1DD52 /* ASTStructureAccess.h in Headers */,
 				33EA187427BC204900A1DD52 /* ASTStructureDecl.h in Headers */,
 				33EA186E27BC1D4C00A1DD52 /* ASTTypeDecl.h in Headers */,
@@ -968,6 +975,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3ADB94442900F7D700CFFDC2 /* ASTStringDumper.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,

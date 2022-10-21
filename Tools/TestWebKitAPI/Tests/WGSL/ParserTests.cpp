@@ -26,27 +26,10 @@
 #include "config.h"
 #include "Parser.h"
 
-#include "ASTArrayAccess.h"
-#include "ASTAssignmentStatement.h"
-#include "ASTCallableExpression.h"
-#include "ASTIdentifierExpression.h"
-#include "ASTLiteralExpressions.h"
-#include "ASTReturnStatement.h"
-#include "ASTStructureAccess.h"
-#include "ASTUnaryExpression.h"
-#include "ASTVariableStatement.h"
+#include "AST.h"
 #include "Lexer.h"
+#include "TestWGSLAPI.h"
 #include "WGSL.h"
-
-#include <wtf/Assertions.h>
-
-#define EXPECT_SHADER(shader) \
-    do { \
-        if (!shader.has_value()) { \
-            logCompilationError(shader.error()); \
-            return; \
-        } \
-    } while (false)
 
 static void checkBuiltin(WGSL::AST::Attribute& attr, ASCIILiteral attrName)
 {
@@ -78,12 +61,6 @@ static void checkVec2F32Type(WGSL::AST::TypeDecl& type)
 static void checkVec4F32Type(WGSL::AST::TypeDecl& type)
 {
     checkVecType(type, WGSL::AST::ParameterizedType::Base::Vec4, "f32"_s);
-}
-
-static void logCompilationError(WGSL::CompilationMessage& error)
-{
-    WTFLogAlways("%u:%u length:%u %s", error.lineNumber(), error.lineOffset(), error.length(), error.message().utf8().data());
-    GTEST_FAIL();
 }
 
 namespace TestWGSLAPI {

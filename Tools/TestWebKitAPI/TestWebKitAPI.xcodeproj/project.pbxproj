@@ -223,6 +223,8 @@
 		3A5DDB2C28D5525E004DA950 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
 		3A5DDB2D28D55265004DA950 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDB2028D54269004DA950 /* libwgsl.a */; };
 		3A7AA56028E28E99009E09C2 /* ConstLiteralTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA55F28E28E99009E09C2 /* ConstLiteralTests.cpp */; };
+		3A9C438828E3E057002F7294 /* ASTStringDumperTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C438028E3E057002F7294 /* ASTStringDumperTests.cpp */; };
+		3A9C438B28E3E240002F7294 /* TestWGSLAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C438928E3E240002F7294 /* TestWGSLAPI.cpp */; };
 		3FBD1B4A1D3D66AB00E6D6FA /* FullscreenLayoutConstraints.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */; };
 		3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */; };
 		4102EE1727845ED500D6BE74 /* ServiceWorkerRoutines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4102EE1627845ED500D6BE74 /* ServiceWorkerRoutines.cpp */; };
@@ -2215,6 +2217,9 @@
 		3A5DDAF428D1638A004DA950 /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
 		3A5DDB2028D54269004DA950 /* libwgsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libwgsl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A7AA55F28E28E99009E09C2 /* ConstLiteralTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConstLiteralTests.cpp; sourceTree = "<group>"; };
+		3A9C438028E3E057002F7294 /* ASTStringDumperTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTStringDumperTests.cpp; sourceTree = "<group>"; };
+		3A9C438928E3E240002F7294 /* TestWGSLAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestWGSLAPI.cpp; sourceTree = "<group>"; };
+		3A9C438A28E3E240002F7294 /* TestWGSLAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestWGSLAPI.h; sourceTree = "<group>"; };
 		3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenLayoutConstraints.mm; sourceTree = "<group>"; };
 		3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenLayoutConstraints.html; sourceTree = "<group>"; };
 		3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureDelegate.mm; sourceTree = "<group>"; };
@@ -4105,9 +4110,12 @@
 		3A15785D28D150BB00142DB1 /* WGSL */ = {
 			isa = PBXGroup;
 			children = (
+				3A9C438028E3E057002F7294 /* ASTStringDumperTests.cpp */,
 				3A7AA55F28E28E99009E09C2 /* ConstLiteralTests.cpp */,
 				3A5DDAD228D15169004DA950 /* LexerTests.cpp */,
 				3A5DDAED28D156FC004DA950 /* ParserTests.cpp */,
+				3A9C438928E3E240002F7294 /* TestWGSLAPI.cpp */,
+				3A9C438A28E3E240002F7294 /* TestWGSLAPI.h */,
 			);
 			path = WGSL;
 			sourceTree = "<group>";
@@ -5905,12 +5913,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A9C438828E3E057002F7294 /* ASTStringDumperTests.cpp in Sources */,
 				3A7AA56028E28E99009E09C2 /* ConstLiteralTests.cpp in Sources */,
 				3A5DDADA28D15169004DA950 /* LexerTests.cpp in Sources */,
 				3A15784128D1505B00142DB1 /* mainIOS.mm in Sources */,
 				3A15784228D1505B00142DB1 /* mainMac.mm in Sources */,
 				3A5DDAEE28D156FC004DA950 /* ParserTests.cpp in Sources */,
 				3A15784428D1505B00142DB1 /* TestsController.cpp in Sources */,
+				3A9C438B28E3E240002F7294 /* TestWGSLAPI.cpp in Sources */,
 				3A15784528D1505B00142DB1 /* UtilitiesCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

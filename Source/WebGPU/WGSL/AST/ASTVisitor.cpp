@@ -54,7 +54,7 @@ template<typename T> void Visitor::maybeCheckErrorAndVisit(T* x)
 
 // Shader Module
 
-void Visitor::visit(AST::ShaderModule& shaderModule)
+void Visitor::visit(ShaderModule& shaderModule)
 {
     for (auto& directive : shaderModule.directives())
         checkErrorAndVisit(directive);
@@ -66,71 +66,71 @@ void Visitor::visit(AST::ShaderModule& shaderModule)
         checkErrorAndVisit(functionDecl);
 }
 
-void Visitor::visit(AST::GlobalDirective&)
+void Visitor::visit(GlobalDirective&)
 {
 }
 
 // Attribute
 
-void Visitor::visit(AST::Attribute& attribute)
+void Visitor::visit(Attribute& attribute)
 {
     switch (attribute.kind()) {
-    case AST::Attribute::Kind::Binding:
-        checkErrorAndVisit(downcast<AST::BindingAttribute>(attribute));
+    case Attribute::Kind::Binding:
+        checkErrorAndVisit(downcast<BindingAttribute>(attribute));
         break;
-    case AST::Attribute::Kind::Builtin:
-        checkErrorAndVisit(downcast<AST::BuiltinAttribute>(attribute));
+    case Attribute::Kind::Builtin:
+        checkErrorAndVisit(downcast<BuiltinAttribute>(attribute));
         break;
-    case AST::Attribute::Kind::Group:
-        checkErrorAndVisit(downcast<AST::GroupAttribute>(attribute));
+    case Attribute::Kind::Group:
+        checkErrorAndVisit(downcast<GroupAttribute>(attribute));
         break;
-    case AST::Attribute::Kind::Location:
-        checkErrorAndVisit(downcast<AST::LocationAttribute>(attribute));
+    case Attribute::Kind::Location:
+        checkErrorAndVisit(downcast<LocationAttribute>(attribute));
         break;
-    case AST::Attribute::Kind::Stage:
-        checkErrorAndVisit(downcast<AST::StageAttribute>(attribute));
+    case Attribute::Kind::Stage:
+        checkErrorAndVisit(downcast<StageAttribute>(attribute));
         break;
     }
 }
 
-void Visitor::visit(AST::BindingAttribute&)
+void Visitor::visit(BindingAttribute&)
 {
 }
 
-void Visitor::visit(AST::BuiltinAttribute&)
+void Visitor::visit(BuiltinAttribute&)
 {
 }
 
-void Visitor::visit(AST::GroupAttribute&)
+void Visitor::visit(GroupAttribute&)
 {
 }
 
-void Visitor::visit(AST::LocationAttribute&)
+void Visitor::visit(LocationAttribute&)
 {
 }
 
-void Visitor::visit(AST::StageAttribute&)
+void Visitor::visit(StageAttribute&)
 {
 }
 
 // Declaration
 
-void Visitor::visit(AST::Decl& declaration)
+void Visitor::visit(Decl& declaration)
 {
     switch (declaration.kind()) {
-    case AST::Decl::Kind::Function:
-        checkErrorAndVisit(downcast<AST::FunctionDecl>(declaration));
+    case Decl::Kind::Function:
+        checkErrorAndVisit(downcast<FunctionDecl>(declaration));
         break;
-    case AST::Decl::Kind::Struct:
-        checkErrorAndVisit(downcast<AST::StructDecl>(declaration));
+    case Decl::Kind::Struct:
+        checkErrorAndVisit(downcast<StructDecl>(declaration));
         break;
-    case AST::Decl::Kind::Variable:
-        checkErrorAndVisit(downcast<AST::VariableDecl>(declaration));
+    case Decl::Kind::Variable:
+        checkErrorAndVisit(downcast<VariableDecl>(declaration));
         break;
     }
 }
 
-void Visitor::visit(AST::FunctionDecl& functionDeclaration)
+void Visitor::visit(FunctionDecl& functionDeclaration)
 {
     for (auto& attribute : functionDeclaration.attributes())
         checkErrorAndVisit(attribute);
@@ -142,7 +142,7 @@ void Visitor::visit(AST::FunctionDecl& functionDeclaration)
     checkErrorAndVisit(functionDeclaration.body());
 }
 
-void Visitor::visit(AST::StructDecl& structDeclaration)
+void Visitor::visit(StructDecl& structDeclaration)
 {
     for (auto& attribute : structDeclaration.attributes())
         checkErrorAndVisit(attribute);
@@ -150,7 +150,7 @@ void Visitor::visit(AST::StructDecl& structDeclaration)
         checkErrorAndVisit(member);
 }
 
-void Visitor::visit(AST::VariableDecl& varDeclaration)
+void Visitor::visit(VariableDecl& varDeclaration)
 {
     for (auto& attribute : varDeclaration.attributes())
         checkErrorAndVisit(attribute);
@@ -161,187 +161,187 @@ void Visitor::visit(AST::VariableDecl& varDeclaration)
 
 // Expression
 
-void Visitor::visit(AST::Expression& expression)
+void Visitor::visit(Expression& expression)
 {
     switch (expression.kind()) {
-    case AST::Expression::Kind::AbstractFloatLiteral:
-        checkErrorAndVisit(downcast<AST::AbstractFloatLiteral>(expression));
+    case Expression::Kind::AbstractFloatLiteral:
+        checkErrorAndVisit(downcast<AbstractFloatLiteral>(expression));
         break;
-    case AST::Expression::Kind::AbstractIntLiteral:
-        checkErrorAndVisit(downcast<AST::AbstractIntLiteral>(expression));
+    case Expression::Kind::AbstractIntLiteral:
+        checkErrorAndVisit(downcast<AbstractIntLiteral>(expression));
         break;
-    case AST::Expression::Kind::ArrayAccess:
-        checkErrorAndVisit(downcast<AST::ArrayAccess>(expression));
+    case Expression::Kind::ArrayAccess:
+        checkErrorAndVisit(downcast<ArrayAccess>(expression));
         break;
-    case AST::Expression::Kind::BoolLiteral:
-        checkErrorAndVisit(downcast<AST::BoolLiteral>(expression));
+    case Expression::Kind::BoolLiteral:
+        checkErrorAndVisit(downcast<BoolLiteral>(expression));
         break;
-    case AST::Expression::Kind::CallableExpression:
-        checkErrorAndVisit(downcast<AST::CallableExpression>(expression));
+    case Expression::Kind::CallableExpression:
+        checkErrorAndVisit(downcast<CallableExpression>(expression));
         break;
-    case AST::Expression::Kind::Float32Literal:
-        checkErrorAndVisit(downcast<AST::Float32Literal>(expression));
+    case Expression::Kind::Float32Literal:
+        checkErrorAndVisit(downcast<Float32Literal>(expression));
         break;
-    case AST::Expression::Kind::Identifier:
-        checkErrorAndVisit(downcast<AST::IdentifierExpression>(expression));
+    case Expression::Kind::Identifier:
+        checkErrorAndVisit(downcast<IdentifierExpression>(expression));
         break;
-    case AST::Expression::Kind::Int32Literal:
-        checkErrorAndVisit(downcast<AST::Int32Literal>(expression));
+    case Expression::Kind::Int32Literal:
+        checkErrorAndVisit(downcast<Int32Literal>(expression));
         break;
-    case AST::Expression::Kind::StructureAccess:
-        checkErrorAndVisit(downcast<AST::StructureAccess>(expression));
+    case Expression::Kind::StructureAccess:
+        checkErrorAndVisit(downcast<StructureAccess>(expression));
         break;
-    case AST::Expression::Kind::Uint32Literal:
-        checkErrorAndVisit(downcast<AST::Uint32Literal>(expression));
+    case Expression::Kind::Uint32Literal:
+        checkErrorAndVisit(downcast<Uint32Literal>(expression));
         break;
-    case AST::Expression::Kind::UnaryExpression:
-        checkErrorAndVisit(downcast<AST::UnaryExpression>(expression));
+    case Expression::Kind::UnaryExpression:
+        checkErrorAndVisit(downcast<UnaryExpression>(expression));
         break;
     }
 }
 
-void Visitor::visit(AST::AbstractFloatLiteral&)
+void Visitor::visit(AbstractFloatLiteral&)
 {
 }
 
-void Visitor::visit(AST::AbstractIntLiteral&)
+void Visitor::visit(AbstractIntLiteral&)
 {
 }
 
-void Visitor::visit(AST::ArrayAccess& arrayAccess)
+void Visitor::visit(ArrayAccess& arrayAccess)
 {
     checkErrorAndVisit(arrayAccess.base());
     checkErrorAndVisit(arrayAccess.index());
 }
 
-void Visitor::visit(AST::BoolLiteral&)
+void Visitor::visit(BoolLiteral&)
 {
 }
 
-void Visitor::visit(AST::CallableExpression& callableExpression)
+void Visitor::visit(CallableExpression& callableExpression)
 {
     checkErrorAndVisit(callableExpression.target());
     for (auto& argument : callableExpression.arguments())
         checkErrorAndVisit(argument);
 }
 
-void Visitor::visit(AST::Float32Literal&)
+void Visitor::visit(Float32Literal&)
 {
 }
 
-void Visitor::visit(AST::IdentifierExpression&)
+void Visitor::visit(IdentifierExpression&)
 {
 }
 
-void Visitor::visit(AST::Int32Literal&)
+void Visitor::visit(Int32Literal&)
 {
 }
 
-void Visitor::visit(AST::StructureAccess& structureAccess)
+void Visitor::visit(StructureAccess& structureAccess)
 {
     checkErrorAndVisit(structureAccess.base());
 }
 
-void Visitor::visit(AST::Uint32Literal&)
+void Visitor::visit(Uint32Literal&)
 {
 }
 
-void Visitor::visit(AST::UnaryExpression& unaryExpression)
+void Visitor::visit(UnaryExpression& unaryExpression)
 {
     checkErrorAndVisit(unaryExpression.expression());
 }
 
 // Statement
 
-void Visitor::visit(AST::Statement& statement)
+void Visitor::visit(Statement& statement)
 {
     switch (statement.kind()) {
-    case AST::Statement::Kind::Assignment:
-        checkErrorAndVisit(downcast<AST::AssignmentStatement>(statement));
+    case Statement::Kind::Assignment:
+        checkErrorAndVisit(downcast<AssignmentStatement>(statement));
         break;
-    case AST::Statement::Kind::Compound:
-        checkErrorAndVisit(downcast<AST::CompoundStatement>(statement));
+    case Statement::Kind::Compound:
+        checkErrorAndVisit(downcast<CompoundStatement>(statement));
         break;
-    case AST::Statement::Kind::Return:
-        checkErrorAndVisit(downcast<AST::ReturnStatement>(statement));
+    case Statement::Kind::Return:
+        checkErrorAndVisit(downcast<ReturnStatement>(statement));
         break;
-    case AST::Statement::Kind::Variable:
-        checkErrorAndVisit(downcast<AST::VariableStatement>(statement));
+    case Statement::Kind::Variable:
+        checkErrorAndVisit(downcast<VariableStatement>(statement));
         break;
     }
 }
 
-void Visitor::visit(AST::AssignmentStatement& assignStatement)
+void Visitor::visit(AssignmentStatement& assignStatement)
 {
     maybeCheckErrorAndVisit(assignStatement.maybeLhs());
     checkErrorAndVisit(assignStatement.rhs());
 }
 
-void Visitor::visit(AST::CompoundStatement& compoundStatement)
+void Visitor::visit(CompoundStatement& compoundStatement)
 {
     for (auto& statement : compoundStatement.statements())
         checkErrorAndVisit(statement);
 }
 
-void Visitor::visit(AST::ReturnStatement& returnStatement)
+void Visitor::visit(ReturnStatement& returnStatement)
 {
     maybeCheckErrorAndVisit(returnStatement.maybeExpression());
 }
 
-void Visitor::visit(AST::VariableStatement& varStatement)
+void Visitor::visit(VariableStatement& varStatement)
 {
     checkErrorAndVisit(varStatement.declaration());
 }
 
 // Types
 
-void Visitor::visit(AST::TypeDecl& typeDecl)
+void Visitor::visit(TypeDecl& typeDecl)
 {
     switch (typeDecl.kind()) {
-    case AST::TypeDecl::Kind::Array:
-        checkErrorAndVisit(downcast<AST::ArrayType>(typeDecl));
+    case TypeDecl::Kind::Array:
+        checkErrorAndVisit(downcast<ArrayType>(typeDecl));
         break;
-    case AST::TypeDecl::Kind::Named:
-        checkErrorAndVisit(downcast<AST::NamedType>(typeDecl));
+    case TypeDecl::Kind::Named:
+        checkErrorAndVisit(downcast<NamedType>(typeDecl));
         break;
-    case AST::TypeDecl::Kind::Parameterized:
-        checkErrorAndVisit(downcast<AST::ParameterizedType>(typeDecl));
+    case TypeDecl::Kind::Parameterized:
+        checkErrorAndVisit(downcast<ParameterizedType>(typeDecl));
         break;
     }
 }
 
-void Visitor::visit(AST::ArrayType& arrayType)
+void Visitor::visit(ArrayType& arrayType)
 {
     maybeCheckErrorAndVisit(arrayType.maybeElementType());
     maybeCheckErrorAndVisit(arrayType.maybeElementCount());
 }
 
-void Visitor::visit(AST::NamedType&)
+void Visitor::visit(NamedType&)
 {
 }
 
-void Visitor::visit(AST::ParameterizedType& parameterizedType)
+void Visitor::visit(ParameterizedType& parameterizedType)
 {
     checkErrorAndVisit(parameterizedType.elementType());
 }
 
 //
 
-void Visitor::visit(AST::Parameter& parameter)
+void Visitor::visit(Parameter& parameter)
 {
     for (auto& attribute : parameter.attributes())
         checkErrorAndVisit(attribute);
     checkErrorAndVisit(parameter.type());
 }
 
-void Visitor::visit(AST::StructMember& structMember)
+void Visitor::visit(StructMember& structMember)
 {
     for (auto& attribute : structMember.attributes())
         checkErrorAndVisit(attribute);
     checkErrorAndVisit(structMember.type());
 }
 
-void Visitor::visit(AST::VariableQualifier&)
+void Visitor::visit(VariableQualifier&)
 {
 }
 
