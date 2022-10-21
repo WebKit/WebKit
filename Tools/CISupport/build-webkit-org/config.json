@@ -349,7 +349,7 @@
                       "name": "Apple-iOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "workernames": ["bot653", "bot654"]
+                      "workernames": ["bot653"]
                     },
                     {
                       "name": "Apple-iPadOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
