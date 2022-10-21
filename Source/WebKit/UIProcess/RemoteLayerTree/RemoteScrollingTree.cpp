@@ -36,21 +36,8 @@
 #include <WebCore/ScrollingTreePositionedNodeCocoa.h>
 #include <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
-#include "ScrollingTreeOverflowScrollingNodeIOS.h"
-#else
-#include "ScrollingTreeFrameScrollingNodeRemoteMac.h"
-#include "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
-
-Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
-{
-    return adoptRef(*new RemoteScrollingTree(scrollingCoordinator));
-}
 
 RemoteScrollingTree::RemoteScrollingTree(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
     : m_scrollingCoordinatorProxy(scrollingCoordinator)
@@ -64,30 +51,6 @@ void RemoteScrollingTree::invalidate()
     Locker locker { m_treeLock };
     removeAllNodes();
 }
-
-#if PLATFORM(MAC)
-void RemoteScrollingTree::handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase)
-{
-    // FIXME: hand off to m_scrollingCoordinatorProxy?
-}
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-void RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture(ScrollingNodeID nodeID)
-{
-    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartPanGesture(nodeID);
-}
-
-void RemoteScrollingTree::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
-{
-    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartScroll(nodeID);
-}
-
-void RemoteScrollingTree::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
-{
-    m_scrollingCoordinatorProxy.scrollingTreeNodeDidEndScroll(nodeID);
-}
-#endif
 
 void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)
 {
@@ -113,19 +76,12 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
     switch (nodeType) {
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
-#if PLATFORM(IOS_FAMILY)
-        return ScrollingTreeFrameScrollingNodeRemoteIOS::create(*this, nodeType, nodeID);
-#else
-        return ScrollingTreeFrameScrollingNodeRemoteMac::create(*this, nodeType, nodeID);
-#endif
+    case ScrollingNodeType::Overflow:
+        ASSERT_NOT_REACHED(); // Subclass should have handled this.
+        break;
+
     case ScrollingNodeType::FrameHosting:
         return ScrollingTreeFrameHostingNode::create(*this, nodeID);
-    case ScrollingNodeType::Overflow:
-#if PLATFORM(IOS_FAMILY)
-        return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);
-#else
-        return ScrollingTreeOverflowScrollingNodeRemoteMac::create(*this, nodeID);
-#endif
     case ScrollingNodeType::OverflowProxy:
         return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
@@ -142,17 +98,6 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
 void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
 {
     m_scrollingCoordinatorProxy.currentSnapPointIndicesDidChange(nodeID, horizontal, vertical);
-}
-
-void RemoteScrollingTree::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
-{
-#if PLATFORM(MAC)
-    if (!rootNode())
-        return;
-    static_cast<ScrollingTreeFrameScrollingNodeRemoteMac&>(*rootNode()).handleMouseEvent(event);
-#else
-    UNUSED_PARAM(event);
-#endif
 }
 
 } // namespace WebKit

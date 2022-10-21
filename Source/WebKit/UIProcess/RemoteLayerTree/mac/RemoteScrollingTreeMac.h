@@ -25,7 +25,9 @@
 
 #pragma once
 
-#if ENABLE(UI_SIDE_COMPOSITING)
+#include "RemoteScrollingTree.h"
+
+#if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
 #include "RemoteScrollingCoordinator.h"
 #include <WebCore/ScrollingConstraints.h>
@@ -39,35 +41,19 @@ namespace WebKit {
 
 class RemoteScrollingCoordinatorProxy;
 
-class RemoteScrollingTree : public WebCore::ScrollingTree {
+class RemoteScrollingTreeMac final : public RemoteScrollingTree {
 public:
-    static Ref<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTree();
+    explicit RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy&);
+    virtual ~RemoteScrollingTreeMac();
 
-    bool isRemoteScrollingTree() const final { return true; }
+    void handleMouseEvent(const WebCore::PlatformMouseEvent&) final;
 
-    void invalidate() final;
+private:
+    void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) final;
 
-    virtual void handleMouseEvent(const WebCore::PlatformMouseEvent&) { }
-
-    const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
-
-    void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction = WebCore::ScrollingLayerPositionAction::Sync) final;
-    void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingTreeScrollingNode&) final;
-    bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) final;
-
-    void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) final;
-
-protected:
-    explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
-
-    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
-
-    RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
+    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
 };
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(WebKit::RemoteScrollingTree, isRemoteScrollingTree());
-
-#endif // ENABLE(UI_SIDE_COMPOSITING)
+#endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
