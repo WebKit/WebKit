@@ -463,8 +463,6 @@ Bug(WPE) fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
 Bug(WPE) fast/fixed-layout [ Skip ]
 
-webkit.org/b/141423 fast/css/font-shorthand-line-height.html [ Failure ]
-
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
