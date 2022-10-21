@@ -1245,7 +1245,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
 
 void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     OSObjectPtr<dispatch_group_t> metadataLoadingGroup = adoptOSObject(dispatch_group_create());
     dispatch_group_enter(metadataLoadingGroup.get());
@@ -3149,7 +3149,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     ALLOW_DEPRECATED_DECLARATIONS_END
     if (currentlySelectedAudibleOption) {
         m_languageOfPrimaryAudioTrack = [[currentlySelectedAudibleOption locale] localeIdentifier];
-        INFO_LOG(LOGIDENTIFIER, "language of selected audible option ", m_languageOfPrimaryAudioTrack);
+        ALWAYS_LOG(LOGIDENTIFIER, "language of selected audible option ", m_languageOfPrimaryAudioTrack);
 
         return m_languageOfPrimaryAudioTrack;
     }
@@ -3159,14 +3159,14 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     NSArray *tracks = [m_avAsset tracksWithMediaType:AVMediaTypeAudio];
     if (!tracks || [tracks count] != 1) {
         m_languageOfPrimaryAudioTrack = emptyString();
-        INFO_LOG(LOGIDENTIFIER, tracks ? [tracks count] : 0, " audio tracks, returning empty");
+        ALWAYS_LOG(LOGIDENTIFIER, tracks ? [tracks count] : 0, " audio tracks, returning empty");
         return m_languageOfPrimaryAudioTrack;
     }
 
     AVAssetTrack *track = [tracks objectAtIndex:0];
     m_languageOfPrimaryAudioTrack = AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(track);
 
-    INFO_LOG(LOGIDENTIFIER, "single audio track has language \"", m_languageOfPrimaryAudioTrack, "\"");
+    ALWAYS_LOG(LOGIDENTIFIER, "single audio track has language \"", m_languageOfPrimaryAudioTrack, "\"");
 
     return m_languageOfPrimaryAudioTrack;
 }
@@ -3327,13 +3327,16 @@ bool MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled() const
 
 void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool disabled)
 {
-    INFO_LOG(LOGIDENTIFIER, disabled);
-    m_allowsWirelessVideoPlayback = !disabled;
+    auto allows = !disabled;
+    if (m_allowsWirelessVideoPlayback != allows)
+        ALWAYS_LOG(LOGIDENTIFIER, disabled);
+
+    m_allowsWirelessVideoPlayback = allows;
     if (!m_avPlayer)
         return;
 
     setDelayCallbacks(true);
-    [m_avPlayer setAllowsExternalPlayback:!disabled];
+    [m_avPlayer setAllowsExternalPlayback:allows];
     setDelayCallbacks(false);
 }
 
@@ -3361,7 +3364,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
     if (!m_playbackTarget)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, shouldPlay);
+    ALWAYS_LOG(LOGIDENTIFIER, shouldPlay);
 
     if (m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation) {
         AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;

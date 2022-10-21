@@ -223,9 +223,7 @@ private:
     bool m_shouldPlayToPlaybackTarget { false };
     mutable bool m_hasPlaybackTargets { false };
 #endif
-#if PLATFORM(IOS_FAMILY)
     bool m_hasPlaybackTargetAvailabilityListeners { false };
-#endif
 
     MonotonicTime m_mostRecentUserInteractionTime;
 

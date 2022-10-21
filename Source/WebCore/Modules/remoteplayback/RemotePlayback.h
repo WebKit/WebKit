@@ -119,6 +119,16 @@ private:
     bool m_available { false };
 };
 
+String convertEnumerationToString(RemotePlayback::State);
+
+}
+
+namespace WTF {
+
+template<> struct LogArgument<WebCore::RemotePlayback::State> {
+    static String toString(WebCore::RemotePlayback::State state) { return convertEnumerationToString(state); }
+};
+
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

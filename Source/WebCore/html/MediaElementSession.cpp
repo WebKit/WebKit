@@ -319,7 +319,7 @@ void MediaElementSession::scheduleClientDataBufferingCheck()
 
 void MediaElementSession::clientDataBufferingTimerFired()
 {
-    INFO_LOG(LOGIDENTIFIER, "visible = ", m_element.elementIsHidden());
+    ALWAYS_LOG(LOGIDENTIFIER, "visible = ", m_element.elementIsHidden());
 
     updateClientDataBuffering();
 
@@ -346,7 +346,7 @@ void MediaElementSession::updateClientDataBuffering()
 void MediaElementSession::addBehaviorRestriction(BehaviorRestrictions restrictions)
 {
     if (restrictions & ~m_restrictions)
-        INFO_LOG(LOGIDENTIFIER, "adding ", restrictionNames(restrictions & ~m_restrictions));
+        ALWAYS_LOG(LOGIDENTIFIER, "adding ", restrictionNames(restrictions & ~m_restrictions));
 
     m_restrictions |= restrictions;
 
@@ -365,7 +365,7 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     if (!(m_restrictions & restriction))
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "removed ", restrictionNames(m_restrictions & restriction));
+    ALWAYS_LOG(LOGIDENTIFIER, "removed ", restrictionNames(m_restrictions & restriction));
     m_restrictions &= ~restriction;
 }
 
@@ -487,7 +487,7 @@ bool MediaElementSession::dataLoadingPermitted() const
         return true;
 
     if (m_restrictions & RequireUserGestureForLoad && !m_element.document().processingUserGestureForMedia()) {
-        INFO_LOG(LOGIDENTIFIER, "returning FALSE");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
     }
 
@@ -522,7 +522,7 @@ MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() con
 bool MediaElementSession::fullscreenPermitted() const
 {
     if (m_restrictions & RequireUserGestureForFullscreen && !m_element.document().processingUserGestureForMedia()) {
-        INFO_LOG(LOGIDENTIFIER, "returning FALSE");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
     }
 
@@ -533,7 +533,7 @@ bool MediaElementSession::pageAllowsDataLoading() const
 {
     Page* page = m_element.document().page();
     if (m_restrictions & RequirePageConsentToLoadMedia && page && !page->canStartMedia()) {
-        INFO_LOG(LOGIDENTIFIER, "returning FALSE");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
     }
 
@@ -544,7 +544,7 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming() const
 {
     Page* page = m_element.document().page();
     if (m_restrictions & RequirePageConsentToResumeMedia && page && !page->canStartMedia()) {
-        INFO_LOG(LOGIDENTIFIER, "returning FALSE");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
     }
 
@@ -716,29 +716,29 @@ bool MediaElementSession::hasWirelessPlaybackTargets() const
 bool MediaElementSession::wirelessVideoPlaybackDisabled() const
 {
     if (!m_element.document().settings().allowsAirPlayForMediaPlayback()) {
-        INFO_LOG(LOGIDENTIFIER, "returning TRUE because of settings");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning TRUE because of settings");
         return true;
     }
 
     if (m_element.hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)) {
-        INFO_LOG(LOGIDENTIFIER, "returning TRUE because of attribute");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning TRUE because of attribute");
         return true;
     }
 
 #if PLATFORM(IOS_FAMILY)
     auto& legacyAirplayAttributeValue = m_element.attributeWithoutSynchronization(HTMLNames::webkitairplayAttr);
     if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "deny"_s)) {
-        INFO_LOG(LOGIDENTIFIER, "returning TRUE because of legacy attribute");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning TRUE because of legacy attribute");
         return true;
     }
     if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "allow"_s)) {
-        INFO_LOG(LOGIDENTIFIER, "returning FALSE because of legacy attribute");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning FALSE because of legacy attribute");
         return false;
     }
 #endif
 
     if (m_element.document().settings().remotePlaybackEnabled() && m_element.hasAttributeWithoutSynchronization(HTMLNames::disableremoteplaybackAttr)) {
-        LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of RemotePlayback attribute");
+        ALWAYS_LOG(LOGIDENTIFIER, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of RemotePlayback attribute");
         return true;
     }
 
@@ -747,7 +747,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled() const
         return true;
 
     bool disabled = player->wirelessVideoPlaybackDisabled();
-    INFO_LOG(LOGIDENTIFIER, "returning ", disabled, " because media engine says so");
+    ALWAYS_LOG(LOGIDENTIFIER, "returning ", disabled, " because media engine says so");
 
     return disabled;
 }
@@ -763,19 +763,21 @@ void MediaElementSession::setWirelessVideoPlaybackDisabled(bool disabled)
     if (!player)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, disabled);
+    ALWAYS_LOG(LOGIDENTIFIER, disabled);
     player->setWirelessVideoPlaybackDisabled(disabled);
 }
 
 void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasListeners)
 {
-    INFO_LOG(LOGIDENTIFIER, hasListeners);
+    if (m_hasPlaybackTargetAvailabilityListeners == hasListeners)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, hasListeners);
+    m_hasPlaybackTargetAvailabilityListeners = hasListeners;
 
 #if PLATFORM(IOS_FAMILY)
-    m_hasPlaybackTargetAvailabilityListeners = hasListeners;
     PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
 #else
-    UNUSED_PARAM(hasListeners);
     m_element.document().playbackTargetPickerClientStateDidChange(*this, m_element.mediaState());
 #endif
 }
@@ -796,7 +798,7 @@ void MediaElementSession::externalOutputDeviceAvailableDidChange(bool hasTargets
     if (m_hasPlaybackTargets == hasTargets)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, hasTargets);
+    ALWAYS_LOG(LOGIDENTIFIER, hasTargets);
 
     m_hasPlaybackTargets = hasTargets;
     m_targetAvailabilityChangedTimer.startOneShot(0_s);
@@ -814,7 +816,9 @@ bool MediaElementSession::isPlayingToWirelessPlaybackTarget() const
 
 void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
-    INFO_LOG(LOGIDENTIFIER, shouldPlay);
+    if (m_shouldPlayToPlaybackTarget != shouldPlay)
+        ALWAYS_LOG(LOGIDENTIFIER, shouldPlay);
+
     m_shouldPlayToPlaybackTarget = shouldPlay;
     updateClientDataBuffering();
     client().setShouldPlayToPlaybackTarget(shouldPlay);
@@ -822,7 +826,7 @@ void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
 
 void MediaElementSession::playbackTargetPickerWasDismissed()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
     client().playbackTargetPickerWasDismissed();
 }
 
@@ -897,7 +901,7 @@ bool MediaElementSession::allowsAutomaticMediaDataLoading() const
 
 void MediaElementSession::mediaEngineUpdated()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_restrictions & WirelessVideoPlaybackDisabled)

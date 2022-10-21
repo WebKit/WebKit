@@ -369,6 +369,7 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
     size_t indexOfClientWillPlayToTarget = notFound;
     bool haveActiveRoute = m_playbackTarget && m_playbackTarget->hasActiveRoute();
 
+    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, " haveActiveRoute = ", haveActiveRoute);
     for (size_t i = 0; i < m_clientState.size(); ++i) {
         auto& state = m_clientState[i];
 
@@ -394,8 +395,10 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
     for (size_t i = 0; i < m_clientState.size(); ++i) {
         auto& state = m_clientState[i];
 
-        if (m_playbackTarget)
+        if (m_playbackTarget) {
+            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling setPlaybackTarget");
             state->client.setPlaybackTarget(state->contextId, *m_playbackTarget.copyRef());
+        }
 
         if (i != indexOfClientWillPlayToTarget || !haveActiveRoute) {
             ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling setShouldPlayToPlaybackTarget(false)");
