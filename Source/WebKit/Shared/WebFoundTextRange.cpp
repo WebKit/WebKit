@@ -64,9 +64,6 @@ std::optional<WebFoundTextRange> WebFoundTextRange::decode(IPC::Decoder& decoder
     if (!decoder.decode(result.frameIdentifier))
         return std::nullopt;
 
-    if (result.frameIdentifier.isHashTableDeletedValue())
-        return std::nullopt;
-
     if (!decoder.decode(result.order))
         return std::nullopt;
 
