@@ -82,6 +82,10 @@
 #include "DeviceOrientationUpdateProvider.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/WorkgroupInterval.h>
+#endif
+
 namespace JSC {
 class Debugger;
 }

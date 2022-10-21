@@ -1331,3 +1331,11 @@
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
 #define HAVE_MEDIAEXPERIENCE_AVSYSTEMCONTROLLER 1
 #endif
+
+#if !defined(HAVE_WORK_INTERVAL_API)
+#if __has_include(<sys/work_interval.h>)
+#define HAVE_WORK_INTERVAL_API 1
+#else
+#define HAVE_WORK_INTERVAL_API 0
+#endif
+#endif

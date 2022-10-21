@@ -31,6 +31,8 @@
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
+(allow system-privilege (privilege-id PRIV_WORK_INTERVAL))
+
 #if USE(SANDBOX_VERSION_2)
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5)))
@@ -2211,6 +2213,7 @@
         MSC_swtch_pri
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
+        MSC_task_self_trap
         MSC_thread_get_special_reply_port
         MSC_thread_self_trap))
 

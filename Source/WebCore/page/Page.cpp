@@ -262,6 +262,14 @@ static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
+#if HAVE(WORK_INTERVAL_API)
+static WTF::WorkgroupInterval& workgroupRendering()
+{
+    static NeverDestroyed<WTF::WorkgroupInterval> workgroup("Rendering workgroup");
+    return workgroup;
+}
+#endif
+
 Page::Page(PageConfiguration&& pageConfiguration)
     : m_chrome(makeUnique<Chrome>(*this, *pageConfiguration.chromeClient))
     , m_dragCaretController(makeUnique<DragCaretController>())
@@ -1675,6 +1683,13 @@ void Page::updateRendering()
 
     m_lastRenderingUpdateTimestamp = MonotonicTime::now();
 
+#if HAVE(WORK_INTERVAL_API)
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        workgroupRendering().join();
+    });
+    WTF::WorkgroupIntervalScope scope(workgroupRendering(), m_lastRenderingUpdateTimestamp, m_lastRenderingUpdateTimestamp + 5_ms);
+#endif
     bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
     if (!isSVGImagePage)
         tracePoint(RenderingUpdateStart);

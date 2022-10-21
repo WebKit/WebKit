@@ -810,6 +810,8 @@
 		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
+		E3D432AE28D3857E0033CB0D /* WorkgroupInterval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D432AC28D3857C0033CB0D /* WorkgroupInterval.cpp */; };
+		E3D432AF28D3857E0033CB0D /* WorkgroupInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D432AD28D3857E0033CB0D /* WorkgroupInterval.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3DA37E7287AD1A10066808F /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DA37E6287AD1A10066808F /* StringCommon.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
@@ -1703,6 +1705,8 @@
 		E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUHelpers.cpp; sourceTree = "<group>"; };
 		E3C583C826127ADD00C57568 /* RobinHoodHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashMap.h; sourceTree = "<group>"; };
 		E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPointerTuple.h; sourceTree = "<group>"; };
+		E3D432AC28D3857C0033CB0D /* WorkgroupInterval.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkgroupInterval.cpp; sourceTree = "<group>"; };
+		E3D432AD28D3857E0033CB0D /* WorkgroupInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkgroupInterval.h; sourceTree = "<group>"; };
 		E3DA37E6287AD1A10066808F /* StringCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCommon.cpp; sourceTree = "<group>"; };
 		E3E0F04F26197157004640FC /* FixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixedVector.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
@@ -2834,6 +2838,8 @@
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
 				93E4A13628F6B75A006AD994 /* UUIDCocoa.mm */,
 				93241657243BC2E50032FAAE /* VectorCocoa.h */,
+				E3D432AC28D3857C0033CB0D /* WorkgroupInterval.cpp */,
+				E3D432AD28D3857E0033CB0D /* WorkgroupInterval.h */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
 			);
 			path = cocoa;
@@ -3293,6 +3299,7 @@
 				DD4901EA27B4748A00D7E50D /* WindowsExtras.h in Headers */,
 				DD3DC8AE27A4BF8E007E5B61 /* WordLock.h in Headers */,
 				DD3DC92327A4BF8E007E5B61 /* WorkerPool.h in Headers */,
+				E3D432AF28D3857E0033CB0D /* WorkgroupInterval.h in Headers */,
 				DD3DC88527A4BF8E007E5B61 /* WorkQueue.h in Headers */,
 				DD3DC8FF27A4BF8E007E5B61 /* WTFConfig.h in Headers */,
 				DD3DC97D27A4BF8E007E5B61 /* WTFSemaphore.h in Headers */,
@@ -3773,6 +3780,7 @@
 				1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */,
 				0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */,
 				E388886F20C9095100E632BC /* WorkerPool.cpp in Sources */,
+				E3D432AE28D3857E0033CB0D /* WorkgroupInterval.cpp in Sources */,
 				E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */,
 				E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */,
 				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
