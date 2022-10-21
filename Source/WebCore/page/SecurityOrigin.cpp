@@ -445,6 +445,28 @@ bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
     return isSameSchemeHostPort(other);
 }
 
+bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
+{
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    // https://html.spec.whatwg.org/#same-site
+    if (isOpaque() != other.isOpaque())
+        return false;
+    if (!isOpaque() && protocol() != other.protocol())
+        return false;
+
+    if (isOpaque())
+        return isSameOriginAs(other);
+
+    auto topDomain = topPrivatelyControlledDomain(domain());
+    if (topDomain.isEmpty())
+        return host() == other.host();
+
+    return topDomain == topPrivatelyControlledDomain(other.domain());
+#else
+    return isSameOriginAs(other);
+#endif // ENABLE(PUBLIC_SUFFIX_LIST)
+}
+
 bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffix, bool treatIPAddressAsDomain) const
 {
     if (domainSuffix.isEmpty())

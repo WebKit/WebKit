@@ -1,0 +1,48 @@
+
+
+PASS Same-origin window, forced
+PASS Same-site window, forced
+PASS Cross-site window, forced
+PASS Same-origin window, forced, reloaded
+PASS Same-site window, forced, reloaded
+PASS Cross-site window, forced, reloaded
+PASS Same-origin window, user-activated
+PASS Same-site window, user-activated
+PASS Cross-site window, user-activated
+PASS Same-site window, user-activated: sec-fetch-dest
+PASS Same-site window, user-activated: sec-fetch-mode
+PASS Same-site window, user-activated: sec-fetch-site
+FAIL Same-site window, user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+PASS Same-site window, forced: sec-fetch-dest
+PASS Same-site window, forced: sec-fetch-mode
+PASS Same-site window, forced: sec-fetch-site
+PASS Same-site window, forced: sec-fetch-user
+PASS Same-origin window, user-activated: sec-fetch-dest
+PASS Same-origin window, user-activated: sec-fetch-mode
+PASS Same-origin window, user-activated: sec-fetch-site
+FAIL Same-origin window, user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+PASS Cross-site window, forced: sec-fetch-dest
+PASS Cross-site window, forced: sec-fetch-mode
+PASS Cross-site window, forced: sec-fetch-site
+PASS Cross-site window, forced: sec-fetch-user
+PASS Cross-site window, user-activated: sec-fetch-dest
+PASS Cross-site window, user-activated: sec-fetch-mode
+PASS Cross-site window, user-activated: sec-fetch-site
+FAIL Cross-site window, user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+PASS Same-origin window, forced: sec-fetch-dest
+PASS Same-origin window, forced: sec-fetch-mode
+PASS Same-origin window, forced: sec-fetch-site
+PASS Same-origin window, forced: sec-fetch-user
+PASS Same-site window, forced, reloaded: sec-fetch-dest
+PASS Same-site window, forced, reloaded: sec-fetch-mode
+PASS Same-site window, forced, reloaded: sec-fetch-site
+PASS Same-site window, forced, reloaded: sec-fetch-user
+PASS Cross-site window, forced, reloaded: sec-fetch-dest
+PASS Cross-site window, forced, reloaded: sec-fetch-mode
+PASS Cross-site window, forced, reloaded: sec-fetch-site
+PASS Cross-site window, forced, reloaded: sec-fetch-user
+PASS Same-origin window, forced, reloaded: sec-fetch-dest
+PASS Same-origin window, forced, reloaded: sec-fetch-mode
+PASS Same-origin window, forced, reloaded: sec-fetch-site
+PASS Same-origin window, forced, reloaded: sec-fetch-user
+

@@ -198,6 +198,10 @@ public:
     // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
     WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin&) const;
 
+    // This method implements "same site" algorithm from the HTML Standard:
+    // https://html.spec.whatwg.org/multipage/origin.html#same-site
+    WEBCORE_EXPORT bool isSameSiteAs(const SecurityOrigin&) const;
+
     // This method implements the "is a registrable domain suffix of or is equal to" algorithm from the HTML Standard:
     // https://html.spec.whatwg.org/multipage/origin.html#is-a-registrable-domain-suffix-of-or-is-equal-to
     WEBCORE_EXPORT bool isMatchingRegistrableDomainSuffix(const String&, bool treatIPAddressAsDomain = false) const;

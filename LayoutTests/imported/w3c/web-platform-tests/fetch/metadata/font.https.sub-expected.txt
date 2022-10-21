@@ -8,6 +8,6 @@ FAIL Same-Site font assert_not_equals: got disallowed value "No header has been 
 FAIL Cross-Site font assert_not_equals: got disallowed value "No header has been recorded"
 PASS Same-Origin font: sec-fetch-dest
 FAIL Same-Origin font: sec-fetch-mode assert_equals: expected "cors" but got "no-cors"
-FAIL Same-Origin font: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-Origin font: sec-fetch-site
 PASS Same-Origin font: sec-fetch-user
 

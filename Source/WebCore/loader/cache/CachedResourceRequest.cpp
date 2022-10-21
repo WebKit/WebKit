@@ -41,10 +41,6 @@
 
 namespace WebCore {
 
-// Created by binding generator.
-String convertEnumerationToString(FetchOptions::Destination);
-String convertEnumerationToString(FetchOptions::Mode);
-
 CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, std::optional<ResourceLoadPriority> priority, String&& charset)
     : m_resourceRequest(WTFMove(resourceRequest))
     , m_charset(WTFMove(charset))
@@ -272,20 +268,6 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
     else
         outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), SecurityOrigin::createFromString(outgoingReferrer));
     FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
-}
-
-void CachedResourceRequest::updateFetchMetadataHeaders()
-{
-    // Implementing step 13 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022
-    // https://w3c.github.io/webappsec-fetch-metadata/#fetch-integration
-    auto requestOrigin = SecurityOrigin::create(m_resourceRequest.url());
-    if (!requestOrigin->isPotentiallyTrustworthy())
-        return;
-
-    // The Fetch IDL documents this as "" while FetchMetadata expects "empty", otherwise they match.
-    String destinationString = m_options.destination == FetchOptions::Destination::EmptyString ? "empty"_s : convertEnumerationToString(m_options.destination);
-    m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchDest, WTFMove(destinationString));
-    m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchMode, convertEnumerationToString(m_options.mode));
 }
 
 void CachedResourceRequest::updateUserAgentHeader(FrameLoader& frameLoader)

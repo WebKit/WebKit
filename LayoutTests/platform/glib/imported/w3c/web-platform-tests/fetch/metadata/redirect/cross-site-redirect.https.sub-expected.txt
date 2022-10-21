@@ -1,0 +1,18 @@
+
+
+PASS Cross-Site -> Same-Origin redirect
+PASS Cross-Site -> Same-Site redirect
+PASS Cross-Site -> Cross-Site redirect
+PASS Cross-Site -> Same-Origin redirect: sec-fetch-dest
+PASS Cross-Site -> Same-Origin redirect: sec-fetch-mode
+PASS Cross-Site -> Same-Origin redirect: sec-fetch-site
+PASS Cross-Site -> Same-Origin redirect: sec-fetch-user
+PASS Cross-Site -> Same-Site redirect: sec-fetch-dest
+PASS Cross-Site -> Same-Site redirect: sec-fetch-mode
+PASS Cross-Site -> Same-Site redirect: sec-fetch-site
+PASS Cross-Site -> Same-Site redirect: sec-fetch-user
+PASS Cross-Site -> Cross-Site redirect: sec-fetch-dest
+PASS Cross-Site -> Cross-Site redirect: sec-fetch-mode
+PASS Cross-Site -> Cross-Site redirect: sec-fetch-site
+PASS Cross-Site -> Cross-Site redirect: sec-fetch-user
+

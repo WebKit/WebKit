@@ -1192,7 +1192,7 @@ imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.html [ 
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata [ Skip ]
 
-# These fetch tests time out
+# These fetch tests time out on ports without web-platform.test domain working (not glib).
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-prefetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-type/response.window.html [ Skip ]
@@ -1205,12 +1205,13 @@ imported/w3c/web-platform-tests/fetch/metadata/embed.https.sub.tentative.html [ 
 imported/w3c/web-platform-tests/fetch/metadata/form.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/iframe.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/iframe.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/navigation.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/revalidate-not-blocked-by-csp.html [ Skip ]
+# These tests have unreliable ordering and are flakey
+imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Skip ]
 
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]

@@ -78,7 +78,6 @@ public:
 
     void updateForAccessControl(Document&);
 
-    void updateFetchMetadataHeaders();
     void updateReferrerPolicy(ReferrerPolicy);
     void updateReferrerAndOriginHeaders(FrameLoader&);
     void updateUserAgentHeader(FrameLoader&);

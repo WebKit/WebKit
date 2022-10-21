@@ -636,13 +636,91 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
     return true;
 }
 
-bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, const URL& preRedirectURL)
+// Created by binding generator.
+String convertEnumerationToString(FetchOptions::Destination);
+String convertEnumerationToString(FetchOptions::Mode);
+
+static const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
+{
+    static NeverDestroyed<const String> none(MAKE_STATIC_STRING_IMPL("none"));
+    static NeverDestroyed<const String> sameOrigin(MAKE_STATIC_STRING_IMPL("same-origin"));
+    static NeverDestroyed<const String> sameSite(MAKE_STATIC_STRING_IMPL("same-site"));
+    static NeverDestroyed<const String> crossSite(MAKE_STATIC_STRING_IMPL("cross-site"));
+
+    switch (enumerationValue) {
+    case FetchMetadataSite::None:
+        return none;
+    case FetchMetadataSite::SameOrigin:
+        return sameOrigin;
+    case FetchMetadataSite::SameSite:
+        return sameSite;
+    case FetchMetadataSite::CrossSite:
+        return crossSite;
+    }
+
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
+
+static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site)
+{
+    // Implementing step 13 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022
+    // https://w3c.github.io/webappsec-fetch-metadata/#fetch-integration
+    auto requestOrigin = SecurityOrigin::create(request.url());
+    if (!requestOrigin->isPotentiallyTrustworthy())
+        return;
+
+    String destinationString;
+    // The Fetch IDL documents this as "" while FetchMetadata expects "empty".
+    if (options.destination == FetchOptions::Destination::EmptyString)
+        destinationString = "empty"_s;
+    else
+        destinationString = convertEnumerationToString(options.destination);
+
+    request.setHTTPHeaderField(HTTPHeaderName::SecFetchDest, WTFMove(destinationString));
+    request.setHTTPHeaderField(HTTPHeaderName::SecFetchMode, convertEnumerationToString(options.mode));
+    request.setHTTPHeaderField(HTTPHeaderName::SecFetchSite, convertEnumerationToString(site));
+}
+
+FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite)
+{
+    // This is true when a user causes a request, such as entering a URL.
+    if (mode == FetchOptions::Mode::Navigate && type == CachedResource::Type::MainResource && !request.hasHTTPReferrer())
+        return FetchMetadataSite::None;
+
+    // If this is a redirect we start with the old value.
+    // The value can never get more "secure" so a full redirect
+    // chain only degrades towards cross-site.
+    Ref<SecurityOrigin> requestOrigin = SecurityOrigin::create(request.url());
+    if ((originalSite == FetchMetadataSite::SameOrigin || originalSite == FetchMetadataSite::None) && originalOrigin.isSameOriginAs(requestOrigin))
+        return FetchMetadataSite::SameOrigin;
+    if (originalSite != FetchMetadataSite::CrossSite && originalOrigin.isSameSiteAs(requestOrigin))
+        return FetchMetadataSite::SameSite;
+    return FetchMetadataSite::CrossSite;
+}
+
+bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
 {
     ASSERT(m_documentLoader);
     if (auto* document = m_documentLoader->cachedResourceLoader().document())
         upgradeInsecureResourceRequestIfNeeded(request, *document);
 
     // FIXME: We might want to align the checks done here with the ones done in CachedResourceLoader::requestResource, content extensions blocking in particular.
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (m_documentLoader->frame()->settings().fetchMetadataEnabled()) {
+        auto requestOrigin = SecurityOrigin::create(request.url());
+
+        // In the case of a protocol downgrade we strip all FetchMetadata headers.
+        // Otherwise we add or update FetchMetadata.
+        if (!requestOrigin->isPotentiallyTrustworthy()) {
+            request.removeHTTPHeaderField(HTTPHeaderName::SecFetchDest);
+            request.removeHTTPHeaderField(HTTPHeaderName::SecFetchMode);
+            request.removeHTTPHeaderField(HTTPHeaderName::SecFetchSite);
+        } else
+            updateRequestFetchMetadataHeaders(request, options, site);
+    }
+#endif // ENABLE(PUBLIC_SUFFIX_LIST)
 
     return canRequestAfterRedirection(type, request.url(), options, preRedirectURL);
 }
@@ -801,8 +879,15 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FIXME: We should reconcile handling of MainResource with other resources.
     if (type != CachedResource::Type::MainResource)
         request.updateReferrerAndOriginHeaders(frameLoader);
-    if (frameLoader.frame().settings().fetchMetadataEnabled())
-        request.updateFetchMetadataHeaders();
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    // FetchMetadata depends on PSL to determine same-site relationships and without this
+    // ability it is best to not set any FetchMetadata headers as sites generally expect
+    // all of them or none.
+    if (frameLoader.frame().settings().fetchMetadataEnabled()) {
+        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame().document()->securityOrigin());
+        updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
+    }
+#endif // ENABLE(PUBLIC_SUFFIX_LIST)
     request.updateUserAgentHeader(frameLoader);
 
     request.updateAccordingCacheMode();

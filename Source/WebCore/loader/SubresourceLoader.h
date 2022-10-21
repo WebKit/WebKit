@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "CachedResourceLoader.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
 #include <wtf/CompletionHandler.h>
@@ -140,6 +141,7 @@ private:
     unsigned m_redirectCount { 0 };
     bool m_loadingMultipartContent { false };
     bool m_inAsyncResponsePolicyCheck { false };
+    FetchMetadataSite m_site { FetchMetadataSite::SameOrigin };
 };
 
 }

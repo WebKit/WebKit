@@ -5,14 +5,14 @@ PASS Same-site image
 PASS Cross-site image
 PASS Same-origin image: sec-fetch-dest
 PASS Same-origin image: sec-fetch-mode
-FAIL Same-origin image: sec-fetch-site assert_equals: expected (string) "same-origin" but got (undefined) undefined
+PASS Same-origin image: sec-fetch-site
 PASS Same-origin image: sec-fetch-user
 PASS Same-site image: sec-fetch-dest
 PASS Same-site image: sec-fetch-mode
-FAIL Same-site image: sec-fetch-site assert_equals: expected (string) "same-site" but got (undefined) undefined
+PASS Same-site image: sec-fetch-site
 PASS Same-site image: sec-fetch-user
 PASS Cross-site image: sec-fetch-dest
 PASS Cross-site image: sec-fetch-mode
-FAIL Cross-site image: sec-fetch-site assert_equals: expected (string) "cross-site" but got (undefined) undefined
+PASS Cross-site image: sec-fetch-site
 PASS Cross-site image: sec-fetch-user
 

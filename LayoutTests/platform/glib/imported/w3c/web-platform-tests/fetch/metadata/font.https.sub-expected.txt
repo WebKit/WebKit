@@ -7,14 +7,14 @@ PASS Same-Site font
 PASS Cross-Site font
 PASS Same-Origin font: sec-fetch-dest
 FAIL Same-Origin font: sec-fetch-mode assert_equals: expected "cors" but got "no-cors"
-FAIL Same-Origin font: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-Origin font: sec-fetch-site
 PASS Same-Origin font: sec-fetch-user
 PASS Same-Site font: sec-fetch-dest
 FAIL Same-Site font: sec-fetch-mode assert_equals: expected "cors" but got "no-cors"
-FAIL Same-Site font: sec-fetch-site assert_equals: expected "same-site" but got ""
+PASS Same-Site font: sec-fetch-site
 PASS Same-Site font: sec-fetch-user
 PASS Cross-Site font: sec-fetch-dest
 FAIL Cross-Site font: sec-fetch-mode assert_equals: expected "cors" but got "no-cors"
-FAIL Cross-Site font: sec-fetch-site assert_equals: expected "cross-site" but got ""
+PASS Cross-Site font: sec-fetch-site
 PASS Cross-Site font: sec-fetch-user
 

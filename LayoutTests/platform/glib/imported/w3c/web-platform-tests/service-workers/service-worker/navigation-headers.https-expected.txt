@@ -39,47 +39,47 @@ PASS POST Navigation, same-origin with cross-site redirect, same-origin redirect
 FAIL POST Navigation, same-origin with cross-site redirect, same-origin redirect, and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://web-platform.test:9443"
 PASS POST Navigation, same-origin with cross-site redirect, same-origin redirect, and fallback service worker sets correct origin and referer headers.
 PASS POST Navigation, same-origin with cross-site redirect, same-origin redirect, and change-request service worker sets correct origin and referer headers.
-FAIL GET Navigation, same-origin with no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL POST Navigation, same-origin with no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL POST Navigation, same-origin with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL POST Navigation, same-origin with fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with navpreload service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL POST Navigation, same-origin with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-site with no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL POST Navigation, same-site with no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL POST Navigation, same-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-site with fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL POST Navigation, same-site with fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-site with navpreload service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL POST Navigation, same-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, cross-site with no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL POST Navigation, cross-site with no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, cross-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL POST Navigation, cross-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, cross-site with fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL POST Navigation, cross-site with fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, cross-site with navpreload service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, cross-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL POST Navigation, cross-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with same-site redirect and no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-origin with same-site redirect and passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-origin with same-site redirect and fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-origin with same-site redirect and navpreload service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "not set"
-FAIL GET Navigation, same-origin with same-site redirect and change-request service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect and no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect and passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect and fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect and navpreload service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect and change-request service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and no service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and fallback service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and navpreload service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "not set"
-FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and change-request service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-origin" but got "not set"
+PASS GET Navigation, same-origin with no service worker sets correct sec-fetch headers.
+PASS POST Navigation, same-origin with no service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+FAIL POST Navigation, same-origin with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+PASS GET Navigation, same-origin with fallback service worker sets correct sec-fetch headers.
+PASS POST Navigation, same-origin with fallback service worker sets correct sec-fetch headers.
+PASS GET Navigation, same-origin with navpreload service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+FAIL POST Navigation, same-origin with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+PASS GET Navigation, same-site with no service worker sets correct sec-fetch headers.
+PASS POST Navigation, same-site with no service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "same-origin"
+FAIL POST Navigation, same-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "same-origin"
+PASS GET Navigation, same-site with fallback service worker sets correct sec-fetch headers.
+PASS POST Navigation, same-site with fallback service worker sets correct sec-fetch headers.
+PASS GET Navigation, same-site with navpreload service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+FAIL POST Navigation, same-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+PASS GET Navigation, cross-site with no service worker sets correct sec-fetch headers.
+PASS POST Navigation, cross-site with no service worker sets correct sec-fetch headers.
+FAIL GET Navigation, cross-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "same-origin"
+FAIL POST Navigation, cross-site with passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "same-origin"
+PASS GET Navigation, cross-site with fallback service worker sets correct sec-fetch headers.
+PASS POST Navigation, cross-site with fallback service worker sets correct sec-fetch headers.
+PASS GET Navigation, cross-site with navpreload service worker sets correct sec-fetch headers.
+FAIL GET Navigation, cross-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+FAIL POST Navigation, cross-site with service worker that changes the request sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+PASS GET Navigation, same-origin with same-site redirect and no service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with same-site redirect and passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "same-site" but got "same-origin"
+PASS GET Navigation, same-origin with same-site redirect and fallback service worker sets correct sec-fetch headers.
+PASS GET Navigation, same-origin with same-site redirect and navpreload service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with same-site redirect and change-request service worker sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+PASS GET Navigation, same-origin with cross-site redirect and no service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with cross-site redirect and passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "same-origin"
+PASS GET Navigation, same-origin with cross-site redirect and fallback service worker sets correct sec-fetch headers.
+PASS GET Navigation, same-origin with cross-site redirect and navpreload service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with cross-site redirect and change-request service worker sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
+PASS GET Navigation, same-origin with cross-site redirect, same-origin redirect, and no service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and passthrough service worker sets correct sec-fetch headers. assert_equals: sec-fetch-site header expected "cross-site" but got "same-origin"
+PASS GET Navigation, same-origin with cross-site redirect, same-origin redirect, and fallback service worker sets correct sec-fetch headers.
+PASS GET Navigation, same-origin with cross-site redirect, same-origin redirect, and navpreload service worker sets correct sec-fetch headers.
+FAIL GET Navigation, same-origin with cross-site redirect, same-origin redirect, and change-request service worker sets correct sec-fetch headers. assert_equals: sec-fetch-dest header expected "empty" but got "iframe"
 PASS Cleanup service worker
 

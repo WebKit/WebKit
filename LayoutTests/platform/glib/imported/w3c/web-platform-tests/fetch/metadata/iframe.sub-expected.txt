@@ -1,0 +1,23 @@
+
+
+PASS Non-secure same-origin iframe => No headers
+PASS Non-secure same-site iframe => No headers
+PASS Non-secure cross-site iframe => No headers.
+PASS Secure, cross-site (cross-scheme, same-host) iframe
+PASS Non-secure same-site iframe => No headers: sec-fetch-dest
+PASS Non-secure same-site iframe => No headers: sec-fetch-mode
+PASS Non-secure same-site iframe => No headers: sec-fetch-site
+PASS Non-secure same-site iframe => No headers: sec-fetch-user
+PASS Non-secure same-origin iframe => No headers: sec-fetch-dest
+PASS Non-secure same-origin iframe => No headers: sec-fetch-mode
+PASS Non-secure same-origin iframe => No headers: sec-fetch-site
+PASS Non-secure same-origin iframe => No headers: sec-fetch-user
+PASS Non-secure cross-site iframe => No headers.: sec-fetch-dest
+PASS Non-secure cross-site iframe => No headers.: sec-fetch-mode
+PASS Non-secure cross-site iframe => No headers.: sec-fetch-site
+PASS Non-secure cross-site iframe => No headers.: sec-fetch-user
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-dest
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-mode
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-site
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-user
+

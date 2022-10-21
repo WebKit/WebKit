@@ -7,26 +7,26 @@ PASS CORS mode
 PASS no-CORS mode
 PASS Same-origin fetch: sec-fetch-dest
 PASS Same-origin fetch: sec-fetch-mode
-FAIL Same-origin fetch: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin fetch: sec-fetch-site
 PASS Same-origin fetch: sec-fetch-user
 PASS Same-site fetch: sec-fetch-dest
 PASS Same-site fetch: sec-fetch-mode
-FAIL Same-site fetch: sec-fetch-site assert_equals: expected "same-site" but got ""
+PASS Same-site fetch: sec-fetch-site
 PASS Same-site fetch: sec-fetch-user
 PASS Cross-site fetch: sec-fetch-dest
 PASS Cross-site fetch: sec-fetch-mode
-FAIL Cross-site fetch: sec-fetch-site assert_equals: expected "cross-site" but got ""
+PASS Cross-site fetch: sec-fetch-site
 PASS Cross-site fetch: sec-fetch-user
 PASS Same-origin mode: sec-fetch-dest
 PASS Same-origin mode: sec-fetch-mode
-FAIL Same-origin mode: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin mode: sec-fetch-site
 PASS Same-origin mode: sec-fetch-user
 PASS CORS mode: sec-fetch-dest
 PASS CORS mode: sec-fetch-mode
-FAIL CORS mode: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS CORS mode: sec-fetch-site
 PASS CORS mode: sec-fetch-user
 PASS no-CORS mode: sec-fetch-dest
 PASS no-CORS mode: sec-fetch-mode
-FAIL no-CORS mode: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS no-CORS mode: sec-fetch-site
 PASS no-CORS mode: sec-fetch-user
 

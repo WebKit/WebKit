@@ -1,7 +1,5 @@
 Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/post-to-owner.py
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/post-to-owner.py
 Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/post-to-owner.py
-Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/post-to-owner.py
 This is a link!This is a link!This is a link!
 
 Harness Error (TIMEOUT), message = null
@@ -12,12 +10,12 @@ TIMEOUT localhost -> www.127.0.0.1:9443 iframe: forced Test timed out
 PASS localhost -> localhost:9443 iframe: user-activated
 TIMEOUT localhost -> www.localhost:9443 iframe: user-activated Test timed out
 TIMEOUT localhost -> www.127.0.0.1:9443 iframe: user-activated Test timed out
-FAIL localhost -> localhost:9443 iframe: forced: sec-fetch-dest assert_equals: expected "iframe" but got ""
-FAIL localhost -> localhost:9443 iframe: forced: sec-fetch-mode assert_equals: expected "navigate" but got ""
-FAIL localhost -> localhost:9443 iframe: forced: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS localhost -> localhost:9443 iframe: forced: sec-fetch-user
-FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-dest assert_equals: expected "iframe" but got ""
-FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-mode assert_equals: expected "navigate" but got ""
-FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS localhost -> localhost:9443 iframe: user-activated: sec-fetch-dest
+PASS localhost -> localhost:9443 iframe: user-activated: sec-fetch-mode
+PASS localhost -> localhost:9443 iframe: user-activated: sec-fetch-site
 FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+PASS localhost -> localhost:9443 iframe: forced: sec-fetch-dest
+PASS localhost -> localhost:9443 iframe: forced: sec-fetch-mode
+PASS localhost -> localhost:9443 iframe: forced: sec-fetch-site
+PASS localhost -> localhost:9443 iframe: forced: sec-fetch-user
 

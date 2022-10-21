@@ -1,0 +1,22 @@
+
+PASS Same-Origin style
+PASS Same-Site style
+PASS Cross-Site style
+PASS Same-Origin, cors style
+PASS Same-Origin style: sec-fetch-dest
+PASS Same-Origin style: sec-fetch-mode
+PASS Same-Origin style: sec-fetch-site
+PASS Same-Origin style: sec-fetch-user
+PASS Same-Site style: sec-fetch-dest
+PASS Same-Site style: sec-fetch-mode
+PASS Same-Site style: sec-fetch-site
+PASS Same-Site style: sec-fetch-user
+PASS Cross-Site style: sec-fetch-dest
+PASS Cross-Site style: sec-fetch-mode
+PASS Cross-Site style: sec-fetch-site
+PASS Cross-Site style: sec-fetch-user
+PASS Same-Origin, cors style: sec-fetch-dest
+PASS Same-Origin, cors style: sec-fetch-mode
+PASS Same-Origin, cors style: sec-fetch-site
+PASS Same-Origin, cors style: sec-fetch-user
+

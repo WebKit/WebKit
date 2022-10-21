@@ -1,0 +1,29 @@
+
+PASS back to same-origin-initiated navigation
+PASS back to same-site-initiated navigation
+PASS back to cross-site-initiated navigation
+PASS back to same-site-initiated navigation 1: sec-fetch-dest
+PASS back to same-site-initiated navigation 1: sec-fetch-mode
+PASS back to same-site-initiated navigation 1: sec-fetch-site
+PASS back to same-site-initiated navigation 1: sec-fetch-user
+PASS back to cross-site-initiated navigation 1: sec-fetch-dest
+PASS back to cross-site-initiated navigation 1: sec-fetch-mode
+PASS back to cross-site-initiated navigation 1: sec-fetch-site
+PASS back to cross-site-initiated navigation 1: sec-fetch-user
+PASS back to same-site-initiated navigation 2: sec-fetch-dest
+PASS back to same-site-initiated navigation 2: sec-fetch-mode
+FAIL back to same-site-initiated navigation 2: sec-fetch-site assert_equals: expected "same-site" but got "cross-site"
+PASS back to same-site-initiated navigation 2: sec-fetch-user
+PASS back to same-origin-initiated navigation 1: sec-fetch-dest
+PASS back to same-origin-initiated navigation 1: sec-fetch-mode
+PASS back to same-origin-initiated navigation 1: sec-fetch-site
+PASS back to same-origin-initiated navigation 1: sec-fetch-user
+PASS back to same-origin-initiated navigation 2: sec-fetch-dest
+PASS back to same-origin-initiated navigation 2: sec-fetch-mode
+FAIL back to same-origin-initiated navigation 2: sec-fetch-site assert_equals: expected "same-origin" but got "cross-site"
+PASS back to same-origin-initiated navigation 2: sec-fetch-user
+PASS back to cross-site-initiated navigation 2: sec-fetch-dest
+PASS back to cross-site-initiated navigation 2: sec-fetch-mode
+FAIL back to cross-site-initiated navigation 2: sec-fetch-site assert_equals: expected "cross-site" but got "same-origin"
+PASS back to cross-site-initiated navigation 2: sec-fetch-user
+
