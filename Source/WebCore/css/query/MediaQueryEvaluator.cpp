@@ -25,7 +25,10 @@
 #include "config.h"
 #include "MediaQueryEvaluator.h"
 
+#include "CSSToLengthConversionData.h"
+#include "Document.h"
 #include "MediaQuery.h"
+#include "RenderView.h"
 
 namespace WebCore {
 namespace MQ {
@@ -33,7 +36,7 @@ namespace MQ {
 MediaQueryEvaluator::MediaQueryEvaluator(const AtomString& mediaType, const Document& document, const RenderStyle* rootElementStyle)
     : GenericMediaQueryEvaluator()
     , m_mediaType(mediaType)
-    , m_featureContext({ document, rootElementStyle })
+    , m_evaluationContext({ CSSToLengthConversionData { *rootElementStyle, nullptr, nullptr, document.renderView() }, document.renderView() })
 {
 }
 
@@ -64,13 +67,13 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
     auto conditionMatches = [&] {
         if (!query.condition)
             return false;
-        return evaluateCondition(*query.condition, m_featureContext) == EvaluationResult::True;
+        return evaluateCondition(*query.condition, m_evaluationContext) == EvaluationResult::True;
     }();
 
     return conditionMatches != isNegated;
 }
 
-EvaluationResult MediaQueryEvaluator::evaluateFeature(const Feature&, const FeatureContext&) const
+EvaluationResult MediaQueryEvaluator::evaluateFeature(const Feature&, const FeatureEvaluationContext&) const
 {
     return EvaluationResult::Unknown;
 }

@@ -49,7 +49,7 @@ struct Feature {
     std::optional<Comparison> leftComparison;
     std::optional<Comparison> rightComparison;
 
-    const FeatureSchema* validSchema { nullptr };
+    const FeatureSchema* schema { nullptr };
 };
 
 struct GeneralEnclosed {
@@ -65,6 +65,8 @@ struct Condition {
 };
 
 struct FeatureSchema {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     enum class Type : uint8_t { Discrete, Range };
     enum class ValueType : uint8_t {
         Integer =       1 << 0,

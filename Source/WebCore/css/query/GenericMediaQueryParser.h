@@ -60,6 +60,7 @@ public:
 
     std::optional<Condition> consumeCondition(CSSParserTokenRange&);
     std::optional<QueryInParens> consumeQueryInParens(CSSParserTokenRange&);
+    std::optional<Feature> consumeFeature(CSSParserTokenRange&);
 
     const FeatureSchema* schemaForFeatureName(const AtomString&) const;
 
@@ -140,17 +141,26 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
         if (auto condition = consumeCondition(conditionRange))
             return { condition };
 
-        if (auto feature = concreteParser().consumeFeature(blockRange)) {
-            if (!validateFeature(*feature) && ConcreteParser::rejectInvalidFeatures())
-                return { };
-
+        if (auto feature = concreteParser().consumeFeature(blockRange))
             return { *feature };
-        }
 
         return GeneralEnclosed { { }, blockRange.serialize() };
     }
 
     return { };
+}
+
+template<typename ConcreteParser>
+std::optional<Feature> GenericMediaQueryParser<ConcreteParser>::consumeFeature(CSSParserTokenRange& range)
+{
+    auto feature = GenericMediaQueryParserBase::consumeFeature(range);
+    if (!feature)
+        return { };
+
+    if (!validateFeature(*feature) && ConcreteParser::rejectInvalidFeatures())
+        return { };
+
+    return feature;
 }
 
 template<typename ConcreteParser>
@@ -165,18 +175,17 @@ bool GenericMediaQueryParser<ConcreteParser>::validateFeature(Feature& feature)
 template<typename ConcreteParser>
 const FeatureSchema* GenericMediaQueryParser<ConcreteParser>::schemaForFeatureName(const AtomString& name) const
 {
-    using SchemaMap = MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, FeatureSchema>;
+    using SchemaMap = MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, const FeatureSchema*>;
 
     static NeverDestroyed<SchemaMap> schemas = [&] {
         auto entries = ConcreteParser::featureSchemas();
         SchemaMap map;
         for (auto& entry : entries)
-            map.add(entry.name, entry);
+            map.add(entry->name, entry);
         return map;
     }();
 
-    auto it = schemas->find(name);
-    return it == schemas->end() ? nullptr : &it->value;
+    return schemas->get(name);
 }
 
 }

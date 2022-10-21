@@ -249,7 +249,7 @@ bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature,
         return true;
     }();
 
-    feature.validSchema = isValid ? &schema : nullptr;
+    feature.schema = isValid ? &schema : nullptr;
     return isValid;
 }
 

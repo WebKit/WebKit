@@ -37,7 +37,7 @@ public:
     MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
     std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);
 
-    static Vector<MQ::FeatureSchema> featureSchemas();
+    static Vector<const FeatureSchema*> featureSchemas();
     static bool rejectInvalidFeatures() { return true; }
 };
 

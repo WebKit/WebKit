@@ -39,11 +39,6 @@
 
 namespace WebCore::Style {
 
-struct ContainerQueryEvaluator::SelectedContainer {
-    const RenderBox* renderer { nullptr };
-    CSSToLengthConversionData conversionData;
-};
-
 ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, SelectorMatchingState* selectorMatchingState)
     : m_element(element)
     , m_selectionMode(selectionMode)
@@ -54,14 +49,14 @@ ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, Selecti
 
 bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery) const
 {
-    auto container = selectContainer(containerQuery);
-    if (!container)
+    auto context = featureEvaluationContextForQuery(containerQuery);
+    if (!context)
         return false;
 
-    return evaluateCondition(containerQuery.condition, *container) == MQ::EvaluationResult::True;
+    return evaluateCondition(containerQuery.condition, *context) == MQ::EvaluationResult::True;
 }
 
-auto ContainerQueryEvaluator::selectContainer(const CQ::ContainerQuery& containerQuery) const -> std::optional<SelectedContainer>
+auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::ContainerQuery& containerQuery) const -> std::optional<FeatureEvaluationContext>
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -69,23 +64,21 @@ auto ContainerQueryEvaluator::selectContainer(const CQ::ContainerQuery& containe
     // considered to just those with a matching query container name."
     // https://drafts.csswg.org/css-contain-3/#container-rule
 
-    auto makeSelectedContainer = [](const Element& element) -> SelectedContainer {
-        auto* renderer = dynamicDowncast<RenderBox>(element.renderer());
-        if (!renderer)
-            return { };
-        return {
-            renderer,
-            CSSToLengthConversionData { renderer->style(), element.document().documentElement()->renderStyle(), nullptr, &renderer->view() }
-        };
-    };
-
     auto* cachedQueryContainers = m_selectorMatchingState ? &m_selectorMatchingState->queryContainers : nullptr;
 
     auto* container = selectContainer(containerQuery.axisFilter, containerQuery.name, m_element.get(), m_selectionMode, m_scopeOrdinal, cachedQueryContainers);
     if (!container)
         return { };
 
-    return makeSelectedContainer(*container);
+    if (!container->renderer())
+        return FeatureEvaluationContext { };
+
+    auto& renderer = *container->renderer();
+
+    return FeatureEvaluationContext {
+        CSSToLengthConversionData { renderer.style(), m_element->document().documentElement()->renderStyle(), nullptr, &renderer.view() },
+        &renderer
+    };
 }
 
 const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes, const String& name, const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, const CachedQueryContainers* cachedQueryContainers)
@@ -163,19 +156,19 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
     return { };
 }
 
-auto ContainerQueryEvaluator::evaluateFeature(const MQ::Feature& sizeFeature, const SelectedContainer& container) const -> MQ::EvaluationResult
+auto ContainerQueryEvaluator::evaluateFeature(const MQ::Feature& sizeFeature, const FeatureEvaluationContext& context) const -> MQ::EvaluationResult
 {
-    if (!sizeFeature.validSchema)
+    if (!sizeFeature.schema)
         return MQ::EvaluationResult::Unknown;
 
     // "If the query container does not have a principal box, or the principal box is not a layout containment box,
     // or the query container does not support container size queries on the relevant axes, then the result of
     // evaluating the size feature is unknown."
     // https://drafts.csswg.org/css-contain-3/#size-container
-    if (!container.renderer)
+    if (!is<RenderBox>(context.renderer))
         return MQ::EvaluationResult::Unknown;
 
-    auto& renderer = *container.renderer;
+    auto& renderer = downcast<RenderBox>(*context.renderer);
 
     auto hasEligibleContainment = [&] {
         if (!renderer.shouldApplyLayoutContainment())
@@ -194,24 +187,24 @@ auto ContainerQueryEvaluator::evaluateFeature(const MQ::Feature& sizeFeature, co
     if (!hasEligibleContainment())
         return MQ::EvaluationResult::Unknown;
 
-    if (sizeFeature.name == CQ::FeatureNames::width())
-        return evaluateLengthFeature(sizeFeature, renderer.contentWidth(), container.conversionData);
+    if (sizeFeature.schema == &CQ::FeatureSchemas::width())
+        return evaluateLengthFeature(sizeFeature, renderer.contentWidth(), context.conversionData);
 
-    if (sizeFeature.name == CQ::FeatureNames::height())
-        return evaluateLengthFeature(sizeFeature, renderer.contentHeight(), container.conversionData);
+    if (sizeFeature.schema == &CQ::FeatureSchemas::height())
+        return evaluateLengthFeature(sizeFeature, renderer.contentHeight(), context.conversionData);
 
-    if (sizeFeature.name == CQ::FeatureNames::inlineSize())
-        return evaluateLengthFeature(sizeFeature, renderer.contentLogicalWidth(), container.conversionData);
+    if (sizeFeature.schema == &CQ::FeatureSchemas::inlineSize())
+        return evaluateLengthFeature(sizeFeature, renderer.contentLogicalWidth(), context.conversionData);
 
-    if (sizeFeature.name == CQ::FeatureNames::blockSize())
-        return evaluateLengthFeature(sizeFeature, renderer.contentLogicalHeight(), container.conversionData);
+    if (sizeFeature.schema == &CQ::FeatureSchemas::blockSize())
+        return evaluateLengthFeature(sizeFeature, renderer.contentLogicalHeight(), context.conversionData);
 
-    if (sizeFeature.name == CQ::FeatureNames::aspectRatio()) {
+    if (sizeFeature.schema == &CQ::FeatureSchemas::aspectRatio()) {
         auto boxRatio = renderer.contentWidth().toDouble() / renderer.contentHeight().toDouble();
         return evaluateRatioFeature(sizeFeature, boxRatio);
     }
 
-    if (sizeFeature.name == CQ::FeatureNames::orientation()) {
+    if (sizeFeature.schema == &CQ::FeatureSchemas::orientation()) {
         bool isPortrait = renderer.contentHeight() >= renderer.contentWidth();
         return evaluateDiscreteFeature(sizeFeature, isPortrait ? CSSValuePortrait : CSSValueLandscape);
     }

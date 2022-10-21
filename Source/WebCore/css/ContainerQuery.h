@@ -36,13 +36,13 @@ class Element;
 
 namespace CQ {
 
-namespace FeatureNames {
-const AtomString& width();
-const AtomString& height();
-const AtomString& inlineSize();
-const AtomString& blockSize();
-const AtomString& aspectRatio();
-const AtomString& orientation();
+namespace FeatureSchemas {
+const MQ::FeatureSchema& width();
+const MQ::FeatureSchema& height();
+const MQ::FeatureSchema& inlineSize();
+const MQ::FeatureSchema& blockSize();
+const MQ::FeatureSchema& aspectRatio();
+const MQ::FeatureSchema& orientation();
 };
 
 enum class Axis : uint8_t {
@@ -51,7 +51,7 @@ enum class Axis : uint8_t {
     Width   = 1 << 2,
     Height  = 1 << 3,
 };
-OptionSet<Axis> requiredAxesForFeature(const AtomString&);
+OptionSet<Axis> requiredAxesForFeature(const MQ::Feature&);
 
 struct ContainerQuery {
     AtomString name;
