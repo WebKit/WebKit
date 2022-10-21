@@ -401,7 +401,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, std::nullopt))
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, process.auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
             parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(*handle);
     }
 #endif

@@ -960,7 +960,7 @@
     (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
 
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
-    (deny IOKIT_OPEN_SERVICE)
+    (deny iokit-open-service)
     (deny iokit-open (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
@@ -1337,23 +1337,22 @@
             (allow mach-message-send
                 (mach-bootstrap-message-numbers)))))
 
+(allow-mach-bootstrap-with-filter)
+
 #if HAVE(SANDBOX_STATE_FLAGS)
-(if (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
+(with-filter
+    (require-all
+        (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
+        (state-flag "WebContentProcessLaunched")
+        (require-not (state-flag "EnableMachBootstrap")))
     (allow mach-bootstrap
+        (require-not (state-flag "EnableExperimentalSandbox"))
         (apply-message-filter
             (deny mach-message-send (with telemetry-backtrace))
             (allow mach-message-send (with telemetry-backtrace)
                 (mach-bootstrap-message-numbers-post-launch))))
-;; else
-    (allow-mach-bootstrap-with-filter))
-
-(with-filter
-    (require-any
-        (require-not (state-flag "WebContentProcessLaunched"))
-        (state-flag "EnableMachBootstrap"))
-    (allow-mach-bootstrap-with-filter))
-#else
-(allow-mach-bootstrap-with-filter)
+    (deny mach-bootstrap (with telemetry-backtrace)
+        (state-flag "EnableExperimentalSandbox")))
 #endif
 
 (define (syscall-mach-only-in-use-during-launch)
