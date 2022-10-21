@@ -185,6 +185,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
     
     auto page = makeUnique<Page>(WTFMove(pageConfiguration));
+    page->settings().setResourceLoadStatisticsEnabled(true);
 #if ENABLE(VIDEO)
     page->settings().setMediaEnabled(false);
 #endif

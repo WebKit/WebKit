@@ -378,6 +378,8 @@ public:
     SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
 #endif
 
+    bool resourceLoadStatisticsEnabled() const { return m_resourceLoadStatisticsEnabled; }
+
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
 
     void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
@@ -740,6 +742,7 @@ private:
     std::unique_ptr<SpeechRecognitionRealtimeMediaSourceManager> m_speechRecognitionRealtimeMediaSourceManager;
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
+    bool m_resourceLoadStatisticsEnabled { false };
 };
 
 } // namespace WebKit

@@ -1665,13 +1665,17 @@ WeakPtr<StorageAreaMap> WebProcess::storageAreaMap(StorageAreaMapIdentifier iden
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 {
-    if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled)
+    if (m_resourceLoadStatisticsEnabled == enabled)
         return;
-    WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enabled);
+
+    m_resourceLoadStatisticsEnabled = enabled;
+
 #if ENABLE(TRACKING_PREVENTION)
     if (enabled && !ResourceLoadObserver::sharedIfExists())
         WebCore::ResourceLoadObserver::setShared(*new WebResourceLoadObserver(m_sessionID && m_sessionID->isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
 #endif
+    for (auto& page : m_pageMap.values())
+        page->setResourceLoadStatisticsEnabled(enabled);
 }
 
 void WebProcess::clearResourceLoadStatistics()

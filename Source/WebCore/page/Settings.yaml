@@ -423,6 +423,12 @@ PreventKeyboardDOMEventDispatch:
     WebCore:
       default: false
 
+ResourceLoadStatisticsEnabled:
+  type: bool
+  defaultValue:
+    WebCore:
+      default: false
+
 PrivateClickMeasurementFraudPreventionEnabled:
   type: bool
   defaultValue:

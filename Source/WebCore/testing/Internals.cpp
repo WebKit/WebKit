@@ -5205,9 +5205,9 @@ String Internals::resourceLoadStatisticsForURL(const DOMURL& url)
     return ResourceLoadObserver::shared().statisticsForURL(url.href());
 }
 
-void Internals::setResourceLoadStatisticsEnabled(bool enable)
+void Internals::setResourceLoadStatisticsEnabled(bool enabled)
 {
-    DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enable);
+    contextDocument()->page()->settings().setResourceLoadStatisticsEnabled(enabled);
 }
 
 String Internals::composedTreeAsText(Node& node)

@@ -57,9 +57,6 @@ public:
     static bool lowPowerVideoAudioBufferSizeEnabled() { return shared().m_lowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
-    static bool resourceLoadStatisticsEnabled() { return shared().m_resourceLoadStatisticsEnabledEnabled; }
-    WEBCORE_EXPORT static void setResourceLoadStatisticsEnabled(bool);
-
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
     static unsigned audioSessionCategoryOverride();

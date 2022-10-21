@@ -687,6 +687,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.allowedNetworkHosts = parameters.allowedNetworkHosts;
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
     pageConfiguration.httpsUpgradeEnabled = parameters.httpsUpgradeEnabled;
+    pageConfiguration.resourceLoadStatisticsEnabled = WebProcess::singleton().resourceLoadStatisticsEnabled();
 
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
@@ -8333,6 +8334,11 @@ void WebPage::clearNotificationPermissionState()
     static_cast<WebNotificationClient&>(WebCore::NotificationController::from(m_page.get())->client()).clearNotificationPermissionState();
 }
 #endif
+
+void WebPage::setResourceLoadStatisticsEnabled(bool enabled)
+{
+    m_page->settings().setResourceLoadStatisticsEnabled(enabled);
+}
 
 void WebPage::generateTestReport(String&& message, String&& group)
 {

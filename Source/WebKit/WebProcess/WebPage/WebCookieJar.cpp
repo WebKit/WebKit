@@ -56,7 +56,7 @@ WebCookieJar::WebCookieJar()
 #if ENABLE(TRACKING_PREVENTION)
 static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ShouldAskITP& shouldAskITPInNetworkProcess)
 {
-    if (!WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
+    if (!WebProcess::singleton().resourceLoadStatisticsEnabled())
         return false;
 
     RegistrableDomain firstPartyDomain { firstPartyForCookies };

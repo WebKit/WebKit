@@ -376,6 +376,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     pageCounter.increment();
 #endif
 
+    m_settings->setResourceLoadStatisticsEnabled(pageConfiguration.resourceLoadStatisticsEnabled);
+
     m_storageNamespaceProvider->setSessionStorageQuota(m_settings->sessionStorageQuota());
 
 #if ENABLE(REMOTE_INSPECTOR)

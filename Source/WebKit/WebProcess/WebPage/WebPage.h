@@ -1575,6 +1575,8 @@ public:
     void setInteractionRegionsEnabled(bool);
 #endif
 
+    void setResourceLoadStatisticsEnabled(bool);
+
     void generateTestReport(String&& message, String&& group);
 
 private:

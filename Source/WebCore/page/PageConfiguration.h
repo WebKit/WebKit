@@ -150,6 +150,7 @@ public:
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };
+    bool resourceLoadStatisticsEnabled { false };
 
     UniqueRef<StorageProvider> storageProvider;
 

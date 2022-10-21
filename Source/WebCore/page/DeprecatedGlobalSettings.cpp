@@ -181,11 +181,6 @@ void DeprecatedGlobalSettings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
     shared().m_lowPowerVideoAudioBufferSizeEnabled = flag;
 }
 
-void DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(bool flag)
-{
-    shared().m_resourceLoadStatisticsEnabledEnabled = flag;
-}
-
 #if PLATFORM(IOS_FAMILY)
 void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionCategory)
 {

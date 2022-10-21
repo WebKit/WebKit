@@ -96,6 +96,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
     auto pageConfiguration = WebCore::pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
 
+    pageConfiguration.resourceLoadStatisticsEnabled = WebProcess::singleton().resourceLoadStatisticsEnabled();
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
     pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);
     pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();
