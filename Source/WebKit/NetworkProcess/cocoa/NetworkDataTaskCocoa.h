@@ -101,8 +101,8 @@ private:
 #if ENABLE(TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
     void updateFirstPartyInfoForSession(const URL&);
-    bool shouldApplyCookiePolicyForThirdPartyCNAMECloaking() const;
-    void applyCookiePolicyForThirdPartyCNAMECloaking(const WebCore::ResourceRequest&);
+    bool shouldApplyCookiePolicyForThirdPartyCloaking() const;
+    void applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest&);
     void blockCookies();
     void unblockCookies();
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;

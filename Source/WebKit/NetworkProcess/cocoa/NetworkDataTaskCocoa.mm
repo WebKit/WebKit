@@ -166,7 +166,7 @@ static WebCore::RegistrableDomain lastCNAMEDomain(NSArray<NSString *> *cnames)
     return { };
 }
 
-bool NetworkDataTaskCocoa::shouldApplyCookiePolicyForThirdPartyCNAMECloaking() const
+bool NetworkDataTaskCocoa::shouldApplyCookiePolicyForThirdPartyCloaking() const
 {
     auto* session = networkSession();
     return session && session->networkStorageSession() && session->networkStorageSession()->resourceLoadStatisticsEnabled();
@@ -174,7 +174,7 @@ bool NetworkDataTaskCocoa::shouldApplyCookiePolicyForThirdPartyCNAMECloaking() c
 
 void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
 {
-    if (!shouldApplyCookiePolicyForThirdPartyCNAMECloaking() || requestURL.host().isEmpty())
+    if (!shouldApplyCookiePolicyForThirdPartyCloaking() || requestURL.host().isEmpty())
         return;
 
     auto* session = networkSession();
@@ -186,9 +186,25 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
         session->setFirstPartyHostIPAddress(requestURL.host().toString(), ipAddress);
 }
 
-void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking(const WebCore::ResourceRequest& request)
+static NSArray<NSHTTPCookie *> *cookiesByCappingExpiry(NSArray<NSHTTPCookie *> *cookies, Seconds ageCap)
 {
-    if (isTopLevelNavigation() || !shouldApplyCookiePolicyForThirdPartyCNAMECloaking())
+    auto *cappedCookies = [NSMutableArray arrayWithCapacity:cookies.count];
+    for (NSHTTPCookie *cookie in cookies)
+        [cappedCookies addObject:WebCore::NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCap)];
+    return cappedCookies;
+}
+
+static bool shouldCapCookieExpiryForThirdPartyIPAddress(const WebCore::IPAddress& remote, const WebCore::IPAddress& firstParty)
+{
+    auto matchingLength = remote.matchingNetMaskLength(firstParty);
+    if (remote.isIPv4())
+        return matchingLength < 4 * sizeof(struct in_addr);
+    return matchingLength < 4 * sizeof(struct in6_addr);
+}
+
+void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest& request)
+{
+    if (isTopLevelNavigation() || !shouldApplyCookiePolicyForThirdPartyCloaking())
         return;
 
     if (request.isThirdParty()) {
@@ -200,38 +216,50 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking(const Web
     // subresource but it resolves to a different CNAME than the top
     // site request, a.k.a. third-party CNAME cloaking.
     auto firstPartyURL = request.firstPartyForCookies();
-    auto firstPartyHostCNAME = networkSession()->firstPartyHostCNAMEDomain(firstPartyURL.host().toString());
+    auto firstPartyHostName = firstPartyURL.host().toString();
+    auto firstPartyHostCNAME = networkSession()->firstPartyHostCNAMEDomain(firstPartyHostName);
+    auto firstPartyAddress = networkSession()->firstPartyHostIPAddress(firstPartyHostName);
 
-    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->resourceLoadStatisticsDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
+    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->resourceLoadStatisticsDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;
 
         auto cnameDomain = lastCNAMEDomain([task _resolvedCNAMEChain]);
-        if (cnameDomain.isEmpty()) {
-            if (!thirdPartyCNAMEDomainForTesting)
-                return cookiesSetInResponse;
+        if (cnameDomain.isEmpty() && thirdPartyCNAMEDomainForTesting)
             cnameDomain = *thirdPartyCNAMEDomainForTesting;
+
+        if (cnameDomain.isEmpty()) {
+            if (!firstPartyAddress)
+                return cookiesSetInResponse;
+
+            auto remoteAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(task.get()));
+            if (!remoteAddress)
+                return cookiesSetInResponse;
+
+            if (shouldCapCookieExpiryForThirdPartyIPAddress(*remoteAddress, *firstPartyAddress)) {
+                cookiesSetInResponse = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies);
+                if (debugLoggingEnabled) {
+                    for (NSHTTPCookie *cookie in cookiesSetInResponse)
+                        RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party IP address cookie named %{public}@.", cookie.name);
+                }
+            }
+
+            return cookiesSetInResponse;
         }
 
         // CNAME cloaking is a first-party sub resource that resolves
         // through a CNAME that differs from the first-party domain and
         // also differs from the top frame host's CNAME, if one exists.
         if (!cnameDomain.matches(firstPartyURL) && (!firstPartyHostCNAME || cnameDomain != *firstPartyHostCNAME)) {
-
-            NSUInteger count = [cookiesSetInResponse count];
             // Don't use RetainPtr here. This array has to be retained and
             // auto released to not be released before returned to the code
             // executing the block.
-            auto* cappedCookies = [NSMutableArray arrayWithCapacity:count];
-            for (NSUInteger i = 0; i < count; ++i) {
-                NSHTTPCookie *cookie = (NSHTTPCookie *)[cookiesSetInResponse objectAtIndex:i];
-                cookie = WebCore::NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCapForCNAMECloakedCookies);
-                [cappedCookies addObject:cookie];
-                if (debugLoggingEnabled)
-                    RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party CNAME cloaked cookie named %{public}s.", [[cookie name] UTF8String]);
+            cookiesSetInResponse = cookiesByCappingExpiry(cookiesSetInResponse, ageCapForCNAMECloakedCookies);
+            if (debugLoggingEnabled) {
+                for (NSHTTPCookie *cookie in cookiesSetInResponse)
+                    RELEASE_LOG_INFO(ITPDebug, "Capped the expiry of third-party CNAME cloaked cookie named %{public}@.", cookie.name);
             }
-            return cappedCookies;
         }
 
         return cookiesSetInResponse;
@@ -427,7 +455,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     }
 
 #if ENABLE(TRACKING_PREVENTION)
-    applyCookiePolicyForThirdPartyCNAMECloaking(request);
+    applyCookiePolicyForThirdPartyCloaking(request);
     if (shouldBlockCookies) {
 #if !RELEASE_LOG_DISABLED
         if (m_session->shouldLogCookieInformation())
@@ -588,7 +616,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 #endif
 
 #if ENABLE(TRACKING_PREVENTION)
-    applyCookiePolicyForThirdPartyCNAMECloaking(request);
+    applyCookiePolicyForThirdPartyCloaking(request);
     if (!m_hasBeenSetToUseStatelessCookieStorage) {
         if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless
             || (m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID, m_shouldRelaxThirdPartyCookieBlocking)))

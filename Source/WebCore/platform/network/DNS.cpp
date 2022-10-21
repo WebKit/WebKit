@@ -76,4 +76,51 @@ std::optional<IPAddress> IPAddress::fromString(const String& string)
     return std::nullopt;
 }
 
+IPAddress IPAddress::isolatedCopy() const
+{
+    if (isIPv4())
+        return IPAddress { ipv4Address() };
+
+    if (isIPv6())
+        return IPAddress { ipv6Address() };
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return IPAddress { WTF::HashTableEmptyValue };
+}
+
+unsigned IPAddress::matchingNetMaskLength(const IPAddress& other) const
+{
+    const unsigned char* addressData = nullptr;
+    const unsigned char* otherAddressData = nullptr;
+    size_t addressLengthInBytes = 0;
+    if (isIPv4() && other.isIPv4()) {
+        addressLengthInBytes = sizeof(struct in_addr);
+        addressData = reinterpret_cast<const unsigned char*>(&ipv4Address());
+        otherAddressData = reinterpret_cast<const unsigned char*>(&other.ipv4Address());
+    } else if (isIPv6() && other.isIPv6()) {
+        addressLengthInBytes = sizeof(struct in6_addr);
+        addressData = reinterpret_cast<const unsigned char*>(&ipv6Address());
+        otherAddressData = reinterpret_cast<const unsigned char*>(&other.ipv6Address());
+    } else
+        return 0;
+
+    std::optional<size_t> firstNonMatchingIndex;
+    unsigned matchingBits = 0;
+    for (size_t i = 0; i < addressLengthInBytes; ++i) {
+        if (addressData[i] != otherAddressData[i]) {
+            firstNonMatchingIndex = i;
+            break;
+        }
+        matchingBits += 8;
+    }
+
+    if (firstNonMatchingIndex) {
+        // Count the number of matching leading bits in the first byte that is different between the two addresses.
+        // For instance, 0xF2 and 0xF3 would have 7 matching bits.
+        matchingBits += clz<unsigned char>(addressData[*firstNonMatchingIndex] ^ otherAddressData[*firstNonMatchingIndex]);
+    }
+
+    return matchingBits;
+}
+
 }
