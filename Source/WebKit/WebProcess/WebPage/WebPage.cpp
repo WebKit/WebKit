@@ -959,7 +959,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         sandbox_enable_state_flag("EnableExperimentalSandbox", *auditToken);
 #if USE(APPLE_INTERNAL_SDK)
     uint64_t bootTime = mach_boottime_usec();
-    if (!(bootTime & 0x7)) {
+    if (!(bootTime & 0x7) || isRunningTest(WebCore::applicationBundleIdentifier())) {
         // Set sandbox state variable with probability of 1/8.
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
     }
