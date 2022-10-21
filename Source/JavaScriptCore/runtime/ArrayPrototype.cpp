@@ -1058,8 +1058,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSlice, (JSGlobalObject* globalObject, Cal
         return { };
 
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
-        if (JSArray* result = JSArray::fastSlice(globalObject, thisObj, begin, end - begin))
+        JSArray* result = JSArray::fastSlice(globalObject, thisObj, begin, end - begin);
+        if (result) {
+            scope.assertNoExceptionExceptTermination();
             return JSValue::encode(result);
+        }
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
     JSObject* result;
@@ -1151,8 +1155,10 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
-    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath))
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
         result = JSArray::fastSlice(globalObject, thisObj, actualStart, actualDeleteCount);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     if (!result) {
         if (speciesResult.first == SpeciesConstructResult::CreatedObject)
