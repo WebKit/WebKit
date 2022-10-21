@@ -50,6 +50,24 @@ struct MockTestMessage1 {
     std::tuple<> arguments() { return { }; }
 };
 
+struct MockTestMessageWithAsyncReply1 {
+    static constexpr bool isSync = false;
+    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
+    // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
+    // If WebPage_GetBytecodeProfileReply is removed, just use another one.
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
+    std::tuple<> arguments() { return { }; }
+    static void callReply(IPC::Decoder& decoder, CompletionHandler<void(uint64_t)>&& completionHandler)
+    {
+        auto value = decoder.decode<uint64_t>();
+        completionHandler(*value);
+    }
+    static void cancelReply(CompletionHandler<void(uint64_t)>&& completionHandler)
+    {
+        completionHandler(0);
+    }
+};
+
 class MockConnectionClient final : public IPC::Connection::Client {
 public:
     ~MockConnectionClient()
@@ -87,7 +105,7 @@ public:
     }
 
     // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(MessageInfo&)>&& handler)
+    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
     {
         m_asyncMessageHandler = WTFMove(handler);
     }
@@ -95,10 +113,9 @@ public:
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
     {
-        MessageInfo messageInfo { decoder.messageName(), decoder.destinationID() };
-        if (m_asyncMessageHandler && m_asyncMessageHandler(messageInfo))
+        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
             return;
-        m_messages.append(WTFMove(messageInfo));
+        m_messages.append({ decoder.messageName(), decoder.destinationID() });
         m_continueWaitForMessage = true;
     }
 
@@ -122,7 +139,7 @@ private:
     std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
     Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
-    Function<bool(MessageInfo&)> m_asyncMessageHandler;
+    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
 };
 
 }
@@ -441,7 +458,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingWorks)
     std::array<size_t, 18> messageCounts { 600, 300, 200, 150, 120, 100, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
     for (size_t i = 0; i < messageCounts.size(); ++i) {
         SCOPED_TRACE(i);
-        RunLoop::current().dispatch([&otherRunLoopTasksRun] { 
+        RunLoop::current().dispatch([&otherRunLoopTasksRun] {
             otherRunLoopTasksRun++;
         });
         Util::spinRunLoop();
@@ -475,18 +492,19 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
         b()->send(MockTestMessage1 { }, i);
     while (a()->pendingMessageCountForTesting() < testedCount)
         sleep(0.1_s);
-    
+
     // Two messages invoke nested run loop. The handler skips total 4 messages for the
     // proofs of logic that the test was ran.
     bool isProcessing = false;
-    aClient().setAsyncMessageHandler([&] (MessageInfo& message) -> bool {
-        if (message.destinationID == 888 || message.destinationID == 1299) {
+    aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        auto destinationID = decoder.destinationID();
+        if (destinationID == 888 || destinationID == 1299) {
             isProcessing = true;
             Util::spinRunLoop();
             isProcessing = false;
             return true; // Skiping the message is the proof that the message was processed.
         }
-        if (message.destinationID == 889 || message.destinationID == 1300) {
+        if (destinationID == 889 || destinationID == 1300) {
             EXPECT_TRUE(isProcessing); // Passing the EXPECT is the proof that we ran the message in a nested event loop.
             return true; // Skipping the message is the proof that above EXPECT was ran.
         }
@@ -497,7 +515,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     std::array<size_t, 16> messageCounts { 600, 498, 150, 218, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
     for (size_t i = 0; i < messageCounts.size(); ++i) {
         SCOPED_TRACE(i);
-        RunLoop::current().dispatch([&otherRunLoopTasksRun] { 
+        RunLoop::current().dispatch([&otherRunLoopTasksRun] {
             otherRunLoopTasksRun++;
         });
         Util::spinRunLoop();
@@ -516,8 +534,259 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     }
 }
 
+
+template<typename C>
+static void dispatchSync(RunLoop& runLoop, C&& function)
+{
+    BinarySemaphore semaphore;
+    runLoop.dispatch([&] () mutable {
+        function();
+        semaphore.signal();
+    });
+    semaphore.wait();
+}
+
+template<typename C>
+static void dispatchAndWait(RunLoop& runLoop, C&& function)
+{
+    std::atomic<bool> done = false;
+    runLoop.dispatch([&] () mutable {
+        function();
+        done = true;
+    });
+    while (!done)
+        RunLoop::current().cycle();
+}
+
+class ConnectionRunLoopTest : public ConnectionTestABBA {
+public:
+    void TearDown() override
+    {
+        ConnectionTestABBA::TearDown();
+        // Remember to call localReferenceBarrier() in test scope.
+        // Otherwise run loops might be executing code that uses variables
+        // that went out of scope.
+        EXPECT_EQ(m_runLoops.size(), 0u);
+    }
+
+    Ref<RunLoop> createRunLoop(const char* name)
+    {
+        auto runLoop = RunLoop::create(name, ThreadType::Unknown);
+        m_runLoops.append(runLoop);
+        return runLoop;
+    }
+
+    void localReferenceBarrier()
+    {
+        // Since we need to send sync to create a barrier to run loops,
+        // we might as well destroy the run loops in this function.
+        Vector<Ref<Thread>> threadsToWait;
+        // FIXME: Cannot wait for RunLoop to really exit.
+        for (auto& runLoop : std::exchange(m_runLoops, { })) {
+            dispatchSync(runLoop, [&] {
+                threadsToWait.append(Thread::current());
+                RunLoop::current().stop();
+            });
+        }
+        while (true) {
+            sleep(0.1_s);
+            Locker lock { Thread::allThreadsLock() };
+            for (auto& thread : threadsToWait) {
+                if (Thread::allThreads().contains(thread.ptr()))
+                    continue;
+            }
+            break;
+        }
+    }
+
+protected:
+    Vector<Ref<RunLoop>> m_runLoops;
+};
+
+#define LOCAL_STRINGIFY(x) #x
+#define RUN_LOOP_NAME "RunLoop at ConnectionTests.cpp:" LOCAL_STRINGIFY(__LINE__)
+
+TEST_P(ConnectionRunLoopTest, RunLoopOpen)
+{
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        bClient().waitForDidClose(kDefaultWaitForTimeout);
+        semaphore.signal();
+    });
+    a()->invalidate();
+    semaphore.wait();
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopInvalidate)
+{
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        b()->invalidate();
+    });
+    aClient().waitForDidClose(kDefaultWaitForTimeout);
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopSend)
+{
+    ASSERT_TRUE(openA());
+    for (uint64_t i = 0u; i < 55u; ++i)
+        a()->send(MockTestMessage1 { }, i);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 100u; i < 160u; ++i)
+            b()->send(MockTestMessage1 { }, i);
+        for (uint64_t i = 0u; i < 55u; ++i) {
+            auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+            EXPECT_EQ(message.messageName, MockTestMessage1::name());
+            EXPECT_EQ(message.destinationID, i);
+        }
+        semaphore.wait(); // FIXME: We cannot yet invalidate() and expect all messages get delivered.
+        b()->invalidate();
+    });
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        auto message = aClient().waitForMessage(kDefaultWaitForTimeout);
+        EXPECT_EQ(message.messageName, MockTestMessage1::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+    semaphore.signal();
+
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        auto listenerID = decoder.decode<uint64_t>();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        encoder.get() << decoder.destinationID();
+        a()->sendSyncReply(WTFMove(encoder));
+        return true;
+    });
+    HashSet<uint64_t> replies;
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 100u; i < 160u; ++i) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t value) {
+                if (!value)
+                    WTFLogAlways("GOT: %llu", j);
+                EXPECT_GE(value, 100u);
+                replies.add(value);
+            }, i);
+        }
+        while (replies.size() < 60u)
+            RunLoop::current().cycle();
+        b()->invalidate();
+    });
+
+    for (uint64_t i = 100u; i < 160u; ++i)
+        EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
+// This API contract does not make sense. Not only that, but there is no good way currently
+// to capture this in a thread-safe way (construct completion handler in a thread-safe way
+// so that it would assert that it would execute in the run loop thread). This is disabled
+// until the API contract is changed.
+TEST_P(ConnectionRunLoopTest, DISABLED_RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        auto listenerID = decoder.decode<uint64_t>();
+        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+        encoder.get() << decoder.destinationID();
+        a()->sendSyncReply(WTFMove(encoder));
+        return true;
+    });
+    HashSet<uint64_t> replies;
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchSync(runLoop, [&] {
+        ASSERT_TRUE(openB());
+    });
+
+    BinarySemaphore semaphore;
+    auto otherRunLoop = createRunLoop(RUN_LOOP_NAME);
+    otherRunLoop->dispatch([&] {
+        for (uint64_t i = 100u; i < 160u; ++i) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (uint64_t value) {
+                EXPECT_GE(value, 100u);
+                // These should be dispatched on `runLoop` above, which does not make much sense.
+                replies.add(value);
+            }, i);
+        }
+        // Halt the runloop for a proof that the async replies are not processed on
+        // this run loop.
+        semaphore.wait();
+    });
+    dispatchAndWait(runLoop, [&] {
+        while (replies.size() < 60u)
+            RunLoop::current().cycle();
+    });
+
+    for (uint64_t i = 100u; i < 160u; ++i)
+        EXPECT_TRUE(replies.contains(i));
+    semaphore.signal();
+    localReferenceBarrier();
+}
+
+// This makes no sense:
+//  - async reply handlers are dispatched on the connection run loop
+//  - async reply handlers are dispatched as cancelled on connection run loop during invalidate
+//  - async reply handlers that are sent to already invalid connection are dispatched on main run loop
+// We have to make the discrepancy as the Connection is not bound to any run loop if it is invalid, e.g.
+// prior to open() and after invalidate().
+// Previously Connection was bound only to main run loop. In that scenario also the invalid send could cancel the reply handler
+// on main run loop, as that is guaranteed to exist. After Connection could be bound to an arbitrary run loop, we cannot
+// cancel the reply handler on a run loop we do not know about.
+// Will be fixed later. Likely this needs an API contract change, where async reply handlers are dispatched on the
+// calling run loop.
+TEST_P(ConnectionRunLoopTest, InvalidSendWithAsyncReplyDispatchesCancelHandlerOnMainThread)
+{
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    uint64_t reply = 1u;
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        b()->invalidate();
+        b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (uint64_t value) {
+            reply = value;
+            }, 77);
+        // Halt the runloop for a proof that the async replies are not processed on
+        // this run loop.
+        semaphore.wait();
+    });
+    EXPECT_EQ(reply, 1u);
+    while (reply == 1u)
+        RunLoop::current().cycle();
+    EXPECT_EQ(reply, 0u);
+    semaphore.signal();
+    localReferenceBarrier();
+}
+
+#undef RUN_LOOP_NAME
+#undef LOCAL_STRINGIFY
+
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionTestABBA,
+    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
+    TestParametersToStringFormatter());
+
+INSTANTIATE_TEST_SUITE_P(ConnectionTest,
+    ConnectionRunLoopTest,
     testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
     TestParametersToStringFormatter());
 
