@@ -321,7 +321,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& st
 
     // Clamp negative values at zero.
     ASSERT(localValue <= 255);
-    return negative ? 0 : static_cast<uint8_t>(localValue);
+    return negative ? 0 : convertPrescaledSRGBAFloatToSRGBAByte(localValue);
 }
 
 template <typename CharacterType>

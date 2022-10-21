@@ -1,34 +1,34 @@
 <svg version="1.2" width="500" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <filter id="oBBoBBWhiteScale" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
       <feFlood flood-color="rgb(100%,100%,0%)" flood-opacity="1.0" x="0" y="0" width="1" height="1" result="displacement-map"/>
       <feDisplacementMap x="0" y="0" width="1" height="1" scale ="0.5" in="grey-input" in2="displacement-map" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
     <filter id="oBBoBBLight" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
       <feFlood flood-color="rgb(0%,0%,19%)" flood-opacity="0.75" x="0" y="0" width="1" height="1" result="displacement-map"/>
       <feDisplacementMap x="0" y="0" width="1" height="1" scale ="1.0" in="grey-input" in2="displacement-map" xChannelSelector="B" yChannelSelector="A"/>
     </filter>
     <filter id="oBBoBBDark" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
       <feFlood flood-color="rgb(25%,100%,25%)" flood-opacity="1.0" x="0" y="0" width="1" height="1" result="displacement-map"/>
       <feDisplacementMap x="0" y="0" width="1" height="1" scale ="1.0" in="grey-input" in2="displacement-map" xChannelSelector="R" yChannelSelector="B"/>
     </filter>
 
     <filter id="USOUOBBBlackScale" filterUnits="userSpaceOnUse" primitiveUnits="objectBoundingBox" x="20" y="140" width="100" height="100">
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="0" y="0" height="1" width="1" result="grey-input"/>
       <feFlood flood-color="rgb(100%,0%,0%)" flood-opacity="1.0" x="0" y="0" width="1" height="1" result="displacement-map"/>
       <feDisplacementMap x="0" y="0" width="1" height="1" scale ="0.5" in="grey-input" in2="displacement-map" xChannelSelector="G" yChannelSelector="B"/>
     </filter>
     <filter id="OBBUSOUWhite" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0" y="0" width="1" height="1">
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="140" y="140" height="100" width="100" result="grey-input"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="140" y="140" height="100" width="100" result="grey-input"/>
       <feFlood flood-color="rgb(100%,100%,50%)" flood-opacity="1.0" x="140" y="140" width="100" height="100" result="displacement-map"/>
       <feDisplacementMap x="140" y="140" height="100" width="100" scale ="50.0" in="grey-input" in2="displacement-map" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
     <filter id="USOUUSOUGrey" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="260" y="140" width="100" height="100">
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="260" y="140" height="100" width="100" result="grey-input"/>
-      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0" x="260" y="140" width="100" height="100" result="displacement-map"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="260" y="140" height="100" width="100" result="grey-input"/>
+      <feFlood flood-color="rgb(127,127,127)" flood-opacity="1.0" x="260" y="140" width="100" height="100" result="displacement-map"/>
       <feDisplacementMap x="260" y="140" width="100" height="100" scale ="100" in="grey-input" in2="displacement-map" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </defs>

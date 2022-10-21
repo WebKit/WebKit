@@ -31,12 +31,12 @@ layer at (0,0) size 800x600
         RenderSVGEllipse {circle} at (300,191) size 67x68 [fill={[type=SOLID] [color=#33BB33]}] [cx=200.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (366,191) size 68x68 [fill={[type=SOLID] [color=#33BB33]}] [cx=240.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (300,258) size 67x67 [fill={[type=SOLID] [color=#33BB33]}] [cx=200.00] [cy=175.00] [r=20.00]
-        RenderSVGEllipse {circle} at (366,258) size 68x67 [fill={[type=SOLID] [color=#33BA33]}] [cx=240.00] [cy=175.00] [r=20.00]
+        RenderSVGEllipse {circle} at (366,258) size 68x67 [fill={[type=SOLID] [color=#33BB33]}] [cx=240.00] [cy=175.00] [r=20.00]
       RenderSVGContainer {g} at (508,191) size 134x134
         RenderSVGEllipse {circle} at (508,191) size 67x68 [fill={[type=SOLID] [color=#5577EE]}] [cx=325.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (575,191) size 67x68 [fill={[type=SOLID] [color=#5577EE]}] [cx=365.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (508,258) size 67x67 [fill={[type=SOLID] [color=#5577EE]}] [cx=325.00] [cy=175.00] [r=20.00]
-        RenderSVGEllipse {circle} at (575,258) size 67x67 [fill={[type=SOLID] [color=#5476ED]}] [cx=365.00] [cy=175.00] [r=20.00]
+        RenderSVGEllipse {circle} at (575,258) size 67x67 [fill={[type=SOLID] [color=#5577EE]}] [cx=365.00] [cy=175.00] [r=20.00]
     RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 228x36

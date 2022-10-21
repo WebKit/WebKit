@@ -26,12 +26,12 @@ PASS Property color value 'rgb(0,51,255)' [Lack of whitespace should not affect 
 PASS Property color value 'rgb(0	,  51 ,255)' [Whitespace should not affect parsing]
 PASS Property color value 'rgb(/* R */0, /* G */51, /* B */255)' [Comments should be allowed within function]
 PASS Property color value 'rgb(-51, 306, 0)' [Invalid values should be clamped to 0 and 255 respectively]
-FAIL Property color value 'rgb(42%, 3%, 50%)' [Valid percentages should be parsed] assert_equals: expected "rgb(107, 8, 128)" but got "rgb(107, 7, 127)"
+PASS Property color value 'rgb(42%, 3%, 50%)' [Valid percentages should be parsed]
 PASS Property color value 'RGB(100%, 100%, 100%)' [Capitalization should not affect parsing]
 PASS Property color value 'rgB(0%, 0%, 0%)' [Capitalization should not affect parsing]
-FAIL Property color value 'rgB(10%, 20%, 30%)' [Capitalization should not affect parsing] assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
-FAIL Property color value 'rgb(10%,20%,30%)' [Whitespace should not affect parsing] assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
-FAIL Property color value 'rgb(10%	,  20% ,30%)' [Whitespace should not affect parsing] assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
+PASS Property color value 'rgB(10%, 20%, 30%)' [Capitalization should not affect parsing]
+PASS Property color value 'rgb(10%,20%,30%)' [Whitespace should not affect parsing]
+PASS Property color value 'rgb(10%	,  20% ,30%)' [Whitespace should not affect parsing]
 PASS Property color value 'rgb(/* R */ 10%, /* G */ 20%, /* B */ 30%)' [Comments should not affect parsing]
 PASS Property color value 'rgb(-12%, 110%, 1400%)' [Invalid values should be clamped to 0 and 255 respectively]
 PASS Property color value 'rgb(0, 0, 0, 0)' [RGB and RGBA are synonyms]
@@ -48,7 +48,7 @@ PASS Property color value 'rgba(0, 51, 255, 0)' [Valid numbers should be parsed]
 PASS Property color value 'rgba(0, 51, 255, -0.1)' [Invalid alpha values should be clamped to 0 and 1 respectively]
 PASS Property color value 'rgba(0, 51, 255, -139)' [Invalid alpha values should be clamped to 0 and 1 respectively]
 PASS Property color value 'RGBA(100%, 100%, 100%, 0)' [Capitalization should not affect parsing]
-FAIL Property color value 'rgba(42%, 3%, 50%, 0.3)' [Valid percentages should be parsed] assert_equals: expected "rgba(107, 8, 128, 0.3)" but got "rgba(107, 7, 127, 0.3)"
+PASS Property color value 'rgba(42%, 3%, 50%, 0.3)' [Valid percentages should be parsed]
 PASS Property color value 'rgBA(0%, 20%, 100%, 1)' [Capitalization should not affect parsing]
 PASS Property color value 'rgba(0%, 20%, 100%, 1.1)' [Invalid alpha values should be clamped to 0 and 1 respectively]
 PASS Property color value 'rgba(0%, 20%, 100%, 37)' [Invalid alpha values should be clamped to 0 and 1 respectively]

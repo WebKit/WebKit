@@ -30,12 +30,12 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (180,115) size 40x40 [fill={[type=SOLID] [color=#33BB33]}] [cx=200.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (220,115) size 40x40 [fill={[type=SOLID] [color=#33BB33]}] [cx=240.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (180,155) size 40x40 [fill={[type=SOLID] [color=#33BB33]}] [cx=200.00] [cy=175.00] [r=20.00]
-        RenderSVGEllipse {circle} at (220,155) size 40x40 [fill={[type=SOLID] [color=#33BA33]}] [cx=240.00] [cy=175.00] [r=20.00]
+        RenderSVGEllipse {circle} at (220,155) size 40x40 [fill={[type=SOLID] [color=#33BB33]}] [cx=240.00] [cy=175.00] [r=20.00]
       RenderSVGContainer {g} at (305,115) size 80x80
         RenderSVGEllipse {circle} at (305,115) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=325.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (345,115) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=365.00] [cy=135.00] [r=20.00]
         RenderSVGEllipse {circle} at (305,155) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=325.00] [cy=175.00] [r=20.00]
-        RenderSVGEllipse {circle} at (345,155) size 40x40 [fill={[type=SOLID] [color=#5476ED]}] [cx=365.00] [cy=175.00] [r=20.00]
+        RenderSVGEllipse {circle} at (345,155) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=365.00] [cy=175.00] [r=20.00]
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"

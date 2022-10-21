@@ -2240,6 +2240,7 @@ imported/mozilla/svg/svg-effects-area-unzoomed.xhtml
 imported/mozilla/svg/svg-effects-area-zoomed-in.xhtml
 imported/mozilla/svg/svg-effects-area-zoomed-out.xhtml
 svg/filters/feImage-self-and-other-referencing.html
+svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
 # GCController.collect() issues.
 svg/animations/svglength-element-removed-crash.svg [ Failure ]
