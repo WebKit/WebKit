@@ -1,0 +1,119 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c
+index 6efcbab91e8..f8dd0240af3 100755
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c
+@@ -6852,7 +6852,6 @@ sctp_pcb_init()
+ #endif
+ #if defined(__Userspace__)
+ 	mbuf_initialize(NULL);
+-	atomic_init();
+ #if defined(INET) || defined(INET6)
+ 	recv_thread_init();
+ #endif
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h
+index 77ea77b671a..89739c4e908 100755
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h
+@@ -80,7 +80,8 @@
+ #if defined(__Userspace_os_Windows)
+ static void atomic_init(void) {} /* empty when we are not using atomic_mtx */
+ #else
+-static inline void atomic_init(void) {} /* empty when we are not using atomic_mtx */
++// WebKit change, this conflicts with atomic_init
++// static inline void atomic_init(void) {} /* empty when we are not using atomic_mtx */
+ #endif
+ 
+ #else
+diff --git a/Source/ThirdParty/libwebrtc/WebKit/0002-Fixing-usrctp-library-compilation-errors.patch b/Source/ThirdParty/libwebrtc/WebKit/0002-Fixing-usrctp-library-compilation-errors.patch
+index 936471154a5..e69de29bb2d 100644
+--- a/Source/ThirdParty/libwebrtc/WebKit/0002-Fixing-usrctp-library-compilation-errors.patch
++++ b/Source/ThirdParty/libwebrtc/WebKit/0002-Fixing-usrctp-library-compilation-errors.patch
+@@ -1,88 +0,0 @@
+-From be71a54da9b0ae7f379eff037735379c9e85e9cb Mon Sep 17 00:00:00 2001
+-From: Youenn Fablet <youenn@apple.com>
+-Date: Thu, 14 Dec 2017 13:44:41 -0800
+-Subject: [PATCH 2/8] Fixing usrctp library compilation errors
+-
+----
+- .../Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c    | 8 ++++++--
+- .../Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c   | 5 +++--
+- .../Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c      | 1 -
+- .../libwebrtc/Source/third_party/usrsctp/usrsctplib/user_atomic.h | 3 ++-
+- 4 files changed, 11 insertions(+), 6 deletions(-)
+-
+-diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c
+-index 0649ec2e325..e4bb51378dc 100755
+---- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c
+-+++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c
+-@@ -1728,10 +1728,12 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
+- 				 * don't double things
+- 				 */
+- 				net->hb_responded = 1;
+-+				struct timeval time_entered;
+- 				net->RTO = sctp_calculate_rto(stcb, asoc, net,
+--							      &cookie->time_entered,
+-+							      &time_entered,
+- 							      sctp_align_unsafe_makecopy,
+- 							      SCTP_RTT_FROM_NON_DATA);
+-+				cookie->time_entered = time_entered;
+- 
+- 				if (stcb->asoc.sctp_autoclose_ticks &&
+- 				    (sctp_is_feature_on(inp, SCTP_PCB_FLAGS_AUTOCLOSE))) {
+-@@ -2481,9 +2483,11 @@ sctp_process_cookie_new(struct mbuf *m, int iphlen, int offset,
+- 	(void)SCTP_GETTIME_TIMEVAL(&stcb->asoc.time_entered);
+- 	if ((netp != NULL) && (*netp != NULL)) {
+- 		/* calculate the RTT and set the encaps port */
+-+		struct timeval time_entered;
+- 		(*netp)->RTO = sctp_calculate_rto(stcb, asoc, *netp,
+--						  &cookie->time_entered, sctp_align_unsafe_makecopy,
+-+						  &time_entered, sctp_align_unsafe_makecopy,
+- 						  SCTP_RTT_FROM_NON_DATA);
+-+		cookie->time_entered = time_entered;
+- 	}
+- 	/* respond with a COOKIE-ACK */
+- 	sctp_send_cookie_ack(stcb);
+-diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c
+-index 90b0bf3d636..f646ca3a3c6 100755
+---- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c
+-+++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c
+-@@ -6024,8 +6024,9 @@ sctp_send_initiate_ack(struct sctp_inpcb *inp, struct sctp_tcb *stcb,
+- 	memset(&stc, 0, sizeof(struct sctp_state_cookie));
+- 
+- 	/* the time I built cookie */
+--	(void)SCTP_GETTIME_TIMEVAL(&stc.time_entered);
+--
+-+	struct timeval time_entered;
+-+	(void)SCTP_GETTIME_TIMEVAL(&time_entered);
+-+	stc.time_entered = time_entered;
+- 	/* populate any tie tags */
+- 	if (asoc != NULL) {
+- 		/* unlock before tag selections */
+-diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c
+-index 9e9fca06c4d..d0c770e3078 100755
+---- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c
+-+++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c
+-@@ -6809,7 +6809,6 @@ sctp_pcb_init()
+- #endif
+- #if defined(__Userspace__)
+- 	mbuf_initialize(NULL);
+--	atomic_init();
+- #if defined(INET) || defined(INET6)
+- 	recv_thread_init();
+- #endif
+-diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_atomic.h b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_atomic.h
+-index b8415c6047e..f344055dc5b 100755
+---- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_atomic.h
+-+++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_atomic.h
+-@@ -80,7 +80,8 @@
+- #if defined(__Userspace_os_Windows)
+- static void atomic_init() {} /* empty when we are not using atomic_mtx */
+- #else
+--static inline void atomic_init() {} /* empty when we are not using atomic_mtx */
+-+// WebKit change, this conflicts with atomic_init MacOS macro.
+-+// static inline void atomic_init() {} /* empty when we are not using atomic_mtx */
+- #endif
+- 
+- #else
+--- 
+-2.13.5 (Apple Git-94)
+-

@@ -1427,6 +1427,9 @@
 		4145F61E1FE1F38D00EB9CAF /* video_decoder_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4145F61A1FE1F38C00EB9CAF /* video_decoder_factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4145F61F1FE1F38D00EB9CAF /* video_encoder_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4145F61B1FE1F38D00EB9CAF /* video_encoder_factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4145F6201FE1F38D00EB9CAF /* video_encoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4145F61C1FE1F38D00EB9CAF /* video_encoder.cc */; };
+		414D71141E4AE98C0023E526 /* user_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71121E4AE9820023E526 /* user_socket.c */; };
+		414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71151E4AEACD0023E526 /* sctp_indata.c */; };
+		414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71181E4AEB110023E526 /* sctp_userspace.c */; };
 		4153CD2721CC661000C3E188 /* LPC_fit.c in Sources */ = {isa = PBXBuildFile; fileRef = 4100CDE521CACFD000F9B87D /* LPC_fit.c */; };
 		4153CD2821CC664800C3E188 /* vq_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 4100CDED21CAD1F500F9B87D /* vq_sse2.c */; };
 		415449A021CAC330001C0A55 /* ecdh.c in Sources */ = {isa = PBXBuildFile; fileRef = 4154499F21CAC330001C0A55 /* ecdh.c */; };
@@ -2677,7 +2680,6 @@
 		41F77D35215BE72B00E72967 /* yasm-options.c in Sources */ = {isa = PBXBuildFile; fileRef = 41F77D30215BE72A00E72967 /* yasm-options.c */; };
 		41F77D36215BE72B00E72967 /* yasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 41F77D32215BE72A00E72967 /* yasm.c */; };
 		41F77D37215BE72B00E72967 /* yasm-plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 41F77D34215BE72B00E72967 /* yasm-plugin.c */; };
-		41F8994C28F3E9000070549C /* sctp_crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 41F8994B28F3E8FF0070549C /* sctp_crc32.c */; };
 		41F9BF962051C82100ABF0B9 /* audio_encoder_factory_template.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F9BF932051C82000ABF0B9 /* audio_encoder_factory_template.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41F9BF972051C82100ABF0B9 /* audio_encoder_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F9BF942051C82000ABF0B9 /* audio_encoder_factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41F9BF982051C82100ABF0B9 /* audio_decoder_factory_template.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F9BF952051C82100ABF0B9 /* audio_decoder_factory_template.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2732,6 +2734,7 @@
 		5C0073031E5513E70042215A /* libboringssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C63FC601E418411002CA531 /* libboringssl.a */; };
 		5C0073041E5513E70042215A /* libopus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4B4A8E1E42C336002651C8 /* libopus.a */; };
 		5C0073051E5513E70042215A /* libsrtp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0884D11E4A97E300403995 /* libsrtp.a */; };
+		5C0073061E5513E70042215A /* libusrsctp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C11A12D1E4577E1004F0987 /* libusrsctp.a */; };
 		5C0073081E5513E70042215A /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0884DE1E4A980100403995 /* libyuv.a */; };
 		5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730C1E5513E70042215A /* CoreMedia.framework */; };
 		5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730D1E5513E70042215A /* CoreVideo.framework */; };
@@ -3044,6 +3047,64 @@
 		5C4B4CE51E4320A9002651C8 /* sleep.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4CB41E4320A9002651C8 /* sleep.cc */; };
 		5C4B4D021E432185002651C8 /* spake25519.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4CF61E432168002651C8 /* spake25519.c */; };
 		5C5F40991E978FDB00D94279 /* SigProc_FIX_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5F408F1E978FD200D94279 /* SigProc_FIX_sse.h */; };
+		5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACB1E42C9D6002651C8 /* user_atomic.h */; };
+		5C6024601E494DB80088F0B2 /* user_environment.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4ACC1E42C9D6002651C8 /* user_environment.c */; };
+		5C6024611E494DB80088F0B2 /* user_environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACD1E42C9D6002651C8 /* user_environment.h */; };
+		5C6024621E494DB80088F0B2 /* user_inpcb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACE1E42C9D6002651C8 /* user_inpcb.h */; };
+		5C6024631E494DB80088F0B2 /* user_ip6_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD01E42C9D6002651C8 /* user_ip6_var.h */; };
+		5C6024641E494DB80088F0B2 /* user_ip_icmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACF1E42C9D6002651C8 /* user_ip_icmp.h */; };
+		5C6024651E494DB80088F0B2 /* user_malloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD11E42C9D6002651C8 /* user_malloc.h */; };
+		5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AD21E42C9D6002651C8 /* user_mbuf.c */; };
+		5C6024671E494DB80088F0B2 /* user_mbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD31E42C9D6002651C8 /* user_mbuf.h */; };
+		5C6024681E494DB80088F0B2 /* user_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD41E42C9D6002651C8 /* user_queue.h */; };
+		5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AD51E42C9D6002651C8 /* user_recv_thread.c */; };
+		5C60246A1E494DB80088F0B2 /* user_recv_thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD61E42C9D6002651C8 /* user_recv_thread.h */; };
+		5C60246B1E494DB80088F0B2 /* user_route.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD71E42C9D6002651C8 /* user_route.h */; };
+		5C60246C1E494DB80088F0B2 /* user_socketvar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD91E42C9D6002651C8 /* user_socketvar.h */; };
+		5C60246D1E494DB80088F0B2 /* user_uma.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ADA1E42C9D6002651C8 /* user_uma.h */; };
+		5C60246E1E494DB80088F0B2 /* usrsctp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ADB1E42C9D6002651C8 /* usrsctp.h */; };
+		5C60246F1E4950A00088F0B2 /* sctp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B151E42C9EF002651C8 /* sctp.h */; };
+		5C6024701E4950A00088F0B2 /* sctp_asconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AEE1E42C9EF002651C8 /* sctp_asconf.c */; };
+		5C6024711E4950A00088F0B2 /* sctp_asconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AEF1E42C9EF002651C8 /* sctp_asconf.h */; };
+		5C6024721E4950A00088F0B2 /* sctp_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF01E42C9EF002651C8 /* sctp_auth.c */; };
+		5C6024731E4950A00088F0B2 /* sctp_auth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF11E42C9EF002651C8 /* sctp_auth.h */; };
+		5C6024741E4950A00088F0B2 /* sctp_bsd_addr.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF21E42C9EF002651C8 /* sctp_bsd_addr.c */; };
+		5C6024751E4950A00088F0B2 /* sctp_bsd_addr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF31E42C9EF002651C8 /* sctp_bsd_addr.h */; };
+		5C6024761E4950A00088F0B2 /* sctp_callout.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF41E42C9EF002651C8 /* sctp_callout.c */; };
+		5C6024771E4950A00088F0B2 /* sctp_callout.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF51E42C9EF002651C8 /* sctp_callout.h */; };
+		5C6024781E4950A00088F0B2 /* sctp_cc_functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF61E42C9EF002651C8 /* sctp_cc_functions.c */; };
+		5C6024791E4950A00088F0B2 /* sctp_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF71E42C9EF002651C8 /* sctp_constants.h */; };
+		5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF81E42C9EF002651C8 /* sctp_crc32.c */; };
+		5C60247B1E4950A00088F0B2 /* sctp_crc32.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF91E42C9EF002651C8 /* sctp_crc32.h */; };
+		5C60247C1E4950A00088F0B2 /* sctp_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFA1E42C9EF002651C8 /* sctp_header.h */; };
+		5C60247D1E4950A00088F0B2 /* sctp_indata.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFC1E42C9EF002651C8 /* sctp_indata.h */; };
+		5C60247E1E4950A00088F0B2 /* sctp_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AFD1E42C9EF002651C8 /* sctp_input.c */; };
+		5C60247F1E4950A00088F0B2 /* sctp_input.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFE1E42C9EF002651C8 /* sctp_input.h */; };
+		5C6024801E4950A00088F0B2 /* sctp_lock_userspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFF1E42C9EF002651C8 /* sctp_lock_userspace.h */; };
+		5C6024811E4950A00088F0B2 /* sctp_os.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B011E42C9EF002651C8 /* sctp_os.h */; };
+		5C6024821E4950A00088F0B2 /* sctp_os_userspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B001E42C9EF002651C8 /* sctp_os_userspace.h */; };
+		5C6024831E4950A00088F0B2 /* sctp_output.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B021E42C9EF002651C8 /* sctp_output.c */; };
+		5C6024841E4950A00088F0B2 /* sctp_output.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B031E42C9EF002651C8 /* sctp_output.h */; };
+		5C6024861E4950A00088F0B2 /* sctp_pcb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B051E42C9EF002651C8 /* sctp_pcb.h */; };
+		5C6024871E4950A00088F0B2 /* sctp_peeloff.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B061E42C9EF002651C8 /* sctp_peeloff.c */; };
+		5C6024881E4950A00088F0B2 /* sctp_peeloff.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B071E42C9EF002651C8 /* sctp_peeloff.h */; };
+		5C6024891E4950A00088F0B2 /* sctp_process_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B081E42C9EF002651C8 /* sctp_process_lock.h */; };
+		5C60248A1E4950A00088F0B2 /* sctp_sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B091E42C9EF002651C8 /* sctp_sha1.c */; };
+		5C60248B1E4950A00088F0B2 /* sctp_sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B0A1E42C9EF002651C8 /* sctp_sha1.h */; };
+		5C60248C1E4950A00088F0B2 /* sctp_ss_functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B0B1E42C9EF002651C8 /* sctp_ss_functions.c */; };
+		5C60248D1E4950A00088F0B2 /* sctp_structs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B0C1E42C9EF002651C8 /* sctp_structs.h */; };
+		5C60248E1E4950A00088F0B2 /* sctp_sysctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B0D1E42C9EF002651C8 /* sctp_sysctl.c */; };
+		5C60248F1E4950A00088F0B2 /* sctp_sysctl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B0E1E42C9EF002651C8 /* sctp_sysctl.h */; };
+		5C6024901E4950A00088F0B2 /* sctp_timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B0F1E42C9EF002651C8 /* sctp_timer.c */; };
+		5C6024911E4950A00088F0B2 /* sctp_timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B101E42C9EF002651C8 /* sctp_timer.h */; };
+		5C6024921E4950A00088F0B2 /* sctp_uio.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B111E42C9EF002651C8 /* sctp_uio.h */; };
+		5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B131E42C9EF002651C8 /* sctp_usrreq.c */; };
+		5C6024941E4950A00088F0B2 /* sctp_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B141E42C9EF002651C8 /* sctp_var.h */; };
+		5C6024951E4950A00088F0B2 /* sctputil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B161E42C9EF002651C8 /* sctputil.c */; };
+		5C6024961E4950A00088F0B2 /* sctputil.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B171E42C9EF002651C8 /* sctputil.h */; };
+		5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B431E42CA00002651C8 /* sctp6_usrreq.c */; };
+		5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B441E42CA00002651C8 /* sctp6_var.h */; };
+		5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B041E42C9EF002651C8 /* sctp_pcb.c */; };
 		5CD284671E6A57F40094FDC8 /* i420_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD284611E6A57F40094FDC8 /* i420_buffer.cc */; };
 		5CD284681E6A57F40094FDC8 /* i420_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD284621E6A57F40094FDC8 /* i420_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5CD284691E6A57F40094FDC8 /* video_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD284631E6A57F40094FDC8 /* video_frame_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4870,6 +4931,13 @@
 			remoteGlobalIDString = 5C0884D21E4A980100403995;
 			remoteInfo = libyuv;
 		};
+		5C11A13E1E45783A004F0987 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C11A0341E4577E1004F0987;
+			remoteInfo = usrsctp;
+		};
 		5C4B4AC61E42C58B002651C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -4974,6 +5042,24 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		5C0884D91E4A980100403995 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5C11A1271E4577E1004F0987 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceVersions";
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5C11A1281E4577E1004F0987 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
 			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
@@ -6555,6 +6641,9 @@
 		4145F61A1FE1F38C00EB9CAF /* video_decoder_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video_decoder_factory.h; path = video_codecs/video_decoder_factory.h; sourceTree = "<group>"; };
 		4145F61B1FE1F38D00EB9CAF /* video_encoder_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video_encoder_factory.h; path = video_codecs/video_encoder_factory.h; sourceTree = "<group>"; };
 		4145F61C1FE1F38D00EB9CAF /* video_encoder.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = video_encoder.cc; path = video_codecs/video_encoder.cc; sourceTree = "<group>"; };
+		414D71121E4AE9820023E526 /* user_socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = user_socket.c; path = usrsctplib/user_socket.c; sourceTree = "<group>"; };
+		414D71151E4AEACD0023E526 /* sctp_indata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_indata.c; sourceTree = "<group>"; };
+		414D71181E4AEB110023E526 /* sctp_userspace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_userspace.c; sourceTree = "<group>"; };
 		414FB869216BB767001F5492 /* RTCRtpEncodingParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCRtpEncodingParameters.h; sourceTree = "<group>"; };
 		414FB86A216BB768001F5492 /* RTCRtpEncodingParameters.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCRtpEncodingParameters.mm; sourceTree = "<group>"; };
 		4154499F21CAC330001C0A55 /* ecdh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecdh.c; path = ecdh/ecdh.c; sourceTree = "<group>"; };
@@ -7976,7 +8065,6 @@
 		41F77D43215BE74A00E72967 /* bc-data.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bc-data.c"; sourceTree = "<group>"; };
 		41F77D44215BE74B00E72967 /* xstrdup.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xstrdup.c; sourceTree = "<group>"; };
 		41F77D45215BE74B00E72967 /* insn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = insn.h; sourceTree = "<group>"; };
-		41F8994B28F3E8FF0070549C /* sctp_crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_crc32.c; sourceTree = "<group>"; };
 		41F9BF932051C82000ABF0B9 /* audio_encoder_factory_template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio_encoder_factory_template.h; path = audio_codecs/audio_encoder_factory_template.h; sourceTree = "<group>"; };
 		41F9BF942051C82000ABF0B9 /* audio_encoder_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio_encoder_factory.h; path = audio_codecs/audio_encoder_factory.h; sourceTree = "<group>"; };
 		41F9BF952051C82100ABF0B9 /* audio_decoder_factory_template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio_decoder_factory_template.h; path = audio_codecs/audio_decoder_factory_template.h; sourceTree = "<group>"; };
@@ -8090,6 +8178,8 @@
 		5C11A01A1E457578004F0987 /* file_audio_device_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file_audio_device_factory.h; path = dummy/file_audio_device_factory.h; sourceTree = "<group>"; };
 		5C11A01B1E457578004F0987 /* file_audio_device.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file_audio_device.cc; path = dummy/file_audio_device.cc; sourceTree = "<group>"; };
 		5C11A01C1E457578004F0987 /* file_audio_device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file_audio_device.h; path = dummy/file_audio_device.h; sourceTree = "<group>"; };
+		5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = usrsctp.xcconfig; sourceTree = "<group>"; };
+		5C11A12D1E4577E1004F0987 /* libusrsctp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libusrsctp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C316D881E66323F008BE64D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		5C316D8A1E66333C008BE64D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5C4B43B01E42877A002651C8 /* boringssl.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = boringssl.xcconfig; sourceTree = "<group>"; };
@@ -8297,6 +8387,64 @@
 		5C4B4AA11E42C52D002651C8 /* repacketizer_demo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = repacketizer_demo.c; path = src/repacketizer_demo.c; sourceTree = "<group>"; };
 		5C4B4AA21E42C52D002651C8 /* repacketizer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = repacketizer.c; path = src/repacketizer.c; sourceTree = "<group>"; };
 		5C4B4AA31E42C52D002651C8 /* tansig_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tansig_table.h; path = src/tansig_table.h; sourceTree = "<group>"; };
+		5C4B4ACB1E42C9D6002651C8 /* user_atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_atomic.h; path = usrsctplib/user_atomic.h; sourceTree = "<group>"; };
+		5C4B4ACC1E42C9D6002651C8 /* user_environment.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = user_environment.c; path = usrsctplib/user_environment.c; sourceTree = "<group>"; };
+		5C4B4ACD1E42C9D6002651C8 /* user_environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_environment.h; path = usrsctplib/user_environment.h; sourceTree = "<group>"; };
+		5C4B4ACE1E42C9D6002651C8 /* user_inpcb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_inpcb.h; path = usrsctplib/user_inpcb.h; sourceTree = "<group>"; };
+		5C4B4ACF1E42C9D6002651C8 /* user_ip_icmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_ip_icmp.h; path = usrsctplib/user_ip_icmp.h; sourceTree = "<group>"; };
+		5C4B4AD01E42C9D6002651C8 /* user_ip6_var.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_ip6_var.h; path = usrsctplib/user_ip6_var.h; sourceTree = "<group>"; };
+		5C4B4AD11E42C9D6002651C8 /* user_malloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_malloc.h; path = usrsctplib/user_malloc.h; sourceTree = "<group>"; };
+		5C4B4AD21E42C9D6002651C8 /* user_mbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = user_mbuf.c; path = usrsctplib/user_mbuf.c; sourceTree = "<group>"; };
+		5C4B4AD31E42C9D6002651C8 /* user_mbuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_mbuf.h; path = usrsctplib/user_mbuf.h; sourceTree = "<group>"; };
+		5C4B4AD41E42C9D6002651C8 /* user_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_queue.h; path = usrsctplib/user_queue.h; sourceTree = "<group>"; };
+		5C4B4AD51E42C9D6002651C8 /* user_recv_thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = user_recv_thread.c; path = usrsctplib/user_recv_thread.c; sourceTree = "<group>"; };
+		5C4B4AD61E42C9D6002651C8 /* user_recv_thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_recv_thread.h; path = usrsctplib/user_recv_thread.h; sourceTree = "<group>"; };
+		5C4B4AD71E42C9D6002651C8 /* user_route.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_route.h; path = usrsctplib/user_route.h; sourceTree = "<group>"; };
+		5C4B4AD91E42C9D6002651C8 /* user_socketvar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_socketvar.h; path = usrsctplib/user_socketvar.h; sourceTree = "<group>"; };
+		5C4B4ADA1E42C9D6002651C8 /* user_uma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = user_uma.h; path = usrsctplib/user_uma.h; sourceTree = "<group>"; };
+		5C4B4ADB1E42C9D6002651C8 /* usrsctp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usrsctp.h; path = usrsctplib/usrsctp.h; sourceTree = "<group>"; };
+		5C4B4AEE1E42C9EF002651C8 /* sctp_asconf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_asconf.c; sourceTree = "<group>"; };
+		5C4B4AEF1E42C9EF002651C8 /* sctp_asconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_asconf.h; sourceTree = "<group>"; };
+		5C4B4AF01E42C9EF002651C8 /* sctp_auth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_auth.c; sourceTree = "<group>"; };
+		5C4B4AF11E42C9EF002651C8 /* sctp_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_auth.h; sourceTree = "<group>"; };
+		5C4B4AF21E42C9EF002651C8 /* sctp_bsd_addr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_bsd_addr.c; sourceTree = "<group>"; };
+		5C4B4AF31E42C9EF002651C8 /* sctp_bsd_addr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_bsd_addr.h; sourceTree = "<group>"; };
+		5C4B4AF41E42C9EF002651C8 /* sctp_callout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_callout.c; sourceTree = "<group>"; };
+		5C4B4AF51E42C9EF002651C8 /* sctp_callout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_callout.h; sourceTree = "<group>"; };
+		5C4B4AF61E42C9EF002651C8 /* sctp_cc_functions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_cc_functions.c; sourceTree = "<group>"; };
+		5C4B4AF71E42C9EF002651C8 /* sctp_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_constants.h; sourceTree = "<group>"; };
+		5C4B4AF81E42C9EF002651C8 /* sctp_crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_crc32.c; sourceTree = "<group>"; };
+		5C4B4AF91E42C9EF002651C8 /* sctp_crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_crc32.h; sourceTree = "<group>"; };
+		5C4B4AFA1E42C9EF002651C8 /* sctp_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_header.h; sourceTree = "<group>"; };
+		5C4B4AFC1E42C9EF002651C8 /* sctp_indata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_indata.h; sourceTree = "<group>"; };
+		5C4B4AFD1E42C9EF002651C8 /* sctp_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_input.c; sourceTree = "<group>"; };
+		5C4B4AFE1E42C9EF002651C8 /* sctp_input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_input.h; sourceTree = "<group>"; };
+		5C4B4AFF1E42C9EF002651C8 /* sctp_lock_userspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_lock_userspace.h; sourceTree = "<group>"; };
+		5C4B4B001E42C9EF002651C8 /* sctp_os_userspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_os_userspace.h; sourceTree = "<group>"; };
+		5C4B4B011E42C9EF002651C8 /* sctp_os.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_os.h; sourceTree = "<group>"; };
+		5C4B4B021E42C9EF002651C8 /* sctp_output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_output.c; sourceTree = "<group>"; };
+		5C4B4B031E42C9EF002651C8 /* sctp_output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_output.h; sourceTree = "<group>"; };
+		5C4B4B041E42C9EF002651C8 /* sctp_pcb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_pcb.c; sourceTree = "<group>"; };
+		5C4B4B051E42C9EF002651C8 /* sctp_pcb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_pcb.h; sourceTree = "<group>"; };
+		5C4B4B061E42C9EF002651C8 /* sctp_peeloff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_peeloff.c; sourceTree = "<group>"; };
+		5C4B4B071E42C9EF002651C8 /* sctp_peeloff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_peeloff.h; sourceTree = "<group>"; };
+		5C4B4B081E42C9EF002651C8 /* sctp_process_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_process_lock.h; sourceTree = "<group>"; };
+		5C4B4B091E42C9EF002651C8 /* sctp_sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_sha1.c; sourceTree = "<group>"; };
+		5C4B4B0A1E42C9EF002651C8 /* sctp_sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_sha1.h; sourceTree = "<group>"; };
+		5C4B4B0B1E42C9EF002651C8 /* sctp_ss_functions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_ss_functions.c; sourceTree = "<group>"; };
+		5C4B4B0C1E42C9EF002651C8 /* sctp_structs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_structs.h; sourceTree = "<group>"; };
+		5C4B4B0D1E42C9EF002651C8 /* sctp_sysctl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_sysctl.c; sourceTree = "<group>"; };
+		5C4B4B0E1E42C9EF002651C8 /* sctp_sysctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_sysctl.h; sourceTree = "<group>"; };
+		5C4B4B0F1E42C9EF002651C8 /* sctp_timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_timer.c; sourceTree = "<group>"; };
+		5C4B4B101E42C9EF002651C8 /* sctp_timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_timer.h; sourceTree = "<group>"; };
+		5C4B4B111E42C9EF002651C8 /* sctp_uio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_uio.h; sourceTree = "<group>"; };
+		5C4B4B131E42C9EF002651C8 /* sctp_usrreq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp_usrreq.c; sourceTree = "<group>"; };
+		5C4B4B141E42C9EF002651C8 /* sctp_var.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp_var.h; sourceTree = "<group>"; };
+		5C4B4B151E42C9EF002651C8 /* sctp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp.h; sourceTree = "<group>"; };
+		5C4B4B161E42C9EF002651C8 /* sctputil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctputil.c; sourceTree = "<group>"; };
+		5C4B4B171E42C9EF002651C8 /* sctputil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctputil.h; sourceTree = "<group>"; };
+		5C4B4B431E42CA00002651C8 /* sctp6_usrreq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sctp6_usrreq.c; sourceTree = "<group>"; };
+		5C4B4B441E42CA00002651C8 /* sctp6_var.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sctp6_var.h; sourceTree = "<group>"; };
 		5C4B4C101E431F75002651C8 /* bitrate_adjuster.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitrate_adjuster.cc; sourceTree = "<group>"; };
 		5C4B4C131E431F75002651C8 /* incoming_video_stream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = incoming_video_stream.cc; sourceTree = "<group>"; };
 		5C4B4C151E431F75002651C8 /* video_frame_buffer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_frame_buffer.cc; sourceTree = "<group>"; };
@@ -9820,6 +9968,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5C11A1261E4577E1004F0987 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5C4B4A871E42C336002651C8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -9859,6 +10014,7 @@
 				5C0073031E5513E70042215A /* libboringssl.a in Frameworks */,
 				5C0073041E5513E70042215A /* libopus.a in Frameworks */,
 				5C0073051E5513E70042215A /* libsrtp.a in Frameworks */,
+				5C0073061E5513E70042215A /* libusrsctp.a in Frameworks */,
 				4129408D212E0D1800AD95E7 /* libvpx.a in Frameworks */,
 				CDEBB4CA24C01A0D00ADBD44 /* libwebm.a in Frameworks */,
 				5C0073081E5513E70042215A /* libyuv.a in Frameworks */,
@@ -13061,7 +13217,6 @@
 				41B8D86E28CB84FA00E5FA37 /* crc32c.cc */,
 				41B8D87328CB84FB00E5FA37 /* crc32c.h */,
 				41B8D87028CB84FA00E5FA37 /* data.h */,
-				41F8994B28F3E8FF0070549C /* sctp_crc32.c */,
 				41B8D87528CB84FC00E5FA37 /* sctp_packet.cc */,
 				41B8D87128CB84FB00E5FA37 /* sctp_packet.h */,
 				41B8D87228CB84FB00E5FA37 /* tlv_trait.cc */,
@@ -14683,6 +14838,100 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		5C4B4AC81E42C980002651C8 /* usrsctp */ = {
+			isa = PBXGroup;
+			children = (
+				5C4B4ACA1E42C9BE002651C8 /* usrsctplib */,
+			);
+			path = usrsctp;
+			sourceTree = "<group>";
+		};
+		5C4B4ACA1E42C9BE002651C8 /* usrsctplib */ = {
+			isa = PBXGroup;
+			children = (
+				5C4B4AED1E42C9E3002651C8 /* netinet */,
+				5C4B4B421E42C9F6002651C8 /* netinet6 */,
+				5C4B4ACB1E42C9D6002651C8 /* user_atomic.h */,
+				5C4B4ACC1E42C9D6002651C8 /* user_environment.c */,
+				5C4B4ACD1E42C9D6002651C8 /* user_environment.h */,
+				5C4B4ACE1E42C9D6002651C8 /* user_inpcb.h */,
+				5C4B4AD01E42C9D6002651C8 /* user_ip6_var.h */,
+				5C4B4ACF1E42C9D6002651C8 /* user_ip_icmp.h */,
+				5C4B4AD11E42C9D6002651C8 /* user_malloc.h */,
+				5C4B4AD21E42C9D6002651C8 /* user_mbuf.c */,
+				5C4B4AD31E42C9D6002651C8 /* user_mbuf.h */,
+				5C4B4AD41E42C9D6002651C8 /* user_queue.h */,
+				5C4B4AD51E42C9D6002651C8 /* user_recv_thread.c */,
+				5C4B4AD61E42C9D6002651C8 /* user_recv_thread.h */,
+				5C4B4AD71E42C9D6002651C8 /* user_route.h */,
+				414D71121E4AE9820023E526 /* user_socket.c */,
+				5C4B4AD91E42C9D6002651C8 /* user_socketvar.h */,
+				5C4B4ADA1E42C9D6002651C8 /* user_uma.h */,
+				5C4B4ADB1E42C9D6002651C8 /* usrsctp.h */,
+			);
+			path = usrsctplib;
+			sourceTree = "<group>";
+		};
+		5C4B4AED1E42C9E3002651C8 /* netinet */ = {
+			isa = PBXGroup;
+			children = (
+				5C4B4B151E42C9EF002651C8 /* sctp.h */,
+				5C4B4AEE1E42C9EF002651C8 /* sctp_asconf.c */,
+				5C4B4AEF1E42C9EF002651C8 /* sctp_asconf.h */,
+				5C4B4AF01E42C9EF002651C8 /* sctp_auth.c */,
+				5C4B4AF11E42C9EF002651C8 /* sctp_auth.h */,
+				5C4B4AF21E42C9EF002651C8 /* sctp_bsd_addr.c */,
+				5C4B4AF31E42C9EF002651C8 /* sctp_bsd_addr.h */,
+				5C4B4AF41E42C9EF002651C8 /* sctp_callout.c */,
+				5C4B4AF51E42C9EF002651C8 /* sctp_callout.h */,
+				5C4B4AF61E42C9EF002651C8 /* sctp_cc_functions.c */,
+				5C4B4AF71E42C9EF002651C8 /* sctp_constants.h */,
+				5C4B4AF81E42C9EF002651C8 /* sctp_crc32.c */,
+				5C4B4AF91E42C9EF002651C8 /* sctp_crc32.h */,
+				5C4B4AFA1E42C9EF002651C8 /* sctp_header.h */,
+				414D71151E4AEACD0023E526 /* sctp_indata.c */,
+				5C4B4AFC1E42C9EF002651C8 /* sctp_indata.h */,
+				5C4B4AFD1E42C9EF002651C8 /* sctp_input.c */,
+				5C4B4AFE1E42C9EF002651C8 /* sctp_input.h */,
+				5C4B4AFF1E42C9EF002651C8 /* sctp_lock_userspace.h */,
+				5C4B4B011E42C9EF002651C8 /* sctp_os.h */,
+				5C4B4B001E42C9EF002651C8 /* sctp_os_userspace.h */,
+				5C4B4B021E42C9EF002651C8 /* sctp_output.c */,
+				5C4B4B031E42C9EF002651C8 /* sctp_output.h */,
+				5C4B4B041E42C9EF002651C8 /* sctp_pcb.c */,
+				5C4B4B051E42C9EF002651C8 /* sctp_pcb.h */,
+				5C4B4B061E42C9EF002651C8 /* sctp_peeloff.c */,
+				5C4B4B071E42C9EF002651C8 /* sctp_peeloff.h */,
+				5C4B4B081E42C9EF002651C8 /* sctp_process_lock.h */,
+				5C4B4B091E42C9EF002651C8 /* sctp_sha1.c */,
+				5C4B4B0A1E42C9EF002651C8 /* sctp_sha1.h */,
+				5C4B4B0B1E42C9EF002651C8 /* sctp_ss_functions.c */,
+				5C4B4B0C1E42C9EF002651C8 /* sctp_structs.h */,
+				5C4B4B0D1E42C9EF002651C8 /* sctp_sysctl.c */,
+				5C4B4B0E1E42C9EF002651C8 /* sctp_sysctl.h */,
+				5C4B4B0F1E42C9EF002651C8 /* sctp_timer.c */,
+				5C4B4B101E42C9EF002651C8 /* sctp_timer.h */,
+				5C4B4B111E42C9EF002651C8 /* sctp_uio.h */,
+				414D71181E4AEB110023E526 /* sctp_userspace.c */,
+				5C4B4B131E42C9EF002651C8 /* sctp_usrreq.c */,
+				5C4B4B141E42C9EF002651C8 /* sctp_var.h */,
+				5C4B4B161E42C9EF002651C8 /* sctputil.c */,
+				5C4B4B171E42C9EF002651C8 /* sctputil.h */,
+			);
+			name = netinet;
+			path = usrsctplib/netinet;
+			sourceTree = "<group>";
+		};
+		5C4B4B421E42C9F6002651C8 /* netinet6 */ = {
+			isa = PBXGroup;
+			children = (
+				5C4B4B431E42CA00002651C8 /* sctp6_usrreq.c */,
+				5C4B4B441E42CA00002651C8 /* sctp6_var.h */,
+			);
+			name = netinet6;
+			path = usrsctplib/netinet6;
+			sourceTree = "<group>";
+		};
 		5C4B4B571E431C20002651C8 /* sdk */ = {
 			isa = PBXGroup;
 			children = (
@@ -14891,6 +15140,7 @@
 				5C4B4A901E42C4C8002651C8 /* opus */,
 				4131C433234C7E040028A615 /* pffft */,
 				419241912127583900634FCF /* rnnnoise */,
+				5C4B4AC81E42C980002651C8 /* usrsctp */,
 				41F773FE215BE33300E72967 /* yasm */,
 			);
 			path = third_party;
@@ -17307,6 +17557,7 @@
 				5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */,
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
+				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
 			path = Configurations;
@@ -17810,6 +18061,7 @@
 				5C63FC601E418411002CA531 /* libboringssl.a */,
 				5C4B4A8E1E42C336002651C8 /* libopus.a */,
 				5C0884D11E4A97E300403995 /* libsrtp.a */,
+				5C11A12D1E4577E1004F0987 /* libusrsctp.a */,
 				4105EB83212E01D2008C0C20 /* libvpx.a */,
 				CDEBB11924C0187400ADBD44 /* libwebm.a */,
 				FB39D0D11200F0E300088E69 /* libwebrtc.dylib */,
@@ -17985,6 +18237,51 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C11A0371E4577E1004F0987 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C60246F1E4950A00088F0B2 /* sctp.h in Headers */,
+				5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */,
+				5C6024711E4950A00088F0B2 /* sctp_asconf.h in Headers */,
+				5C6024731E4950A00088F0B2 /* sctp_auth.h in Headers */,
+				5C6024751E4950A00088F0B2 /* sctp_bsd_addr.h in Headers */,
+				5C6024771E4950A00088F0B2 /* sctp_callout.h in Headers */,
+				5C6024791E4950A00088F0B2 /* sctp_constants.h in Headers */,
+				5C60247B1E4950A00088F0B2 /* sctp_crc32.h in Headers */,
+				5C60247C1E4950A00088F0B2 /* sctp_header.h in Headers */,
+				5C60247D1E4950A00088F0B2 /* sctp_indata.h in Headers */,
+				5C60247F1E4950A00088F0B2 /* sctp_input.h in Headers */,
+				5C6024801E4950A00088F0B2 /* sctp_lock_userspace.h in Headers */,
+				5C6024811E4950A00088F0B2 /* sctp_os.h in Headers */,
+				5C6024821E4950A00088F0B2 /* sctp_os_userspace.h in Headers */,
+				5C6024841E4950A00088F0B2 /* sctp_output.h in Headers */,
+				5C6024861E4950A00088F0B2 /* sctp_pcb.h in Headers */,
+				5C6024881E4950A00088F0B2 /* sctp_peeloff.h in Headers */,
+				5C6024891E4950A00088F0B2 /* sctp_process_lock.h in Headers */,
+				5C60248B1E4950A00088F0B2 /* sctp_sha1.h in Headers */,
+				5C60248D1E4950A00088F0B2 /* sctp_structs.h in Headers */,
+				5C60248F1E4950A00088F0B2 /* sctp_sysctl.h in Headers */,
+				5C6024911E4950A00088F0B2 /* sctp_timer.h in Headers */,
+				5C6024921E4950A00088F0B2 /* sctp_uio.h in Headers */,
+				5C6024941E4950A00088F0B2 /* sctp_var.h in Headers */,
+				5C6024961E4950A00088F0B2 /* sctputil.h in Headers */,
+				5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */,
+				5C6024611E494DB80088F0B2 /* user_environment.h in Headers */,
+				5C6024621E494DB80088F0B2 /* user_inpcb.h in Headers */,
+				5C6024631E494DB80088F0B2 /* user_ip6_var.h in Headers */,
+				5C6024641E494DB80088F0B2 /* user_ip_icmp.h in Headers */,
+				5C6024651E494DB80088F0B2 /* user_malloc.h in Headers */,
+				5C6024671E494DB80088F0B2 /* user_mbuf.h in Headers */,
+				5C6024681E494DB80088F0B2 /* user_queue.h in Headers */,
+				5C60246A1E494DB80088F0B2 /* user_recv_thread.h in Headers */,
+				5C60246B1E494DB80088F0B2 /* user_route.h in Headers */,
+				5C60246C1E494DB80088F0B2 /* user_socketvar.h in Headers */,
+				5C60246D1E494DB80088F0B2 /* user_uma.h in Headers */,
+				5C60246E1E494DB80088F0B2 /* usrsctp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20399,6 +20696,25 @@
 			productReference = 5C0884DE1E4A980100403995 /* libyuv.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		5C11A0341E4577E1004F0987 /* usrsctp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C11A1291E4577E1004F0987 /* Build configuration list for PBXNativeTarget "usrsctp" */;
+			buildPhases = (
+				5C11A0371E4577E1004F0987 /* Headers */,
+				5C11A0771E4577E1004F0987 /* Sources */,
+				5C11A1261E4577E1004F0987 /* Frameworks */,
+				5C11A1271E4577E1004F0987 /* CopyFiles */,
+				5C11A1281E4577E1004F0987 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = usrsctp;
+			productName = boringssl;
+			productReference = 5C11A12D1E4577E1004F0987 /* libusrsctp.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		5C4B490E1E42C336002651C8 /* opus */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5C4B4A8A1E42C336002651C8 /* Build configuration list for PBXNativeTarget "opus" */;
@@ -20507,6 +20823,7 @@
 				411ED040212E0811004320BA /* PBXTargetDependency */,
 				5C0884E01E4A982000403995 /* PBXTargetDependency */,
 				5C0884E21E4A982000403995 /* PBXTargetDependency */,
+				5C11A13F1E45783A004F0987 /* PBXTargetDependency */,
 				5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */,
 				5C63FC621E418449002CA531 /* PBXTargetDependency */,
 			);
@@ -20554,6 +20871,7 @@
 				FB39D0D01200F0E300088E69 /* libwebrtc */,
 				5C63FA7A1E418411002CA531 /* boringssl */,
 				5C4B490E1E42C336002651C8 /* opus */,
+				5C11A0341E4577E1004F0987 /* usrsctp */,
 				5C08848B1E4A97E300403995 /* srtp */,
 				5C0884D21E4A980100403995 /* yuv */,
 				4105EB69212E01D2008C0C20 /* vpx */,
@@ -21162,6 +21480,36 @@
 				5C0884FD1E4A986000403995 /* scale_gcc.cc in Sources */,
 				41D7291826650F1200651A0B /* scale_uv.cc in Sources */,
 				5C0884FE1E4A986000403995 /* video_common.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C11A0771E4577E1004F0987 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */,
+				5C6024701E4950A00088F0B2 /* sctp_asconf.c in Sources */,
+				5C6024721E4950A00088F0B2 /* sctp_auth.c in Sources */,
+				5C6024741E4950A00088F0B2 /* sctp_bsd_addr.c in Sources */,
+				5C6024761E4950A00088F0B2 /* sctp_callout.c in Sources */,
+				5C6024781E4950A00088F0B2 /* sctp_cc_functions.c in Sources */,
+				5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */,
+				414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */,
+				5C60247E1E4950A00088F0B2 /* sctp_input.c in Sources */,
+				5C6024831E4950A00088F0B2 /* sctp_output.c in Sources */,
+				5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */,
+				5C6024871E4950A00088F0B2 /* sctp_peeloff.c in Sources */,
+				5C60248A1E4950A00088F0B2 /* sctp_sha1.c in Sources */,
+				5C60248C1E4950A00088F0B2 /* sctp_ss_functions.c in Sources */,
+				5C60248E1E4950A00088F0B2 /* sctp_sysctl.c in Sources */,
+				5C6024901E4950A00088F0B2 /* sctp_timer.c in Sources */,
+				414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */,
+				5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */,
+				5C6024951E4950A00088F0B2 /* sctputil.c in Sources */,
+				5C6024601E494DB80088F0B2 /* user_environment.c in Sources */,
+				5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */,
+				5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */,
+				414D71141E4AE98C0023E526 /* user_socket.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22662,7 +23010,6 @@
 				5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */,
 				5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */,
 				41239B3F21476DC400396F81 /* screenshare_layers.cc in Sources */,
-				41F8994C28F3E9000070549C /* sctp_crc32.c in Sources */,
 				412FF981254B3CA6001DF036 /* sctp_data_channel.cc in Sources */,
 				418939E5242A7337007FDC41 /* sctp_data_channel_transport.cc in Sources */,
 				41B8D87F28CB84FD00E5FA37 /* sctp_packet.cc in Sources */,
@@ -22977,6 +23324,11 @@
 			target = 5C0884D21E4A980100403995 /* yuv */;
 			targetProxy = 5C0884E11E4A982000403995 /* PBXContainerItemProxy */;
 		};
+		5C11A13F1E45783A004F0987 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C11A0341E4577E1004F0987 /* usrsctp */;
+			targetProxy = 5C11A13E1E45783A004F0987 /* PBXContainerItemProxy */;
+		};
 		5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5C4B490E1E42C336002651C8 /* opus */;
@@ -23097,6 +23449,48 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C08848A1E4A978C00403995 /* libyuv.xcconfig */;
 			buildSettings = {
+			};
+			name = Production;
+		};
+		5C11A12A1E4577E1004F0987 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					Source/,
+					Source/third_party/usrsctp/usrsctplib/netinet/,
+					Source/third_party/usrsctp/usrsctplib/,
+					Source/third_party/boringssl/src/include/,
+					Source/third_party/usrsctp/usrsctplib/usrsctplib/,
+				);
+			};
+			name = Debug;
+		};
+		5C11A12B1E4577E1004F0987 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					Source/,
+					Source/third_party/usrsctp/usrsctplib/netinet/,
+					Source/third_party/usrsctp/usrsctplib/,
+					Source/third_party/boringssl/src/include/,
+					Source/third_party/usrsctp/usrsctplib/usrsctplib/,
+				);
+			};
+			name = Release;
+		};
+		5C11A12C1E4577E1004F0987 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					Source/,
+					Source/third_party/usrsctp/usrsctplib/netinet/,
+					Source/third_party/usrsctp/usrsctplib/,
+					Source/third_party/boringssl/src/include/,
+					Source/third_party/usrsctp/usrsctplib/usrsctplib/,
+				);
 			};
 			name = Production;
 		};
@@ -23281,6 +23675,16 @@
 				5C0884DB1E4A980100403995 /* Debug */,
 				5C0884DC1E4A980100403995 /* Release */,
 				5C0884DD1E4A980100403995 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5C11A1291E4577E1004F0987 /* Build configuration list for PBXNativeTarget "usrsctp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C11A12A1E4577E1004F0987 /* Debug */,
+				5C11A12B1E4577E1004F0987 /* Release */,
+				5C11A12C1E4577E1004F0987 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

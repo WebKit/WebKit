@@ -58,6 +58,7 @@ list(APPEND WebCore_LIBRARIES
     ${VIDEOTOOLBOX_LIBRARY}
     ${XML2_LIBRARY}
     opus
+    usrsctp
     vpx
     webm
     yuv
