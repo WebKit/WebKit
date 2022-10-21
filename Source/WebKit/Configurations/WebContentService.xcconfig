@@ -28,6 +28,7 @@ PRODUCT_NAME_ = $(PRODUCT_NAME_Normal);
 PRODUCT_NAME_Normal = com.apple.WebKit.WebContent;
 PRODUCT_NAME_Development = com.apple.WebKit.WebContent.Development;
 PRODUCT_NAME_CaptivePortal = com.apple.WebKit.WebContent.CaptivePortal;
+PRODUCT_NAME_Crashy = com.apple.WebKit.WebContent.Crashy;
 
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
 INFOPLIST_FILE[sdk=embedded*] = WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist;
