@@ -36,6 +36,11 @@ class RenderBlock;
 class RenderStyle;
 class RenderTreeBuilder;
 
+struct MarginRect {
+    LayoutRect marginRect;
+    LayoutRect anchorRect;
+};
+
 class RenderElement : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderElement);
 public:
@@ -195,7 +200,7 @@ public:
 
     // absoluteAnchorRectWithScrollMargin() is similar to absoluteAnchorRect, but it also takes into account any
     // CSS scroll-margin that is set in the style of this RenderElement.
-    LayoutRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr) const;
+    MarginRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr) const;
 
     bool hasFilter() const { return style().hasFilter(); }
     bool hasBackdropFilter() const
