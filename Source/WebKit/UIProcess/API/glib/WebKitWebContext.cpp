@@ -121,11 +121,9 @@ enum {
     PROP_LOCAL_STORAGE_DIRECTORY,
 #endif
     PROP_WEBSITE_DATA_MANAGER,
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     PROP_PSON_ENABLED,
-#if !USE(GTK4)
     PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS,
-#endif
 #endif
     PROP_MEMORY_PRESSURE_SETTINGS,
     PROP_TIME_ZONE_OVERRIDE,
@@ -211,11 +209,9 @@ struct _WebKitWebContextPrivate {
 
     RefPtr<WebProcessPool> processPool;
     bool clientsDetached;
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     bool psonEnabled;
-#if !USE(GTK4)
     bool useSystemAppearanceForScrollbars;
-#endif
 #endif
 
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
@@ -346,15 +342,13 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     case PROP_WEBSITE_DATA_MANAGER:
         g_value_set_object(value, webkit_web_context_get_website_data_manager(context));
         break;
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     case PROP_PSON_ENABLED:
         g_value_set_boolean(value, context->priv->psonEnabled);
         break;
-#if !USE(GTK4)
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
         g_value_set_boolean(value, webkit_web_context_get_use_system_appearance_for_scrollbars(context));
         break;
-#endif
 #endif
     case PROP_TIME_ZONE_OVERRIDE:
         g_value_set_string(value, webkit_web_context_get_time_zone_override(context));
@@ -379,15 +373,13 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->websiteDataManager = manager ? WEBKIT_WEBSITE_DATA_MANAGER(manager) : nullptr;
         break;
     }
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     case PROP_PSON_ENABLED:
         context->priv->psonEnabled = g_value_get_boolean(value);
         break;
-#if !USE(GTK4)
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
         webkit_web_context_set_use_system_appearance_for_scrollbars(context, g_value_get_boolean(value));
         break;
-#endif
 #endif
     case PROP_MEMORY_PRESSURE_SETTINGS: {
         gpointer settings = g_value_get_boxed(value);
@@ -417,11 +409,11 @@ static void webkitWebContextConstructed(GObject* object)
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
     configuration.setUsesWebProcessCache(true);
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
-#if !USE(GTK4)
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
-#endif
+#else
+    configuration.setProcessSwapsOnNavigation(true);
 #endif
     if (priv->memoryPressureSettings) {
         configuration.setMemoryPressureHandlerConfiguration(webkitMemoryPressureSettingsGetMemoryPressureHandlerConfiguration(priv->memoryPressureSettings));
@@ -531,7 +523,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             WEBKIT_TYPE_WEBSITE_DATA_MANAGER,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     /**
      * WebKitWebContext:process-swap-on-cross-site-navigation-enabled:
      *
@@ -553,7 +545,6 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-#if !USE(GTK4)
     /**
      * WebKitWebContext:use-system-appearance-for-scrollbars:
      *
@@ -572,7 +563,6 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             _("Whether to use system appearance for rendering scrollbars"),
             TRUE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-#endif
 #endif
 
     /**
