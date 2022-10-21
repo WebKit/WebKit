@@ -341,10 +341,14 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool exclude
 
     if (excludeDocumentsInPageGroupPages) {
         Page::forEachPage([&](Page& page) {
-            for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-                if (!frame->document())
+            for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+                auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+                if (!localFrame)
                     continue;
-                result.remove(frame->document()->identifier().object());
+                auto* document = localFrame->document();
+                if (!document)
+                    continue;
+                result.remove(document->identifier().object());
             }
         });
     }

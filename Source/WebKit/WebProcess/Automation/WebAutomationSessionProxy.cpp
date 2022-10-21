@@ -479,7 +479,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdenti
         return;
     }
 
-    WebCore::Frame* coreChildFrame = coreFrame->tree().scopedChild(ordinal);
+    auto* coreChildFrame = coreFrame->tree().scopedChild(ordinal);
     if (!coreChildFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -567,7 +567,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    WebCore::Frame* coreChildFrame = coreFrame->tree().scopedChild(AtomString { name });
+    auto* coreChildFrame = coreFrame->tree().scopedChild(AtomString { name });
     if (!coreChildFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;

@@ -85,16 +85,12 @@ public:
 
     AttachmentInfo& operator=(const AttachmentInfo&) = default;
 
-    void setType(Attachment::Type type) { m_type = type; }
-    Attachment::Type type() const { return m_type; }
-
     // The attachment is not null unless explicitly set.
     void setNull() { m_isNull = true; }
     bool isNull() const { return m_isNull; }
 
 private:
     // The AttachmentInfo will be copied using memcpy, so all members must be trivially copyable.
-    Attachment::Type m_type;
     bool m_isNull;
 };
 
@@ -167,15 +163,8 @@ bool Connection::processMessage()
         messageData += sizeof(AttachmentInfo) * attachmentCount;
 
         for (size_t i = 0; i < attachmentCount; ++i) {
-            switch (attachmentInfo[i].type()) {
-            case Attachment::FileDescriptorType:
-                if (!attachmentInfo[i].isNull())
-                    attachmentFileDescriptorCount++;
-                break;
-            case Attachment::Uninitialized:
-            default:
-                break;
-            }
+            if (!attachmentInfo[i].isNull())
+                attachmentFileDescriptorCount++;
         }
 
         if (messageInfo.isBodyOutOfLine())
@@ -187,21 +176,8 @@ bool Connection::processMessage()
 
     size_t fdIndex = 0;
     for (size_t i = 0; i < attachmentCount; ++i) {
-        int fd = -1;
-        switch (attachmentInfo[i].type()) {
-        case Attachment::FileDescriptorType:
-            if (!attachmentInfo[i].isNull())
-                fd = m_fileDescriptors[fdIndex++];
-            attachments[attachmentCount - i - 1] = Attachment(UnixFileDescriptor(fd, UnixFileDescriptor::Adopt));
-            break;
-        case Attachment::CustomWriterType:
-            attachments[attachmentCount - i - 1] = Attachment(Attachment::CustomWriter(m_socketDescriptor));
-            break;
-        case Attachment::Uninitialized:
-            attachments[attachmentCount - i - 1] = Attachment();
-        default:
-            break;
-        }
+        int fd = !attachmentInfo[i].isNull() ? m_fileDescriptors[fdIndex++] : -1;
+        attachments[attachmentCount - i - 1] = UnixFileDescriptor { fd, UnixFileDescriptor::Adopt };
     }
 
     if (messageInfo.isBodyOutOfLine()) {
@@ -441,7 +417,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
         memcpy(oolMessageBody->data(), outputMessage.body(), outputMessage.bodySize());
 
-        outputMessage.appendAttachment(Attachment { handle.releaseHandle() });
+        outputMessage.appendAttachment(handle.releaseHandle());
     }
 
     return sendOutputMessage(outputMessage);
@@ -466,7 +442,6 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 
     Vector<AttachmentInfo> attachmentInfo;
     MallocPtr<char> attachmentFDBuffer;
-    bool hasCustomWriterAttachments { false };
 
     auto& attachments = outputMessage.attachments();
     if (!attachments.isEmpty()) {
@@ -474,7 +449,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 
         size_t attachmentFDBufferLength = std::count_if(attachments.begin(), attachments.end(),
             [](const Attachment& attachment) {
-                return !attachment.isNull();
+                return !!attachment;
             });
 
         if (attachmentFDBufferLength) {
@@ -495,23 +470,11 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         attachmentInfo.resize(attachments.size());
         int fdIndex = 0;
         for (size_t i = 0; i < attachments.size(); ++i) {
-            attachmentInfo[i].setType(attachments[i].type());
-
-            switch (attachments[i].type()) {
-            case Attachment::FileDescriptorType:
-                if (!attachments[i].isNull()) {
-                    ASSERT(fdPtr);
-                    fdPtr[fdIndex++] = attachments[i].fd().value();
-                } else
-                    attachmentInfo[i].setNull();
-                break;
-            case Attachment::CustomWriterType:
-                hasCustomWriterAttachments = true;
-                break;
-            case Attachment::Uninitialized:
-            default:
-                break;
-            }
+            if (!!attachments[i]) {
+                ASSERT(fdPtr);
+                fdPtr[fdIndex++] = attachments[i].value();
+            } else
+                attachmentInfo[i].setNull();
         }
 
         iov[iovLength].iov_base = attachmentInfo.data();
@@ -574,15 +537,6 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         if (m_isConnected)
             WTFLogAlways("Error sending IPC message: %s", safeStrerror(errno).data());
         return false;
-    }
-
-    if (hasCustomWriterAttachments) {
-        for (auto& attachment : attachments) {
-            if (attachment.type() == Attachment::CustomWriterType) {
-                ASSERT(std::holds_alternative<Attachment::CustomWriterFunc>(attachment.customWriter()));
-                std::get<Attachment::CustomWriterFunc>(attachment.customWriter())(m_socketDescriptor);
-            }
-        }
     }
 
     return true;

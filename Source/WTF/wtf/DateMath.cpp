@@ -1039,11 +1039,10 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
 
 static std::optional<Vector<UChar, 32>> validateTimeZone(StringView timeZone)
 {
-    Vector<UChar, 32> buffer(timeZone.length());
-    timeZone.getCharactersWithUpconvert(buffer.data());
-
+    auto buffer = timeZone.upconvertedCharacters();
+    const UChar* characters = buffer;
     Vector<UChar, 32> canonicalBuffer;
-    auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
+    auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, characters, timeZone.length(), canonicalBuffer, nullptr);
     if (!U_SUCCESS(status))
         return std::nullopt;
     return canonicalBuffer;

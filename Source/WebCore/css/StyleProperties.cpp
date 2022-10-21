@@ -38,6 +38,7 @@
 #include "CSSValuePool.h"
 #include "Color.h"
 #include "Document.h"
+#include "FontSelectionValueInlines.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "Rect.h"
 #include "StylePropertyShorthand.h"
@@ -561,6 +562,17 @@ std::optional<CSSValueID> StyleProperties::isSingleFontShorthand() const
     return sizeValueID;
 }
 
+static std::optional<CSSValueID> fontStretchKeyword(double value)
+{
+    // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
+    float valueAsFloat = value;
+    FontSelectionValue valueAsFontSelectionValue { valueAsFloat };
+    float valueAsFloatAfterRoundTrip = valueAsFontSelectionValue;
+    if (value != valueAsFloatAfterRoundTrip)
+        return std::nullopt;
+    return fontStretchKeyword(valueAsFontSelectionValue);
+}
+
 String StyleProperties::fontValue() const
 {
     int fontSizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
@@ -576,19 +588,41 @@ String StyleProperties::fontValue() const
     if (auto shorthand = isSingleFontShorthand())
         return getValueNameAtomString(shorthand.value());
 
-    String commonValue = fontSizeProperty.value()->cssText();
+    // Font stretch values can only be serialized in the font shorthand as keywords, since percentages are also valid font sizes.
+    // If a font stretch percentage can be expressed as a keyword, then do that.
+    ASCIILiteral fontStretchPercentageAsKeyword;
+    bool fontStretchIsNormal = false;
+    if (int fontStretchPropertyIndex = findPropertyIndex(CSSPropertyFontStretch); fontStretchPropertyIndex != -1) {
+        if (auto fontStretch = dynamicDowncast<CSSPrimitiveValue>(*propertyAt(fontStretchPropertyIndex).value())) {
+            std::optional<CSSValueID> keyword;
+            if (!fontStretch->isPercentage())
+                keyword = fontStretch->valueID();
+            else {
+                keyword = fontStretchKeyword(fontStretch->doubleValue());
+                if (!keyword)
+                    return emptyString();
+                fontStretchPercentageAsKeyword = getValueName(*keyword);
+            }
+            fontStretchIsNormal = keyword == CSSValueNormal;
+        }
+    }
+
+    auto fontSizeString = fontSizeProperty.value()->cssText();
+    auto commonValue = fontSizeString;
     StringBuilder result;
     appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontStretch, result, commonValue);
-    if (!result.isEmpty())
-        result.append(' ');
-    result.append(fontSizeProperty.value()->cssText());
+    if (fontStretchIsNormal)
+        commonValue = { };
+    else if (!fontStretchPercentageAsKeyword.isNull()) {
+        result.append(result.isEmpty() ? "" : " ", fontStretchPercentageAsKeyword);
+        commonValue = { };
+    } else
+        appendFontLonghandValueIfExplicit(CSSPropertyFontStretch, result, commonValue);
+    result.append(result.isEmpty() ? "" : " ", fontSizeString);
     appendFontLonghandValueIfExplicit(CSSPropertyLineHeight, result, commonValue);
-    if (!result.isEmpty())
-        result.append(' ');
-    result.append(fontFamilyProperty.value()->cssText());
+    result.append(result.isEmpty() ? "" : " ", fontFamilyProperty.value()->cssText());
     if (isCSSWideValueKeyword(commonValue))
         return commonValue;
     return result.toString();

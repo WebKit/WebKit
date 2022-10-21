@@ -45,6 +45,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMetaCharsetParser.h"
+#include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLStyleElement.h"
@@ -66,22 +67,23 @@
 
 namespace WebCore {
 
-static bool isCharsetSpecifyingNode(const Node& node)
+static bool isCharsetSpecifyingNode(const HTMLMetaElement& element)
 {
-    if (!is<HTMLElement>(node))
+    if (!element.hasAttributes())
         return false;
-
-    const HTMLElement& element = downcast<HTMLElement>(node);
-    if (!element.hasTagName(HTMLNames::metaTag))
-        return false;
-    HTMLMetaCharsetParser::AttributeList attributes;
-    if (element.hasAttributes()) {
-        for (const Attribute& attribute : element.attributesIterator()) {
-            // FIXME: We should deal appropriately with the attribute if they have a namespace.
-            attributes.append({ attribute.name().toAtomString(), attribute.value() });
-        }
+    Vector<std::pair<StringView, StringView>> attributes;
+    for (auto& attribute : element.attributesIterator()) {
+        if (attribute.name().hasPrefix())
+            continue;
+        attributes.append({ StringView { attribute.name().localName() }, StringView { attribute.value() } });
     }
     return HTMLMetaCharsetParser::encodingFromMetaAttributes(attributes).isValid();
+}
+
+template<typename NodeType> static bool isCharsetSpecifyingNode(const NodeType& node)
+{
+    auto* metaElement = dynamicDowncast<HTMLMetaElement>(node);
+    return metaElement && isCharsetSpecifyingNode(*metaElement);
 }
 
 static bool shouldIgnoreElement(const Element& element)
@@ -227,8 +229,12 @@ void PageSerializer::serializeFrame(Frame* frame)
         }
     }
 
-    for (Frame* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling())
-        serializeFrame(childFrame);
+    for (AbstractFrame* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
+        if (!localFrame)
+            continue;
+        serializeFrame(localFrame);
+    }
 }
 
 void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL& url)

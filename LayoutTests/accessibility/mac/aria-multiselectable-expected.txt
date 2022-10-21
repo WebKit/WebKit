@@ -1,18 +1,15 @@
-Siamese
-Tabby
 This tests that aria trees that are multi selectable will return the right selected rows.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: treeitem1.role === 'AXRole: AXRow'
+PASS: treeitem1.subrole === 'AXSubrole: AXOutlineRow'
+PASS: treeitem2.role === 'AXRole: AXRow'
+PASS: treeitem2.subrole === 'AXSubrole: AXOutlineRow'
+PASS: selectedRow1.isEqual(treeitem1) === true
+PASS: selectedRow2.isEqual(treeitem2) === true
+PASS: selectedRow1.isEqual(treeitem2) === true
 
-
-PASS treeitem1.role is 'AXRole: AXRow'
-PASS treeitem1.subrole is 'AXSubrole: AXOutlineRow'
-PASS treeitem2.role is 'AXRole: AXRow'
-PASS treeitem2.subrole is 'AXSubrole: AXOutlineRow'
-PASS selectedRow1.isEqual(treeitem1) is true
-PASS selectedRow2.isEqual(treeitem2) is true
-PASS selectedRow1.isEqual(treeitem2) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+Siamese
+Tabby

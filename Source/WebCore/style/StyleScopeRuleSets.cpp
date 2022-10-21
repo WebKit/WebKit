@@ -36,7 +36,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLNames.h"
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "Page.h"
 #include "RuleSetBuilder.h"
 #include "StyleResolver.h"
@@ -136,7 +136,7 @@ void ScopeRuleSets::initializeUserStyle()
         m_userStyle = WTFMove(userStyle);
 }
 
-void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& mediaQueryEvaluator)
+void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const LegacyMediaQueryEvaluator& mediaQueryEvaluator)
 {
     RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
     for (auto& sheet : userSheets) {
@@ -193,7 +193,7 @@ bool ScopeRuleSets::hasContainerQueries() const
     return false;
 }
 
-std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator& evaluator)
 {
     std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
 
@@ -215,7 +215,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
     return evaluationChanges;
 }
 
-void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* mediaQueryEvaluator, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
+void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, LegacyMediaQueryEvaluator* mediaQueryEvaluator, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
 {
     RuleSetBuilder builder(*m_authorStyle, *mediaQueryEvaluator, &m_styleResolver);
 

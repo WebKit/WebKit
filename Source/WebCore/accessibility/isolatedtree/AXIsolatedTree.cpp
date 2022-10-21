@@ -433,8 +433,8 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::CanSetValueAttribute:
         propertyMap.set(AXPropertyName::CanSetValueAttribute, axObject.canSetValueAttribute());
         break;
-    case AXPropertyName::CurrentValue:
-        propertyMap.set(AXPropertyName::CurrentValue, axObject.currentValue().isolatedCopy());
+    case AXPropertyName::CurrentState:
+        propertyMap.set(AXPropertyName::CurrentState, static_cast<int>(axObject.currentState()));
         break;
     case AXPropertyName::DisclosedRows:
         propertyMap.set(AXPropertyName::DisclosedRows, axIDs(axObject.disclosedRows()));

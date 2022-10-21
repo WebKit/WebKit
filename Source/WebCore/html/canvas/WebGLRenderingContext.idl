@@ -27,11 +27,14 @@ typedef unsigned long GLenum;
 typedef long GLint;
 typedef long GLsizei;
 
-#ifdef ENABLE_VIDEO
-typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
-#else
-typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
+typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+    or HTMLVideoElement
 #endif
+#if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
+    or WebCodecsVideoFrame
+#endif
+) TexImageSource;
 
 [
     ActiveDOMObject,

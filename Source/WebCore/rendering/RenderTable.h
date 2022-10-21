@@ -163,6 +163,7 @@ public:
 
     // This function returns 0 if the table has no non-empty sections.
     RenderTableSection* topNonEmptySection() const;
+    RenderTableSection* bottomNonEmptySection() const;
 
     unsigned lastColumnIndex() const { return numEffCols() - 1; }
 
@@ -299,6 +300,7 @@ private:
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     std::optional<LayoutUnit> firstLineBaseline() const override;
+    std::optional<LayoutUnit> lastLineBaseline() const override;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const final;
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;

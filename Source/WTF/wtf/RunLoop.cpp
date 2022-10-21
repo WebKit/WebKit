@@ -200,4 +200,11 @@ void RunLoop::threadWillExit()
     }
 }
 
+#if ASSERT_ENABLED
+void RunLoop::assertIsCurrent() const
+{
+    ASSERT(this == &current());
+}
+#endif
+
 } // namespace WTF

@@ -29,10 +29,24 @@
 
 #include "BufferSource.h"
 #include "ExceptionOr.h"
-#include "WebCodecsEncodedVideoChunkType.h"
-#include <wtf/Vector.h>
+#include "WebCodecsEncodedVideoChunkData.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
+
+class WebCodecsEncodedVideoChunkStorage : public ThreadSafeRefCounted<WebCodecsEncodedVideoChunkStorage> {
+public:
+    static Ref<WebCodecsEncodedVideoChunkStorage> create(WebCodecsEncodedVideoChunkType type, int64_t timestamp, std::optional<uint64_t> duration, Vector<uint8_t>&& buffer) { return create(WebCodecsEncodedVideoChunkData { type, timestamp, duration, WTFMove(buffer) }); }
+    static Ref<WebCodecsEncodedVideoChunkStorage> create(WebCodecsEncodedVideoChunkData&& data) { return adoptRef(* new WebCodecsEncodedVideoChunkStorage(WTFMove(data))); }
+
+    const WebCodecsEncodedVideoChunkData& data() const { return m_data; }
+    uint64_t memoryCost() const { return m_data.buffer.size(); }
+
+private:
+    explicit WebCodecsEncodedVideoChunkStorage(WebCodecsEncodedVideoChunkData&&);
+
+    const WebCodecsEncodedVideoChunkData m_data;
+};
 
 class WebCodecsEncodedVideoChunk : public RefCounted<WebCodecsEncodedVideoChunk> {
 public:
@@ -46,24 +60,34 @@ public:
     };
 
     static Ref<WebCodecsEncodedVideoChunk> create(Init&& init) { return adoptRef(*new WebCodecsEncodedVideoChunk(WTFMove(init))); }
+    static Ref<WebCodecsEncodedVideoChunk> create(Ref<WebCodecsEncodedVideoChunkStorage>&& storage) { return adoptRef(*new WebCodecsEncodedVideoChunk(WTFMove(storage))); }
 
-    WebCodecsEncodedVideoChunkType type() const { return m_type; };
-    int64_t timestamp() const { return m_timestamp; }
-    std::optional<uint64_t> duration() const { return m_duration; }
-    size_t byteLength() const { return m_data.size(); }
+    WebCodecsEncodedVideoChunkType type() const { return m_storage->data().type; };
+    int64_t timestamp() const { return m_storage->data().timestamp; }
+    std::optional<uint64_t> duration() const { return m_storage->data().duration; }
+    size_t byteLength() const { return m_storage->data().buffer.size(); }
 
     ExceptionOr<void> copyTo(BufferSource&&);
 
-    const uint8_t* data() const { return m_data.data(); }
+    const uint8_t* data() const { return m_storage->data().buffer.data(); }
+    WebCodecsEncodedVideoChunkStorage& storage() { return m_storage.get(); }
 
 private:
     explicit WebCodecsEncodedVideoChunk(Init&&);
+    explicit WebCodecsEncodedVideoChunk(Ref<WebCodecsEncodedVideoChunkStorage>&&);
 
-    WebCodecsEncodedVideoChunkType m_type { WebCodecsEncodedVideoChunkType::Key };
-    int64_t m_timestamp { 0 };
-    std::optional<uint64_t> m_duration { 0 };
-    Vector<uint8_t> m_data;
+    Ref<WebCodecsEncodedVideoChunkStorage> m_storage;
 };
+
+inline WebCodecsEncodedVideoChunkStorage::WebCodecsEncodedVideoChunkStorage(WebCodecsEncodedVideoChunkData&& data)
+    : m_data { WTFMove(data) }
+{
+}
+
+inline WebCodecsEncodedVideoChunk::WebCodecsEncodedVideoChunk(Ref<WebCodecsEncodedVideoChunkStorage>&& storage)
+    : m_storage(WTFMove(storage))
+{
+}
 
 }
 

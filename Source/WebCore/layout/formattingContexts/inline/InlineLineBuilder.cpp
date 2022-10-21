@@ -114,10 +114,10 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
     auto previousContent = currentTextItem.inlineTextBox().content();
     auto currentContent = nextInlineTextItem.inlineTextBox().content();
-    if (currentContent.is8Bit() && !previousContent.is8Bit()) {
-        // FIXME: Remove this workaround when we move over to a better way of handling prior-context with unicode.
+    if (!previousContent.is8Bit()) {
+        // FIXME: Remove this workaround when we move over to a better way of handling prior-context with Unicode.
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters. 
-        currentContent = String::make16BitFrom8BitSource(currentContent.characters8(), currentContent.length());
+        currentContent.convertTo16Bit();
     }
     auto& style = nextInlineTextItem.style();
     auto lineBreakIterator = LazyLineBreakIterator { currentContent, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
@@ -594,12 +594,12 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     return lineRange;
 }
 
-FloatingContext::Constraints LineBuilder::floatConstraints(const InlineRect& lineLogicalRect) const
+FloatingContext::Constraints LineBuilder::floatConstraints(const InlineRect& lineMarginBoxRect) const
 {
     if (isInIntrinsicWidthMode() || floatingState()->isEmpty())
         return { };
 
-    return formattingContext().formattingGeometry().floatConstraintsForLine(lineLogicalRect.top(), lineLogicalRect.height(), FloatingContext { formattingContext(), *floatingState() });
+    return formattingContext().formattingGeometry().floatConstraintsForLine(lineMarginBoxRect.top(), lineMarginBoxRect.height(), FloatingContext { formattingContext(), *floatingState() });
 }
 
 LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
@@ -868,13 +868,16 @@ std::tuple<InlineRect, bool> LineBuilder::lineRectForCandidateInlineContent(cons
     }
     if (maximumLineLogicalHeight == m_lineLogicalRect.height())
         return { m_lineLogicalRect, false };
-    auto adjustedLineLogicalRect = InlineRect { m_lineLogicalRect.top(), m_lineLogicalRect.left(), m_lineLogicalRect.width(), maximumLineLogicalHeight };
-    auto lineConstraints = floatConstraints(adjustedLineLogicalRect);
+
+    auto adjustedLineMarginBoxRect = InlineRect { m_lineLogicalRect.top(),  m_lineLogicalRect.left() - m_lineMarginStart, m_lineLogicalRect.width() + m_lineMarginStart, maximumLineLogicalHeight };
+    auto lineConstraints = floatConstraints(adjustedLineMarginBoxRect);
     if (lineConstraints.left)
-        adjustedLineLogicalRect.shiftLeftTo(std::max<InlineLayoutUnit>(adjustedLineLogicalRect.left(), lineConstraints.left->x));
+        adjustedLineMarginBoxRect.shiftLeftTo(std::max<InlineLayoutUnit>(adjustedLineMarginBoxRect.left(), lineConstraints.left->x));
     if (lineConstraints.right)
-        adjustedLineLogicalRect.setRight(std::max(adjustedLineLogicalRect.left(), std::min<InlineLayoutUnit>(adjustedLineLogicalRect.right(), lineConstraints.right->x)));
-    return { adjustedLineLogicalRect,  lineConstraints.left || lineConstraints.right };
+        adjustedLineMarginBoxRect.setRight(std::max(adjustedLineMarginBoxRect.left(), std::min<InlineLayoutUnit>(adjustedLineMarginBoxRect.right(), lineConstraints.right->x)));
+
+    auto adjustedLineRect = InlineRect { adjustedLineMarginBoxRect.top(), adjustedLineMarginBoxRect.left() + m_lineMarginStart, adjustedLineMarginBoxRect.width() - m_lineMarginStart, adjustedLineMarginBoxRect.height() };
+    return { adjustedLineRect, lineConstraints.left || lineConstraints.right };
 }
 
 bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstraintApplies lineBoxConstraintApplies)

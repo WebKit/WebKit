@@ -2701,7 +2701,7 @@ void WebViewImpl::selectionDidChange()
         m_softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if HAVE(TOUCH_BAR)
     updateTouchBar();
-    if (!m_page->editorState().isMissingPostLayoutData)
+    if (!m_page->editorState().isMissingPostLayoutData())
         requestCandidatesForSelectionIfNeeded();
 #endif
 
@@ -3156,10 +3156,10 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     if (!editorState.isContentEditable)
         return;
 
-    if (editorState.isMissingPostLayoutData)
+    if (editorState.isMissingPostLayoutData())
         return;
 
-    auto& postLayoutData = editorState.postLayoutData();
+    auto& postLayoutData = *editorState.postLayoutData;
     m_lastStringForCandidateRequest = postLayoutData.stringForCandidateRequest;
 
     NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
@@ -3188,10 +3188,10 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
-    if (editorState.isMissingPostLayoutData)
+    if (editorState.isMissingPostLayoutData())
         return;
 
-    auto& postLayoutData = editorState.postLayoutData();
+    auto& postLayoutData = *editorState.postLayoutData;
     if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
         return;
 
@@ -3237,10 +3237,10 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
-    if (editorState.isMissingPostLayoutData)
+    if (editorState.isMissingPostLayoutData())
         return;
 
-    auto& postLayoutData = editorState.postLayoutData();
+    auto& postLayoutData = *editorState.postLayoutData;
     if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
         return;
 
@@ -5639,13 +5639,13 @@ void WebViewImpl::updateTextTouchBar()
     // the text when changing selection throughout the document.
     if (isRichlyEditableForTouchBar()) {
         const EditorState& editorState = m_page->editorState();
-        if (!editorState.isMissingPostLayoutData) {
-            [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeBold)];
-            [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeItalics)];
-            [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeUnderline)];
-            [m_textTouchBarItemController setTextColor:cocoaColor(editorState.postLayoutData().textColor).get()];
-            [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
-            [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
+        if (!editorState.isMissingPostLayoutData()) {
+            [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeBold)];
+            [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeItalics)];
+            [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeUnderline)];
+            [m_textTouchBarItemController setTextColor:cocoaColor(editorState.postLayoutData->textColor).get()];
+            [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData->enclosingListType];
+            [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData->textAlignment)];
         }
         BOOL isShowingCandidateListItem = [textTouchBar.defaultItemIdentifiers containsObject:NSTouchBarItemIdentifierCandidateList] && [NSSpellChecker isAutomaticTextReplacementEnabled];
         [m_textTouchBarItemController setUsesNarrowTextStyleItem:isShowingCombinedTextFormatItem && isShowingCandidateListItem];

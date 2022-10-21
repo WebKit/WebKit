@@ -147,8 +147,12 @@ void PageDebugger::reportException(JSGlobalObject* state, JSC::Exception* except
 void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 {
     for (auto& page : pageGroup.pages()) {
-        for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext())
-            setJavaScriptPaused(*frame, paused);
+        for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            if (!localFrame)
+                continue;
+            setJavaScriptPaused(*localFrame, paused);
+        }
 
         if (auto* frontendClient = page.inspectorController().inspectorFrontendClient()) {
             if (paused)

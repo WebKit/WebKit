@@ -914,7 +914,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
     }
 
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationContext::WindowPostMessage);
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 
@@ -1562,8 +1562,11 @@ bool DOMWindow::consumeTransientActivation()
     if (!hasTransientActivation())
         return false;
 
-    for (RefPtr frame = this->frame() ? &this->frame()->tree().top() : nullptr; frame; frame = frame->tree().traverseNext()) {
-        auto* window = frame->window();
+    for (RefPtr<AbstractFrame> frame = this->frame() ? &this->frame()->tree().top() : nullptr; frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        auto* window = localFrame->window();
         if (!window || window->lastActivationTimestamp() != MonotonicTime::infinity())
             window->setLastActivationTimestamp(-MonotonicTime::infinity());
     }
@@ -1579,7 +1582,10 @@ void DOMWindow::notifyActivated(MonotonicTime activationTime)
         return;
 
     for (RefPtr ancestor = frame() ? frame()->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
-        if (auto* window = ancestor->window())
+        RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor.get());
+        if (!localAncestor)
+            continue;
+        if (auto* window = localAncestor->window())
             window->setLastActivationTimestamp(activationTime);
     }
 
@@ -1587,9 +1593,12 @@ void DOMWindow::notifyActivated(MonotonicTime activationTime)
     if (!securityOrigin)
         return;
 
-    RefPtr descendant = frame();
+    RefPtr<AbstractFrame> descendant = frame();
     while ((descendant = descendant->tree().traverseNext(frame()))) {
-        auto* descendantWindow = descendant->window();
+        auto* localDescendant = dynamicDowncast<LocalFrame>(descendant.get());
+        if (!localDescendant)
+            continue;
+        auto* descendantWindow = localDescendant->window();
         if (!descendantWindow)
             continue;
 
@@ -2651,10 +2660,10 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
     // In those cases, we schedule a location change right now and return early.
     RefPtr<Frame> targetFrame;
     if (isTopTargetFrameName(frameName))
-        targetFrame = &frame->tree().top();
+        targetFrame = dynamicDowncast<LocalFrame>(&frame->tree().top());
     else if (isParentTargetFrameName(frameName)) {
         if (RefPtr parent = frame->tree().parent())
-            targetFrame = parent;
+            targetFrame = dynamicDowncast<LocalFrame>(parent.get());
         else
             targetFrame = frame;
     }

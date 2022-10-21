@@ -29,21 +29,25 @@ from pathlib import Path
 
 
 def main():
-    directory = sys.argv[1]
-    directoryPath = Path(directory).resolve()
+     for directory in sys.argv[1:]:
+        print(f'Considering directory {directory} for deletion')
+        directoryPath = Path(directory).resolve()
 
-    if not directoryPath.exists():
-        print(directory + "does not exist")
-        return 1
+        if not directoryPath.exists():
+            print(f'{directory} does not exist')
+            return 1
 
-    if not directoryPath.is_dir():
-        print(directory + "is not a directory")
-        return 1
+        if not directoryPath.is_dir():
+            print(f'{directory} is not a directory')
+            return 1
 
-    tenGigabytes = 1024 * 1024 * 1024 * 10
-    if directoryPath.stat().st_size >= tenGigabytes:
-        os.remove(directory)
-        print("Deleted " + directory)
+        tenGigabytes = 1024 * 1024 * 1024 * 10
+        directorySize = sum(file.stat().st_size for file in directoryPath.rglob('*'))
+        if directorySize >= tenGigabytes:
+            os.remove(directory)
+            print(f'Deleted {directory}')
+        else:
+            print(f'{directory} is {directorySize}. Doing nothing') 
 
 
 if __name__ == '__main__':

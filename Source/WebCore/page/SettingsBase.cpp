@@ -181,9 +181,12 @@ void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
     if (!m_page)
         return;
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->adjustMinimumDOMTimerInterval(oldTimerInterval);
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (localFrame->document())
+            localFrame->document()->adjustMinimumDOMTimerInterval(oldTimerInterval);
     }
 }
 
@@ -305,10 +308,13 @@ void SettingsBase::setNeedsRelayoutAllFrames()
     if (!m_page)
         return;
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->ownerRenderer())
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
             continue;
-        frame->ownerRenderer()->setNeedsLayoutAndPrefWidthsRecalc();
+        if (!localFrame->ownerRenderer())
+            continue;
+        localFrame->ownerRenderer()->setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
 
@@ -341,11 +347,14 @@ void SettingsBase::imageLoadingSettingsTimerFired()
     if (!m_page)
         return;
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->document())
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
             continue;
-        frame->document()->cachedResourceLoader().setImagesEnabled(m_page->settings().areImagesEnabled());
-        frame->document()->cachedResourceLoader().setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
+        if (!localFrame->document())
+            continue;
+        localFrame->document()->cachedResourceLoader().setImagesEnabled(m_page->settings().areImagesEnabled());
+        localFrame->document()->cachedResourceLoader().setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
     }
 }
 
@@ -409,8 +418,11 @@ void SettingsBase::layerBasedSVGEngineEnabledChanged()
     if (!m_page)
         return;
 
-    for (auto* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* document = frame->document();
+    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* document = localFrame->document();
         if (!document)
             continue;
 

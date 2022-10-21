@@ -189,9 +189,9 @@ struct WebPageCreationParameters {
     WebCore::Color accentColor;
 #endif
 #if USE(WPE_RENDERER)
-    IPC::Attachment hostFileDescriptor;
+    UnixFileDescriptor hostFileDescriptor;
 #endif
-#if PLATFORM(WIN)
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     uint64_t nativeWindowHandle;
 #endif
 #if USE(GRAPHICS_LAYER_WC)
@@ -221,7 +221,7 @@ struct WebPageCreationParameters {
     UserContentControllerParameters userContentControllerParameters;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    WebExtensionControllerParameters webExtensionControllerParameters;
+    std::optional<WebExtensionControllerParameters> webExtensionControllerParameters;
 #endif
 
     std::optional<WebCore::Color> backgroundColor;

@@ -9,8 +9,8 @@ PASS Decode a non key frame first fails
 PASS Verify reset() suppresses outputs
 PASS Test unconfigured VideoDecoder operations
 PASS Test closed VideoDecoder operations
-FAIL Decode empty frame promise_rejects_dom: function "function () { throw e }" threw object "EncodingError: VPx decoding failed with error 1" that is not a DOMException AbortError: property "code" is equal to 0, expected 20
-FAIL Decode corrupt frame promise_rejects_dom: function "function () { throw e }" threw object "EncodingError: VPx decoding failed with error -1" that is not a DOMException AbortError: property "code" is equal to 0, expected 20
+PASS Decode empty frame
+PASS Decode corrupt frame
 PASS Close while decoding corrupt frame
 PASS Test decoding after flush
 PASS Test decoding a with negative timestamp

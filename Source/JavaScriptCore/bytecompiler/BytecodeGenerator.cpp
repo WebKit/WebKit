@@ -4404,12 +4404,14 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     RefPtr<RegisterID> iterable = newTemporary();
     emitNode(iterable.get(), subjectNode);
 
-    RefPtr<RegisterID> iteratorSymbol = emitGetById(newTemporary(), iterable.get(), propertyNames().iteratorSymbol);
     RefPtr<RegisterID> nextOrIndex = newTemporary();
     RefPtr<RegisterID> iterator = newTemporary();
-    CallArguments args(*this, nullptr, 0);
-    move(args.thisRegister(), iterable.get());
-    emitIteratorOpen(iterator.get(), nextOrIndex.get(), iteratorSymbol.get(), args, node);
+    {
+        RefPtr<RegisterID> iteratorSymbol = emitGetById(newTemporary(), iterable.get(), propertyNames().iteratorSymbol);
+        CallArguments args(*this, nullptr, 0);
+        move(args.thisRegister(), iterable.get());
+        emitIteratorOpen(iterator.get(), nextOrIndex.get(), iteratorSymbol.get(), args, node);
+    }
 
     Ref<Label> loopDone = newLabel();
     Ref<Label> tryStartLabel = newLabel();

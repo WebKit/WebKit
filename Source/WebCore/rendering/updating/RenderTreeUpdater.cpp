@@ -31,13 +31,11 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Element.h"
-#include "FullscreenManager.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
-#include "RenderFullScreen.h"
 #include "RenderInline.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -313,7 +311,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
-    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.isInTopLayer() || element.displayContentsChanged());
+    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.displayContentsChanged());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -389,14 +387,6 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     element.setRenderer(newRenderer.get());
 
     newRenderer->initializeStyle();
-
-#if ENABLE(FULLSCREEN_API)
-    if (m_document.fullscreenManager().isFullscreen() && m_document.fullscreenManager().currentFullscreenElement() == &element) {
-        newRenderer = RenderFullScreen::wrapNewRenderer(m_builder, WTFMove(newRenderer), insertionPosition.parent(), m_document);
-        if (!newRenderer)
-            return;
-    }
-#endif
 
     m_builder.attach(insertionPosition.parent(), WTFMove(newRenderer), insertionPosition.nextSibling());
 

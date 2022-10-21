@@ -140,7 +140,7 @@ static UBool uTextLatin1Access(UText* uText, int64_t index, UBool forward)
     }
     uText->chunkLength = static_cast<int32_t>(uText->chunkNativeLimit - uText->chunkNativeStart);
 
-    StringImpl::copyCharacters(const_cast<UChar*>(uText->chunkContents), static_cast<const LChar*>(uText->context) + uText->chunkNativeStart, static_cast<unsigned>(uText->chunkLength));
+    StringImpl::copyCharacters(const_cast<UChar*>(uText->chunkContents), static_cast<const LChar*>(uText->context) + uText->chunkNativeStart, uText->chunkLength);
 
     uText->nativeIndexingLimit = uText->chunkLength;
 
@@ -178,7 +178,7 @@ static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UC
         if (trimmedLength > destCapacity)
             trimmedLength = destCapacity;
 
-        StringImpl::copyCharacters(dest, static_cast<const LChar*>(uText->context) + start, static_cast<unsigned>(trimmedLength));
+        StringImpl::copyCharacters(dest, static_cast<const LChar*>(uText->context) + start, trimmedLength);
     }
 
     if (length < destCapacity) {
@@ -291,7 +291,7 @@ static void textLatin1ContextAwareMoveInPrimaryContext(UText* text, int64_t nati
     text->chunkLength = length < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(length) : 0;
     text->nativeIndexingLimit = text->chunkLength;
     text->chunkOffset = forward ? 0 : text->chunkLength;
-    StringImpl::copyCharacters(const_cast<UChar*>(text->chunkContents), static_cast<const LChar*>(text->p) + (text->chunkNativeStart - text->b), static_cast<unsigned>(text->chunkLength));
+    StringImpl::copyCharacters(const_cast<UChar*>(text->chunkContents), static_cast<const LChar*>(text->p) + (text->chunkNativeStart - text->b), text->chunkLength);
 }
 
 static void textLatin1ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)

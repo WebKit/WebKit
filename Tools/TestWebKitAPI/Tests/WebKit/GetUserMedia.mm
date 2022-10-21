@@ -848,6 +848,17 @@ function doTest()
     });
 }
 
+function hasSleepDisabler()
+{
+    return window.internals ? internals.hasSleepDisabler() : false;
+}
+
+function stop()
+{
+    if (localVideo.srcObject)
+        localVideo.srcObject.getVideoTracks()[0].stop();
+    window.webkit.messageHandlers.gum.postMessage("PASS");
+}
 </script>
 </body></html>
 )DOCDOCDOC"_s;
@@ -886,6 +897,9 @@ TEST(WebKit, AutoplayOnVisibilityChange)
     [webView stringByEvaluatingJavaScript:@"capture()"];
     TestWebKitAPI::Util::run(&done);
 
+    bool hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_TRUE(hasSleepDisabler);
+
     done = false;
     [hostWindow deminiaturize:hostWindow];
     TestWebKitAPI::Util::run(&done);
@@ -893,6 +907,13 @@ TEST(WebKit, AutoplayOnVisibilityChange)
     done = false;
     [webView stringByEvaluatingJavaScript:@"doTest()"];
     TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"stop()"];
+    TestWebKitAPI::Util::run(&done);
+
+    hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_FALSE(hasSleepDisabler);
 }
 
 static constexpr auto getUserMediaFocusText = R"DOCDOCDOC(

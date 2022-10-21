@@ -28,6 +28,8 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "GenericMediaQueryTypes.h"
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 namespace MQ {
@@ -44,6 +46,8 @@ protected:
     std::optional<Feature> consumeRangeFeature(CSSParserTokenRange&);
     RefPtr<CSSValue> consumeValue(CSSParserTokenRange&);
 
+    bool validateFeatureAgainstSchema(Feature&, const FeatureSchema&);
+
     const CSSParserContext& m_context;
 };
 
@@ -56,8 +60,13 @@ public:
 
     std::optional<Condition> consumeCondition(CSSParserTokenRange&);
     std::optional<QueryInParens> consumeQueryInParens(CSSParserTokenRange&);
+    std::optional<Feature> consumeFeature(CSSParserTokenRange&);
+
+    const FeatureSchema* schemaForFeatureName(const AtomString&) const;
 
 private:
+    bool validateFeature(Feature&);
+
     ConcreteParser& concreteParser() { return static_cast<ConcreteParser&>(*this); }
 };
 
@@ -139,6 +148,44 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
     }
 
     return { };
+}
+
+template<typename ConcreteParser>
+std::optional<Feature> GenericMediaQueryParser<ConcreteParser>::consumeFeature(CSSParserTokenRange& range)
+{
+    auto feature = GenericMediaQueryParserBase::consumeFeature(range);
+    if (!feature)
+        return { };
+
+    if (!validateFeature(*feature) && ConcreteParser::rejectInvalidFeatures())
+        return { };
+
+    return feature;
+}
+
+template<typename ConcreteParser>
+bool GenericMediaQueryParser<ConcreteParser>::validateFeature(Feature& feature)
+{
+    auto* schema = schemaForFeatureName(feature.name);
+    if (!schema)
+        return false;
+    return validateFeatureAgainstSchema(feature, *schema);
+}
+
+template<typename ConcreteParser>
+const FeatureSchema* GenericMediaQueryParser<ConcreteParser>::schemaForFeatureName(const AtomString& name) const
+{
+    using SchemaMap = MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, const FeatureSchema*>;
+
+    static NeverDestroyed<SchemaMap> schemas = [&] {
+        auto entries = ConcreteParser::featureSchemas();
+        SchemaMap map;
+        for (auto& entry : entries)
+            map.add(entry->name, entry);
+        return map;
+    }();
+
+    return schemas->get(name);
 }
 
 }

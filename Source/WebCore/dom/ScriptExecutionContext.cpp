@@ -40,6 +40,7 @@
 #include "FontLoadRequest.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
@@ -344,6 +345,7 @@ void ScriptExecutionContext::stopActiveDOMObjects()
         activeDOMObject.stop();
         return ShouldContinue::Yes;
     });
+    m_deferredPromises.clear();
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& activeDOMObject)
@@ -783,6 +785,16 @@ ScriptExecutionContext::NotificationCallbackIdentifier ScriptExecutionContext::a
 CompletionHandler<void()> ScriptExecutionContext::takeNotificationCallback(NotificationCallbackIdentifier identifier)
 {
     return m_notificationCallbacks.take(identifier);
+}
+
+void ScriptExecutionContext::addDeferredPromise(Ref<DeferredPromise>&& promise)
+{
+    m_deferredPromises.add(WTFMove(promise));
+}
+
+RefPtr<DeferredPromise> ScriptExecutionContext::takeDeferredPromise(DeferredPromise* promise)
+{
+    return m_deferredPromises.take(promise);
 }
 
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)

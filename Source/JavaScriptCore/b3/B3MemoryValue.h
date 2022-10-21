@@ -81,7 +81,7 @@ public:
     
     Width accessWidth() const;
 
-    bool isCanonicalWidth() const { return B3::isCanonicalWidth(accessWidth()); }
+    bool isCanonicalWidth() const { return JSC::isCanonicalWidth(accessWidth()); }
 
     B3_SPECIALIZE_VALUE_FOR_NON_VARARGS_CHILDREN
 

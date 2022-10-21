@@ -725,7 +725,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 #if USE(UICONTEXTMENU)
     UIAction *optionAction = [self actionForOptionIndex:rowIndex];
     if (optionAction) {
-        [optionAction _performActionWithSender:nil];
+        [optionAction performWithSender:nil target:nil];
         [_view accessoryDone];
     }
 #endif

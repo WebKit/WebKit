@@ -39,6 +39,8 @@ typedef struct __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 
+class FloatRect;
+class GraphicsContext;
 class NativeImage;
 class ProcessIdentity;
 #if USE(AVFOUNDATION) && PLATFORM(COCOA)
@@ -99,6 +101,8 @@ public:
     WEBCORE_EXPORT virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
     void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
+
+    void paintInContext(GraphicsContext&, const FloatRect&, bool shouldDiscardAlpha);
 
 protected:
     WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation);

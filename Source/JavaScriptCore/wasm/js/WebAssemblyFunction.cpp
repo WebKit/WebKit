@@ -139,13 +139,13 @@ bool WebAssemblyFunction::usesTagRegisters() const
 RegisterSet WebAssemblyFunction::calleeSaves() const
 {
     // Pessimistically save callee saves in BoundsChecking mode since the LLInt always bounds checks
-    RegisterSet result = Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
+    RegisterSetBuilder result = Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
     if (usesTagRegisters()) {
-        RegisterSet tagCalleeSaves = RegisterSet::calleeSaveRegisters();
-        tagCalleeSaves.filter(RegisterSet::runtimeTagRegisters());
+        RegisterSetBuilder tagCalleeSaves = RegisterSetBuilder::calleeSaveRegisters();
+        tagCalleeSaves.filter(RegisterSetBuilder::runtimeTagRegisters());
         result.merge(tagCalleeSaves);
     }
-    return result;
+    return result.buildAndValidate();
 }
 
 RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const
@@ -246,8 +246,8 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     FPRReg scratchFPR = Wasm::wasmCallingConvention().fprArgs[0];
     for (unsigned i = signature.argumentCount(); i--;) {
         CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, 0);
-        CCallHelpers::Address jsParam(GPRInfo::callFrameRegister, jsCallInfo.params[i].offsetFromFP());
-        bool isStack = wasmCallInfo.params[i].isStackArgument();
+        CCallHelpers::Address jsParam(GPRInfo::callFrameRegister, jsCallInfo.params[i].location.offsetFromFP());
+        bool isStack = wasmCallInfo.params[i].location.isStackArgument();
 
         auto type = signature.argumentType(i);
         switch (type.kind) {
@@ -255,15 +255,15 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             jit.loadValue(jsParam, scratchJSR);
             slowPath.append(jit.branchIfNotInt32(scratchJSR));
             if (isStack) {
-                CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()) };
+                CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
                 jit.store32(scratchJSR.payloadGPR(), addr.withOffset(PayloadOffset));
 #if USE(JSVALUE32_64)
                 jit.store32(CCallHelpers::TrustedImm32(0), addr.withOffset(TagOffset));
 #endif
             } else {
-                jit.zeroExtend32ToWord(scratchJSR.payloadGPR(), wasmCallInfo.params[i].jsr().payloadGPR());
+                jit.zeroExtend32ToWord(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR());
 #if USE(JSVALUE32_64)
-                jit.move(CCallHelpers::TrustedImm32(0), wasmCallInfo.params[i].jsr().tagGPR());
+                jit.move(CCallHelpers::TrustedImm32(0), wasmCallInfo.params[i].location.jsr().tagGPR());
 #endif
             }
             break;
@@ -305,9 +305,9 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 jit.loadValue(jsParam, scratchJSR);
                 if (!type.isNullable())
                     slowPath.append(jit.branchIfNull(scratchJSR));
-                jit.storeValue(scratchJSR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));
+                jit.storeValue(scratchJSR, calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()));
             } else {
-                auto externJSR = wasmCallInfo.params[i].jsr();
+                auto externJSR = wasmCallInfo.params[i].location.jsr();
                 jit.loadValue(jsParam, externJSR);
                 if (!type.isNullable())
                     slowPath.append(jit.branchIfNull(externJSR));
@@ -317,7 +317,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         case Wasm::TypeKind::F32:
         case Wasm::TypeKind::F64: {
             if (!isStack)
-                scratchFPR = wasmCallInfo.params[i].fpr();
+                scratchFPR = wasmCallInfo.params[i].location.fpr();
 
             jit.loadValue(jsParam, scratchJSR);
 #if USE(JSVALUE64)
@@ -344,7 +344,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             }
             done.link(&jit);
             if (isStack) {
-                CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()) };
+                CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
                 if (signature.argumentType(i).isF32()) {
                     jit.storeFloat(scratchFPR, addr.withOffset(PayloadOffset));
 #if USE(JSVALUE32_64)
@@ -417,7 +417,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     marshallJSResult(jit, typeDefinition, wasmCallInfo, savedResultRegisters);
 
-    ASSERT(!RegisterSet::runtimeTagRegisters().contains(GPRInfo::nonPreservedNonReturnGPR));
+    ASSERT(!RegisterSetBuilder::runtimeTagRegisters().contains(GPRInfo::nonPreservedNonReturnGPR, IgnoreVectors));
     jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, previousInstanceOffset), GPRInfo::nonPreservedNonReturnGPR);
     if (Wasm::Context::useFastTLS())
         jit.storeWasmContextInstance(GPRInfo::nonPreservedNonReturnGPR);

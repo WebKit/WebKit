@@ -93,7 +93,7 @@ imported/w3c/web-platform-tests/speech-api [ Pass ]
 http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
-svg/filters/feDisplacementMap-filterUnits.svg [ Pass ]
+media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -2111,7 +2111,7 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ Pass ImageOnlyFailure ]
 
 # rdar://80340581 ([ Monterey ] http/tests/preload/onload_event.html is a flaky failure)
-[ Monterey ] http/tests/preload/onload_event.html [ Pass Failure ]
+http/tests/preload/onload_event.html [ Pass Failure ]
 
 # rdar://80347712 ([ Monterey ] media/video-src-blob-replay.html is a flaky timeout)
 [ Monterey ] media/video-src-blob-replay.html [ Timeout ]
@@ -2307,6 +2307,9 @@ webkit.org/b/237166 [ BigSur+ ] webgl/pending/conformance/textures/misc/tex-imag
 # macOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
 
+# Test failures due to framework bugs that occur only with --accelerated-drawing flag turned on
+webkit.org/b/236904 svg/gradients/spreadMethodClose2.svg [ Pass ImageOnlyFailure ]
+
 # fractional pixel diff between modern and legacy line layout.
 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
 
@@ -2369,8 +2372,6 @@ webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/d
 
 webkit.org/b/245092 webaudio/offlineaudiocontext-gc.html [ Pass Failure ]
 
-webkit.org/b/245733 [ Monterey ] fast/text/hyphenate-avoid-orphaned-word.html [ Failure ]
-
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
 
 # webkit.org/b/246170 4X http/wpt/webauthn/public-key-credential(Layout tests) are constant crashes
@@ -2381,8 +2382,8 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 
 webkit.org/b/246427 [ Debug ] imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
 
-webkit.org/b/246467 [ Debug ] compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Pass Failure ]
-
 # webkit.org/b/243681  Newly imported tests that fail on BigSur+
-[ BigSur+ ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
+[ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
+[ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Pass Failure ]
+[ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
+[ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Pass Failure ]

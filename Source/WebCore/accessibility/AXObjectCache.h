@@ -186,6 +186,8 @@ public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
+    void onSelectedChanged(Node*);
+    void onTitleChange(Document&);
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
@@ -309,6 +311,7 @@ public:
         AXRowIndexChanged,
         AXRowSpanChanged,
         AXSelectedChildrenChanged,
+        AXSelectedCellChanged,
         AXSelectedStateChanged,
         AXSelectedTextChanged,
         AXSetSizeChanged,
@@ -498,7 +501,6 @@ private:
     bool shouldProcessAttributeChange(Element*, const QualifiedName&);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
-    void selectedStateChanged(Node*);
 
     void handleActiveDescendantChanged(Element&);
 
@@ -511,8 +513,8 @@ private:
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
     void findModalNodes();
-    void updateCurrentModalNode();
-    Element* updateCurrentModalNodeInternal();
+    enum class WillRecomputeFocus : bool { No, Yes };
+    void updateCurrentModalNode(WillRecomputeFocus = WillRecomputeFocus::No);
     bool isNodeVisible(Node*) const;
     bool modalElementHasAccessibleContent(Element&);
 
@@ -652,6 +654,7 @@ inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
 inline void AXObjectCache::onSelectedChanged(Node*) { }
+inline void AXObjectCache::onTitleChange(Document&) { }
 inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node*, Node*) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }

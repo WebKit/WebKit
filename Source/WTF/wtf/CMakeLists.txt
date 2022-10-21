@@ -317,6 +317,7 @@ set(WTF_PUBLIC_HEADERS
     UnionFind.h
     UniqueArray.h
     UniqueRef.h
+    UniqueRefVector.h
     UnsafePointer.h
     VMTags.h
     ValueCheck.h

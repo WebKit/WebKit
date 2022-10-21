@@ -132,8 +132,11 @@ bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) co
 {
     // We allow one level of self-reference because some websites depend on that, but we don't allow more than one.
     bool foundOneSelfReference = false;
-    for (auto* frame = document().frame(); frame; frame = frame->tree().parent()) {
-        if (equalIgnoringFragmentIdentifier(frame->document()->url(), completeURL)) {
+    for (AbstractFrame* frame = document().frame(); frame; frame = frame->tree().parent()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (equalIgnoringFragmentIdentifier(localFrame->document()->url(), completeURL)) {
             if (foundOneSelfReference)
                 return true;
             foundOneSelfReference = true;

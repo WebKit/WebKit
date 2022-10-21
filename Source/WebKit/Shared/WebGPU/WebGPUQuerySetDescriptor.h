@@ -38,33 +38,6 @@ namespace WebKit::WebGPU {
 struct QuerySetDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::QueryType type { PAL::WebGPU::QueryType::Occlusion };
     PAL::WebGPU::Size32 count { 0 };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << type;
-        encoder << count;
-    }
-
-    template<class Decoder> static std::optional<QuerySetDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::QueryType> type;
-        decoder >> type;
-        if (!type)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::Size32> count;
-        decoder >> count;
-        if (!count)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*type), WTFMove(*count) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

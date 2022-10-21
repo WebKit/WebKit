@@ -2681,7 +2681,7 @@ static TestWebKitAPI::HTTPServer simplePDFTestServer()
     } };
 }
 
-TEST(WKDownload, CaptivePortalPDF)
+TEST(WKDownload, LockdownModePDF)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
@@ -2729,7 +2729,7 @@ static TestWebKitAPI::HTTPServer simpleUSDZTestServer()
     } };
 }
 
-TEST(WKDownload, CaptivePortalUSDZ)
+TEST(WKDownload, LockdownModeUSDZ)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;

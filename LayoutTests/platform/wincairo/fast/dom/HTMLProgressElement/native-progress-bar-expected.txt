@@ -7,10 +7,10 @@ layer at (0,0) size 800x108
         RenderText {#text} at (0,0) size 336x19
           text run at (0,0) width 336: "Test passes if following bars are filled 30% with a color."
       RenderBlock {P} at (0,36) size 784x40
-        RenderProgress {PROGRESS} at (0,2) size 160x16
+        RenderProgress {PROGRESS} at (0,12) size 160x6
         RenderBR {BR} at (160,0) size 0x19
         RenderBlock {PROGRESS} at (0,22) size 160x16
-          RenderProgress {DIV} at (0,0) size 160x16
+          RenderProgress {DIV} at (0,0) size 160x6
             RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#808080]
               RenderBlock {DIV} at (0,0) size 48x16 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

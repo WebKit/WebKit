@@ -74,6 +74,6 @@ WidgetT* createAndAppendChild(toolkitten::Widget* parent, const toolkitten::IntS
     WidgetT* ptr = widget.get();
     ptr->setSize(size);
     ptr->setPosition(position);
-    parent->appendChild(move(widget));
+    parent->appendChild(std::move(widget));
     return ptr;
 }

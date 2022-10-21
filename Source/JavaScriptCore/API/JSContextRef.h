@@ -143,18 +143,33 @@ JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx) JSC_API
 @abstract Gets a copy of the name of a context.
 @param ctx The JSGlobalContext whose name you want to get.
 @result The name for ctx.
-@discussion A JSGlobalContext's name is exposed for remote debugging to make it
-easier to identify the context you would like to attach to.
+@discussion A JSGlobalContext's name is exposed when inspecting the context to make it easier to identify the context you would like to inspect.
 */
 JS_EXPORT JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*!
 @function
-@abstract Sets the remote debugging name for a context.
+@abstract Sets the name exposed when inspecting a context.
 @param ctx The JSGlobalContext that you want to name.
-@param name The remote debugging name to set on ctx.
+@param name The name to set on the context.
 */
 JS_EXPORT void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
+
+/*!
+@function
+@abstract Gets whether the context is inspectable in Web Inspector.
+@param ctx The JSGlobalContext that you want to change the inspectability of.
+@result Whether the context is inspectable in Web Inspector.
+*/
+JS_EXPORT bool JSGlobalContextIsInspectable(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@function
+@abstract Sets whether the context is inspectable in Web Inspector. Default value is NO.
+@param ctx The JSGlobalContext that you want to change the inspectability of.
+@param inspectable YES to allow Web Inspector to connect to the context, otherwise NO.
+*/
+JS_EXPORT void JSGlobalContextSetInspectable(JSGlobalContextRef ctx, bool inspectable) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 #ifdef __cplusplus
 }

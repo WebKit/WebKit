@@ -26,7 +26,10 @@
 #pragma once
 
 #include "BytecodeStructs.h"
+#include "ClonedArguments.h"
 #include "CommonSlowPaths.h"
+#include "DirectArguments.h"
+#include "ScopedArguments.h"
 
 namespace JSC {
 
@@ -146,6 +149,48 @@ inline void tryCacheGetFromScopeGlobal(
             }
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
         }
+    }
+}
+
+ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCell* iterable)
+{
+    if (isJSArray(iterable)) {
+        JSArray* array = jsCast<JSArray*>(iterable);
+        if (array->isIteratorProtocolFastAndNonObservable()) {
+            // JSImmutableButterfly::createFromArray does not consult the prototype chain,
+            // so we must be sure that not consulting the prototype chain would
+            // produce the same value during iteration.
+            return JSImmutableButterfly::createFromArray(globalObject, globalObject->vm(), array);
+        }
+        return nullptr;
+    }
+
+    switch (iterable->type()) {
+    case StringType: {
+        if (LIKELY(globalObject->isStringPrototypeIteratorProtocolFastAndNonObservable()))
+            return JSImmutableButterfly::createFromString(globalObject, jsCast<JSString*>(iterable));
+        return nullptr;
+    }
+    case ClonedArgumentsType: {
+        auto* arguments = jsCast<ClonedArguments*>(iterable);
+        if (LIKELY(arguments->isIteratorProtocolFastAndNonObservable()))
+            return JSImmutableButterfly::createFromClonedArguments(globalObject, arguments);
+        return nullptr;
+    }
+    case DirectArgumentsType: {
+        auto* arguments = jsCast<DirectArguments*>(iterable);
+        if (LIKELY(arguments->isIteratorProtocolFastAndNonObservable()))
+            return JSImmutableButterfly::createFromDirectArguments(globalObject, arguments);
+        return nullptr;
+    }
+    case ScopedArgumentsType: {
+        auto* arguments = jsCast<ScopedArguments*>(iterable);
+        if (LIKELY(arguments->isIteratorProtocolFastAndNonObservable()))
+            return JSImmutableButterfly::createFromScopedArguments(globalObject, arguments);
+        return nullptr;
+    }
+    default:
+        return nullptr;
     }
 }
 

@@ -30,6 +30,10 @@
 #include "MarkedBlock.h"
 #include "StructureID.h"
 
+#if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT)
+#include <wtf/NeverDestroyed.h>
+#endif
+
 #include <wtf/OSAllocator.h>
 
 #if OS(UNIX) && ASSERT_ENABLED

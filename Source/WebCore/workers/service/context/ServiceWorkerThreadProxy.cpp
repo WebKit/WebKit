@@ -83,7 +83,7 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, Servi
     allServiceWorkerThreadProxies().add(this);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_remoteDebuggable->setRemoteDebuggingAllowed(true);
+    m_remoteDebuggable->setInspectable(true);
     m_remoteDebuggable->init();
 #endif
 }

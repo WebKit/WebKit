@@ -805,12 +805,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!value)
         return { };
 
-    ASSERT([value isKindOfClass:[NSURL class]]);
-    if (![value isKindOfClass:[NSURL class]])
+    RetainPtr url = dynamic_objc_cast<NSURL>(value);
+    if (!url) {
+        if (auto *urlData = dynamic_objc_cast<NSData>(value))
+            url = adoptNS([[NSURL alloc] initWithDataRepresentation:urlData relativeToURL:nil]);
+    }
+
+    if (!url)
         return { };
 
-    NSURL *url = (NSURL *)value;
-    if (!allowReadingURLAtIndex(url, index))
+    if (!allowReadingURLAtIndex(url.get(), index))
         return { };
 
 #if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && NSURL_SUPPORTS_TITLE
@@ -819,7 +823,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UNUSED_PARAM(title);
 #endif
 
-    return url;
+    return url.get();
 }
 
 void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& types)

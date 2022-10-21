@@ -53,6 +53,9 @@ public:
     bool failedToLoadPosterImage() const;
 
     void updateFromElement() final;
+    bool hasVideoMetadata() const;
+    bool hasPosterFrameSize() const;
+    bool hasDefaultObjectSize() const;
 
 private:
     void willBeDestroyed() override;
@@ -77,13 +80,6 @@ private:
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const final;
     LayoutUnit minimumReplacedHeight() const final;
-
-#if ENABLE(FULLSCREEN_API)
-    LayoutUnit offsetLeft() const final;
-    LayoutUnit offsetTop() const final;
-    LayoutUnit offsetWidth() const final;
-    LayoutUnit offsetHeight() const final;
-#endif
 
     void updatePlayer();
 

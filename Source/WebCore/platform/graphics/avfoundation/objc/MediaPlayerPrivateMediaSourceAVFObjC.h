@@ -239,7 +239,7 @@ private:
     void acceleratedRenderingStateChanged() override;
     void notifyActiveSourceBuffersChanged() override;
 
-    void playerContentBoxRectChanged(const LayoutRect&) final;
+    void setPresentationSize(const IntSize&) final;
 
     void updateDisplayLayerAndDecompressionSession();
 

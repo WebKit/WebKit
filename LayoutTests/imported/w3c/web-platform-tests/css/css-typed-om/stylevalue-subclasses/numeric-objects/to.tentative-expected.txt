@@ -11,7 +11,7 @@ PASS Converting a CSSMathMin to a single unit finds the min value
 PASS Converting a CSSMathMin to a single unit with different units throws a TypeError
 PASS Converting a CSSMathMax to a single unit finds the max value
 PASS Converting a CSSMathMax to a single unit with different units throws a TypeError
-FAIL Converting a CSSMathClamp to a single unit returns the clamped value Type error
+PASS Converting a CSSMathClamp to a single unit returns the clamped value
 PASS Converting a CSSMathClamp to a single unit with different units throws a TypeError
 PASS Converting a CSSMathNegate to a single unit negates its value
 PASS Converting a CSSMathInvert to a single unit inverts its value and units

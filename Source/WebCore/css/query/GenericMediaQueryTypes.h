@@ -25,6 +25,8 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "CSSValueKeywords.h"
+#include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore::MQ {
@@ -34,6 +36,7 @@ enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, Grea
 enum class Syntax : uint8_t { Boolean, Plain, Range };
 
 struct Condition;
+struct FeatureSchema;
 
 struct Comparison {
     ComparisonOperator op;
@@ -45,6 +48,8 @@ struct Feature {
     Syntax syntax;
     std::optional<Comparison> leftComparison;
     std::optional<Comparison> rightComparison;
+
+    const FeatureSchema* schema { nullptr };
 };
 
 struct GeneralEnclosed {
@@ -57,6 +62,24 @@ using QueryInParens = std::variant<Condition, Feature, GeneralEnclosed>;
 struct Condition {
     LogicalOperator logicalOperator { LogicalOperator::And };
     Vector<QueryInParens> queries;
+};
+
+struct FeatureSchema {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    enum class Type : uint8_t { Discrete, Range };
+    enum class ValueType : uint8_t {
+        Integer =       1 << 0,
+        Number =        1 << 1,
+        Length =        1 << 2,
+        Ratio =         1 << 3,
+        Resolution =    1 << 4,
+    };
+
+    AtomString name;
+    Type type;
+    OptionSet<ValueType> valueTypes;
+    Vector<CSSValueID> valueIdentifiers;
 };
 
 }

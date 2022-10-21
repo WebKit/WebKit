@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/NSTextAlternatives.h>
+#import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItem_Private.h>
@@ -731,6 +732,10 @@ typedef enum {
 - (void)setOperation:(UINavigationControllerOperation)operation;
 @optional
 - (UIWindow *)window;
+@end
+
+@interface UIActivityViewController ()
+@property (nonatomic) BOOL allowsCustomPresentationStyle;
 @end
 
 typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
@@ -1449,12 +1454,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 #if USE(UICONTEXTMENU)
 
-@interface UIAction (IPI)
-- (void)_performActionWithSender:(id)sender;
-@end
-
-#if HAVE(LINK_PREVIEW)
-
 @interface UIContextMenuConfiguration (IPI)
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
@@ -1472,8 +1471,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @interface UIContextMenuInteraction (IPI)
 @property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
 @end
-
-#endif // HAVE(LINK_PREVIEW)
 
 #endif // USE(UICONTEXTMENU)
 

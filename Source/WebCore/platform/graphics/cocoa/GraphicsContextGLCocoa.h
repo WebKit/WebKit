@@ -63,8 +63,15 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    void* attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
+    using IOSurfaceTextureAttachment = std::optional<std::tuple<void*, unsigned, unsigned>>;
+    IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
     void detachIOSurfaceFromSharedTexture(void* handle);
+#endif
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+    RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
+    void* createSyncWithSharedEvent(const RetainPtr<id>& sharedEvent, uint64_t signalValue);
+    bool destroySync(void* sync);
+    void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
 #endif
 
     // GraphicsContextGLANGLE overrides.

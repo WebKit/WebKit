@@ -33,7 +33,7 @@ namespace WebCore {
 template<typename T> struct Converter<IDLSerializedScriptValue<T>> : DefaultConverter<IDLSerializedScriptValue<T>> {
     static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return T::create(lexicalGlobalObject, value);
+        return T::convert(lexicalGlobalObject, value);
     }
 };
 

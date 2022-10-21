@@ -62,13 +62,15 @@ public:
     virtual ~LinkLoader();
 
     void loadLink(const LinkLoadParameters&, Document&);
-    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&);
+    enum class ShouldLog { No, Yes };
+    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
     static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
     static bool isSupportedType(CachedResource::Type, const String& mimeType, Document&);
 
     void triggerEvents(const CachedResource&);
+    void triggerError();
     void cancelLoad();
 
 private:

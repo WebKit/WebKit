@@ -30,6 +30,7 @@
 #include "pas_heap_inlines.h"
 #include "pas_allocation_result.h"
 #include "pas_local_allocator_inlines.h"
+#include "pas_malloc_stack_logging.h"
 #include "pas_primitive_heap_ref.h"
 #include "pas_segregated_heap_inlines.h"
 #include "pas_utils.h"
@@ -173,7 +174,7 @@ pas_try_allocate_common_impl_slow(
         
         pas_scavenger_notify_eligibility_if_needed();
         
-        return result;
+        return pas_msl_malloc_logging(size, result);
     }
     
     if (verbose)
@@ -195,7 +196,7 @@ pas_try_allocate_common_impl_slow(
     if (baseline_allocator_result.lock)
         pas_lock_unlock(baseline_allocator_result.lock);
 
-    return result;
+    return pas_msl_malloc_logging(size, result);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result

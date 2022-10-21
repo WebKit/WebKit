@@ -97,9 +97,9 @@ public:
     
     // This is the set of registers that Air is allowed to emit code to mutate. It's derived from
     // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
-    const RegisterSet& mutableRegs() const { return m_mutableRegs; }
+    RegisterSet mutableRegs() const { return m_mutableRegs.toRegisterSet().includeWholeRegisterWidth(); }
     
-    bool isPinned(Reg reg) const { return !mutableRegs().get(reg); }
+    bool isPinned(Reg reg) const { return !mutableRegs().contains(reg, IgnoreVectors); }
     void pinRegister(Reg);
     
     void setOptLevel(unsigned optLevel) { m_optLevel = optLevel; }
@@ -228,7 +228,7 @@ public:
     RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
     
     // This just tells you what the callee saves are.
-    RegisterSet calleeSaveRegisters() const { return m_calleeSaveRegisters; }
+    RegisterSetBuilder calleeSaveRegisters() const { return m_calleeSaveRegisters; }
 
     // Recomputes predecessors and deletes unreachable blocks.
     JS_EXPORT_PRIVATE void resetReachability();
@@ -352,8 +352,7 @@ public:
     Disassembler* disassembler() { return m_disassembler.get(); }
 
     RegisterSet mutableGPRs();
-    RegisterSet mutableFPRs();
-    RegisterSet pinnedRegisters() const { return m_pinnedRegs; }
+    ScalarRegisterSet pinnedRegisters() const { return m_pinnedRegs; }
     
     void emitDefaultPrologue(CCallHelpers&);
     void emitEpilogue(CCallHelpers&);
@@ -385,8 +384,8 @@ private:
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
     Vector<Reg> m_gpRegsInPriorityOrder;
     Vector<Reg> m_fpRegsInPriorityOrder;
-    RegisterSet m_mutableRegs;
-    RegisterSet m_pinnedRegs;
+    ScalarRegisterSet m_mutableRegs;
+    ScalarRegisterSet m_pinnedRegs;
     SparseCollection<StackSlot> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Special> m_specials;
@@ -402,7 +401,7 @@ private:
     bool m_preserveB3Origins { true };
     bool m_forceIRC { false };
     RegisterAtOffsetList m_uncorrectedCalleeSaveRegisterAtOffsetList;
-    RegisterSet m_calleeSaveRegisters;
+    RegisterSetBuilder m_calleeSaveRegisters;
     StackSlot* m_calleeSaveStackSlot { nullptr };
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
     Vector<MacroAssembler::Label> m_entrypointLabels; // This is empty until code generation.

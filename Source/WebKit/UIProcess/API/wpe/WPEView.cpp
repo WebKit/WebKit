@@ -377,10 +377,10 @@ void View::setInputMethodState(std::optional<InputMethodState>&& state)
 void View::selectionDidChange()
 {
     const auto& editorState = m_pageProxy->editorState();
-    if (!editorState.isMissingPostLayoutData) {
-        m_inputMethodFilter.notifyCursorRect(editorState.postLayoutData().caretRectAtStart);
-        m_inputMethodFilter.notifySurrounding(editorState.postLayoutData().surroundingContext, editorState.postLayoutData().surroundingContextCursorPosition,
-            editorState.postLayoutData().surroundingContextSelectionPosition);
+    if (!editorState.isMissingPostLayoutData()) {
+        m_inputMethodFilter.notifyCursorRect(editorState.postLayoutData->caretRectAtStart);
+        m_inputMethodFilter.notifySurrounding(editorState.postLayoutData->surroundingContext, editorState.postLayoutData->surroundingContextCursorPosition,
+            editorState.postLayoutData->surroundingContextSelectionPosition);
     }
 }
 

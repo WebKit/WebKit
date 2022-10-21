@@ -29,12 +29,12 @@
 #import "Logging.h"
 #import "PlatformCALayer.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
-#import "ScrollingTreeFixedNode.h"
+#import "ScrollingTreeFixedNodeCocoa.h"
 #import "ScrollingTreeFrameHostingNode.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 #import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNodeMac.h"
-#import "ScrollingTreePositionedNode.h"
+#import "ScrollingTreePositionedNodeCocoa.h"
 #import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
@@ -69,14 +69,14 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     case ScrollingNodeType::OverflowProxy:
         return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
-        return ScrollingTreeFixedNode::create(*this, nodeID);
+        return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
-        return ScrollingTreePositionedNode::create(*this, nodeID);
+        return ScrollingTreePositionedNodeCocoa::create(*this, nodeID);
     }
     ASSERT_NOT_REACHED();
-    return ScrollingTreeFixedNode::create(*this, nodeID);
+    return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
 }
 
 using LayerAndPoint = std::pair<CALayer *, FloatPoint>;
@@ -231,16 +231,6 @@ OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesFor
     return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(localPoint));
 }
 #endif
-
-void ScrollingTreeMac::lockLayersForHitTesting()
-{
-    m_layerHitTestMutex.lock();
-}
-
-void ScrollingTreeMac::unlockLayersForHitTesting()
-{
-    m_layerHitTestMutex.unlock();
-}
 
 void ScrollingTreeMac::didCompleteRenderingUpdate()
 {

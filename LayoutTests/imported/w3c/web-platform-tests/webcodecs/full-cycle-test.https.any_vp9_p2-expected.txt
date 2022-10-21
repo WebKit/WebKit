@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: Not supported Reached unreachable code
 
-FAIL Encoding and decoding cycle promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+PASS Encoding and decoding cycle
 

@@ -1538,13 +1538,51 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/bidi/log_entry_added/console.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log_entry_added/console_args.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log_entry_added/event_buffer.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log_entry_added/javascript.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log_entry_added/subscription.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
     "imported/w3c/webdriver/tests/bidi/new_session/connect.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
     "imported/w3c/webdriver/tests/bidi/session_subscribe/subscribe.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
+    "imported/w3c/webdriver/tests/bidi/session_unsubscribe/unsubscribe.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
     "imported/w3c/webdriver/tests/new_session/websocket_url.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/get_computed_role/get.py": {
+        "subtests": {
+            "test_no_user_prompt": {
+                "expected": {
+                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/246845"}
+                }
+            },
+            "test_computed_roles[<li role=menuitem>foo-li-menu]": {
+                "expected": {
+                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/246845"}
+                }
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/get_computed_label/get.py": {
+        "expected": {
+            "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/246814"},
+            "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/246814"}
+        }
     }
 }

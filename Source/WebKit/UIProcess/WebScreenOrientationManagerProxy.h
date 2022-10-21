@@ -68,6 +68,8 @@ private:
     void platformInitialize();
     void platformDestroy();
 
+    std::optional<WebCore::Exception> platformShouldRejectLockRequest() const;
+
     // IPC message handlers.
     void currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&&);
     void lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);

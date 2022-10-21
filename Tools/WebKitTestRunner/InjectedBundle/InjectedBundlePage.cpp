@@ -49,6 +49,7 @@
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKURLRequest.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>

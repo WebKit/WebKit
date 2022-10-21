@@ -33,57 +33,59 @@
 
 namespace WebCore {
 namespace CQ {
-namespace FeatureNames {
+namespace FeatureSchemas {
 
-const AtomString& width()
+using namespace MQ;
+
+const FeatureSchema& width()
 {
-    static MainThreadNeverDestroyed<AtomString> name { "width"_s };
-    return name;
+    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "width"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
+    return schema;
 }
 
-const AtomString& height()
+const FeatureSchema& height()
 {
-    static MainThreadNeverDestroyed<AtomString> name { "height"_s };
-    return name;
+    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "height"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
+    return schema;
 }
 
-const AtomString& inlineSize()
+const FeatureSchema& inlineSize()
 {
-    static MainThreadNeverDestroyed<AtomString> name { "inline-size"_s };
-    return name;
+    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "inline-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
+    return schema;
 }
 
-const AtomString& blockSize()
+const FeatureSchema& blockSize()
 {
-    static MainThreadNeverDestroyed<AtomString> name { "block-size"_s };
-    return name;
+    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "block-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
+    return schema;
 }
 
-const AtomString& aspectRatio()
+const FeatureSchema& aspectRatio()
 {
-    static MainThreadNeverDestroyed<AtomString> name { "aspect-ratio"_s };
-    return name;
+    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "aspect-ratio"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Ratio }, { } } };
+    return schema;
 }
 
-const AtomString& orientation()
+const FeatureSchema& orientation()
 {
-    static MainThreadNeverDestroyed<AtomString> name { "orientation"_s };
-    return name;
+    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "orientation"_s, FeatureSchema::Type::Discrete, { }, { CSSValuePortrait, CSSValueLandscape } } };
+    return schema;
 }
 
 }
 
-OptionSet<Axis> requiredAxesForFeature(const AtomString& featureName)
+OptionSet<Axis> requiredAxesForFeature(const MQ::Feature& feature)
 {
-    if (featureName == FeatureNames::width())
+    if (feature.schema == &FeatureSchemas::width())
         return { Axis::Width };
-    if (featureName == FeatureNames::height())
+    if (feature.schema == &FeatureSchemas::height())
         return { Axis::Height };
-    if (featureName == FeatureNames::inlineSize())
+    if (feature.schema == &FeatureSchemas::inlineSize())
         return { Axis::Inline };
-    if (featureName == FeatureNames::blockSize())
+    if (feature.schema == &FeatureSchemas::blockSize())
         return { Axis::Block };
-    if (featureName == FeatureNames::aspectRatio() || featureName == FeatureNames::orientation())
+    if (feature.schema == &FeatureSchemas::aspectRatio() || feature.schema == &FeatureSchemas::orientation())
         return { Axis::Inline, Axis::Block };
     return { };
 }

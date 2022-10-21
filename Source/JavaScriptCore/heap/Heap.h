@@ -176,6 +176,7 @@ class Heap;
     v(webAssemblyGlobalSpace, webAssemblyGlobalHeapCellType, JSWebAssemblyGlobal) \
     v(webAssemblyInstanceSpace, webAssemblyInstanceHeapCellType, JSWebAssemblyInstance) \
     v(webAssemblyMemorySpace, webAssemblyMemoryHeapCellType, JSWebAssemblyMemory) \
+    v(webAssemblyStructSpace, webAssemblyStructHeapCellType, JSWebAssemblyStruct) \
     v(webAssemblyModuleSpace, webAssemblyModuleHeapCellType, JSWebAssemblyModule) \
     v(webAssemblyModuleRecordSpace, webAssemblyModuleRecordHeapCellType, WebAssemblyModuleRecord) \
     v(webAssemblyTableSpace, webAssemblyTableHeapCellType, JSWebAssemblyTable) \
@@ -974,6 +975,7 @@ public:
     IsoHeapCellType webAssemblyGlobalHeapCellType;
     IsoHeapCellType webAssemblyInstanceHeapCellType;
     IsoHeapCellType webAssemblyMemoryHeapCellType;
+    IsoHeapCellType webAssemblyStructHeapCellType;
     IsoHeapCellType webAssemblyModuleHeapCellType;
     IsoHeapCellType webAssemblyModuleRecordHeapCellType;
     IsoHeapCellType webAssemblyTableHeapCellType;

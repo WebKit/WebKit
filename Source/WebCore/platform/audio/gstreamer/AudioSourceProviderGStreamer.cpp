@@ -248,16 +248,16 @@ GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink, bool 
     return GST_FLOW_OK;
 }
 
-void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClient)
+void AudioSourceProviderGStreamer::setClient(WeakPtr<AudioSourceProviderClient>&& newClient)
 {
-    if (client() == newClient)
+    if (client() == newClient.get())
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient, client());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient.get(), client());
 #endif
     bool previousClientWasValid = !!m_client;
-    m_client = newClient;
+    m_client = WTFMove(newClient);
 
     // The volume element is used to mute audio playback towards the
     // autoaudiosink. This is needed to avoid double playback of audio

@@ -32,6 +32,11 @@ namespace WebKit {
 
 bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
 {
+    if (frameIdentifier.isHashTableDeletedValue())
+        return other.frameIdentifier.isHashTableDeletedValue();
+    if (other.frameIdentifier.isHashTableDeletedValue())
+        return false;
+
     return location == other.location
         && length == other.length
         && frameIdentifier == other.frameIdentifier

@@ -33,19 +33,45 @@
 
 namespace JSC {
 
-template<typename NumberType>
-ALWAYS_INLINE JSString* stringSlice(JSGlobalObject* globalObject, VM& vm, JSString* string, int32_t length, NumberType start, NumberType end)
+ALWAYS_INLINE std::tuple<int32_t, int32_t> extractSliceOffsets(int32_t length, int32_t startValue, std::optional<int32_t> endValue)
 {
-    NumberType from = start < 0 ? length + start : start;
-    NumberType to = end < 0 ? length + end : end;
-    if (to > from && to > 0 && from < length) {
-        if (from < 0)
-            from = 0;
-        if (to > length)
-            to = length;
-        return jsSubstring(vm, globalObject, string, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
+    int32_t from;
+    if (startValue < 0)
+        from = std::max<int32_t>(length + startValue, 0);
+    else
+        from = std::min<int32_t>(startValue, length);
+
+    int32_t end = endValue.value_or(length);
+    int32_t to;
+    if (end < 0)
+        to = std::max<int32_t>(length + end, 0);
+    else
+        to = std::min<int32_t>(end, length);
+
+    if (from >= to)
+        return { 0, 0 };
+    return { from, to };
+}
+
+template<typename NumberType>
+ALWAYS_INLINE JSString* stringSlice(JSGlobalObject* globalObject, VM& vm, JSString* string, int32_t length, NumberType start, std::optional<NumberType> endValue)
+{
+    if constexpr (std::is_same_v<NumberType, int32_t>) {
+        auto [from, to] = extractSliceOffsets(length, start, endValue);
+        return jsSubstring(vm, globalObject, string, from, to - from);
+    } else {
+        NumberType from = start < 0 ? length + start : start;
+        NumberType end = endValue.value_or(length);
+        NumberType to = end < 0 ? length + end : end;
+        if (to > from && to > 0 && from < length) {
+            if (from < 0)
+                from = 0;
+            if (to > length)
+                to = length;
+            return jsSubstring(vm, globalObject, string, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
+        }
+        return jsEmptyString(vm);
     }
-    return jsEmptyString(vm);
 }
 
 ALWAYS_INLINE std::tuple<int32_t, int32_t> extractSubstringOffsets(int32_t length, int32_t startValue, std::optional<int32_t> endValue)
@@ -64,15 +90,12 @@ ALWAYS_INLINE std::tuple<int32_t, int32_t> extractSubstringOffsets(int32_t lengt
 
 ALWAYS_INLINE JSString* stringSubstring(JSGlobalObject* globalObject, JSString* string, int32_t startValue, std::optional<int32_t> endValue)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     int length = string->length();
     RELEASE_ASSERT(length >= 0);
 
     auto [start, end] = extractSubstringOffsets(length, startValue, endValue);
 
-    RELEASE_AND_RETURN(scope, jsSubstring(globalObject, string, start, end - start));
+    return jsSubstring(globalObject, string, start, end - start);
 }
 
 ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, const String* separators, int separatorCount)
@@ -115,8 +138,6 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
 
     if (source.is8Bit() && allSeparators8Bit) {
         LChar* buffer;
-        const LChar* sourceData = source.characters8();
-
         auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
         if (!impl) {
             throwOutOfMemoryError(globalObject, scope);
@@ -127,16 +148,14 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         Checked<int, AssertNoOverflow> bufferPos = 0;
         for (int i = 0; i < maxCount; i++) {
             if (i < rangeCount) {
-                if (int srcLen = substringRanges[i].distance()) {
-                    StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
-                    bufferPos += srcLen;
-                }
+                auto substring = StringView { source }.substring(substringRanges[i].begin(), substringRanges[i].distance());
+                substring.getCharacters8(buffer + bufferPos.value());
+                bufferPos += substring.length();
             }
             if (i < separatorCount) {
-                if (int sepLen = separators[i].length()) {
-                    StringImpl::copyCharacters(buffer + bufferPos.value(), separators[i].characters8(), sepLen);
-                    bufferPos += sepLen;
-                }
+                StringView separator = separators[i];
+                separator.getCharacters8(buffer + bufferPos.value());
+                bufferPos += separator.length();
             }
         }
 
@@ -154,22 +173,14 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     Checked<int, AssertNoOverflow> bufferPos = 0;
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
-            if (int srcLen = substringRanges[i].distance()) {
-                if (source.is8Bit())
-                    StringImpl::copyCharacters(buffer + bufferPos.value(), source.characters8() + substringRanges[i].begin(), srcLen);
-                else
-                    StringImpl::copyCharacters(buffer + bufferPos.value(), source.characters16() + substringRanges[i].begin(), srcLen);
-                bufferPos += srcLen;
-            }
+            auto substring = StringView { source }.substring(substringRanges[i].begin(), substringRanges[i].distance());
+            substring.getCharacters(buffer + bufferPos.value());
+            bufferPos += substring.length();
         }
         if (i < separatorCount) {
-            if (int sepLen = separators[i].length()) {
-                if (separators[i].is8Bit())
-                    StringImpl::copyCharacters(buffer + bufferPos.value(), separators[i].characters8(), sepLen);
-                else
-                    StringImpl::copyCharacters(buffer + bufferPos.value(), separators[i].characters16(), sepLen);
-                bufferPos += sepLen;
-            }
+            StringView separator = separators[i];
+            separator.getCharacters(buffer + bufferPos.value());
+            bufferPos += separator.length();
         }
     }
 

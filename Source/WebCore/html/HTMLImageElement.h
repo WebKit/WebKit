@@ -29,7 +29,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -141,7 +141,7 @@ public:
     void setLoadingForBindings(const AtomString&);
 
     bool isLazyLoadable() const;
-    static bool hasLazyLoadableAttributeValue(const AtomString&);
+    static bool hasLazyLoadableAttributeValue(StringView);
 
     bool isDeferred() const;
 

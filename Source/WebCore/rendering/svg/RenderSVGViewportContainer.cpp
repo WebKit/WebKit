@@ -83,7 +83,7 @@ bool RenderSVGViewportContainer::updateLayoutSizeIfNeeded()
 {
     auto previousViewportSize = viewportSize();
     m_viewport = { computeViewportLocation(), computeViewportSize() };
-    return selfNeedsLayout() || (svgSVGElement().hasRelativeLengths() && previousViewportSize != viewportSize());
+    return selfNeedsLayout() || previousViewportSize != viewportSize();
 }
 
 void RenderSVGViewportContainer::updateFromElement()
@@ -97,6 +97,18 @@ void RenderSVGViewportContainer::updateFromElement()
     updateLayerTransform();
 }
 
+bool RenderSVGViewportContainer::needsHasSVGTransformFlag() const
+{
+    auto& useSVGSVGElement = svgSVGElement();
+    if (useSVGSVGElement.hasTransformRelatedAttributes())
+        return true;
+
+    if (isOutermostSVGViewportContainer())
+        return !useSVGSVGElement.currentTranslateValue().isZero() || useSVGSVGElement.renderer()->style().effectiveZoom() != 1;
+
+    return false;
+}
+
 void RenderSVGViewportContainer::updateFromStyle()
 {
     RenderSVGContainer::updateFromStyle();
@@ -104,13 +116,11 @@ void RenderSVGViewportContainer::updateFromStyle()
     if (SVGRenderSupport::isOverflowHidden(*this))
         setHasNonVisibleOverflow();
 
-    if (hasSVGTransform() || !parent())
+    if (hasSVGTransform() || !parent() || !needsHasSVGTransformFlag())
         return;
 
-    if (svgSVGElement().hasTransformRelatedAttributes()) {
-        setHasTransformRelatedProperty();
-        setHasSVGTransform();
-    }
+    setHasTransformRelatedProperty();
+    setHasSVGTransform();
 }
 
 inline AffineTransform viewBoxToViewTransform(const SVGSVGElement& svgSVGElement, const FloatSize& viewportSize)
@@ -138,8 +148,8 @@ void RenderSVGViewportContainer::updateLayerTransform()
             m_supplementalLayerTransform.scale(scale);
             viewportSize.scale(1.0 / scale);
         }
-    } else if (auto viewportLocation = this->viewportLocation(); !viewportLocation.isZero())
-        m_supplementalLayerTransform.translate(viewportLocation);
+    } else if (!m_viewport.location().isZero())
+        m_supplementalLayerTransform.translate(m_viewport.location());
 
     if (useSVGSVGElement.hasAttribute(SVGNames::viewBoxAttr)) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!

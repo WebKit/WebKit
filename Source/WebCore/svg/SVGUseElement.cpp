@@ -317,6 +317,7 @@ Path SVGUseElement::toClipPath()
         return { };
     }
 
+    // FIXME: [LBSE] Stop mutating the path here.
     Path path = downcast<SVGGraphicsElement>(*targetClone).toClipPath();
     SVGLengthContext lengthContext(this);
     // FIXME: Find a way to do this without manual resolution of x/y here. It's potentially incorrect.

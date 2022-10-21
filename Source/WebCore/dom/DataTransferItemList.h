@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class DataTransferItem;
+class Document;
 class File;
 
 class DataTransferItemList final : public ScriptWrappable, public ContextDestructionObserver, public CanMakeWeakPtr<DataTransferItemList> {
@@ -60,7 +61,7 @@ public:
     // DOM API
     unsigned length() const;
     RefPtr<DataTransferItem> item(unsigned index);
-    ExceptionOr<RefPtr<DataTransferItem>> add(const String& data, const String& type);
+    ExceptionOr<RefPtr<DataTransferItem>> add(Document&, const String& data, const String& type);
     RefPtr<DataTransferItem> add(Ref<File>&&);
     ExceptionOr<void> remove(unsigned index);
     void clear();

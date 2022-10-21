@@ -53,7 +53,7 @@ class JITCompiler;
 
 struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     CodeOrigin codeOrigin;
-    RegisterSet usedRegisters;
+    ScalarRegisterSet usedRegisters;
     CallSiteIndex callSiteIndex;
     GPRReg m_baseGPR { InvalidGPRReg };
     GPRReg m_valueGPR { InvalidGPRReg };
@@ -100,6 +100,7 @@ public:
         CallLinkInfo,
         CellPointer,
         NonCellPointer,
+        GlobalObject,
     };
 
     using Value = CompactPointerTuple<void*, Type>;
@@ -154,7 +155,7 @@ public:
     static ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
     static ptrdiff_t offsetOfIsInvalidated() { return OBJECT_OFFSETOF(JITData, m_isInvalidated); }
 
-    static std::unique_ptr<JITData> create(VM&, const JITCode&, ExitVector&& exits);
+    static std::unique_ptr<JITData> create(VM&, CodeBlock*, const JITCode&, ExitVector&& exits);
 
     void setExitCode(unsigned exitIndex, MacroAssemblerCodeRef<OSRExitPtrTag> code)
     {
@@ -172,7 +173,7 @@ public:
     FixedVector<StructureStubInfo>& stubInfos() { return m_stubInfos; }
 
 private:
-    explicit JITData(VM&, const JITCode&, ExitVector&&);
+    explicit JITData(VM&, CodeBlock*, const JITCode&, ExitVector&&);
 
     FixedVector<StructureStubInfo> m_stubInfos;
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
@@ -224,7 +225,7 @@ public:
     
     void shrinkToFit(const ConcurrentJSLocker&) final;
 
-    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
+    RegisterSetBuilder liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
 #if ENABLE(FTL_JIT)
     CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
     void setOSREntryBlock(VM&, const JSCell* owner, CodeBlock* osrEntryBlock);
@@ -287,9 +288,9 @@ public:
 #endif // ENABLE(FTL_JIT)
 };
 
-inline std::unique_ptr<JITData> JITData::create(VM& vm, const JITCode& jitCode, ExitVector&& exits)
+inline std::unique_ptr<JITData> JITData::create(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)
 {
-    return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(jitCode.m_linkerIR.size()))) JITData(vm, jitCode, WTFMove(exits)) };
+    return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(jitCode.m_linkerIR.size()))) JITData(vm, codeBlock, jitCode, WTFMove(exits)) };
 }
 
 } } // namespace JSC::DFG

@@ -44,10 +44,10 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~SlowPathCallGenerator() { }
-        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&) = 0;
+        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&) = 0;
     };
 
-    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&);
+    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&);
 
 private:
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) final;

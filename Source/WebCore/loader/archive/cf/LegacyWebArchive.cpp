@@ -172,7 +172,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromPropertyListData(CF
     return ResourceResponse();
 }
 
-RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dictionary)
+RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dictionary, const UsePrefixedScheme usePrefixedScheme)
 {
     ASSERT(dictionary);
     if (!dictionary)
@@ -196,11 +196,15 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         return nullptr;
     }
 
-    auto url = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
-    if (url && CFGetTypeID(url) != CFStringGetTypeID()) {
+    const auto cfURL = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
+    if (cfURL && CFGetTypeID(cfURL) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - URL is not of type CFString, cannot create invalid resource");
         return nullptr;
     }
+
+    const String stringURL { cfURL };
+    const auto schemePrefix = usePrefixedScheme == UsePrefixedScheme::Yes ? "webarchive+"_s : ""_s;
+    const URL url { schemePrefix + stringURL };
 
     auto textEncoding = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceTextEncodingNameKey));
     if (textEncoding && CFGetTypeID(textEncoding) != CFStringGetTypeID()) {
@@ -225,7 +229,7 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
-    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response);
+    return ArchiveResource::create(SharedBuffer::create(resourceData), url, mimeType, textEncoding, frameName, response);
 }
 
 Ref<LegacyWebArchive> LegacyWebArchive::create()
@@ -250,10 +254,15 @@ Ref<LegacyWebArchive> LegacyWebArchive::create(Ref<ArchiveResource>&& mainResour
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(FragmentedSharedBuffer& data)
 {
-    return create(URL(), data);
+    return create(URL(), data, UsePrefixedScheme::No);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBuffer& data)
+{
+    return create(URL(), data, UsePrefixedScheme::Yes);
+}
+
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBuffer& data, const UsePrefixedScheme usePrefixedScheme)
 {
     LOG(Archives, "LegacyWebArchive - Creating from raw data");
 
@@ -282,13 +291,13 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBu
         return nullptr;
     }
 
-    if (!archive->extract(plist.get()))
+    if (!archive->extract(plist.get(), usePrefixedScheme))
         return nullptr;
 
     return WTFMove(archive);
 }
 
-bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
+bool LegacyWebArchive::extract(CFDictionaryRef dictionary, const UsePrefixedScheme usePrefixedScheme)
 {
     ASSERT(dictionary);
     if (!dictionary) {
@@ -306,7 +315,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
         return false;
     }
 
-    auto mainResource = createResource(mainResourceDict);
+    auto mainResource = createResource(mainResourceDict, usePrefixedScheme);
     if (!mainResource) {
         LOG(Archives, "LegacyWebArchive - Failed to parse main resource from CFDictionary or main resource does not exist, aborting invalid WebArchive");
         return false;
@@ -334,7 +343,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 return false;
             }
 
-            if (auto subresource = createResource(subresourceDict))
+            if (auto subresource = createResource(subresourceDict, usePrefixedScheme))
                 addSubresource(subresource.releaseNonNull());
         }
     }
@@ -355,7 +364,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
             }
 
             auto subframeArchive = create();
-            if (subframeArchive->extract(subframeDict))
+            if (subframeArchive->extract(subframeDict, usePrefixedScheme))
                 addSubframeArchive(WTFMove(subframeArchive));
             else
                 LOG(Archives, "LegacyWebArchive - Invalid subframe archive skipped");
@@ -446,7 +455,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame& frame)
 
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     for (unsigned i = 0; i < frame.tree().childCount(); ++i) {
-        if (auto childFrameArchive = create(*frame.tree().child(i)))
+        auto* localChild = dynamicDowncast<LocalFrame>(frame.tree().child(i));
+        if (!localChild)
+            continue;
+        if (auto childFrameArchive = create(*localChild))
             subframeArchives.append(childFrameArchive.releaseNonNull());
     }
 

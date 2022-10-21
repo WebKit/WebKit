@@ -131,12 +131,17 @@ void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificatio
     m_pendingNotification = std::make_pair(notificationManager, identifier);
 }
 
-void TestNotificationProvider::simulateNotificationClick()
+bool TestNotificationProvider::simulateNotificationClick()
 {
+    if (!m_pendingNotification.first)
+        return false;
+
     callOnMainThread([pair = std::exchange(m_pendingNotification, { })] {
         WKNotificationManagerProviderDidClickNotification(pair.first, pair.second);
         WKRelease(pair.first);
     });
+
+    return true;
 }
 
 } // namespace TestWebKitAPI

@@ -263,13 +263,14 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
 // https://w3c.github.io/webcodecs/#videoframe-initialize-visible-rect-and-display-size
 void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame& frame, const WebCodecsVideoFrame::Init& init, const DOMRectInit& defaultVisibleRect, size_t defaultDisplayWidth, size_t defaultDisplayHeight)
 {
-    frame.setVisibleRect(init.visibleRect);
+    auto visibleRect = init.visibleRect.value_or(defaultVisibleRect);
+    frame.setVisibleRect(visibleRect);
     if (init.displayWidth && init.displayHeight)
         frame.setDisplaySize(*init.displayWidth, *init.displayHeight);
     else {
         auto widthScale = defaultDisplayWidth / defaultVisibleRect.width;
         auto heightScale = defaultDisplayHeight / defaultVisibleRect.height;
-        frame.setDisplaySize(init.visibleRect.width * widthScale, init.visibleRect.height * heightScale);
+        frame.setDisplaySize(visibleRect.width * widthScale, visibleRect.height * heightScale);
     }
 }
 
@@ -283,6 +284,41 @@ Ref<VideoColorSpace> videoFramePickColorSpace(const std::optional<VideoColorSpac
         return VideoColorSpace::create({ PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true });
 
     return VideoColorSpace::create({ PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false });
+}
+
+// https://w3c.github.io/webcodecs/#validate-videoframeinit
+static bool isNegativeOrNonFinite(double value)
+{
+    return value < 0 || !std::isfinite(value);
+}
+
+bool validateVideoFrameInit(const WebCodecsVideoFrame::Init& init, size_t codedWidth, size_t codedHeight, VideoPixelFormat format)
+{
+    if (init.visibleRect) {
+        auto& visibleRect = *init.visibleRect;
+        if (!verifyRectOffsetAlignment(format, visibleRect))
+            return false;
+
+        if (isNegativeOrNonFinite(visibleRect.x) || isNegativeOrNonFinite(visibleRect.y) || isNegativeOrNonFinite(visibleRect.width) || isNegativeOrNonFinite(visibleRect.height))
+            return false;
+        if (!visibleRect.width || !visibleRect.height)
+            return false;
+
+        if (visibleRect.y + visibleRect.height > codedHeight)
+            return false;
+        if (visibleRect.x + visibleRect.width > codedWidth)
+            return false;
+    }
+
+    if (!codedWidth || !codedHeight)
+        return false;
+
+    if (!!init.displayWidth != !!init.displayHeight)
+        return false;
+    if (init.displayWidth && (!*init.displayWidth || !*init.displayHeight))
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

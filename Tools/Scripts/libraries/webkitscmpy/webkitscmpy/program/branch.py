@@ -114,7 +114,7 @@ class Branch(Command):
                 prompt = '{}nter issue URL or title of new issue: '.format('{}, e'.format(why) if why else 'E')
             else:
                 prompt = '{}nter name of new branch (or issue URL): '.format('{}, e'.format(why) if why else 'E')
-            args.issue = Terminal.input(prompt)
+            args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
 
         if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact:
             issue = Tracker.instance().issue(int(args.issue))

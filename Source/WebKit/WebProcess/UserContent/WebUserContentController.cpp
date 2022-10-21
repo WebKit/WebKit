@@ -134,8 +134,12 @@ void WebUserContentController::addContentWorlds(const Vector<std::pair<ContentWo
                     return;
 
                 auto& mainFrame = page.mainFrame();
-                for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext())
-                    frame->loader().client().dispatchGlobalObjectAvailable(contentWorld->coreWorld());
+                for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+                    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+                    if (!localFrame)
+                        continue;
+                    localFrame->loader().client().dispatchGlobalObjectAvailable(contentWorld->coreWorld());
+                }
             });
         }
     }
@@ -433,8 +437,12 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
                 return;
             }
 
-            for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext(&mainFrame))
-                frame->injectUserScriptImmediately(world.coreWorld(), userScript);
+            for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext(&mainFrame)) {
+                auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+                if (!localFrame)
+                    continue;
+                localFrame->injectUserScriptImmediately(world.coreWorld(), userScript);
+            }
         });
     }
 

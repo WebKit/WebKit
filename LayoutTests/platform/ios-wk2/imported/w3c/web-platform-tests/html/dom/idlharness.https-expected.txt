@@ -3909,7 +3909,7 @@ PASS HTMLCanvasElement interface: attribute height
 PASS HTMLCanvasElement interface: operation getContext(DOMString, optional any)
 PASS HTMLCanvasElement interface: operation toDataURL(optional DOMString, optional any)
 PASS HTMLCanvasElement interface: operation toBlob(BlobCallback, optional DOMString, optional any)
-FAIL HTMLCanvasElement interface: operation transferControlToOffscreen() assert_own_property: interface prototype object missing non-static operation expected property "transferControlToOffscreen" missing
+PASS HTMLCanvasElement interface: operation transferControlToOffscreen()
 PASS HTMLCanvasElement must be primary interface of document.createElement("canvas")
 PASS Stringification of document.createElement("canvas")
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "width" with the proper type
@@ -3920,7 +3920,7 @@ PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit 
 PASS HTMLCanvasElement interface: calling toDataURL(optional DOMString, optional any) on document.createElement("canvas") with too few arguments must throw TypeError
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toBlob(BlobCallback, optional DOMString, optional any)" with the proper type
 PASS HTMLCanvasElement interface: calling toBlob(BlobCallback, optional DOMString, optional any) on document.createElement("canvas") with too few arguments must throw TypeError
-FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "transferControlToOffscreen()" with the proper type assert_inherits: property "transferControlToOffscreen" not found in prototype chain
+PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "transferControlToOffscreen()" with the proper type
 PASS CanvasRenderingContext2D interface: existence and properties of interface object
 PASS CanvasRenderingContext2D interface object length
 PASS CanvasRenderingContext2D interface object name
@@ -4224,106 +4224,106 @@ PASS ImageBitmapRenderingContext interface: existence and properties of interfac
 PASS ImageBitmapRenderingContext interface: existence and properties of interface prototype object's @@unscopables property
 PASS ImageBitmapRenderingContext interface: attribute canvas
 PASS ImageBitmapRenderingContext interface: operation transferFromImageBitmap(ImageBitmap?)
-FAIL OffscreenCanvas interface: existence and properties of interface object assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface object length assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface object name assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: existence and properties of interface prototype object assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: attribute width assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: attribute height assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: operation getContext(OffscreenRenderingContextId, optional any) assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: operation transferToImageBitmap() assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: operation convertToBlob(optional ImageEncodeOptions) assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: attribute oncontextlost assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvas interface: attribute oncontextrestored assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
-FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface object assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface object length assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface object name assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation commit() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute canvas assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation save() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation restore() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation reset() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation isContextLost() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation rotate(unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation translate(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation transform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation getTransform() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(optional DOMMatrix2DInit) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation resetTransform() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute globalAlpha assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute globalCompositeOperation assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute imageSmoothingEnabled assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute imageSmoothingQuality assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute strokeStyle assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fillStyle assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createLinearGradient(double, double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createRadialGradient(double, double, double, double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createConicGradient(double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createPattern(CanvasImageSource, DOMString) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetX assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetY assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowBlur assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowColor assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute filter assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation strokeRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation beginPath() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation fill(optional CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation fill(Path2D, optional CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation stroke() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation stroke(Path2D) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation clip(optional CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation clip(Path2D, optional CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInPath(unrestricted double, unrestricted double, optional CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInPath(Path2D, unrestricted double, unrestricted double, optional CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(Path2D, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation strokeText(DOMString, unrestricted double, unrestricted double, optional unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation measureText(DOMString) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(long, long, optional ImageDataSettings) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(ImageData) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation getImageData(long, long, long, long, optional ImageDataSettings) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long, long, long, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute lineWidth assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute lineCap assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute lineJoin assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute miterLimit assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation getLineDash() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute lineDashOffset assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute font assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textAlign assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textBaseline assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute direction assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute letterSpacing assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute wordSpacing assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation closePath() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+PASS OffscreenCanvas interface: existence and properties of interface object
+PASS OffscreenCanvas interface object length
+PASS OffscreenCanvas interface object name
+PASS OffscreenCanvas interface: existence and properties of interface prototype object
+PASS OffscreenCanvas interface: existence and properties of interface prototype object's "constructor" property
+PASS OffscreenCanvas interface: existence and properties of interface prototype object's @@unscopables property
+PASS OffscreenCanvas interface: attribute width
+PASS OffscreenCanvas interface: attribute height
+PASS OffscreenCanvas interface: operation getContext(OffscreenRenderingContextId, optional any)
+PASS OffscreenCanvas interface: operation transferToImageBitmap()
+PASS OffscreenCanvas interface: operation convertToBlob(optional ImageEncodeOptions)
+FAIL OffscreenCanvas interface: attribute oncontextlost assert_true: The prototype object must have a property "oncontextlost" expected true got false
+FAIL OffscreenCanvas interface: attribute oncontextrestored assert_true: The prototype object must have a property "oncontextrestored" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface object
+PASS OffscreenCanvasRenderingContext2D interface object length
+PASS OffscreenCanvasRenderingContext2D interface object name
+PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object
+PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property
+PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property
+PASS OffscreenCanvasRenderingContext2D interface: operation commit()
+PASS OffscreenCanvasRenderingContext2D interface: attribute canvas
+PASS OffscreenCanvasRenderingContext2D interface: operation save()
+PASS OffscreenCanvasRenderingContext2D interface: operation restore()
+FAIL OffscreenCanvasRenderingContext2D interface: operation reset() assert_own_property: interface prototype object missing non-static operation expected property "reset" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation isContextLost() assert_own_property: interface prototype object missing non-static operation expected property "isContextLost" missing
+PASS OffscreenCanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation rotate(unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation translate(unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation transform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation getTransform()
+PASS OffscreenCanvasRenderingContext2D interface: operation setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation setTransform(optional DOMMatrix2DInit)
+PASS OffscreenCanvasRenderingContext2D interface: operation resetTransform()
+PASS OffscreenCanvasRenderingContext2D interface: attribute globalAlpha
+PASS OffscreenCanvasRenderingContext2D interface: attribute globalCompositeOperation
+PASS OffscreenCanvasRenderingContext2D interface: attribute imageSmoothingEnabled
+PASS OffscreenCanvasRenderingContext2D interface: attribute imageSmoothingQuality
+PASS OffscreenCanvasRenderingContext2D interface: attribute strokeStyle
+PASS OffscreenCanvasRenderingContext2D interface: attribute fillStyle
+PASS OffscreenCanvasRenderingContext2D interface: operation createLinearGradient(double, double, double, double)
+PASS OffscreenCanvasRenderingContext2D interface: operation createRadialGradient(double, double, double, double, double, double)
+PASS OffscreenCanvasRenderingContext2D interface: operation createConicGradient(double, double, double)
+PASS OffscreenCanvasRenderingContext2D interface: operation createPattern(CanvasImageSource, DOMString)
+PASS OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetX
+PASS OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetY
+PASS OffscreenCanvasRenderingContext2D interface: attribute shadowBlur
+PASS OffscreenCanvasRenderingContext2D interface: attribute shadowColor
+FAIL OffscreenCanvasRenderingContext2D interface: attribute filter assert_true: The prototype object must have a property "filter" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: operation clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation strokeRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation beginPath()
+PASS OffscreenCanvasRenderingContext2D interface: operation fill(optional CanvasFillRule)
+PASS OffscreenCanvasRenderingContext2D interface: operation fill(Path2D, optional CanvasFillRule)
+PASS OffscreenCanvasRenderingContext2D interface: operation stroke()
+PASS OffscreenCanvasRenderingContext2D interface: operation stroke(Path2D)
+PASS OffscreenCanvasRenderingContext2D interface: operation clip(optional CanvasFillRule)
+PASS OffscreenCanvasRenderingContext2D interface: operation clip(Path2D, optional CanvasFillRule)
+PASS OffscreenCanvasRenderingContext2D interface: operation isPointInPath(unrestricted double, unrestricted double, optional CanvasFillRule)
+PASS OffscreenCanvasRenderingContext2D interface: operation isPointInPath(Path2D, unrestricted double, unrestricted double, optional CanvasFillRule)
+PASS OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(Path2D, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation strokeText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation measureText(DOMString)
+PASS OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation createImageData(long, long, optional ImageDataSettings)
+PASS OffscreenCanvasRenderingContext2D interface: operation createImageData(ImageData)
+PASS OffscreenCanvasRenderingContext2D interface: operation getImageData(long, long, long, long, optional ImageDataSettings)
+PASS OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long)
+PASS OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long, long, long, long, long)
+PASS OffscreenCanvasRenderingContext2D interface: attribute lineWidth
+PASS OffscreenCanvasRenderingContext2D interface: attribute lineCap
+PASS OffscreenCanvasRenderingContext2D interface: attribute lineJoin
+PASS OffscreenCanvasRenderingContext2D interface: attribute miterLimit
+PASS OffscreenCanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>)
+PASS OffscreenCanvasRenderingContext2D interface: operation getLineDash()
+PASS OffscreenCanvasRenderingContext2D interface: attribute lineDashOffset
+PASS OffscreenCanvasRenderingContext2D interface: attribute font
+PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
+PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
+PASS OffscreenCanvasRenderingContext2D interface: attribute direction
+FAIL OffscreenCanvasRenderingContext2D interface: attribute letterSpacing assert_true: The prototype object must have a property "letterSpacing" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute wordSpacing assert_true: The prototype object must have a property "wordSpacing" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: operation closePath()
+PASS OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
+PASS OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
+PASS OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS CustomElementRegistry interface: existence and properties of interface object
 PASS CustomElementRegistry interface object length
 PASS CustomElementRegistry interface object name

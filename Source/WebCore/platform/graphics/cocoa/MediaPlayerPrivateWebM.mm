@@ -140,7 +140,7 @@ void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<String, ASCIICaseInsensit
 
 MediaPlayer::SupportsType MediaPlayerPrivateWebM::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (parameters.isMediaSource || parameters.isMediaStream)
+    if (parameters.isMediaSource || parameters.isMediaStream || parameters.requiresRemotePlayback)
         return MediaPlayer::SupportsType::IsNotSupported;
     
     return SourceBufferParserWebM::isContentTypeSupported(parameters.type);
@@ -615,15 +615,15 @@ bool MediaPlayerPrivateWebM::shouldEnsureLayer() const
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     return isCopyDisplayedPixelBufferAvailable()
         && ((m_displayLayer && !CGRectIsEmpty([m_displayLayer bounds]))
-            || !m_player->playerContentBoxRect().isEmpty());
+            || !m_player->presentationSize().isEmpty());
 #else
     return !m_hasBeenAskedToPaintGL && !m_isGatheringVideoFrameMetadata;
 #endif
 }
 
-void MediaPlayerPrivateWebM::playerContentBoxRectChanged(const LayoutRect& newRect)
+void MediaPlayerPrivateWebM::setPresentationSize(const IntSize& newSize)
 {
-    if (m_hasVideo && !m_displayLayer && !newRect.isEmpty())
+    if (m_hasVideo && !m_displayLayer && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
@@ -1290,7 +1290,7 @@ void MediaPlayerPrivateWebM::ensureLayer()
     if (m_enabledVideoTrackID != notFound)
         reenqueSamples(m_enabledVideoTrackID);
 
-    m_videoLayerManager->setVideoLayer(m_displayLayer.get(), snappedIntRect(m_player->playerContentBoxRect()).size());
+    m_videoLayerManager->setVideoLayer(m_displayLayer.get(), m_player->presentationSize());
     m_player->renderingModeChanged();
 }
 

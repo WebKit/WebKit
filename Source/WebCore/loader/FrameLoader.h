@@ -54,6 +54,7 @@
 
 namespace WebCore {
 
+class AbstractFrame;
 class Archive;
 class CachedFrameBase;
 class CachedPage;
@@ -431,7 +432,7 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    bool preventsParentFromBeingComplete(const Frame&) const;
+    bool preventsParentFromBeingComplete(const AbstractFrame&) const;
 
     Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;

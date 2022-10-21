@@ -35,27 +35,6 @@ namespace WebKit::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << colorSpace;
-    }
-
-    template<class Decoder> static std::optional<ExternalTextureDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::PredefinedColorSpace> colorSpace;
-        decoder >> colorSpace;
-        if (!colorSpace)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*colorSpace) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

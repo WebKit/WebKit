@@ -51,6 +51,10 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
 
+#if ENABLE(WEB_CODECS)
+#include "WebCodecsVideoFrame.h"
+#endif
+
 #if ENABLE(WEBGL2)
 #include "WebGLSampler.h"
 #include "WebGLTransformFeedback.h"
@@ -313,11 +317,14 @@ public:
     // These must be virtual so more validation can be added in WebGL 2.0.
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
 
+    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>
 #if ENABLE(VIDEO)
-    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<HTMLVideoElement>>;
-#else
-    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
+        , RefPtr<HTMLVideoElement>
 #endif
+#if ENABLE(WEB_CODECS)
+        , RefPtr<WebCodecsVideoFrame>
+#endif
+    >;
 
     virtual ExceptionOr<void> texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, std::optional<TexImageSource>);
 

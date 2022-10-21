@@ -186,6 +186,9 @@ typedef enum {
 #if HAVE(PROHIBIT_PRIVACY_PROXY)
 @property (setter=_setProhibitPrivacyProxy:) BOOL _prohibitPrivacyProxy;
 #endif
+#if ENABLE(TRACKER_DISPOSITION)
+@property (setter=_setNeedsNetworkTrackingPrevention:) BOOL _needsNetworkTrackingPrevention;
+#endif
 @end
 
 @interface NSURLProtocol ()

@@ -41,7 +41,7 @@ public:
     static void paintFocus(GraphicsContext&, const Path&, const Color&);
     static void paintFocus(GraphicsContext&, const Vector<FloatRect>&, const Color&, PaintRounded = PaintRounded::No);
     enum class ArrowDirection { Up, Down };
-    static void paintArrow(GraphicsContext&, ArrowDirection, bool);
+    static void paintArrow(GraphicsContext&, const FloatRect&, ArrowDirection, bool);
 
     virtual void platformColorsDidChange() { };
 
@@ -60,7 +60,7 @@ private:
 
     static Color focusColor(const Color&);
 
-    Color m_accentColor;
+    Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
 };
 
 } // namespace WebCore

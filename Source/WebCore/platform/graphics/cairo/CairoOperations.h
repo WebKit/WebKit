@@ -63,7 +63,6 @@ void setCTM(GraphicsContextCairo&, const AffineTransform&);
 AffineTransform getCTM(GraphicsContextCairo&);
 
 IntRect getClipBounds(GraphicsContextCairo&);
-FloatRect roundToDevicePixels(GraphicsContextCairo&, const FloatRect&);
 
 bool isAcceleratedContext(GraphicsContextCairo&);
 

@@ -34,7 +34,7 @@ layer at (10,110) size 200x430 clip at (11,111) size 198x428
 layer at (220,110) size 570x430 clip at (221,111) size 568x428
   RenderBlock (relative positioned) zI: 1 {DIV} at (210,0) size 570x430 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
 layer at (221,111) size 568x24
-  RenderButton {BUTTON} at (1,1) size 568x24
+  RenderButton {BUTTON} at (1,1) size 568x24 [color=#000000CC]
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,111) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24
@@ -48,14 +48,14 @@ layer at (221,135) size 568x24
     RenderText {#text} at (5,5) size 28x14
       text run at (5,5) width 28: "Item 2"
 layer at (221,159) size 568x24
-  RenderButton {BUTTON} at (1,49) size 568x24
+  RenderButton {BUTTON} at (1,49) size 568x24 [color=#000000CC]
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,159) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24
     RenderText {#text} at (5,5) size 28x14
       text run at (5,5) width 28: "Item 3"
 layer at (221,183) size 568x24
-  RenderButton {BUTTON} at (1,73) size 568x24
+  RenderButton {BUTTON} at (1,73) size 568x24 [color=#000000CC]
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,183) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24

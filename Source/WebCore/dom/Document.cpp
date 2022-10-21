@@ -229,6 +229,7 @@
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SleepDisabler.h"
 #include "SocketProvider.h"
 #include "SpeechRecognition.h"
 #include "StorageEvent.h"
@@ -297,10 +298,6 @@
 #include "DeviceMotionEvent.h"
 #include "DeviceOrientationAndMotionAccessController.h"
 #include "DeviceOrientationEvent.h"
-#endif
-
-#if ENABLE(FULLSCREEN_API)
-#include "RenderFullScreen.h"
 #endif
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
@@ -427,8 +424,11 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
         return false;
 
     const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
-    for (RefPtr ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
-        RefPtr ancestorDocument = ancestorFrame->document();
+    for (RefPtr<AbstractFrame> ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
+        RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame.get());
+        if (!localAncestor)
+            continue;
+        RefPtr ancestorDocument = localAncestor->document();
         // FIXME: Should be an ASSERT? Frames should alway have documents.
         if (!ancestorDocument)
             return true;
@@ -1723,6 +1723,11 @@ void Document::updateTitle(const StringWithDirection& title)
         });
         m_updateTitleTaskScheduled = true;
     }
+
+#if ENABLE(ACCESSIBILITY)
+    if (auto* cache = existingAXObjectCache())
+        cache->onTitleChange(*this);
+#endif
 }
 
 void Document::updateTitleFromTitleElement()
@@ -3080,7 +3085,7 @@ bool Document::isFullyActive() const
     if (frame->isMainFrame())
         return true;
 
-    auto* parentFrame = frame->tree().parent();
+    auto* parentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
     return parentFrame && parentFrame->document() && parentFrame->document()->isFullyActive();
 }
 
@@ -3804,7 +3809,8 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
     // "allow-top-navigation" / "allow-top-navigation-by-user-activation" was explicitly specified.
     if (sandboxFlags() != SandboxNone) {
         // Navigation is only allowed if the parent of the sandboxed iframe is first-party.
-        RefPtr parentDocument = m_frame->tree().parent() ? m_frame->tree().parent()->document() : nullptr;
+        RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
+        RefPtr parentDocument = parentFrame ? parentFrame->document() : nullptr;
         if (parentDocument && canAccessAncestor(parentDocument->securityOrigin(), &targetFrame))
             return false;
     }
@@ -5437,6 +5443,15 @@ String Document::referrer()
     return String();
 }
 
+String Document::referrerForBindings()
+{
+    if (auto* page = this->page(); page
+        && page->usesEphemeralSession()
+        && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
+        return String();
+    return referrer();
+}
+
 String Document::domain() const
 {
     return securityOrigin().domain();
@@ -6081,8 +6096,12 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 void Document::setDesignMode(InheritedBool value)
 {
     m_designMode = value;
-    for (RefPtr frame = m_frame.get(); frame && frame->document(); frame = frame->tree().traverseNext(m_frame.get()))
-        frame->document()->scheduleFullStyleRebuild();
+    for (RefPtr<AbstractFrame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame || !localFrame->document())
+            continue;
+        localFrame->document()->scheduleFullStyleRebuild();
+    }
 }
 
 String Document::designMode() const
@@ -6115,7 +6134,7 @@ Document* Document::parentDocument() const
 {
     if (!m_frame)
         return nullptr;
-    Frame* parent = m_frame->tree().parent();
+    auto* parent = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
     if (!parent)
         return nullptr;
     return parent->document();
@@ -6449,7 +6468,7 @@ void Document::initSecurityContext()
     RefPtr parentFrame = m_frame->tree().parent();
     RefPtr openerFrame = m_frame->loader().opener();
 
-    RefPtr ownerFrame = parentFrame;
+    RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
     if (!ownerFrame)
         ownerFrame = openerFrame;
 
@@ -6495,7 +6514,7 @@ void Document::initContentSecurityPolicy()
 {
     if (!m_frame)
         return;
-    RefPtr parentFrame = m_frame->tree().parent();
+    RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
     if (parentFrame)
         contentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*parentFrame->document()->contentSecurityPolicy());
 
@@ -6565,7 +6584,10 @@ bool Document::isSecureContext() const
         return true;
 
     for (auto* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
-        if (!isDocumentSecure(*frame->document()))
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (!isDocumentSecure(*localFrame->document()))
             return false;
     }
 
@@ -8424,6 +8446,8 @@ void Document::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 
 void Document::mediaStreamCaptureStateChanged()
 {
+    updateSleepDisablerIfNeeded();
+
     if (!MediaProducer::isCapturing(m_mediaState))
         return;
 
@@ -9166,6 +9190,17 @@ void Document::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRe
         if (!changedRect)
             scheduleRenderingUpdate(RenderingUpdateStep::PrepareCanvasesForDisplay);
     }
+}
+
+void Document::updateSleepDisablerIfNeeded()
+{
+    MediaProducerMediaStateFlags activeVideoCaptureMask { MediaProducerMediaState::HasActiveVideoCaptureDevice, MediaProducerMediaState::HasActiveScreenCaptureDevice, MediaProducerMediaState::HasActiveWindowCaptureDevice };
+    if (m_mediaState & activeVideoCaptureMask) {
+        if (!m_sleepDisabler)
+            m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: Document doing camera, screen or window capture"_s, PAL::SleepDisabler::Type::Display);
+        return;
+    }
+    m_sleepDisabler = nullptr;
 }
 
 void Document::canvasDestroyed(CanvasBase& canvasBase)

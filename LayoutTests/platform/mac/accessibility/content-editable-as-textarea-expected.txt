@@ -1,8 +1,4 @@
-
 This tests that a contenteditable region behaves as a proper AXTextArea.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
 
 Role: AXRole: AXTextArea
 Value: AXValue: hello
@@ -44,4 +40,5 @@ world
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
 

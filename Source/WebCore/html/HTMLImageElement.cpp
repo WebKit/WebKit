@@ -46,10 +46,10 @@
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
 #include "LazyLoadImageObserver.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
 #include "NodeTraversal.h"
 #include "PlatformMouseEvent.h"
@@ -225,7 +225,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         }
 
         RefPtr documentElement = document().documentElement();
-        MediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
+        LegacyMediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
@@ -249,7 +249,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
     RefPtr documentElement = document().documentElement();
-    MediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
+    LegacyMediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
 
     if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
         return;
@@ -278,7 +278,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
         document().addDynamicMediaQueryDependentImage(*this);
 }
 
-bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attributeValue)
+bool HTMLImageElement::hasLazyLoadableAttributeValue(StringView attributeValue)
 {
     return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
 }

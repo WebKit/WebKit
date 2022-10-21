@@ -30,6 +30,20 @@
 
 namespace WebCore {
 
+using namespace MQ;
+
+Vector<const FeatureSchema*> ContainerQueryParser::featureSchemas()
+{
+    return {
+        &CQ::FeatureSchemas::width(),
+        &CQ::FeatureSchemas::height(),
+        &CQ::FeatureSchemas::inlineSize(),
+        &CQ::FeatureSchemas::blockSize(),
+        &CQ::FeatureSchemas::aspectRatio(),
+        &CQ::FeatureSchemas::orientation(),
+    };
+}
+
 std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ContainerQueryParser parser(context);
@@ -64,7 +78,7 @@ std::optional<MQ::Feature> ContainerQueryParser::consumeFeature(CSSParserTokenRa
     if (!sizeFeature)
         return { };
 
-    m_requiredAxes.add(CQ::requiredAxesForFeature(sizeFeature->name));
+    m_requiredAxes.add(CQ::requiredAxesForFeature(*sizeFeature));
     return sizeFeature;
 }
 

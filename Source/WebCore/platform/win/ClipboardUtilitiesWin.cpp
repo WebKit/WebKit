@@ -167,7 +167,7 @@ HGLOBAL createGlobalData(const String& str)
     if (!vm)
         return 0;
     UChar* buffer = static_cast<UChar*>(GlobalLock(vm));
-    StringView(str).getCharactersWithUpconvert(buffer);
+    StringView(str).getCharacters(buffer);
     buffer[str.length()] = 0;
     GlobalUnlock(vm);
     return vm;

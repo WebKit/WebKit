@@ -764,6 +764,31 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
         ASSERT(resultButterfly.publicLength() == count);
         return resultArray;
     }
+    case ArrayWithArrayStorage: {
+        if (count >= MIN_SPARSE_ARRAY_INDEX || sourceStructure->holesMustForwardToPrototype(source))
+            return nullptr;
+
+        if (startIndex + count > source->butterfly()->arrayStorage()->vectorLength())
+            return nullptr;
+
+        Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+        if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+            return nullptr;
+
+        ASSERT(!globalObject->isHavingABadTime());
+        ObjectInitializationScope scope(vm);
+        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
+        if (UNLIKELY(!resultArray))
+            return nullptr;
+        gcSafeMemcpy(resultArray->butterfly()->contiguous().data(), source->butterfly()->arrayStorage()->m_vector + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+        ASSERT(resultArray->butterfly()->publicLength() == count);
+        return resultArray;
+    }
+    case ArrayWithUndecided: {
+        if (count)
+            return nullptr;
+        return constructEmptyArray(globalObject, nullptr);
+    }
     default:
         return nullptr;
     }

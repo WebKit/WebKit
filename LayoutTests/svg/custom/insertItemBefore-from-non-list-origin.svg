@@ -6,6 +6,6 @@ if (window.testRunner) {
 }
 
 var oFEConvolveMatrix = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix");
-document.createElementNS("http://www.w3.org/2000/svg", "altGlyph").x.baseVal.insertItemBefore(oFEConvolveMatrix.width.baseVal, 0);
+document.createElementNS("http://www.w3.org/2000/svg", "text").x.baseVal.insertItemBefore(oFEConvolveMatrix.width.baseVal, 0);
 </script>
 </svg>

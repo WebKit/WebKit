@@ -53,7 +53,7 @@ def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
+        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty, str(wasm.types[ty]["width"]))
         inc += 1
 
 
@@ -208,11 +208,11 @@ contents = wasm.header + """
 #include <cstdint>
 #include <wtf/PrintStream.h>
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
-#include "B3Type.h"
-#endif
+namespace JSC {
 
-namespace JSC { namespace Wasm {
+enum class Width : uint8_t;
+
+namespace Wasm {
 
 static constexpr unsigned expectedVersionNumber = """ + wasm.expectedVersionNumber + """;
 
@@ -256,6 +256,8 @@ struct Type {
         }
     }
 
+    Width width() const;
+
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
 
     #define CREATE_PREDICATE(name, ...) bool is ## name() const { return kind == TypeKind::name; }
@@ -282,19 +284,6 @@ inline bool isValidTypeKind(Int i)
     return false;
 }
 #undef CREATE_CASE
-
-#if ENABLE(WEBASSEMBLY_B3JIT)
-#define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
-inline B3::Type toB3Type(Type type)
-{
-    switch (type.kind) {
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return B3::Void;
-}
-#undef CREATE_CASE
-#endif
 
 #define CREATE_CASE(name, ...) case TypeKind::name: return #name;
 inline const char* makeString(TypeKind kind)

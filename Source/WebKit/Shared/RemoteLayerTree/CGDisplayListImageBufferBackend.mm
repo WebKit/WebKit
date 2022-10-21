@@ -77,6 +77,11 @@ public:
         return m_immutableBaseTransform * GraphicsContextCG::getCTM(includeDeviceScale);
     }
 
+    WebCore::FloatRect roundToDevicePixels(const WebCore::FloatRect& rect, RoundingMode = RoundAllSides) const final
+    {
+        return rect;
+    }
+
     bool canUseShadowBlur() const final { return false; }
 
 protected:

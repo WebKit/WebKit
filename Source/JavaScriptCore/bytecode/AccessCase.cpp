@@ -2006,7 +2006,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             if (callHasReturnValue) {
                 // This is the result value. We don't want to overwrite the result with what we stored to the stack.
                 // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-                dontRestore.set(valueRegs);
+                dontRestore.add(valueRegs, IgnoreVectors);
             }
             state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
         };
@@ -2355,8 +2355,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             } else {
                 // Handle the case where we are allocating out-of-line using an operation.
                 RegisterSet extraRegistersToPreserve;
-                extraRegistersToPreserve.set(baseGPR);
-                extraRegistersToPreserve.set(valueRegs);
+                extraRegistersToPreserve.add(baseGPR, IgnoreVectors);
+                extraRegistersToPreserve.add(valueRegs, IgnoreVectors);
                 AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(extraRegistersToPreserve);
                 
                 jit.store32(
@@ -2400,7 +2400,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 
                 noException.link(&jit);
                 RegisterSet resultRegisterToExclude;
-                resultRegisterToExclude.set(scratchGPR);
+                resultRegisterToExclude.add(scratchGPR, IgnoreVectors);
                 state.restoreLiveRegistersFromStackForCall(spillState, resultRegisterToExclude);
             }
         }

@@ -37,7 +37,6 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderEmbeddedObject.h"
-#include "RenderFullScreen.h"
 #include "RenderGrid.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderLineBreak.h"
@@ -64,7 +63,6 @@
 #include "RenderTreeBuilderContinuation.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
-#include "RenderTreeBuilderFullScreen.h"
 #include "RenderTreeBuilderInline.h"
 #include "RenderTreeBuilderList.h"
 #include "RenderTreeBuilderMathML.h"
@@ -137,9 +135,6 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_mathMLBuilder(makeUnique<MathML>(*this))
 #endif
     , m_continuationBuilder(makeUnique<Continuation>(*this))
-#if ENABLE(FULLSCREEN_API)
-    , m_fullScreenBuilder(makeUnique<FullScreen>(*this))
-#endif
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -156,11 +151,6 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
     RELEASE_ASSERT(RenderTreeMutationDisallowedScope::isMutationAllowed());
     ASSERT(renderer.parent());
     auto toDestroy = detach(*renderer.parent(), renderer, canCollapseAnonymousBlock);
-
-#if ENABLE(FULLSCREEN_API)
-    if (is<RenderFullScreen>(renderer))
-        fullScreenBuilder().cleanupOnDestroy(downcast<RenderFullScreen>(renderer));
-#endif
 
     if (is<RenderTextFragment>(renderer))
         firstLetterBuilder().cleanupOnDestroy(downcast<RenderTextFragment>(renderer));
@@ -409,13 +399,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 
     return detachFromRenderElement(parent, child);
 }
-
-#if ENABLE(FULLSCREEN_API)
-void RenderTreeBuilder::createPlaceholderForFullScreen(RenderFullScreen& renderer, std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
-{
-    fullScreenBuilder().createPlaceholder(renderer, WTFMove(style), frameRect);
-}
-#endif
 
 void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
@@ -820,7 +803,6 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     }
 
     RenderObject* next = nullptr;
-    auto internalMoveScope = SetForScope { m_internalMovesType, RenderObject::IsInternalMove::Yes };
     for (auto* current = blockParent.firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())

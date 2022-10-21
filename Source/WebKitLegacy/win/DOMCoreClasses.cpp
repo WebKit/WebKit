@@ -1292,9 +1292,9 @@ HRESULT DOMElement::font(_Out_ WebFontDescription* webFontDescription)
     auto fontDescription = renderer->style().fontCascade().fontDescription();
     AtomString family = fontDescription.firstFamily();
 
-    // FIXME: This leaks. Delete this whole function to get rid of the leak.
+    // FIXME: This leaks. Delete this whole function, which probably is unused, to get rid of the leak.
     UChar* familyCharactersBuffer = new UChar[family.length()];
-    StringView(family.string()).getCharactersWithUpconvert(familyCharactersBuffer);
+    StringView(family.string()).getCharacters(familyCharactersBuffer);
 
     webFontDescription->family = wcharFrom(familyCharactersBuffer);
     webFontDescription->familyLength = family.length();

@@ -41,7 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-play-state-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-play-state-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-shorthand.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-timing-function-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-timing-function-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-timing-function-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/animation-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/keyframes-allowed-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/keyframes-name-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/parsing/keyframes-name-valid.html

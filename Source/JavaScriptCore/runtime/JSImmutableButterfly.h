@@ -34,6 +34,10 @@
 
 namespace JSC {
 
+class ClonedArguments;
+class DirectArguments;
+class ScopedArguments;
+
 class JSImmutableButterfly : public JSCell {
     using Base = JSCell;
 
@@ -127,6 +131,11 @@ public:
         }
         return result;
     }
+
+    static JSImmutableButterfly* createFromClonedArguments(JSGlobalObject*, ClonedArguments*);
+    static JSImmutableButterfly* createFromDirectArguments(JSGlobalObject*, DirectArguments*);
+    static JSImmutableButterfly* createFromScopedArguments(JSGlobalObject*, ScopedArguments*);
+    static JSImmutableButterfly* createFromString(JSGlobalObject*, JSString*);
 
     unsigned publicLength() const { return m_header.publicLength(); }
     unsigned vectorLength() const { return m_header.vectorLength(); }

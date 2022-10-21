@@ -89,26 +89,26 @@ static bool didCloseWindow;
 static RetainPtr<NSURL> clientRedirectSourceURL;
 static RetainPtr<NSURL> clientRedirectDestinationURL;
 
-static bool didChangeCaptivePortalMode;
-static bool captivePortalModeBeforeChange;
-static bool captivePortalModeAfterChange;
+static bool didChangeLockdownMode;
+static bool lockdownModeBeforeChange;
+static bool lockdownModeAfterChange;
 static unsigned crashCount = 0;
 
-@interface CaptivePortalModeKVO : NSObject {
+@interface LockdownModeKVO : NSObject {
 @public
 }
 @end
 
-@implementation CaptivePortalModeKVO
+@implementation LockdownModeKVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
 {
     ASSERT([keyPath isEqualToString:@"lockdownModeEnabled"]);
     ASSERT([[object class] isEqual:[WKWebpagePreferences class]]);
 
-    captivePortalModeBeforeChange = [[change objectForKey:NSKeyValueChangeOldKey] boolValue];
-    captivePortalModeAfterChange = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
-    didChangeCaptivePortalMode = true;
+    lockdownModeBeforeChange = [[change objectForKey:NSKeyValueChangeOldKey] boolValue];
+    lockdownModeAfterChange = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+    didChangeLockdownMode = true;
 }
 
 @end
@@ -7810,7 +7810,7 @@ static bool isJITEnabled(WKWebView *webView)
 
 enum class ShouldBeEnabled : bool { No, Yes };
 enum class IsShowingInitialEmptyDocument : bool { No, Yes };
-static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, ShouldBeEnabled shouldBeEnabled, IsShowingInitialEmptyDocument isShowingInitialEmptyDocument = IsShowingInitialEmptyDocument::No)
+static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEnabled shouldBeEnabled, IsShowingInitialEmptyDocument isShowingInitialEmptyDocument = IsShowingInitialEmptyDocument::No)
 {
     auto runJSCheck = [&](const String& js) -> bool {
         bool finishedRunningScript = false;
@@ -7849,10 +7849,10 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
 }
 
-@interface CaptivePortalMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
+@interface LockdownMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
 @end
 
-@implementation CaptivePortalMessageHandler
+@implementation LockdownMessageHandler
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
@@ -7862,7 +7862,7 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
 
 @end
 
-static void configureCaptivePortalWKWebViewConfiguration(WKWebViewConfiguration *config)
+static void configureLockdownWKWebViewConfiguration(WKWebViewConfiguration *config)
 {
     [config.preferences _setMediaDevicesEnabled:YES];
     config.preferences._mediaCaptureRequiresSecureConnection = NO;
@@ -7877,13 +7877,13 @@ static void configureCaptivePortalWKWebViewConfiguration(WKWebViewConfiguration 
     }
 }
 
-TEST(ProcessSwap, NavigatingToCaptivePortalMode)
+TEST(ProcessSwap, NavigatingToLockdownMode)
 {
-    auto messageHandler = adoptNS([[CaptivePortalMessageHandler alloc] init]);
+    auto messageHandler = adoptNS([[LockdownMessageHandler alloc] init]);
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
-    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration.get());
+    configureLockdownWKWebViewConfiguration(webViewConfiguration.get());
     [webViewConfiguration.get().userContentController addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -7891,7 +7891,7 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     [webView setNavigationDelegate:delegate.get()];
 
     EXPECT_TRUE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
 
     __block bool finishedNavigation = false;
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -7906,11 +7906,11 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     EXPECT_NE(pid1, 0);
 
     EXPECT_TRUE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::Yes);
 
     finishedNavigation = false;
     receivedScriptMessage = false;
-    url = [[NSBundle mainBundle] URLForResource:@"CaptivePortalPDF" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    url = [[NSBundle mainBundle] URLForResource:@"LockdownModePDF" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
@@ -7928,14 +7928,14 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
-    // We should have process-swap for transitioning to captive portal mode.
+    // We should have process-swap for transitioning to lockdown mode.
     EXPECT_NE(pid1, [webView _webProcessIdentifier]);
     EXPECT_FALSE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::No);
 
     finishedNavigation = false;
     receivedScriptMessage = false;
-    url = [[NSBundle mainBundle] URLForResource:@"CaptivePortalPDF" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    url = [[NSBundle mainBundle] URLForResource:@"LockdownModePDF" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
@@ -7943,9 +7943,9 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     EXPECT_WK_STREQ("Error loading PDF", getNextMessage().body);
 }
 
-TEST(ProcessSwap, CaptivePortalModeSystemSettingChange)
+TEST(ProcessSwap, LockdownModeSystemSettingChange)
 {
-    auto kvo = adoptNS([CaptivePortalModeKVO new]);
+    auto kvo = adoptNS([LockdownModeKVO new]);
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
@@ -7971,18 +7971,18 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChange)
 
     EXPECT_TRUE(isJITEnabled(webView.get()));
 
-    EXPECT_FALSE(didChangeCaptivePortalMode);
+    EXPECT_FALSE(didChangeLockdownMode);
 
     finishedNavigation = false;
     // Now change the global setting.
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
-    TestWebKitAPI::Util::run(&didChangeCaptivePortalMode);
-    EXPECT_FALSE(captivePortalModeBeforeChange);
-    EXPECT_TRUE(captivePortalModeAfterChange);
+    TestWebKitAPI::Util::run(&didChangeLockdownMode);
+    EXPECT_FALSE(lockdownModeBeforeChange);
+    EXPECT_TRUE(lockdownModeAfterChange);
     EXPECT_TRUE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
 
-    // This should cause the WebView to reload with a WebProcess in captive portal mode.
+    // This should cause the WebView to reload with a WebProcess in lockdown mode.
     TestWebKitAPI::Util::run(&finishedNavigation);
 
     EXPECT_FALSE(isJITEnabled(webView.get()));
@@ -7990,13 +7990,13 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChange)
     pid_t pid2 = [webView _webProcessIdentifier];
     EXPECT_NE(pid1, pid2);
 
-    didChangeCaptivePortalMode = false;
+    didChangeLockdownMode = false;
     finishedNavigation = false;
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 
-    TestWebKitAPI::Util::run(&didChangeCaptivePortalMode);
-    EXPECT_TRUE(captivePortalModeBeforeChange);
-    EXPECT_FALSE(captivePortalModeAfterChange);
+    TestWebKitAPI::Util::run(&didChangeLockdownMode);
+    EXPECT_TRUE(lockdownModeBeforeChange);
+    EXPECT_FALSE(lockdownModeAfterChange);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
 
     TestWebKitAPI::Util::run(&finishedNavigation);
@@ -8009,11 +8009,11 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChange)
 
 #if PLATFORM(IOS)
 
-TEST(ProcessSwap, CannotDisableCaptivePortalModeWithoutBrowserEntitlement)
+TEST(ProcessSwap, CannotDisableLockdownModeWithoutBrowserEntitlement)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
-    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration.get());
+    configureLockdownWKWebViewConfiguration(webViewConfiguration.get());
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -8021,7 +8021,7 @@ TEST(ProcessSwap, CannotDisableCaptivePortalModeWithoutBrowserEntitlement)
     [webView setNavigationDelegate:delegate.get()];
 
     EXPECT_FALSE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No, IsShowingInitialEmptyDocument::Yes);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::No, IsShowingInitialEmptyDocument::Yes);
     pid_t pid1 = [webView _webProcessIdentifier];
 
     __block bool finishedNavigation = false;
@@ -8031,14 +8031,14 @@ TEST(ProcessSwap, CannotDisableCaptivePortalModeWithoutBrowserEntitlement)
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_TRUE(preferences.lockdownModeEnabled);
-        bool didThrowWhenTryingToDisableCaptivePortalMode = false;
-        // TestWebKitAPI doesn't have the web browser entitlement and thus shouldn't be able to disable captive portal mode.
+        bool didThrowWhenTryingToDisableLockdownMode = false;
+        // TestWebKitAPI doesn't have the web browser entitlement and thus shouldn't be able to disable lockdown mode.
         @try {
             preferences.lockdownModeEnabled = NO;
         } @catch (NSException *exception) {
-            didThrowWhenTryingToDisableCaptivePortalMode = true;
+            didThrowWhenTryingToDisableLockdownMode = true;
         }
-        EXPECT_TRUE(didThrowWhenTryingToDisableCaptivePortalMode);
+        EXPECT_TRUE(didThrowWhenTryingToDisableLockdownMode);
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -8046,18 +8046,18 @@ TEST(ProcessSwap, CannotDisableCaptivePortalModeWithoutBrowserEntitlement)
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
-    EXPECT_EQ(pid1, [webView _webProcessIdentifier]); // Shouldn't have process-swapped since we're staying in captive portal mode.
+    EXPECT_EQ(pid1, [webView _webProcessIdentifier]); // Shouldn't have process-swapped since we're staying in lockdown mode.
     EXPECT_FALSE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::No);
 }
 
 #else
 
-TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
+TEST(ProcessSwap, LockdownModeEnabledByDefaultThenOptOut)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled);
-    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration.get());
+    configureLockdownWKWebViewConfiguration(webViewConfiguration.get());
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -8065,7 +8065,7 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     [webView setNavigationDelegate:delegate.get()];
 
     EXPECT_FALSE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No, IsShowingInitialEmptyDocument::Yes);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::No, IsShowingInitialEmptyDocument::Yes);
     pid_t pid1 = [webView _webProcessIdentifier];
 
     __block bool finishedNavigation = false;
@@ -8083,7 +8083,7 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     TestWebKitAPI::Util::run(&finishedNavigation);
 
     EXPECT_FALSE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::No);
     EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
 
     finishedNavigation = false;
@@ -8091,13 +8091,13 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
-    EXPECT_EQ(pid1, [webView _webProcessIdentifier]); // Shouldn't have process-swapped since we're staying in captive portal mode.
+    EXPECT_EQ(pid1, [webView _webProcessIdentifier]); // Shouldn't have process-swapped since we're staying in lockdown mode.
     EXPECT_FALSE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::No);
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_TRUE(preferences.lockdownModeEnabled);
-        preferences.lockdownModeEnabled = NO; // Opt out of captive portal mode for this load.
+        preferences.lockdownModeEnabled = NO; // Opt out of lockdown mode for this load.
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -8106,19 +8106,19 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
-    // We should have process-swapped to get out of captive portal mode.
+    // We should have process-swapped to get out of lockdown mode.
     EXPECT_NE(pid1, [webView _webProcessIdentifier]);
     EXPECT_TRUE(isJITEnabled(webView.get()));
-    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
+    checkSettingsControlledByLockdownMode(webView.get(), ShouldBeEnabled::Yes);
 
-    // captive portal mode should be disabled in new WebViews since it is not enabled globally.
+    // lockdown mode should be disabled in new WebViews since it is not enabled globally.
     auto webViewConfiguration2 = adoptNS([WKWebViewConfiguration new]);
-    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration2.get());
+    configureLockdownWKWebViewConfiguration(webViewConfiguration2.get());
     EXPECT_TRUE(webViewConfiguration2.get().defaultWebpagePreferences.lockdownModeEnabled == NO);
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration2.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
     EXPECT_TRUE(isJITEnabled(webView2.get()));
-    checkSettingsControlledByCaptivePortalMode(webView2.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
+    checkSettingsControlledByLockdownMode(webView2.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
     pid_t pid2 = [webView2 _webProcessIdentifier];
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = nil;
@@ -8128,11 +8128,11 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     [webView2 loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
     EXPECT_TRUE(isJITEnabled(webView2.get()));
-    checkSettingsControlledByCaptivePortalMode(webView2.get(), ShouldBeEnabled::Yes);
+    checkSettingsControlledByLockdownMode(webView2.get(), ShouldBeEnabled::Yes);
     EXPECT_EQ(pid2, [webView2 _webProcessIdentifier]);
 }
 
-TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly1)
+TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly1)
 {
     // Captive portal mode is disabled globally and explicitly opted out via defaultWebpagePreferences.
 
@@ -8164,7 +8164,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     // Now change the global setting.
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
-    // This should not reload the web view since the view has explicitly opted out of captive portal mode.
+    // This should not reload the web view since the view has explicitly opted out of lockdown mode.
     TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(finishedNavigation);
 
@@ -8176,7 +8176,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly2)
+TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly2)
 {
     // Captive portal mode is enabled globally but explicitly opted out via defaultWebpagePreferences.
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -8209,7 +8209,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     // Now change the global setting.
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 
-    // This should not reload the web view since the view has explicitly opted out of captive portal mode.
+    // This should not reload the web view since the view has explicitly opted out of lockdown mode.
     TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(finishedNavigation);
 
@@ -8219,7 +8219,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     EXPECT_TRUE(isJITEnabled(webView.get()));
 }
 
-TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly3)
+TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly3)
 {
     // Captive portal mode is disabled globally and explicitly opted out for the load.
 
@@ -8239,7 +8239,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_FALSE(preferences.lockdownModeEnabled);
-        preferences.lockdownModeEnabled = NO; // Explicitly Opt out of captive portal mode for this load.
+        preferences.lockdownModeEnabled = NO; // Explicitly Opt out of lockdown mode for this load.
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -8256,7 +8256,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     // Now change the global setting.
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
-    // This should not reload the web view since the view has explicitly opted out of captive portal mode.
+    // This should not reload the web view since the view has explicitly opted out of lockdown mode.
     TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(finishedNavigation);
 
@@ -8268,7 +8268,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly4)
+TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly4)
 {
     // Captive portal mode is enabled globally but explicitly opted out for the load.
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -8289,7 +8289,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_TRUE(preferences.lockdownModeEnabled);
-        preferences.lockdownModeEnabled = NO; // Explicitly Opt out of captive portal mode for this load.
+        preferences.lockdownModeEnabled = NO; // Explicitly Opt out of lockdown mode for this load.
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -8306,7 +8306,7 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
     // Now change the global setting.
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 
-    // This should not reload the web view since the view has explicitly opted out of captive portal mode.
+    // This should not reload the web view since the view has explicitly opted out of lockdown mode.
     TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(finishedNavigation);
 

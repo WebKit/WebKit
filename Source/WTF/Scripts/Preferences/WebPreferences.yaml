@@ -1308,7 +1308,7 @@ MaxParseDuration:
     WebCore:
       default: -1
 
-MediaAudioCodecIDsAllowedInCaptivePortalMode:
+MediaAudioCodecIDsAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1326,7 +1326,7 @@ MediaCapabilitiesEnabled:
     WebCore:
       default: false
 
-MediaCaptionFormatTypesAllowedInCaptivePortalMode:
+MediaCaptionFormatTypesAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1334,7 +1334,7 @@ MediaCaptionFormatTypesAllowedInCaptivePortalMode:
     WebKit:
       default: '"c608,wvtt"'
 
-MediaCodecTypesAllowedInCaptivePortalMode:
+MediaCodecTypesAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1342,7 +1342,7 @@ MediaCodecTypesAllowedInCaptivePortalMode:
     WebKit:
       default: '"mp4a.40,avc1"'
 
-MediaContainerTypesAllowedInCaptivePortalMode:
+MediaContainerTypesAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -1421,6 +1421,16 @@ MediaEnabled:
     WebCore:
       default: true
 
+MediaPreferredFullscreenWidth:
+  type: double
+  defaultValue:
+    WebKitLegacy:
+      default: 960
+    WebKit:
+      default: 960
+    WebCore:
+      default: 960
+
 MediaPreloadingEnabled:
   type: bool
   defaultValue:
@@ -1469,7 +1479,7 @@ MediaUserGestureInheritsFromDocument:
     WebCore:
       default: false
 
-MediaVideoCodecIDsAllowedInCaptivePortalMode:
+MediaVideoCodecIDsAllowedInLockdownMode:
   type: String
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -2497,6 +2507,17 @@ WantsBalancedSetDefersLoadingBehavior:
 WebArchiveDebugModeEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitWebArchiveDebugModeEnabledPreferenceKey
+  condition: ENABLE(WEB_ARCHIVE)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+WebArchiveTestingModeEnabled:
+  type: bool
   condition: ENABLE(WEB_ARCHIVE)
   defaultValue:
     WebKitLegacy:

@@ -36,6 +36,11 @@ RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPagePr
 {
 }
 
+void RemoteScrollingCoordinatorProxyMac::didReceiveWheelEvent(bool /* wasHandled */)
+{
+    scrollingTree()->applyLayerPositions();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)

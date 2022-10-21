@@ -441,13 +441,6 @@ AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDevi
     return m_primaryContext.getCTM(includeDeviceScale);
 }
 
-FloatRect BifurcatedGraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
-{
-    auto roundedRect = m_primaryContext.roundToDevicePixels(rect, roundingMode);
-    VERIFY_STATE_SYNCHRONIZATION();
-    return roundedRect;
-}
-
 void BifurcatedGraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
     m_primaryContext.drawFocusRing(rects, width, offset, color);
@@ -571,11 +564,11 @@ bool BifurcatedGraphicsContext::supportsInternalLinks() const
 
 void BifurcatedGraphicsContext::didUpdateState(GraphicsContextState& state)
 {
-    // This calls updateState() instead of didUpdateState() so that changes
+    // This calls mergeLastChanges() instead of didUpdateState() so that changes
     // are also applied to each context's GraphicsContextState, so that code
     // internal to the child contexts that reads from the state gets the right values.
-    m_primaryContext.updateState(state);
-    m_secondaryContext.updateState(state);
+    m_primaryContext.mergeLastChanges(state);
+    m_secondaryContext.mergeLastChanges(state);
     state.didApplyChanges();
 
     VERIFY_STATE_SYNCHRONIZATION();

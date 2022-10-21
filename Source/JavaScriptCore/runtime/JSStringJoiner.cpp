@@ -37,7 +37,7 @@ JSStringJoiner::~JSStringJoiner()
 template<typename CharacterType>
 static inline void appendStringToData(CharacterType*& data, StringView string)
 {
-    string.getCharactersWithUpconvert(data);
+    string.getCharacters(data);
     data += string.length();
 }
 

@@ -1,8 +1,10 @@
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: The video frame has been detached.
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage2D: The video frame has been detached.
 
-FAIL texImage2D with 48x36 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texSubImage2D with 48x36 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texImage2D with 480x360 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texSubImage2D with 480x360 srgb VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texImage2D with a closed VideoFrame. Can't find variable: OffscreenCanvas
-FAIL texSubImage2D with a closed VideoFrame. Can't find variable: OffscreenCanvas
+PASS texImage2D with 48x36 srgb VideoFrame.
+PASS texSubImage2D with 48x36 srgb VideoFrame.
+PASS texImage2D with 480x360 srgb VideoFrame.
+PASS texSubImage2D with 480x360 srgb VideoFrame.
+PASS texImage2D with a closed VideoFrame.
+PASS texSubImage2D with a closed VideoFrame.
 

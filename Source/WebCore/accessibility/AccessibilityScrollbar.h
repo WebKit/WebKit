@@ -63,4 +63,7 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollbar, isAccessibilityScrollbar())
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityScrollbar) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityScrollbar(); } \
+SPECIALIZE_TYPE_TRAITS_END()

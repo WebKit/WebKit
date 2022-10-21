@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
+
+PASS same-origin report
+PASS same-site report
+PASS cross-site report
+FAIL same-origin report: sec-fetch-dest assert_equals: expected "report" but got "empty"
+PASS same-origin report: sec-fetch-mode
+PASS same-origin report: sec-fetch-site
+PASS same-origin report: sec-fetch-user
+FAIL same-site report: sec-fetch-dest assert_equals: expected "report" but got "empty"
+PASS same-site report: sec-fetch-mode
+PASS same-site report: sec-fetch-site
+PASS same-site report: sec-fetch-user
+FAIL cross-site report: sec-fetch-dest assert_equals: expected "report" but got "empty"
+PASS cross-site report: sec-fetch-mode
+PASS cross-site report: sec-fetch-site
+PASS cross-site report: sec-fetch-user
+

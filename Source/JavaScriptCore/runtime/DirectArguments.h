@@ -74,11 +74,11 @@ public:
     
     uint32_t length(JSGlobalObject* globalObject) const
     {
+        VM& vm = getVM(globalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
         if (UNLIKELY(m_mappedArguments)) {
-            VM& vm = getVM(globalObject);
-            auto scope = DECLARE_THROW_SCOPE(vm);
             JSValue value = get(globalObject, vm.propertyNames->length);
-            RETURN_IF_EXCEPTION(scope, 0);
+            RETURN_IF_EXCEPTION(scope, { });
             RELEASE_AND_RETURN(scope, value.toUInt32(globalObject));
         }
         return m_length;
@@ -145,6 +145,8 @@ public:
     }
 
     void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
+
+    JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
 
     DECLARE_INFO;
     

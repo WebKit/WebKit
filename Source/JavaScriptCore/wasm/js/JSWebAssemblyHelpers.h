@@ -165,6 +165,8 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
         return jsNumber(purifyNaN(bitwise_cast<double>(bits)));
     case Wasm::TypeKind::I64:
         return JSBigInt::createFrom(globalObject, static_cast<int64_t>(bits));
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull:
     case Wasm::TypeKind::Externref:
     case Wasm::TypeKind::Funcref:
         return bitwise_cast<JSValue>(bits);

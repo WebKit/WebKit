@@ -1,5 +1,7 @@
 <html>
 <head>
+  <script src="../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+  <script src="../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
   <script>
     var testFrame;
     var testDiv;
@@ -14,7 +16,11 @@
         } else {
             // Test if the iframe expands full screen when max-width/max-height are set.
             waitForEventTestAndEnd(document, 'webkitfullscreenchange', "testFrame.getBoundingClientRect().right == document.body.getBoundingClientRect().right && testFrame.getBoundingClientRect().bottom == document.body.getBoundingClientRect().bottom");
-            runWithKeyDown(function(){ testDiv.webkitRequestFullScreen(); });
+
+            // Make sure iframe gets transient activation.
+            test_driver.click(testFrame).then(() => {
+              runWithKeyDown(() => { testDiv.webkitRequestFullScreen(); });
+            });
         }
     }
   </script>

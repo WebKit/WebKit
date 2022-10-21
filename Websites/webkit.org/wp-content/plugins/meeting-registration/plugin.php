@@ -74,7 +74,7 @@ class WebKit_Meeting_Registration {
             'show_in_nav_menus'     => false,
             'can_export'            => true,
             'has_archive'           => true,
-            'exclude_from_search'   => false,
+            'exclude_from_search'   => true,
             'publicly_queryable'    => false,
             'rewrite'               => false,
             'capability_type'       => 'post',

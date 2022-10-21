@@ -36,33 +36,6 @@ struct ImageDataLayout {
     PAL::WebGPU::Size64 offset { 0 };
     std::optional<PAL::WebGPU::Size32> bytesPerRow;
     std::optional<PAL::WebGPU::Size32> rowsPerImage;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << offset;
-        encoder << bytesPerRow;
-        encoder << rowsPerImage;
-    }
-
-    template<class Decoder> static std::optional<ImageDataLayout> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::Size64> offset;
-        decoder >> offset;
-        if (!offset)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::Size32>> bytesPerRow;
-        decoder >> bytesPerRow;
-        if (!bytesPerRow)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::Size32>> rowsPerImage;
-        decoder >> rowsPerImage;
-        if (!rowsPerImage)
-            return std::nullopt;
-
-        return { { WTFMove(*offset), WTFMove(*bytesPerRow), WTFMove(*rowsPerImage) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

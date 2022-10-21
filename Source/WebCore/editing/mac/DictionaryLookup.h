@@ -66,10 +66,9 @@ public:
     
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static WKRevealController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, Function<void()>&& clearTextIndicator = nullptr);
-#endif // PLATFORM(MAC)
-    
+#endif
 };
 
 } // namespace WebCore
 
-#endif
+#endif // PLATFORM(COCOA)

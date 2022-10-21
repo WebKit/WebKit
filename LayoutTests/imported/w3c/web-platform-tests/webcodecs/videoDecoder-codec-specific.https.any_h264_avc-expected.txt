@@ -9,8 +9,8 @@ PASS Decode a non key frame first fails
 PASS Verify reset() suppresses outputs
 PASS Test unconfigured VideoDecoder operations
 PASS Test closed VideoDecoder operations
-FAIL Decode empty frame assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Decode corrupt frame assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Decode empty frame
+PASS Decode corrupt frame
 PASS Close while decoding corrupt frame
 PASS Test decoding after flush
 PASS Test decoding a with negative timestamp

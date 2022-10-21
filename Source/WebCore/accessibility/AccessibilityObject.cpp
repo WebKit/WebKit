@@ -1825,14 +1825,6 @@ const AccessibilityScrollView* AccessibilityObject::ancestorAccessibilityScrollV
     }));
 }
 
-ScrollView* AccessibilityObject::scrollViewAncestor() const
-{
-    if (auto parentScrollView = ancestorAccessibilityScrollView(true/* includeSelf */))
-        return parentScrollView->scrollView();
-    
-    return nullptr;
-}
-
 #if PLATFORM(COCOA)
 RemoteAXObjectRef AccessibilityObject::remoteParentObject() const
 {
@@ -2186,27 +2178,6 @@ AccessibilityCurrentState AccessibilityObject::currentState() const
     return AccessibilityCurrentState::True;
 }
 
-String AccessibilityObject::currentValue() const
-{
-    switch (currentState()) {
-    case AccessibilityCurrentState::False:
-        return "false"_s;
-    case AccessibilityCurrentState::Page:
-        return "page"_s;
-    case AccessibilityCurrentState::Step:
-        return "step"_s;
-    case AccessibilityCurrentState::Location:
-        return "location"_s;
-    case AccessibilityCurrentState::Time:
-        return "time"_s;
-    case AccessibilityCurrentState::Date:
-        return "date"_s;
-    default:
-    case AccessibilityCurrentState::True:
-        return "true"_s;
-    }
-}
-
 bool AccessibilityObject::isModalDescendant(Node* modalNode) const
 {
     Node* node = this->node();
@@ -2362,15 +2333,6 @@ AccessibilityOrientation AccessibilityObject::orientation() const
 
     return AccessibilityOrientation::Undefined;
 }    
-
-AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
-{
-    for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->renderer() && child->renderer()->isAnonymousBlock())
-            return child;
-    }
-    return nullptr;
-}
 
 using ARIARoleMap = HashMap<String, AccessibilityRole, ASCIICaseInsensitiveHash>;
 using ARIAReverseRoleMap = HashMap<AccessibilityRole, String, DefaultHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;

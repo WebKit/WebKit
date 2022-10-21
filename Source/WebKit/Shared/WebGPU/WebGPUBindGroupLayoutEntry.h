@@ -47,57 +47,6 @@ struct BindGroupLayoutEntry {
     std::optional<TextureBindingLayout> texture;
     std::optional<StorageTextureBindingLayout> storageTexture;
     std::optional<ExternalTextureBindingLayout> externalTexture;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << binding;
-        encoder << visibility;
-        encoder << buffer;
-        encoder << sampler;
-        encoder << texture;
-        encoder << storageTexture;
-        encoder << externalTexture;
-    }
-
-    template<class Decoder> static std::optional<BindGroupLayoutEntry> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::Index32> binding;
-        decoder >> binding;
-        if (!binding)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::ShaderStageFlags> visibility;
-        decoder >> visibility;
-        if (!visibility)
-            return std::nullopt;
-
-        std::optional<std::optional<BufferBindingLayout>> buffer;
-        decoder >> buffer;
-        if (!buffer)
-            return std::nullopt;
-
-        std::optional<std::optional<SamplerBindingLayout>> sampler;
-        decoder >> sampler;
-        if (!sampler)
-            return std::nullopt;
-
-        std::optional<std::optional<TextureBindingLayout>> texture;
-        decoder >> texture;
-        if (!texture)
-            return std::nullopt;
-
-        std::optional<std::optional<StorageTextureBindingLayout>> storageTexture;
-        decoder >> storageTexture;
-        if (!storageTexture)
-            return std::nullopt;
-
-        std::optional<std::optional<ExternalTextureBindingLayout>> externalTexture;
-        decoder >> externalTexture;
-        if (!externalTexture)
-            return std::nullopt;
-
-        return { { WTFMove(*binding), WTFMove(*visibility), WTFMove(*buffer), WTFMove(*sampler), WTFMove(*texture), WTFMove(*storageTexture), WTFMove(*externalTexture) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

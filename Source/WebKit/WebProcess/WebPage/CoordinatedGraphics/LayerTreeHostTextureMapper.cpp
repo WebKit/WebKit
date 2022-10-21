@@ -275,9 +275,9 @@ RefPtr<WebCore::DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonito
     return nullptr;
 }
 
-HWND LayerTreeHost::window()
+GLNativeWindowType LayerTreeHost::window()
 {
-    return reinterpret_cast<HWND>(m_webPage.nativeWindowHandle());
+    return reinterpret_cast<GLNativeWindowType>(m_webPage.nativeWindowHandle());
 }
 
 bool LayerTreeHost::enabled()

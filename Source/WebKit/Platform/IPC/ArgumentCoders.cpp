@@ -176,7 +176,7 @@ std::optional<SHA1::Digest> ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder
     SHA1::Digest digest;
     if (!decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1))
         return std::nullopt;
-    return WTFMove(digest);
+    return digest;
 }
 
 #if HAVE(AUDIT_TOKEN)

@@ -36,6 +36,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InlineInvalidation.h"
+#include "InlineWalker.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
@@ -100,8 +101,14 @@ RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
 
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
-    if (!renderer.isInline())
+    if (!renderer.isInline()) {
+        // FIXME: See canUseForChild on out-of-flow nested boxes.
+        if (!renderer.isFloatingOrOutOfFlowPositioned() || renderer.parent() != renderer.containingBlock())
+            return nullptr;
+        if (auto* containingBlock = renderer.containingBlock(); containingBlock && is<RenderBlockFlow>(*containingBlock))
+            return downcast<RenderBlockFlow>(*containingBlock).modernLineLayout();
         return nullptr;
+    }
 
     if (auto* container = blockContainer(renderer))
         return container->modernLineLayout();
@@ -353,6 +360,42 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
     boxGeometry.setPadding(logicalPadding(renderInline, isLeftToRightInlineDirection, writingMode, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
 }
 
+void LineLayout::updateInlineContentDimensions()
+{
+    for (auto walker = InlineWalker(flow()); !walker.atEnd(); walker.advance()) {
+        auto& renderer = *walker.current();
+
+        if (is<RenderReplaced>(renderer)) {
+            updateReplacedDimensions(downcast<RenderReplaced>(renderer));
+            continue;
+        }
+        if (is<RenderTable>(renderer)) {
+            updateInlineTableDimensions(downcast<RenderTable>(renderer));
+            continue;
+        }
+        if (is<RenderListMarker>(renderer)) {
+            updateListMarkerDimensions(downcast<RenderListMarker>(renderer));
+            continue;
+        }
+        if (is<RenderListItem>(renderer)) {
+            updateListItemDimensions(downcast<RenderListItem>(renderer));
+            continue;
+        }
+        if (is<RenderBlock>(renderer)) {
+            updateInlineBlockDimensions(downcast<RenderBlock>(renderer));
+            continue;
+        }
+        if (is<RenderLineBreak>(renderer)) {
+            updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
+            continue;
+        }
+        if (is<RenderInline>(renderer)) {
+            updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+            continue;
+        }
+    }
+}
+
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
 {
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage() };
@@ -422,6 +465,7 @@ void LineLayout::constructContent()
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
 
         if (layoutBox.isOutOfFlowPositioned()) {
+            ASSERT(renderer.layer());
             auto& layer = *renderer.layer();
             auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
 

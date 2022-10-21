@@ -21,4 +21,5 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderH265")))
 - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo;
 - (void)setUseAnnexB:(bool)useAnnexB;
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback;
+- (void)flush;
 @end

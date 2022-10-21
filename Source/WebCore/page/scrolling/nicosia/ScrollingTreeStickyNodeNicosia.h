@@ -34,10 +34,6 @@
 #include "ScrollingTreeStickyNode.h"
 #include <wtf/RefPtr.h>
 
-namespace Nicosia {
-class CompositionLayer;
-}
-
 namespace WebCore {
 
 class ScrollingTreeStickyNodeNicosia final : public ScrollingTreeStickyNode {
@@ -45,14 +41,13 @@ public:
     static Ref<ScrollingTreeStickyNodeNicosia> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreeStickyNodeNicosia() = default;
 
-    Nicosia::CompositionLayer* layer() const { return m_layer.get(); }
-
 private:
     ScrollingTreeStickyNodeNicosia(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
     FloatPoint layerTopLeft() const override;
+    Nicosia::CompositionLayer* layer() const override { return m_layer.get(); }
 
     RefPtr<Nicosia::CompositionLayer> m_layer;
 };

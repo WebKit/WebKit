@@ -50,7 +50,6 @@
 #include "PageOverlayController.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFragmentedFlow.h"
-#include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
@@ -646,8 +645,11 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlushIncludingSubf
     updateScrollCoordinatedLayersAfterFlush();
 
     auto& frame = m_renderView.frameView().frame();
-    for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
-        auto* view = subframe->contentRenderer();
+    for (AbstractFrame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(subframe);
+        if (!localFrame)
+            continue;
+        auto* view = localFrame->contentRenderer();
         if (!view)
             continue;
 
@@ -2326,7 +2328,10 @@ void RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump()
     updateEventRegions();
 
     for (auto* child = frameView.frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
-        if (auto* renderer = child->contentRenderer())
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        if (auto* renderer = localChild->contentRenderer())
             renderer->compositor().updateEventRegions();
     }
 
@@ -2530,8 +2535,11 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 
 void RenderLayerCompositor::invalidateEventRegionForAllFrames()
 {
-    for (auto* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* view = frame->contentRenderer())
+    for (AbstractFrame* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* view = localFrame->contentRenderer())
             view->compositor().invalidateEventRegionForAllLayers();
     }
 }
@@ -2632,15 +2640,15 @@ enum class FullScreenDescendant { Yes, No, NotApplicable };
 static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& layer)
 {
     auto& document = layer.renderer().document();
+    auto* fullScreenElement = document.fullscreenManager().fullscreenElement();
 
-    if (!document.fullscreenManager().isFullscreen() || !document.fullscreenManager().fullscreenRenderer())
+    if (!document.fullscreenManager().isFullscreen() || !fullScreenElement)
         return FullScreenDescendant::NotApplicable;
 
-    auto* fullScreenLayer = document.fullscreenManager().fullscreenRenderer()->layer();
-    if (!fullScreenLayer) {
-        ASSERT_NOT_REACHED();
+    auto* fullScreenRenderer = dynamicDowncast<RenderLayerModelObject>(fullScreenElement->renderer());
+    auto* fullScreenLayer = fullScreenRenderer->layer();
+    if (!fullScreenRenderer || !fullScreenLayer)
         return FullScreenDescendant::NotApplicable;
-    }
 
     return layer.isDescendantOf(*fullScreenLayer) ? FullScreenDescendant::Yes : FullScreenDescendant::No;
 }
@@ -3291,7 +3299,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     // z-index and clipping will be broken.
     if (!renderer.isPositioned())
         return false;
-    
+
 #if ENABLE(FULLSCREEN_API)
     if (isDescendantOfFullScreenLayer(layer) == FullScreenDescendant::No)
         return false;

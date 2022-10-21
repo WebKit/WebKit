@@ -36,27 +36,6 @@ namespace WebKit::WebGPU {
 
 struct ImageCopyBuffer : public ImageDataLayout {
     WebGPUIdentifier buffer;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ImageDataLayout&>(*this);
-        encoder << buffer;
-    }
-
-    template<class Decoder> static std::optional<ImageCopyBuffer> decode(Decoder& decoder)
-    {
-        std::optional<ImageDataLayout> imageDataLayout;
-        decoder >> imageDataLayout;
-        if (!imageDataLayout)
-            return std::nullopt;
-
-        std::optional<WebGPUIdentifier> buffer;
-        decoder >> buffer;
-        if (!buffer)
-            return std::nullopt;
-
-        return { { WTFMove(*imageDataLayout), WTFMove(*buffer) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

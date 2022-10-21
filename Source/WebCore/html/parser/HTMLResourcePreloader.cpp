@@ -30,10 +30,9 @@
 #include "CrossOriginAccessControl.h"
 #include "DefaultResourceLoadPriority.h"
 #include "Document.h"
-#include "ScriptElementCachedScriptFetcher.h"
-
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "RenderView.h"
+#include "ScriptElementCachedScriptFetcher.h"
 
 namespace WebCore {
 
@@ -82,7 +81,7 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
 {
     ASSERT(m_document.frame());
     ASSERT(m_document.renderView());
-    if (!preload->media().isEmpty() && !MediaQueryEvaluator::mediaAttributeMatches(m_document, preload->media()))
+    if (!preload->media().isEmpty() && !LegacyMediaQueryEvaluator::mediaAttributeMatches(m_document, preload->media()))
         return;
 
     m_document.cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(m_document));

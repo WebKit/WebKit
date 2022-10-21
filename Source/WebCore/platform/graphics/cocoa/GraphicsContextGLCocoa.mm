@@ -115,7 +115,7 @@ static bool platformSupportsMetal()
 #endif
         return true;
     }
-    
+
     return false;
 }
 
@@ -195,6 +195,12 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
+
+#if ASSERT_ENABLED && USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+    const char* displayExtensions = EGL_QueryString(display, EGL_EXTENSIONS);
+    ASSERT(strstr(displayExtensions, "EGL_ANGLE_metal_shared_event_sync"));
+#endif
+
     return display;
 }
 
@@ -646,7 +652,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
 }
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
+GraphicsContextGLCocoa::IOSurfaceTextureAttachment GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
 {
     constexpr EGLint emptyAttributes[] = { EGL_NONE };
 
@@ -656,19 +662,22 @@ void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IO
     RetainPtr<MTLSharedTextureHandle> handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
     if (!handle) {
         LOG(WebGL, "Unable to create a MTLSharedTextureHandle from the IOSurface in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
 
     if (!handle.get().device) {
         LOG(WebGL, "MTLSharedTextureHandle does not have a Metal device in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
 
     auto texture = adoptNS([handle.get().device newSharedTextureWithHandle:handle.get()]);
     if (!texture) {
         LOG(WebGL, "Unable to create a MTLSharedTexture from the texture handle in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
+
+    GCGLuint textureWidth = [texture width];
+    GCGLuint textureHeight = [texture height];
 
     // FIXME: Does the texture have the correct usage mode?
 
@@ -677,19 +686,56 @@ void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IO
     auto eglImage = EGL_CreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
     if (!eglImage) {
         LOG(WebGL, "Unable to create an EGLImage from the Metal handle in attachIOSurfaceToTexture.");
-        return nullptr;
+        return std::nullopt;
     }
 
     // Tell the currently bound texture to use the EGLImage.
     GL_EGLImageTargetTexture2DOES(target, eglImage);
 
-    return eglImage;
+    return std::make_tuple(eglImage, textureWidth, textureHeight);
 }
 
 void GraphicsContextGLCocoa::detachIOSurfaceFromSharedTexture(void* handle)
 {
     auto display = platformDisplay();
     EGL_DestroyImageKHR(display, handle);
+}
+#endif
+
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
+{
+    return WebCore::newSharedEventWithMachPort(m_displayObj, sharedEventSendRight);
+}
+
+void* GraphicsContextGLCocoa::createSyncWithSharedEvent(const RetainPtr<id>& sharedEvent, uint64_t signalValue)
+{
+    COMPILE_ASSERT(sizeof(EGLAttrib) == sizeof(void*), "EGLAttrib not pointer-sized!");
+    auto signalValueLo = static_cast<EGLAttrib>(signalValue);
+    auto signalValueHi = static_cast<EGLAttrib>(signalValue >> 32);
+
+    // FIXME: How do we check for available extensions?
+    auto display = platformDisplay();
+    const EGLAttrib syncAttributes[] = {
+        EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, reinterpret_cast<EGLAttrib>(sharedEvent.get()),
+        EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, signalValueLo,
+        EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, signalValueHi,
+        EGL_NONE
+    };
+    return EGL_CreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttributes);
+}
+
+bool GraphicsContextGLCocoa::destroySync(void* sync)
+{
+    auto display = platformDisplay();
+    return !!EGL_DestroySync(display, sync);
+}
+
+void GraphicsContextGLCocoa::clientWaitSyncWithFlush(void* sync, uint64_t timeout)
+{
+    auto display = platformDisplay();
+    auto ret = EGL_ClientWaitSync(display, sync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
+    ASSERT_UNUSED(ret, ret == EGL_CONDITION_SATISFIED);
 }
 #endif
 

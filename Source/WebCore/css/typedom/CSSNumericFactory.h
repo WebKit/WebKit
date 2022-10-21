@@ -75,6 +75,24 @@ public:
     static Ref<CSSUnitValue> cqb(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CQB); }
     static Ref<CSSUnitValue> cqmin(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CQMIN); }
     static Ref<CSSUnitValue> cqmax(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CQMAX); }
+    static Ref<CSSUnitValue> svw(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_SVW); }
+    static Ref<CSSUnitValue> svh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_SVH); }
+    static Ref<CSSUnitValue> svi(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_SVI); }
+    static Ref<CSSUnitValue> svb(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_SVB); }
+    static Ref<CSSUnitValue> svmin(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_SVMIN); }
+    static Ref<CSSUnitValue> svmax(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_SVMAX); }
+    static Ref<CSSUnitValue> lvw(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LVW); }
+    static Ref<CSSUnitValue> lvh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LVH); }
+    static Ref<CSSUnitValue> lvi(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LVI); }
+    static Ref<CSSUnitValue> lvb(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LVB); }
+    static Ref<CSSUnitValue> lvmin(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LVMIN); }
+    static Ref<CSSUnitValue> lvmax(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LVMAX); }
+    static Ref<CSSUnitValue> dvw(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_DVW); }
+    static Ref<CSSUnitValue> dvh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_DVH); }
+    static Ref<CSSUnitValue> dvi(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_DVI); }
+    static Ref<CSSUnitValue> dvb(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_DVB); }
+    static Ref<CSSUnitValue> dvmin(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_DVMIN); }
+    static Ref<CSSUnitValue> dvmax(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_DVMAX); }
 
 
     // <angle>

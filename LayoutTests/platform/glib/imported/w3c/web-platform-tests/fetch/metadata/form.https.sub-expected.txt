@@ -1,0 +1,35 @@
+
+
+
+
+PASS web-platform.test -> web-platform.test:9443 iframe: forced
+PASS web-platform.test -> www.web-platform.test:9443 iframe: forced
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: forced
+PASS web-platform.test -> web-platform.test:9443 iframe: user-activated
+PASS web-platform.test -> www.web-platform.test:9443 iframe: user-activated
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: user-activated
+PASS web-platform.test -> www.web-platform.test:9443 iframe: forced: sec-fetch-dest
+PASS web-platform.test -> www.web-platform.test:9443 iframe: forced: sec-fetch-mode
+PASS web-platform.test -> www.web-platform.test:9443 iframe: forced: sec-fetch-site
+PASS web-platform.test -> www.web-platform.test:9443 iframe: forced: sec-fetch-user
+PASS web-platform.test -> web-platform.test:9443 iframe: forced: sec-fetch-dest
+PASS web-platform.test -> web-platform.test:9443 iframe: forced: sec-fetch-mode
+PASS web-platform.test -> web-platform.test:9443 iframe: forced: sec-fetch-site
+PASS web-platform.test -> web-platform.test:9443 iframe: forced: sec-fetch-user
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: user-activated: sec-fetch-dest
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: user-activated: sec-fetch-mode
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: user-activated: sec-fetch-site
+FAIL web-platform.test -> www.not-web-platform.test:9443 iframe: user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: forced: sec-fetch-dest
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: forced: sec-fetch-mode
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: forced: sec-fetch-site
+PASS web-platform.test -> www.not-web-platform.test:9443 iframe: forced: sec-fetch-user
+PASS web-platform.test -> www.web-platform.test:9443 iframe: user-activated: sec-fetch-dest
+PASS web-platform.test -> www.web-platform.test:9443 iframe: user-activated: sec-fetch-mode
+PASS web-platform.test -> www.web-platform.test:9443 iframe: user-activated: sec-fetch-site
+FAIL web-platform.test -> www.web-platform.test:9443 iframe: user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+PASS web-platform.test -> web-platform.test:9443 iframe: user-activated: sec-fetch-dest
+PASS web-platform.test -> web-platform.test:9443 iframe: user-activated: sec-fetch-mode
+PASS web-platform.test -> web-platform.test:9443 iframe: user-activated: sec-fetch-site
+FAIL web-platform.test -> web-platform.test:9443 iframe: user-activated: sec-fetch-user assert_equals: expected "?1" but got ""
+

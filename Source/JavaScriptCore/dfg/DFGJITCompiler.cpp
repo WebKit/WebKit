@@ -768,6 +768,15 @@ JITCompiler::LinkableConstant::LinkableConstant(JITCompiler& jit, void* pointer,
     m_pointer = pointer;
 }
 
+JITCompiler::LinkableConstant::LinkableConstant(JITCompiler& jit, GlobalObjectTag, CodeOrigin codeOrigin)
+{
+    if (jit.m_graph.m_plan.isUnlinked()) {
+        m_index = jit.addToConstantPool(LinkerIR::Type::GlobalObject, nullptr);
+        return;
+    }
+    m_pointer = jit.m_graph.globalObjectFor(codeOrigin);
+}
+
 void JITCompiler::LinkableConstant::materialize(CCallHelpers& jit, GPRReg resultGPR)
 {
 #if USE(JSVALUE64)

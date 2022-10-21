@@ -1715,7 +1715,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     }
 
     if (networkConnectionIntegrityEnabled)
-        enableNetworkConnectionIntegrity(ensureMutableRequest());
+        enableNetworkConnectionIntegrity(ensureMutableRequest(), request.isThirdParty());
 
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     RetainPtr task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];

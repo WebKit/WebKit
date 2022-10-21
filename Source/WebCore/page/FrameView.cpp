@@ -82,7 +82,7 @@
 #include "ProgressTracker.h"
 #include "Quirks.h"
 #include "RenderEmbeddedObject.h"
-#include "RenderFullScreen.h"
+#include "RenderFlexibleBox.h"
 #include "RenderIFrame.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -1156,10 +1156,14 @@ bool FrameView::flushCompositingStateIncludingSubframes()
 {
     bool allFramesFlushed = flushCompositingStateForThisFrame(frame());
 
-    for (Frame* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
-        if (!child->view())
+    for (AbstractFrame* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
             continue;
-        bool flushed = child->view()->flushCompositingStateForThisFrame(frame());
+        auto* frameView = localChild->view();
+        if (!frameView)
+            continue;
+        bool flushed = frameView->flushCompositingStateForThisFrame(frame());
         allFramesFlushed &= flushed;
     }
     return allFramesFlushed;
@@ -1402,8 +1406,11 @@ bool FrameView::useSlowRepaintsIfNotOverlapped() const
 
 void FrameView::updateCanBlitOnScrollRecursively()
 {
-    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        if (FrameView* view = frame->view())
+    for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (FrameView* view = localFrame->view())
             view->setCanBlitOnScroll(!view->useSlowRepaints());
     }
 }
@@ -2794,8 +2801,11 @@ void FrameView::applyRecursivelyWithVisibleRect(const Function<void(FrameView& f
 
     // Recursive call for subframes. We cache the current FrameView's windowClipRect to avoid recomputing it for every subframe.
     SetForScope windowClipRectCache(m_cachedWindowClipRect, &windowClipRect);
-    for (Frame* childFrame = frame().tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-        if (auto* childView = childFrame->view())
+    for (AbstractFrame* childFrame = frame().tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
+        if (!localFrame)
+            continue;
+        if (auto* childView = localFrame->view())
             childView->applyRecursivelyWithVisibleRect(apply);
     }
 }
@@ -3358,8 +3368,11 @@ void FrameView::updateBackgroundRecursively(const std::optional<Color>& backgrou
 #endif
 #endif
 
-    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        if (auto* view = frame->view()) {
+    for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* view = localFrame->view()) {
 #if HAVE(OS_DARK_MODE_SUPPORT)
             auto baseBackgroundColor = backgroundColor.value_or(RenderTheme::singleton().systemColor(cssValueControlBackground, view->styleColorOptions()));
 #else
@@ -3505,8 +3518,12 @@ bool FrameView::safeToPropagateScrollToParent() const
     auto* parentFrame = frame().tree().parent();
     if (!parentFrame)
         return false;
+    
+    auto* localParent = dynamicDowncast<LocalFrame>(parentFrame);
+    if (!localParent)
+        return false;
 
-    auto* parentDocument = parentFrame->document();
+    auto* parentDocument = localParent->document();
     if (!parentDocument)
         return false;
 
@@ -4326,7 +4343,10 @@ void FrameView::notifyAllFramesThatContentAreaWillPaint() const
     notifyScrollableAreasThatContentAreaWillPaint();
 
     for (auto* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
-        if (auto* frameView = child->view())
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        if (auto* frameView = localChild->view())
             frameView->notifyScrollableAreasThatContentAreaWillPaint();
     }
 }
@@ -4492,7 +4512,7 @@ FrameView* FrameView::parentFrameView() const
 {
     if (!parent())
         return nullptr;
-    auto* parentFrame = frame().tree().parent();
+    auto* parentFrame = dynamicDowncast<LocalFrame>(frame().tree().parent());
     if (!parentFrame)
         return nullptr;
     return parentFrame->view();
@@ -4715,8 +4735,11 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
     // in the render tree only. This will allow us to restore the selection from the DOM
     // after we paint the snapshot.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-            if (auto* renderView = frame->contentRenderer())
+        for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            if (!localFrame)
+                continue;
+            if (auto* renderView = localFrame->contentRenderer())
                 renderView->selection().clear();
         }
     }
@@ -4731,8 +4754,12 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
 
     // Restore selection.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr()))
-            frame->selection().updateAppearance();
+        for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            if (!localFrame)
+                continue;
+            localFrame->selection().updateAppearance();
+        }
     }
 
     // Restore cached paint behavior.
@@ -4775,7 +4802,10 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
             // affects the set of rendered children.
             auto previousView = descendantsDeque.takeFirst();
             for (auto* frame = previousView->frame().tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
-                if (auto* view = frame->view())
+                auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+                if (!localFrame)
+                    continue;
+                if (auto* view = localFrame->view())
                     descendantsDeque.append(*view);
             }
             if (descendantsDeque.isEmpty())
@@ -5393,8 +5423,11 @@ void FrameView::setTracksRepaints(bool trackRepaints)
             frame().document()->updateLayout();
     }
 
-    for (Frame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
-        if (RenderView* renderView = frame->contentRenderer())
+    for (AbstractFrame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* renderView = localFrame->contentRenderer())
             renderView->compositor().setTracksRepaints(trackRepaints);
     }
 
@@ -5542,8 +5575,11 @@ bool FrameView::isFlippedDocument() const
 
 void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
 {
-    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        if (FrameView* view = frame->view())
+    for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (FrameView* view = localFrame->view())
             view->notifyWidgets(notification);
     }
 }

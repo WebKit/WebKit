@@ -187,7 +187,7 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
     EXPECT_EQ(totalRequests, 2u);
 }
 
-TEST(MediaLoading, CaptivePortalHLS)
+TEST(MediaLoading, LockdownModeHLS)
 {
     if (!PAL::canLoad_AVFoundation_AVURLAssetAllowableTypeCategoriesKey())
         return;

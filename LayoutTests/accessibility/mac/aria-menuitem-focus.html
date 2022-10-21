@@ -1,39 +1,42 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 <title>ARIA menuitem Focus</title>
 </head>
 <body>
 
 <div role="menu">
-<div class="item" id="i0" role="menuitem" tabindex="-1">Item 0</div>
-<div class="item" id="i1" role="menuitem" tabindex="-1">Item 1</div>
+    <div class="item" id="i0" role="menuitem" tabindex="-1">Item 0</div>
+    <div class="item" id="i1" role="menuitem" tabindex="-1">Item 1</div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that ARIA menuitems expose AXFocused correctly.");
-    
-    if (window.accessibilityController) {
-        var itemCount = document.getElementsByClassName("item").length;
-        for (var i = 0; i < itemCount; ++i) {
-            var item = accessibilityController.accessibleElementById("i" + i);
-            
-            shouldBeTrue("item.isAttributeSupported('AXFocused')");
-            shouldBeTrue("item.isAttributeSettable('AXFocused')");
-            shouldBeFalse("item.boolAttributeValue('AXFocused')");
+var testOutput = "This tests that ARIA menuitems expose AXFocused correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var item;
+    setTimeout(async function() {
+        for (var i = 0; i < document.getElementsByClassName("item").length; ++i) {
+            const id = `i${i}`;
+            item = accessibilityController.accessibleElementById(id);
+            testOutput += expect("item.isAttributeSupported('AXFocused')", "true");
+            testOutput += expect("item.isAttributeSettable('AXFocused')", "true");
+            testOutput += expect("item.boolAttributeValue('AXFocused')", "false");
             
             // Set focus.
-            document.getElementById("i" + i).focus();
-            
-            shouldBeTrue("item.boolAttributeValue('AXFocused')");
+            document.getElementById(id).focus();
+            await waitFor(() => accessibilityController.focusedElement.domIdentifier === id)
+            testOutput += expect("item.boolAttributeValue('AXFocused')", "true");
         }
-    }
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

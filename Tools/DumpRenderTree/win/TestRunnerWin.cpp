@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1276,4 +1276,12 @@ void TestRunner::setShouldInvertColors(bool shouldInvertColors)
         return;
 
     prefsPrivate->setShouldInvertColors(shouldInvertColors);
+}
+
+void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
+{
+    UNUSED_PARAM(message);
+    UNUSED_PARAM(group);
+
+    fprintf(testResult, "ERROR: TestRunner::generateTestReport() not implemented\n");
 }

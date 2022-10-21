@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
-
-Harness Error (TIMEOUT), message = null
 
 PASS Should fire a securitypolicyviolation event
-NOTRUN Test that paragraph remains unmodified and error events received.
+PASS Test that paragraph remains unmodified and error events received.
 Lorem ipsum

@@ -1,0 +1,41 @@
+
+PASS valid: @keyframes  foo  { }
+PASS valid: @keyframes   foo { }
+PASS valid: @keyframes -foo { }
+PASS valid: @keyframes _bar { }
+PASS valid: @keyframes __bar { }
+PASS valid: @keyframes __bar__ { }
+PASS valid: @keyframes ease-out { }
+PASS valid: @keyframes example { }
+PASS valid: @keyframes EXAMPLE { }
+PASS valid: @keyframes not { }
+PASS valid: @keyframes and { }
+PASS valid: @keyframes all { }
+PASS valid: @keyframes or { }
+PASS valid: @keyframes auto { }
+PASS valid: @keyframes normal { }
+PASS valid: @keyframes " foo " { }
+PASS valid: @keyframes "  foo" { }
+PASS valid: @keyframes "-foo" { }
+PASS valid: @keyframes "_bar" { }
+PASS valid: @keyframes "__bar" { }
+PASS valid: @keyframes "__bar__" { }
+PASS valid: @keyframes "ease-out" { }
+PASS valid: @keyframes "example" { }
+PASS valid: @keyframes "EXAMPLE" { }
+PASS valid: @keyframes "one two" { }
+PASS valid: @keyframes "one, two" { }
+PASS valid: @keyframes "not" { }
+PASS valid: @keyframes "and" { }
+PASS valid: @keyframes "all" { }
+PASS valid: @keyframes "or" { }
+PASS valid: @keyframes "auto" { }
+PASS valid: @keyframes "normal" { }
+PASS valid: @keyframes "none" { }
+PASS valid: @keyframes "default" { }
+PASS valid: @keyframes "initial" { }
+PASS valid: @keyframes "inherit" { }
+PASS valid: @keyframes "unset" { }
+PASS valid: @keyframes "revert" { }
+PASS valid: @keyframes "revert-layer" { }
+

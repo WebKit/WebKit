@@ -75,7 +75,7 @@ public:
     bool canSetExpandedAttribute() const override;
 
     void setAccessibleName(const AtomString&) override;
-    
+
     // Provides common logic used by all elements when determining isIgnored.
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
     

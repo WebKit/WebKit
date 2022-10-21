@@ -37,27 +37,6 @@ struct ImageCopyExternalImage {
     // FIXME: Handle the source.
     std::optional<Origin2D> origin;
     bool flipY { false };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << origin;
-        encoder << flipY;
-    }
-
-    template<class Decoder> static std::optional<ImageCopyExternalImage> decode(Decoder& decoder)
-    {
-        std::optional<std::optional<Origin2D>> origin;
-        decoder >> origin;
-        if (!origin)
-            return std::nullopt;
-
-        std::optional<bool> flipY;
-        decoder >> flipY;
-        if (!flipY)
-            return std::nullopt;
-
-        return { { WTFMove(*origin), WTFMove(*flipY) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -3,6 +3,6 @@
 PASS Same-Origin -> Same-Origin redirect
 PASS undefined: sec-fetch-dest
 PASS undefined: sec-fetch-mode
-FAIL undefined: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS undefined: sec-fetch-site
 PASS undefined: sec-fetch-user
 

@@ -19,6 +19,7 @@
 #include "config.h"
 #include "ApplicationGLib.h"
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -1,0 +1,97 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>mspace width/height/depth - legacy length values</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#dictionary-based-attributes">
+<meta name="assert" content="Verify namedspace values are invalid for width/height/depth.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/feature-detection.js"></script>
+<style>
+  math {
+      font: 25px;
+  }
+</style>
+<script>
+  setup({ explicit_done: true });
+  window.addEventListener("load", runTests);
+
+  function runTests() {
+
+      let epsilon = 1;
+      let emToPx = 25;
+
+      Array.from(document.getElementsByClassName("test")).forEach(div => {
+          test(function() {
+              assert_true(MathMLFeatureDetection.has_mspace());
+              Array.from(div.getElementsByTagName('math')).forEach(math => {
+                  let space = math.firstElementChild.getBoundingClientRect();
+                  assert_true(space.width == 0 && space.height == 0, "space is empty");
+              });
+          }, div.dataset.label);
+      });
+
+      done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+  <!-- The default values of width/height/depth is 0 so nonzero unitless
+       values are treated as 0 whether are not they are supported.
+       Below we only test named constants. -->
+
+  <div class="test" data-label="namedspaces for width are not supported">
+    <math><mspace width="veryverythinmathspace"/></math>
+    <math><mspace width="verythinmathspace"/></math>
+    <math><mspace width="thinmathspace"/></math>
+    <math><mspace width="mediummathspace"/></math>
+    <math><mspace width="thickmathspace"/></math>
+    <math><mspace width="verythickmathspace"/></math>
+    <math><mspace width="veryverythickmathspace"/></math>
+    <math><mspace width="negativeveryverythinmathspace"/></math>
+    <math><mspace width="negativeverythinmathspace"/></math>
+    <math><mspace width="negativethinmathspace"/></math>
+    <math><mspace width="negativemediummathspace"/></math>
+    <math><mspace width="negativethickmathspace"/></math>
+    <math><mspace width="negativeverythickmathspace"/></math>
+    <math><mspace width="negativeveryverythickmathspace"/></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for height are not supported">
+    <math><mspace height="veryverythinmathspace"/></math>
+    <math><mspace height="verythinmathspace"/></math>
+    <math><mspace height="thinmathspace"/></math>
+    <math><mspace height="mediummathspace"/></math>
+    <math><mspace height="thickmathspace"/></math>
+    <math><mspace height="verythickmathspace"/></math>
+    <math><mspace height="veryverythickmathspace"/></math>
+    <math><mspace height="negativeveryverythinmathspace"/></math>
+    <math><mspace height="negativeverythinmathspace"/></math>
+    <math><mspace height="negativethinmathspace"/></math>
+    <math><mspace height="negativemediummathspace"/></math>
+    <math><mspace height="negativethickmathspace"/></math>
+    <math><mspace height="negativeverythickmathspace"/></math>
+    <math><mspace height="negativeveryverythickmathspace"/></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for depth are not supported">
+    <math><mspace depth="veryverythinmathspace"/></math>
+    <math><mspace depth="verythinmathspace"/></math>
+    <math><mspace depth="thinmathspace"/></math>
+    <math><mspace depth="mediummathspace"/></math>
+    <math><mspace depth="thickmathspace"/></math>
+    <math><mspace depth="verythickmathspace"/></math>
+    <math><mspace depth="veryverythickmathspace"/></math>
+    <math><mspace depth="negativeveryverythinmathspace"/></math>
+    <math><mspace depth="negativeverythinmathspace"/></math>
+    <math><mspace depth="negativethinmathspace"/></math>
+    <math><mspace depth="negativemediummathspace"/></math>
+    <math><mspace depth="negativethickmathspace"/></math>
+    <math><mspace depth="negativeverythickmathspace"/></math>
+    <math><mspace depth="negativeveryverythickmathspace"/></math>
+  </div>
+</body>
+</html>

@@ -35,33 +35,6 @@ namespace WebKit::WebGPU {
 struct RenderBundleEncoderDescriptor : public RenderPassLayout {
     bool depthReadOnly { false };
     bool stencilReadOnly { false };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const RenderPassLayout&>(*this);
-        encoder << depthReadOnly;
-        encoder << stencilReadOnly;
-    }
-
-    template<class Decoder> static std::optional<RenderBundleEncoderDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<RenderPassLayout> renderPassLayout;
-        decoder >> renderPassLayout;
-        if (!renderPassLayout)
-            return std::nullopt;
-
-        std::optional<bool> depthReadOnly;
-        decoder >> depthReadOnly;
-        if (!depthReadOnly)
-            return std::nullopt;
-
-        std::optional<bool> stencilReadOnly;
-        decoder >> stencilReadOnly;
-        if (!stencilReadOnly)
-            return std::nullopt;
-
-        return { { WTFMove(*renderPassLayout), WTFMove(*depthReadOnly), WTFMove(*stencilReadOnly) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

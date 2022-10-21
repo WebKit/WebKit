@@ -63,7 +63,7 @@ constexpr unsigned toIndex(GraphicsContextState::Change change)
     return WTF::ctzConstexpr(enumToUnderlyingType(change));
 }
 
-void GraphicsContextState::mergeChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)
+void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)
 {
     for (auto change : state.changes()) {
         auto mergeChange = [&](auto GraphicsContextState::*property) {
@@ -74,30 +74,95 @@ void GraphicsContextState::mergeChanges(const GraphicsContextState& state, const
         };
 
         switch (toIndex(change)) {
-        case toIndex(Change::FillBrush):                   mergeChange(&GraphicsContextState::m_fillBrush); break;
-        case toIndex(Change::FillRule):                    mergeChange(&GraphicsContextState::m_fillRule); break;
+        case toIndex(Change::FillBrush):
+            mergeChange(&GraphicsContextState::m_fillBrush);
+            break;
+        case toIndex(Change::FillRule):
+            mergeChange(&GraphicsContextState::m_fillRule);
+            break;
 
-        case toIndex(Change::StrokeBrush):                 mergeChange(&GraphicsContextState::m_strokeBrush); break;
-        case toIndex(Change::StrokeThickness):             mergeChange(&GraphicsContextState::m_strokeThickness); break;
-        case toIndex(Change::StrokeStyle):                 mergeChange(&GraphicsContextState::m_strokeStyle); break;
+        case toIndex(Change::StrokeBrush):
+            mergeChange(&GraphicsContextState::m_strokeBrush);
+            break;
+        case toIndex(Change::StrokeThickness):
+            mergeChange(&GraphicsContextState::m_strokeThickness);
+            break;
+        case toIndex(Change::StrokeStyle):
+            mergeChange(&GraphicsContextState::m_strokeStyle);
+            break;
 
-        case toIndex(Change::CompositeMode):               mergeChange(&GraphicsContextState::m_compositeMode); break;
-        case toIndex(Change::DropShadow):                  mergeChange(&GraphicsContextState::m_dropShadow); break;
+        case toIndex(Change::CompositeMode):
+            mergeChange(&GraphicsContextState::m_compositeMode);
+            break;
+        case toIndex(Change::DropShadow):
+            mergeChange(&GraphicsContextState::m_dropShadow);
+            break;
 
-        case toIndex(Change::Alpha):                       mergeChange(&GraphicsContextState::m_alpha); break;
-        case toIndex(Change::TextDrawingMode):             mergeChange(&GraphicsContextState::m_textDrawingMode); break;
-        case toIndex(Change::ImageInterpolationQuality):   mergeChange(&GraphicsContextState::m_imageInterpolationQuality); break;
+        case toIndex(Change::Alpha):
+            mergeChange(&GraphicsContextState::m_alpha);
+            break;
+        case toIndex(Change::TextDrawingMode):
+            mergeChange(&GraphicsContextState::m_textDrawingMode);
+            break;
+        case toIndex(Change::ImageInterpolationQuality):
+            mergeChange(&GraphicsContextState::m_imageInterpolationQuality);
+            break;
 
-        case toIndex(Change::ShouldAntialias):             mergeChange(&GraphicsContextState::m_shouldAntialias); break;
-        case toIndex(Change::ShouldSmoothFonts):           mergeChange(&GraphicsContextState::m_shouldSmoothFonts); break;
-        case toIndex(Change::ShouldSubpixelQuantizeFonts): mergeChange(&GraphicsContextState::m_shouldSubpixelQuantizeFonts); break;
-        case toIndex(Change::ShadowsIgnoreTransforms):     mergeChange(&GraphicsContextState::m_shadowsIgnoreTransforms); break;
-        case toIndex(Change::DrawLuminanceMask):           mergeChange(&GraphicsContextState::m_drawLuminanceMask); break;
+        case toIndex(Change::ShouldAntialias):
+            mergeChange(&GraphicsContextState::m_shouldAntialias);
+            break;
+        case toIndex(Change::ShouldSmoothFonts):
+            mergeChange(&GraphicsContextState::m_shouldSmoothFonts);
+            break;
+        case toIndex(Change::ShouldSubpixelQuantizeFonts):
+            mergeChange(&GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+            break;
+        case toIndex(Change::ShadowsIgnoreTransforms):
+            mergeChange(&GraphicsContextState::m_shadowsIgnoreTransforms);
+            break;
+        case toIndex(Change::DrawLuminanceMask):
+            mergeChange(&GraphicsContextState::m_drawLuminanceMask);
+            break;
 #if HAVE(OS_DARK_MODE_SUPPORT)
-        case toIndex(Change::UseDarkAppearance):           mergeChange(&GraphicsContextState::m_useDarkAppearance); break;
+        case toIndex(Change::UseDarkAppearance):
+            mergeChange(&GraphicsContextState::m_useDarkAppearance);
+            break;
 #endif
         }
     }
+}
+
+void GraphicsContextState::mergeAllChanges(const GraphicsContextState& state)
+{
+    auto mergeChange = [&](Change change, auto GraphicsContextState::*property) {
+        if (this->*property == state.*property)
+            return;
+        this->*property = state.*property;
+        m_changeFlags.add(change);
+    };
+
+    mergeChange(Change::FillBrush,                   &GraphicsContextState::m_fillBrush);
+    mergeChange(Change::FillRule,                    &GraphicsContextState::m_fillRule);
+
+    mergeChange(Change::StrokeBrush,                 &GraphicsContextState::m_strokeBrush);
+    mergeChange(Change::StrokeThickness,             &GraphicsContextState::m_strokeThickness);
+    mergeChange(Change::StrokeStyle,                 &GraphicsContextState::m_strokeStyle);
+
+    mergeChange(Change::CompositeMode,               &GraphicsContextState::m_compositeMode);
+    mergeChange(Change::DropShadow,                  &GraphicsContextState::m_dropShadow);
+
+    mergeChange(Change::Alpha,                       &GraphicsContextState::m_alpha);
+    mergeChange(Change::ImageInterpolationQuality,   &GraphicsContextState::m_textDrawingMode);
+    mergeChange(Change::TextDrawingMode,             &GraphicsContextState::m_imageInterpolationQuality);
+
+    mergeChange(Change::ShouldAntialias,             &GraphicsContextState::m_shouldAntialias);
+    mergeChange(Change::ShouldSmoothFonts,           &GraphicsContextState::m_shouldSmoothFonts);
+    mergeChange(Change::ShouldSubpixelQuantizeFonts, &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+    mergeChange(Change::ShadowsIgnoreTransforms,     &GraphicsContextState::m_shadowsIgnoreTransforms);
+    mergeChange(Change::DrawLuminanceMask,           &GraphicsContextState::m_drawLuminanceMask);
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    mergeChange(Change::UseDarkAppearance,           &GraphicsContextState::m_useDarkAppearance);
+#endif
 }
 
 void GraphicsContextState::didBeginTransparencyLayer()

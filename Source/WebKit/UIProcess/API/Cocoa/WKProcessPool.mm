@@ -501,17 +501,17 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 + (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled
 {
-    WebKit::setCaptivePortalModeEnabledGloballyForTesting(!!isEnabled);
+    WebKit::setLockdownModeEnabledGloballyForTesting(!!isEnabled);
 }
 
 + (BOOL)_lockdownModeEnabledGloballyForTesting
 {
-    return WebKit::captivePortalModeEnabledBySystem();
+    return WebKit::lockdownModeEnabledBySystem();
 }
 
 + (void)_clearCaptivePortalModeEnabledGloballyForTesting
 {
-    WebKit::setCaptivePortalModeEnabledGloballyForTesting(std::nullopt);
+    WebKit::setLockdownModeEnabledGloballyForTesting(std::nullopt);
 }
 
 - (BOOL)_isCookieStoragePartitioningEnabled

@@ -164,7 +164,7 @@ private:
     void characteristicsChanged();
 
     bool shouldEnsureLayer() const;
-    void playerContentBoxRectChanged(const LayoutRect&) final;
+    void setPresentationSize(const IntSize&) final;
     bool supportsAcceleratedRendering() const final { return true; }
     void acceleratedRenderingStateChanged() final;
     void updateDisplayLayerAndDecompressionSession();

@@ -105,6 +105,18 @@ void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* old
     SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+FloatRect RenderSVGBlock::referenceBoxRect(CSSBoxType boxType) const
+{
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        // Skip RenderBox::referenceBoxRect() implementation (generic CSS, not SVG), if LBSE is enabled.
+        return RenderElement::referenceBoxRect(boxType);
+    }
+
+    return RenderBlockFlow::referenceBoxRect(boxType);
+}
+#endif
+
 void RenderSVGBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)
 {
     RenderBlockFlow::computeOverflow(oldClientAfterEdge, recomputeFloats);

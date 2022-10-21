@@ -39,7 +39,6 @@
 #include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ScrollbarTheme.h>
-#include <WebCore/ScrollbarThemeWin.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <windowsx.h>
 #include <wtf/HexNumber.h>

@@ -180,7 +180,7 @@ public:
         return { };
     }
 
-    static const ASCIILiteral& uuidToKeySystem(const String& uuid)
+    static ASCIILiteral uuidToKeySystem(const String& uuid)
     {
         if (isClearKeyUUID(uuid))
             return s_ClearKeyKeySystem;
@@ -197,8 +197,7 @@ public:
 #endif
 
         ASSERT_NOT_REACHED();
-        static NeverDestroyed<ASCIILiteral> empty(""_s);
-        return empty;
+        return ""_s;
     }
 };
 

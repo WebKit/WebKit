@@ -70,13 +70,13 @@ public:
 
     void initialize(
         CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSInternalPtrTag> done,
-        CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget, const RegisterSet& usedRegisters,
+        CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget, const RegisterSetBuilder& usedRegisters,
         CallSiteIndex, RefPtr<Generator>
         );
 
     CodeLocationJump<JSInternalPtrTag> patchableJump() const { return m_patchableJump; }
     CodeLocationLabel<JSInternalPtrTag> done() const { return m_done; }
-    const RegisterSet& usedRegisters() const { return m_usedRegisters; }
+    const ScalarRegisterSet& usedRegisters() const { return m_usedRegisters; }
     CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
 
     void generate(CodeBlock*);
@@ -87,7 +87,7 @@ private:
     CodeLocationJump<JSInternalPtrTag> m_patchableJump;
     CodeLocationLabel<JSInternalPtrTag> m_done;
     CodeLocationLabel<ExceptionHandlerPtrTag> m_exceptionTarget;
-    RegisterSet m_usedRegisters;
+    ScalarRegisterSet m_usedRegisters;
     CallSiteIndex m_callSiteIndex;
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_stub;
     RefPtr<Generator> m_generator;

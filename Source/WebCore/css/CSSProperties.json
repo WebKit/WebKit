@@ -3454,9 +3454,6 @@
         },
         "-webkit-mask-position-y": {
             "codegen-properties": {
-                "aliases":[
-                    "-webkit-mask-position-y"
-                ],
                 "name-for-methods": "YPosition",
                 "fill-layer-property": true
             },

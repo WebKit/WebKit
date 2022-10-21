@@ -228,9 +228,9 @@ page/mac/ServicesOverlayController.mm
 page/mac/TextIndicatorWindow.mm
 page/mac/WheelEventDeltaFilterMac.mm
 page/scrolling/cocoa/ScrollingStateNode.mm
-page/scrolling/cocoa/ScrollingTreeFixedNode.mm
+page/scrolling/cocoa/ScrollingTreeFixedNodeCocoa.mm
 page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm
-page/scrolling/cocoa/ScrollingTreePositionedNode.mm
+page/scrolling/cocoa/ScrollingTreePositionedNodeCocoa.mm
 page/scrolling/cocoa/ScrollingTreeStickyNodeCocoa.mm
 page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
@@ -527,6 +527,7 @@ platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/PluginBlocklist.mm
 platform/mac/PowerObserverMac.cpp
 platform/mac/PublicSuffixMac.mm
+platform/mac/RevealUtilities.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm
@@ -638,7 +639,7 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 // The following files aren't unified with others to prevent them from being merged
 // with files that include system headers that include system OpenGL headers.
 
-platform/graphics/angle/ANGLEUtilities.cpp @no-unify
+platform/graphics/angle/ANGLEUtilities.mm @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp @no-unify
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm @no-unify

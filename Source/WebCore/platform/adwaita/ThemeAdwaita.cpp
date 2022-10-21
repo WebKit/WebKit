@@ -132,19 +132,34 @@ void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Vector<Flo
     paintFocus(graphicsContext, path, color);
 }
 
-void ThemeAdwaita::paintArrow(GraphicsContext& graphicsContext, ArrowDirection direction, bool useDarkAppearance)
+void ThemeAdwaita::paintArrow(GraphicsContext& graphicsContext, const FloatRect& rect, ArrowDirection direction, bool useDarkAppearance)
 {
+    auto offset = rect.location();
+    float size;
+    if (rect.width() > rect.height()) {
+        size = rect.height();
+        offset.move((rect.width() - size) / 2, 0);
+    } else {
+        size = rect.width();
+        offset.move(0, (rect.height() - size) / 2);
+    }
+    float zoomFactor = size / arrowSize;
+    auto transform = [&](FloatPoint point) {
+        point.scale(zoomFactor);
+        point.moveBy(offset);
+        return point;
+    };
     Path path;
     switch (direction) {
     case ArrowDirection::Down:
-        path.moveTo({ 3, 6 });
-        path.addLineTo({ 13, 6 });
-        path.addLineTo({ 8, 11 });
+        path.moveTo(transform({ 3, 6 }));
+        path.addLineTo(transform({ 13, 6 }));
+        path.addLineTo(transform({ 8, 11 }));
         break;
     case ArrowDirection::Up:
-        path.moveTo({ 3, 10 });
-        path.addLineTo({ 8, 5 });
-        path.addLineTo({ 13, 10});
+        path.moveTo(transform({ 3, 10 }));
+        path.addLineTo(transform({ 8, 5 }));
+        path.addLineTo(transform({ 13, 10 }));
         break;
     }
     path.closeSubpath();
@@ -163,15 +178,15 @@ LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCa
     case RadioPart: {
         LengthSize buttonSize = zoomedSize;
         if (buttonSize.width.isIntrinsicOrAuto())
-            buttonSize.width = Length(12, LengthType::Fixed);
+            buttonSize.width = Length(12 * zoomFactor, LengthType::Fixed);
         if (buttonSize.height.isIntrinsicOrAuto())
-            buttonSize.height = Length(12, LengthType::Fixed);
+            buttonSize.height = Length(12 * zoomFactor, LengthType::Fixed);
         return buttonSize;
     }
     case InnerSpinButtonPart: {
         LengthSize spinButtonSize = zoomedSize;
         if (spinButtonSize.width.isIntrinsicOrAuto())
-            spinButtonSize.width = Length(static_cast<int>(arrowSize), LengthType::Fixed);
+            spinButtonSize.width = Length(static_cast<int>(arrowSize * zoomFactor), LengthType::Fixed);
         if (spinButtonSize.height.isIntrinsicOrAuto() || fontCascade.pixelSize() > static_cast<int>(arrowSize))
             spinButtonSize.height = Length(fontCascade.pixelSize(), LengthType::Fixed);
         return spinButtonSize;
@@ -492,14 +507,7 @@ void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graph
             path.clear();
         }
 
-        GraphicsContextStateSaver buttonStateSaver(graphicsContext);
-        if (buttonRect.height() > arrowSize)
-            graphicsContext.translate(buttonRect.x(), buttonRect.y() + (buttonRect.height() / 2.0) - (arrowSize / 2.));
-        else {
-            graphicsContext.translate(buttonRect.x(), buttonRect.y());
-            graphicsContext.scale(FloatSize::narrowPrecision(buttonRect.width() / arrowSize, buttonRect.height() / arrowSize));
-        }
-        paintArrow(graphicsContext, ArrowDirection::Up, useDarkAppearance);
+        paintArrow(graphicsContext, buttonRect, ArrowDirection::Up, useDarkAppearance);
     }
 
     buttonRect.move(0, buttonRect.height());
@@ -510,18 +518,13 @@ void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graph
                 graphicsContext.setFillColor(spinButtonBackgroundPressedColor);
             else if (states.states().contains(ControlStates::States::Hovered))
                 graphicsContext.setFillColor(spinButtonBackgroundHoveredColor);
+            else
+                graphicsContext.setFillColor(spinButtonBackgroundColor);
             graphicsContext.fillPath(path);
             path.clear();
         }
 
-        GraphicsContextStateSaver buttonStateSaver(graphicsContext);
-        if (buttonRect.height() > arrowSize)
-            graphicsContext.translate(buttonRect.x(), buttonRect.y() + (buttonRect.height() / 2.0) - (arrowSize / 2.));
-        else {
-            graphicsContext.translate(buttonRect.x(), buttonRect.y());
-            graphicsContext.scale(FloatSize::narrowPrecision(buttonRect.width() / arrowSize, buttonRect.height() / arrowSize));
-        }
-        paintArrow(graphicsContext, ArrowDirection::Down, useDarkAppearance);
+        paintArrow(graphicsContext, buttonRect, ArrowDirection::Down, useDarkAppearance);
     }
 }
 
@@ -537,7 +540,7 @@ void ThemeAdwaita::setAccentColor(const Color& color)
 
 Color ThemeAdwaita::accentColor()
 {
-    return m_accentColor.isValid() ? m_accentColor : SRGBA<uint8_t> { 52, 132, 228 };
+    return m_accentColor;
 }
 
 } // namespace WebCore

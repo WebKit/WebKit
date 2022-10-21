@@ -78,6 +78,9 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
+    m_videoInlineSize = m_player->presentationSize();
+    setVideoInlineSizeIfPossible(m_videoInlineSize);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::VideoInlineSizeChanged(m_videoInlineSize), m_id);
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 

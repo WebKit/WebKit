@@ -40,7 +40,7 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
 float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle*, const Document&);
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 
-// Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueWebkitXxxLarge), this function will return
+// Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueXxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).
 float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Settings::Values&, bool inQuirksMode = false);
 float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document&);

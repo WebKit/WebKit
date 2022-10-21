@@ -38,7 +38,7 @@
     readonly attribute long length;
     getter DataTransferItem item(unsigned long index);
 
-    DataTransferItem? add(DOMString data, DOMString type);
+    [CallWith=CurrentDocument] DataTransferItem? add(DOMString data, DOMString type);
     DataTransferItem? add(File file);
 
     undefined remove(unsigned long index);

@@ -10,49 +10,49 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,20) size 766x39
           text run at (0,20) width 766: "The order of the text below each popup button should match the order of the select's option text, and the order of the text in the"
           text run at (0,40) width 79: "popup menu."
-      RenderBlock (anonymous) at (0,76) size 784x40
+      RenderBlock (anonymous) at (0,76) size 784x48
         RenderText {#text} at (0,0) size 262x19
           text run at (0,0) width 262: "1) direction: rtl; -webkit-rtl-ordering: logical"
         RenderBR {BR} at (262,0) size 0x19
-        RenderMenuList {SELECT} at (0,20) size 100x20 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (21,2) size 75x16
-            RenderText at (4,0) size 71x16
-              text run at (4,0) width 48 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-              text run at (52,0) width 23: "abc"
-        RenderBR {BR} at (100,20) size 0x19
-      RenderBlock {DIV} at (0,116) size 100x20
+        RenderMenuList {SELECT} at (0,20) size 100x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x26
+            RenderText at (22,5) size 71x16
+              text run at (22,5) width 48 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+              text run at (70,5) width 23: "abc"
+        RenderBR {BR} at (100,24) size 0x19
+      RenderBlock {DIV} at (0,124) size 100x20
         RenderText {#text} at (0,0) size 69x19
           text run at (0,0) width 22: "abc"
           text run at (22,0) width 47 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-      RenderBlock (anonymous) at (0,136) size 784x60
+      RenderBlock (anonymous) at (0,144) size 784x68
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 105x19
           text run at (0,20) width 105: "2) text-align: right"
         RenderBR {BR} at (105,20) size 0x19
-        RenderMenuList {SELECT} at (0,40) size 200x20 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 175x16
-            RenderText at (0,0) size 71x16
-              text run at (0,0) width 23: "abc"
-              text run at (23,0) width 48 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-        RenderBR {BR} at (200,40) size 0x19
-      RenderBlock {DIV} at (0,196) size 200x20
+        RenderMenuList {SELECT} at (0,40) size 200x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 198x26
+            RenderText at (5,5) size 71x16
+              text run at (5,5) width 23: "abc"
+              text run at (28,5) width 48 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+        RenderBR {BR} at (200,44) size 0x19
+      RenderBlock {DIV} at (0,212) size 200x20
         RenderText {#text} at (0,0) size 69x19
           text run at (0,0) width 22: "abc"
           text run at (22,0) width 47 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-      RenderBlock (anonymous) at (0,216) size 784x60
+      RenderBlock (anonymous) at (0,232) size 784x68
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 68x19
           text run at (0,20) width 68: "3) No style"
         RenderBR {BR} at (68,20) size 0x19
-        RenderMenuList {SELECT} at (0,40) size 100x20 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 75x16
-            RenderText at (0,0) size 71x16
-              text run at (0,0) width 23: "abc"
-              text run at (23,0) width 48 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-        RenderBR {BR} at (100,40) size 0x19
-      RenderBlock {DIV} at (0,276) size 100x20
+        RenderMenuList {SELECT} at (0,40) size 100x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x26
+            RenderText at (5,5) size 71x16
+              text run at (5,5) width 23: "abc"
+              text run at (28,5) width 48 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+        RenderBR {BR} at (100,44) size 0x19
+      RenderBlock {DIV} at (0,300) size 100x20
         RenderText {#text} at (0,0) size 69x19
           text run at (0,0) width 22: "abc"
           text run at (22,0) width 47 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-      RenderBlock (anonymous) at (0,296) size 784x20
+      RenderBlock (anonymous) at (0,320) size 784x20
         RenderBR {BR} at (0,0) size 0x19

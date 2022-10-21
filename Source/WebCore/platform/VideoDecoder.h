@@ -59,9 +59,9 @@ public:
     };
 
     using PostTaskCallback = Function<void(Function<void()>&&)>;
-    using OutputCallback = Function<void(DecodedFrame&&)>;
+    using OutputCallback = Function<void(Expected<DecodedFrame, String>&&)>;
     using CreateResult = Expected<UniqueRef<VideoDecoder>, String>;
-    using CreateCallback = CompletionHandler<void(CreateResult&&)>;
+    using CreateCallback = Function<void(CreateResult&&)>;
 
     using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);

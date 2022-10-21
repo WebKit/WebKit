@@ -73,7 +73,6 @@ public:
     CFStreamError cfStreamError() const;
     operator CFStreamError() const;
     static const void* getSSLPeerCertificateDataBytePtr(CFDictionaryRef);
-
 #endif
 
 #if PLATFORM(COCOA)
@@ -81,6 +80,8 @@ public:
     WEBCORE_EXPORT NSError *nsError() const;
     WEBCORE_EXPORT operator NSError *() const;
 #endif
+
+    bool compromisedNetworkConnectionIntegrity() const { return m_compromisedNetworkConnectionIntegrity; }
 
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
@@ -105,6 +106,7 @@ private:
 #else
     mutable RetainPtr<NSError> m_platformError;
 #endif
+    bool m_compromisedNetworkConnectionIntegrity { false };
 };
 
 } // namespace WebCore

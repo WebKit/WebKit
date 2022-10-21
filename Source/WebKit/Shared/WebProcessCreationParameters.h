@@ -130,7 +130,7 @@ struct WebProcessCreationParameters {
     bool attrStyleEnabled { false };
     bool shouldThrowExceptionForGlobalConstantRedeclaration { true };
     WebCore::CrossOriginMode crossOriginMode { WebCore::CrossOriginMode::Shared }; // Cross-origin isolation via COOP+COEP headers.
-    bool isCaptivePortalModeEnabled { false };
+    bool isLockdownModeEnabled { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices { false };
@@ -189,7 +189,7 @@ struct WebProcessCreationParameters {
 
 #if USE(WPE_RENDERER)
     bool isServiceWorkerProcess { false };
-    IPC::Attachment hostClientFileDescriptor;
+    UnixFileDescriptor hostClientFileDescriptor;
     CString implementationLibraryName;
 #endif
 

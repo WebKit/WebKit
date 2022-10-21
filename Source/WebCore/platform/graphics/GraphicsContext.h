@@ -57,6 +57,7 @@ class GraphicsContextGL;
 class Path;
 class SystemImage;
 class TextRun;
+class VideoFrame;
 
 class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
@@ -158,7 +159,8 @@ public:
 #endif
 
     virtual const GraphicsContextState& state() const { return m_state; }
-    void updateState(GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeLastChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
+    void mergeAllChanges(const GraphicsContextState&);
 
     // Called *after* any change to GraphicsContextState; generally used to propagate changes
     // to the platform context's state.
@@ -190,7 +192,6 @@ public:
         RoundAllSides,
         RoundOriginAndDimensions
     };
-    virtual FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) = 0;
     WEBCORE_EXPORT static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     // Shapes
@@ -267,6 +268,9 @@ public:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);
+#endif
+#if ENABLE(WEB_CODECS)
+    WEBCORE_EXPORT virtual void paintVideoFrame(VideoFrame&, const FloatRect& destination, bool shouldDiscardAlpha);
 #endif
 
     // Clipping

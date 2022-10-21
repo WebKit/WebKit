@@ -4,7 +4,7 @@ Blocked access to external URL http://www.localhost:8800/fetch/metadata/resource
 PASS Non-secure same-origin script => No headers
 FAIL Non-secure same-origin script => No headers: sec-fetch-dest assert_equals: expected "" but got "script"
 FAIL Non-secure same-origin script => No headers: sec-fetch-mode assert_equals: expected "" but got "no-cors"
-PASS Non-secure same-origin script => No headers: sec-fetch-site
+FAIL Non-secure same-origin script => No headers: sec-fetch-site assert_equals: expected "" but got "same-origin"
 PASS Non-secure same-origin script => No headers: sec-fetch-user
 PASS Non-secure same-site script => No headers
 FAIL Non-secure same-site script => No headers: sec-fetch-dest null is not an object (evaluating 'value.dest')

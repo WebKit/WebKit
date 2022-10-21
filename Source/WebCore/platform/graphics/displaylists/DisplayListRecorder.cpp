@@ -112,7 +112,7 @@ const GraphicsContextState& Recorder::state() const
 
 void Recorder::didUpdateState(GraphicsContextState& state)
 {
-    currentState().state.mergeChanges(state, currentState().lastDrawingState);
+    currentState().state.mergeLastChanges(state, currentState().lastDrawingState);
     state.didApplyChanges();
 }
 
@@ -578,6 +578,17 @@ void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destinat
 }
 #endif
 
+#if ENABLE(WEB_CODECS)
+void Recorder::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
+{
+    if (!frame.isRemoteProxy()) {
+        GraphicsContext::paintVideoFrame(frame, destination, shouldDiscardAlpha);
+        return;
+    }
+    // FIXME: Implement recording.
+}
+#endif
+
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     // We modify the state directly here instead of calling GraphicsContext::scale()
@@ -587,12 +598,6 @@ void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
     recordApplyDeviceScaleFactor(deviceScaleFactor);
-}
-
-FloatRect Recorder::roundToDevicePixels(const FloatRect& rect, GraphicsContext::RoundingMode)
-{
-    WTFLogAlways("GraphicsContext::roundToDevicePixels() is not yet compatible with DisplayList::Recorder.");
-    return rect;
 }
 
 const Recorder::ContextState& Recorder::currentState() const

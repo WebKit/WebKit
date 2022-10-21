@@ -748,7 +748,9 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
-    void enqueuePlaybackTargetAvailabilityChangedEvent();
+
+    enum class EnqueueBehavior : uint8_t { Always, OnlyWhenChanged };
+    void enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior);
 #endif
 
     String mediaPlayerReferrer() const override;
@@ -1002,6 +1004,13 @@ private:
     void playPlayer();
     void pausePlayer();
 
+    struct RemotePlaybackConfiguration {
+        MediaTime currentTime;
+        double rate;
+        bool paused;
+    };
+    void applyConfiguration(const RemotePlaybackConfiguration&);
+
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
@@ -1235,10 +1244,6 @@ private:
     bool m_playbackBlockedWaitingForKey { false };
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    Ref<RemotePlayback> m_remote;
-#endif
-
     std::unique_ptr<MediaElementSession> m_mediaSession;
     size_t m_reportedExtraMemoryCost { 0 };
 
@@ -1256,7 +1261,10 @@ private:
     MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };
+    bool m_lastTargetAvailabilityEventState { false };
 #endif
+
+    std::optional<RemotePlaybackConfiguration> m_remotePlaybackConfiguration;
 
     bool m_isPlayingToWirelessTarget { false };
     bool m_playingOnSecondScreen { false };
@@ -1288,6 +1296,10 @@ private:
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;
     const void* m_logIdentifier;
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    Ref<RemotePlayback> m_remote;
 #endif
 };
 

@@ -42,18 +42,21 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
     , m_alignedNewFrameSize(CallFrame::headerSizeInRegisters
         + roundArgumentCountToAlignFrame(data.args.size()))
     , m_frameDelta(m_alignedNewFrameSize - m_alignedOldFrameSize)
-    , m_lockedRegisters(RegisterSet::allRegisters())
+    , m_lockedRegisters(RegisterSetBuilder::allRegisters().buildScalarRegisterSet())
     , m_numPassedArgs(data.numPassedArgs)
     , m_numParameters(data.numParameters)
 {
     // We are allowed all the usual registers...
     for (unsigned i = GPRInfo::numberOfRegisters; i--; )
-        m_lockedRegisters.clear(GPRInfo::toRegister(i));
+        m_lockedRegisters.remove(GPRInfo::toRegister(i));
     for (unsigned i = FPRInfo::numberOfRegisters; i--; )
-        m_lockedRegisters.clear(FPRInfo::toRegister(i));
+        m_lockedRegisters.remove(FPRInfo::toRegister(i));
 
     // ... as well as the callee saved registers
-    m_lockedRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
+    for (Reg r : RegisterSetBuilder::vmCalleeSaveRegisters()) {
+        if (RegisterSetBuilder::vmCalleeSaveRegisters().contains(r, IgnoreVectors))
+            m_lockedRegisters.remove(r);
+    }
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
     addNew(CallFrameSlot::callee, data.callee);
@@ -199,7 +202,7 @@ void CallFrameShuffler::dump(PrintStream& out) const
     out.print("  Locked registers: ");
     bool firstLocked { true };
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (m_lockedRegisters.get(reg)) {
+        if (m_lockedRegisters.contains(reg, IgnoreVectors)) {
             out.print(firstLocked ? "" : ", ", reg);
             firstLocked = false;
         }

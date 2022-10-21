@@ -80,13 +80,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     for (unsigned i = firstGPR; i < GPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = i * sizeof(CPURegister);
-        storeSpooler.storeGPR({ GPRInfo::toRegister(i), offset });
+        storeSpooler.storeGPR({ GPRInfo::toRegister(i), offset, conservativeWidthWithoutVectors(GPRInfo::toRegister(i)) });
     }
     storeSpooler.finalizeGPR();
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = (GPRInfo::numberOfRegisters + i) * sizeof(double);
-        storeSpooler.storeFPR({ FPRInfo::toRegister(i), offset });
+        storeSpooler.storeFPR({ FPRInfo::toRegister(i), offset, conservativeWidthWithoutVectors(FPRInfo::toRegister(i)) });
     }
     storeSpooler.finalizeFPR();
 
@@ -101,13 +101,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     for (unsigned i = firstGPR; i < GPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = i * sizeof(CPURegister);
-        loadSpooler.loadGPR({ GPRInfo::toRegister(i), offset });
+        loadSpooler.loadGPR({ GPRInfo::toRegister(i), offset, conservativeWidthWithoutVectors(GPRInfo::toRegister(i)) });
     }
     loadSpooler.finalizeGPR();
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         ptrdiff_t offset = (GPRInfo::numberOfRegisters + i) * sizeof(double);
-        loadSpooler.loadFPR({ FPRInfo::toRegister(i), offset });
+        loadSpooler.loadFPR({ FPRInfo::toRegister(i), offset, conservativeWidthWithoutVectors(FPRInfo::toRegister(i)) });
     }
     loadSpooler.finalizeFPR();
 

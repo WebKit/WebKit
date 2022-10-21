@@ -36,4 +36,14 @@ enum class WebCodecsEncodedVideoChunkType {
 
 }
 
+namespace WTF {
+template<> struct EnumTraits<WebCore::WebCodecsEncodedVideoChunkType> {
+    using values = EnumValues<
+        WebCore::WebCodecsEncodedVideoChunkType,
+        WebCore::WebCodecsEncodedVideoChunkType::Key,
+        WebCore::WebCodecsEncodedVideoChunkType::Delta
+    >;
+};
+
+}
 #endif

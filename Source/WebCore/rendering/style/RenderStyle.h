@@ -2463,7 +2463,8 @@ inline bool RenderStyle::isDisplayBlockType(DisplayType display)
 {
     return display == DisplayType::Block || display == DisplayType::Table
         || display == DisplayType::FlowRoot || display == DisplayType::Grid
-        || display == DisplayType::Flex || display == DisplayType::ListItem;
+        || display == DisplayType::Flex || display == DisplayType::Box
+        || display == DisplayType::ListItem;
 }
 
 inline bool RenderStyle::setWritingMode(WritingMode v)

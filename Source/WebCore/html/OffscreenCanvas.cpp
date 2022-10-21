@@ -77,6 +77,8 @@ WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> DetachedOffscreenCanv
 
 bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
 {
+    UNUSED_PARAM(context);
+
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     if (context.isWorkerGlobalScope())
         return DeprecatedGlobalSettings::offscreenCanvasInWorkersEnabled();

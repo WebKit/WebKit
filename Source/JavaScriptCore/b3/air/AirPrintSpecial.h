@@ -106,10 +106,10 @@ private:
     bool isValid(Inst&) final;
     bool admitsStack(Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Inst&, unsigned) final;
-    void reportUsedRegisters(Inst&, const RegisterSet&) final;
+    void reportUsedRegisters(Inst&, const RegisterSetBuilder&) final;
     MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
-    RegisterSet extraEarlyClobberedRegs(Inst&) final;
-    RegisterSet extraClobberedRegs(Inst&) final;
+    RegisterSetBuilder extraEarlyClobberedRegs(Inst&) final;
+    RegisterSetBuilder extraClobberedRegs(Inst&) final;
     
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;

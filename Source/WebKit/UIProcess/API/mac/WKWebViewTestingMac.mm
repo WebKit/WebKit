@@ -81,7 +81,9 @@
 
 - (NSRect)_candidateRect
 {
-    return _page->editorState().postLayoutData().selectionBoundingRect;
+    if (!_page->editorState().postLayoutData)
+        return NSZeroRect;
+    return _page->editorState().postLayoutData->selectionBoundingRect;
 }
 
 - (void)viewDidChangeEffectiveAppearance

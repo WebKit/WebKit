@@ -21,11 +21,12 @@
     }
     
     #box.animating {
-        animation: move 1s linear;
+        animation: move 100s linear;
     }
 
     @keyframes move {
         from { transform: translate3d(100px, 2000px, 0); }
+        80%  { transform: translate3d(100px, 2000px, 0); }
         to   { transform: translate3d(100px, 2100px, 0); }
     }
 

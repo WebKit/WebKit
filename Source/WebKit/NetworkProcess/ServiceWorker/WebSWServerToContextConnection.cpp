@@ -33,6 +33,7 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
+#include "NetworkSession.h"
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -133,6 +134,7 @@ void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier servi
     sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed) mutable {
         if (weakThis && !--weakThis->m_processingFunctionalEventCount)
             weakThis->m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { weakThis->webProcessIdentifier() }, 0);
+
         callback(wasProcessed);
     });
 }
@@ -142,9 +144,20 @@ void WebSWServerToContextConnection::fireNotificationEvent(ServiceWorkerIdentifi
     if (!m_processingFunctionalEventCount++)
         m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
-    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FireNotificationEvent { serviceWorkerIdentifier, data, eventType }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed) mutable {
-        if (weakThis && !--weakThis->m_processingFunctionalEventCount)
+    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FireNotificationEvent { serviceWorkerIdentifier, data, eventType }, [weakThis = WeakPtr { *this }, eventType, callback = WTFMove(callback)](bool wasProcessed) mutable {
+        if (!weakThis)
+            return callback(wasProcessed);
+
+        if (!--weakThis->m_processingFunctionalEventCount)
             weakThis->m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { weakThis->webProcessIdentifier() }, 0);
+
+        auto* session = weakThis->m_connection.networkSession();
+        if (auto* resourceLoadStatistics = session ? session->resourceLoadStatistics() : nullptr; resourceLoadStatistics && wasProcessed && eventType == NotificationEventType::Click) {
+            return resourceLoadStatistics->setMostRecentWebPushInteractionTime(RegistrableDomain(weakThis->registrableDomain()), [callback = WTFMove(callback), wasProcessed] () mutable {
+                callback(wasProcessed);
+            });
+        }
+
         callback(wasProcessed);
     });
 }

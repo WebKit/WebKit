@@ -23,7 +23,7 @@
 
 #include "OpenXRExtensions.h"
 #include "PlatformXROpenXR.h"
-
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 
 using namespace WebCore;

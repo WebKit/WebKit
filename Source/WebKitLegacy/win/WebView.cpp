@@ -3627,8 +3627,8 @@ static Frame *incrementFrame(Frame *curr, bool forward, bool wrapFlag)
 {
     CanWrap canWrap = wrapFlag ? CanWrap::Yes : CanWrap::No;
     return forward
-        ? curr->tree().traverseNext(canWrap)
-        : curr->tree().traversePrevious(canWrap);
+        ? dynamicDowncast<LocalFrame>(curr->tree().traverseNext(canWrap))
+        : dynamicDowncast<LocalFrame>(curr->tree().traversePrevious(canWrap));
 }
 
 HRESULT WebView::searchFor(_In_ BSTR str, BOOL forward, BOOL caseFlag, BOOL wrapFlag, _Out_ BOOL* found)
@@ -6217,7 +6217,7 @@ LRESULT WebView::onIMERequestReconvertString(Frame* targetFrame, RECONVERTSTRING
     reconvertString->dwStrLen = text.length();
     reconvertString->dwTargetStrLen = text.length();
     reconvertString->dwStrOffset = sizeof(RECONVERTSTRING);
-    StringView(text).getCharactersWithUpconvert(reinterpret_cast<UChar*>(reconvertString + 1));
+    StringView(text).getCharacters(reinterpret_cast<UChar*>(reconvertString + 1));
     return totalSize;
 }
 

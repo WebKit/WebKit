@@ -1,3 +1,3 @@
-from build import *
-from patch import *
-from step import *
+from ews.models.build import Build
+from ews.models.patch import Change
+from ews.models.step import Step

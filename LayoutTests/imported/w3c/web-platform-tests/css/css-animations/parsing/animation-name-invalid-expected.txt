@@ -5,4 +5,6 @@ PASS e.style['animation-name'] = "one, initial" should not set the property valu
 PASS e.style['animation-name'] = "one, inherit" should not set the property value
 PASS e.style['animation-name'] = "one, unset" should not set the property value
 PASS e.style['animation-name'] = "default, two" should not set the property value
+PASS e.style['animation-name'] = "revert, three" should not set the property value
+PASS e.style['animation-name'] = "revert-layer, four" should not set the property value
 

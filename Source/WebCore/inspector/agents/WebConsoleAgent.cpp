@@ -45,6 +45,15 @@ namespace WebCore {
 
 using namespace Inspector;
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebConsoleAgentAdditions.cpp>)
+#include <WebKitAdditions/WebConsoleAgentAdditions.cpp>
+#else
+static String networkConnectionIntegrityErrorMessage(const ResourceError&)
+{
+    return { };
+}
+#endif
+
 WebConsoleAgent::WebConsoleAgent(WebAgentContext& context)
     : InspectorConsoleAgent(context)
 {
@@ -78,8 +87,14 @@ void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier,
     if (error.isCancellation())
         return;
 
-    auto message = makeString("Failed to load resource", error.localizedDescription().isEmpty() ? "" : ": ", error.localizedDescription());
-    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, error.failingURL().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
+    auto level = MessageLevel::Error;
+    auto message = networkConnectionIntegrityErrorMessage(error);
+    if (message.isEmpty())
+        message = makeString("Failed to load resource", error.localizedDescription().isEmpty() ? "" : ": ", error.localizedDescription());
+    else
+        level = MessageLevel::Info;
+
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, level, WTFMove(message), error.failingURL().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
 }
 
 } // namespace WebCore

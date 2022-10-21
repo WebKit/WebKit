@@ -1496,6 +1496,11 @@ void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOp
 
 #endif
 
+URL WebChromeClient::sanitizeForCopyOrShare(const URL& url) const
+{
+    return m_page.sanitizeForCopyOrShare(url);
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 void WebChromeClient::textAutosizingUsesIdempotentModeChanged()

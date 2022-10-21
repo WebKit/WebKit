@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/append.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/clear.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/declared.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/delete-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/delete-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/delete.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/get-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/get-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/get.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/getAll-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/getAll.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/has.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/iterable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/set-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/set.tentative.html

@@ -360,7 +360,11 @@ std::optional<WebCore::IPAddress> NetworkSession::firstPartyHostIPAddress(const 
     if (firstPartyHost.isEmpty())
         return std::nullopt;
 
-    return m_firstPartyHostIPAddresses.get(firstPartyHost);
+    auto iterator = m_firstPartyHostIPAddresses.find(firstPartyHost);
+    if (iterator == m_firstPartyHostIPAddresses.end())
+        return std::nullopt;
+
+    return { iterator->value };
 }
 #endif // ENABLE(TRACKING_PREVENTION)
 

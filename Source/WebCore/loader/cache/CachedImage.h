@@ -101,6 +101,8 @@ public:
     bool isVisibleInViewport(const Document&) const;
     bool allowsAnimation(const Image&) const;
 
+    bool layerBasedSVGEngineEnabled() const { return m_layerBasedSVGEngineEnabled; }
+
 private:
     void clear();
 
@@ -161,6 +163,7 @@ private:
         void scheduleRenderingUpdate(const Image&) final;
 
         bool allowsAnimation(const Image&) const final;
+        bool layerBasedSVGEngineEnabled() const final { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->m_layerBasedSVGEngineEnabled : false; }
 
         HashSet<CachedImage*> m_cachedImages;
     };
@@ -201,6 +204,7 @@ private:
     bool m_isManuallyCached : 1;
     bool m_shouldPaintBrokenImage : 1;
     bool m_forceUpdateImageDataEnabledForTesting : 1;
+    bool m_layerBasedSVGEngineEnabled : 1 { false };
 };
 
 } // namespace WebCore

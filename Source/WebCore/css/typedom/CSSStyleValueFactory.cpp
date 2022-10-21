@@ -33,24 +33,16 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSCustomPropertyValue.h"
-#include "CSSFunctionValue.h"
 #include "CSSKeywordValue.h"
-#include "CSSMatrixComponent.h"
 #include "CSSNumericFactory.h"
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
-#include "CSSPerspective.h"
 #include "CSSPropertyParser.h"
-#include "CSSRotate.h"
-#include "CSSScale.h"
-#include "CSSSkew.h"
-#include "CSSSkewX.h"
-#include "CSSSkewY.h"
 #include "CSSStyleImageValue.h"
 #include "CSSStyleValue.h"
 #include "CSSTokenizer.h"
+#include "CSSTransformListValue.h"
 #include "CSSTransformValue.h"
-#include "CSSTranslate.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
@@ -275,6 +267,12 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
             CSSTokenizer tokenizer(downcast<CSSCustomPropertyValue>(cssValue.get()).customCSSText());
             return ExceptionOr<Ref<CSSStyleValue>> { CSSUnparsedValue::create(tokenizer.tokenRange()) };
         });
+    } else if (is<CSSTransformListValue>(cssValue)) {
+        auto& transformList = downcast<CSSTransformListValue>(cssValue.get());
+        auto transformValue = CSSTransformValue::create(transformList);
+        if (transformValue.hasException())
+            return transformValue.releaseException();
+        return Ref<CSSStyleValue> { transformValue.releaseReturnValue() };
     } else if (is<CSSValueList>(cssValue)) {
         // Reifying the first value in value list.
         // FIXME: Verify this is the expected behavior.
@@ -284,50 +282,6 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
             return Exception { TypeError, "The CSSValueList should not be empty."_s };
         
         return reifyValue(*valueList->begin(), document);
-    } else if (is<CSSFunctionValue>(cssValue)) {
-        auto makeTransformValue = [&](auto exceptionOrTransformComponent) -> ExceptionOr<Ref<CSSStyleValue>> {
-            if (exceptionOrTransformComponent.hasException())
-                return exceptionOrTransformComponent.releaseException();
-            auto transformValue = CSSTransformValue::create({ exceptionOrTransformComponent.releaseReturnValue() });
-            if (transformValue.hasException())
-                return transformValue.releaseException();
-            return Ref<CSSStyleValue> { transformValue.releaseReturnValue() };
-        };
-
-        auto& functionValue = downcast<CSSFunctionValue>(cssValue.get());
-        switch (functionValue.name()) {
-        case CSSValueTranslateX:
-        case CSSValueTranslateY:
-        case CSSValueTranslateZ:
-        case CSSValueTranslate:
-        case CSSValueTranslate3d:
-            return makeTransformValue(CSSTranslate::create(functionValue));
-        case CSSValueScaleX:
-        case CSSValueScaleY:
-        case CSSValueScaleZ:
-        case CSSValueScale:
-        case CSSValueScale3d:
-            return makeTransformValue(CSSScale::create(functionValue));
-        case CSSValueRotateX:
-        case CSSValueRotateY:
-        case CSSValueRotateZ:
-        case CSSValueRotate:
-        case CSSValueRotate3d:
-            return makeTransformValue(CSSRotate::create(functionValue));
-        case CSSValueSkewX:
-            return makeTransformValue(CSSSkewX::create(functionValue));
-        case CSSValueSkewY:
-            return makeTransformValue(CSSSkewY::create(functionValue));
-        case CSSValueSkew:
-            return makeTransformValue(CSSSkew::create(functionValue));
-        case CSSValuePerspective:
-            return makeTransformValue(CSSPerspective::create(functionValue));
-        case CSSValueMatrix:
-        case CSSValueMatrix3d:
-            return makeTransformValue(CSSMatrixComponent::create(functionValue));
-        default:
-            break;
-        }
     }
     
     return CSSStyleValue::create(WTFMove(cssValue));

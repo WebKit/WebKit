@@ -536,8 +536,8 @@ void WebAnimation::updatePlaybackRate(double newPlaybackRate)
         return;
     }
 
-    if (previousPlayState == PlayState::Idle || previousPlayState == PlayState::Paused) {
-        // If previous play state is idle or paused,
+    if (previousPlayState == PlayState::Idle || previousPlayState == PlayState::Paused || !currentTime()) {
+        // If previous play state is idle or paused, or animation's current time is unresolved,
         // Apply any pending playback rate on animation.
         applyPendingPlaybackRate();
     } else if (previousPlayState == PlayState::Finished) {
@@ -998,30 +998,67 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     // 2. Let has pending ready promise be a boolean flag that is initially false.
     bool hasPendingReadyPromise = false;
 
-    // 3. Perform the steps corresponding to the first matching condition from the following, if any:
-    if (effectivePlaybackRate() > 0 && autoRewind == AutoRewind::Yes && (!localTime || localTime.value() < 0_s || (localTime.value() + timeEpsilon) >= endTime)) {
-        // If animation's effective playback rate > 0, the auto-rewind flag is true and either animation's:
-        //     - current time is unresolved, or
-        //     - current time < zero, or
-        //     - current time ≥ target effect end,
-        // Set animation's hold time to zero.
-        m_holdTime = 0_s;
-    } else if (effectivePlaybackRate() < 0 && autoRewind == AutoRewind::Yes && (!localTime || localTime.value() <= 0_s || localTime.value() > endTime)) {
-        // If animation's effective playback rate < 0, the auto-rewind flag is true and either animation's:
-        //     - current time is unresolved, or
-        //     - current time ≤ zero, or
-        //     - current time > target effect end
-        // If target effect end is positive infinity, throw an InvalidStateError and abort these steps.
-        if (endTime == Seconds::infinity())
-            return Exception { InvalidStateError };
-        m_holdTime = endTime;
-    } else if (!effectivePlaybackRate() && !localTime) {
-        // If animation's effective playback rate = 0 and animation's current time is unresolved,
-        // Set animation's hold time to zero.
-        m_holdTime = 0_s;
+    // 3. Let seek time be a time value that is initially unresolved.
+    Markable<Seconds, Seconds::MarkableTraits> seekTime;
+
+    // 4. If the auto-rewind flag is true, perform the steps corresponding to the first matching condition from the following, if any:
+    if (autoRewind == AutoRewind::Yes) {
+        if (effectivePlaybackRate() >= 0 && (!localTime || *localTime < 0_s || (*localTime + timeEpsilon) >= endTime)) {
+            // If animation's effective playback rate ≥ 0, and animation's current time is either:
+            //     - unresolved, or
+            //     - less than zero, or
+            //     - greater than or equal to associated effect end,
+            // Set seek time to zero.
+            seekTime = 0_s;
+        } else if (effectivePlaybackRate() < 0 && (!localTime || *localTime <= 0_s || *localTime > endTime)) {
+            // If animation's effective playback rate < 0, and animation's current time is either:
+            //     - unresolved, or
+            //     - less than or equal to zero, or
+            //     - greater than associated effect end,
+            // If associated effect end is positive infinity,
+            //     throw an "InvalidStateError" DOMException and abort these steps.
+            // Otherwise,
+            //     Set seek time to animation's associated effect end.
+            if (endTime == Seconds::infinity())
+                return Exception { InvalidStateError };
+            seekTime = endTime;
+        }
     }
 
-    // 4. If animation has a pending play task or a pending pause task,
+    // 5. If the following three conditions are all satisfied:
+    //    - seek time is unresolved, and
+    //    - animation’s start time is unresolved, and
+    //    - animation’s current time is unresolved,
+    // set seek time to zero.
+    if (!seekTime && !m_startTime && !localTime)
+        seekTime = 0_s;
+
+    // 6. Let has finite timeline be true if animation has an associated timeline that is not monotonically increasing.
+    // FIXME: revisit this when we support scroll timelines.
+    auto hasFiniteTimeline = !m_timeline;
+
+    // 7. If seek time is resolved,
+    if (seekTime) {
+        if (hasFiniteTimeline) {
+            // If has finite timeline is true,
+            //     1. Set animation's start time to seek time.
+            //     2. Let animation's hold time be unresolved.
+            //     3. Apply any pending playback rate on animation.
+            m_startTime = seekTime;
+            m_holdTime = std::nullopt;
+            applyPendingPlaybackRate();
+        } else {
+            // Otherwise,
+            //     Set animation's hold time to seek time.
+            m_holdTime = seekTime;
+        }
+    }
+
+    // 8. If animation's hold time is resolved, let its start time be unresolved.
+    if (m_holdTime)
+        m_startTime = std::nullopt;
+
+    // 9. If animation has a pending play task or a pending pause task,
     if (pending()) {
         // 1. Cancel that task.
         m_timeToRunPendingPauseTask = TimeToRunPendingTask::NotScheduled;
@@ -1030,26 +1067,24 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
         hasPendingReadyPromise = true;
     }
 
-    // 5. If the following three conditions are all satisfied:
-    //    - animation's hold time is unresolved, and
-    //    - aborted pause is false, and
-    //    - animation does not have a pending playback rate,
+    // 10. If the following four conditions are all satisfied:
+    //     - animation's hold time is unresolved, and
+    //     - seek time is unresolved, and
+    //     - aborted pause is false, and
+    //     - animation does not have a pending playback rate,
     // abort this procedure.
-    if (!m_holdTime && !abortedPause && !m_pendingPlaybackRate)
+    if (!m_holdTime && !seekTime && !abortedPause && !m_pendingPlaybackRate)
         return { };
 
-    // 6. If animation's hold time is resolved, let its start time be unresolved.
-    if (m_holdTime)
-        m_startTime = std::nullopt;
-
-    // 7. If has pending ready promise is false, let animation's current ready promise be a new (pending) Promise object.
+    // 11. If has pending ready promise is false, let animation's current ready promise be
+    // a new promise in the relevant Realm of animation.
     if (!hasPendingReadyPromise)
         m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
 
-    // 8. Schedule a task to run as soon as animation is ready.
+    // 12. Schedule a task to run as soon as animation is ready.
     m_timeToRunPendingPlayTask = TimeToRunPendingTask::WhenReady;
 
-    // 9. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
+    // 13. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     timingDidChange(DidSeek::No, SynchronouslyNotify::No);
 
     invalidateEffect();
@@ -1061,7 +1096,7 @@ void WebAnimation::runPendingPlayTask()
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " runPendingPlayTask (current time is " << currentTime() << ")");
 
-    // 3.4.10. Playing an animation, step 8.
+    // 3.4.10. Playing an animation, step 12.
     // https://drafts.csswg.org/web-animations-1/#play-an-animation
 
     m_timeToRunPendingPlayTask = TimeToRunPendingTask::NotScheduled;

@@ -90,6 +90,7 @@ protected:
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>) override;
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
+    mutable Lock m_layerHitTestMutex;
 
 private:
     bool isThreadedScrollingTree() const override { return true; }
@@ -116,6 +117,9 @@ private:
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
     
     bool scrollingThreadIsActive();
+
+    void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
+    void unlockLayersForHitTesting() final WTF_RELEASES_LOCK(m_layerHitTestMutex);
 
     enum class SynchronizationState : uint8_t {
         Idle,

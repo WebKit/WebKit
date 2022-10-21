@@ -2165,6 +2165,39 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
         processTableOfContentsEntry(static_cast<GstTocEntry*>(i->data));
 }
 
+void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
+{
+    GUniquePtr<char> elementName(gst_element_get_name(element));
+    auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+    auto classifiers = elementClass.split('/');
+
+    // Collect processing time metrics for video decoders and converters.
+    if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
+        webkitGstTraceProcessingTimeForElement(element);
+
+    if (classifiers.contains("Decoder"_s) && classifiers.contains("Video"_s)) {
+        configureVideoDecoder(element);
+        return;
+    }
+
+    if (classifiers.contains("Depayloader"_s)) {
+        configureDepayloader(element);
+        return;
+    }
+
+    if (g_str_has_prefix(elementName.get(), "downloadbuffer")) {
+        configureDownloadBuffer(element);
+        return;
+    }
+
+    // This will set the multiqueue size to the default value.
+    if (g_str_has_prefix(elementName.get(), "uridecodebin"))
+        g_object_set(element, "buffer-size", 2 * MB, nullptr);
+
+    if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstQueue2"))
+        g_object_set(G_OBJECT(element), "high-watermark", 0.10, nullptr);
+}
+
 void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
 {
     GUniquePtr<char> elementName(gst_element_get_name(element));
@@ -2765,34 +2798,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
 
-    g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin* subBin, GstElement* element, MediaPlayerPrivateGStreamer* player) {
-        GUniquePtr<char> binName(gst_element_get_name(GST_ELEMENT_CAST(subBin)));
-        GUniquePtr<char> elementName(gst_element_get_name(element));
-        auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
-        auto classifiers = elementClass.split('/');
-
-        // Collect processing time metrics for video decoders and converters.
-        if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
-            webkitGstTraceProcessingTimeForElement(element);
-
-        if (classifiers.contains("Decoder"_s) && classifiers.contains("Video"_s)) {
-            player->configureVideoDecoder(element);
-            return;
-        }
-
-        if (classifiers.contains("Depayloader"_s)) {
-            player->configureDepayloader(element);
-            return;
-        }
-
-        if (g_str_has_prefix(elementName.get(), "downloadbuffer")) {
-            player->configureDownloadBuffer(element);
-            return;
-        }
-
-        // This will set the multiqueue size to the default value.
-        if (g_str_has_prefix(elementName.get(), "uridecodebin"))
-            g_object_set(element, "buffer-size", 2 * MB, nullptr);
+    g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "element-setup", G_CALLBACK(+[](GstBin*, GstElement* element, MediaPlayerPrivateGStreamer* player) {
+        player->configureElement(element);
     }), this);
 
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(sourceSetupCallback), this);
@@ -3604,7 +3611,7 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 }
 #endif
 
-void MediaPlayerPrivateGStreamer::setSize(const IntSize& size)
+void MediaPlayerPrivateGStreamer::setPresentationSize(const IntSize& size)
 {
     m_size = size;
 }

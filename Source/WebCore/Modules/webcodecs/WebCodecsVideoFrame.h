@@ -43,31 +43,33 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
+class ImageBuffer;
 class NativeImage;
 class OffscreenCanvas;
-
-using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
-#if ENABLE(CSS_TYPED_OM)
-    , RefPtr<CSSStyleImageValue>
-#endif
-#if ENABLE(OFFSCREEN_CANVAS)
-    , RefPtr<OffscreenCanvas>
-#endif
-#if ENABLE(VIDEO)
-    , RefPtr<HTMLVideoElement>
-#endif
-    >;
 
 class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame> {
 public:
     ~WebCodecsVideoFrame();
 
+    using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
+#if ENABLE(CSS_TYPED_OM)
+        , RefPtr<CSSStyleImageValue>
+#endif
+#if ENABLE(OFFSCREEN_CANVAS)
+        , RefPtr<OffscreenCanvas>
+#endif
+#if ENABLE(VIDEO)
+        , RefPtr<HTMLVideoElement>
+#endif
+    >;
+
+    enum class AlphaOption { Keep, Discard };
     struct Init {
         std::optional<uint64_t> duration;
         std::optional<int64_t> timestamp;
         WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Keep };
 
-        DOMRectInit visibleRect;
+        std::optional<DOMRectInit> visibleRect;
 
         std::optional<size_t> displayWidth;
         std::optional<size_t> displayHeight;
@@ -93,6 +95,7 @@ public:
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(Ref<WebCodecsVideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(BufferSource&&, BufferInit&&);
     static Ref<WebCodecsVideoFrame> create(Ref<VideoFrame>&&, BufferInit&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ImageBuffer&, IntSize, Init&&);
 
     std::optional<VideoPixelFormat> format() const { return m_format; }
     size_t codedWidth() const { return m_codedWidth; }
@@ -123,10 +126,11 @@ public:
 
     void setDisplaySize(size_t, size_t);
     void setVisibleRect(const DOMRectInit&);
+    bool shoudlDiscardAlpha() const { return m_format && (*m_format == VideoPixelFormat::RGBX || *m_format == VideoPixelFormat::BGRX); }
 
 private:
-    static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
-    static Ref<WebCodecsVideoFrame> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(Ref<NativeImage>&&, Init&&);
 
     RefPtr<VideoFrame> m_internalFrame;

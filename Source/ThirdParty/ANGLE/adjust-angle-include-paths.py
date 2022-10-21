@@ -56,4 +56,3 @@ for filename in os.listdir('.'):
     newLines = [replace(line) for line in lines]
     if lines != newLines:
         open(filename, 'w').writelines(newLines)
-        print("Postprocessed ANGLE header {}".format(filename))

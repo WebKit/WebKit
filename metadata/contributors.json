@@ -1478,6 +1478,18 @@
    },
    {
       "emails" : [
+         "chirag_m_shah@apple.com",
+         "chirags@alumni.upenn.edu",
+         "chirags2793@gmail.com"
+      ],
+      "github" : "chirags27",
+      "name" : "Chirag M Shah",
+      "nicks" : [
+         "chirag_m_shah"
+      ]
+   },
+   {
+      "emails" : [
          "cblu@apple.com"
       ],
       "name" : "Chris Blumenberg",
@@ -1784,6 +1796,17 @@
       "name" : "Daniel Cheng",
       "nicks" : [
          "dcheng"
+      ]
+   },
+   {
+      "emails" : [
+         "jalkut@red-sweater.com"
+      ],
+      "github" : "danielpunkass",
+      "name" : "Daniel Jalkut",
+      "nicks" : [
+         "danielpunkass",
+         "dcj"
       ]
    },
    {

@@ -32,7 +32,7 @@ namespace JSC { namespace FTL {
 
 void SlowPathCallKey::dump(PrintStream& out) const
 {
-    out.print("<usedRegisters = ", m_usedRegisters, ", offset = ", m_offset, ", indirectOffset = ", m_indirectOffset, ", callTarget = ", RawPointer(m_callTarget.taggedPtr()));
+    out.print("<usedRegisters = ", m_usedRegisters.toRegisterSet(), ", offset = ", m_offset, ", indirectOffset = ", m_indirectOffset, ", callTarget = ", RawPointer(m_callTarget.taggedPtr()));
     if (Options::clobberAllRegsInFTLICSlowPath())
         out.print(", argumentRegisters = ", argumentRegistersIfClobberingCheckIsEnabled());
     out.print(">");

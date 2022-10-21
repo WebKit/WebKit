@@ -756,6 +756,7 @@ css/CSSFontFaceSet.cpp
 css/CSSFontFaceSource.cpp
 css/CSSFontFaceSrcValue.cpp
 css/CSSFontFeatureValue.cpp
+css/CSSFontFeatureValuesRule.cpp
 css/CSSFontPaletteValuesOverrideColorsValue.cpp
 css/CSSFontPaletteValuesRule.cpp
 css/CSSFontSelector.cpp
@@ -808,6 +809,7 @@ css/CSSSupportsRule.cpp
 css/CSSTimingFunctionValue.cpp
 css/CSSToLengthConversionData.cpp
 css/CSSToStyleMap.cpp
+css/CSSTransformListValue.cpp
 css/CSSUnicodeRangeValue.cpp
 css/CSSUnits.cpp
 css/CSSValue.cpp
@@ -827,10 +829,10 @@ css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
+css/LegacyMediaQueryEvaluator.cpp
+css/LegacyMediaQuery.cpp
 css/MediaFeatureNames.cpp
 css/MediaList.cpp
-css/MediaQuery.cpp
-css/MediaQueryEvaluator.cpp
 css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryListEvent.cpp
@@ -884,6 +886,7 @@ css/parser/SizesCalcParser.cpp
 css/query/GenericMediaQueryEvaluator.cpp
 css/query/GenericMediaQueryParser.cpp
 css/query/GenericMediaQuerySerialization.cpp
+css/query/MediaQueryEvaluator.cpp
 css/query/MediaQueryParser.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMapReadOnly.cpp
@@ -1910,12 +1913,14 @@ page/scrolling/ScrollingStateStickyNode.cpp
 page/scrolling/ScrollingStateTree.cpp
 page/scrolling/ScrollingThread.cpp
 page/scrolling/ScrollingTree.cpp
+page/scrolling/ScrollingTreeFixedNode.cpp
 page/scrolling/ScrollingTreeFrameHostingNode.cpp
 page/scrolling/ScrollingTreeFrameScrollingNode.cpp
 page/scrolling/ScrollingTreeGestureState.cpp
 page/scrolling/ScrollingTreeLatchingController.cpp
 page/scrolling/ScrollingTreeNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
+page/scrolling/ScrollingTreePositionedNode.cpp
 page/scrolling/ScrollingTreeScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
 page/scrolling/ScrollingTreeStickyNode.cpp
@@ -2222,6 +2227,7 @@ platform/graphics/filters/FilterImage.cpp
 platform/graphics/filters/FilterOperation.cpp
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/filters/FilterResults.cpp
+platform/graphics/filters/FilterTargetSwitcher.cpp
 platform/graphics/filters/PointLightSource.cpp
 platform/graphics/filters/SourceAlpha.cpp
 platform/graphics/filters/SourceGraphic.cpp
@@ -2437,7 +2443,6 @@ rendering/RenderFragmentedFlow.cpp
 rendering/RenderFrame.cpp
 rendering/RenderFrameBase.cpp
 rendering/RenderFrameSet.cpp
-rendering/RenderFullScreen.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
 rendering/RenderHTMLCanvas.cpp
@@ -2653,7 +2658,6 @@ rendering/updating/RenderTreeBuilderBlockFlow.cpp
 rendering/updating/RenderTreeBuilderContinuation.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
 rendering/updating/RenderTreeBuilderFormControls.cpp
-rendering/updating/RenderTreeBuilderFullScreen.cpp
 rendering/updating/RenderTreeBuilderInline.cpp
 rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMathML.cpp
@@ -2674,8 +2678,10 @@ storage/StorageQuotaManager.cpp
 style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
+style/ColorFromPrimitiveValue.cpp
 style/ContainerQueryEvaluator.cpp
 style/ElementRuleCollector.cpp
+style/FilterOperationsBuilder.cpp
 style/HasSelectorFilter.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
@@ -3055,6 +3061,7 @@ JSCSSConditionRule.cpp
 JSCSSContainerRule.cpp
 JSCSSCounterStyleRule.cpp
 JSCSSFontFaceRule.cpp
+JSCSSFontFeatureValuesRule.cpp
 JSCSSFontPaletteValuesRule.cpp
 JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp
@@ -3859,9 +3866,6 @@ JSSQLTransaction.cpp
 JSSQLTransactionCallback.cpp
 JSSQLTransactionErrorCallback.cpp
 JSSVGAElement.cpp
-JSSVGAltGlyphDefElement.cpp
-JSSVGAltGlyphElement.cpp
-JSSVGAltGlyphItemElement.cpp
 JSSVGAngle.cpp
 JSSVGAnimateColorElement.cpp
 JSSVGAnimateElement.cpp
@@ -3883,7 +3887,6 @@ JSSVGAnimationElement.cpp
 JSSVGCircleElement.cpp
 JSSVGClipPathElement.cpp
 JSSVGComponentTransferFunctionElement.cpp
-JSSVGCursorElement.cpp
 JSSVGDefsElement.cpp
 JSSVGDescElement.cpp
 JSSVGElement.cpp
@@ -3916,20 +3919,11 @@ JSSVGFETurbulenceElement.cpp
 JSSVGFilterElement.cpp
 JSSVGFilterPrimitiveStandardAttributes.cpp
 JSSVGFitToViewBox.cpp
-JSSVGFontElement.cpp
-JSSVGFontFaceElement.cpp
-JSSVGFontFaceFormatElement.cpp
-JSSVGFontFaceNameElement.cpp
-JSSVGFontFaceSrcElement.cpp
-JSSVGFontFaceUriElement.cpp
 JSSVGForeignObjectElement.cpp
 JSSVGGElement.cpp
 JSSVGGeometryElement.cpp
-JSSVGGlyphElement.cpp
-JSSVGGlyphRefElement.cpp
 JSSVGGradientElement.cpp
 JSSVGGraphicsElement.cpp
-JSSVGHKernElement.cpp
 JSSVGImageElement.cpp
 JSSVGLength.cpp
 JSSVGLengthList.cpp
@@ -3940,7 +3934,6 @@ JSSVGMarkerElement.cpp
 JSSVGMaskElement.cpp
 JSSVGMatrix.cpp
 JSSVGMetadataElement.cpp
-JSSVGMissingGlyphElement.cpp
 JSSVGNumber.cpp
 JSSVGNumberList.cpp
 JSSVGPathElement.cpp
@@ -3983,7 +3976,6 @@ JSSVGStringList.cpp
 JSSVGStyleElement.cpp
 JSSVGSwitchElement.cpp
 JSSVGSymbolElement.cpp
-JSSVGTRefElement.cpp
 JSSVGTSpanElement.cpp
 JSSVGTests.cpp
 JSSVGTextContentElement.cpp
@@ -3996,7 +3988,6 @@ JSSVGTransformList.cpp
 JSSVGURIReference.cpp
 JSSVGUnitTypes.cpp
 JSSVGUseElement.cpp
-JSSVGVKernElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp

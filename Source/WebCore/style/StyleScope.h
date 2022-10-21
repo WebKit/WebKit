@@ -28,7 +28,7 @@
 #pragma once
 
 #include "LayoutSize.h"
-#include "MediaQueryEvaluator.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "StyleScopeOrdinal.h"
 #include "Timer.h"
 #include <memory>

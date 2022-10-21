@@ -32,9 +32,9 @@
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "RenderStyle.h"
 #include "Settings.h"
 #include "StyleResolveForDocument.h"
@@ -79,7 +79,7 @@ bool HTMLMetaElement::mediaAttributeMatches()
             mediaType = frameView->mediaType();
     }
 
-    return MediaQueryEvaluator(mediaType, document, documentStyle ? &*documentStyle : nullptr).evaluate(*m_media);
+    return LegacyMediaQueryEvaluator(mediaType, document, documentStyle ? &*documentStyle : nullptr).evaluate(*m_media);
 }
 
 const Color& HTMLMetaElement::contentColor()

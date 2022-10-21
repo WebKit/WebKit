@@ -57,7 +57,7 @@ const MathMLElement::Length& MathMLFractionElement::lineThickness()
 
     auto& thickness = attributeWithoutSynchronization(linethicknessAttr);
     if (document().settings().coreMathMLEnabled()) {
-        m_lineThickness = parseMathMLLength(thickness);
+        m_lineThickness = parseMathMLLength(thickness, false);
         return m_lineThickness.value();
     }
 
@@ -75,7 +75,7 @@ const MathMLElement::Length& MathMLFractionElement::lineThickness()
         m_lineThickness.value().type = LengthType::UnitLess;
         m_lineThickness.value().value = 2;
     } else
-        m_lineThickness = parseMathMLLength(thickness);
+        m_lineThickness = parseMathMLLength(thickness, true);
     return m_lineThickness.value();
 }
 

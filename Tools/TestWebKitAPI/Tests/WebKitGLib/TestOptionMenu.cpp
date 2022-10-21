@@ -28,6 +28,7 @@ using PlatformRectangle = GdkRectangle;
 using PlatformRectangle = WebKitRectangle;
 #endif
 
+#if !PLATFORM(GTK) || !USE(GTK4)
 class OptionMenuTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(OptionMenuTest);
@@ -301,11 +302,12 @@ static void testOptionMenuSelect(OptionMenuTest* test, gconstpointer)
     g_assert_nonnull(result);
     g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(result), ==, 1);
 }
+#endif // !PLATFORM(GTK) || !USE(GTK4)
 
 void beforeAll()
 {
 #if !PLATFORM(GTK) || !USE(GTK4)
-    // FIXME: Rework option menu API in GTK4 to not expose GdkEvent.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246716
     OptionMenuTest::add("WebKitWebView", "option-menu-simple", testOptionMenuSimple);
     OptionMenuTest::add("WebKitWebView", "option-menu-groups", testOptionMenuGroups);
     OptionMenuTest::add("WebKitWebView", "option-menu-activate", testOptionMenuActivate);

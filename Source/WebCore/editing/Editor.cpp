@@ -1647,12 +1647,16 @@ void Editor::copyURL(const URL& url, const String& title)
 
 void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard)
 {
+    auto sanitizedURL = url;
+    if (auto* page = m_document.page())
+        sanitizedURL = page->sanitizeForCopyOrShare(url);
+
     PasteboardURL pasteboardURL;
-    pasteboardURL.url = url;
+    pasteboardURL.url = sanitizedURL;
     pasteboardURL.title = title;
 
 #if PLATFORM(MAC)
-    pasteboardURL.userVisibleForm = userVisibleString(url);
+    pasteboardURL.userVisibleForm = userVisibleString(sanitizedURL);
 #endif
 
     pasteboard.write(pasteboardURL);

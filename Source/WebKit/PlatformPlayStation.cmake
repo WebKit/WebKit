@@ -20,7 +20,7 @@ list(APPEND NetworkProcess_PRIVATE_LIBRARIES
 )
 
 list(APPEND GPUProcess_SOURCES
-    GPUProcess/EntryPoint/unix/GPUProcessMain.cpp
+    GPUProcess/EntryPoint/playstation/GPUProcessMain.cpp
 )
 list(APPEND GPUProcess_PRIVATE_LIBRARIES
     ${ProcessLauncher_LIBRARY}
@@ -46,7 +46,6 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/curl/NetworkSessionCurl.cpp
     NetworkProcess/curl/WebSocketTaskCurl.cpp
 
-    Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
     Platform/IPC/unix/IPCSemaphoreUnix.cpp
 

@@ -134,16 +134,9 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 // We prewarm local storage for at most 5 origins in a given page.
 static const unsigned maxlocalStoragePrewarmingCount { 5 };
 
-static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
-{
-    if (!ownerElement)
-        return 0;
-    return ownerElement->document().frame();
-}
-
 static inline float parentPageZoomFactor(Frame* frame)
 {
-    Frame* parent = frame->tree().parent();
+    Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->pageZoomFactor();
@@ -151,20 +144,18 @@ static inline float parentPageZoomFactor(Frame* frame)
 
 static inline float parentTextZoomFactor(Frame* frame)
 {
-    Frame* parent = frame->tree().parent();
+    Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->textZoomFactor();
 }
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient)
-    : m_mainFrame(ownerElement ? page.mainFrame() : *this)
-    , m_page(page)
+    : AbstractFrame(page, FrameIdentifier::generate(), ownerElement)
+    , m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_settings(&page.settings())
-    , m_treeNode(*this, parentFromOwnerElement(ownerElement))
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
-    , m_frameID(FrameIdentifier::generate())
     , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
@@ -183,8 +174,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
 #endif
 
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
-    Frame* parent = parentFromOwnerElement(ownerElement);
-    if (parent && parent->activeDOMObjectsAndAnimationsSuspended())
+    if (Frame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 }
 
@@ -223,11 +213,6 @@ Frame::~Frame()
 
     if (!isMainFrame())
         m_mainFrame.selfOnlyDeref();
-}
-
-Page* Frame::page() const
-{
-    return m_page.get();
 }
 
 HTMLFrameOwnerElement* Frame::ownerElement() const
@@ -284,8 +269,8 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = true;
 
     if (isMainFrame()) {
-        if (m_page)
-            m_page->didChangeMainDocument();
+        if (auto* page = this->page())
+            page->didChangeMainDocument();
         m_loader->client().dispatchDidChangeMainDocument();
 
         // We want to generate the same unique names whenever a page is loaded to avoid making layout tests
@@ -320,8 +305,8 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     }
 #endif
 
-    if (m_page && m_doc && isMainFrame() && !loader().stateMachine().isDisplayingInitialEmptyDocument())
-        m_page->mainFrameDidChangeToNonInitialEmptyDocument();
+    if (page() && m_doc && isMainFrame() && !loader().stateMachine().isDisplayingInitialEmptyDocument())
+        page()->mainFrameDidChangeToNonInitialEmptyDocument();
 
     InspectorInstrumentation::frameDocumentUpdated(*this);
 
@@ -330,7 +315,7 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
 
 void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
-    if (!m_page || !m_doc || !m_doc->renderView())
+    if (!page() || !m_doc || !m_doc->renderView())
         return;
 
     bool needsUpdateForWheelEventHandlers = false;
@@ -348,10 +333,10 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
 #endif
 #if ENABLE(EDITABLE_REGION)
     // Document::mayHaveEditableElements never changes from true to false currently.
-    needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
+    needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && page()->shouldBuildEditableRegion();
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    needsUpdateForInteractionRegions = m_page->shouldBuildInteractionRegions();
+    needsUpdateForInteractionRegions = page()->shouldBuildInteractionRegions();
 #endif
     if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions)
         return;
@@ -373,8 +358,8 @@ void Frame::orientationChanged()
 
 int Frame::orientation() const
 {
-    if (m_page)
-        return m_page->chrome().client().deviceOrientation();
+    if (auto* page = this->page())
+        return page->chrome().client().deviceOrientation();
     return 0;
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
@@ -631,15 +616,18 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     }
 
     // Subframes of the one we're printing don't lay out to the page size.
-    for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->setPrinting(printing, FloatSize(), FloatSize(), 0, shouldAdjustViewSize);
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
+            localFrame->setPrinting(printing, FloatSize(), FloatSize(), 0, shouldAdjustViewSize);
+    }
 }
 
 bool Frame::shouldUsePrintingLayout() const
 {
     // Only top frame being printed should be fit to page size.
     // Subframes should be constrained by parents only.
-    return m_doc->printing() && (!tree().parent() || !tree().parent()->m_doc->printing());
+    auto* parent = dynamicDowncast<LocalFrame>(tree().parent());
+    return m_doc->printing() && (!parent || !parent->m_doc->printing());
 }
 
 FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize)
@@ -664,14 +652,14 @@ FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, cons
 
 void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 {
-    if (!m_page)
+    if (!page())
         return;
 
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
-    bool pageWasNotified = m_page->hasBeenNotifiedToInjectUserScripts();
-    m_page->userContentProvider().forEachUserScript([this, protectedThis = Ref { *this }, injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
+    bool pageWasNotified = page()->hasBeenNotifiedToInjectUserScripts();
+    page()->userContentProvider().forEachUserScript([this, protectedThis = Ref { *this }, injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
         if (script.injectionTime() == injectionTime) {
             if (script.waitForNotificationBeforeInjecting() == WaitForNotificationBeforeInjecting::Yes && !pageWasNotified)
                 addUserScriptAwaitingNotification(world, script);
@@ -769,7 +757,7 @@ void Frame::clearTimers()
 
 void Frame::willDetachPage()
 {
-    if (Frame* parent = tree().parent())
+    if (Frame* parent = dynamicDowncast<LocalFrame>(tree().parent()))
         parent->loader().checkLoadComplete();
 
     for (auto& observer : m_destructionObservers)
@@ -875,7 +863,7 @@ void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& 
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
-    ASSERT(m_page);
+    ASSERT(page());
 
     bool isMainFrame = this->isMainFrame();
 
@@ -973,8 +961,10 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 
     document->resolveStyle(Document::ResolveStyleType::Rebuild);
 
-    for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
+            localFrame->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+    }
 
     if (FrameView* view = this->view()) {
         if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
@@ -1041,8 +1031,10 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
 
 void Frame::deviceOrPageScaleFactorChanged()
 {
-    for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->deviceOrPageScaleFactorChanged();
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
+            localFrame->deviceOrPageScaleFactorChanged();
+    }
 
     if (RenderView* root = contentRenderer())
         root->compositor().deviceOrPageScaleFactorChanged();
@@ -1051,7 +1043,7 @@ void Frame::deviceOrPageScaleFactorChanged()
 void Frame::dropChildren()
 {
     ASSERT(isMainFrame());
-    while (Frame* child = tree().firstChild())
+    while (auto* child = tree().firstChild())
         tree().removeChild(*child);
 }
 

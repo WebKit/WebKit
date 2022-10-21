@@ -28,6 +28,7 @@
 
 #include <wtf/LogChannels.h>
 #include <wtf/Logging.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WTF {
 

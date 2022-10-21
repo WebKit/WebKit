@@ -125,9 +125,9 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_allowsContentJavaScript = allows; }
 
-    bool captivePortalModeEnabled() const;
-    void setCaptivePortalModeEnabled(std::optional<bool> captivePortalModeEnabled) { m_captivePortalModeEnabled = captivePortalModeEnabled; }
-    bool isCaptivePortalModeExplicitlySet() const { return !!m_captivePortalModeEnabled; }
+    bool lockdownModeEnabled() const;
+    void setLockdownModeEnabled(std::optional<bool> enabled) { m_lockdownModeEnabled = enabled; }
+    bool isLockdownModeExplicitlySet() const { return !!m_lockdownModeEnabled; }
 
     WebCore::ColorSchemePreference colorSchemePreference() const { return m_colorSchemePreference; }
     void setColorSchemePreference(WebCore::ColorSchemePreference colorSchemePreference) { m_colorSchemePreference = colorSchemePreference; }
@@ -176,7 +176,7 @@ private:
     WebCore::ModalContainerObservationPolicy m_modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
     bool m_networkConnectionIntegrityEnabled { false };
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
-    std::optional<bool> m_captivePortalModeEnabled;
+    std::optional<bool> m_lockdownModeEnabled;
     WebCore::ColorSchemePreference m_colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };
     bool m_allowPrivacyProxy { true };
 };

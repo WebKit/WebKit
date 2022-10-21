@@ -133,7 +133,9 @@ PASS font-palette
 PASS font-size
 PASS font-stretch
 PASS font-style
-PASS font-synthesis
+PASS font-synthesis-small-caps
+PASS font-synthesis-style
+PASS font-synthesis-weight
 PASS font-variant-alternates
 PASS font-variant-caps
 PASS font-variant-east-asian
@@ -383,7 +385,6 @@ PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
-PASS -webkit-overflow-scrolling
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-text-combine

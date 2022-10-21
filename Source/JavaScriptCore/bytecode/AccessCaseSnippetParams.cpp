@@ -47,11 +47,11 @@ public:
     }
 
     template<size_t... ArgumentsIndex>
-    CCallHelpers::JumpList generateImpl(AccessGenerationState& state, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
+    CCallHelpers::JumpList generateImpl(AccessGenerationState& state, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
     {
         CCallHelpers::JumpList exceptions;
         // We spill (1) the used registers by IC and (2) the used registers by Snippet.
-        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(usedRegistersBySnippet);
+        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(usedRegistersBySnippet.buildAndValidate());
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
@@ -78,13 +78,13 @@ public:
 
         noException.link(&jit);
         RegisterSet dontRestore;
-        dontRestore.set(m_result);
+        dontRestore.add(m_result, IgnoreVectors);
         state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
         return exceptions;
     }
 
-    CCallHelpers::JumpList generate(AccessGenerationState& state, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit) final
+    CCallHelpers::JumpList generate(AccessGenerationState& state, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers& jit) final
     {
         m_from.link(&jit);
         CCallHelpers::JumpList exceptions = generateImpl(state, usedRegistersBySnippet, jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
@@ -110,7 +110,7 @@ private:
 SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
-CCallHelpers::JumpList AccessCaseSnippetParams::emitSlowPathCalls(AccessGenerationState& state, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit)
+CCallHelpers::JumpList AccessCaseSnippetParams::emitSlowPathCalls(AccessGenerationState& state, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers& jit)
 {
     CCallHelpers::JumpList exceptions;
     for (auto& generator : m_generators)

@@ -158,14 +158,13 @@ auto CSSUnitValue::toSumValue() const -> std::optional<SumValue>
         switch (category) {
         case CSSUnitCategory::Percent:
             return CSSUnitType::CSS_PERCENTAGE;
-        case CSSUnitCategory::Other:
-            if (unit == CSSUnitType::CSS_FR)
-                return CSSUnitType::CSS_FR;
-            break;
+        case CSSUnitCategory::Flex:
+            return CSSUnitType::CSS_FR;
         default:
             break;
         }
-        return canonicalUnitTypeForCategory(category);
+        auto result = canonicalUnitTypeForCategory(category);
+        return result == CSSUnitType::CSS_UNKNOWN ? unit : result;
     } (m_unit);
     auto convertedValue = m_value * conversionToCanonicalUnitsScaleFactor(unitEnum()) / conversionToCanonicalUnitsScaleFactor(canonicalUnit);
 

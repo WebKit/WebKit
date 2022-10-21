@@ -25,26 +25,20 @@
 #pragma once
 
 #include "GenericMediaQueryParser.h"
+#include "MediaQuery.h"
 
 namespace WebCore {
 namespace MQ {
 
-enum class Prefix : bool { Not, Only };
-
-struct MediaQuery {
-    std::optional<Prefix> prefix;
-    AtomString mediaType;
-    std::optional<Condition> condition { };
-};
-
-using MediaQueryList = Vector<MediaQuery>;
-
 class MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
 public:
     MediaQueryParser(const CSSParserContext&);
-    
+
     MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
     std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);
+
+    static Vector<const FeatureSchema*> featureSchemas();
+    static bool rejectInvalidFeatures() { return true; }
 };
 
 void serialize(StringBuilder&, const MediaQueryList&);

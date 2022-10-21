@@ -115,9 +115,9 @@ PASS TryAllocate('UndetectableHTMLCollection') is 'no constructor'
 PASS TryAllocate('XPathNSResolver') is 'no constructor'
 PASS TryAllocate('EventListener') is 'no constructor'
 PASS TryAllocate('NPObject') is 'no constructor'
-FAIL TryAllocate('CSSStyleSheet') should be [object CSSStyleSheet]. Was exception.
-FAIL TryAllocate('CSSStyleSheet') should be [object CSSStyleSheet]. Was exception.
-FAIL TryAllocate('CSSStyleSheet') should be [object CSSStyleSheet]. Was exception.
+PASS TryAllocate('CSSStyleSheet') is '[object CSSStyleSheet]'
+PASS TryAllocate('CSSStyleSheet') is '[object CSSStyleSheet]'
+PASS TryAllocate('CSSStyleSheet') is '[object CSSStyleSheet]'
 PASS TryAllocate('Comment') is '[object Comment]'
 PASS TryAllocate('Comment') is '[object Comment]'
 PASS TryAllocate('Comment') is '[object Comment]'

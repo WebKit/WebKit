@@ -204,6 +204,8 @@ std::optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
 AtomString concatenateFamilyName(CSSParserTokenRange&);
 AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
+// https://drafts.csswg.org/css-fonts-4/#family-name-value
+Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange&);
 std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
 std::optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);

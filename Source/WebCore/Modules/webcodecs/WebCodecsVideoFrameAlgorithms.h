@@ -53,6 +53,8 @@ void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVi
 
 Ref<VideoColorSpace> videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
 
+bool validateVideoFrameInit(const WebCodecsVideoFrame::Init&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
+
 }
 
 #endif

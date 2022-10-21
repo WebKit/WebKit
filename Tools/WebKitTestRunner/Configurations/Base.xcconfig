@@ -144,3 +144,5 @@ WK_FRAMEWORK_VERSION_PREFIX[sdk=macosx*] = Versions/A/;
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 HEADER_SEARCH_PATHS_ = ;
 HEADER_SEARCH_PATHS_cocoatouch = $(SRCROOT)/../../Source/WebKit/Platform/spi/ios $(SRCROOT)/../../Source/WebKit/Platform/spi/watchos;
+
+EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/gtk";

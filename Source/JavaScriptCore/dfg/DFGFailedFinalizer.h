@@ -38,6 +38,7 @@ public:
     
     size_t codeSize() final;
     bool finalize() final;
+    bool isFailed() final { return true; }
 };
 
 } } // namespace JSC::DFG

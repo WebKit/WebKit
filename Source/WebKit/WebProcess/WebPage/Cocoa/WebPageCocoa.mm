@@ -436,7 +436,7 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 
 void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& result) const
 {
-    if (result.isMissingPostLayoutData)
+    if (result.isMissingPostLayoutData())
         return;
 
     const auto& selection = frame.selection().selection();
@@ -444,7 +444,7 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
     if (!result.isContentEditable || selection.isNone())
         return;
 
-    auto& postLayoutData = result.postLayoutData();
+    auto& postLayoutData = *result.postLayoutData;
     if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
         if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"_s))
             postLayoutData.typingAttributes |= AttributeBold;
@@ -647,6 +647,15 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     frame.editor().readSelectionFromPasteboard(pasteboardName);
     completionHandler(true);
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageCocoaAdditions.mm>)
+#include <WebKitAdditions/WebPageCocoaAdditions.mm>
+#else
+URL WebPage::sanitizeForCopyOrShare(const URL& url) const
+{
+    return url;
+}
+#endif
 
 } // namespace WebKit
 

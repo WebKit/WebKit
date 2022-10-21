@@ -29,7 +29,7 @@ namespace WebCore {
 
 class Document;
 class MediaQueryList;
-class MediaQueryEvaluator;
+class LegacyMediaQueryEvaluator;
 class MediaQuerySet;
 class RenderStyle;
 class WeakPtrImplWithEventTargetData;

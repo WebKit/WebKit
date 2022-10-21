@@ -131,6 +131,8 @@ static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& 
         case WebCore::StyleRuleType::Namespace:
         case WebCore::StyleRuleType::CounterStyle:
         case WebCore::StyleRuleType::LayerStatement:
+        case WebCore::StyleRuleType::FontFeatureValues:
+        case WebCore::StyleRuleType::FontFeatureValuesBlock:
         case WebCore::StyleRuleType::FontPaletteValues:
             // These rule types do not contain child rules, and therefore have nothing to display in the Styles panel in
             // the details sidebar of the Elements Tab in Web Inspector.

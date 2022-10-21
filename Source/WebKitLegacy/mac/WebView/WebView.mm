@@ -1585,7 +1585,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-    _private->page->setRemoteInspectionAllowed(true);
+    _private->page->setInspectable(true);
 #endif
 
     _private->page->setCanStartMedia([self window]);
@@ -1870,7 +1870,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->setGroupName(groupName);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    _private->page->setRemoteInspectionAllowed(isInternalInstall());
+    _private->page->setInspectable(isInternalInstall());
 #endif
 
     [self _updateScreenScaleFromWindow];
@@ -1922,8 +1922,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)updateLayoutIgnorePendingStyleSheets
 {
     WebThreadRun(^{
-        for (auto* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
-            auto *document = frame->document();
+        for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+            if (!localFrame)
+                continue;
+            auto *document = localFrame->document();
             if (document)
                 document->updateLayoutIgnorePendingStylesheets();
         }
@@ -2687,12 +2690,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)allowsRemoteInspection
 {
-    return _private->page->remoteInspectionAllowed();
+    return _private->page->inspectable();
 }
 
 - (void)setAllowsRemoteInspection:(BOOL)allow
 {
-    _private->page->setRemoteInspectionAllowed(allow);
+    _private->page->setInspectable(allow);
 }
 
 - (void)setShowingInspectorIndication:(BOOL)showing
@@ -3270,6 +3273,13 @@ IGNORE_WARNINGS_END
     if ([scheme _webkit_isCaseInsensitiveEqualToString:@"blob"])
         return YES;
 
+    NSString* webArchivePrefix = @"webarchive+";
+    if ([scheme _webkit_hasCaseInsensitivePrefix:webArchivePrefix]) {
+        auto url = [request URL];
+        NSString* modifiedURL = [[url absoluteString] substringFromIndex:[webArchivePrefix length]];
+        return [self _canHandleRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:modifiedURL]] forMainFrame:forMainFrame];
+    }
+
     return NO;
 }
 
@@ -3798,7 +3808,7 @@ IGNORE_WARNINGS_END
     WebThreadLock();
 
     auto* mainCoreFrame = [self _mainCoreFrame];
-    for (auto* frame = mainCoreFrame; frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = mainCoreFrame; frame; frame = dynamicDowncast<WebCore::LocalFrame>(frame->tree().traverseNext())) {
         auto* coreView = frame ? frame->view() : 0;
         if (!coreView)
             continue;
@@ -3829,14 +3839,22 @@ IGNORE_WARNINGS_END
 
 - (void)_attachScriptDebuggerToAllFrames
 {
-    for (auto* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext())
-        [kit(frame) _attachScriptDebugger];
+    for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        [kit(localFrame) _attachScriptDebugger];
+    }
 }
 
 - (void)_detachScriptDebuggerFromAllFrames
 {
-    for (auto* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext())
-        [kit(frame) _detachScriptDebugger];
+    for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        [kit(localFrame) _detachScriptDebugger];
+    }
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -4153,8 +4171,11 @@ IGNORE_WARNINGS_END
 - (BOOL)_isUsingAcceleratedCompositing
 {
     auto* coreFrame = [self _mainCoreFrame];
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        NSView *documentView = [[kit(frame) frameView] documentView];
+    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        NSView *documentView = [[kit(localFrame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isUsingAcceleratedCompositing])
             return YES;
     }
@@ -4202,8 +4223,11 @@ IGNORE_WARNINGS_END
 - (BOOL)_isSoftwareRenderable
 {
     auto* coreFrame = [self _mainCoreFrame];
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        if (auto* view = frame->view()) {
+    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* view = localFrame->view()) {
             if (!view->isSoftwareRenderable())
                 return NO;
         }
@@ -6266,16 +6290,24 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     auto* coreFrame = [self _mainCoreFrame];
 #if !PLATFORM(IOS_FAMILY)
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame))
-        [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        [[[kit(localFrame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    }
     if (_private->hostWindow && [self window] != _private->hostWindow)
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow.get()];
     if (hostWindow)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
 #endif
     _private->hostWindow = hostWindow;
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame))
-        [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
+    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        [[[kit(localFrame) frameView] documentView] viewDidMoveToHostWindow];
+    }
 #if !PLATFORM(IOS_FAMILY)
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
 #endif
@@ -6534,8 +6566,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     auto* coreFrame = core(frame);
     WebCore::CanWrap canWrap = options & WebFindOptionsWrapAround ? WebCore::CanWrap::Yes : WebCore::CanWrap::No;
     return kit((options & WebFindOptionsBackwards)
-        ? coreFrame->tree().traversePrevious(canWrap)
-        : coreFrame->tree().traverseNext(canWrap));
+        ? dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().traversePrevious(canWrap))
+        : dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().traverseNext(canWrap)));
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag

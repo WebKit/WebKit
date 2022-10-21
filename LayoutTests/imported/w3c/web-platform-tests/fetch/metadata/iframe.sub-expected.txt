@@ -1,5 +1,4 @@
 Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/post-to-owner.py
-Blocked access to external URL http://www.127.0.0.1:8800/fetch/metadata/resources/post-to-owner.py
 
 
 Harness Error (TIMEOUT), message = null
@@ -8,12 +7,12 @@ PASS Non-secure same-origin iframe => No headers
 TIMEOUT Non-secure same-site iframe => No headers Test timed out
 TIMEOUT Non-secure cross-site iframe => No headers. Test timed out
 PASS Secure, cross-site (cross-scheme, same-host) iframe
-PASS Non-secure same-origin iframe => No headers: sec-fetch-dest
-PASS Non-secure same-origin iframe => No headers: sec-fetch-mode
-PASS Non-secure same-origin iframe => No headers: sec-fetch-site
+FAIL Non-secure same-origin iframe => No headers: sec-fetch-dest assert_equals: expected "" but got "iframe"
+FAIL Non-secure same-origin iframe => No headers: sec-fetch-mode assert_equals: expected "" but got "navigate"
+FAIL Non-secure same-origin iframe => No headers: sec-fetch-site assert_equals: expected "" but got "same-origin"
 PASS Non-secure same-origin iframe => No headers: sec-fetch-user
-FAIL Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-dest assert_equals: expected "iframe" but got ""
-FAIL Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-mode assert_equals: expected "navigate" but got ""
-FAIL Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-site assert_equals: expected "cross-site" but got ""
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-dest
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-mode
+PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-site
 PASS Secure, cross-site (cross-scheme, same-host) iframe: sec-fetch-user
 

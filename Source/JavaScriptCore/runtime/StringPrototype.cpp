@@ -313,10 +313,9 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
 
         Checked<int, AssertNoOverflow> bufferPos = 0;
         for (int i = 0; i < rangeCount; i++) {
-            if (int srcLen = substringRanges[i].distance()) {
-                StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
-                bufferPos += srcLen;
-            }
+            int srcLen = substringRanges[i].distance();
+            StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+            bufferPos += srcLen;
         }
 
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
@@ -333,10 +332,9 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
 
     Checked<int, AssertNoOverflow> bufferPos = 0;
     for (int i = 0; i < rangeCount; i++) {
-        if (int srcLen = substringRanges[i].distance()) {
-            StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
-            bufferPos += srcLen;
-        }
+        int srcLen = substringRanges[i].distance();
+        StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+        bufferPos += srcLen;
     }
 
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
@@ -1004,7 +1002,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSlice, (JSGlobalObject* globalObject, Ca
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double end = a1.isUndefined() ? length : a1.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(stringSlice(globalObject, vm, string, length, start, end)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(stringSlice<double>(globalObject, vm, string, length, start, end)));
 }
 
 // Return true in case of early return (resultLength got to limitLength).

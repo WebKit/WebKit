@@ -365,9 +365,10 @@ void FocusController::setFocusedFrame(Frame* frame)
         oldFrame->selection().setFocused(false);
         oldFrame->document()->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
 #if ENABLE(SERVICE_WORKER)
-        auto* frame = oldFrame.get();
+        AbstractFrame* frame = oldFrame.get();
         do {
-            frame->document()->updateServiceWorkerClientData();
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
+                localFrame->document()->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
 #endif
@@ -377,9 +378,10 @@ void FocusController::setFocusedFrame(Frame* frame)
         newFrame->selection().setFocused(true);
         newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
 #if ENABLE(SERVICE_WORKER)
-        auto* frame = newFrame.get();
+        AbstractFrame* frame = newFrame.get();
         do {
-            frame->document()->updateServiceWorkerClientData();
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
+                localFrame->document()->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
 #endif
@@ -953,8 +955,11 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 
     contentAreaDidShowOrHide(view, contentIsVisible);
 
-    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        FrameView* frameView = frame->view();
+    for (AbstractFrame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        FrameView* frameView = localFrame->view();
         if (!frameView)
             continue;
 

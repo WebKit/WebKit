@@ -150,9 +150,16 @@ TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
     EXPECT_TRUE([webView _displayCaptureState] == WKDisplayCaptureStateNone);
     EXPECT_TRUE([webView _displayCaptureSurfaces] == WKDisplayCaptureSurfaceNone);
 
+    auto hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_TRUE(hasSleepDisabler);
+
     // Check "Allow Screen"
     [webView stringByEvaluatingJavaScript:@"stop()"];
     [delegate resetWasPrompted];
+
+    hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_FALSE(hasSleepDisabler);
+
     [webView _setIndexOfGetDisplayMediaDeviceSelectedForTesting:@0];
     [delegate setGetDisplayMediaDecision:WKDisplayCapturePermissionDecisionScreenPrompt];
     [webView stringByEvaluatingJavaScript:@"promptForCapture({ video : true })"];

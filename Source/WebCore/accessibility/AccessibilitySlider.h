@@ -49,7 +49,6 @@ private:
 
     AccessibilityRole roleValue() const override { return AccessibilityRole::Slider; }
     bool isSlider() const final { return true; }
-    bool isInputSlider() const override { return true; }
     bool isControl() const override { return true; }
     
     void addChildren() override;
@@ -81,4 +80,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySliderThumb, isSliderThumb())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilitySliderThumb) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isSliderThumb(); } \
+SPECIALIZE_TYPE_TRAITS_END()

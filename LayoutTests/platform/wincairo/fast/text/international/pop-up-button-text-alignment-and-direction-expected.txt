@@ -1,99 +1,99 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x540
-  RenderBlock {HTML} at (0,0) size 800x540
-    RenderBody {BODY} at (8,16) size 784x516
-      RenderBlock {P} at (0,0) size 784x20
+layer at (0,0) size 785x604
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x604
+  RenderBlock {HTML} at (0,0) size 785x604
+    RenderBody {BODY} at (8,16) size 769x580
+      RenderBlock {P} at (0,0) size 769x20
         RenderText {#text} at (0,0) size 660x19
           text run at (0,0) width 458: "Verify that the alignment and writing direction of each selected item matches "
           text run at (458,0) width 202: "the one below the pop-up button."
-      RenderBlock {DIV} at (0,36) size 784x240
-        RenderMenuList {SELECT} at (0,0) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 475x20
-            RenderText at (0,0) size 181x20
-              text run at (0,0) width 35: "First "
-              text run at (35,0) width 57 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
-              text run at (92,0) width 18: "03"
-              text run at (110,0) width 40 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
-              text run at (150,0) width 31: " fifth"
-        RenderBlock {DIV} at (0,24) size 470x36
+      RenderBlock {DIV} at (0,36) size 769x272
+        RenderMenuList {SELECT} at (0,0) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (5,5) size 181x20
+              text run at (5,5) width 35: "First "
+              text run at (40,5) width 57 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+              text run at (97,5) width 18: "03"
+              text run at (115,5) width 40 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (155,5) width 31: " fifth"
+        RenderBlock {DIV} at (0,32) size 470x36
           RenderText {#text} at (10,10) size 130x15
             text run at (10,10) width 27: "First "
             text run at (37,10) width 38 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
             text run at (75,10) width 12: "03"
             text run at (87,10) width 28 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (115,10) width 25: " fifth"
-        RenderMenuList {SELECT} at (0,60) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 475x20
-            RenderText at (0,0) size 181x20
-              text run at (0,0) width 27: "fifth"
-              text run at (27,0) width 61 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
-              text run at (88,0) width 18: "03"
-              text run at (106,0) width 44 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
-              text run at (150,0) width 31: "First"
-        RenderBlock {DIV} at (0,84) size 470x36
+        RenderMenuList {SELECT} at (0,68) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (5,5) size 181x20
+              text run at (5,5) width 27: "fifth"
+              text run at (32,5) width 61 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+              text run at (93,5) width 18: "03"
+              text run at (111,5) width 44 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (155,5) width 31: "First"
+        RenderBlock {DIV} at (0,100) size 470x36
           RenderText {#text} at (10,10) size 130x15
             text run at (10,10) width 22: "fifth"
             text run at (32,10) width 41 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
             text run at (73,10) width 12: "03"
             text run at (85,10) width 31 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (116,10) width 24: "First"
-        RenderMenuList {SELECT} at (0,120) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 475x20
-            RenderText at (0,0) size 181x20
-              text run at (0,0) width 181: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-        RenderBlock {DIV} at (0,144) size 470x36
+        RenderMenuList {SELECT} at (0,136) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (5,5) size 181x20
+              text run at (5,5) width 181: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,168) size 470x36
           RenderText {#text} at (10,10) size 130x15
             text run at (10,10) width 130: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-        RenderMenuList {SELECT} at (0,180) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 475x20
-            RenderText at (0,0) size 181x20
-              text run at (0,0) width 181 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-        RenderBlock {DIV} at (0,204) size 470x36
+        RenderMenuList {SELECT} at (0,204) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (5,5) size 181x20
+              text run at (5,5) width 181 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,236) size 470x36
           RenderText {#text} at (10,10) size 130x15
             text run at (10,10) width 130 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-      RenderBlock {DIV} at (0,276) size 784x240
-        RenderMenuList {SELECT} at (0,0) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (21,2) size 475x20
-            RenderText at (294,0) size 181x20
-              text run at (294,0) width 35: "First "
-              text run at (329,0) width 57 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
-              text run at (386,0) width 18: "03"
-              text run at (404,0) width 40 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
-              text run at (444,0) width 31: " fifth"
-        RenderBlock {DIV} at (0,24) size 470x36
+      RenderBlock {DIV} at (0,308) size 769x272
+        RenderMenuList {SELECT} at (0,0) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (312,5) size 181x20
+              text run at (312,5) width 35: "First "
+              text run at (347,5) width 57 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+              text run at (404,5) width 18: "03"
+              text run at (422,5) width 40 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (462,5) width 31: " fifth"
+        RenderBlock {DIV} at (0,32) size 470x36
           RenderText {#text} at (330,10) size 130x15
             text run at (330,10) width 27: "First "
             text run at (357,10) width 38 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
             text run at (395,10) width 12: "03"
             text run at (407,10) width 28 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (435,10) width 25: " fifth"
-        RenderMenuList {SELECT} at (0,60) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (21,2) size 475x20
-            RenderText at (294,0) size 181x20
-              text run at (294,0) width 27: "fifth"
-              text run at (321,0) width 61 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
-              text run at (382,0) width 18: "03"
-              text run at (400,0) width 44 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
-              text run at (444,0) width 31: "First"
-        RenderBlock {DIV} at (0,84) size 470x36
+        RenderMenuList {SELECT} at (0,68) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (312,5) size 181x20
+              text run at (312,5) width 27: "fifth"
+              text run at (339,5) width 61 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+              text run at (400,5) width 18: "03"
+              text run at (418,5) width 44 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (462,5) width 31: "First"
+        RenderBlock {DIV} at (0,100) size 470x36
           RenderText {#text} at (330,10) size 130x15
             text run at (330,10) width 22: "fifth"
             text run at (352,10) width 41 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
             text run at (393,10) width 12: "03"
             text run at (405,10) width 31 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (436,10) width 24: "First"
-        RenderMenuList {SELECT} at (0,120) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (21,2) size 475x20
-            RenderText at (294,0) size 181x20
-              text run at (294,0) width 181: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-        RenderBlock {DIV} at (0,144) size 470x36
+        RenderMenuList {SELECT} at (0,136) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (312,5) size 181x20
+              text run at (312,5) width 181: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,168) size 470x36
           RenderText {#text} at (330,10) size 130x15
             text run at (330,10) width 130: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-        RenderMenuList {SELECT} at (0,180) size 500x24 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (21,2) size 475x20
-            RenderText at (294,0) size 181x20
-              text run at (294,0) width 181 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
-        RenderBlock {DIV} at (0,204) size 470x36
+        RenderMenuList {SELECT} at (0,204) size 500x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 498x30
+            RenderText at (312,5) size 181x20
+              text run at (312,5) width 181 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,236) size 470x36
           RenderText {#text} at (330,10) size 130x15
             text run at (330,10) width 130 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"

@@ -65,6 +65,7 @@ using ResourceErrorOr = Expected<T, ResourceError>;
 
 enum class CachePolicy : uint8_t;
 enum class ImageLoading : uint8_t { Immediate, DeferredUntilVisible };
+enum class FetchMetadataSite : uint8_t { None, SameOrigin, SameSite, CrossSite };
 
 // The CachedResourceLoader provides a per-context interface to the MemoryCache
 // and enforces a bunch of security checks and rules for resource revalidation.
@@ -156,7 +157,7 @@ public:
     void warnUnusedPreloads();
     void stopUnusedPreloadsTimer();
 
-    bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&, const URL& preRedirectURL);
+    bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&, FetchMetadataSite, const URL& preRedirectURL);
     bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived, const URL& preRedirectURL = URL()) const;
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
@@ -168,6 +169,8 @@ public:
     KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
 
     Vector<CachedResource*> visibleResourcesToPrioritize();
+
+    static FetchMetadataSite computeFetchMetadataSite(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite = FetchMetadataSite::SameOrigin);
 
 private:
     explicit CachedResourceLoader(DocumentLoader*);

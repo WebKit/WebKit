@@ -82,9 +82,12 @@ void DeviceOrientationAndMotionAccessController::shouldAllowAccess(const Documen
         if (permissionState != DeviceOrientationOrMotionPermissionState::Granted)
             return;
 
-        for (auto* frame = m_topDocument.frame(); frame && frame->window(); frame = frame->tree().traverseNext()) {
-            frame->window()->startListeningForDeviceOrientationIfNecessary();
-            frame->window()->startListeningForDeviceMotionIfNecessary();
+        for (AbstractFrame* frame = m_topDocument.frame(); frame && frame->window(); frame = frame->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            if (!localFrame)
+                continue;
+            localFrame->window()->startListeningForDeviceOrientationIfNecessary();
+            localFrame->window()->startListeningForDeviceMotionIfNecessary();
         }
     });
 }

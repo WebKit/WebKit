@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2013-2020 Apple Inc.  All rights reserved.
+# Copyright (C) 2013-2022 Apple Inc.  All rights reserved.
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,7 @@
 
 import optparse
 import os
+import shutil
 import subprocess
 import sys
 
@@ -38,15 +39,19 @@ def main():
 
     options, parameters = parser.parse_args()
     if not options.platform:
-        parser.error("Platform is required")
+        parser.error('Platform is required')
         return -1
+
+    if options.platform == 'win':
+        return deleteWindowsStaleFiles()
+
     if not options.configuration:
-        parser.error("Configuration is required")
+        parser.error('Configuration is required')
         return -2
 
     genericPlatform = options.platform.split('-', 1)[0]
     if genericPlatform not in ('mac', 'ios'):
-        print('Exited without removing any files.')
+        print('Exited without removing any files since platform {} is not supported by this script.'.format(genericPlatform))
         return 0
 
     if options.build_directory:
@@ -85,6 +90,20 @@ def webkitBuildDirectory(platform, fullPlatform, configuration):
         platform = 'device'
     return subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
         "--" + platform, "--" + configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
+
+def deleteWindowsStaleFiles():
+    directoriesToDelete = ['/cygdrive/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/sym/WebKit.pdb',
+                           '/cygdrive/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/sym/WTF.pdb',
+                           '/cygdrive/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/sym/JavaScriptCore.pdb',
+                           '/cygdrive/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/sym/DumpRenderTreeLib.pdb']
+    for directory in directoriesToDelete:
+        try:
+            print(f'Removing: {directory}')
+            shutil.rmtree(directory)
+        except OSError as e:
+            print(f'Failed to remove: {directory}, error: {e}')
+            continue
+        print('Done')
 
 
 if __name__ == '__main__':

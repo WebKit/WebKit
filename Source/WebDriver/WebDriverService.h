@@ -100,6 +100,7 @@ private:
     void getElementTagName(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void isElementEnabled(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void getComputedRole(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void isElementDisplayed(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClick(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClear(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

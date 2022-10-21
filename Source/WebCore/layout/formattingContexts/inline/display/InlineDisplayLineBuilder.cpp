@@ -40,15 +40,19 @@ InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext
 
 InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineBox& lineBox, const InlineRect& lineBoxRect) const
 {
-    auto& rootInlineBox = lineBox.rootInlineBox();
-    auto scrollableOverflowRect = lineBoxRect;
-    auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom {
-        lineBoxRect.top() + rootInlineBox.logicalTop() - rootInlineBox.annotationAbove().value_or(0.f),
-        lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.annotationUnder().value_or(0.f)
+    auto initialEnclosingTopAndBottom = [&]() -> std::tuple<std::optional<InlineLayoutUnit>, std::optional<InlineLayoutUnit>>  {
+        auto& rootInlineBox = lineBox.rootInlineBox();
+        if (!lineBox.hasContent() || !rootInlineBox.hasContent())
+            return { };
+        return {
+            lineBoxRect.top() + rootInlineBox.logicalTop() - rootInlineBox.annotationAbove().value_or(0.f),
+            lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.annotationUnder().value_or(0.f)
+        };
     };
-
+    auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
+    auto scrollableOverflowRect = lineBoxRect;
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-        if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox())
+        if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox() && !inlineLevelBox.isLineBreakBox())
             continue;
 
         auto& layoutBox = inlineLevelBox.layoutBox();
@@ -59,24 +63,31 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             borderBox.moveBy(lineBoxRect.topLeft());
         } else if (inlineLevelBox.isInlineBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-            borderBox.moveBy(lineBoxRect.topLeft());
-            // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
-            auto hasScrollableContent = [&] {
+            auto isContentful = [&] {
                 // In standards mode, inline boxes always start with an imaginary strut.
                 return layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
             };
-            if (lineBox.hasContent() && hasScrollableContent()) {
+            if (!isContentful())
+                continue;
+            borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+            borderBox.moveBy(lineBoxRect.topLeft());
+            // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
+            if (lineBox.hasContent()) {
                 // Empty lines (e.g. continuation pre/post blocks) don't expect scrollbar overflow.
                 scrollableOverflowRect.expandVerticallyToContain(borderBox);
             }
+        } else if (inlineLevelBox.isLineBreakBox()) {
+            borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox));
+            borderBox.moveBy(lineBoxRect.topLeft());
         } else
             ASSERT_NOT_REACHED();
 
-        enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top() - inlineLevelBox.annotationAbove().value_or(0.f));
-        enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom() + inlineLevelBox.annotationUnder().value_or(0.f));
+        auto adjustedBorderBoxTop = borderBox.top() - inlineLevelBox.annotationAbove().value_or(0.f);
+        auto adjustedBorderBoxBottom = borderBox.bottom() + inlineLevelBox.annotationUnder().value_or(0.f);
+        enclosingTop = std::min(enclosingTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
+        enclosingBottom = std::max(enclosingBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
     }
-    return { enclosingTopAndBottom, scrollableOverflowRect };
+    return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, scrollableOverflowRect };
 }
 
 InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox) const

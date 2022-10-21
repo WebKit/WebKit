@@ -47,9 +47,8 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
     return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJSONEnum>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String& stringValue)
 {
-    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     static constexpr std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> mappings[] = {
         { "EnumValue1", TestDefaultToJSONEnum::EnumValue1 },
         { "EnumValue2", TestDefaultToJSONEnum::EnumValue2 },
@@ -58,6 +57,11 @@ template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJS
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
         return *enumerationValue;
     return std::nullopt;
+}
+
+template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJSONEnum>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestDefaultToJSONEnum>(value.toWTFString(&lexicalGlobalObject));
 }
 
 template<> const char* expectedEnumerationValues<TestDefaultToJSONEnum>()

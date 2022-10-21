@@ -147,6 +147,7 @@ void ScopedArguments::unmapArgument(JSGlobalObject* globalObject, uint32_t i)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_totalLength);
+    m_hasUnmappedArgument = true;
     unsigned namedLength = m_table->length();
     if (i < namedLength) {
         auto* maybeCloned = m_table->trySet(vm, i, ScopeOffset());
@@ -162,6 +163,25 @@ void ScopedArguments::unmapArgument(JSGlobalObject* globalObject, uint32_t i)
 void ScopedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
 {
     GenericArguments::copyToArguments(globalObject, firstElementDest, offset, length);
+}
+
+bool ScopedArguments::isIteratorProtocolFastAndNonObservable()
+{
+    Structure* structure = this->structure();
+    JSGlobalObject* globalObject = structure->globalObject();
+    if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
+        return false;
+
+    if (UNLIKELY(m_overrodeThings))
+        return false;
+
+    if (UNLIKELY(m_hasUnmappedArgument))
+        return false;
+
+    if (structure->didTransition())
+        return false;
+
+    return true;
 }
 
 } // namespace JSC

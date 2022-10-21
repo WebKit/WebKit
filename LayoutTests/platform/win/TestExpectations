@@ -1812,6 +1812,7 @@ webkit.org/b/140832 [ Release ] accessibility/aria-slider-value-change.html [ Fa
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value-change.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/aria-slider-value.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value.html [ Skip ] # Debug assertion
+webkit.org/b/140832 accessibility/appearance-none-meter-and-progress-elements.html [ Skip ]
 webkit.org/b/140832 [ Release ] accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/meter-element.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/progressbar.html [ Failure ]
@@ -2239,6 +2240,7 @@ imported/mozilla/svg/svg-effects-area-unzoomed.xhtml
 imported/mozilla/svg/svg-effects-area-zoomed-in.xhtml
 imported/mozilla/svg/svg-effects-area-zoomed-out.xhtml
 svg/filters/feImage-self-and-other-referencing.html
+svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
 # GCController.collect() issues.
 svg/animations/svglength-element-removed-crash.svg [ Failure ]
@@ -2518,6 +2520,9 @@ http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Failure ]
+http/tests/security/contentSecurityPolicy/prefetch-src/prefetch-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/prefetch-src/prefetch-blocked.html [ Skip ]
+http/tests/security/contentSecurityPolicy/prefetch-src/prefetch-blocked-by-default.html [ Skip ]
 
 # Crashes
 http/tests/misc/drag-not-loaded-image.html [ Skip ] # Crash
@@ -5169,6 +5174,23 @@ webkit.org/b/243648 scrollbars/transparent-scrollbar.html [ ImageOnlyFailure ]
 
 webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 
+webkit.org/b/246536 accessibility/table-row-role-changes.html [ Skip ]
+
+webkit.org/b/246537 fast/block/positioning/border-change-relayout-test.html [ Skip ]
+
+webkit.org/b/246544 fast/events/mouse-cursor-multiframecur.html [ Failure ]
+
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 
+# webkit.org/b/246869 REGRESSION(255399@main-255410@main): [ Win EWS ] 10X CSS Layout-tests are constant ImageOnlyFailures
+css3/filters/effect-blur.html [ ImageOnlyFailure ]
+css3/filters/effect-combined.html [ ImageOnlyFailure ]
+css3/filters/effect-contrast.html [ ImageOnlyFailure ]
+css3/filters/effect-grayscale.html [ ImageOnlyFailure ]
+css3/filters/effect-hue-rotate.html [ ImageOnlyFailure ]
+css3/filters/effect-invert.html [ ImageOnlyFailure ]
+css3/filters/effect-opacity.html [ ImageOnlyFailure ]
+css3/filters/effect-saturate.html [ ImageOnlyFailure ]
+css3/filters/effect-sepia.html [ ImageOnlyFailure ]
+fast/css/aspect-ratio-min-height-replaced.html [ ImageOnlyFailure ]

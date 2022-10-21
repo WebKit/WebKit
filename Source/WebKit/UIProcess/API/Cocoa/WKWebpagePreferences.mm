@@ -27,7 +27,7 @@
 #import <WebKit/WKWebpagePreferences.h>
 
 #import "APICustomHeaderFields.h"
-#import "CaptivePortalModeObserver.h"
+#import "LockdownModeObserver.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
@@ -128,22 +128,22 @@ static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPol
     return WebCore::ModalContainerObservationPolicy::Disabled;
 }
 
-class WebPagePreferencesCaptivePortalModeObserver final : public CaptivePortalModeObserver {
+class WebPagePreferencesLockdownModeObserver final : public LockdownModeObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebPagePreferencesCaptivePortalModeObserver(id object)
+    WebPagePreferencesLockdownModeObserver(id object)
         : m_object(object)
     {
-        addCaptivePortalModeObserver(*this);
+        addLockdownModeObserver(*this);
     }
 
-    ~WebPagePreferencesCaptivePortalModeObserver()
+    ~WebPagePreferencesLockdownModeObserver()
     {
-        removeCaptivePortalModeObserver(*this);
+        removeLockdownModeObserver(*this);
     }
 
 private:
-    void willChangeCaptivePortalMode() final
+    void willChangeLockdownMode() final
     {
         if (auto object = m_object.get()) {
             [object willChangeValueForKey:@"_captivePortalModeEnabled"];
@@ -151,7 +151,7 @@ private:
         }
     }
 
-    void didChangeCaptivePortalMode() final
+    void didChangeLockdownMode() final
     {
         if (auto object = m_object.get()) {
             [object didChangeValueForKey:@"_captivePortalModeEnabled"];
@@ -187,7 +187,7 @@ private:
         return nil;
 
     API::Object::constructInWrapper<API::WebsitePolicies>(self);
-    _captivePortalModeObserver = makeUnique<WebKit::WebPagePreferencesCaptivePortalModeObserver>(self);
+    _lockdownModeObserver = makeUnique<WebKit::WebPagePreferencesLockdownModeObserver>(self);
 
     return self;
 }
@@ -477,20 +477,20 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     }
 }
 
-- (void)_setCaptivePortalModeEnabled:(BOOL)captivePortalModeEnabled
+- (void)_setCaptivePortalModeEnabled:(BOOL)enabled
 {
 #if PLATFORM(IOS_FAMILY)
-    // On iOS, the web browser entitlement is required to disable captive portal mode.
-    if (!captivePortalModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
-        [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable captive portal mode"];
+    // On iOS, the web browser entitlement is required to disable Lockdown mode.
+    if (!enabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
+        [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable Lockdown mode"];
 #endif
 
-    _websitePolicies->setCaptivePortalModeEnabled(!!captivePortalModeEnabled);
+    _websitePolicies->setLockdownModeEnabled(!!enabled);
 }
 
 - (BOOL)_captivePortalModeEnabled
 {
-    return _websitePolicies->captivePortalModeEnabled();
+    return _websitePolicies->lockdownModeEnabled();
 }
 
 - (void)_setAllowPrivacyProxy:(BOOL)allow
@@ -567,7 +567,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 - (BOOL)isLockdownModeEnabled
 {
 #if ENABLE(LOCKDOWN_MODE_API)
-    return _websitePolicies->captivePortalModeEnabled();
+    return _websitePolicies->lockdownModeEnabled();
 #else
     return NO;
 #endif
@@ -582,7 +582,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
         [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable lockdown mode"];
 #endif
 
-    _websitePolicies->setCaptivePortalModeEnabled(!!lockdownModeEnabled);
+    _websitePolicies->setLockdownModeEnabled(!!lockdownModeEnabled);
 #endif
 }
 

@@ -192,7 +192,7 @@ bool MockMediaPlayerMediaSource::didLoadingProgress() const
     return false;
 }
 
-void MockMediaPlayerMediaSource::setSize(const IntSize&)
+void MockMediaPlayerMediaSource::setPresentationSize(const IntSize&)
 {
 }
 

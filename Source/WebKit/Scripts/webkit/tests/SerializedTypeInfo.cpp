@@ -38,7 +38,9 @@
 #include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/ReturnRefClass.h>
+#include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 
 #if ENABLE(IPC_TESTING_API)
@@ -57,6 +59,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             "bool"_s,
             "int"_s,
             "bool"_s,
+            "RetainPtr<NSArray>"_s,
         } },
         { "Namespace::ReturnRefClass"_s, {
             "double"_s,
@@ -79,10 +82,15 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             "int"_s,
         } },
         { "WebCore::InheritsFrom"_s, {
-            "int"_s,
-            "int"_s,
+            "float"_s,
+        } },
+        { "WebCore::InheritanceGrandchild"_s, {
+            "double"_s,
         } },
         { "Seconds"_s, {
+            "double"_s,
+        } },
+        { "CreateUsingClass"_s, {
             "double"_s,
         } },
     };

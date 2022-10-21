@@ -384,7 +384,7 @@ public:
         struct Key {
             Key() = default;
 
-            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg extra2GPR, GPRReg stubInfoGPR, GPRReg arrayProfileGPR, RegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
+            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg extra2GPR, GPRReg stubInfoGPR, GPRReg arrayProfileGPR, ScalarRegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
                 : m_wrapped(wrapped)
                 , m_baseGPR(baseGPR)
                 , m_valueGPR(valueGPR)
@@ -420,7 +420,7 @@ public:
             GPRReg m_extra2GPR;
             GPRReg m_stubInfoGPR;
             GPRReg m_arrayProfileGPR;
-            RegisterSet m_usedRegisters;
+            ScalarRegisterSet m_usedRegisters;
         };
 
         using KeyTraits = SimpleClassHashTraits<Key>;
@@ -486,7 +486,7 @@ public:
         GPRReg m_extra2GPR;
         GPRReg m_stubInfoGPR;
         GPRReg m_arrayProfileGPR;
-        RegisterSet m_usedRegisters;
+        ScalarRegisterSet m_usedRegisters;
         const FixedVector<RefPtr<AccessCase>>& m_cases;
         const FixedVector<StructureID>& m_weakStructures;
     };

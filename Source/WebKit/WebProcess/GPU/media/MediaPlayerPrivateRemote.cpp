@@ -161,10 +161,10 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
         if (!player)
             return;
 
-        auto contentBox = snappedIntRect(player->playerContentBoxRect()).size();
-        m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value(), m_videoFullscreenGravity, contentBox);
+        auto presentationSize = player->presentationSize();
+        m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value(), m_videoFullscreenGravity, presentationSize);
 #if PLATFORM(COCOA)
-        m_videoLayerManager->setVideoLayer(m_videoLayer.get(), contentBox);
+        m_videoLayerManager->setVideoLayer(m_videoLayer.get(), presentationSize);
 #endif
     }, m_id);
 }
@@ -204,7 +204,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem, m_player->requiresRemotePlayback()), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
         if (!weakThis)
             return;
 
@@ -985,6 +985,11 @@ unsigned long long MediaPlayerPrivateRemote::totalBytes() const
 {
     notImplemented();
     return 0;
+}
+
+void MediaPlayerPrivateRemote::setPresentationSize(const IntSize& size)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetPresentationSize(size), m_id);
 }
 
 #if PLATFORM(COCOA)

@@ -1,0 +1,6 @@
+
+PASS Loading "var(--x) serif" causes SyntaxError (document)
+PASS Loading "var(--x, 10px) serif" causes SyntaxError (document)
+PASS Loading "var(--x) serif" causes SyntaxError (worker)
+PASS Loading "var(--x, 10px) serif" causes SyntaxError (worker)
+

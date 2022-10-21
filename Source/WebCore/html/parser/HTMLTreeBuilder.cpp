@@ -243,7 +243,7 @@ private:
     {
         if (stringView.is8Bit() || !isAll8BitData())
             return stringView.toString();
-        return String::make8BitFrom16BitSource(stringView.characters16(), stringView.length());
+        return String::make8Bit(stringView.characters16(), stringView.length());
     }
 
     StringView m_text;

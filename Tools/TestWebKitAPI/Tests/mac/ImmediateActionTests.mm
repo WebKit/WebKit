@@ -34,6 +34,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKHitTestResult.h>
+#import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
 
@@ -101,10 +102,38 @@ using ImmediateActionHitTestResult = std::pair<RetainPtr<_WKHitTestResult>, _WKI
 
 @end
 
+@interface RVPresentingContext (Internal)
+@property (nonatomic, readonly, weak) id<RVPresenterHighlightDelegate> highlightDelegate;
+@end
+
+static RetainPtr<RVPresentingContext> lastPresentingContext;
+
+@implementation RVPresentingContext (ImmediateActionTests)
+
+- (instancetype)swizzled_initWithPointerLocationInView:(NSPoint)location inView:(NSView *)view highlightDelegate:(id<RVPresenterHighlightDelegate>)delegate
+{
+    lastPresentingContext = [self swizzled_initWithPointerLocationInView:location inView:view highlightDelegate:delegate];
+    return lastPresentingContext.get();
+}
+
+@end
+
 namespace TestWebKitAPI {
+
+static void swizzlePresentingContextInitialization()
+{
+    auto originalMethod = class_getInstanceMethod(RVPresentingContext.class, @selector(initWithPointerLocationInView:inView:highlightDelegate:));
+    auto swizzledMethod = class_getInstanceMethod(RVPresentingContext.class, @selector(swizzled_initWithPointerLocationInView:inView:highlightDelegate:));
+    auto originalImplementation = method_getImplementation(originalMethod);
+    auto swizzledImplementation = method_getImplementation(swizzledMethod);
+    class_replaceMethod(RVPresentingContext.class, @selector(swizzled_initWithPointerLocationInView:inView:highlightDelegate:), originalImplementation, method_getTypeEncoding(originalMethod));
+    class_replaceMethod(RVPresentingContext.class, @selector(initWithPointerLocationInView:inView:highlightDelegate:), swizzledImplementation, method_getTypeEncoding(swizzledMethod));
+}
 
 TEST(ImmediateActionTests, ImmediateActionOverText)
 {
+    swizzlePresentingContextInitialization();
+
     auto webView = adoptNS([[WKWebViewForTestingImmediateActions alloc] initWithFrame:NSMakeRect(0, 0, 500, 500)]);
     [webView synchronouslyLoadHTMLString:@"<div style='font-size: 32px;'>Foobar</div>"];
 
@@ -112,6 +141,7 @@ TEST(ImmediateActionTests, ImmediateActionOverText)
     EXPECT_NOT_NULL([webView immediateActionGesture].animationController);
     EXPECT_EQ(actionType, _WKImmediateActionLookupText);
     EXPECT_WK_STREQ([hitTestResult lookupText], "Foobar");
+    EXPECT_NOT_NULL([lastPresentingContext highlightDelegate]);
 }
 
 TEST(ImmediateActionTests, ImmediateActionOverBody)

@@ -387,9 +387,10 @@ _NEVER_SKIPPED_JS_FILES = [
 ]
 
 _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
-    'TestExpectations',
-    'TestExpectations.json',
-    '.py'
+    re.compile('.*TestExpectations$'),
+    re.compile('.*TestExpectations.json$'),
+    # Avoid imported WebDriverTests python machinery
+    re.compile('(?!WebDriverTests).{0,14}.*.py$'),
 ]
 
 # Files to skip that are less obvious.
@@ -643,10 +644,13 @@ class CheckerDispatcher(object):
         match = re.search(r"\s*png$", file_path)
         if match:
             return False
-        if isinstance(skip_array_entry, str):
-            if file_path.find(skip_array_entry) >= 0:
+        return self._file_matches_pattern(file_path, skip_array_entry)
+
+    def _file_matches_pattern(self, file_path, pattern):
+        if isinstance(pattern, str):
+            if file_path.find(pattern) >= 0:
                 return True
-        elif skip_array_entry.match(file_path):
+        elif pattern.match(file_path):
                 return True
         return False
 
@@ -671,8 +675,8 @@ class CheckerDispatcher(object):
         basename = os.path.basename(file_path)
         if basename.startswith('ChangeLog'):
             return False
-        for suffix in _NEVER_SKIPPED_FILES:
-            if basename.endswith(suffix):
+        for pattern in _NEVER_SKIPPED_FILES:
+            if self._file_matches_pattern(file_path, pattern):
                 return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if self._should_skip_file_path(file_path, skipped_file):

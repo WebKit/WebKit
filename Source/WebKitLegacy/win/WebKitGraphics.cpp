@@ -113,7 +113,7 @@ unsigned CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDesc
     ASSERT(buffer);
 
     String result = StringTruncator::centerTruncate(String(text, length), width, makeFont(description));
-    StringView(result).getCharactersWithUpconvert(buffer);
+    StringView(result).getCharacters(buffer);
     buffer[result.length()] = '\0';
     return result.length();
 }
@@ -123,7 +123,7 @@ unsigned RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescr
     ASSERT(buffer);
 
     String result = StringTruncator::rightTruncate(String(text, length), width, makeFont(description));
-    StringView(result).getCharactersWithUpconvert(buffer);
+    StringView(result).getCharacters(buffer);
     buffer[result.length()] = '\0';
     return result.length();
 }

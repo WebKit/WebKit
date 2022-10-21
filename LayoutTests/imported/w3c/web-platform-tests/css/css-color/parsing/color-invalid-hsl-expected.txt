@@ -1,0 +1,21 @@
+
+PASS e.style['color'] = "hsl(none, none, none)" should not set the property value
+PASS e.style['color'] = "hsla(none, none, none, none)" should not set the property value
+PASS e.style['color'] = "hsl(none, 100%, 50%)" should not set the property value
+PASS e.style['color'] = "hsla(120, 100%, 50%, none)" should not set the property value
+PASS e.style['color'] = "hsl(10, 50%, 0)" should not set the property value
+PASS e.style['color'] = "hsl(50%, 50%, 0%)" should not set the property value
+PASS e.style['color'] = "hsl(0, 0% 0%)" should not set the property value
+PASS e.style['color'] = "hsl(0, 0%, light)" should not set the property value
+PASS e.style['color'] = "hsl()" should not set the property value
+PASS e.style['color'] = "hsl(0)" should not set the property value
+PASS e.style['color'] = "hsl(0, 0%)" should not set the property value
+PASS e.style['color'] = "hsla(10, 50%, 0, 1)" should not set the property value
+PASS e.style['color'] = "hsla(50%, 50%, 0%, 1)" should not set the property value
+PASS e.style['color'] = "hsla(0, 0% 0%, 1)" should not set the property value
+PASS e.style['color'] = "hsla(0, 0%, light, 1)" should not set the property value
+PASS e.style['color'] = "hsla()" should not set the property value
+PASS e.style['color'] = "hsla(0)" should not set the property value
+PASS e.style['color'] = "hsla(0, 0%)" should not set the property value
+PASS e.style['color'] = "hsla(0, 0%, 0%, 1, 0%)" should not set the property value
+

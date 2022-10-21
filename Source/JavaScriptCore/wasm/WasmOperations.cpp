@@ -39,6 +39,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "JSWebAssemblyStruct.h"
 #include "ProbeContext.h"
 #include "ReleaseHeapAccessScope.h"
 #include "TypedArrayController.h"
@@ -176,9 +177,9 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     loadValuesIntoBuffer(context, osrEntryData.values(), buffer);
 
     // 2. Restore callee saves.
-    RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
+    auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
     for (const RegisterAtOffset& entry : *callee.calleeSaveRegisters()) {
-        if (dontRestoreRegisters.get(entry.reg()))
+        if (dontRestoreRegisters.contains(entry.reg(), IgnoreVectors))
             continue;
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = *bitwise_cast<UCPURegister*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
@@ -585,12 +586,12 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         RETURN_IF_EXCEPTION(scope, void());
 
         auto rep = wasmCallInfo.results[index];
-        if (rep.isGPR())
-            registerResults[registerResultOffsets.find(rep.jsr().payloadGPR())->offset() / sizeof(uint64_t)] = unboxedValue;
-        else if (rep.isFPR())
-            registerResults[registerResultOffsets.find(rep.fpr())->offset() / sizeof(uint64_t)] = unboxedValue;
+        if (rep.location.isGPR())
+            registerResults[registerResultOffsets.find(rep.location.jsr().payloadGPR())->offset() / sizeof(uint64_t)] = unboxedValue;
+        else if (rep.location.isFPR())
+            registerResults[registerResultOffsets.find(rep.location.fpr())->offset() / sizeof(uint64_t)] = unboxedValue;
         else
-            calleeFramePointer[rep.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
+            calleeFramePointer[rep.location.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
     }
 }
 
@@ -615,7 +616,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
 
     for (unsigned i = 0; i < signature->returnCount(); ++i) {
-        ValueLocation loc = wasmCallInfo.results[i];
+        ValueLocation loc = wasmCallInfo.results[i].location;
         JSValue value;
         if (loc.isGPR()) {
 #if USE(JSVALE32_64)
@@ -831,6 +832,48 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instan
     JSValue value = instance->getFunctionWrapper(index);
     ASSERT(value.isCallable());
     return JSValue::encode(value);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint64_t* arguments))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    Ref<TypeDefinition> structTypeDefinition = jsInstance->instance().module().moduleInformation().typeSignatures[typeIndex];
+    const StructType& structType = *structTypeDefinition->as<StructType>();
+
+    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
+    for (unsigned i = 0; i < structType.fieldCount(); ++i)
+        structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type, arguments[i]));
+    return JSValue::encode(structValue);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance* instance, uint32_t typeIndex))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    return JSValue::encode(JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))
+{
+    auto structReference = JSValue::decode(encodedStructReference);
+    ASSERT(structReference.isObject());
+    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
+    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    return structPointer->get(fieldIndex);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmStructSet, void, (Instance* instance, EncodedJSValue encodedStructReference, uint32_t fieldIndex, EncodedJSValue argument))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    auto structReference = JSValue::decode(encodedStructReference);
+    ASSERT(structReference.isObject());
+    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
+    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    const auto fieldType = structPointer->structType()->field(fieldIndex).type;
+    return structPointer->set(jsInstance->globalObject(), fieldIndex, toJSValue(jsInstance->globalObject(), fieldType, argument));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance* instance, unsigned tableIndex))

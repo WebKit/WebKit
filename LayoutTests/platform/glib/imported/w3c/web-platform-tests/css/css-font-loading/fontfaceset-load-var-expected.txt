@@ -1,0 +1,12 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: SyntaxError thrown when matching loading values with var()
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+
+PASS Loading "var(--x) serif" causes SyntaxError (document)
+PASS Loading "var(--x, 10px) serif" causes SyntaxError (document)
+PASS Loading "var(--x) serif" causes SyntaxError (worker)
+PASS Loading "var(--x, 10px) serif" causes SyntaxError (worker)
+

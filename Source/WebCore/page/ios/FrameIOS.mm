@@ -630,13 +630,14 @@ NSRect Frame::rectForScrollToVisible()
 
 void Frame::setTimersPaused(bool paused)
 {
-    if (!m_page)
+    auto* page = this->page();
+    if (!page)
         return;
     JSLockHolder lock(commonVM());
     if (paused)
-        m_page->suspendActiveDOMObjectsAndAnimations();
+        page->suspendActiveDOMObjectsAndAnimations();
     else
-        m_page->resumeActiveDOMObjectsAndAnimations();
+        page->resumeActiveDOMObjectsAndAnimations();
 }
 
 void Frame::dispatchPageHideEventBeforePause()
@@ -708,8 +709,12 @@ VisibleSelection Frame::rangedSelectionInitialExtent() const
 void Frame::recursiveSetUpdateAppearanceEnabled(bool enabled)
 {
     selection().setUpdateAppearanceEnabled(enabled);
-    for (Frame* child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->recursiveSetUpdateAppearanceEnabled(enabled);
+    for (auto* child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        localChild->recursiveSetUpdateAppearanceEnabled(enabled);
+    }
 }
 
 // FIXME: Break this function up into pieces with descriptive function names so that it's easier to follow.
@@ -833,8 +838,12 @@ void Frame::resetAllGeolocationPermission()
     if (document()->domWindow())
         document()->domWindow()->resetAllGeolocationPermission();
 
-    for (Frame* child = tree().firstChild(); child; child = child->tree().nextSibling())
-        child->resetAllGeolocationPermission();
+    for (auto* child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        localChild->resetAllGeolocationPermission();
+    }
 }
 
 } // namespace WebCore

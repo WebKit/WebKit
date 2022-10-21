@@ -56,6 +56,7 @@
 #import <WebKit/WebDeviceOrientationProviderMock.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebGeolocationPosition.h>
 #import <WebKit/WebHTMLRepresentation.h>
@@ -1210,6 +1211,17 @@ unsigned TestRunner::imageCountInGeneralPasteboard() const
         return 0;
     
     return imagesArray.count;
+}
+
+
+void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
+{
+    ASSERT(message);
+    auto messageCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, message));
+    RetainPtr<CFStringRef> groupCF;
+    if (group)
+        groupCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, group));
+    [mainFrame _generateTestReport:(__bridge NSString *)messageCF.get() withGroup:(__bridge NSString *)groupCF.get()];
 }
 
 #if PLATFORM(MAC)

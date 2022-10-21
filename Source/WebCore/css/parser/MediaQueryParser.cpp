@@ -28,7 +28,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
-#include "MediaQueryParser.h"
+#include "LegacyMediaQueryParser.h"
 
 #include "CSSTokenizer.h"
 #include "MediaList.h"
@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(const String& queryString, MediaQueryParserContext context)
+RefPtr<MediaQuerySet> LegacyMediaQueryParser::parseMediaQuerySet(const String& queryString, MediaQueryParserContext context)
 {
     auto tokenizer = CSSTokenizer::tryCreate(queryString);
     if (UNLIKELY(!tokenizer))
@@ -45,30 +45,30 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(const String& querySt
     return parseMediaQuerySet(tokenizer->tokenRange(), context);
 }
 
-RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(CSSParserTokenRange range, MediaQueryParserContext context)
+RefPtr<MediaQuerySet> LegacyMediaQueryParser::parseMediaQuerySet(CSSParserTokenRange range, MediaQueryParserContext context)
 {
-    return MediaQueryParser(MediaQuerySetParser, context).parseInternal(range);
+    return LegacyMediaQueryParser(MediaQuerySetParser, context).parseInternal(range);
 }
 
-RefPtr<MediaQuerySet> MediaQueryParser::parseMediaCondition(CSSParserTokenRange range, MediaQueryParserContext context)
+RefPtr<MediaQuerySet> LegacyMediaQueryParser::parseMediaCondition(CSSParserTokenRange range, MediaQueryParserContext context)
 {
-    return MediaQueryParser(MediaConditionParser, context).parseInternal(range);
+    return LegacyMediaQueryParser(MediaConditionParser, context).parseInternal(range);
 }
 
-const MediaQueryParser::State MediaQueryParser::ReadRestrictor = &MediaQueryParser::readRestrictor;
-const MediaQueryParser::State MediaQueryParser::ReadMediaNot = &MediaQueryParser::readMediaNot;
-const MediaQueryParser::State MediaQueryParser::ReadMediaType = &MediaQueryParser::readMediaType;
-const MediaQueryParser::State MediaQueryParser::ReadAnd = &MediaQueryParser::readAnd;
-const MediaQueryParser::State MediaQueryParser::ReadFeatureStart = &MediaQueryParser::readFeatureStart;
-const MediaQueryParser::State MediaQueryParser::ReadFeature = &MediaQueryParser::readFeature;
-const MediaQueryParser::State MediaQueryParser::ReadFeatureColon = &MediaQueryParser::readFeatureColon;
-const MediaQueryParser::State MediaQueryParser::ReadFeatureValue = &MediaQueryParser::readFeatureValue;
-const MediaQueryParser::State MediaQueryParser::ReadFeatureEnd = &MediaQueryParser::readFeatureEnd;
-const MediaQueryParser::State MediaQueryParser::SkipUntilComma = &MediaQueryParser::skipUntilComma;
-const MediaQueryParser::State MediaQueryParser::SkipUntilBlockEnd = &MediaQueryParser::skipUntilBlockEnd;
-const MediaQueryParser::State MediaQueryParser::Done = &MediaQueryParser::done;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadRestrictor = &LegacyMediaQueryParser::readRestrictor;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadMediaNot = &LegacyMediaQueryParser::readMediaNot;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadMediaType = &LegacyMediaQueryParser::readMediaType;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadAnd = &LegacyMediaQueryParser::readAnd;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadFeatureStart = &LegacyMediaQueryParser::readFeatureStart;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadFeature = &LegacyMediaQueryParser::readFeature;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadFeatureColon = &LegacyMediaQueryParser::readFeatureColon;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadFeatureValue = &LegacyMediaQueryParser::readFeatureValue;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::ReadFeatureEnd = &LegacyMediaQueryParser::readFeatureEnd;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::SkipUntilComma = &LegacyMediaQueryParser::skipUntilComma;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::SkipUntilBlockEnd = &LegacyMediaQueryParser::skipUntilBlockEnd;
+const LegacyMediaQueryParser::State LegacyMediaQueryParser::Done = &LegacyMediaQueryParser::done;
 
-MediaQueryParser::MediaQueryParser(ParserType parserType, MediaQueryParserContext context)
+LegacyMediaQueryParser::LegacyMediaQueryParser(ParserType parserType, MediaQueryParserContext context)
     : m_parserType(parserType)
     , m_mediaQueryData(context)
     , m_querySet(MediaQuerySet::create())
@@ -76,32 +76,32 @@ MediaQueryParser::MediaQueryParser(ParserType parserType, MediaQueryParserContex
 {
     switch (m_parserType) {
     case MediaQuerySetParser:
-        m_state = &MediaQueryParser::readRestrictor;
+        m_state = &LegacyMediaQueryParser::readRestrictor;
         break;
     case MediaConditionParser:
-        m_state = &MediaQueryParser::readMediaNot;
+        m_state = &LegacyMediaQueryParser::readMediaNot;
         break;
     }
 }
 
-MediaQueryParser::~MediaQueryParser() = default;
+LegacyMediaQueryParser::~LegacyMediaQueryParser() = default;
 
-void MediaQueryParser::setStateAndRestrict(State state, MediaQuery::Restrictor restrictor)
+void LegacyMediaQueryParser::setStateAndRestrict(State state, LegacyMediaQuery::Restrictor restrictor)
 {
     m_mediaQueryData.setRestrictor(restrictor);
     m_state = state;
 }
 
 // State machine member functions start here
-void MediaQueryParser::readRestrictor(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
+void LegacyMediaQueryParser::readRestrictor(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     readMediaType(type, token, range);
 }
 
-void MediaQueryParser::readMediaNot(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
+void LegacyMediaQueryParser::readMediaNot(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "not"_s))
-        setStateAndRestrict(ReadFeatureStart, MediaQuery::Not);
+        setStateAndRestrict(ReadFeatureStart, LegacyMediaQuery::Not);
     else
         readFeatureStart(type, token, range);
 }
@@ -115,19 +115,19 @@ static bool isRestrictorOrLogicalOperator(const CSSParserToken& token)
         || equalLettersIgnoringASCIICase(token.value(), "only"_s);
 }
 
-void MediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
+void LegacyMediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     if (type == LeftParenthesisToken) {
-        if (m_mediaQueryData.restrictor() != MediaQuery::None)
+        if (m_mediaQueryData.restrictor() != LegacyMediaQuery::None)
             m_state = SkipUntilComma;
         else
             m_state = ReadFeature;
     } else if (type == IdentToken) {
         if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "not"_s))
-            setStateAndRestrict(ReadMediaType, MediaQuery::Not);
+            setStateAndRestrict(ReadMediaType, LegacyMediaQuery::Not);
         else if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "only"_s))
-            setStateAndRestrict(ReadMediaType, MediaQuery::Only);
-        else if (m_mediaQueryData.restrictor() != MediaQuery::None
+            setStateAndRestrict(ReadMediaType, LegacyMediaQuery::Only);
+        else if (m_mediaQueryData.restrictor() != LegacyMediaQuery::None
             && isRestrictorOrLogicalOperator(token)) {
             m_state = SkipUntilComma;
         } else {
@@ -143,17 +143,17 @@ void MediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserTok
     }
 }
 
-void MediaQueryParser::commitMediaQuery()
+void LegacyMediaQueryParser::commitMediaQuery()
 {
     // FIXME-NEWPARSER: Convoluted and awful, but we can't change the MediaQuerySet yet because of the
     // old parser.
     static const NeverDestroyed<String> defaultMediaType { "all"_s };
-    MediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().value_or(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
+    LegacyMediaQuery mediaQuery { m_mediaQueryData.restrictor(), m_mediaQueryData.mediaType().value_or(defaultMediaType), WTFMove(m_mediaQueryData.expressions()) };
     m_mediaQueryData.clear();
     m_querySet->addMediaQuery(WTFMove(mediaQuery));
 }
 
-void MediaQueryParser::readAnd(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
+void LegacyMediaQueryParser::readAnd(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
 {
     if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "and"_s)) {
         m_state = ReadFeatureStart;
@@ -166,7 +166,7 @@ void MediaQueryParser::readAnd(CSSParserTokenType type, const CSSParserToken& to
         m_state = SkipUntilComma;
 }
 
-void MediaQueryParser::readFeatureStart(CSSParserTokenType type, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/)
+void LegacyMediaQueryParser::readFeatureStart(CSSParserTokenType type, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/)
 {
     if (type == LeftParenthesisToken)
         m_state = ReadFeature;
@@ -174,7 +174,7 @@ void MediaQueryParser::readFeatureStart(CSSParserTokenType type, const CSSParser
         m_state = SkipUntilComma;
 }
 
-void MediaQueryParser::readFeature(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
+void LegacyMediaQueryParser::readFeature(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
 {
     if (type == IdentToken) {
         m_mediaQueryData.setMediaFeature(token.value().toString());
@@ -183,7 +183,7 @@ void MediaQueryParser::readFeature(CSSParserTokenType type, const CSSParserToken
         m_state = SkipUntilComma;
 }
 
-void MediaQueryParser::readFeatureColon(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
+void LegacyMediaQueryParser::readFeatureColon(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     if (type == ColonToken) {
         while (range.peek().type() == WhitespaceToken)
@@ -199,7 +199,7 @@ void MediaQueryParser::readFeatureColon(CSSParserTokenType type, const CSSParser
         m_state = SkipUntilBlockEnd;
 }
 
-void MediaQueryParser::readFeatureValue(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
+void LegacyMediaQueryParser::readFeatureValue(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
     if (type == DimensionToken && token.unitType() == CSSUnitType::CSS_UNKNOWN) {
         range.consume();
@@ -210,7 +210,7 @@ void MediaQueryParser::readFeatureValue(CSSParserTokenType type, const CSSParser
     }
 }
 
-void MediaQueryParser::readFeatureEnd(CSSParserTokenType type, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/)
+void LegacyMediaQueryParser::readFeatureEnd(CSSParserTokenType type, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/)
 {
     if (type == RightParenthesisToken || type == EOFToken) {
         if (type != EOFToken && m_mediaQueryData.lastExpressionValid())
@@ -223,25 +223,25 @@ void MediaQueryParser::readFeatureEnd(CSSParserTokenType type, const CSSParserTo
     }
 }
 
-void MediaQueryParser::skipUntilComma(CSSParserTokenType type, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/)
+void LegacyMediaQueryParser::skipUntilComma(CSSParserTokenType type, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/)
 {
     if ((type == CommaToken && !m_blockWatcher.blockLevel()) || type == EOFToken) {
         m_state = ReadRestrictor;
         m_mediaQueryData.clear();
-        MediaQuery query = MediaQuery(MediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
+        auto query = LegacyMediaQuery(LegacyMediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
         m_querySet->addMediaQuery(WTFMove(query));
     }
 }
 
-void MediaQueryParser::skipUntilBlockEnd(CSSParserTokenType /*type */, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
+void LegacyMediaQueryParser::skipUntilBlockEnd(CSSParserTokenType /*type */, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
 {
     if (token.getBlockType() == CSSParserToken::BlockEnd && !m_blockWatcher.blockLevel())
         m_state = SkipUntilComma;
 }
 
-void MediaQueryParser::done(CSSParserTokenType /*type*/, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/) { }
+void LegacyMediaQueryParser::done(CSSParserTokenType /*type*/, const CSSParserToken& /*token*/, CSSParserTokenRange& /*range*/) { }
 
-void MediaQueryParser::handleBlocks(const CSSParserToken& token)
+void LegacyMediaQueryParser::handleBlocks(const CSSParserToken& token)
 {
     if (token.getBlockType() != CSSParserToken::BlockStart)
         return;
@@ -257,7 +257,7 @@ void MediaQueryParser::handleBlocks(const CSSParserToken& token)
         m_state = SkipUntilBlockEnd;
 }
 
-void MediaQueryParser::processToken(const CSSParserToken& token, CSSParserTokenRange& range)
+void LegacyMediaQueryParser::processToken(const CSSParserToken& token, CSSParserTokenRange& range)
 {
     CSSParserTokenType type = token.type();
 
@@ -277,7 +277,7 @@ void MediaQueryParser::processToken(const CSSParserToken& token, CSSParserTokenR
 }
 
 // The state machine loop
-RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange& range)
+RefPtr<MediaQuerySet> LegacyMediaQueryParser::parseInternal(CSSParserTokenRange& range)
 {
     
     while (!range.atEnd())
@@ -288,7 +288,7 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange& range
         processToken(CSSParserToken(EOFToken), range);
 
     if (m_state != ReadAnd && m_state != ReadRestrictor && m_state != Done && m_state != ReadMediaNot) {
-        MediaQuery query = MediaQuery(MediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
+        auto query = LegacyMediaQuery(LegacyMediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
         m_querySet->addMediaQuery(WTFMove(query));
     } else if (m_mediaQueryData.currentMediaQueryChanged())
         commitMediaQuery();
@@ -298,30 +298,30 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange& range
     return m_querySet;
 }
 
-MediaQueryParser::MediaQueryData::MediaQueryData(MediaQueryParserContext context)
+LegacyMediaQueryParser::MediaQueryData::MediaQueryData(MediaQueryParserContext context)
     : m_context(context)
 {
 }
 
-void MediaQueryParser::MediaQueryData::clear()
+void LegacyMediaQueryParser::MediaQueryData::clear()
 {
-    m_restrictor = MediaQuery::None;
+    m_restrictor = LegacyMediaQuery::None;
     m_mediaType = std::nullopt;
     m_mediaFeature = String();
     m_expressions.clear();
 }
 
-void MediaQueryParser::MediaQueryData::addExpression(CSSParserTokenRange& range)
+void LegacyMediaQueryParser::MediaQueryData::addExpression(CSSParserTokenRange& range)
 {
     m_expressions.append(MediaQueryExpression { m_mediaFeature, range, m_context });
 }
 
-bool MediaQueryParser::MediaQueryData::lastExpressionValid()
+bool LegacyMediaQueryParser::MediaQueryData::lastExpressionValid()
 {
     return m_expressions.last().isValid();
 }
 
-void MediaQueryParser::MediaQueryData::removeLastExpression()
+void LegacyMediaQueryParser::MediaQueryData::removeLastExpression()
 {
     m_expressions.removeLast();
 }

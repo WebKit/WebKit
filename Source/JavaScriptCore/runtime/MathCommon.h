@@ -48,6 +48,12 @@ constexpr double minSafeInteger()
     return -9007199254740991.0;
 }
 
+constexpr uint64_t maxSafeIntegerAsUInt64()
+{
+    // 2 ^ 53 - 1
+    return 9007199254740991ULL;
+}
+
 inline bool isInteger(double value)
 {
     return std::isfinite(value) && std::trunc(value) == value;

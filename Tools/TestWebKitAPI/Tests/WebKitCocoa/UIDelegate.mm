@@ -405,7 +405,7 @@ static UIViewController *overrideViewControllerForFullscreenPresentation()
     return nil;
 }
 
-constexpr auto WebKitCaptivePortalModeAlertShownKey = @"WebKitCaptivePortalModeAlertShown";
+constexpr auto WebKitLockdownModeAlertShownKey = @"WebKitLockdownModeAlertShown";
 
 TEST(WebKit, LockdownModeDefaultFirstUseMessage)
 {
@@ -417,7 +417,7 @@ TEST(WebKit, LockdownModeDefaultFirstUseMessage)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get() addToWindow:NO]);
 
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
     [WKWebView _resetPresentLockdownModeMessage];
 
@@ -429,10 +429,10 @@ TEST(WebKit, LockdownModeDefaultFirstUseMessage)
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(presentViewControllerCallCount, 1);
 
-    EXPECT_TRUE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey]);
+    EXPECT_TRUE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitLockdownModeAlertShownKey]);
     
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
 }
 
 static bool showedNoFirstUseMessage;
@@ -458,7 +458,7 @@ TEST(WebKit, LockdownModeNoFirstUseMessage)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get() addToWindow:NO]);
 
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
     [WKWebView _resetPresentLockdownModeMessage];
 
@@ -474,10 +474,10 @@ TEST(WebKit, LockdownModeNoFirstUseMessage)
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(presentViewControllerCallCount, 0);
 
-    EXPECT_TRUE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey]);
+    EXPECT_TRUE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitLockdownModeAlertShownKey]);
     
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
 }
 
 static bool showedCustomFirstUseMessage;
@@ -512,7 +512,7 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get() addToWindow:NO]);
 
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
     [WKWebView _resetPresentLockdownModeMessage];
 
@@ -528,7 +528,7 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
     EXPECT_TRUE(showedCustomFirstUseMessage);
     EXPECT_TRUE(requestFutureFirstUseMessage);
 
-    EXPECT_FALSE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey]);
+    EXPECT_FALSE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitLockdownModeAlertShownKey]);
 
     // Load a new view and ask again:
     auto secondWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get() addToWindow:NO]);
@@ -543,10 +543,10 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
     EXPECT_FALSE(showedCustomFirstUseMessage);
     EXPECT_FALSE(requestFutureFirstUseMessage);
 
-    EXPECT_TRUE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey]);
+    EXPECT_TRUE([[NSUserDefaults standardUserDefaults] boolForKey:WebKitLockdownModeAlertShownKey]);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitCaptivePortalModeAlertShownKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
 }
 
 #endif // PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000

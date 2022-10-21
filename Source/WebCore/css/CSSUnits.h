@@ -136,11 +136,14 @@ enum class CSSUnitType : uint8_t {
 enum class CSSUnitCategory : uint8_t {
     Number,
     Percent,
-    Length,
+    AbsoluteLength,
+    FontRelativeLength,
+    ViewportPercentageLength,
     Angle,
     Time,
     Frequency,
     Resolution,
+    Flex,
     Other
 };
 

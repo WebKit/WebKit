@@ -4,7 +4,7 @@ Blocked access to external URL https://www.localhost:9443/fetch/metadata/resourc
 PASS Same-origin script
 PASS Same-origin script: sec-fetch-dest
 PASS Same-origin script: sec-fetch-mode
-FAIL Same-origin script: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin script: sec-fetch-site
 PASS Same-origin script: sec-fetch-user
 PASS Same-site script
 FAIL Same-site script: sec-fetch-dest null is not an object (evaluating 'value.dest')
@@ -19,6 +19,6 @@ FAIL Cross-site script: sec-fetch-user null is not an object (evaluating 'value.
 PASS Same-origin CORS script
 PASS Same-origin CORS script: sec-fetch-dest
 PASS Same-origin CORS script: sec-fetch-mode
-FAIL Same-origin CORS script: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS Same-origin CORS script: sec-fetch-site
 PASS Same-origin CORS script: sec-fetch-user
 

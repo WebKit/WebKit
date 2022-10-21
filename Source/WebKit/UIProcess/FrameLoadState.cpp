@@ -52,6 +52,12 @@ void FrameLoadState::didStartProvisionalLoad(const URL& url)
     m_provisionalURL = url;
 }
 
+void FrameLoadState::didSuspend()
+{
+    m_provisionalURL = { };
+    m_state = State::Finished;
+}
+
 void FrameLoadState::didExplicitOpen(const URL& url)
 {
     m_url = url;

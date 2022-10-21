@@ -27,6 +27,7 @@ import os
 import re
 import requests
 import socket
+import sys
 import time
 
 from datetime import datetime, timedelta
@@ -73,7 +74,7 @@ class Bugzilla():
 
     @classmethod
     def save_attachment(cls, attachment_id, attachment_data):
-        with open(Bugzilla.file_path_for_patch(attachment_id), 'w') as attachment_file:
+        with open(Bugzilla.file_path_for_patch(attachment_id), 'wb') as attachment_file:
             attachment_file.write(attachment_data)
 
     @classmethod
@@ -235,10 +236,10 @@ class BugzillaBeautifulSoup():
                 _log.error('Unexpected error while authenticating to bugzilla.')
                 continue
 
-            match = re.search("<title>(.+?)</title>", response.read())
+            match = re.search(b"<title>(.+?)</title>", response.read())
             # If the resulting page has a title, and it contains the word
             # "invalid" assume it's the login failure page.
-            if match and re.search("Invalid", match.group(1), re.IGNORECASE):
+            if match and re.search(b"Invalid", match.group(1), re.IGNORECASE):
                 errorMessage = 'Bugzilla login failed: {}'.format(match.group(1))
                 if attempts >= 3:
                     # raise an exception only if this was the last attempt
@@ -290,6 +291,8 @@ class BugzillaBeautifulSoup():
                 continue
             patch_id = int(digits.search(patch_tag["href"]).group(0))
             date_tag = row.find("td", text=date_format)
+            if sys.version_info > (3, 0) and date_tag:
+                date_tag = date_tag.text
             if date_tag and datetime.strptime(date_format.search(date_tag).group(0), "%Y-%m-%d %H:%M") < since:
                 continue
             patch_ids.append(patch_id)

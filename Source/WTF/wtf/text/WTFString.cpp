@@ -192,7 +192,7 @@ Vector<UChar> String::charactersWithoutNullTermination() const
 
         if (is8Bit()) {
             const LChar* characters8 = m_impl->characters8();
-            for (size_t i = 0; i < length(); ++i)
+            for (unsigned i = 0; i < length(); ++i)
                 result.uncheckedAppend(characters8[i]);
         } else {
             const UChar* characters16 = m_impl->characters16();
@@ -470,37 +470,30 @@ CString String::utf8(ConversionMode mode) const
     return expectedString.value();
 }
 
-String String::make8BitFrom16BitSource(const UChar* source, size_t length)
+String String::make8Bit(const UChar* source, unsigned length)
 {
-    if (!length)
-        return String();
-
     LChar* destination;
     String result = String::createUninitialized(length, destination);
-
-    copyLCharsFromUCharSource(destination, source, length);
-
+    StringImpl::copyCharacters(destination, source, length);
     return result;
 }
 
-String String::make16BitFrom8BitSource(const LChar* source, size_t length)
+void String::convertTo16Bit()
 {
-    if (!length)
-        return String();
-    
+    if (isNull() || !is8Bit())
+        return;
+    auto length = this->length();
     UChar* destination;
-    String result = String::createUninitialized(length, destination);
-    
-    StringImpl::copyCharacters(destination, source, length);
-    
-    return result;
+    auto convertedString = String::createUninitialized(length, destination);
+    StringImpl::copyCharacters(destination, characters8(), length);
+    *this = WTFMove(convertedString);
 }
 
 template<bool replaceInvalidSequences>
 String fromUTF8Impl(const LChar* stringStart, size_t length)
 {
-    if (length > StringImplShape::MaxLength)
-        CRASH();
+    // Do this assertion before chopping the size_t down to unsigned.
+    RELEASE_ASSERT(length <= String::MaxLength);
 
     if (!stringStart)
         return String();
@@ -550,8 +543,11 @@ String String::fromUTF8(const CString& s)
 String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
 {
     String utf8 = fromUTF8(string, size);
-    if (!utf8)
+    if (!utf8) {
+        // Do this assertion before chopping the size_t down to unsigned.
+        RELEASE_ASSERT(size <= String::MaxLength);
         return String(string, size);
+    }
     return utf8;
 }
 

@@ -290,6 +290,9 @@
             "WTF_WordLock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
+            "WTF_WordLock.ManyContendedLongSections": {
+                "expected": {"gtk": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246603"}}
+            },
             "WTF.WorkerPoolDecrease": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214803"}}
             }

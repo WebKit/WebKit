@@ -688,10 +688,11 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     ASSERT(m_frame);
 
-    Frame& topFrame = m_frame->tree().top();
+    auto* topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
 
     ASSERT(m_frame->document());
-    ASSERT(topFrame.document());
+    ASSERT(topFrame);
+    ASSERT(topFrame->document());
     
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
@@ -713,12 +714,12 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (isRedirectToGetAfterPost(m_request, newRequest))
         newRequest.clearHTTPOrigin();
 
-    if (&topFrame != m_frame) {
+    if (topFrame != m_frame) {
         if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, m_frame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url(), MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes)) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
-        if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, topFrame.document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url())) {
+        if (!topFrame || !MixedContentChecker::canDisplayInsecureContent(*m_frame, topFrame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url())) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
@@ -1228,6 +1229,21 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
 }
 #endif
 
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+bool DocumentLoader::isLoadingRemoteArchive() const
+{
+#if ENABLE(MHTML)
+    return m_archive && m_archive->shouldOverrideBaseURL();
+#else
+    bool isQuickLookPreview = false;
+#if USE(QUICK_LOOK)
+    isQuickLookPreview = isQuickLookPreviewURL(m_response.url());
+#endif // QUICK_LOOK
+    return m_archive && !m_frame->settings().webArchiveTestingModeEnabled() && !isQuickLookPreview;
+#endif // !MHTML
+}
+#endif // WEBARCHIVE || MHTML
+
 void DocumentLoader::commitData(const SharedBuffer& data)
 {
     if (!m_gotFirstByte) {
@@ -1255,9 +1271,21 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             return;
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        if (m_archive && m_archive->shouldOverrideBaseURL())
-            document.setBaseURLOverride(m_archive->mainResource()->url());
-#endif
+        if (isLoadingRemoteArchive()) {
+            auto& url { m_archive->mainResource()->url() };
+            if (m_archive->shouldOverrideBaseURL())
+                document.setBaseURLOverride(url);
+#if ENABLE(WEB_ARCHIVE)
+            constexpr auto webArchivePrefix { "webarchive+"_s };
+            if (url.protocol().startsWith(webArchivePrefix)) {
+                auto unprefixedScheme { url.protocol().substring(webArchivePrefix.length()) };
+                if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(unprefixedScheme.toStringWithoutCopying()))
+                    document.securityOrigin().grantLoadLocalResources();
+            }
+#endif // WEB_ARCHIVE
+        }
+#endif // WEB_ARCHIVE || MHTML
+
 #if ENABLE(SERVICE_WORKER)
         if (m_canUseServiceWorkers) {
             if (!document.securityOrigin().isOpaque()) {
@@ -1812,12 +1840,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
     if (!m_archive)
         return false;
 
-#if ENABLE(WEB_ARCHIVE)
-    // The idea of WebArchiveDebugMode is that we should fail instead of trying to fetch from the network.
-    // Returning true ensures the caller will not try to fetch from the network.
-    if (m_frame->settings().webArchiveDebugModeEnabled() && responseMIMEType() == "application/x-webarchive"_s)
-        return true;
-#endif
+    DOCUMENTLOADER_RELEASE_LOG("scheduleArchiveLoad: Failed to unarchive subresource");
 
     // If we want to load from the archive only, then we should always return true so that the caller
     // does not try to fetch from the network.

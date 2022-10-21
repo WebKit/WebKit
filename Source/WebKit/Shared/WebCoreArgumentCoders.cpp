@@ -2462,20 +2462,17 @@ std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDete
 
 void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, const UnixFileDescriptor& fd)
 {
-    encoder.addAttachment(Attachment(fd.duplicate()));
+    encoder.addAttachment(fd.duplicate());
 }
 
 void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, UnixFileDescriptor&& fd)
 {
-    encoder.addAttachment(Attachment(WTFMove(fd)));
+    encoder.addAttachment(WTFMove(fd));
 }
 
 std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Decoder& decoder)
 {
-    auto attachment = decoder.takeLastAttachment();
-    if (!attachment)
-        return std::nullopt;
-    return std::optional<UnixFileDescriptor> { std::in_place, attachment->release() };
+    return decoder.takeLastAttachment();
 }
 
 #endif

@@ -161,6 +161,7 @@ class GitHubMixin(object):
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
+    REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
 
     def fetch_data_from_url_with_authentication_github(self, url):
         response = None
@@ -767,8 +768,8 @@ class ShowIdentifier(shell.ShellCommand):
             if identifier:
                 identifier = identifier.replace('master', DEFAULT_BRANCH)
             self.setProperty('identifier', identifier)
-            ews_revision = self.getProperty('ews_revision')
-            if ews_revision:
+            if self.getProperty('ews_revision', False) and not self.getProperty('github.number', False):
+                # Note that this if condition matches with CheckOutSpecificRevision.doStepIf
                 step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
             else:
                 step = self.getLastBuildStepByName(CheckOutSource.name)
@@ -1827,7 +1828,7 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             repository_url = self.getProperty('repository', '')
             rc = SUCCESS
             if any((
-                not self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL], repository_url=repository_url),
+                not self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url),
                 not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
             )):
                 rc = FAILURE
@@ -1889,6 +1890,7 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
         GitHubMixin.MERGE_QUEUE_LABEL,
         GitHubMixin.UNSAFE_MERGE_QUEUE_LABEL,
         GitHubMixin.BLOCKED_LABEL,
+        GitHubMixin.REQUEST_MERGE_QUEUE_LABEL,
     ]
 
     def start(self):
@@ -5261,3 +5263,16 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class DeleteStaleBuildFiles(shell.ShellCommand):
+    name = 'delete-stale-build-files'
+    description = ['Deleting stale build files']
+    descriptionDone = ['Deleted stale build files']
+    command = ['python3', 'Tools/CISupport/delete-stale-build-files', WithProperties('--platform=%(fullPlatform)s')]
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+
+    def __init__(self, **kwargs):
+        super(DeleteStaleBuildFiles, self).__init__(logEnviron=False, timeout=600, **kwargs)

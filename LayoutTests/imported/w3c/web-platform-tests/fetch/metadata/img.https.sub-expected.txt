@@ -6,6 +6,6 @@ FAIL Same-site image promise_test: Unhandled rejection with value: object "[obje
 FAIL Cross-site image promise_test: Unhandled rejection with value: object "[object Event]"
 PASS Same-origin image: sec-fetch-dest
 PASS Same-origin image: sec-fetch-mode
-FAIL Same-origin image: sec-fetch-site assert_equals: expected (string) "same-origin" but got (undefined) undefined
+PASS Same-origin image: sec-fetch-site
 PASS Same-origin image: sec-fetch-user
 

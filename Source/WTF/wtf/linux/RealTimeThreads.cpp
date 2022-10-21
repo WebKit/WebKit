@@ -30,6 +30,7 @@
 #include <signal.h>
 #include <string.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/SafeStrerror.h>
 
 #if USE(GLIB)

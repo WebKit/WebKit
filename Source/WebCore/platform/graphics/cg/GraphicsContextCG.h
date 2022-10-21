@@ -107,8 +107,6 @@ public:
 
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
-    FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) final;
-
     void drawFocusRing(const Vector<FloatRect>&, float, float, const Color&) final;
     void drawFocusRing(const Path&, float, float, const Color&) final;
 #if PLATFORM(MAC)
@@ -134,6 +132,8 @@ public:
 #if OS(WINDOWS)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
 #endif
+
+    virtual FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) const;
 
 protected:
     virtual void setCGShadow(RenderingMode, const FloatSize& offset, float blur, const Color&, bool shadowsIgnoreTransforms);

@@ -756,6 +756,7 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
     Vector<FieldType> fields;
     WASM_PARSER_FAIL_IF(!fields.tryReserveCapacity(fieldCount), "can't allocate enough memory for struct fields ", fieldCount, " entries");
 
+    Checked<unsigned, RecordOverflow> structInstancePayloadSize { 0 };
     for (uint32_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
         Type fieldType;
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, fieldType), "can't get ", fieldIndex, "th field Type");
@@ -765,6 +766,8 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
         WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Field's mutability: 0x", hex(mutability, 2, Lowercase));
 
         fields.uncheckedAppend(FieldType { fieldType, static_cast<Mutability>(mutability) });
+        structInstancePayloadSize += typeKindSizeInBytes(fieldType.kind);
+        WASM_PARSER_FAIL_IF(structInstancePayloadSize.hasOverflowed(), "struct layout is too big");
     }
 
     structType = TypeInformation::typeDefinitionForStruct(fields);

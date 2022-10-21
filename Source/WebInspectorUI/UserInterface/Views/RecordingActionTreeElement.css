@@ -54,6 +54,10 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     opacity: 1;
 }
 
+.item.recording-action > .titles .parameter.object-handle {
+    color: var(--text-color-gray-medium);
+}
+
 .item.recording-action > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
 }

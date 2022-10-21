@@ -40,6 +40,8 @@
 - (void)requestExitFullScreen;
 - (void)exitFullScreen;
 - (void)beganExitFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
+- (void)setSupportedOrientations:(UIInterfaceOrientationMask)orientations;
+- (void)resetSupportedOrientations;
 - (void)close;
 - (void)webViewDidRemoveFromSuperviewWhileInFullscreen;
 - (void)videoControlsManagerDidChange;

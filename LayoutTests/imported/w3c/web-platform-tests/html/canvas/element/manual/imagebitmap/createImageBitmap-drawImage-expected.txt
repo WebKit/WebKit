@@ -34,11 +34,11 @@ FAIL createImageBitmap from a vector SVGImageElement scaled down, and drawImage 
 FAIL createImageBitmap from a vector SVGImageElement scaled up, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL createImageBitmap from a vector SVGImageElement resized, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL createImageBitmap from a vector SVGImageElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL createImageBitmap from an OffscreenCanvas, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap from an OffscreenCanvas scaled down, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap from an OffscreenCanvas scaled up, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap from an OffscreenCanvas resized, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap from an OffscreenCanvas with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+PASS createImageBitmap from an OffscreenCanvas, and drawImage on the created ImageBitmap
+PASS createImageBitmap from an OffscreenCanvas scaled down, and drawImage on the created ImageBitmap
+PASS createImageBitmap from an OffscreenCanvas scaled up, and drawImage on the created ImageBitmap
+PASS createImageBitmap from an OffscreenCanvas resized, and drawImage on the created ImageBitmap
+PASS createImageBitmap from an OffscreenCanvas with negative sw/sh, and drawImage on the created ImageBitmap
 PASS createImageBitmap from an ImageData, and drawImage on the created ImageBitmap
 PASS createImageBitmap from an ImageData scaled down, and drawImage on the created ImageBitmap
 PASS createImageBitmap from an ImageData scaled up, and drawImage on the created ImageBitmap

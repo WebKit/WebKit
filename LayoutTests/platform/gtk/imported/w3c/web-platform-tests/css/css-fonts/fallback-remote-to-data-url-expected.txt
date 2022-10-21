@@ -1,0 +1,4 @@
+0123456789 ABCDEFGHIJ
+
+PASS We should use the inline custom font to render the page when the primary remote font is loading
+

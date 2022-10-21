@@ -30,6 +30,7 @@
 
 #import "WKWebView.h"
 #import "WebPageProxy.h"
+#import <WebCore/Exception.h>
 
 namespace WebKit {
 
@@ -52,6 +53,13 @@ void WebScreenOrientationManagerProxy::setWindow(UIWindow *window)
 void WebScreenOrientationManagerProxy::webViewDidMoveToWindow()
 {
     setWindow([m_page.cocoaView() window]);
+}
+
+std::optional<WebCore::Exception> WebScreenOrientationManagerProxy::platformShouldRejectLockRequest() const
+{
+    if (UIApplication.sharedApplication.supportsMultipleScenes)
+        return WebCore::Exception { WebCore::NotSupportedError, "Apps supporting multiple scenes (multitask) cannot lock their orientation"_s };
+    return std::nullopt;
 }
 
 } // namespace WebKit

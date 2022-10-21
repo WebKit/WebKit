@@ -1945,7 +1945,7 @@ int legacyFontSizeFromCSSValue(Document& document, CSSPrimitiveValue* value, boo
         return 0;
     }
 
-    if (CSSValueXSmall <= value->valueID() && value->valueID() <= CSSValueWebkitXxxLarge)
+    if (CSSValueXSmall <= value->valueID() && value->valueID() <= CSSValueXxxLarge)
         return value->valueID() - CSSValueXSmall + 1;
 
     return 0;

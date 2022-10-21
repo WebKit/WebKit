@@ -2,8 +2,8 @@
 
 FAIL <video> and VideoFrame constructed VideoFrame assert_unreached: Reached unreachable code
 FAIL CSSImageValue constructed VideoFrame assert_throws_dom: CSSImageValues are currently always tainted function "_ => { new VideoFrame(bgImage, {timestamp: 0}); }" did not throw
-FAIL Image element constructed VideoFrame Can't find variable: OffscreenCanvas
+PASS Image element constructed VideoFrame
 FAIL SVGImageElement constructed VideoFrame Type error
-FAIL Canvas element constructed VideoFrame Type error
-FAIL Copy of canvas element constructed VideoFrame Type error
+PASS Canvas element constructed VideoFrame
+PASS Copy of canvas element constructed VideoFrame
 

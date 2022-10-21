@@ -3,15 +3,19 @@ This tests that changing the aria-current value results in a CurrentStateChanged
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS item2.isAttributeSupported('AXARIACurrent') is true
 PASS item2.currentStateValue is 'page'
+PASS item3.isAttributeSupported('AXARIACurrent') is false
 PASS item3.currentStateValue is 'false'
 Setting aria-current to false on item2.
 AXCurrentStateChanged notification for item2
+PASS item2.isAttributeSupported('AXARIACurrent') is false
 PASS item2.currentStateValue is 'false'
 PASS item3.currentStateValue is 'false'
 Setting aria-current to page on item3.
 AXCurrentStateChanged notification for item3
 PASS item2.currentStateValue is 'false'
+PASS item3.isAttributeSupported('AXARIACurrent') is true
 PASS item3.currentStateValue is 'page'
 PASS successfullyParsed is true
 

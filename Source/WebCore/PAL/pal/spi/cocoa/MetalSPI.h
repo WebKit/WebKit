@@ -38,10 +38,15 @@ typedef struct __IOSurface *IOSurfaceRef;
 - (NSString*)vendorName;
 - (NSString*)familyName;
 - (NSString*)productName;
+- (id <MTLSharedEvent>)newSharedEventWithMachPort:(mach_port_t)machPort;
 @end
 
 @interface _MTLDevice : NSObject
 - (void)_purgeDevice;
+@end
+
+@interface MTLSharedEventHandle(Private)
+- (mach_port_t)eventPort;
 @end
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)

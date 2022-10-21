@@ -58,6 +58,10 @@
     if (self = [super init]) {
         m_h264Decoder = [[RTCVideoDecoderH264 alloc] init];
         [m_h264Decoder setCallback:^(RTCVideoFrame *frame) {
+            if (!frame) {
+              callback(nil, 0, 0);
+              return;
+            }
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
             callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
         }];
@@ -69,6 +73,10 @@
     if (self = [super init]) {
         m_h265Decoder = [[RTCVideoDecoderH265 alloc] init];
         [m_h265Decoder setCallback:^(RTCVideoFrame *frame) {
+            if (!frame) {
+              callback(nil, 0, 0);
+              return;
+            }
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
             callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
         }];
@@ -80,6 +88,10 @@
     if (self = [super init]) {
         m_vp9Decoder = [[RTCVideoDecoderVTBVP9 alloc] init];
         [m_vp9Decoder setCallback:^(RTCVideoFrame *frame) {
+            if (!frame) {
+              callback(nil, 0, 0);
+              return;
+            }
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
             callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
         }];

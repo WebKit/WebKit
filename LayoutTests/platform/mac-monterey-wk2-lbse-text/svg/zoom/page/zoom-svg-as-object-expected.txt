@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 667x500
+      RenderEmbeddedObject {OBJECT} at (0,0) size 400x300
+        layer at (0,0) size 400x300
+          RenderView at (0,0) size 400x300
+        layer at (0,0) size 400x300 scrollWidth 480 scrollHeight 360
+          RenderSVGRoot {svg} at (0,0) size 400x300
+        layer at (0,0) size 400x300
+          RenderSVGViewportContainer at (0,0) size 400x300
+        layer at (1,1) size 478x358 backgroundClip at (0,0) size 400x300 clip at (0,0) size 400x300
+          RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

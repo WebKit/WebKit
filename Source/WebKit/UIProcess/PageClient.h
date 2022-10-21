@@ -643,7 +643,7 @@ public:
 #endif
 
 #if USE(WPE_RENDERER)
-    virtual IPC::Attachment hostFileDescriptor() = 0;
+    virtual UnixFileDescriptor hostFileDescriptor() = 0;
 #endif
 
     virtual void didChangeWebPageID() const { }

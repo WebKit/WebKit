@@ -36,7 +36,8 @@ sub bug_format_comment {
     # Should match "r12345" and "trac.webkit.org/r12345" but not "https://trac.webkit.org/r12345"
     push(@$regexes, { match => qr/(?<!\/|\#)\b((r[[:digit:]]{5,}))\b/, replace => \&_replace_reference });
     push(@$regexes, { match => qr/(?<!\/)(trac.webkit.org\/(r[[:digit:]]{5,}))\b/, replace => \&_replace_reference });
-    push(@$regexes, { match => qr/(?<!\/)\b((\d*\.?\d+@\S+))\b/, replace => \&_replace_reference });
+    push(@$regexes, { match => qr/\b((?<!https:\/\/)(?<!\/|\x{2026}|\.)(\d+@\S+))\b/, replace => \&_replace_reference });
+    push(@$regexes, { match => qr/\b((?<!https:\/\/)(?<!\/|\x{2026}|\.)(\d+\.?\d+@\S+))\b/, replace => \&_replace_reference });
 }
 
 sub _replace_reference {

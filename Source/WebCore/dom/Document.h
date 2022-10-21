@@ -222,6 +222,7 @@ class SelectorQuery;
 class SelectorQueryCache;
 class SerializedScriptValue;
 class Settings;
+class SleepDisabler;
 class SpeechRecognition;
 class StorageConnection;
 class StringCallback;
@@ -993,6 +994,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setCookie(const String&);
 
     WEBCORE_EXPORT String referrer();
+    String referrerForBindings();
 
     WEBCORE_EXPORT String domain() const;
     ExceptionOr<void> setDomain(const String& newDomain);
@@ -1713,6 +1715,12 @@ public:
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
     WEBCORE_EXPORT String endpointURIForToken(const String&) const final;
 
+    bool hasSleepDisabler() const { return !!m_sleepDisabler; }
+
+    void notifyReportObservers(Ref<Report>&&) final;
+    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
+    String httpUserAgent() const final;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1840,9 +1848,7 @@ private:
 
     NotificationClient* notificationClient() final;
 
-    void notifyReportObservers(Ref<Report>&&) final;
-    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
-    String httpUserAgent() const final;
+    void updateSleepDisablerIfNeeded();
 
     const Ref<const Settings> m_settings;
 
@@ -2317,6 +2323,8 @@ private:
 
     Ref<ReportingScope> m_reportingScope;
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
+
+    std::unique_ptr<SleepDisabler> m_sleepDisabler;
 };
 
 Element* eventTargetElementForDocument(Document*);

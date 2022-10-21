@@ -28,6 +28,7 @@
 
 #include <mutex>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

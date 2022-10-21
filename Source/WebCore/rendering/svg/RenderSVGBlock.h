@@ -49,6 +49,8 @@ private:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutPoint currentSVGLayoutLocation() const final { return location(); }
     void setCurrentSVGLayoutLocation(const LayoutPoint& location) final { setLocation(location); }
+
+    FloatRect referenceBoxRect(CSSBoxType) const final;
 #endif
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;

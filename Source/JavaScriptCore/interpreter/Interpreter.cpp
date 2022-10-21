@@ -206,6 +206,9 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     case ScopedArgumentsType:
         length = jsCast<ScopedArguments*>(cell)->length(globalObject);
         break;
+    case ClonedArgumentsType:
+        length = jsCast<ClonedArguments*>(cell)->length(globalObject);
+        break;
     case JSImmutableButterflyType:
         length = jsCast<JSImmutableButterfly*>(cell)->length();
         break;
@@ -279,10 +282,14 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
         scope.release();
         jsCast<ScopedArguments*>(cell)->copyToArguments(globalObject, firstElementDest, offset, length);
         return;
+    case ClonedArgumentsType:
+        scope.release();
+        jsCast<ClonedArguments*>(cell)->copyToArguments(globalObject, firstElementDest, offset, length);
+        return;
     case JSImmutableButterflyType:
         scope.release();
         jsCast<JSImmutableButterfly*>(cell)->copyToArguments(globalObject, firstElementDest, offset, length);
-        return; 
+        return;
     default: {
         ASSERT(arguments.isObject());
         JSObject* object = jsCast<JSObject*>(cell);
@@ -300,7 +307,8 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
             firstElementDest[i] = value;
         }
         return;
-    } }
+    }
+    }
 }
 
 void setupVarargsFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue arguments, uint32_t offset, uint32_t length)
@@ -637,15 +645,15 @@ private:
         if (!currentCalleeSaves)
             return;
 
-        RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
-        RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
+        RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
+        auto dontCopyRegisters = RegisterSetBuilder::stackRegisters();
         CPURegister* frame = reinterpret_cast<CPURegister*>(m_callFrame->registers());
 
         unsigned registerCount = currentCalleeSaves->registerCount();
         VMEntryRecord* record = vmEntryRecord(m_vm.topEntryFrame);
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset currentEntry = currentCalleeSaves->at(i);
-            if (dontCopyRegisters.get(currentEntry.reg()))
+            if (dontCopyRegisters.contains(currentEntry.reg(), IgnoreVectors))
                 continue;
             RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
             

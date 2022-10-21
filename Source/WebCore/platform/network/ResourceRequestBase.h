@@ -81,6 +81,8 @@ public:
     WEBCORE_EXPORT const URL& firstPartyForCookies() const;
     WEBCORE_EXPORT void setFirstPartyForCookies(const URL&);
 
+    WEBCORE_EXPORT bool isThirdParty() const;
+
     // Same-Site cookies; see <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-2.1>
     // and <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-5.2>.
     // FIXME: For some reason the main resource request may be updated more than once. We start off as Unspecified

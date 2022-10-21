@@ -31,16 +31,7 @@
 
 namespace WebKit::WebGPU {
 
-struct ExternalTextureBindingLayout {
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-    }
-
-    template<class Decoder> static std::optional<ExternalTextureBindingLayout> decode(Decoder& decoder)
-    {
-        return { { } };
-    }
-};
+struct ExternalTextureBindingLayout { };
 
 } // namespace WebKit::WebGPU
 

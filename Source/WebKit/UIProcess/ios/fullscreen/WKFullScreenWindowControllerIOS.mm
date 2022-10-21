@@ -162,7 +162,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-static const NSTimeInterval kAnimationDuration = 0.2;
+static constexpr NSTimeInterval kAnimationDuration = 0.2;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
+static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
+#endif
 
 #pragma mark -
 
@@ -523,6 +527,16 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark External Interface
 
+- (void)setSupportedOrientations:(UIInterfaceOrientationMask)orientations
+{
+    [_fullscreenViewController setSupportedOrientations:orientations];
+}
+
+- (void)resetSupportedOrientations
+{
+    [_fullscreenViewController resetSupportedOrientations];
+}
+
 - (void)enterFullScreen:(CGSize)videoDimensions
 {
     if ([self isFullScreen])
@@ -548,8 +562,14 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    CGFloat aspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : (960.0 / 540.0);
-    [_window setFrame:CGRectMake(0, 0, 540 * aspectRatio, 540)];
+    CGFloat targetWidth = page->preferences().mediaPreferredFullscreenWidth();
+    CGFloat targetHeight = targetWidth / kTargetWindowAspectRatio;
+    CGFloat aspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : kTargetWindowAspectRatio;
+    // FIXME: We should probably set a limit on maximum width here. If the incoming video has a huge aspect ratio, the window
+    // frame could be set to something unreasonably wide.
+    [_window setFrame:CGRectMake(0, 0, targetHeight * aspectRatio, targetHeight)];
+    [_window setClipsToBounds:YES];
+    [_window _setContinuousCornerRadius:kFullScreenWindowCornerRadius];
     [_window setNeedsLayout];
     [_window layoutIfNeeded];
 #endif

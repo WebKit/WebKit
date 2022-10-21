@@ -105,6 +105,7 @@ public:
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
     bool isSubgridValue() const { return m_classType == SubgridClass; }
+    bool isTransformListValue() const { return m_classType == TransformListClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
 
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
@@ -203,6 +204,7 @@ protected:
         GridAutoRepeatClass,
         GridIntegerRepeatClass,
         SubgridClass,
+        TransformListClass,
         // Do not append non-list class types here.
     };
 

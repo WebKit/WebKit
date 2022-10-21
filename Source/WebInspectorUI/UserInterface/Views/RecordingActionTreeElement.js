@@ -49,6 +49,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         let parameterCount = recordingAction.parameters.length;
 
         function createParameterElement(parameter, swizzleType, index) {
+            let parameterCopyText = "";
             let parameterElement = document.createElement("span");
             parameterElement.classList.add("parameter");
 
@@ -87,6 +88,10 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case WI.Recording.Swizzle.Path2D:
             case WI.Recording.Swizzle.CanvasGradient:
             case WI.Recording.Swizzle.CanvasPattern:
+                    parameterElement.classList.add("swizzled");
+                    parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
+                    break;
+
             case WI.Recording.Swizzle.WebGLBuffer:
             case WI.Recording.Swizzle.WebGLFramebuffer:
             case WI.Recording.Swizzle.WebGLRenderbuffer:
@@ -99,8 +104,17 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case WI.Recording.Swizzle.WebGLSync:
             case WI.Recording.Swizzle.WebGLTransformFeedback:
             case WI.Recording.Swizzle.WebGLVertexArrayObject:
-                parameterElement.classList.add("swizzled");
-                parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
+                parameterCopyText = WI.Recording.displayNameForSwizzleType(swizzleType);
+
+                parameterElement.textContent = parameterCopyText;
+                if (parameter) {
+                    let objectHandleElement = document.createElement("span");
+                    objectHandleElement.classList.add("parameter");
+                    objectHandleElement.classList.add("object-handle");
+                    objectHandleElement.textContent = `@${parameter}`;
+                    parameterElement.append(" ", objectHandleElement);
+                } else
+                    parameterElement.classList.add("swizzled");
                 break;
             }
 
@@ -109,7 +123,10 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 parameterElement.textContent = swizzleType === WI.Recording.Swizzle.None ? parameter : WI.Recording.displayNameForSwizzleType(swizzleType);
             }
 
-            return parameterElement;
+            if (!parameterCopyText.length)
+                   parameterCopyText = parameterElement.textContent;
+
+            return {parameterElement, parameterCopyText};
         }
 
         let titleFragment = document.createDocumentFragment();
@@ -142,13 +159,13 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         for (let i = 0; i < parameterCount; ++i) {
             let parameter = recordingAction.parameters[i];
             let swizzleType = recordingAction.swizzleTypes[i];
-            let parameterElement = createParameterElement(parameter, swizzleType, i);
+            let {parameterElement, parameterCopyText} = createParameterElement(parameter, swizzleType, i);
             parametersContainer.appendChild(parameterElement);
 
             if (i)
                 copyText += ", ";
 
-            copyText += parameterElement.textContent;
+            copyText += parameterCopyText;
         }
 
         if (recordingAction.isFunction)

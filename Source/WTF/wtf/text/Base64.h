@@ -31,7 +31,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Span.h>
 #include <wtf/text/StringConcatenate.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WTF {
 
@@ -86,7 +86,6 @@ WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(Span<const std::b
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
 std::optional<Vector<uint8_t>> base64Decode(Span<const uint8_t>, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
 std::optional<Vector<uint8_t>> base64Decode(Span<const char>, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
-std::optional<Vector<uint8_t>> base64Decode(const String&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
 std::optional<Vector<uint8_t>> base64Decode(const void*, unsigned, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
 
 // All the same functions modified for base64url, as defined in RFC 4648.
@@ -106,7 +105,6 @@ String base64URLEncodeToString(const void*, unsigned);
 
 std::optional<Vector<uint8_t>> base64URLDecode(StringView);
 inline std::optional<Vector<uint8_t>> base64URLDecode(ASCIILiteral literal) { return base64URLDecode(StringView { literal }); }
-std::optional<Vector<uint8_t>> base64URLDecode(const String&);
 std::optional<Vector<uint8_t>> base64URLDecode(Span<const std::byte>);
 std::optional<Vector<uint8_t>> base64URLDecode(Span<const uint8_t>);
 std::optional<Vector<uint8_t>> base64URLDecode(Span<const char>);
@@ -175,11 +173,6 @@ inline std::optional<Vector<uint8_t>> base64Decode(Span<const char> input, Optio
     return base64Decode(asBytes(input), options, map);
 }
 
-inline std::optional<Vector<uint8_t>> base64Decode(const String& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
-{
-    return base64Decode(StringView { input }, options, map);
-}
-
 inline std::optional<Vector<uint8_t>> base64Decode(const void* input, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     return base64Decode({ static_cast<const std::byte*>(input), length }, options, map);
@@ -236,11 +229,6 @@ inline String base64URLEncodeToString(const void* input, unsigned length)
 }
 
 inline std::optional<Vector<uint8_t>> base64URLDecode(StringView input)
-{
-    return base64Decode(input, { }, Base64DecodeMap::URL);
-}
-
-inline std::optional<Vector<uint8_t>> base64URLDecode(const String& input)
 {
     return base64Decode(input, { }, Base64DecodeMap::URL);
 }

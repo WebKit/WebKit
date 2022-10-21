@@ -21,8 +21,8 @@
 
 #pragma once
 
+#include "LegacyMediaQueryEvaluator.h"
 #include "MatchResult.h"
-#include "MediaQueryEvaluator.h"
 #include "PropertyAllowlist.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
@@ -81,7 +81,7 @@ public:
 
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
     void setPseudoElementRequest(const PseudoElementRequest& request) { m_pseudoElementRequest = request; }
-    void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"_s); }
+    void setMedium(const LegacyMediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"_s); }
 
     bool hasAnyMatchingRules(const RuleSet&);
 

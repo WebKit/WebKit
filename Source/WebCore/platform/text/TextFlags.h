@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontTaggedSettings.h"
 #include <optional>
 #include <variant>
 #include <vector>
@@ -480,5 +481,8 @@ enum class AllowUserInstalledFonts : uint8_t {
     No,
     Yes
 };
+
+using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
+FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&);
 
 }

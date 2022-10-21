@@ -67,12 +67,10 @@ bool InlineFormattingQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIn
     return rootStyle.nbspMode() == NBSPMode::Space && (whiteSpace == WhiteSpace::Normal || whiteSpace == WhiteSpace::PreWrap || whiteSpace == WhiteSpace::PreLine);
 }
 
-InlineLayoutUnit InlineFormattingQuirks::initialLineHeight(bool isFirstLine) const
+InlineLayoutUnit InlineFormattingQuirks::initialLineHeight() const
 {
     ASSERT(!layoutState().inStandardsMode());
-    // Negative lineHeight value means the line-height is not set
-    auto& rootStyle = isFirstLine ? formattingContext().root().firstLineStyle() : formattingContext().root().style();
-    return rootStyle.lineHeight().isNegative() ? rootStyle.metricsOfPrimaryFont().floatHeight() : rootStyle.computedLineHeight();
+    return 0.f;
 }
 
 bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const

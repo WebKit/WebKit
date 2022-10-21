@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)hideUI;
 - (void)videoControlsManagerDidChange;
 - (void)setAnimatingViewAlpha:(CGFloat)alpha;
+- (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;
+- (void)resetSupportedOrientations;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
 - (void)hideMediaControls:(BOOL)hidden;
 #endif

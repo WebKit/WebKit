@@ -42,7 +42,9 @@ std::optional<CSSNumericType> CSSNumericType::create(CSSUnitType unit, int expon
     case CSSUnitCategory::Percent:
         type.percent = exponent;
         return { WTFMove(type) };
-    case CSSUnitCategory::Length:
+    case CSSUnitCategory::AbsoluteLength:
+    case CSSUnitCategory::FontRelativeLength:
+    case CSSUnitCategory::ViewportPercentageLength:
         type.length = exponent;
         return { WTFMove(type) };
     case CSSUnitCategory::Angle:
@@ -57,11 +59,10 @@ std::optional<CSSNumericType> CSSNumericType::create(CSSUnitType unit, int expon
     case CSSUnitCategory::Resolution:
         type.resolution = exponent;
         return { WTFMove(type) };
+    case CSSUnitCategory::Flex:
+        type.flex = exponent;
+        return { WTFMove(type) };
     case CSSUnitCategory::Other:
-        if (unit == CSSUnitType::CSS_FR) {
-            type.flex = exponent;
-            return { WTFMove(type) };
-        }
         break;
     }
     

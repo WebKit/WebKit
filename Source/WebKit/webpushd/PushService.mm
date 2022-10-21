@@ -599,6 +599,18 @@ struct RawPushMessage {
 
 };
 
+static std::optional<Vector<uint8_t>> base64URLDecode(NSString *string)
+{
+    String coreString = string;
+    return WTF::base64URLDecode(coreString);
+}
+
+static std::optional<Vector<uint8_t>> base64Decode(NSString *string)
+{
+    String coreString = string;
+    return WTF::base64Decode(coreString);
+}
+
 static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDictionary* userInfo)
 {
     RawPushMessage message;

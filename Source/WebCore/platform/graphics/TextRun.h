@@ -154,6 +154,8 @@ public:
 
     TextRun isolatedCopy() const;
 
+    const String& textAsString() const { return m_text; }
+
 private:
     String m_text;
 

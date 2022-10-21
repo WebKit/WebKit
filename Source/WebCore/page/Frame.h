@@ -30,8 +30,6 @@
 #include "AbstractFrame.h"
 #include "AdjustViewSizeOrNot.h"
 #include "Document.h"
-#include "FrameIdentifier.h"
-#include "FrameTree.h"
 #include "PageIdentifier.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
@@ -140,13 +138,11 @@ public:
     void removeDestructionObserver(FrameDestructionObserver&);
 
     WEBCORE_EXPORT void willDetachPage();
-    void detachFromPage();
     void disconnectOwnerElement();
 
     Frame& mainFrame() const;
     bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
 
-    WEBCORE_EXPORT Page* page() const;
     WEBCORE_EXPORT HTMLFrameOwnerElement* ownerElement() const;
 
     Document* document() const;
@@ -161,13 +157,11 @@ public:
     NavigationScheduler& navigationScheduler() const;
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
-    FrameTree& tree() const;
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
     void resetScript();
 
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
-    FrameIdentifier frameID() const { return m_frameID; }
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
@@ -321,12 +315,9 @@ private:
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
     Frame& m_mainFrame;
-    WeakPtr<Page> m_page;
     const RefPtr<Settings> m_settings;
-    mutable FrameTree m_treeNode;
     UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
-    const FrameIdentifier m_frameID;
 
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
     RefPtr<FrameView> m_view;
@@ -367,6 +358,11 @@ private:
     UniqueRef<EventHandler> m_eventHandler;
 };
 
+using LocalFrame = Frame;
+
+// FIXME: Remove after WebKitAdditions transitions to this change.
+#define WEBCORE_HAS_LOCAL_FRAME 1
+
 inline NavigationScheduler& Frame::navigationScheduler() const
 {
     return m_navigationScheduler.get();
@@ -380,16 +376,6 @@ inline FrameView* Frame::view() const
 inline Document* Frame::document() const
 {
     return m_doc.get();
-}
-
-inline FrameTree& Frame::tree() const
-{
-    return m_treeNode;
-}
-
-inline void Frame::detachFromPage()
-{
-    m_page = nullptr;
 }
 
 inline Frame& Frame::mainFrame() const

@@ -34,10 +34,18 @@
 #if defined(BUILDING_GTK__)
 #undef JSC_API_AVAILABLE
 #define JSC_API_AVAILABLE(...)
+
+#undef JSC_API_DEPRECATED
+#define JSC_API_DEPRECATED(...)
+
+#undef JSC_API_DEPRECATED_WITH_REPLACEMENT
+#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
 #endif
 
 #else
 #define JSC_API_AVAILABLE(...)
+#define JSC_API_DEPRECATED(...)
+#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
 #endif
 
 #endif /* __WebKitAvailability__ */

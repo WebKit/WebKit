@@ -389,6 +389,8 @@ public:
 
     bool isSecureEventInputEnabled() const;
 
+    void generateTestReport(JSStringRef message, JSStringRef group);
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 

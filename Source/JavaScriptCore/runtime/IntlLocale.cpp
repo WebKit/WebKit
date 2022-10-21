@@ -185,10 +185,7 @@ void LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
 
     ASSERT(value.isAllASCII());
     Vector<char, 32> rawValue(value.length() + 1);
-    if (value.is8Bit())
-        StringImpl::copyCharacters(reinterpret_cast<LChar*>(rawValue.data()), value.characters8(), value.length());
-    else
-        StringImpl::copyCharacters(reinterpret_cast<LChar*>(rawValue.data()), value.characters16(), value.length());
+    value.getCharacters(reinterpret_cast<LChar*>(rawValue.data()));
     rawValue[value.length()] = '\0';
 
     UErrorCode status = U_ZERO_ERROR;

@@ -19,27 +19,27 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,74) size 784x20
         RenderText {#text} at (0,0) size 280x19
           text run at (0,0) width 280: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-      RenderBlock (anonymous) at (0,110) size 784x44
-        RenderButton {BUTTON} at (0,0) size 51x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-          RenderBlock (anonymous) at (8,3) size 35x16
+      RenderBlock (anonymous) at (0,110) size 784x50
+        RenderButton {BUTTON} at (0,0) size 51x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 35x16
             RenderText {#text} at (0,0) size 35x16
               text run at (0,0) width 35: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-        RenderText {#text} at (51,1) size 4x19
-          text run at (51,1) width 4: " "
-        RenderBR {BR} at (55,1) size 0x19
-        RenderButton {INPUT} at (0,22) size 51x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-          RenderBlock (anonymous) at (8,3) size 35x16
+        RenderText {#text} at (51,2) size 4x19
+          text run at (51,2) width 4: " "
+        RenderBR {BR} at (55,2) size 0x19
+        RenderButton {INPUT} at (0,25) size 51x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 35x16
             RenderText at (0,0) size 35x16
               text run at (0,0) width 35 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,162) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,180) size 784x20
+      RenderBlock {HR} at (0,168) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,186) size 784x20
         RenderText {#text} at (0,0) size 229x19
           text run at (0,0) width 229: "The following lines should be identical:"
-      RenderBlock {P} at (0,216) size 784x20
+      RenderBlock {P} at (0,222) size 784x20
         RenderText {#text} at (0,0) size 66x19
           text run at (0,0) width 16: "21"
           text run at (16,0) width 50 RTL: "\x{5D4}\x{5DE}\x{5D0}\x{5D4} \x{5D4}-"
-      RenderBlock {P} at (0,252) size 784x20
+      RenderBlock {P} at (0,258) size 784x20
         RenderText {#text} at (0,0) size 66x19
           text run at (0,0) width 66: "21-\x{5D4} \x{5D4}\x{5D0}\x{5DE}\x{5D4}"

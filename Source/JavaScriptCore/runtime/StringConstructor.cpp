@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
     unsigned length = callFrame->argumentCount();
     if (LIKELY(length == 1)) {
         scope.release();
-        unsigned code = callFrame->uncheckedArgument(0).toUInt32(globalObject);
+        UChar code = callFrame->uncheckedArgument(0).toUInt32(globalObject);
         // Not checking for an exception here is ok because jsSingleCharacterString will just fetch an unused string if there's an exception.
         return JSValue::encode(jsSingleCharacterString(vm, code));
     }
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
 
 JSString* stringFromCharCode(JSGlobalObject* globalObject, int32_t arg)
 {
-    return jsSingleCharacterString(globalObject->vm(), arg);
+    return jsSingleCharacterString(globalObject->vm(), static_cast<UChar>(arg));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -71,8 +71,8 @@ public:
     String getData(Document&, const String& type) const;
     String getDataForItem(Document&, const String& type) const;
 
-    void setData(const String& type, const String& data);
-    void setDataFromItemList(const String& type, const String& data);
+    void setData(Document&, const String& type, const String& data);
+    void setDataFromItemList(Document&, const String& type, const String& data);
 
     void setDragImage(Element&, int x, int y);
 

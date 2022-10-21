@@ -6,4 +6,5 @@ PASS Property animation-name value 'ease-in'
 PASS Property animation-name value 'infinite'
 PASS Property animation-name value 'paused'
 PASS Property animation-name value 'first, second, third'
+PASS Property animation-name value '"something"'
 

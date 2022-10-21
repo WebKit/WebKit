@@ -144,6 +144,8 @@ public:
 
     void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
+    JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
+
     DECLARE_INFO;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
@@ -161,6 +163,7 @@ private:
     }
     
     bool m_overrodeThings { false }; // True if length, callee, and caller are fully materialized in the object.
+    bool m_hasUnmappedArgument { false };
     unsigned m_totalLength; // The length of declared plus overflow arguments.
     WriteBarrier<JSFunction> m_callee;
     WriteBarrier<ScopedArgumentsTable> m_table;

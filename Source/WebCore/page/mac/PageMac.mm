@@ -92,10 +92,13 @@ void Page::addSchedulePair(Ref<SchedulePair>&& pair)
         m_scheduledRunLoopPairs = makeUnique<SchedulePairHashSet>();
     m_scheduledRunLoopPairs->add(pair.ptr());
 
-    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
-        if (DocumentLoader* documentLoader = frame->loader().documentLoader())
+    for (AbstractFrame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* documentLoader = localFrame->loader().documentLoader())
             documentLoader->schedule(pair);
-        if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
+        if (auto* documentLoader = localFrame->loader().provisionalDocumentLoader())
             documentLoader->schedule(pair);
     }
 
@@ -110,10 +113,13 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
 
     m_scheduledRunLoopPairs->remove(pair.ptr());
 
-    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
-        if (DocumentLoader* documentLoader = frame->loader().documentLoader())
+    for (AbstractFrame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (auto* documentLoader = localFrame->loader().documentLoader())
             documentLoader->unschedule(pair);
-        if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
+        if (auto* documentLoader = localFrame->loader().provisionalDocumentLoader())
             documentLoader->unschedule(pair);
     }
 }

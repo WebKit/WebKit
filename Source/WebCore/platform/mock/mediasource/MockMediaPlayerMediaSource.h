@@ -84,7 +84,7 @@ private:
     MediaTime maxMediaTimeSeekable() const override;
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     bool didLoadingProgress() const override;
-    void setSize(const IntSize&) override;
+    void setPresentationSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override;
     MediaTime durationMediaTime() const override;
     void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;

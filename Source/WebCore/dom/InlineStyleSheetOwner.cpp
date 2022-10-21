@@ -24,10 +24,10 @@
 #include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "ElementInlines.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include "StyleScope.h"
@@ -170,8 +170,10 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     ASSERT(document.contentSecurityPolicy());
     const ContentSecurityPolicy& contentSecurityPolicy = *document.contentSecurityPolicy();
-    if (!contentSecurityPolicy.allowInlineStyle(document.url().string(), m_startTextPosition.m_line, text, CheckUnsafeHashes::No, element, element.nonce(), element.isInUserAgentShadowTree()))
+    if (!contentSecurityPolicy.allowInlineStyle(document.url().string(), m_startTextPosition.m_line, text, CheckUnsafeHashes::No, element, element.nonce(), element.isInUserAgentShadowTree())) {
+        element.notifyLoadedSheetAndAllCriticalSubresources(true);
         return;
+    }
 
     auto mediaQueries = MediaQuerySet::create(m_media, MediaQueryParserContext(document));
 

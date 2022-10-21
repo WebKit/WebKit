@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Tests that document.referrer is omitted in third-party iframes while in private browsing mode.");
+    jsTestIsAsync = true;
+
+    function receiveMessage(event) {
+        if (event.origin === "http://localhost:8000") {
+            if (event.data.indexOf("PASS") === -1)
+                testFailed(event.data.replace("FAIL ", ""));
+            else
+                testPassed(event.data.replace("PASS ", ""));
+        } else
+            testFailed("Received a message from an unexpected origin: " + event.origin);
+        setEnableFeature(false, finishJSTest);
+    }
+
+    window.addEventListener("message", receiveMessage, false);
+
+    function runTest() {
+        if (testRunner) {
+            setEnableFeature(true, function() {
+                let iframeElement = document.createElement("iframe");
+                iframeElement.src = "http://localhost:8000/resourceLoadStatistics/resources/report-document-referrer.html";
+                document.body.appendChild(iframeElement);
+            });
+        }
+    }
+</script>
+</body>
+</html>

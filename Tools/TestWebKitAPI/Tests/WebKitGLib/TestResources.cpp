@@ -431,6 +431,10 @@ static void testWebResourceMimeType(SingleResourceLoadTest* test, gconstpointer)
     test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
     response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/css");
+
+    test->loadURI(kServer->getURIForPath("/iframe-no-content.html").data());
+    response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/plain");
 }
 
 static void testWebResourceSuggestedFilename(SingleResourceLoadTest* test, gconstpointer)
@@ -900,6 +904,11 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     } else if (g_str_equal(path, "/redirected-to-cancel.js")) {
         soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
         soup_message_headers_append(responseHeaders, "Location", "/cancel-this.js");
+    } else if (g_str_equal(path, "/iframe-no-content.html")) {
+        static const char* iframeNoContentHTML = "<html><body><iframe src='/no-content'/></body></html>";
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, iframeNoContentHTML, strlen(iframeNoContentHTML));
+    } else if (g_str_equal(path, "/no-content")) {
+        soup_server_message_set_status(message, SOUP_STATUS_NO_CONTENT, nullptr);
     } else if (g_str_has_prefix(path, "/sync-request-on-max-conns-")) {
         char* contents;
         gsize contentsLength;

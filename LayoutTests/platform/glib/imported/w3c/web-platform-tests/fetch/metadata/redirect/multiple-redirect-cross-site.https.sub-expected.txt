@@ -1,0 +1,8 @@
+
+
+PASS Same-Origin -> Cross-Site -> Same-Origin redirect
+PASS Same-Origin -> Cross-Site -> Same-Origin redirect: sec-fetch-dest
+PASS Same-Origin -> Cross-Site -> Same-Origin redirect: sec-fetch-mode
+PASS Same-Origin -> Cross-Site -> Same-Origin redirect: sec-fetch-site
+PASS Same-Origin -> Cross-Site -> Same-Origin redirect: sec-fetch-user
+

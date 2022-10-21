@@ -158,8 +158,12 @@ CachedFrame::CachedFrame(Frame& frame)
     m_document->setMayBeDetachedFromFrame(false);
 
     // Create the CachedFrames for all Frames in the FrameTree.
-    for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        m_childFrames.append(makeUniqueRef<CachedFrame>(*child));
+    for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = downcast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+        m_childFrames.append(makeUniqueRef<CachedFrame>(*localChild));
+    }
 
     RELEASE_ASSERT(m_document->domWindow());
     RELEASE_ASSERT(m_document->frame());

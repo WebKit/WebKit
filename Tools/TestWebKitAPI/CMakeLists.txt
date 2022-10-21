@@ -34,6 +34,7 @@ set(TestWTF_SOURCES
     Tests/WTF/CompactRefPtr.cpp
     Tests/WTF/CompactRefPtrTuple.cpp
     Tests/WTF/CompactUniquePtrTuple.cpp
+    Tests/WTF/CompletionHandlerTests.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
     Tests/WTF/Condition.cpp
     Tests/WTF/CrossThreadCopier.cpp
@@ -115,6 +116,7 @@ set(TestWTF_SOURCES
     Tests/WTF/URLParser.cpp
     Tests/WTF/UniqueArray.cpp
     Tests/WTF/UniqueRef.cpp
+    Tests/WTF/UniqueRefVector.cpp
     Tests/WTF/Vector.cpp
     Tests/WTF/WTFString.cpp
     Tests/WTF/WeakPtr.cpp

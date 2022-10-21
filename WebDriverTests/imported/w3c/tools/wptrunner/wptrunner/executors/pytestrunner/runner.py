@@ -60,10 +60,11 @@ def run(path, server_config, session_config, timeout=0, environ=None):
             subtests = SubtestResultRecorder()
 
             try:
+                basetemp = os.path.join(cache, "pytest")
                 pytest.main(["--strict",  # turn warnings into errors
                              "-vv",  # show each individual subtest and full failure logs
                              "--capture", "no",  # enable stdout/stderr from tests
-                             "--basetemp", cache,  # temporary directory
+                             "--basetemp", basetemp,  # temporary directory
                              "--showlocals",  # display contents of variables in local scope
                              "-p", "no:mozlog",  # use the WPT result recorder
                              "-p", "no:cacheprovider",  # disable state preservation across invocations
@@ -103,35 +104,34 @@ class SubtestResultRecorder(object):
         if report.passed and report.when == "call":
             self.record_pass(report)
         elif report.failed:
+            # pytest outputs the stacktrace followed by an error message prefixed
+            # with "E   ", e.g.
+            #
+            #        def test_example():
+            #  >         assert "fuu" in "foobar"
+            #  > E       AssertionError: assert 'fuu' in 'foobar'
+            message = ""
+            for line in report.longreprtext.splitlines():
+                if line.startswith("E   "):
+                    message = line[1:].strip()
+                    break
+
             if report.when != "call":
-                self.record_error(report)
+                self.record_error(report, message)
             else:
-                self.record_fail(report)
+                self.record_fail(report, message)
         elif report.skipped:
             self.record_skip(report)
 
     def record_pass(self, report):
         self.record(report.nodeid, "PASS")
 
-    def record_fail(self, report):
-        # pytest outputs the stacktrace followed by an error message prefixed
-        # with "E   ", e.g.
-        #
-        #        def test_example():
-        #  >         assert "fuu" in "foobar"
-        #  > E       AssertionError: assert 'fuu' in 'foobar'
-        message = ""
-        for line in report.longreprtext.splitlines():
-            if line.startswith("E   "):
-                message = line[1:].strip()
-                break
-
+    def record_fail(self, report, message):
         self.record(report.nodeid, "FAIL", message=message, stack=report.longrepr)
 
-    def record_error(self, report):
+    def record_error(self, report, message):
         # error in setup/teardown
-        if report.when != "call":
-            message = "%s error" % report.when
+        message = "{} error: {}".format(report.when, message)
         self.record(report.nodeid, "ERROR", message, report.longrepr)
 
     def record_skip(self, report):
@@ -148,7 +148,7 @@ class SubtestResultRecorder(object):
 
 class TemporaryDirectory(object):
     def __enter__(self):
-        self.path = tempfile.mkdtemp(prefix="pytest-")
+        self.path = tempfile.mkdtemp(prefix="wdspec-")
         return self.path
 
     def __exit__(self, *args):

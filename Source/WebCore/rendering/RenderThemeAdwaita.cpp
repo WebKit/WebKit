@@ -41,12 +41,16 @@
 #include "TimeRanges.h"
 #include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
+#include <wtf/text/Base64.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
 #endif
 
-#include <wtf/text/Base64.h>
+#if PLATFORM(WIN)
+#include "WebCoreBundleWin.h"
+#include <wtf/FileSystem.h>
+#endif
 
 namespace WebCore {
 
@@ -228,11 +232,21 @@ String RenderThemeAdwaita::mediaControlsStyleSheet()
 
 String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
+#if USE(GLIB)
     auto path = makeString("/org/webkit/media-controls/", iconName, '.', iconType);
     auto data = adoptGRef(g_resources_lookup_data(path.latin1().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return emptyString();
     return base64EncodeToString(g_bytes_get_data(data.get(), nullptr), g_bytes_get_size(data.get()));
+#elif PLATFORM(WIN)
+    auto path = webKitBundlePath(iconName, iconType, "media-controls"_s);
+    auto data = FileSystem::readEntireFile(path);
+    if (!data)
+        return { };
+    return base64EncodeToString(data->data(), data->size());
+#else
+    return { };
+#endif
 }
 
 String RenderThemeAdwaita::mediaControlsFormattedStringForDuration(double durationInSeconds)
@@ -340,18 +354,14 @@ bool RenderThemeAdwaita::paintTextField(const RenderObject& renderObject, const 
 
 #if ENABLE(DATALIST_ELEMENT)
     if (is<HTMLInputElement>(renderObject.generatingNode()) && downcast<HTMLInputElement>(*(renderObject.generatingNode())).list()) {
+        auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
         FloatRect arrowRect = rect;
         if (renderObject.style().direction() == TextDirection::LTR)
-            arrowRect.move(arrowRect.width() - (menuListButtonArrowSize + textFieldBorderSize * 2), (arrowRect.height() / 2.) - (menuListButtonArrowSize / 2.));
+            arrowRect.move(arrowRect.width() - (zoomedArrowSize + textFieldBorderSize * 2), 0);
         else
-            fieldRect.move(textFieldBorderSize * 2, (arrowRect.height() / 2.) - (menuListButtonArrowSize / 2.));
-        arrowRect.setWidth(menuListButtonArrowSize);
-        arrowRect.setHeight(menuListButtonArrowSize);
-        {
-            GraphicsContextStateSaver arrowStateSaver(graphicsContext);
-            graphicsContext.translate(arrowRect.x(), arrowRect.y());
-            ThemeAdwaita::paintArrow(graphicsContext, ThemeAdwaita::ArrowDirection::Down, renderObject.useDarkAppearance());
-        }
+            fieldRect.move(textFieldBorderSize * 2, 0);
+        arrowRect.setWidth(zoomedArrowSize);
+        ThemeAdwaita::paintArrow(graphicsContext, arrowRect, ThemeAdwaita::ArrowDirection::Down, renderObject.useDarkAppearance());
     }
 #endif
 
@@ -403,8 +413,9 @@ LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style, 
     if (style.effectiveAppearance() == NoControlPart)
         return { };
 
-    int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? menuListButtonArrowSize : 0);
-    int rightPadding = menuListButtonPadding + (style.direction() == TextDirection::LTR ? menuListButtonArrowSize : 0);
+    auto zoomedArrowSize = menuListButtonArrowSize * style.effectiveZoom();
+    int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? zoomedArrowSize : 0);
+    int rightPadding = menuListButtonPadding + (style.direction() == TextDirection::LTR ? zoomedArrowSize : 0);
 
     return { menuListButtonPadding, rightPadding, menuListButtonPadding, leftPadding };
 }
@@ -424,19 +435,15 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     ControlStates controlStates(states);
     Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
+    auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
     FloatRect fieldRect = rect;
     fieldRect.inflate(menuListButtonBorderSize);
     if (renderObject.style().direction() == TextDirection::LTR)
-        fieldRect.move(fieldRect.width() - (menuListButtonArrowSize + menuListButtonPadding), (fieldRect.height() / 2.) - (menuListButtonArrowSize / 2));
+        fieldRect.move(fieldRect.width() - (zoomedArrowSize + menuListButtonPadding), 0);
     else
-        fieldRect.move(menuListButtonPadding, (fieldRect.height() / 2.) - (menuListButtonArrowSize / 2));
-    fieldRect.setWidth(menuListButtonArrowSize);
-    fieldRect.setHeight(menuListButtonArrowSize);
-    {
-        GraphicsContextStateSaver arrowStateSaver(graphicsContext);
-        graphicsContext.translate(fieldRect.x(), fieldRect.y());
-        ThemeAdwaita::paintArrow(graphicsContext, ThemeAdwaita::ArrowDirection::Down, renderObject.useDarkAppearance());
-    }
+        fieldRect.move(menuListButtonPadding, 0);
+    fieldRect.setWidth(zoomedArrowSize);
+    ThemeAdwaita::paintArrow(graphicsContext, fieldRect, ThemeAdwaita::ArrowDirection::Down, renderObject.useDarkAppearance());
 
     if (isFocused(renderObject))
         ThemeAdwaita::paintFocus(graphicsContext, rect, menuListButtonFocusOffset, platformFocusRingColor({ }));

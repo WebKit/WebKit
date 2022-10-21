@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
+#include "FrameTree.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -32,6 +34,8 @@
 namespace WebCore {
 
 class AbstractDOMWindow;
+class HTMLFrameOwnerElement;
+class Page;
 class WindowProxy;
 
 // FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
@@ -44,17 +48,22 @@ public:
 
     WindowProxy& windowProxy() { return m_windowProxy; }
     const WindowProxy& windowProxy() const { return m_windowProxy; }
-
     AbstractDOMWindow* window() const { return virtualWindow(); }
+    FrameTree& tree() const { return m_treeNode; }
+    FrameIdentifier frameID() const { return m_frameID; }
+    WEBCORE_EXPORT Page* page() const;
+    WEBCORE_EXPORT void detachFromPage();
 
 protected:
-    AbstractFrame();
-
+    AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*);
     void resetWindowProxy();
 
 private:
     virtual AbstractDOMWindow* virtualWindow() const = 0;
 
+    WeakPtr<Page> m_page;
+    const FrameIdentifier m_frameID;
+    mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;
 };
 

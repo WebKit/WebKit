@@ -113,7 +113,12 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
     EXPECT_FALSE(testContextOne.loaded);
 }
 
+// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=246632 is resolved 
+#if PLATFORM(IOS)
+TEST(WKWebExtensionController, DISABLED_BackgroundPageLoading)
+#else
 TEST(WKWebExtensionController, BackgroundPageLoading)
+#endif
 {
     NSDictionary *resources = @{
         @"background.html": @"<body>Hello world!</body>",

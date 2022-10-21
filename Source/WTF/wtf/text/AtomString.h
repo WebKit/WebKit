@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,14 +21,8 @@
 #pragma once
 
 #include <utility>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringImpl.h>
-#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/WTFString.h>
-
-#if OS(WINDOWS)
-#include <wtf/text/win/WCharStringExtras.h>
-#endif
 
 namespace WTF {
 
@@ -40,12 +34,6 @@ public:
     AtomString(const UChar*, unsigned length);
 
     ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
-
-    template<size_t inlineCapacity>
-    explicit AtomString(const Vector<UChar, inlineCapacity>& characters)
-        : m_string(AtomStringImpl::add(characters.data(), characters.size()))
-    {
-    }
 
     AtomString(AtomStringImpl*);
     AtomString(RefPtr<AtomStringImpl>&&);
@@ -61,12 +49,7 @@ public:
 
     AtomString(ASCIILiteral);
 
-    // We have to declare the copy constructor and copy assignment operator as well, otherwise
-    // they'll be implicitly deleted by adding the move constructor and move assignment operator.
-    AtomString(const AtomString& other) : m_string(other.m_string) { }
-    AtomString(AtomString&& other) : m_string(WTFMove(other.m_string)) { }
-    AtomString& operator=(const AtomString& other) { m_string = other.m_string; return *this; }
-    AtomString& operator=(AtomString&& other) { m_string = WTFMove(other.m_string); return *this; }
+    static AtomString lookUp(const UChar* characters, unsigned length) { return AtomStringImpl::lookUp(characters, length); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     AtomString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }

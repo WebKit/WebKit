@@ -85,7 +85,7 @@ private:
     float deviceScaleFactor() const override;
 
     void initialize();
-    HWND window();
+    GLNativeWindowType window();
     bool enabled();
     void compositeLayersToContext();
     void flushAndRenderLayers();

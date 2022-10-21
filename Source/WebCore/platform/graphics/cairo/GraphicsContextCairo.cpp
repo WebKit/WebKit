@@ -272,12 +272,6 @@ void GraphicsContextCairo::drawDotsForDocumentMarker(const FloatRect& rect, Docu
     Cairo::drawDotsForDocumentMarker(*this, rect, style);
 }
 
-FloatRect GraphicsContextCairo::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
-{
-    UNUSED_PARAM(roundingMode);
-    return Cairo::State::roundToDevicePixels(*this, rect);
-}
-
 void GraphicsContextCairo::translate(float x, float y)
 {
     Cairo::translate(*this, x, y);

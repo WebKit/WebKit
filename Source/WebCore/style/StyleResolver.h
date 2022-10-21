@@ -25,8 +25,8 @@
 #include "Document.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "MatchedDeclarationsCache.h"
-#include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
 #include "RuleSet.h"
 #include "StyleBuilderState.h"
@@ -114,7 +114,7 @@ public:
     ScopeRuleSets& ruleSets() { return m_ruleSets; }
     const ScopeRuleSets& ruleSets() const { return m_ruleSets; }
 
-    const MediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
+    const LegacyMediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
 
     void addCurrentSVGFontFaceRules();
 
@@ -166,7 +166,7 @@ private:
     typedef HashMap<AtomString, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
-    MediaQueryEvaluator m_mediaQueryEvaluator;
+    LegacyMediaQueryEvaluator m_mediaQueryEvaluator;
     std::unique_ptr<RenderStyle> m_rootDefaultStyle;
 
     Document& m_document;

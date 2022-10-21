@@ -45,11 +45,10 @@ public:
 
     static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const CachedQueryContainers* = nullptr);
 
-    struct SelectedContainer;
-    MQ::EvaluationResult evaluateFeature(const MQ::Feature&, const SelectedContainer&) const;
+    MQ::EvaluationResult evaluateFeature(const MQ::Feature&, const FeatureEvaluationContext&) const;
 
 private:
-    std::optional<SelectedContainer> selectContainer(const CQ::ContainerQuery&) const;
+    std::optional<FeatureEvaluationContext> featureEvaluationContextForQuery(const CQ::ContainerQuery&) const;
 
     const Ref<const Element> m_element;
     const SelectionMode m_selectionMode;

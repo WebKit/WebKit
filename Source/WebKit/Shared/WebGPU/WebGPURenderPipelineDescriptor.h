@@ -43,51 +43,6 @@ struct RenderPipelineDescriptor : public PipelineDescriptorBase {
     std::optional<DepthStencilState> depthStencil;
     std::optional<MultisampleState> multisample;
     std::optional<FragmentState> fragment;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const PipelineDescriptorBase&>(*this);
-        encoder << vertex;
-        encoder << primitive;
-        encoder << depthStencil;
-        encoder << multisample;
-        encoder << fragment;
-    }
-
-    template<class Decoder> static std::optional<RenderPipelineDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<PipelineDescriptorBase> pipelineDescriptorBase;
-        decoder >> pipelineDescriptorBase;
-        if (!pipelineDescriptorBase)
-            return std::nullopt;
-
-        std::optional<VertexState> vertex;
-        decoder >> vertex;
-        if (!vertex)
-            return std::nullopt;
-
-        std::optional<std::optional<PrimitiveState>> primitive;
-        decoder >> primitive;
-        if (!primitive)
-            return std::nullopt;
-
-        std::optional<std::optional<DepthStencilState>> depthStencil;
-        decoder >> depthStencil;
-        if (!depthStencil)
-            return std::nullopt;
-
-        std::optional<std::optional<MultisampleState>> multisample;
-        decoder >> multisample;
-        if (!multisample)
-            return std::nullopt;
-
-        std::optional<std::optional<FragmentState>> fragment;
-        decoder >> fragment;
-        if (!fragment)
-            return std::nullopt;
-
-        return { { WTFMove(*pipelineDescriptorBase), WTFMove(*vertex), WTFMove(*primitive), WTFMove(*depthStencil), WTFMove(*multisample), WTFMove(*fragment) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -51,6 +51,12 @@
             await dialog1Accessible(true);
             await dialog2Accessible(false);
 
+            // https://www.w3.org/TR/wai-aria-1.1/#aria-modal
+            // "If focus moves to an element outside the modal element, assistive technologies SHOULD NOT limit navigation to the modal element."
+            testOutput += "\nFocusing on background.\n\n";
+            document.getElementById("textfield").focus();
+            await backgroundAccessible(true);
+
             testOutput += "\nMoving focus back to first descendant of #dialog2.\n\n";
             focusFirstDescendant(document.getElementById("dialog2"));
             await backgroundAccessible(false);

@@ -188,7 +188,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
         case CSSValueLarge:
         case CSSValueXLarge:
         case CSSValueXxLarge:
-        case CSSValueWebkitXxxLarge:
+        case CSSValueXxxLarge:
             fontDescription.setKeywordSizeFromIdentifier(ident);
             return Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), context.settingsValues());
         case CSSValueLarger:

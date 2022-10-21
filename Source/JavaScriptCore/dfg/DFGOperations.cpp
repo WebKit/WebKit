@@ -32,7 +32,7 @@
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CodeBlockInlines.h"
-#include "CommonSlowPaths.h"
+#include "CommonSlowPathsInlines.h"
 #include "DFGDriver.h"
 #include "DFGJITCode.h"
 #include "DFGToFTLDeferredCompilationCallback.h"
@@ -2718,15 +2718,24 @@ JSC_DEFINE_JIT_OPERATION(operationStringSubstr, JSCell*, (JSGlobalObject* global
     return jsSubstring(vm, globalObject, jsCast<JSString*>(cell), from, span);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationStringSlice, JSCell*, (JSGlobalObject* globalObject, JSCell* cell, int32_t start, int32_t end))
+JSC_DEFINE_JIT_OPERATION(operationStringSlice, JSString*, (JSGlobalObject* globalObject, JSString* string, int32_t start))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    JSString* string = asString(cell);
     static_assert(static_cast<uint64_t>(JSString::MaxLength) <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()));
-    return stringSlice(globalObject, vm, string, string->length(), start, end);
+    return stringSlice<int32_t>(globalObject, vm, string, string->length(), start, std::nullopt);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringSliceWithEnd, JSString*, (JSGlobalObject* globalObject, JSString* string, int32_t start, int32_t end))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    static_assert(static_cast<uint64_t>(JSString::MaxLength) <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()));
+    return stringSlice<int32_t>(globalObject, vm, string, string->length(), start, end);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringSubstring, JSString*, (JSGlobalObject* globalObject, JSString* string, int32_t start))
@@ -3413,11 +3422,10 @@ JSC_DEFINE_JIT_OPERATION(operationSpreadGeneric, JSCell*, (JSGlobalObject* globa
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (isJSArray(iterable)) {
-        JSArray* array = jsCast<JSArray*>(iterable);
-        if (array->isIteratorProtocolFastAndNonObservable())
-            RELEASE_AND_RETURN(throwScope, JSImmutableButterfly::createFromArray(globalObject, vm, array));
-    }
+    auto* result = CommonSlowPaths::trySpreadFast(globalObject, iterable);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    if (result)
+        return result;
 
     // FIXME: we can probably make this path faster by having our caller JS code call directly into
     // the iteration protocol builtin: https://bugs.webkit.org/show_bug.cgi?id=164520

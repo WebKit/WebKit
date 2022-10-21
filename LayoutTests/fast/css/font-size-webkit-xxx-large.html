@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+    <title>-webkit-xxx-large is an alias of xxx-large</title>
+    <p>Computed style is: <span id="computed"></span></p>
+    <p>Specified style is: <span id="specified"></span></p>
+    <span id="rendered" style="font-size: -webkit-xxx-large">Rendering result</span>
+    <script>
+        computed.textContent = getComputedStyle(rendered).fontSize;
+        specified.textContent = rendered.style.fontSize;
+    </script>
+</html>

@@ -37,10 +37,35 @@
         go();
     }
 
+    function playAudio() {
+        window.webkit.messageHandlers.testHandler.postMessage('playAudio');
+        const audio = document.getElementsByTagName('audio')[0];
+        audio.play().then(playing).catch(notPlaying);
+    }
+
+    let canvasTimer;
+    function startCanvasUpdate()
+    {
+        stopCanvasUpdate();
+        canvasTimer = setInterval(() => {
+            window.webkit.messageHandlers.testHandler.postMessage('canvasClearFill');
+            myCanvas.getContext('2d').clearRect(0, 0, 50, 50);
+            myCanvas.getContext('2d').fillRect(0, 0, 100, 100);
+        }, 50);
+    }
+
+    function stopCanvasUpdate()
+    {
+        if (canvasTimer)
+            clearInterval(canvasTimer);
+    }
+
     document.addEventListener('pageshow', go);
    </script>
 </head>
 <body onload="go()">
     <video src="video-with-audio.mp4" webkit-playsinline></video>
+    <audio src="video-with-audio.mp4" webkit-playsinline></video>
+    <canvas id="myCanvas" width="200" height="200"></canvas>
 </body>
 </html>

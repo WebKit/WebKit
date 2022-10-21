@@ -46,6 +46,10 @@
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif
 
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#include <WebKitAdditions/WKShareSheetAdditions.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 
 @interface WKShareSheetFileItemProvider : UIActivityItemProvider
@@ -251,12 +255,20 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
             [self dismiss];
     }];
 
-    UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
-    if (rect) {
-        popoverController.sourceView = webView;
-        popoverController.sourceRect = *rect;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    if (shareSheetUsesModalPresentationForWebView(webView)) {
+        [_shareSheetViewController setAllowsCustomPresentationStyle:YES];
+        [_shareSheetViewController setModalPresentationStyle:UIModalPresentationFormSheet];
     } else
-        popoverController._centersPopoverIfSourceViewNotSet = YES;
+#endif // HAVE(UIKIT_WEBKIT_INTERNALS)
+    {
+        UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
+        if (rect) {
+            popoverController.sourceView = webView;
+            popoverController.sourceRect = *rect;
+        } else
+            popoverController._centersPopoverIfSourceViewNotSet = YES;
+    }
 
     if ([_delegate respondsToSelector:@selector(shareSheet:willShowActivityItems:)])
         [_delegate shareSheet:self willShowActivityItems:sharingItems];

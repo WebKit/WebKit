@@ -109,6 +109,7 @@ public:
     void getElementTagName(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementRect(const String& elementID, Function<void (CommandResult&&)>&&);
     void isElementEnabled(const String& elementID, Function<void (CommandResult&&)>&&);
+    void getComputedRole(const String& elementID, Function<void (CommandResult&&)>&&);
     void isElementDisplayed(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementClick(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementClear(const String& elementID, Function<void (CommandResult&&)>&&);

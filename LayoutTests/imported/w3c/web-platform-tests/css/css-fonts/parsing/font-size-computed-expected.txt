@@ -19,5 +19,5 @@ PASS <font size="3"> is font-size: medium
 PASS <font size="4"> is font-size: large
 PASS <font size="5"> is font-size: x-large
 PASS <font size="6"> is font-size: xx-large
-FAIL <font size="7"> is font-size: xxx-large assert_equals: expected "48px" but got "32px"
+PASS <font size="7"> is font-size: xxx-large
 

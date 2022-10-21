@@ -31,13 +31,21 @@ from webkitbugspy import Tracker
 COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-/]*'
 COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
 CHERRY_PICK_RE = re.compile(r'[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF))
-REVERT_RE = re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF))
+REVERT_RE = [
+    re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Reverts? \[{}\]'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Reverts? \({}\)'.format(COMPOUND_COMMIT_REF)),
+]
 FOLLOW_UP_FIXES_RE = [
     re.compile(r'Fix following {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Follow-? ?up fix to {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Follow-? ?up fix {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Follow-? ?up to {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Follow-? ?up {}'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'\[?[Gg]ardening\]?:? REGRESSION \(?{}\)?'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'REGRESSION ?\(?{}\)?'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\[?[Gg]ardening\]?:? REGRESSION \({}\)'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\[?[Gg]ardening\]?:? REGRESSION {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'REGRESSION ?\({}\)'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'REGRESSION ?{}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'\[?[Gg]ardening\]?:? [Tt]est-? ?[Aa]ddition \(?{}\)?'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'[Tt]est-? ?[Aa]ddition \(?{}\)?'.format(COMPOUND_COMMIT_REF)),
 ]
@@ -49,7 +57,7 @@ class Relationship(object):
         'references', 'referenced by',
         'cherry-picked', 'original',
         'reverts', 'reverted by',
-        'follow-up', 'follow-up by',
+        'follow-up to', 'followed-up by',
     )
     REFERENCES, REFERENCED_BY, \
         CHERRY_PICK, ORIGINAL, \
@@ -79,7 +87,7 @@ class Relationship(object):
 
         for type, regexes in {
             cls.ORIGINAL: [CHERRY_PICK_RE],
-            cls.REVERTS: [REVERT_RE],
+            cls.REVERTS: REVERT_RE,
             cls.FOLLOW_UP: FOLLOW_UP_FIXES_RE,
         }.items():
             for regex in regexes:
@@ -181,7 +189,10 @@ class Trace(Command):
                 if commits_story:
                     found = commits_story.by_ref.get(ref, None)
                 if not found:
-                    found = repository.find(ref)
+                    try:
+                        found = repository.find(ref)
+                    except ValueError:
+                        continue
                 if not found:
                     continue
                 if commits_story:
@@ -202,14 +213,6 @@ class Trace(Command):
         if not commits_story:
             return result
 
-        type = Relationship.REFERENCES
-        for issue in CommitsStory.issues_for(commit):
-            for candidate in commits_story.by_issue.get(issue.link, []):
-                if str(candidate) in tracked:
-                    continue
-                tracked.add(str(candidate))
-                result.append(Relationship(candidate, type))
-
         references = [str(commit)]
         if commit.hash:
             references.append(commit.hash[:Commit.HASH_LABEL_SIZE])
@@ -221,6 +224,15 @@ class Trace(Command):
                     continue
                 tracked.add(str(candidate.commit))
                 result.append(candidate)
+
+        type = Relationship.REFERENCES
+        for issue in CommitsStory.issues_for(commit):
+            for candidate in commits_story.by_issue.get(issue.link, []):
+                if str(candidate) in tracked:
+                    continue
+                tracked.add(str(candidate))
+                result.append(Relationship(candidate, type))
+
         return result
 
     @classmethod

@@ -27,6 +27,7 @@
 #include "LogInitialization.h"
 
 #include "Logging.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {

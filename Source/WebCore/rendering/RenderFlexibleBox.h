@@ -54,6 +54,8 @@ public:
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     std::optional<LayoutUnit> firstLineBaseline() const override;
+    std::optional<LayoutUnit> lastLineBaseline() const override;
+    RenderBox* getBaselineChild(ItemPosition alignment) const;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
@@ -230,8 +232,9 @@ private:
     HashSet<const RenderBox*> m_relaidOutChildren;
 
     mutable OrderIterator m_orderIterator { *this };
-    int m_numberOfInFlowChildrenOnFirstLine { -1 };
-    
+    std::optional<size_t> m_numberOfInFlowChildrenOnFirstLine { };
+    std::optional<size_t> m_numberOfInFlowChildrenOnLastLine { };
+
     // This is SizeIsUnknown outside of layoutBlock()
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     bool m_inLayout { false };

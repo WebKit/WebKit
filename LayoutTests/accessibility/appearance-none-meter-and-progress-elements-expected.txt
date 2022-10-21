@@ -1,0 +1,11 @@
+This test ensures that <meter> and <progress> elements with appearance:none are accessible.
+
+PASS: progress.role === 'AXRole: AXProgressIndicator'
+PASS: progress.intValue === 4
+PASS: meter.role === 'AXRole: AXLevelIndicator'
+PASS: meter.valueDescription.includes('4 of 7') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

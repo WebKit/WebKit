@@ -31,4 +31,5 @@ PASS CSS Fonts Module Level 4: parsing @font-palette-values 28
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 29
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 30
 PASS CSS Fonts Module Level 4: parsing @font-palette-values 31
+FAIL CSS Fonts Module Level 4: parsing @font-palette-values 32 assert_equals: expected "foo, bar, baz" but got ""
 

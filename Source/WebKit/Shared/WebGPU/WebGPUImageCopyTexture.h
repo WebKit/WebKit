@@ -41,39 +41,6 @@ struct ImageCopyTexture {
     PAL::WebGPU::IntegerCoordinate mipLevel { 0 };
     std::optional<Origin3D> origin;
     PAL::WebGPU::TextureAspect aspect { PAL::WebGPU::TextureAspect::All };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << texture;
-        encoder << mipLevel;
-        encoder << origin;
-        encoder << aspect;
-    }
-
-    template<class Decoder> static std::optional<ImageCopyTexture> decode(Decoder& decoder)
-    {
-        std::optional<WebGPUIdentifier> texture;
-        decoder >> texture;
-        if (!texture)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::IntegerCoordinate> mipLevel;
-        decoder >> mipLevel;
-        if (!mipLevel)
-            return std::nullopt;
-
-        std::optional<std::optional<Origin3D>> origin;
-        decoder >> origin;
-        if (!origin)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::TextureAspect> aspect;
-        decoder >> aspect;
-        if (!aspect)
-            return std::nullopt;
-
-        return { { WTFMove(*texture), WTFMove(*mipLevel), WTFMove(*origin), WTFMove(*aspect) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

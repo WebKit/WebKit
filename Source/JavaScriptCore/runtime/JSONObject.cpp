@@ -507,7 +507,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     // First time through, initialize.
     if (!m_index) {
         if (m_isArray) {
-            uint64_t length = static_cast<uint64_t>(toLength(globalObject, m_object));
+            uint64_t length = toLength(globalObject, m_object);
             RETURN_IF_EXCEPTION(scope, false);
             if (UNLIKELY(length > std::numeric_limits<uint32_t>::max())) {
                 throwOutOfMemoryError(globalObject, scope);
@@ -1170,7 +1170,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 
                 JSObject* array = asObject(inValue);
                 markedStack.appendWithCrashOnOverflow(array);
-                uint64_t length = static_cast<uint64_t>(toLength(m_globalObject, array));
+                uint64_t length = toLength(m_globalObject, array);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (UNLIKELY(length > std::numeric_limits<uint32_t>::max())) {
                     throwOutOfMemoryError(m_globalObject, scope);

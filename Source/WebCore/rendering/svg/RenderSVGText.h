@@ -78,6 +78,8 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) override;
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
 #endif
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 

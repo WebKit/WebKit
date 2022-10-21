@@ -1,0 +1,26 @@
+layer at (0,0) size 1130x842
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 1130x842 scrollWidth 942 scrollHeight 702
+  RenderSVGRoot {svg} at (0,0) size 1130.39x842.39
+layer at (0,0) size 1131x843 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGViewportContainer at (0,0) size 1130.39x842.39
+layer at (0,0) size 250x200
+  RenderSVGForeignObject {foreignObject} at (0,0) size 250x200
+    RenderBlock {xhtml:div} at (0,0) size 250x18
+      RenderText {#text} at (0,0) size 83x18
+        text run at (0,0) width 83: "This is a text"
+    RenderBlock (anonymous) at (0,18) size 250x18
+      RenderInline {xhtml:a} at (0,0) size 68x18 [color=#0000EE]
+        RenderText {#text} at (0,0) size 68x18
+          text run at (0,0) width 68: "and a link."
+      RenderBR {xhtml:br} at (67,0) size 1x18
+    RenderBlock {xhtml:div} at (0,36) size 250x18
+      RenderText {#text} at (0,0) size 56x18
+        text run at (0,0) width 56: "[HTML]"
+layer at (0,0) size 250x200
+  RenderSVGRect {rect} at (0,0) size 250x200 [stroke={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=250.00] [height=200.00]
+layer at (0,0) size 250x200 scrollHeight 204
+  RenderSVGForeignObject {foreignObject} at (0,0) size 250x200
+    RenderText {#text} at (0,0) size 0x0
+layer at (260,0) size 250x200
+  RenderSVGRect {rect} at (260,0) size 250x200 [stroke={[type=SOLID] [color=#008000]}] [x=260.00] [y=0.00] [width=250.00] [height=200.00]

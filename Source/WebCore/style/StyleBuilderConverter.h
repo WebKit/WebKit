@@ -1292,10 +1292,7 @@ inline std::optional<Length> BuilderConverter::convertMarqueeIncrement(BuilderSt
 
 inline std::optional<FilterOperations> BuilderConverter::convertFilterOperations(BuilderState& builderState, const CSSValue& value)
 {
-    FilterOperations operations;
-    if (builderState.createFilterOperations(value, operations))
-        return operations;
-    return std::nullopt;
+    return builderState.createFilterOperations(value);
 }
 
 inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)

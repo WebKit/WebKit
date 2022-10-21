@@ -62,6 +62,7 @@ class OffscreenCanvas;
 class Path2D;
 class RenderObject;
 class TextMetrics;
+class WebCodecsVideoFrame;
 
 struct DOMMatrix2DInit;
 
@@ -78,6 +79,9 @@ using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanv
 #endif
 #if ENABLE(VIDEO)
     , RefPtr<HTMLVideoElement>
+#endif
+#if ENABLE(WEB_CODECS)
+    , RefPtr<WebCodecsVideoFrame>
 #endif
     >;
 
@@ -357,6 +361,9 @@ private:
 #if ENABLE(CSS_TYPED_OM)
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CSSStyleImageValue&, bool repeatX, bool repeatY);
 #endif
+#if ENABLE(WEB_CODECS)
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(WebCodecsVideoFrame&, bool repeatX, bool repeatY);
+#endif
 
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
@@ -369,6 +376,9 @@ private:
     ExceptionOr<void> drawImage(CSSStyleImageValue&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
     ExceptionOr<void> drawImage(ImageBitmap&, const FloatRect& srcRect, const FloatRect& dstRect);
+#if ENABLE(WEB_CODECS)
+    ExceptionOr<void> drawImage(WebCodecsVideoFrame&, const FloatRect& srcRect, const FloatRect& dstRect);
+#endif
 
     void beginCompositeLayer();
     void endCompositeLayer();

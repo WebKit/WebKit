@@ -46,8 +46,8 @@
 #include "HTMLMediaElement.h"
 #include "HTMLObjectElement.h"
 #include "HTMLSpanElement.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include "MathMLElement.h"
-#include "MediaQueryEvaluator.h"
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderTheme.h"
@@ -95,15 +95,15 @@ StyleSheetContents* UserAgentStyle::legacyFormControlsIOSStyleSheet;
 StyleSheetContents* UserAgentStyle::alternateFormControlDesignStyleSheet;
 #endif
 
-static const MediaQueryEvaluator& screenEval()
+static const LegacyMediaQueryEvaluator& screenEval()
 {
-    static NeverDestroyed<const MediaQueryEvaluator> staticScreenEval(String(MAKE_STATIC_STRING_IMPL("screen")));
+    static NeverDestroyed<const LegacyMediaQueryEvaluator> staticScreenEval(String(MAKE_STATIC_STRING_IMPL("screen")));
     return staticScreenEval;
 }
 
-static const MediaQueryEvaluator& printEval()
+static const LegacyMediaQueryEvaluator& printEval()
 {
-    static NeverDestroyed<const MediaQueryEvaluator> staticPrintEval(String(MAKE_STATIC_STRING_IMPL("print")));
+    static NeverDestroyed<const LegacyMediaQueryEvaluator> staticPrintEval(String(MAKE_STATIC_STRING_IMPL("print")));
     return staticPrintEval;
 }
 

@@ -138,11 +138,9 @@ public:
 
         m_webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
             "website-data-manager", websiteDataManager.get(),
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
             "process-swap-on-cross-site-navigation-enabled", TRUE,
-#if !USE(GTK4)
             "use-system-appearance-for-scrollbars", FALSE,
-#endif
 #endif
             "memory-pressure-settings", s_memoryPressureSettings,
             nullptr)));

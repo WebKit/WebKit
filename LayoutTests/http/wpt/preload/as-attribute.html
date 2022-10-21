@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    var loaded = 0;
+    var expectedToLoad = 2;
+</script>
+<link rel=preload href="/WebKit/preload/resources/square.png?asemptystring" as="" onload="++loaded;">
+<link rel=preload href="/WebKit/preload/resources/square.png?asbadvalue" as="unknown" onload="++loaded;">
+<link rel=preload href="/WebKit/preload/resources/classic.js" as="worker" onload="++loaded;">
+<link rel=preload href="/WebKit/preload/resources/square.png?img_good_type" as="image" onload="++loaded;">
+<script src="/WebKit/preload/resources/dummy.js?pipe=trickle(d0.5)"></script>
+<script>
+    var t = async_test('Test preload as attribute values.');
+    window.setInterval(t.step_func(function() {
+        function verifyDownloadNumber(url, number) {
+            var absolute_url = new URL(url, window.location.href);
+            assert_equals(performance.getEntriesByName(absolute_url).length, number, url);
+        }
+        if (loaded == 2) {
+            verifyDownloadNumber("/WebKit/preload/resources/square.png?asemptystring", 0);
+            verifyDownloadNumber("/WebKit/preload/resources/square.png?asbadvalue", 0);
+            verifyDownloadNumber("/WebKit/preload/resources/classic.js", 1);
+            verifyDownloadNumber("/WebKit/preload/resources/square.png?img_good_type", 1);
+
+            document.write('<img src="/WebKit/preload/resources/square.png?img_good_type">');
+            new Worker("/WebKit/preload/resources/classic.js");
+
+            t.done();
+        }
+    }), 200);
+</script>
+<span>foo</span>

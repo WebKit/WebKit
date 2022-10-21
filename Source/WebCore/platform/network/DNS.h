@@ -57,6 +57,8 @@ public:
     {
     }
 
+    WEBCORE_EXPORT IPAddress isolatedCopy() const;
+    WEBCORE_EXPORT unsigned matchingNetMaskLength(const IPAddress& other) const;
     WEBCORE_EXPORT static std::optional<IPAddress> fromString(const String&);
 
     bool isIPv4() const { return std::holds_alternative<struct in_addr>(m_address); }
@@ -83,7 +85,7 @@ inline std::optional<IPAddress> IPAddress::fromSockAddrIn6(const struct sockaddr
     if (address.sin6_family == AF_INET6)
         return IPAddress { address.sin6_addr };
     if (address.sin6_family == AF_INET)
-        return IPAddress {reinterpret_cast<const struct sockaddr_in&>(address).sin_addr };
+        return IPAddress { reinterpret_cast<const struct sockaddr_in&>(address).sin_addr };
     return { };
 }
 

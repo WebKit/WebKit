@@ -153,9 +153,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
         break;
-    case AvoidanceReason::BoxDecorationBreakClone:
-        stream << "webkit-box-decoration-break: clone";
-        break;
     case AvoidanceReason::FlowIsUnsupportedListItem:
         stream << "list item with text-indent";
         break;
@@ -315,10 +312,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
     if (!style.hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-    if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-        SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
-#endif
     // These are non-standard properties.
     if (style.lineBreak() == LineBreak::AfterWhiteSpace)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasAfterWhiteSpaceLineBreak, reasons, includeReasons);
@@ -390,9 +383,12 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (renderer.style().shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
-            if (!is<RenderReplaced>(renderer))
+            // FIXME: We don't collect out-of-flow boxes from nested subtrees.
+            if (renderer.parent() != renderer.containingBlock())
                 return false;
-            if (!renderer.parent()->style().isLeftToRightDirection())
+            if (!renderer.parent()->style().isLeftToRightDirection() || !renderer.parent()->style().isHorizontalWritingMode())
+                return false;
+            if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
                 return false;
             // This simply checks the not-yet supported case when the out-of-flow positioned
             // content has a relatively positioned inline containing block (has to call container to not skip RenderInlines).

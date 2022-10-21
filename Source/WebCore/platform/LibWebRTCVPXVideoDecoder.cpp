@@ -133,10 +133,10 @@ void LibWebRTCVPXInternalVideoDecoder::decode(Span<const uint8_t> data, int64_t 
         if (protectedThis->m_isClosed)
             return;
 
-        String result;
         if (error)
-            result = makeString("VPx decoding failed with error ", error);
-        callback(WTFMove(result));
+            protectedThis->m_outputCallback(makeUnexpected(makeString("VPx decoding failed with error ", error)));
+
+        callback({ });
     });
 }
 
@@ -169,7 +169,7 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
             return nullptr;
         });
 
-        protectedThis->m_outputCallback({ WTFMove(videoFrame), timestamp, duration });
+        protectedThis->m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
     });
     return 0;
 }

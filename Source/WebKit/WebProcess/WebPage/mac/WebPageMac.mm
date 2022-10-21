@@ -153,7 +153,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     result.canEnableAutomaticSpellingCorrection = result.isContentEditable && frame.editor().canEnableAutomaticSpellingCorrection();
 
-    if (result.isMissingPostLayoutData)
+    if (result.isMissingPostLayoutData())
         return;
 
     auto& selection = frame.selection().selection();
@@ -161,7 +161,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     if (!selectedRange)
         return;
 
-    auto& postLayoutData = result.postLayoutData();
+    auto& postLayoutData = *result.postLayoutData;
     VisiblePosition selectionStart = selection.visibleStart();
     auto selectionStartBoundary = makeBoundaryPoint(selectionStart);
     auto selectionEnd = makeBoundaryPoint(selection.visibleEnd());

@@ -42,45 +42,6 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
     WebGPUIdentifier occlusionQuerySet;
     RenderPassTimestampWrites timestampWrites;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << colorAttachments;
-        encoder << depthStencilAttachment;
-        encoder << occlusionQuerySet;
-        encoder << timestampWrites;
-    }
-
-    template<class Decoder> static std::optional<RenderPassDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<Vector<std::optional<RenderPassColorAttachment>>> colorAttachments;
-        decoder >> colorAttachments;
-        if (!colorAttachments)
-            return std::nullopt;
-
-        std::optional<std::optional<RenderPassDepthStencilAttachment>> depthStencilAttachment;
-        decoder >> depthStencilAttachment;
-        if (!depthStencilAttachment)
-            return std::nullopt;
-
-        std::optional<WebGPUIdentifier> occlusionQuerySet;
-        decoder >> occlusionQuerySet;
-        if (!occlusionQuerySet)
-            return std::nullopt;
-
-        std::optional<RenderPassTimestampWrites> timestampWrites;
-        decoder >> timestampWrites;
-        if (!timestampWrites)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*colorAttachments), WTFMove(*depthStencilAttachment), WTFMove(*occlusionQuerySet), WTFMove(*timestampWrites) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

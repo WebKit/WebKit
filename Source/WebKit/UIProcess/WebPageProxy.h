@@ -503,8 +503,8 @@ public:
 
     void addPreviouslyVisitedPath(const String&);
 
-    bool isCaptivePortalModeExplicitlySet() const { return m_isCaptivePortalModeExplicitlySet; }
-    bool shouldEnableCaptivePortalMode() const;
+    bool isLockdownModeExplicitlySet() const { return m_isLockdownModeExplicitlySet; }
+    bool shouldEnableLockdownMode() const;
 
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
@@ -560,8 +560,8 @@ public:
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);
-    bool allowsRemoteInspection() const;
-    void setAllowsRemoteInspection(bool);
+    bool inspectable() const;
+    void setInspectable(bool);
     String remoteInspectionNameOverride() const;
     void setRemoteInspectionNameOverride(const String&);
     void remoteInspectorInformationDidChange();
@@ -2181,7 +2181,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    bool suspendCurrentPageIfPossible(API::Navigation&, std::optional<WebCore::FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient, ShouldDelayClosingUntilFirstLayerFlush);
+    bool suspendCurrentPageIfPossible(API::Navigation&, RefPtr<WebFrameProxy>&& mainFrame, ProcessSwapRequestedByClient, ShouldDelayClosingUntilFirstLayerFlush);
 
     enum class ResetStateReason {
         PageInvalidated,
@@ -2774,7 +2774,7 @@ private:
     Ref<WebUserContentControllerProxy> m_userContentController;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    Ref<WebExtensionController> m_webExtensionController;
+    RefPtr<WebExtensionController> m_webExtensionController;
 #endif
 
     Ref<VisitedLinkStore> m_visitedLinkStore;
@@ -3310,7 +3310,7 @@ private:
     bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
-    bool m_isCaptivePortalModeExplicitlySet { false };
+    bool m_isLockdownModeExplicitlySet { false };
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;
 

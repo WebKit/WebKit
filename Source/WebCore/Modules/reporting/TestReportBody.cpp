@@ -56,19 +56,4 @@ const String& TestReportBody::message() const
     return m_bodyMessage;
 }
 
-Ref<FormData> TestReportBody::createReportFormDataForViolation() const
-{
-    // https://w3c.github.io/reporting/#generate-test-report-command, Step 7.1.10
-    // Suitable for network endpoints.
-    auto reportBody = JSON::Object::create();
-    reportBody->setString("body_message"_s, message());
-
-    auto reportObject = JSON::Object::create();
-    reportObject->setString("type"_s, type());
-    reportObject->setString("url"_s, ""_s);
-    reportObject->setObject("body"_s, WTFMove(reportBody));
-
-    return FormData::create(reportObject->toJSONString().utf8());
-}
-
 } // namespace WebCore

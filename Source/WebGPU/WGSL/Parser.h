@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AST/ShaderModule.h"
+#include "ASTShaderModule.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
 #include <wtf/Expected.h>

@@ -635,7 +635,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToLocaleString, (JSGlobalObject* globalOb
         return JSValue::encode(earlyReturnValue);
 
     // 2. Let len be ? ToLength(? Get(array, "length")).
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
+    uint64_t length = toLength(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // 3. Let separator be the String value for the list-separator String appropriate for
@@ -756,7 +756,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
         return JSValue::encode(earlyReturnValue);
 
     // 2. Let len be ? ToLength(? Get(O, "length")).
-    double length = toLength(globalObject, thisObject);
+    uint64_t length = toLength(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. If separator is undefined, let separator be the single-element String ",".
@@ -765,12 +765,10 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
         const LChar comma = ',';
 
         if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject))) {
-            uint64_t length64 = static_cast<uint64_t>(length);
-            ASSERT(static_cast<double>(length64) == length);
             JSString* jsSeparator = jsSingleCharacterString(vm, comma);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-            RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(globalObject, thisObject, jsSeparator, length64)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(globalObject, thisObject, jsSeparator, length)));
         }
 
         unsigned unsignedLength = static_cast<unsigned>(length);
@@ -783,12 +781,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
     JSString* jsSeparator = separatorValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject))) {
-        uint64_t length64 = static_cast<uint64_t>(length);
-        ASSERT(static_cast<double>(length64) == length);
-
-        RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(globalObject, thisObject, jsSeparator, length64)));
-    }
+    if (UNLIKELY(length > std::numeric_limits<unsigned>::max() || !canUseFastJoin(thisObject)))
+        RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(globalObject, thisObject, jsSeparator, length)));
 
     auto viewWithString = jsSeparator->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -839,7 +833,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncPop, (JSGlobalObject* globalObject, CallF
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObj));
+    uint64_t length = toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (length == 0) {
@@ -881,7 +875,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncPush, (JSGlobalObject* globalObject, Call
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObj));
+    uint64_t length = toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned argCount = callFrame->argumentCount();
 
@@ -909,7 +903,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncReverse, (JSGlobalObject* globalObject, C
     if (UNLIKELY(!thisObject))
         return encodedJSValue();
 
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
+    uint64_t length = toLength(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     thisObject->ensureWritable(vm);
@@ -1010,7 +1004,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncShift, (JSGlobalObject* globalObject, Cal
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObj));
+    uint64_t length = toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (length == 0) {
@@ -1054,8 +1048,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSlice, (JSGlobalObject* globalObject, Cal
         return { };
 
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
-        if (JSArray* result = JSArray::fastSlice(globalObject, thisObj, begin, end - begin))
+        JSArray* result = JSArray::fastSlice(globalObject, thisObj, begin, end - begin);
+        if (result) {
+            scope.assertNoExceptionExceptTermination();
             return JSValue::encode(result);
+        }
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
     JSObject* result;
@@ -1099,7 +1097,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObj));
+    uint64_t length = toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (!callFrame->argumentCount()) {
@@ -1147,8 +1145,10 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
-    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath))
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
         result = JSArray::fastSlice(globalObject, thisObj, actualStart, actualDeleteCount);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     if (!result) {
         if (speciesResult.first == SpeciesConstructResult::CreatedObject)
@@ -1203,7 +1203,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncUnShift, (JSGlobalObject* globalObject, C
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObj));
+    uint64_t length = toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned nrArgs = callFrame->argumentCount();
@@ -1338,7 +1338,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
         return { };
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
+    uint64_t length = toLength(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!length)
         return JSValue::encode(jsNumber(-1));
@@ -1378,7 +1378,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
         return { };
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
+    uint64_t length = toLength(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!length)
         return JSValue::encode(jsNumber(-1));

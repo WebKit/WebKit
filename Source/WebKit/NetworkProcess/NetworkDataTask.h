@@ -160,7 +160,6 @@ protected:
     };
     void scheduleFailure(FailureType);
 
-    bool isThirdPartyRequest(const WebCore::ResourceRequest&) const;
     void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
 
     WeakPtr<NetworkSession> m_session;

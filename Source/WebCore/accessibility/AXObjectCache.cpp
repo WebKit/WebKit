@@ -86,6 +86,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTablePartElement.h"
@@ -309,10 +310,52 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
     return false;
 }
 
-void AXObjectCache::updateCurrentModalNode()
+void AXObjectCache::updateCurrentModalNode(WillRecomputeFocus willRecomputeFocus)
 {
+    auto recomputeModalElement = [&] () -> Element* {
+        // There might be multiple modal dialog nodes.
+        // We use this function to pick the one we want.
+        if (m_modalElements.isEmpty())
+            return nullptr;
+
+        // Pick the document active modal <dialog> element if it exists.
+        if (Element* activeModalDialog = document().activeModalDialog()) {
+            ASSERT(m_modalElements.contains(activeModalDialog));
+            return activeModalDialog;
+        }
+
+        SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
+        // If any of the modal nodes contains the keyboard focus, we want to pick that one.
+        // If not, we want to pick the last visible dialog in the DOM.
+        RefPtr<Element> focusedElement = document().focusedElement();
+        bool focusedElementIsOutsideModals = focusedElement;
+        RefPtr<Element> lastVisible;
+        for (auto& element : m_modalElements) {
+            // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
+            // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
+            if (!element || !isModalElement(*element))
+                continue;
+
+            // To avoid trapping users in an empty modal, skip any non-visible element, or any element without accessible content.
+            if (!isNodeVisible(element.get()) || !modalElementHasAccessibleContent(*element))
+                continue;
+
+            lastVisible = element.get();
+            if (focusedElement && focusedElement->isDescendantOf(*element)) {
+                focusedElementIsOutsideModals = false;
+                break;
+            }
+        }
+
+        // If there is a focused element, and it's not inside any of the modals, we should
+        // consider all modals inactive to allow the user to freely navigate.
+        if (focusedElementIsOutsideModals && willRecomputeFocus == WillRecomputeFocus::No)
+            return nullptr;
+        return lastVisible.get();
+    };
+
     auto* previousModal = m_currentModalElement.get();
-    m_currentModalElement = updateCurrentModalNodeInternal();
+    m_currentModalElement = recomputeModalElement();
     if (previousModal != m_currentModalElement.get()) {
         childrenChanged(rootWebArea());
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -321,41 +364,6 @@ void AXObjectCache::updateCurrentModalNode()
         m_deferredRegenerateIsolatedTree = true;
 #endif
     }
-}
-
-Element* AXObjectCache::updateCurrentModalNodeInternal()
-{
-    // There might be multiple modal dialog nodes.
-    // We use this function to pick the one we want.
-    if (m_modalElements.isEmpty())
-        return nullptr;
-
-    // Pick the document active modal <dialog> element if it exists.
-    if (Element* activeModalDialog = document().activeModalDialog()) {
-        ASSERT(m_modalElements.contains(activeModalDialog));
-        return activeModalDialog;
-    }
-
-    SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
-    // If any of the modal nodes contains the keyboard focus, we want to pick that one.
-    // If not, we want to pick the last visible dialog in the DOM.
-    RefPtr<Element> focusedElement = document().focusedElement();
-    RefPtr<Element> lastVisible;
-    for (auto& element : m_modalElements) {
-        // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
-        // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
-        if (!element || !isModalElement(*element))
-            continue;
-
-        // To avoid trapping users in an empty modal, skip any non-visible element, or any element without accessible content.
-        if (!isNodeVisible(element.get()) || !modalElementHasAccessibleContent(*element))
-            continue;
-
-        lastVisible = element.get();
-        if (focusedElement && focusedElement->isDescendantOf(*element))
-            break;
-    }
-    return lastVisible.get();
 }
 
 bool AXObjectCache::isNodeVisible(Node* node) const
@@ -632,37 +640,34 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         return AccessibilityMathMLElement::create(renderer, isAnonymousOperator);
 #endif
 
-    if (is<RenderBoxModelObject>(*renderer)) {
-        RenderBoxModelObject& cssBox = downcast<RenderBoxModelObject>(*renderer);
-        if (is<RenderListBox>(cssBox))
-            return AccessibilityListBox::create(&downcast<RenderListBox>(cssBox));
-        if (is<RenderMenuList>(cssBox))
-            return AccessibilityMenuList::create(&downcast<RenderMenuList>(cssBox));
+    if (is<RenderListBox>(renderer))
+        return AccessibilityListBox::create(renderer);
+    if (is<RenderMenuList>(renderer))
+        return AccessibilityMenuList::create(downcast<RenderMenuList>(renderer));
 
-        // standard tables
-        if (is<RenderTable>(cssBox))
-            return AccessibilityTable::create(&downcast<RenderTable>(cssBox));
-        if (is<RenderTableRow>(cssBox))
-            return AccessibilityTableRow::create(&downcast<RenderTableRow>(cssBox));
-        if (is<RenderTableCell>(cssBox))
-            return AccessibilityTableCell::create(&downcast<RenderTableCell>(cssBox));
+    // standard tables
+    if (is<RenderTable>(renderer))
+        return AccessibilityTable::create(renderer);
+    if (is<RenderTableRow>(renderer))
+        return AccessibilityTableRow::create(renderer);
+    if (is<RenderTableCell>(renderer))
+        return AccessibilityTableCell::create(renderer);
 
-        // progress bar
-        if (is<RenderProgress>(cssBox))
-            return AccessibilityProgressIndicator::create(&downcast<RenderProgress>(cssBox));
+    // progress bar
+    if (is<RenderProgress>(renderer) || is<HTMLProgressElement>(node))
+        return AccessibilityProgressIndicator::create(renderer);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        if (is<RenderAttachment>(cssBox))
-            return AccessibilityAttachment::create(&downcast<RenderAttachment>(cssBox));
+    if (is<RenderAttachment>(renderer))
+        return AccessibilityAttachment::create(downcast<RenderAttachment>(renderer));
 #endif
 
-        if (is<RenderMeter>(cssBox))
-            return AccessibilityProgressIndicator::create(&downcast<RenderMeter>(cssBox));
+    if (is<RenderMeter>(renderer) || is<HTMLMeterElement>(node))
+        return AccessibilityProgressIndicator::create(renderer);
 
-        // input type=range
-        if (is<RenderSlider>(cssBox))
-            return AccessibilitySlider::create(&downcast<RenderSlider>(cssBox));
-    }
+    // input type=range
+    if (is<RenderSlider>(renderer))
+        return AccessibilitySlider::create(renderer);
 
     return AccessibilityRenderObject::create(renderer);
 }
@@ -1417,21 +1422,13 @@ void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode, 
     
 void AXObjectCache::selectedChildrenChanged(Node* node)
 {
-    handleMenuItemSelected(node);
-    
-    // postTarget is ObservableParent so that you can pass in any child of an element and it will go up the parent tree
-    // to find the container which should send out the notification.
-    postNotification(node, AXSelectedChildrenChanged, PostTarget::ObservableParent);
+    postNotification(node, AXSelectedChildrenChanged);
 }
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
     if (renderer)
-        handleMenuItemSelected(renderer->node());
-
-    // postTarget is ObservableParent so that you can pass in any child of an element and it will go up the parent tree
-    // to find the container which should send out the notification.
-    postNotification(renderer, AXSelectedChildrenChanged, PostTarget::ObservableParent);
+        selectedChildrenChanged(renderer->node());
 }
 
 void AXObjectCache::selectedStateChanged(Node* node)
@@ -1441,8 +1438,19 @@ void AXObjectCache::selectedStateChanged(Node* node)
     if (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s)
         || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s))
         postNotification(node, AXSelectedStateChanged);
-    else
-        selectedChildrenChanged(node);
+    else if (auto* axObject = getOrCreate(node)) {
+        if (auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*axObject, false, [] (const auto& object) {
+            return object.canHaveSelectedChildren();
+        }))
+            selectedChildrenChanged(ancestor->node());
+    }
+
+    handleMenuItemSelected(node);
+}
+
+void AXObjectCache::onTitleChange(Document& document)
+{
+    postNotification(get(&document), nullptr, AXTextChanged);
 }
 
 #ifndef NDEBUG
@@ -3569,7 +3577,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredModalChangedList.clear();
 
     if (shouldRecomputeModal) {
-        updateCurrentModalNode();
+        updateCurrentModalNode(updatedFocusedElement ? WillRecomputeFocus::No : WillRecomputeFocus::Yes);
         // "When a modal element is displayed, assistive technologies SHOULD navigate to the element unless focus has explicitly been set elsewhere."
         // `updatedFocusedElement` indicates focus was explicitly set elsewhere, so don't autofocus into the modal.
         // https://w3c.github.io/aria/#aria-modal
@@ -3664,7 +3672,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;
         case AXCurrentStateChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::CurrentValue);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CurrentState);
             break;
         case AXColumnCountChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXColumnCount);

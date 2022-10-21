@@ -658,6 +658,12 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 
 #endif
 
+/*!
+@abstract Controls whether this @link WKWebView @/link is inspectable in Web Inspector.
+@discussion The default value is NO.
+*/
+@property (nonatomic, setter=setInspectable:) BOOL inspectable NS_SWIFT_NAME(isInspectable) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if !TARGET_OS_IPHONE

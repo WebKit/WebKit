@@ -34,6 +34,9 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     or HTMLVideoElement
 #endif
+#if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
+    or WebCodecsVideoFrame
+#endif
 ) CanvasImageSource;
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasdrawimage

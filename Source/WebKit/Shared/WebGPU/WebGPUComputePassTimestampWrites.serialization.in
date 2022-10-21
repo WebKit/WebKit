@@ -28,3 +28,4 @@ header: "WebGPUComputePassTimestampWrites.h"
     PAL::WebGPU::Size32 queryIndex
     PAL::WebGPU::ComputePassTimestampLocation location
 }
+#endif

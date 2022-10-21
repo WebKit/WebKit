@@ -222,6 +222,16 @@ void ResourceLoader::start()
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (m_documentLoader && m_documentLoader->scheduleArchiveLoad(*this, m_request))
         return;
+
+#if ENABLE(WEB_ARCHIVE)
+    constexpr auto webArchivePrefix { "webarchive+"_s };
+    if (m_request.url().protocol().startsWith(webArchivePrefix)) {
+        auto url { m_request.url() };
+        const auto unprefixedScheme { url.protocol().substring(webArchivePrefix.length()) };
+        url.setProtocol(unprefixedScheme);
+        m_request.setURL(url);
+    }
+#endif
 #endif
 
     if (m_documentLoader && m_documentLoader->applicationCacheHost().maybeLoadResource(*this, m_request, m_request.url()))
@@ -508,7 +518,9 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
 
 bool ResourceLoader::shouldAllowResourceToAskForCredentials() const
 {
-    return m_canCrossOriginRequestsAskUserForCredentials || m_frame->tree().top().document()->securityOrigin().canRequest(m_request.url());
+    auto* topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
+    return m_canCrossOriginRequestsAskUserForCredentials
+        || (topFrame && topFrame->document()->securityOrigin().canRequest(m_request.url()));
 }
 
 void ResourceLoader::didBlockAuthenticationChallenge()

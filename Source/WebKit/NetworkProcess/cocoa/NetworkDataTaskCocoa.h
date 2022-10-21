@@ -101,8 +101,8 @@ private:
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
     void updateFirstPartyInfoForSession(const URL&);
-    bool shouldApplyCookiePolicyForThirdPartyCNAMECloaking() const;
-    void applyCookiePolicyForThirdPartyCNAMECloaking(const WebCore::ResourceRequest&);
+    bool shouldApplyCookiePolicyForThirdPartyCloaking() const;
+    void applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest&);
     void blockCookies();
     void unblockCookies();
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
@@ -131,6 +131,6 @@ private:
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
 void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *);
 
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *);
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool isThirdParty);
 
 } // namespace WebKit

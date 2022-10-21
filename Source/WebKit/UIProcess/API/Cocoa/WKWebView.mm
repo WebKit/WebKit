@@ -461,7 +461,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->setDefaultWebsitePolicies([_configuration defaultWebpagePreferences]->_websitePolicies.get());
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    pageConfiguration->setWebExtensionController([_configuration _webExtensionController]->_webExtensionController.get());
+    if (auto *controller = _configuration.get()._webExtensionControllerIfExists)
+        pageConfiguration->setWebExtensionController(&controller._webExtensionController);
 #endif
 
 #if PLATFORM(MAC)
@@ -1430,6 +1431,25 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     _page->restoreFromSessionState(sessionState, true);
 }
 
+- (BOOL)inspectable
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    return _page->inspectable();
+#else
+    return NO;
+#endif
+}
+
+- (void)setInspectable:(BOOL)inspectable
+{
+    THROW_IF_SUSPENDED;
+#if ENABLE(REMOTE_INSPECTOR)
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    _page->setInspectable(inspectable);
+#endif
+}
+
 #pragma mark - iOS API
 
 #if PLATFORM(IOS_FAMILY)
@@ -1761,10 +1781,10 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
 {
-    if (state.isMissingPostLayoutData)
+    if (state.isMissingPostLayoutData())
         return @{ @"post-layout-data" : @NO };
 
-    auto& postLayoutData = state.postLayoutData();
+    auto& postLayoutData = *state.postLayoutData;
     return @{
         @"post-layout-data" : @YES,
         @"bold": postLayoutData.typingAttributes & WebKit::AttributeBold ? @YES : @NO,
@@ -3041,19 +3061,12 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (BOOL)_allowsRemoteInspection
 {
-#if ENABLE(REMOTE_INSPECTOR)
-    return _page->allowsRemoteInspection();
-#else
-    return NO;
-#endif
+    return self.inspectable;
 }
 
 - (void)_setAllowsRemoteInspection:(BOOL)allow
 {
-    THROW_IF_SUSPENDED;
-#if ENABLE(REMOTE_INSPECTOR)
-    _page->setAllowsRemoteInspection(allow);
-#endif
+    self.inspectable = allow;
 }
 
 - (NSString *)_remoteInspectionNameOverride

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=3850-4000" />
+    <meta name="fuzzy" content="maxDifference=1; totalPixels=3800-4000" />
     <desc>Test that the 'href' attribute is animated correctly.</desc>
     <defs>
         <linearGradient id="red-fill">

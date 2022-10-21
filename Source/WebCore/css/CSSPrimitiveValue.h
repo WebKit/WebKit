@@ -87,6 +87,7 @@ public:
     bool isCounter() const { return primitiveUnitType() == CSSUnitType::CSS_COUNTER; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
+    bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && primitiveType() != CSSUnitType::CSS_REMS && primitiveType() != CSSUnitType::CSS_RLHS); }
     bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EMS; }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
     bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }

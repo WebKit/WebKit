@@ -46,6 +46,7 @@ extern ASCIILiteral manifestSrc;
 extern ASCIILiteral mediaSrc;
 extern ASCIILiteral objectSrc;
 extern ASCIILiteral pluginTypes;
+extern ASCIILiteral prefetchSrc;
 extern ASCIILiteral reportURI;
 extern ASCIILiteral reportTo;
 extern ASCIILiteral sandbox;

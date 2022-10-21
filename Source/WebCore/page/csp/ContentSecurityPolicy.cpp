@@ -531,7 +531,7 @@ bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& u
 {
     if (overrideContentSecurityPolicy)
         return true;
-    Frame& topFrame = frame.tree().top();
+    auto& topFrame = frame.tree().top();
     if (&frame == &topFrame)
         return true;
     String sourceURL;
@@ -667,6 +667,11 @@ bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectRespon
 bool ContentSecurityPolicy::allowImageFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
 {
     return allowResourceFromSource(url, redirectResponseReceived, &ContentSecurityPolicyDirectiveList::violatedDirectiveForImage, preRedirectURL);
+}
+
+bool ContentSecurityPolicy::allowPrefetchFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
+{
+    return allowResourceFromSource(url, redirectResponseReceived, &ContentSecurityPolicyDirectiveList::violatedDirectiveForPrefetch, preRedirectURL);
 }
 
 bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL, const String& nonce) const

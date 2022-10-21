@@ -162,7 +162,7 @@ public:
     MediaPlayer::NetworkState networkState() const final;
     MediaPlayer::ReadyState readyState() const final;
     void setPageIsVisible(bool visible) final { m_visible = visible; }
-    void setSize(const IntSize&) final;
+    void setPresentationSize(const IntSize&) final;
     // Prefer MediaTime based methods over float based.
     float duration() const final { return durationMediaTime().toFloat(); }
     double durationDouble() const final { return durationMediaTime().toDouble(); }
@@ -487,6 +487,7 @@ private:
 
     void configureDepayloader(GstElement*);
     void configureVideoDecoder(GstElement*);
+    void configureElement(GstElement*);
 
     void setPlaybinURL(const URL& urlString);
 

@@ -62,7 +62,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
         )
         (GraphicsLayer
           (position 8.00 277.00)
-          (bounds 784.00 225.00)
+          (bounds 784.00 228.00)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=-28 height=-28)

@@ -1,0 +1,166 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>mspace width/height/depth - legacy length values</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#dictionary-based-attributes">
+<meta name="assert" content="Verify nonzero unitless and namedspace values are invalid for width/height/depth.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/feature-detection.js"></script>
+<script src="/mathml/support/layout-comparison.js"></script>
+<style>
+  math {
+      font: 25px;
+  }
+</style>
+<script>
+  setup({ explicit_done: true });
+  window.addEventListener("load", runTests);
+
+  function runTests() {
+
+      let epsilon = 1;
+      let emToPx = 25;
+      let reference = document.getElementById("reference");
+
+      Array.from(document.getElementsByClassName("test")).forEach(div => {
+          test(function() {
+              assert_true(MathMLFeatureDetection.has_mpadded());
+              Array.from(div.getElementsByTagName('math')).forEach(math => {
+                  compareLayout(math, reference, epsilon);
+              });
+          }, div.dataset.label);
+      });
+
+      done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+
+  <div>
+    <math id="reference"><mrow><mspace width="1em" depth="1em" height="1em"/></mrow></math>
+  </div>
+
+  <div class="test" data-label="non-zero unitless values for width are not supported">
+    <math><mpadded width="2"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="non-zero unitless values for height are not supported">
+    <math><mpadded height="2"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="non-zero unitless values for depth are not supported">
+    <math><mpadded depth="2"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <!-- Values for the legacy mpadded syntax (as implemented in Firefox require
+       an unsigned number e.g. "10veryverythinmathspace". However, WebKit only
+       implemented legacy MathML lengths, which does not require such number.
+       Below we test the two syntaxes. -->
+  <div class="test" data-label="namedspaces for width are not supported (without &lt;unsigned-number&gt;)">
+    <math><mpadded width="veryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="verythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="thinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="mediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="thickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="verythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="veryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativeveryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativeverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativethinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativemediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativethickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativeverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="negativeveryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for width are not supported (with &lt;unsigned-number&gt;)">
+    <math><mpadded width="36veryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36verythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36thinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36mediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36thickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36verythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36veryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativeveryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativeverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativethinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativemediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativethickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativeverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded width="36negativeveryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for height are not supported (without &lt;unsigned-number&gt;)">
+    <math><mpadded height="veryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="verythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="thinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="mediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="thickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="verythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="veryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativeveryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativeverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativethinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativemediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativethickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativeverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="negativeveryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for height are not supported (with &lt;unsigned-number&gt;)">
+    <math><mpadded height="36veryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36verythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36thinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36mediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36thickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36verythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36veryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativeveryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativeverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativethinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativemediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativethickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativeverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded height="36negativeveryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for depth are not supported (without &lt;unsigned-number&gt;)">
+    <math><mpadded depth="veryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="verythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="thinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="mediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="thickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="verythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="veryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativeveryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativeverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativethinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativemediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativethickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativeverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="negativeveryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+
+  <div class="test" data-label="namedspaces for depth are not supported (with &lt;unsigned-number&gt;)">
+    <math><mpadded depth="36veryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36verythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36thinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36mediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36thickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36verythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36veryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativeveryverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativeverythinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativethinmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativemediummathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativethickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativeverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+    <math><mpadded depth="36negativeveryverythickmathspace"><mspace width="1em" depth="1em" height="1em"/></mpadded></math>
+  </div>
+</body>
+</html>

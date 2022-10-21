@@ -451,7 +451,7 @@ public:
     bool m_dumpMemoryFootprint { false };
     bool m_dumpLinkBufferStats { false };
     bool m_dumpSamplingProfilerData { false };
-    bool m_enableRemoteDebugging { false };
+    bool m_inspectable { false };
     bool m_canBlockIsFalse { false };
 
     void parseArguments(int, char**);
@@ -912,11 +912,12 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
+    auto type = JSC::retrieveTypeAssertion(globalObject, assertions);
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
     parameters = jsUndefined();
-    if (!assertions.isEmpty()) {
-        if (std::optional<ScriptFetchParameters::Type> type = ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())))
-            parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
-    }
+    if (type)
+        parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
 
     auto result = JSC::importModule(globalObject, Identifier::fromString(vm, specifier), jsString(vm, referrer.string()), parameters, jsUndefined());
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
@@ -2682,7 +2683,8 @@ JSC_DEFINE_HOST_FUNCTION(functionIs32BitPlatform, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionCreateGlobalObject, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
-    return JSValue::encode(GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>()));
+    auto* newGlobalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
+    return JSValue::encode(newGlobalObject->globalThis());
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCreateHeapBigInt, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -3673,8 +3675,8 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
 
-        if (!strcmp(arg, "--remote-debug")) {
-            m_enableRemoteDebugging = true;
+        if (!strcmp(arg, "--inspectable") || !strcmp(arg, "--remote-debug")) {
+            m_inspectable = true;
             continue;
         }
 
@@ -3773,7 +3775,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 
         startTimeoutThreadIfNeeded(vm);
         globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
-        globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
+        globalObject->setInspectable(options.m_inspectable);
         func(vm, globalObject, success);
         vm.drainMicrotasks();
     }

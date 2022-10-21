@@ -32,21 +32,32 @@
 #include "RemoteInspector.h"
 #include <wtf/RunLoop.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/spi/darwin/OSVariantSPI.h>
+#endif
+
 namespace Inspector {
 
 bool RemoteInspectionTarget::remoteControlAllowed() const
 {
-    return remoteDebuggingAllowed() || hasLocalDebugger();
+    return inspectable() || hasLocalDebugger();
 }
 
-void RemoteInspectionTarget::setRemoteDebuggingAllowed(bool allowed)
+bool RemoteInspectionTarget::inspectable() const
 {
-    if (m_allowed == allowed)
-        return;
+#if PLATFORM(COCOA)
+    static bool allowInternalSecurityPolicies = os_variant_allows_internal_security_policies("com.apple.WebInspector");
+    if (allowInternalSecurityPolicies && !RemoteInspector::singleton().isSimulatingCustomerInstall())
+        return true;
+#endif
+    return m_inspectable;
+}
 
-    m_allowed = allowed;
+void RemoteInspectionTarget::setInspectable(bool inspectable)
+{
+    m_inspectable = inspectable;
 
-    if (m_allowed && automaticInspectionAllowed())
+    if (RemoteInspectionTarget::inspectable() && automaticInspectionAllowed())
         RemoteInspector::singleton().updateAutomaticInspectionCandidate(this);
     else
         RemoteInspector::singleton().updateTarget(this);
@@ -55,7 +66,7 @@ void RemoteInspectionTarget::setRemoteDebuggingAllowed(bool allowed)
 void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
 {
     ASSERT(targetIdentifier());
-    ASSERT(m_allowed);
+    ASSERT(inspectable());
     ASSERT(automaticInspectionAllowed());
 
     while (RemoteInspector::singleton().waitingForAutomaticInspection(targetIdentifier())) {

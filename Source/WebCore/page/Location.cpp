@@ -112,8 +112,10 @@ Ref<DOMStringList> Location::ancestorOrigins() const
     auto* frame = this->frame();
     if (!frame)
         return origins;
-    for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent())
-        origins->append(ancestor->document()->securityOrigin().toString());
+    for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
+        if (auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor))
+            origins->append(localAncestor->document()->securityOrigin().toString());
+    }
     return origins;
 }
 

@@ -166,7 +166,7 @@ public:
     LayoutPoint contentBoxLocation() const;
 
     // https://www.w3.org/TR/css-transforms-1/#reference-box
-    FloatRect referenceBoxRect(CSSBoxType) const final;
+    FloatRect referenceBoxRect(CSSBoxType) const override;
 
     // The content box in absolute coords. Ignores transforms.
     IntRect absoluteContentBox() const;

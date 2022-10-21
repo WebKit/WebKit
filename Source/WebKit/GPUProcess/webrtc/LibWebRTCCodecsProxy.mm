@@ -100,6 +100,10 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     if (useRemoteFrames)
         videoFrameObjectHeap = m_videoFrameObjectHeap.ptr();
     return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
+        if (!pixelBuffer) {
+            connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+            return;
+        }
         auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::VideoFrame::Rotation::None, pixelBuffer);
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);
@@ -291,6 +295,19 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
 #if !PLATFORM(MACCATALYST)
     webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sharedVideoFrame.time.toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sharedVideoFrame.rotation), shouldEncodeAsKeyFrame);
 #endif
+}
+
+void LibWebRTCCodecsProxy::flushEncoder(VideoEncoderIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    auto* encoder = findEncoder(identifier);
+    if (!encoder) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+
+    webrtc::flushLocalEncoder(encoder->webrtcEncoder);
+    m_connection->send(Messages::LibWebRTCCodecs::FlushEncoderCompleted { identifier }, 0);
 }
 
 void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)

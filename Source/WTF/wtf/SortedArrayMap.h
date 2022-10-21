@@ -76,6 +76,10 @@ struct ComparableStringView {
     StringView string;
 };
 
+template<typename SortedArrayKeyType> struct SortedArrayKeyTraits {
+    static std::optional<SortedArrayKeyType> parse(const SortedArrayKeyType& key) { return key; }
+};
+
 // NoUppercaseLettersOptimized means no characters with the 0x20 bit set.
 // That means the strings can't include control characters, uppercase letters, or any of @[\]_.
 enum class ASCIISubset : uint8_t { All, NoUppercaseLetters, NoUppercaseLettersOptimized };
@@ -83,15 +87,14 @@ enum class ASCIISubset : uint8_t { All, NoUppercaseLetters, NoUppercaseLettersOp
 template<ASCIISubset> struct ComparableASCIISubsetLiteral {
     ASCIILiteral literal;
     template<unsigned size> constexpr ComparableASCIISubsetLiteral(const char (&characters)[size]);
-    static std::optional<ComparableStringView> parse(StringView string) { return { { string } }; }
 };
+
+template<ASCIISubset subset> constexpr bool operator==(ComparableASCIISubsetLiteral<subset>, ComparableASCIISubsetLiteral<subset>);
+template<ASCIISubset subset> constexpr bool operator<(ComparableASCIISubsetLiteral<subset>, ComparableASCIISubsetLiteral<subset>);
 
 using ComparableASCIILiteral = ComparableASCIISubsetLiteral<ASCIISubset::All>;
 using ComparableCaseFoldingASCIILiteral = ComparableASCIISubsetLiteral<ASCIISubset::NoUppercaseLetters>;
 using ComparableLettersLiteral = ComparableASCIISubsetLiteral<ASCIISubset::NoUppercaseLettersOptimized>;
-
-template<ASCIISubset subset> constexpr bool operator==(ComparableASCIISubsetLiteral<subset>, ComparableASCIISubsetLiteral<subset>);
-template<ASCIISubset subset> constexpr bool operator<(ComparableASCIISubsetLiteral<subset>, ComparableASCIISubsetLiteral<subset>);
 
 bool operator==(ComparableStringView, ComparableASCIILiteral);
 bool operator==(ComparableStringView, ComparableCaseFoldingASCIILiteral);
@@ -105,22 +108,27 @@ bool operator<(ComparableLettersLiteral, ComparableStringView);
 
 template<typename OtherType> bool operator==(OtherType, ComparableStringView);
 
-template<typename StorageInteger> class PackedASCIILowerCodes {
+template<typename StorageInteger, ASCIISubset> class PackedASCIISubsetLiteral {
 public:
     static_assert(std::is_unsigned_v<StorageInteger>);
 
-    template<unsigned size> constexpr PackedASCIILowerCodes(const char (&characters)[size]);
-    static std::optional<PackedASCIILowerCodes> parse(StringView);
+    template<unsigned size> constexpr PackedASCIISubsetLiteral(const char (&characters)[size]);
     constexpr StorageInteger value() const { return m_value; }
+
+    template<typename CharacterType> static std::optional<PackedASCIISubsetLiteral> parse(Span<const CharacterType>);
 
 private:
     template<unsigned size> static constexpr StorageInteger pack(const char (&characters)[size]);
-    explicit constexpr PackedASCIILowerCodes(StorageInteger);
+    explicit constexpr PackedASCIISubsetLiteral(StorageInteger);
     StorageInteger m_value { 0 };
 };
 
-template<typename StorageInteger> constexpr bool operator==(PackedASCIILowerCodes<StorageInteger>, PackedASCIILowerCodes<StorageInteger>);
-template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes<StorageInteger>, PackedASCIILowerCodes<StorageInteger>);
+template<typename StorageInteger, ASCIISubset subset> constexpr bool operator==(PackedASCIISubsetLiteral<StorageInteger, subset>, PackedASCIISubsetLiteral<StorageInteger, subset>);
+template<typename StorageInteger, ASCIISubset subset> constexpr bool operator<(PackedASCIISubsetLiteral<StorageInteger, subset>, PackedASCIISubsetLiteral<StorageInteger, subset>);
+
+template<typename StorageInteger> using PackedASCIILiteral = PackedASCIISubsetLiteral<StorageInteger, ASCIISubset::All>;
+template<typename StorageInteger> using PackedASCIILowerCodes = PackedASCIISubsetLiteral<StorageInteger, ASCIISubset::NoUppercaseLetters>;
+template<typename StorageInteger> using PackedLettersLiteral = PackedASCIISubsetLiteral<StorageInteger, ASCIISubset::NoUppercaseLettersOptimized>;
 
 template<ASCIISubset subset> constexpr bool isInSubset(char character)
 {
@@ -133,6 +141,18 @@ template<ASCIISubset subset> constexpr bool isInSubset(char character)
         return !isASCIIUpper(character);
     case ASCIISubset::NoUppercaseLettersOptimized:
         return character == toASCIILowerUnchecked(character);
+    }
+}
+
+template<ASCIISubset subset, typename CharacterType> constexpr std::make_unsigned_t<CharacterType> foldForComparison(CharacterType character)
+{
+    switch (subset) {
+    case ASCIISubset::All:
+        return character;
+    case ASCIISubset::NoUppercaseLetters:
+        return toASCIILower(character);
+    case ASCIISubset::NoUppercaseLettersOptimized:
+        return toASCIILowerUnchecked(character);
     }
 }
 
@@ -153,18 +173,10 @@ template<typename ArrayType> constexpr SortedArrayMap<ArrayType>::SortedArrayMap
     }));
 }
 
-template<typename, typename = void> constexpr bool HasParseMember = false;
-template<typename T> constexpr bool HasParseMember<T, std::void_t<decltype(std::declval<T>().parse)>> = true;
-
 template<typename ArrayType> template<typename KeyArgument> inline auto SortedArrayMap<ArrayType>::tryGet(const KeyArgument& key) const -> const ValueType*
 {
     using KeyType = typename ElementType::first_type;
-    auto parsedKey = [&key] {
-        if constexpr (HasParseMember<KeyType>)
-            return KeyType::parse(key);
-        else
-            return std::make_optional(key);
-    }();
+    auto parsedKey = SortedArrayKeyTraits<KeyType>::parse(key);
     if (!parsedKey)
         return nullptr;
     decltype(std::begin(m_array)) iterator;
@@ -204,12 +216,7 @@ template<typename ArrayType> constexpr SortedArraySet<ArrayType>::SortedArraySet
 template<typename ArrayType> template<typename KeyArgument> inline bool SortedArraySet<ArrayType>::contains(const KeyArgument& key) const
 {
     using KeyType = typename std::remove_extent_t<ArrayType>;
-    auto parsedKey = [&key] {
-        if constexpr (HasParseMember<KeyType>)
-            return KeyType::parse(key);
-        else
-            return std::make_optional(key);
-    }();
+    auto parsedKey = SortedArrayKeyTraits<KeyType>::parse(key);
     if (!parsedKey)
         return false;
     if (std::size(m_array) < binarySearchThreshold)
@@ -323,17 +330,17 @@ template<typename OtherType> inline bool operator==(OtherType a, ComparableStrin
     return b == a;
 }
 
-template<typename StorageInteger> template<unsigned size> constexpr PackedASCIILowerCodes<StorageInteger>::PackedASCIILowerCodes(const char (&string)[size])
+template<typename StorageInteger, ASCIISubset subset> template<unsigned size> constexpr PackedASCIISubsetLiteral<StorageInteger, subset>::PackedASCIISubsetLiteral(const char (&string)[size])
     : m_value { pack(string) }
 {
 }
 
-template<typename StorageInteger> constexpr PackedASCIILowerCodes<StorageInteger>::PackedASCIILowerCodes(StorageInteger value)
+template<typename StorageInteger, ASCIISubset subset> constexpr PackedASCIISubsetLiteral<StorageInteger, subset>::PackedASCIISubsetLiteral(StorageInteger value)
     : m_value { value }
 {
 }
 
-template<typename StorageInteger> template<unsigned size> constexpr StorageInteger PackedASCIILowerCodes<StorageInteger>::pack(const char (&string)[size])
+template<typename StorageInteger, ASCIISubset subset> template<unsigned size> constexpr StorageInteger PackedASCIISubsetLiteral<StorageInteger, subset>::pack(const char (&string)[size])
 {
     ASSERT_UNDER_CONSTEXPR_CONTEXT(size);
     constexpr unsigned length = size - 1;
@@ -341,35 +348,54 @@ template<typename StorageInteger> template<unsigned size> constexpr StorageInteg
     ASSERT_UNDER_CONSTEXPR_CONTEXT(length <= sizeof(StorageInteger));
     StorageInteger result = 0;
     for (unsigned index = 0; index < length; ++index) {
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(isInSubset<subset>(string[index]));
         StorageInteger code = static_cast<uint8_t>(string[index]);
         result |= code << ((sizeof(StorageInteger) - index - 1) * 8);
     }
     return result;
 }
 
-template<typename StorageInteger> auto PackedASCIILowerCodes<StorageInteger>::parse(StringView string) -> std::optional<PackedASCIILowerCodes>
+template<typename StorageInteger, ASCIISubset subset> template<typename CharacterType> auto PackedASCIISubsetLiteral<StorageInteger, subset>::parse(Span<const CharacterType> span) -> std::optional<PackedASCIISubsetLiteral>
 {
-    if (string.length() > sizeof(StorageInteger))
+    if (span.size() > sizeof(StorageInteger))
         return std::nullopt;
     StorageInteger result = 0;
-    for (unsigned index = 0; index < string.length(); ++index) {
-        UChar code = string[index];
+    for (unsigned index = 0; index < span.size(); ++index) {
+        auto code = span[index];
         if (!isASCII(code))
             return std::nullopt;
-        result |= static_cast<StorageInteger>(toASCIILower(code)) << ((sizeof(StorageInteger) - index - 1) * 8);
+        result |= static_cast<StorageInteger>(foldForComparison<subset>(code)) << ((sizeof(StorageInteger) - index - 1) * 8);
     }
-    return PackedASCIILowerCodes(result);
+    return PackedASCIISubsetLiteral(result);
 }
 
-template<typename StorageInteger> constexpr bool operator==(PackedASCIILowerCodes<StorageInteger> a, PackedASCIILowerCodes<StorageInteger> b)
+template<typename StorageInteger, ASCIISubset subset> constexpr bool operator==(PackedASCIISubsetLiteral<StorageInteger, subset> a, PackedASCIISubsetLiteral<StorageInteger, subset> b)
 {
     return a.value() == b.value();
 }
 
-template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes<StorageInteger> a, PackedASCIILowerCodes<StorageInteger> b)
+template<typename StorageInteger, ASCIISubset subset> constexpr bool operator<(PackedASCIISubsetLiteral<StorageInteger, subset> a, PackedASCIISubsetLiteral<StorageInteger, subset> b)
 {
     return a.value() < b.value();
 }
+
+template<ASCIISubset subset> struct SortedArrayKeyTraits<ComparableASCIISubsetLiteral<subset>> {
+    static std::optional<ComparableStringView> parse(StringView string)
+    {
+        return { { string } };
+    }
+};
+
+template<typename StorageInteger, ASCIISubset subset> struct SortedArrayKeyTraits<PackedASCIISubsetLiteral<StorageInteger, subset>> {
+    template<typename CharacterType> static std::optional<PackedASCIISubsetLiteral<StorageInteger, subset>> parse(Span<const CharacterType> span)
+    {
+        return PackedASCIISubsetLiteral<StorageInteger, subset>::parse(span);
+    }
+    static std::optional<PackedASCIISubsetLiteral<StorageInteger, subset>> parse(StringView string)
+    {
+        return string.is8Bit() ? parse(string.span8()) : parse(string.span16());
+    }
+};
 
 template<typename ValueType> constexpr std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
 {
@@ -386,7 +412,9 @@ using WTF::ComparableASCIILiteral;
 using WTF::ComparableASCIISubsetLiteral;
 using WTF::ComparableCaseFoldingASCIILiteral;
 using WTF::ComparableLettersLiteral;
+using WTF::PackedASCIILiteral;
 using WTF::PackedASCIILowerCodes;
+using WTF::PackedLettersLiteral;
 using WTF::SortedArrayMap;
 using WTF::SortedArraySet;
 using WTF::makeOptionalFromPointer;

@@ -817,6 +817,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSContainerRule.idl
     css/CSSCounterStyleRule.idl
     css/CSSFontFaceRule.idl
+    css/CSSFontFeatureValuesRule.idl
     css/CSSFontPaletteValuesRule.idl
     css/CSSGroupingRule.idl
     css/CSSImportRule+Layer.idl
@@ -1365,9 +1366,6 @@ set(WebCore_NON_SVG_IDL_FILES
 set(WebCore_SVG_IDL_FILES
     svg/Document+SVG.idl
     svg/SVGAElement.idl
-    svg/SVGAltGlyphDefElement.idl
-    svg/SVGAltGlyphElement.idl
-    svg/SVGAltGlyphItemElement.idl
     svg/SVGAngle.idl
     svg/SVGAnimateColorElement.idl
     svg/SVGAnimateElement.idl
@@ -1389,7 +1387,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGCircleElement.idl
     svg/SVGClipPathElement.idl
     svg/SVGComponentTransferFunctionElement.idl
-    svg/SVGCursorElement.idl
     svg/SVGDefsElement.idl
     svg/SVGDescElement.idl
     svg/SVGElement.idl
@@ -1422,20 +1419,11 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGFilterElement.idl
     svg/SVGFilterPrimitiveStandardAttributes.idl
     svg/SVGFitToViewBox.idl
-    svg/SVGFontElement.idl
-    svg/SVGFontFaceElement.idl
-    svg/SVGFontFaceFormatElement.idl
-    svg/SVGFontFaceNameElement.idl
-    svg/SVGFontFaceSrcElement.idl
-    svg/SVGFontFaceUriElement.idl
     svg/SVGForeignObjectElement.idl
     svg/SVGGElement.idl
     svg/SVGGeometryElement.idl
-    svg/SVGGlyphElement.idl
-    svg/SVGGlyphRefElement.idl
     svg/SVGGradientElement.idl
     svg/SVGGraphicsElement.idl
-    svg/SVGHKernElement.idl
     svg/SVGImageElement.idl
     svg/SVGLength.idl
     svg/SVGLengthList.idl
@@ -1446,7 +1434,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGMaskElement.idl
     svg/SVGMatrix.idl
     svg/SVGMetadataElement.idl
-    svg/SVGMissingGlyphElement.idl
     svg/SVGNumber.idl
     svg/SVGNumberList.idl
     svg/SVGPathElement.idl
@@ -1489,7 +1476,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGStyleElement.idl
     svg/SVGSwitchElement.idl
     svg/SVGSymbolElement.idl
-    svg/SVGTRefElement.idl
     svg/SVGTSpanElement.idl
     svg/SVGTests.idl
     svg/SVGTextContentElement.idl
@@ -1502,7 +1488,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGURIReference.idl
     svg/SVGUnitTypes.idl
     svg/SVGUseElement.idl
-    svg/SVGVKernElement.idl
     svg/SVGViewElement.idl
     svg/SVGViewSpec.idl
     svg/SVGZoomAndPan.idl
@@ -1739,7 +1724,6 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/fullscreen.css
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/mathml.css
-    ${WEBCORE_DIR}/css/mediaControls.css
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
@@ -2160,16 +2144,22 @@ set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.css"
 )
 
-if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
+if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE" OR WTF_PLATFORM_WIN_CAIRO)
     list(APPEND MODERN_MEDIA_CONTROLS_STYLE_SHEETS
         "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-overrides.css"
     )
 endif ()
 
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
+    set(CAT_PROGRAM ${CMAKE_COMMAND} -E cat)
+else ()
+    set(CAT_PROGRAM cat)
+endif ()
+
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     DEPENDS ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS}
-    COMMAND cat ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+    COMMAND ${CAT_PROGRAM} ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     VERBATIM)
 
 set(MODERN_MEDIA_CONTROLS_SCRIPTS
@@ -2252,7 +2242,7 @@ set(MODERN_MEDIA_CONTROLS_SCRIPTS
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     DEPENDS ${MODERN_MEDIA_CONTROLS_SCRIPTS}
-    COMMAND cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+    COMMAND ${CAT_PROGRAM} ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     VERBATIM)
 
 # Modules that the bindings generator scripts may use

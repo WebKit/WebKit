@@ -538,6 +538,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \
     v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
+    v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \

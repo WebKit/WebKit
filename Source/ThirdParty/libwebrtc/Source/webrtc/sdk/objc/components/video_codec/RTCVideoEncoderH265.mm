@@ -176,6 +176,7 @@ void compressionOutputCallback(void* encoder,
   int framesLeft;
   std::vector<uint8_t> _nv12ScaleBuffer;
   bool _useAnnexB;
+  bool _needsToSendDescription;
   RTCVideoEncoderDescriptionCallback _descriptionCallback;
 }
 
@@ -219,6 +220,7 @@ void compressionOutputCallback(void* encoder,
 - (void)setUseAnnexB:(bool)useAnnexB
 {
     _useAnnexB = useAnnexB;
+    _needsToSendDescription = !useAnnexB;
 }
 
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback
@@ -559,22 +561,30 @@ void compressionOutputCallback(void* encoder,
       return;
     }
   } else {
-    if (_descriptionCallback) {
-      buffer->SetSize(0);
-      CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
-      size_t currentStart = 0;
-      size_t size = CMBlockBufferGetDataLength(blockBuffer);
-      while (currentStart < size) {
-        char* data = nullptr;
-        size_t length;
-        if (auto error = CMBlockBufferGetDataPointer(blockBuffer, currentStart, &length, nullptr, &data)) {
-          RTC_LOG(LS_ERROR) << "H264 decoder: CMBlockBufferGetDataPointer failed with error " << error;
-          return;
-        }
-        buffer->AppendData(data, size);
-        currentStart += size;
+    buffer->SetSize(0);
+    CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+    size_t currentStart = 0;
+    size_t size = CMBlockBufferGetDataLength(blockBuffer);
+    while (currentStart < size) {
+      char* data = nullptr;
+      size_t length;
+      if (auto error = CMBlockBufferGetDataPointer(blockBuffer, currentStart, &length, nullptr, &data)) {
+        RTC_LOG(LS_ERROR) << "H264 decoder: CMBlockBufferGetDataPointer failed with error " << error;
+        return;
       }
-      _descriptionCallback(buffer->data(), buffer->size());
+      buffer->AppendData(data, size);
+      currentStart += size;
+    }
+    if (_descriptionCallback && _needsToSendDescription) {
+      auto formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
+      auto sampleExtensionsDict = static_cast<CFDictionaryRef>(CMFormatDescriptionGetExtension(formatDescription, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+      if (sampleExtensionsDict) {
+        auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("hvcC")));
+        if (sampleExtensions) {
+          _needsToSendDescription = false;
+          _descriptionCallback(reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(sampleExtensions)), CFDataGetLength(sampleExtensions));
+        }
+      }
     }
   }
 
@@ -609,6 +619,11 @@ void compressionOutputCallback(void* encoder,
   return [[RTCVideoEncoderQpThresholds alloc]
       initWithThresholdsLow:kLowh265QpThreshold
                        high:kHighh265QpThreshold];
+}
+
+- (void)flush {
+    if (_compressionSession)
+        VTCompressionSessionCompleteFrames(_compressionSession, kCMTimeInvalid);
 }
 
 @end

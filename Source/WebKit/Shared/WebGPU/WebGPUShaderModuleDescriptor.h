@@ -38,33 +38,6 @@ struct ShaderModuleDescriptor : public ObjectDescriptorBase {
     String code;
     // FIXME: Hook up the sourceMap.
     Vector<KeyValuePair<String, ShaderModuleCompilationHint>> hints;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << code;
-        encoder << hints;
-    }
-
-    template<class Decoder> static std::optional<ShaderModuleDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<String> code;
-        decoder >> code;
-        if (!code)
-            return std::nullopt;
-
-        std::optional<Vector<KeyValuePair<String, ShaderModuleCompilationHint>>> hints;
-        decoder >> hints;
-        if (!hints)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*code), WTFMove(*hints) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

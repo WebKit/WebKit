@@ -37,11 +37,11 @@ namespace JSC {
 
 void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* registerSaveLocations)
 {
-    RegisterSet calleeSaveRegisters { RegisterSet::vmCalleeSaveRegisters() };
+    auto calleeSaveRegisters = RegisterSetBuilder::vmCalleeSaveRegisters();
 
     for (size_t i = 0; i < registerSaveLocations->registerCount(); ++i) {
         RegisterAtOffset entry { registerSaveLocations->at(i) };
-        if (!calleeSaveRegisters.get(entry.reg()))
+        if (!calleeSaveRegisters.contains(entry.reg(), IgnoreVectors))
             continue;
 
         int saveSlotIndexInCPURegisters = entry.offsetAsIndex();
@@ -70,7 +70,7 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
     }
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!calleeSaveRegisters.get(reg))
+        if (!calleeSaveRegisters.contains(reg, IgnoreVectors))
             continue;
 
         if (registers[reg])

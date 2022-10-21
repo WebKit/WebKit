@@ -36,6 +36,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSTransformListValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "DeprecatedGlobalSettings.h"
@@ -319,7 +320,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& st
 
     // Clamp negative values at zero.
     ASSERT(localValue <= 255);
-    return negative ? 0 : static_cast<uint8_t>(localValue);
+    return negative ? 0 : convertPrescaledSRGBAFloatToSRGBAByte(localValue);
 }
 
 template <typename CharacterType>
@@ -1338,7 +1339,7 @@ static RefPtr<CSSValueList> parseSimpleTransformList(const CharType* chars, unsi
         return nullptr;
     const CharType*& pos = chars;
     const CharType* end = chars + length;
-    RefPtr<CSSValueList> transformList;
+    RefPtr<CSSTransformListValue> transformList;
     while (pos < end) {
         while (pos < end && isCSSSpace(*pos))
             ++pos;
@@ -1348,7 +1349,7 @@ static RefPtr<CSSValueList> parseSimpleTransformList(const CharType* chars, unsi
         if (!transformValue)
             return nullptr;
         if (!transformList)
-            transformList = CSSValueList::createSpaceSeparated();
+            transformList = CSSTransformListValue::create();
         transformList->append(*transformValue);
     }
     return transformList;

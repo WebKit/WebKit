@@ -301,7 +301,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     [coder encodeObject:self.websiteDataStore forKey:@"websiteDataStore"];
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto *controller = _webExtensionController.peek())
+    if (auto *controller = self._webExtensionControllerIfExists)
         [coder encodeObject:controller forKey:@"webExtensionController"];
 #endif
 
@@ -402,7 +402,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    configuration._webExtensionController = self._webExtensionController;
+    if (auto *controller = self._webExtensionControllerIfExists)
+        configuration._webExtensionController = controller;
 #endif
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
@@ -506,6 +507,15 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 - (void)setUserContentController:(WKUserContentController *)userContentController
 {
     _userContentController.set(userContentController);
+}
+
+- (_WKWebExtensionController *)_webExtensionControllerIfExists
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    return _webExtensionController.peek();
+#else
+    return nullptr;
+#endif
 }
 
 - (_WKWebExtensionController *)_webExtensionController

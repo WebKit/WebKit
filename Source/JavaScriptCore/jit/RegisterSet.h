@@ -20,175 +20,145 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if !ENABLE(C_LOOP)
 
+#include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "Reg.h"
+#include "Width.h"
 #include <wtf/Bitmap.h>
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
+class ScalarRegisterSet;
 typedef Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs> RegisterBitmap;
 class RegisterAtOffsetList;
+struct RegisterSetBuilderHash;
+class RegisterSet;
 
-class RegisterSet {
+enum IgnoreVectorsTag { IgnoreVectors };
+
+class RegisterSetBuilder final {
+    friend ScalarRegisterSet;
+    friend RegisterSet;
+
 public:
-    constexpr RegisterSet() { }
+    constexpr RegisterSetBuilder() { }
+
+    inline constexpr RegisterSetBuilder(RegisterSet);
 
     template<typename... Regs>
-    constexpr explicit RegisterSet(Regs... regs)
+    inline constexpr explicit RegisterSetBuilder(Regs... regs)
     {
         setMany(regs...);
     }
-    
-    JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
-    static RegisterSet runtimeTagRegisters();
-    static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
-    JS_EXPORT_PRIVATE static RegisterSet calleeSaveRegisters();
-    static RegisterSet vmCalleeSaveRegisters(); // Callee save registers that might be saved and used by any tier.
-    static RegisterAtOffsetList* vmCalleeSaveRegisterOffsets();
-    static RegisterSet llintBaselineCalleeSaveRegisters(); // Registers saved and used by the LLInt.
-    static RegisterSet dfgCalleeSaveRegisters(); // Registers saved and used by the DFG JIT.
-    static RegisterSet ftlCalleeSaveRegisters(); // Registers that might be saved and used by the FTL JIT.
-#if ENABLE(WEBASSEMBLY)
-    static RegisterSet webAssemblyCalleeSaveRegisters(); // Registers saved and used by the WebAssembly JIT.
-#endif
-    JS_EXPORT_PRIVATE static RegisterSet volatileRegistersForJSCall();
-    static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
-    JS_EXPORT_PRIVATE static RegisterSet macroScratchRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet allGPRs();
-    JS_EXPORT_PRIVATE static RegisterSet allFPRs();
-    static RegisterSet allRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
 
-    static RegisterSet registersToNotSaveForJSCall();
-    static RegisterSet registersToNotSaveForCCall();
-    
-    void set(Reg reg, bool value = true)
+    inline constexpr RegisterSetBuilder& add(Reg reg, Width width)
     {
         ASSERT(!!reg);
-        m_bits.set(reg.index(), value);
+        m_bits.set(reg.index());
+
+        if (UNLIKELY(width > conservativeWidthWithoutVectors(reg) && conservativeWidth(reg) > conservativeWidthWithoutVectors(reg)))
+            m_upperBits.set(reg.index());
+        return *this;
     }
-    
-    void set(JSValueRegs regs, bool value = true)
+
+    inline constexpr RegisterSetBuilder& add(JSValueRegs regs, IgnoreVectorsTag)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            set(regs.tagGPR(), value);
-        set(regs.payloadGPR(), value);
+            add(regs.tagGPR(), IgnoreVectors);
+        add(regs.payloadGPR(), IgnoreVectors);
+        return *this;
     }
 
-    void set(const RegisterSet& other, bool value = true) { value ? merge(other) : exclude(other); }
+    inline constexpr void add(Reg reg, IgnoreVectorsTag)
+    {
+        add(reg, conservativeWidthWithoutVectors(reg));
+    }
 
-    void clear(Reg reg)
+    inline constexpr RegisterSetBuilder& remove(Reg reg)
     {
         ASSERT(!!reg);
-        set(reg, false);
+        m_bits.clear(reg.index());
+        m_upperBits.clear(reg.index());
+        return *this;
     }
-    
-    bool get(Reg reg) const
+
+    inline constexpr RegisterSetBuilder& remove(JSValueRegs regs)
     {
-        ASSERT(!!reg);
-        return m_bits.get(reg.index());
+        if (regs.tagGPR() != InvalidGPRReg)
+            remove(regs.tagGPR());
+        remove(regs.payloadGPR());
+        return *this;
     }
-    
-    template<typename Iterable>
-    void setAll(const Iterable& iterable)
+
+    inline constexpr bool hasAnyWideRegisters() const { return m_upperBits.count(); }
+    inline constexpr bool isEmpty() const { return m_bits.isEmpty() && m_upperBits.isEmpty(); }
+
+    inline constexpr RegisterSetBuilder& merge(const RegisterSetBuilder& other)
     {
-        for (Reg reg : iterable)
-            set(reg);
+        m_bits.merge(other.m_bits);
+        m_upperBits.merge(other.m_upperBits);
+        return *this;
     }
-    
-    // Also allow add/remove/contains terminology, which means the same thing as set/clear/get.
-    bool add(Reg reg)
+
+    inline constexpr RegisterSetBuilder& filter(const RegisterSetBuilder& other)
     {
-        ASSERT(!!reg);
-        return !m_bits.testAndSet(reg.index());
+        m_bits.filter(other.m_bits);
+        m_upperBits.filter(other.m_upperBits);
+        return *this;
     }
-    bool remove(Reg reg)
+
+    inline constexpr RegisterSetBuilder& exclude(const RegisterSetBuilder& other)
     {
-        ASSERT(!!reg);
-        return m_bits.testAndClear(reg.index());
+        m_bits.exclude(other.m_bits);
+        m_upperBits.exclude(other.m_upperBits);
+        return *this;
     }
-    bool contains(Reg reg) const { return get(reg); }
-    
-    void merge(const RegisterSet& other) { m_bits.merge(other.m_bits); }
-    void filter(const RegisterSet& other) { m_bits.filter(other.m_bits); }
-    void exclude(const RegisterSet& other) { m_bits.exclude(other.m_bits); }
-    
-    bool subsumes(const RegisterSet& other) const { return m_bits.subsumes(other.m_bits); }
-    
-    size_t numberOfSetGPRs() const;
-    size_t numberOfSetFPRs() const;
-    size_t numberOfSetRegisters() const { return m_bits.count(); }
-    
-    bool isEmpty() const { return m_bits.isEmpty(); }
-    
-    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
-    
-    bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits; }
-    bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits; }
-    
-    unsigned hash() const { return m_bits.hash(); }
-    
-    template<typename Func>
-    void forEach(const Func& func) const
+
+    inline constexpr RegisterSet buildAndValidate() const WARN_UNUSED_RETURN;
+    inline constexpr RegisterSet buildWithLowerBits() const WARN_UNUSED_RETURN;
+    inline constexpr ScalarRegisterSet buildScalarRegisterSet() const WARN_UNUSED_RETURN;
+    inline constexpr size_t numberOfSetRegisters() const;
+    inline size_t numberOfSetGPRs() const;
+    inline size_t numberOfSetFPRs() const;
+
+    void dump(PrintStream& out) const
     {
-        m_bits.forEachSetBit(
-            [&] (size_t index) {
-                func(Reg::fromIndex(index));
-            });
+        CommaPrinter comma;
+        out.print("[");
+        for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
+                continue;
+            out.print(comma, reg);
+            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) == conservativeWidthWithoutVectors(reg)))
+                continue;
+
+            if (m_bits.get(reg.index()))
+                out.print("↓");
+            else
+                out.print("↑");
+        }
+        out.print("]");
     }
-    
-    class iterator {
-    public:
-        iterator()
-        {
-        }
-        
-        iterator(const RegisterBitmap::iterator& iter)
-            : m_iter(iter)
-        {
-        }
-        
-        Reg operator*() const { return Reg::fromIndex(*m_iter); }
-        
-        iterator& operator++()
-        {
-            ++m_iter;
-            return *this;
-        }
-        
-        bool operator==(const iterator& other) const
-        {
-            return m_iter == other.m_iter;
-        }
-        
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-        
-    private:
-        RegisterBitmap::iterator m_iter;
-    };
-    
-    iterator begin() const { return iterator(m_bits.begin()); }
-    iterator end() const { return iterator(m_bits.end()); }
-    
-private:
-    void setAny(Reg reg) { set(reg); }
-    void setAny(JSValueRegs regs) { set(regs); }
-    void setAny(const RegisterSet& set) { merge(set); }
-    void setMany() { }
+
+    inline constexpr bool operator==(const RegisterSetBuilder& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
+    inline constexpr bool operator!=(const RegisterSetBuilder& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
+
+protected:
+    inline constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); add(reg, IgnoreVectors); }
+    inline constexpr void setAny(JSValueRegs regs) { add(regs, IgnoreVectors); }
+    inline constexpr void setAny(const RegisterSetBuilder& set) { merge(set); }
+    inline constexpr void setMany() { }
     template<typename RegType, typename... Regs>
-    void setMany(RegType reg, Regs... regs)
+    inline constexpr void setMany(RegType reg, Regs... regs)
     {
         setAny(reg);
         setMany(regs...);
@@ -197,13 +167,359 @@ private:
     // These offsets mirror the logic in Reg.h.
     static constexpr unsigned gprOffset = 0;
     static constexpr unsigned fprOffset = gprOffset + MacroAssembler::numGPRs;
-    
+
+    RegisterBitmap m_bits = { };
+    RegisterBitmap m_upperBits = { };
+
+public:
+    JS_EXPORT_PRIVATE static RegisterSet allGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet allFPRs();
+    JS_EXPORT_PRIVATE static RegisterSet allRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet allScalarRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet macroClobberedRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet runtimeTagRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
+    JS_EXPORT_PRIVATE static RegisterSet calleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet vmCalleeSaveRegisters(); // Callee save registers that might be saved and used by any tier.
+    JS_EXPORT_PRIVATE static RegisterAtOffsetList* vmCalleeSaveRegisterOffsets();
+    JS_EXPORT_PRIVATE static RegisterSet llintBaselineCalleeSaveRegisters(); // Registers saved and used by the LLInt.
+    JS_EXPORT_PRIVATE static RegisterSet dfgCalleeSaveRegisters(); // Registers saved and used by the DFG JIT.
+    JS_EXPORT_PRIVATE static RegisterSet ftlCalleeSaveRegisters(); // Registers that might be saved and used by the FTL JIT.
+    JS_EXPORT_PRIVATE static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
+    JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
+    JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForJSCall(RegisterSetBuilder live);
+    JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForCCall(RegisterSetBuilder live);
+};
+
+class RegisterSet final {
+    friend ScalarRegisterSet;
+    friend RegisterSetBuilder;
+
+    constexpr explicit inline RegisterSet(const RegisterSetBuilder& set)
+        : m_bits(set.m_bits)
+        , m_upperBits(set.m_upperBits)
+    {
+        m_bits.merge(m_upperBits);
+    }
+
+public:
+    constexpr RegisterSet() = default;
+
+    inline constexpr bool contains(Reg reg, Width width) const
+    {
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        if (LIKELY(width < conservativeWidth(reg)) || conservativeWidth(reg) <= conservativeWidthWithoutVectors(reg))
+            return m_bits.get(reg.index());
+        return m_bits.get(reg.index()) && m_upperBits.get(reg.index());
+    }
+
+    inline constexpr bool contains(Reg reg, IgnoreVectorsTag) const
+    {
+        return contains(reg, conservativeWidthWithoutVectors(reg));
+    }
+
+    inline size_t numberOfSetGPRs() const
+    {
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSetBuilder::allGPRs().m_bits);
+        return temp.count();
+    }
+
+    inline size_t numberOfSetFPRs() const
+    {
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSetBuilder::allFPRs().m_bits);
+        return temp.count();
+    }
+
+    inline constexpr size_t numberOfSetRegisters() const
+    {
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        return m_bits.count();
+    }
+
+    inline size_t byteSizeOfSetRegisters() const
+    {
+#if CPU(REGISTER64)
+        return (m_bits.count() + m_upperBits.count()) * sizeof(CPURegister);
+#else
+        auto effectiveGPRCount = numberOfSetFPRs()
+            ? WTF::roundUpToMultipleOf<2>(numberOfSetGPRs())
+            : numberOfSetGPRs();
+        return effectiveGPRCount * bytesForWidth(pointerWidth()) + numberOfSetFPRs() * sizeof(double);
+#endif
+    }
+
+    inline constexpr bool subsumes(const RegisterSet& other) const
+    {
+        return m_bits.subsumes(other.m_bits) && m_upperBits.subsumes(other.m_upperBits);
+    }
+
+    inline constexpr bool isEmpty() const
+    {
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        return m_bits.isEmpty();
+    }
+
+    inline constexpr RegisterSet& includeWholeRegisterWidth()
+    {
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        m_upperBits.merge(m_bits);
+        return *this;
+    }
+
+    inline constexpr ScalarRegisterSet buildScalarRegisterSet() const WARN_UNUSED_RETURN;
+
+    template<typename Func>
+    inline constexpr void forEach(const Func& func) const
+    {
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        m_bits.forEachSetBit(
+            [&] (size_t index) {
+                ASSERT(m_bits.get(index) >= m_upperBits.get(index));
+                func(Reg::fromIndex(index));
+            });
+    }
+
+    template<typename Func>
+    inline constexpr void forEachWithWidth(const Func& func) const
+    {
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        m_bits.forEachSetBit(
+            [&] (size_t index) {
+                ASSERT(m_bits.get(index) >= m_upperBits.get(index));
+                Reg reg = Reg::fromIndex(index);
+                Width includedWidth = m_upperBits.get(index) ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg);
+                func(reg, includedWidth);
+            });
+    }
+
+    class iterator {
+    public:
+        inline constexpr iterator() { }
+
+        inline constexpr iterator(const RegisterBitmap::iterator& iter)
+            : m_iter(iter)
+        {
+        }
+
+        inline constexpr Reg operator*() const { return Reg::fromIndex(*m_iter); }
+
+        iterator& operator++()
+        {
+            ++m_iter;
+            return *this;
+        }
+
+        inline constexpr bool operator==(const iterator& other) const
+        {
+            return m_iter == other.m_iter;
+        }
+
+        inline constexpr bool operator!=(const iterator& other) const
+        {
+            return !(*this == other);
+        }
+
+    private:
+        RegisterBitmap::iterator m_iter;
+    };
+
+    inline constexpr iterator begin() const { return iterator(m_bits.begin()); }
+    inline constexpr iterator end() const { return iterator(m_bits.end()); }
+
+    inline constexpr RegisterSet& add(Reg reg, Width width)
+    {
+        ASSERT(!!reg);
+        m_bits.set(reg.index());
+
+        if (UNLIKELY(width > conservativeWidthWithoutVectors(reg) && conservativeWidth(reg) > conservativeWidthWithoutVectors(reg)))
+            m_upperBits.set(reg.index());
+        return *this;
+    }
+
+    inline constexpr void add(Reg reg, IgnoreVectorsTag)
+    {
+        add(reg, conservativeWidthWithoutVectors(reg));
+    }
+
+    inline constexpr RegisterSet& add(JSValueRegs regs, IgnoreVectorsTag)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            add(regs.tagGPR(), IgnoreVectors);
+        add(regs.payloadGPR(), IgnoreVectors);
+        return *this;
+    }
+
+    inline constexpr RegisterSet& remove(Reg reg)
+    {
+        ASSERT(!!reg);
+        m_bits.clear(reg.index());
+        m_upperBits.clear(reg.index());
+        return *this;
+    }
+
+    inline constexpr RegisterSet& remove(JSValueRegs regs)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            remove(regs.tagGPR());
+        remove(regs.payloadGPR());
+        return *this;
+    }
+
+    inline constexpr bool hasAnyWideRegisters() const { return m_upperBits.count(); }
+
+    inline constexpr RegisterSet& merge(const RegisterSet& other)
+    {
+        m_bits.merge(other.m_bits);
+        m_upperBits.merge(other.m_upperBits);
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        return *this;
+    }
+
+    void dump(PrintStream& out) const
+    {
+        CommaPrinter comma;
+        out.print("[");
+        for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
+                continue;
+            out.print(comma, reg);
+            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) == conservativeWidthWithoutVectors(reg)))
+                continue;
+
+            if (m_bits.get(reg.index()))
+                out.print("↓");
+            else
+                out.print("↑");
+        }
+        out.print("]");
+    }
+
+    inline constexpr bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
+    inline constexpr bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
+
+private:
+    RegisterBitmap m_bits = { };
+    RegisterBitmap m_upperBits = { };
+};
+
+constexpr RegisterSetBuilder::RegisterSetBuilder(RegisterSet set)
+    : m_bits(set.m_bits)
+    , m_upperBits(set.m_upperBits)
+{ }
+
+constexpr RegisterSet RegisterSetBuilder::buildAndValidate() const
+{
+#if ASSERT_ENABLED
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+        if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
+            continue;
+
+        ASSERT(!m_upperBits.get(reg.index()) || m_bits.get(reg.index()));
+    }
+#endif
+    return RegisterSet(*this);
+}
+
+constexpr RegisterSet RegisterSetBuilder::buildWithLowerBits() const
+{
+    return RegisterSet(*this);
+}
+
+constexpr size_t RegisterSetBuilder::numberOfSetRegisters() const { return buildAndValidate().numberOfSetRegisters(); }
+size_t RegisterSetBuilder::numberOfSetGPRs() const { return buildAndValidate().numberOfSetGPRs(); }
+size_t RegisterSetBuilder::numberOfSetFPRs() const { return buildAndValidate().numberOfSetFPRs(); }
+
+class ScalarRegisterSet final {
+    friend RegisterSet;
+    friend RegisterSetBuilder;
+
+    inline constexpr ScalarRegisterSet(const RegisterSet& registers)
+        : m_bits(registers.m_bits)
+    {
+    }
+
+public:
+    constexpr ScalarRegisterSet() { }
+
+    inline constexpr unsigned hash() const { return m_bits.hash(); }
+    inline constexpr bool operator==(const ScalarRegisterSet& other) const { return m_bits == other.m_bits; }
+    inline constexpr bool operator!=(const ScalarRegisterSet& other) const { return m_bits != other.m_bits; }
+
+    inline constexpr RegisterSet toRegisterSet() const WARN_UNUSED_RETURN
+    {
+        RegisterSet result;
+        m_bits.forEachSetBit(
+            [&] (size_t index) {
+                result.add(Reg::fromIndex(index), conservativeWidthWithoutVectors(Reg::fromIndex(index)));
+            });
+        return result;
+    }
+
+    inline constexpr void add(Reg reg, IgnoreVectorsTag)
+    {
+        ASSERT(!!reg);
+        m_bits.set(reg.index());
+    }
+
+    inline constexpr void add(JSValueRegs regs, IgnoreVectorsTag)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            add(regs.tagGPR(), IgnoreVectors);
+        add(regs.payloadGPR(), IgnoreVectors);
+    }
+
+    inline constexpr void remove(Reg reg)
+    {
+        ASSERT(!!reg);
+        m_bits.clear(reg.index());
+    }
+
+    inline constexpr bool contains(Reg reg, IgnoreVectorsTag) const
+    {
+        ASSERT(!!reg);
+        return m_bits.get(reg.index());
+    }
+
+    inline size_t numberOfSetGPRs() const
+    {
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSetBuilder::allGPRs().m_bits);
+        return temp.count();
+    }
+
+    inline size_t numberOfSetFPRs() const
+    {
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSetBuilder::allFPRs().m_bits);
+        return temp.count();
+    }
+
+    inline constexpr size_t numberOfSetRegisters() const
+    {
+        return m_bits.count();
+    }
+
+private:
     RegisterBitmap m_bits;
 };
 
-struct RegisterSetHash {
-    static unsigned hash(const RegisterSet& set) { return set.hash(); }
-    static bool equal(const RegisterSet& a, const RegisterSet& b) { return a == b; }
+constexpr ScalarRegisterSet RegisterSetBuilder::buildScalarRegisterSet() const
+{
+    return ScalarRegisterSet(buildAndValidate());
+}
+
+constexpr ScalarRegisterSet RegisterSet::buildScalarRegisterSet() const
+{
+    return ScalarRegisterSet(*this);
+}
+
+struct RegisterSetBuilderHash {
+    static constexpr unsigned hash(const ScalarRegisterSet& set) { return set.hash(); }
+    static constexpr bool equal(const ScalarRegisterSet& a, const ScalarRegisterSet& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
@@ -212,7 +528,7 @@ struct RegisterSetHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::RegisterSet> : JSC::RegisterSetHash { };
+template<> struct DefaultHash<JSC::ScalarRegisterSet> : JSC::RegisterSetBuilderHash { };
 
 } // namespace WTF
 

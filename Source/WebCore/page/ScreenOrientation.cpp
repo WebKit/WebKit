@@ -28,6 +28,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -109,13 +110,15 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
         promise->reject(Exception { SecurityError, "Only first party documents can lock the screen orientation"_s });
         return;
     }
+    if (document->settings().fullscreenRequirementForScreenOrientationLockingEnabled()) {
 #if ENABLE(FULLSCREEN_API)
-    if (!document->fullscreenManager().isFullscreen()) {
+        if (!document->fullscreenManager().isFullscreen()) {
 #else
-    if (true) {
+        if (true) {
 #endif
-        promise->reject(Exception { SecurityError, "Locking the screen orientation is only allowed when in fullscreen"_s });
-        return;
+            promise->reject(Exception { SecurityError, "Locking the screen orientation is only allowed when in fullscreen"_s });
+            return;
+        }
     }
     if (!isSupportedLockType(lockType)) {
         promise->reject(Exception { NotSupportedError, "Lock type should be one of { \"any\", \"natural\", \"portrait\", \"landscape\" }"_s });

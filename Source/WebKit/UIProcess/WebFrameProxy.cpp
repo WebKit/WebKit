@@ -70,6 +70,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, Frame
     , m_process(process)
     , m_frameID(frameID)
 {
+    ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, this);
 
     WebProcessPool::statistics().wkFrameCount++;
@@ -85,8 +86,8 @@ WebFrameProxy::~WebFrameProxy()
     if (m_navigateCallback)
         m_navigateCallback({ }, { });
 
-    if (auto iterator = allFrames().find(m_frameID); iterator->value == this)
-        allFrames().remove(iterator);
+    ASSERT(allFrames().get(m_frameID) == this);
+    allFrames().remove(m_frameID);
 }
 
 void WebFrameProxy::webProcessWillShutDown()

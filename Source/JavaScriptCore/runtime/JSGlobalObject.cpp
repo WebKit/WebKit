@@ -167,6 +167,7 @@
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "JSWebAssemblyStruct.h"
 #include "JSWebAssemblyTable.h"
 #include "JSWebAssemblyTag.h"
 #include "JSWithScope.h"
@@ -258,6 +259,8 @@
 #include "WebAssemblyModuleRecord.h"
 #include "WebAssemblyRuntimeErrorConstructor.h"
 #include "WebAssemblyRuntimeErrorPrototype.h"
+#include "WebAssemblyStructConstructor.h"
+#include "WebAssemblyStructPrototype.h"
 #include "WebAssemblyTableConstructor.h"
 #include "WebAssemblyTablePrototype.h"
 #include "WebAssemblyTagConstructor.h"
@@ -2838,19 +2841,21 @@ void slowValidateCell(JSGlobalObject* globalObject)
     ASSERT_GC_OBJECT_INHERITS(globalObject, JSGlobalObject::info());
 }
 
-void JSGlobalObject::setRemoteDebuggingEnabled(bool enabled)
+void JSGlobalObject::setInspectable(bool inspectable)
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    m_inspectorDebuggable->setRemoteDebuggingAllowed(enabled);
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    m_inspectorDebuggable->setInspectable(inspectable);
 #else
-    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(inspectable);
 #endif
 }
 
-bool JSGlobalObject::remoteDebuggingEnabled() const
+bool JSGlobalObject::inspectable() const
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    return m_inspectorDebuggable->remoteDebuggingAllowed();
+    // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
+    return m_inspectorDebuggable->inspectable();
 #else
     return false;
 #endif

@@ -42,6 +42,7 @@ class Font;
 class GlyphBuffer;
 class Image;
 class SourceImage;
+class VideoFrame;
 
 struct ImagePaintingOptions;
 
@@ -268,10 +269,11 @@ private:
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
 #endif
+#if ENABLE(WEB_CODECS)
+    WEBCORE_EXPORT void paintVideoFrame(VideoFrame&, const FloatRect&, bool shouldDiscardAlpha) final;
+#endif
 
     WEBCORE_EXPORT void applyDeviceScaleFactor(float) final;
-
-    WEBCORE_EXPORT FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) final;
 
     void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextState&);

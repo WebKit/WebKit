@@ -45,7 +45,7 @@ public:
     const String& url() const;
     const RefPtr<ReportBody>& body() const;
 
-    static Ref<FormData> createReportFormDataForViolation(const String& type, const URL&, const String& userAgent, const Function<void(JSON::Object&)>& populateBody);
+    static Ref<FormData> createReportFormDataForViolation(const String& type, const URL&, const String& userAgent, const String& destination, const Function<void(JSON::Object&)>& populateBody);
 
 private:
     explicit Report(const String& type, const String& url, RefPtr<ReportBody>&&);

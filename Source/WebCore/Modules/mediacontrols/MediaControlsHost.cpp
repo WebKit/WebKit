@@ -127,7 +127,7 @@ String MediaControlsHost::layoutTraitsClassName() const
     return "IOSLayoutTraits"_s;
 #elif PLATFORM(WATCHOS)
     return "WatchOSLayoutTraits"_s;
-#elif PLATFORM(GTK) || PLATFORM(WPE)
+#elif PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN_CAIRO)
     return "AdwaitaLayoutTraits"_s;
 #else
     ASSERT_NOT_REACHED();

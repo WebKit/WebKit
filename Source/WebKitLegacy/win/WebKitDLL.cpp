@@ -38,7 +38,6 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
-#include <WebCore/RenderThemeWin.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/Widget.h>
@@ -46,6 +45,10 @@
 #include <wchar.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
+
+#if !PLATFORM(WIN_CAIRO)
+#include <WebCore/RenderThemeWin.h>
+#endif
 
 using namespace WebCore;
 
@@ -92,7 +95,9 @@ STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRe
             return TRUE;
 
         case DLL_PROCESS_DETACH:
+#if !PLATFORM(WIN_CAIRO)
             WebCore::RenderThemeWin::setWebKitIsBeingUnloaded();
+#endif
             break;
 
         case DLL_THREAD_ATTACH:

@@ -61,9 +61,9 @@ RenderBox* OrderIterator::next()
                     return nullptr;
             } else
                 m_isReset = false;
-            m_currentChild = m_containerBox.firstChildBox();
+            m_currentChild = m_reversedOrder ? m_containerBox.lastChildBox() : m_containerBox.firstChildBox();
         } else {
-            m_currentChild = m_currentChild->nextSiblingBox();
+            m_currentChild = m_reversedOrder ? m_currentChild->previousSiblingBox() : m_currentChild->nextSiblingBox();
         }
     } while (!m_currentChild || m_currentChild->style().order() != *m_orderValuesIterator);
     
@@ -80,6 +80,20 @@ void OrderIterator::reset()
 bool OrderIterator::shouldSkipChild(const RenderObject& child) const
 {
     return child.isOutOfFlowPositioned() || child.isExcludedFromNormalLayout();
+}
+
+OrderIterator OrderIterator::reverse()
+{
+    OrderIterator reversedItr(*this);
+    OrderValues reversedValues;
+
+    for (auto valuesItr = m_orderValues.rbegin(); valuesItr != m_orderValues.rend(); valuesItr++)
+        reversedValues.insert(*valuesItr);
+    reversedItr.m_orderValues = reversedValues;
+    reversedItr.m_reversedOrder = !m_reversedOrder;
+    reversedItr.reset();
+
+    return reversedItr;
 }
 
 OrderIteratorPopulator::~OrderIteratorPopulator()

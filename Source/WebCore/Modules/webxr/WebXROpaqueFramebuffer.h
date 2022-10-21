@@ -32,6 +32,7 @@
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
 #include <wtf/Ref.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
@@ -80,6 +81,10 @@ private:
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     void* m_ioSurfaceTextureHandle { nullptr };
     bool m_ioSurfaceTextureHandleIsShared { false };
+#endif
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+    RetainPtr<id> m_completionEvent { nullptr };
+    uint64_t m_renderingFrameIndex { 0 };
 #endif
 };
 

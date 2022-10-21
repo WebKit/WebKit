@@ -36,6 +36,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/ScreenOrientationType.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -209,6 +210,16 @@ void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame
 void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     m_client.beganExitFullScreen(initialFrame, finalFrame);
+}
+
+bool WebFullScreenManagerProxy::lockFullscreenOrientation(WebCore::ScreenOrientationType orientation)
+{
+    return m_client.lockFullscreenOrientation(orientation);
+}
+
+void WebFullScreenManagerProxy::unlockFullscreenOrientation()
+{
+    m_client.unlockFullscreenOrientation();
 }
 
 } // namespace WebKit

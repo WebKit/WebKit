@@ -86,7 +86,6 @@ struct EditorState {
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
 #endif
-    bool isMissingPostLayoutData { true };
 
     struct PostLayoutData {
         uint32_t typingAttributes { AttributeNone };
@@ -144,32 +143,12 @@ struct EditorState {
         bool canCut { false };
         bool canCopy { false };
         bool canPaste { false };
-
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, PostLayoutData&);
     };
 
-    const PostLayoutData& postLayoutData() const;
-    PostLayoutData& postLayoutData();
+    bool isMissingPostLayoutData() const { return !postLayoutData; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, EditorState&);
-
-private:
-    PostLayoutData m_postLayoutData;
+    std::optional<PostLayoutData> postLayoutData;
 };
-
-inline auto EditorState::postLayoutData() -> PostLayoutData&
-{
-    ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");
-    return m_postLayoutData;
-}
-
-inline auto EditorState::postLayoutData() const -> const PostLayoutData&
-{
-    ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");
-    return m_postLayoutData;
-}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const EditorState&);
 

@@ -1,4 +1,5 @@
 
-FAIL Percentages which can be transformed into keywords should be for serialization assert_equals: expected "ultra-condensed medium serif" but got "50% medium serif"
-FAIL Percentages which cannot be transformed into keywords should prevent the font shorthand from serializing assert_equals: expected "" but got "25% medium serif"
+PASS Keywords should appear in serialization of font and fontStretch
+PASS Percentages which can be transformed into keywords should be for serialization of font, but not of fontStretch
+PASS Percentages which cannot be transformed into keywords should prevent the font shorthand from serializing, but not fontStretch
 

@@ -996,14 +996,6 @@ class WebkitFlatpak:
                 "NUMBER_OF_PROCESSORS": n_cores,
             })
 
-        # Set PKG_CONFIG_PATH in sandbox so uninstalled WebKit.pc files can be used.
-        pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
-        if pkg_config_path:
-            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
-        else:
-            pkg_config_path = self.build_path
-        sandbox_environment["PKG_CONFIG_PATH"] = pkg_config_path
-
         if not building_local_deps and args[0] != "sccache":
             # Merge local dependencies build env vars in sandbox environment, without overriding
             # previously set PATH values.

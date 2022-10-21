@@ -38,7 +38,7 @@
 #import "Region.h"
 #import "ScrollingStateTree.h"
 #import "ScrollingThread.h"
-#import "ScrollingTreeFixedNode.h"
+#import "ScrollingTreeFixedNodeCocoa.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 #import "ScrollingTreeMac.h"
 #import "ScrollingTreeStickyNodeCocoa.h"

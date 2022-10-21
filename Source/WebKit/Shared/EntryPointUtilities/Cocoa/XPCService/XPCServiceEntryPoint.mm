@@ -127,6 +127,12 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
         extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
 #endif
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+    auto isWebcontentCrashy = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-webcontent-crashy"));
+    if (!isWebcontentCrashy.isEmpty())
+        extraInitializationData.add("is-webcontent-crashy"_s, WTFMove(isWebcontentCrashy));
+#endif
+
     auto isPrewarmedProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed"));
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);

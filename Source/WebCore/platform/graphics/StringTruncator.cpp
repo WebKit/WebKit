@@ -93,10 +93,10 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     unsigned truncatedLength = omitStart + shouldInsertEllipsis + (length - omitEnd);
     ASSERT(truncatedLength <= length);
 
-    StringView(string).left(omitStart).getCharactersWithUpconvert(buffer);
+    StringView(string).left(omitStart).getCharacters(buffer);
     if (shouldInsertEllipsis)
         buffer[omitStart++] = horizontalEllipsis;
-    StringView(string).substring(omitEnd, length - omitEnd).getCharactersWithUpconvert(&buffer[omitStart]);
+    StringView(string).substring(omitEnd, length - omitEnd).getCharacters(&buffer[omitStart]);
     return truncatedLength;
 }
 
@@ -123,7 +123,7 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     unsigned truncatedLength = shouldInsertEllipsis ? keepLength + 1 : keepLength;
 
-    StringView(string).left(keepLength).getCharactersWithUpconvert(buffer);
+    StringView(string).left(keepLength).getCharacters(buffer);
     if (shouldInsertEllipsis)
         buffer[keepLength] = horizontalEllipsis;
 
@@ -137,7 +137,7 @@ static unsigned rightClipToCharacterBuffer(const String& string, unsigned length
 
     NonSharedCharacterBreakIterator it(StringView(string).left(length));
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
-    StringView(string).left(keepLength).getCharactersWithUpconvert(buffer);
+    StringView(string).left(keepLength).getCharacters(buffer);
 
     return keepLength;
 }
@@ -149,7 +149,7 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
 
     UBreakIterator* it = wordBreakIterator(StringView(string).left(length));
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
-    StringView(string).left(keepLength).getCharactersWithUpconvert(buffer);
+    StringView(string).left(keepLength).getCharacters(buffer);
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS_FAMILY)-guard.
@@ -186,10 +186,10 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
     if (shouldInsertEllipsis) {
         buffer[0] = horizontalEllipsis;
-        StringView(string).substring(adjustedStartIndex, length - adjustedStartIndex + 1).getCharactersWithUpconvert(&buffer[1]);
+        StringView(string).substring(adjustedStartIndex, length - adjustedStartIndex + 1).getCharacters(&buffer[1]);
         return length - adjustedStartIndex + 1;
     }
-    StringView(string).substring(adjustedStartIndex, length - adjustedStartIndex + 1).getCharactersWithUpconvert(&buffer[0]);
+    StringView(string).substring(adjustedStartIndex, length - adjustedStartIndex + 1).getCharacters(&buffer[0]);
     return length - adjustedStartIndex;
 }
 
@@ -224,7 +224,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = centerTruncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     } else {
         keepCount = length;
-        StringView(string).getCharactersWithUpconvert(stringBuffer);
+        StringView(string).getCharacters(stringBuffer);
         truncatedLength = length;
     }
 

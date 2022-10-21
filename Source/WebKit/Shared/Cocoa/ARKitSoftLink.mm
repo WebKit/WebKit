@@ -29,7 +29,7 @@
 
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARQuickLookPreviewItem);
 

@@ -312,11 +312,15 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     };
 
     auto getTypeFromAssertions = [&]() -> JSC::ScriptFetchParameters::Type {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
         auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(&globalObject, parametersValue, { vm.propertyNames->type.impl() });
         RETURN_IF_EXCEPTION(scope, { });
-        if (!assertions.isEmpty())
-            return JSC::ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())).value_or(JSC::ScriptFetchParameters::Type::JavaScript);
-        return JSC::ScriptFetchParameters::Type::JavaScript;
+
+        auto type = JSC::retrieveTypeAssertion(&globalObject, assertions);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        return type.value_or(JSC::ScriptFetchParameters::Type::JavaScript);
     };
 
     // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.

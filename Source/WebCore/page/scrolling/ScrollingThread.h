@@ -57,7 +57,6 @@ private:
 
     ScrollingThread();
 
-    void dispatchFunctionsFromScrollingThread();
     RunLoop& runLoop() { return m_runLoop; }
 
     Ref<RunLoop> m_runLoop;

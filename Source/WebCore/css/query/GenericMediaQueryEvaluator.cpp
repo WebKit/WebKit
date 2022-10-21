@@ -83,7 +83,7 @@ static EvaluationResult evaluateLengthComparison(LayoutUnit size, const std::opt
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-EvaluationResult GenericMediaQueryEvaluatorBase::evaluateLengthFeature(const Feature& feature, LayoutUnit length, const CSSToLengthConversionData& conversionData) const
+EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit length, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!length);
@@ -120,7 +120,7 @@ static EvaluationResult evaluateRatioComparison(double ratio, const std::optiona
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-EvaluationResult GenericMediaQueryEvaluatorBase::evaluateRatioFeature(const Feature& feature, double ratio) const
+EvaluationResult evaluateRatioFeature(const Feature& feature, double ratio)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!ratio);
@@ -131,7 +131,7 @@ EvaluationResult GenericMediaQueryEvaluatorBase::evaluateRatioFeature(const Feat
     return leftResult & rightResult;
 }
 
-EvaluationResult GenericMediaQueryEvaluatorBase::evaluateDiscreteFeature(const Feature& feature, CSSValueID expectedValue) const
+EvaluationResult evaluateDiscreteFeature(const Feature& feature, CSSValueID expectedValue)
 {
     if (!feature.rightComparison)
         return EvaluationResult::Unknown;

@@ -37,6 +37,15 @@ MediaQueryParser::MediaQueryParser(const CSSParserContext& context)
 {
 }
 
+Vector<const FeatureSchema*> MediaQueryParser::featureSchemas()
+{
+    static MainThreadNeverDestroyed<FeatureSchema> widthSchema { FeatureSchema { "width"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
+    static MainThreadNeverDestroyed<FeatureSchema> heightSchema { FeatureSchema { "height"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
+    static MainThreadNeverDestroyed<FeatureSchema> orientationSchema { FeatureSchema { "orientation"_s, FeatureSchema::Type::Discrete, { }, { CSSValuePortrait, CSSValueLandscape } } };
+
+    return { &widthSchema.get(), &heightSchema.get(), &orientationSchema.get() };
+}
+
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)
 {
     MediaQueryList list;

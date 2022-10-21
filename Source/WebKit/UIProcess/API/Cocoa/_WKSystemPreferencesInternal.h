@@ -26,5 +26,5 @@
 #import "_WKSystemPreferences.h"
 
 constexpr auto LDMEnabledKey = "LDMGlobalEnabled";
-constexpr auto WKCaptivePortalModeEnabledKey = "WKCaptivePortalModeEnabled"_s;
-constexpr auto WKCaptivePortalModeContainerConfigurationChangedNotification = @"WKCaptivePortalModeContainerConfigurationChanged";
+constexpr auto WKLockdownModeEnabledKey = "WKLockdownModeEnabled"_s;
+constexpr auto WKLockdownModeContainerConfigurationChangedNotification = @"WKLockdownModeContainerConfigurationChanged";

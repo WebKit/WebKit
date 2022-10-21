@@ -70,12 +70,12 @@ private:
 
     // AudioSourceProvider
     void provideInput(AudioBus*, size_t) final;
-    void setClient(AudioSourceProviderClient*) final;
+    void setClient(WeakPtr<AudioSourceProviderClient>&&) final;
 
     void prepare(const AudioStreamBasicDescription&);
 
     Lock m_lock;
-    AudioSourceProviderClient* m_client { nullptr };
+    WeakPtr<AudioSourceProviderClient> m_client;
 
     std::optional<CAAudioStreamDescription> m_inputDescription;
     std::optional<CAAudioStreamDescription> m_outputDescription;

@@ -32,22 +32,7 @@
 
 namespace WebKit::WebGPU {
 
-struct CommandBufferDescriptor : public ObjectDescriptorBase {
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-    }
-
-    template<class Decoder> static std::optional<CommandBufferDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase) } };
-    }
-};
+struct CommandBufferDescriptor : public ObjectDescriptorBase { };
 
 } // namespace WebKit::WebGPU
 

@@ -42,8 +42,6 @@ public:
     WEBCORE_EXPORT const String& type() const final;
     WEBCORE_EXPORT const String& message() const;
 
-    WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation() const;
-
 private:
     TestReportBody(String&& message);
 

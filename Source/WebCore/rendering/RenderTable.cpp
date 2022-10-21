@@ -901,6 +901,14 @@ RenderTableSection* RenderTable::topNonEmptySection() const
     return section;
 }
 
+RenderTableSection* RenderTable::bottomNonEmptySection() const
+{
+    auto* section = bottomSection();
+    if (section && !section->numRows())
+        section = sectionAbove(section, SkipEmptySections);
+    return section;
+}
+
 void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 {
     // We split the column at "position", taking "firstSpan" cells from the span.
@@ -1539,6 +1547,22 @@ std::optional<LayoutUnit> RenderTable::firstLineBaseline() const
 
     // FIXME: A table row always has a baseline per CSS 2.1. Will this return the right value?
     return std::optional<LayoutUnit>();
+}
+
+std::optional<LayoutUnit> RenderTable::lastLineBaseline() const
+{
+    if (isWritingModeRoot() || shouldApplyLayoutContainment())
+        return { };
+
+    recalcSectionsIfNeeded();
+
+    auto* tableSection = bottomNonEmptySection();
+    if (!tableSection)
+        return { };
+
+    if (auto baseline = tableSection->lastLineBaseline())
+        return LayoutUnit { baseline.value() + tableSection->logicalTop() };
+    return { };
 }
 
 LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy, PaintPhase phase) const

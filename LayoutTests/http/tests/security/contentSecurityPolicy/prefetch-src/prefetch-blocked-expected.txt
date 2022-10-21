@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/cache/resources/prefetched-main-resource.py because it does not appear in the prefetch-src directive of the Content Security Policy.
+PASS

@@ -217,7 +217,7 @@ class StatusBubble(View):
         return message
 
     def _should_display_step(self, step):
-        return not filter(lambda step_to_hide: re.search(step_to_hide, step.state_string), StatusBubble.STEPS_TO_HIDE)
+        return not [step_to_hide for step_to_hide in StatusBubble.STEPS_TO_HIDE if re.search(step_to_hide, step.state_string)]
 
     def _does_build_contains_any_failed_step(self, build):
         for step in build.step_set.all():

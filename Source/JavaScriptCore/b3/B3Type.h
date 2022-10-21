@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Common.h"
+#include "Width.h"
 #include <wtf/StdLibExtras.h>
 
 #if !ASSERT_ENABLED

@@ -1,0 +1,18 @@
+
+PASS Check that src: local(  A  ) is valid
+PASS Check that src: local(A B) is valid
+PASS Check that src: local(A    B) is valid
+PASS Check that src: local(   A  B   ) is valid
+FAIL Check that src: local(default) is invalid assert_equals: expected false but got true
+FAIL Check that src: local(inherit) is invalid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local(revert) is invalid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local(unset) is invalid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local(default A) is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local(inherit A) is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local(revert A) is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local(unset A) is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local("default") is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local("inherit") is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local("revert") is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+FAIL Check that src: local("unset") is valid assert_equals: testSheet should initially be empty expected 0 but got 1
+

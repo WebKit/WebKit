@@ -39,7 +39,7 @@ struct ScratchBuffer;
 
 class ScratchRegisterAllocator {
 public:
-    ScratchRegisterAllocator() { }
+    ScratchRegisterAllocator() = default;
     ScratchRegisterAllocator(const RegisterSet& usedRegisters);
     ~ScratchRegisterAllocator();
 
@@ -86,19 +86,15 @@ public:
 
     PreservedState preserveReusedRegistersByPushing(AssemblyHelpers& jit, ExtraStackSpace);
     void restoreReusedRegistersByPopping(AssemblyHelpers& jit, const PreservedState&);
-    
-    RegisterSet usedRegistersForCall() const;
-    
-    unsigned desiredScratchBufferSizeForCall() const;
 
     static unsigned preserveRegistersToStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, unsigned extraPaddingInBytes);
     static void restoreRegistersFromStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraPaddingInBytes);
 
 private:
-    RegisterSet m_usedRegisters;
-    RegisterSet m_lockedRegisters;
-    RegisterSet m_scratchRegisters;
-    unsigned m_numberOfReusedRegisters;
+    RegisterSet m_usedRegisters { };
+    RegisterSet m_scratchRegisters { };
+    ScalarRegisterSet m_lockedRegisters { };
+    unsigned m_numberOfReusedRegisters { 0 };
 };
 
 } // namespace JSC

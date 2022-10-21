@@ -17,7 +17,11 @@
         --expertise-shadow: 0px 5px 10px 0px hsla(0, 0%, 100%, 0.1);
         --hover-text-color: hsl(0, 0%, 100%);
     }
+    img.github {
+        filter: invert(100%);
+    }
 }
+
 article ul {
     list-style: none;
     padding-left: 0;
@@ -39,11 +43,11 @@ article ul > li {
 
 li span,
 li em {
+    display: block;
     font-size: 1.3rem;
 }
 
 li em {
-    display: block;
     line-height: 2rem;
 }
 
@@ -87,7 +91,6 @@ li em {
     }
 
 }
-
 </style>
 	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
@@ -166,6 +169,7 @@ function parseContributorsJSON(text) {
             kind: contributor.status ? contributor.status : 'contributor',
             emails: contributor.emails,
             nicks: contributor.nicks,
+            github: contributor.github,
             expertise: contributor.expertise
         });
     });
@@ -191,29 +195,37 @@ function formatAffiliation(contributor) {
 
 function addText(container, text) { container.appendChild(document.createTextNode(text)); }
 
-function addWrappedText(container, tagName, attributes, text) {
+function addElement(container, tagName, attributes, text = "") {
     var element = document.createElement(tagName);
-    for (var name in attributes)
+    for (var name in attributes) {
         element.setAttribute(name, attributes[name]);
-    addText(element, text);
+    }
+    if (text) {
+        addText(element, text);
+    }
     container.appendChild(element);
 }
 
 function populateContributorListItem(listItem, contributor) {
-    addWrappedText(listItem, 'strong', {'class': 'name'}, contributor.name);
+    addElement(listItem, 'strong', {'class': 'name'}, contributor.name);
+    if (contributor.github) {
+        addText(listItem, ' ');
+        addElement(listItem, 'a', {'href': 'https://github.com/' + contributor.github });
+        addElement(listItem.lastChild, 'img', {'src': 'https://raw.githubusercontent.com/primer/octicons/main/icons/mark-github-16.svg', 'width': '16', 'height': '16', 'alt': contributor.github, 'class': 'github'});
+    }
     if (contributor.nicks) {
-        addWrappedText(listItem, 'span', {'class': 'nicks'}, ' (' + contributor.nicks.join(', ') + ')');
+        addElement(listItem, 'span', {'class': 'nicks'}, ' (' + contributor.nicks.join(', ') + ')');
     }
 
     var affiliation = formatAffiliation(contributor);
     if (affiliation) {
         addText(listItem, ' ');
-        addWrappedText(listItem, 'em', {'class': 'affiliation'}, affiliation);
+        addElement(listItem, 'em', {'class': 'affiliation'}, affiliation);
     }
 
     if (contributor.expertise) {
         var expertiseList = document.createElement('ul');
-        addWrappedText(expertiseList, 'li', {'class': 'expertise'}, contributor.expertise);
+        addElement(expertiseList, 'li', {'class': 'expertise'}, contributor.expertise);
         listItem.appendChild(expertiseList);
     }
 }

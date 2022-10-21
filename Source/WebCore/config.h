@@ -45,6 +45,9 @@
 #ifndef JSC_API_DEPRECATED
 #define JSC_API_DEPRECATED(...)
 #endif
+#ifndef JSC_API_DEPRECATED_WITH_REPLACEMENT
+#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
+#endif
 #endif
 
 #ifdef __cplusplus

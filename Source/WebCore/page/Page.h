@@ -329,8 +329,8 @@ public:
 
 
 #if ENABLE(REMOTE_INSPECTOR)
-    WEBCORE_EXPORT bool remoteInspectionAllowed() const;
-    WEBCORE_EXPORT void setRemoteInspectionAllowed(bool);
+    WEBCORE_EXPORT bool inspectable() const;
+    WEBCORE_EXPORT void setInspectable(bool);
     WEBCORE_EXPORT String remoteInspectionNameOverride() const;
     WEBCORE_EXPORT void setRemoteInspectionNameOverride(const String&);
     void remoteInspectorInformationDidChange() const;
@@ -944,6 +944,9 @@ public:
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
+
+    URL sanitizeForCopyOrShare(const URL&) const;
+    String sanitizeForCopyOrShare(const String&) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);
