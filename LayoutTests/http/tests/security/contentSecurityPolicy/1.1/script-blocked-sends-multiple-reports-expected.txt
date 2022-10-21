@@ -13,7 +13,7 @@ HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-bl
 REQUEST_METHOD: POST
 REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.py?test=script-blocked-sends-multiple-reports-report-only
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","referrer":"","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src http://example.com 'unsafe-inline'; report-uri ../resources/save-report.py?test=script-blocked-sends-multiple-reports-report-only","blocked-uri":"http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js","status-code":200}}
+{"type":"csp-violation","url":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","referrer":"","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src http://example.com 'unsafe-inline'; report-uri ../resources/save-report.py?test=script-blocked-sends-multiple-reports-report-only","blocked-uri":"http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js","status-code":200}}
 
 --------
 Frame: 'enforced-1'
@@ -25,7 +25,7 @@ HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-bl
 REQUEST_METHOD: POST
 REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.py?test=script-blocked-sends-multiple-reports-enforced-1
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","referrer":"","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src http://127.0.0.1:8000 'unsafe-inline'; report-uri ../resources/save-report.py?test=script-blocked-sends-multiple-reports-enforced-1","blocked-uri":"http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js","status-code":200}}
+{"type":"csp-violation","url":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","referrer":"","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src http://127.0.0.1:8000 'unsafe-inline'; report-uri ../resources/save-report.py?test=script-blocked-sends-multiple-reports-enforced-1","blocked-uri":"http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js","status-code":200}}
 
 --------
 Frame: 'enforced-2'
@@ -37,4 +37,4 @@ HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-bl
 REQUEST_METHOD: POST
 REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.py?test=script-blocked-sends-multiple-reports-enforced-2
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","referrer":"","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src http://127.0.0.1:8000 https://127.0.0.1:8443 'unsafe-inline'; report-uri ../resources/save-report.py?test=script-blocked-sends-multiple-reports-enforced-2","blocked-uri":"http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js","status-code":200}}
+{"type":"csp-violation","url":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py","referrer":"","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src http://127.0.0.1:8000 https://127.0.0.1:8443 'unsafe-inline'; report-uri ../resources/save-report.py?test=script-blocked-sends-multiple-reports-enforced-2","blocked-uri":"http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js","status-code":200}}

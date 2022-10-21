@@ -118,7 +118,7 @@ void sendCOEPInheritenceViolation(ReportingClient& reportingClient, const URL& e
     if (endpoint.isEmpty())
         return;
 
-    auto reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), [&](auto& body) {
+    auto reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
         body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("type"_s, type);
         body.setString("blockedURL"_s, PingLoader::sanitizeURLForReport(blockedURL));
@@ -136,7 +136,7 @@ void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedder
     if (endpoint.isEmpty())
         return;
 
-    auto reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), [&](auto& body) {
+    auto reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
         body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("type"_s, "corp"_s);
         body.setString("blockedURL"_s, PingLoader::sanitizeURLForReport(blockedURL));

@@ -6,4 +6,4 @@ HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocke
 REQUEST_METHOD: POST
 REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.py
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.py","referrer":"","violated-directive":"img-src","effective-directive":"img-src","original-policy":"img-src 'none'; report-uri resources/save-report.py","blocked-uri":"file","status-code":200,"source-file":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.py","line-number":9,"column-number":26}}
+{"type":"csp-violation","url":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.py","csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.py","referrer":"","violated-directive":"img-src","effective-directive":"img-src","original-policy":"img-src 'none'; report-uri resources/save-report.py","blocked-uri":"file","status-code":200,"source-file":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.py","line-number":9,"column-number":26}}

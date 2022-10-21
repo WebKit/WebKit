@@ -153,17 +153,30 @@ String ReportingScope::endpointURIForToken(const String& reportTo) const
 
 void ReportingScope::generateTestReport(String&& message, String&& group)
 {
-    UNUSED_PARAM(group);
-
+    URL testReportURL;
     String reportURL { ""_s };
-    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
-        reportURL = document->url().strippedForUseAsReferrer();
+
+    auto* document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (document) {
+        testReportURL = document->url();
+        reportURL = testReportURL.strippedForUseAsReferrer();
+    }
+
+    auto testReportBody = TestReportBody::create(WTFMove(message));
 
     // https://w3c.github.io/reporting/#generate-test-report-command, step 7.1.10.
-    auto reportBody = TestReportBody::create(WTFMove(message));
-    notifyReportObservers(Report::create(reportBody->type(), WTFMove(reportURL), WTFMove(reportBody)));
+    if (document) {
+        auto reportFormData = Report::createReportFormDataForViolation(testReportBody->type(), testReportURL, document->httpUserAgent(), group, [&](auto& body) {
+            body.setString("body_message"_s, testReportBody->message());
+        });
 
-    // FIXME(244907): We should call sendReportToEndpoints here.
+        if (group.isNull())
+            group = "default"_s;
+        
+        document->sendReportToEndpoints(testReportURL, { }, { group }, WTFMove(reportFormData), ViolationReportType::Test);
+    }
+
+    notifyReportObservers(Report::create(testReportBody->type(), WTFMove(reportURL), WTFMove(testReportBody)));
 }
 
 } // namespace WebCore

@@ -1958,3 +1958,6 @@ webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui.html
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]
 
 webkit.org/b/245900 [ Debug ] fast/inline/inline-box-adjust-position-crash2.html [ Skip ]
+
+# http version of this test fails, but https passes. May be a PingLoad issue in GTK
+webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.http.sub.html [ Failure ]

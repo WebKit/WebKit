@@ -92,9 +92,9 @@ typedef enum {
 - (void)setTimeoutsPaused:(BOOL)flag;
 
 /*!
-    @method setPluginsPaused
-    @abstract Stop/start all plugins based on the flag passed if we have a WebHTMLView
-    @param flag YES to stop plugins on the html view, NO to start them
+ @method setPluginsPaused
+ @abstract Stop/start all plugins based on the flag passed if we have a WebHTMLView
+ @param flag YES to stop plugins on the html view, NO to start them
  */
 - (void)setPluginsPaused:(BOOL)flag;
 - (void)prepareForPause;
@@ -287,4 +287,7 @@ typedef enum {
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 
 - (NSURL *)_unreachableURL;
+
+- (void)_generateTestReport:(NSString *) message withGroup:(NSString *)group;
+
 @end

@@ -111,13 +111,11 @@ Ref<FormData> CSPViolationReportBody::createReportFormDataForViolation(bool uses
         }
     }
 
+    // https://www.w3.org/TR/reporting-1/#queue-report, step 2.3.1.
     auto reportObject = JSON::Object::create();
-    if (usesReportTo) {
-        reportObject->setString("type"_s, type());
-        reportObject->setString("url"_s, documentURL());
-        reportObject->setObject("body"_s, WTFMove(cspReport));
-    } else
-        reportObject->setObject("csp-report"_s, WTFMove(cspReport));
+    reportObject->setString("type"_s, type());
+    reportObject->setString("url"_s, documentURL());
+    reportObject->setObject(usesReportTo ? "body"_s : "csp-report"_s, WTFMove(cspReport));
 
     return FormData::create(reportObject->toJSONString().utf8());
 }

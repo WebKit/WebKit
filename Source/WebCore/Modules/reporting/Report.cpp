@@ -64,18 +64,21 @@ const RefPtr<ReportBody>& Report::body() const
     return m_body;
 }
 
-Ref<FormData> Report::createReportFormDataForViolation(const String& type, const URL& url, const String& userAgent, const Function<void(JSON::Object&)>& populateBody)
+Ref<FormData> Report::createReportFormDataForViolation(const String& type, const URL& url, const String& userAgent, const String& destination, const Function<void(JSON::Object&)>& populateBody)
 {
     auto body = JSON::Object::create();
     populateBody(body);
 
+    // https://www.w3.org/TR/reporting-1/#queue-report, step 2.3.1.
     auto reportObject = JSON::Object::create();
+    reportObject->setObject("body"_s, WTFMove(body));
+    reportObject->setString("user_agent"_s, userAgent);
+    reportObject->setString("destination"_s, destination);
     reportObject->setString("type"_s, type);
+    reportObject->setInteger("age"_s, 0); // We currently do not delay sending the reports.
+    reportObject->setInteger("attempts"_s, 0);
     if (url.isValid())
         reportObject->setString("url"_s, url.string());
-    reportObject->setString("user_agent"_s, userAgent);
-    reportObject->setInteger("age"_s, 0); // We currently do not delay sending the reports.
-    reportObject->setObject("body"_s, WTFMove(body));
 
     auto reportList = JSON::Array::create();
     reportList->pushObject(reportObject);

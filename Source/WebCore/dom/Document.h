@@ -1717,6 +1717,10 @@ public:
 
     bool hasSleepDisabler() const { return !!m_sleepDisabler; }
 
+    void notifyReportObservers(Ref<Report>&&) final;
+    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
+    String httpUserAgent() const final;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1843,10 +1847,6 @@ private:
     Style::Update& ensurePendingRenderTreeUpdate();
 
     NotificationClient* notificationClient() final;
-
-    void notifyReportObservers(Ref<Report>&&) final;
-    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
-    String httpUserAgent() const final;
 
     void updateSleepDisablerIfNeeded();
 
