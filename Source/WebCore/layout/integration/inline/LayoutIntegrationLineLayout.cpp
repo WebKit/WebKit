@@ -102,10 +102,11 @@ RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
     if (!renderer.isInline()) {
-        if (!renderer.isFloatingOrOutOfFlowPositioned())
+        // FIXME: See canUseForChild on out-of-flow nested boxes.
+        if (!renderer.isFloatingOrOutOfFlowPositioned() || renderer.parent() != renderer.containingBlock())
             return nullptr;
-        if (auto* containgBlock = renderer.containingBlock(); containgBlock && is<RenderBlockFlow>(*containgBlock))
-            return downcast<RenderBlockFlow>(*containgBlock).modernLineLayout();
+        if (auto* containingBlock = renderer.containingBlock(); containingBlock && is<RenderBlockFlow>(*containingBlock))
+            return downcast<RenderBlockFlow>(*containingBlock).modernLineLayout();
         return nullptr;
     }
 
