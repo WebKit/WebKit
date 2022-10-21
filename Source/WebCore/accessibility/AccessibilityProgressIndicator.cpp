@@ -35,22 +35,13 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderProgress* renderer)
+AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
 {
+    ASSERT(is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(renderer->node()) || is<HTMLMeterElement>(renderer->node()));
 }
 
-Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderProgress* renderer)
-{
-    return adoptRef(*new AccessibilityProgressIndicator(renderer));
-}
-    
-AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderMeter* renderer)
-    : AccessibilityRenderObject(renderer)
-{
-}
-
-Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderMeter* renderer)
+Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityProgressIndicator(renderer));
 }
@@ -67,18 +58,14 @@ String AccessibilityProgressIndicator::valueDescription() const
     if (!description.isEmpty())
         return description;
 
-    if (!m_renderer->isMeter())
-        return description;
-
-    HTMLMeterElement* meter = meterElement();
+    auto* meter = meterElement();
     if (!meter)
         return description;
 
     // The HTML spec encourages authors to include a textual representation of the meter's state in
     // the element's contents. We'll fall back on that if there is not a more accessible alternative.
-    AccessibilityObject* axMeter = axObjectCache()->getOrCreate(meter);
-    if (is<AccessibilityNodeObject>(axMeter))
-        description = downcast<AccessibilityNodeObject>(axMeter)->accessibilityDescriptionForChildren();
+    if (auto* nodeObject = dynamicDowncast<AccessibilityNodeObject>(axObjectCache()->getOrCreate(meter)))
+        description = nodeObject->accessibilityDescriptionForChildren();
 
     if (description.isEmpty())
         description = meter->textContent();
@@ -92,19 +79,11 @@ String AccessibilityProgressIndicator::valueDescription() const
 
 float AccessibilityProgressIndicator::valueForRange() const
 {
-    if (!m_renderer)
-        return 0.0;
-    
-    if (m_renderer->isProgress()) {
-        HTMLProgressElement* progress = progressElement();
-        if (progress && progress->position() >= 0)
-            return narrowPrecisionToFloat(progress->value());
-    }
+    if (auto* progress = progressElement(); progress && progress->position() >= 0)
+        return narrowPrecisionToFloat(progress->value());
 
-    if (m_renderer->isMeter()) {
-        if (HTMLMeterElement* meter = meterElement())
-            return narrowPrecisionToFloat(meter->value());
-    }
+    if (auto* meter = meterElement())
+        return narrowPrecisionToFloat(meter->value());
 
     // Indeterminate progress bar should return 0.
     return 0.0;
@@ -112,35 +91,23 @@ float AccessibilityProgressIndicator::valueForRange() const
 
 float AccessibilityProgressIndicator::maxValueForRange() const
 {
-    if (!m_renderer)
-        return 0.0;
+    if (auto* progress = progressElement())
+        return narrowPrecisionToFloat(progress->max());
 
-    if (m_renderer->isProgress()) {
-        if (HTMLProgressElement* progress = progressElement())
-            return narrowPrecisionToFloat(progress->max());
-    }
-    
-    if (m_renderer->isMeter()) {
-        if (HTMLMeterElement* meter = meterElement())
-            return narrowPrecisionToFloat(meter->max());
-    }
+    if (auto* meter = meterElement())
+        return narrowPrecisionToFloat(meter->max());
 
     return 0.0;
 }
 
 float AccessibilityProgressIndicator::minValueForRange() const
 {
-    if (!m_renderer)
+    if (auto* progress = progressElement())
         return 0.0;
-    
-    if (m_renderer->isProgress())
-        return 0.0;
-    
-    if (m_renderer->isMeter()) {
-        if (HTMLMeterElement* meter = meterElement())
-            return narrowPrecisionToFloat(meter->min());
-    }
-    
+
+    if (auto* meter = meterElement())
+        return narrowPrecisionToFloat(meter->min());
+
     return 0.0;
 }
     
@@ -153,58 +120,35 @@ AccessibilityRole AccessibilityProgressIndicator::roleValue() const
 
 HTMLProgressElement* AccessibilityProgressIndicator::progressElement() const
 {
-    if (!is<RenderProgress>(*m_renderer))
-        return nullptr;
-    
-    return downcast<RenderProgress>(*m_renderer).progressElement();
+    return dynamicDowncast<HTMLProgressElement>(node());
 }
 
 HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
 {
-    if (!is<RenderMeter>(*m_renderer))
-        return nullptr;
-
-    return downcast<RenderMeter>(*m_renderer).meterElement();
+    return dynamicDowncast<HTMLMeterElement>(node());
 }
 
 String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
 {
 #if PLATFORM(COCOA)
-    if (!m_renderer || !m_renderer->isMeter())
+    auto* meterElement = this->meterElement();
+    if (!meterElement)
         return String();
-    
+
     // Only expose this when the author has explicitly specified the following attributes.
     if (!hasAttribute(lowAttr) && !hasAttribute(highAttr) && !hasAttribute(optimumAttr))
         return String();
     
-    if (HTMLMeterElement* element = meterElement()) {
-        switch (element->gaugeRegion()) {
-        case HTMLMeterElement::GaugeRegionOptimum:
-            return AXMeterGaugeRegionOptimumText();
-        case HTMLMeterElement::GaugeRegionSuboptimal:
-            return AXMeterGaugeRegionSuboptimalText();
-        case HTMLMeterElement::GaugeRegionEvenLessGood:
-            return AXMeterGaugeRegionLessGoodText();
-        default:
-            break;
-        }
+    switch (meterElement->gaugeRegion()) {
+    case HTMLMeterElement::GaugeRegionOptimum:
+        return AXMeterGaugeRegionOptimumText();
+    case HTMLMeterElement::GaugeRegionSuboptimal:
+        return AXMeterGaugeRegionSuboptimalText();
+    case HTMLMeterElement::GaugeRegionEvenLessGood:
+        return AXMeterGaugeRegionLessGoodText();
     }
 #endif
     return String();
-}
-
-Element* AccessibilityProgressIndicator::element() const
-{
-    if (!m_renderer)
-        return nullptr;
-
-    if (m_renderer->isProgress())
-        return progressElement();
-
-    if (m_renderer->isMeter())
-        return meterElement();
-
-    return AccessibilityObject::element();
 }
 
 } // namespace WebCore

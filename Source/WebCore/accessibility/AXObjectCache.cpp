@@ -86,6 +86,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTablePartElement.h"
@@ -639,37 +640,34 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         return AccessibilityMathMLElement::create(renderer, isAnonymousOperator);
 #endif
 
-    if (is<RenderBoxModelObject>(*renderer)) {
-        RenderBoxModelObject& cssBox = downcast<RenderBoxModelObject>(*renderer);
-        if (is<RenderListBox>(cssBox))
-            return AccessibilityListBox::create(&downcast<RenderListBox>(cssBox));
-        if (is<RenderMenuList>(cssBox))
-            return AccessibilityMenuList::create(&downcast<RenderMenuList>(cssBox));
+    if (is<RenderListBox>(renderer))
+        return AccessibilityListBox::create(renderer);
+    if (is<RenderMenuList>(renderer))
+        return AccessibilityMenuList::create(downcast<RenderMenuList>(renderer));
 
-        // standard tables
-        if (is<RenderTable>(cssBox))
-            return AccessibilityTable::create(&downcast<RenderTable>(cssBox));
-        if (is<RenderTableRow>(cssBox))
-            return AccessibilityTableRow::create(&downcast<RenderTableRow>(cssBox));
-        if (is<RenderTableCell>(cssBox))
-            return AccessibilityTableCell::create(&downcast<RenderTableCell>(cssBox));
+    // standard tables
+    if (is<RenderTable>(renderer))
+        return AccessibilityTable::create(renderer);
+    if (is<RenderTableRow>(renderer))
+        return AccessibilityTableRow::create(renderer);
+    if (is<RenderTableCell>(renderer))
+        return AccessibilityTableCell::create(renderer);
 
-        // progress bar
-        if (is<RenderProgress>(cssBox))
-            return AccessibilityProgressIndicator::create(&downcast<RenderProgress>(cssBox));
+    // progress bar
+    if (is<RenderProgress>(renderer) || is<HTMLProgressElement>(node))
+        return AccessibilityProgressIndicator::create(renderer);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        if (is<RenderAttachment>(cssBox))
-            return AccessibilityAttachment::create(&downcast<RenderAttachment>(cssBox));
+    if (is<RenderAttachment>(renderer))
+        return AccessibilityAttachment::create(downcast<RenderAttachment>(renderer));
 #endif
 
-        if (is<RenderMeter>(cssBox))
-            return AccessibilityProgressIndicator::create(&downcast<RenderMeter>(cssBox));
+    if (is<RenderMeter>(renderer) || is<HTMLMeterElement>(node))
+        return AccessibilityProgressIndicator::create(renderer);
 
-        // input type=range
-        if (is<RenderSlider>(cssBox))
-            return AccessibilitySlider::create(&downcast<RenderSlider>(cssBox));
-    }
+    // input type=range
+    if (is<RenderSlider>(renderer))
+        return AccessibilitySlider::create(renderer);
 
     return AccessibilityRenderObject::create(renderer);
 }

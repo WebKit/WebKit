@@ -1812,6 +1812,7 @@ webkit.org/b/140832 [ Release ] accessibility/aria-slider-value-change.html [ Fa
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value-change.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/aria-slider-value.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/aria-slider-value.html [ Skip ] # Debug assertion
+webkit.org/b/140832 accessibility/appearance-none-meter-and-progress-elements.html [ Skip ]
 webkit.org/b/140832 [ Release ] accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 [ Debug ] accessibility/meter-element.html [ Skip ] # Debug assertion
 webkit.org/b/140832 [ Release ] accessibility/progressbar.html [ Failure ]
