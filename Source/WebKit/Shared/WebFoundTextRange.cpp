@@ -32,6 +32,11 @@ namespace WebKit {
 
 bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
 {
+    if (frameIdentifier.isHashTableDeletedValue())
+        return other.frameIdentifier.isHashTableDeletedValue();
+    if (other.frameIdentifier.isHashTableDeletedValue())
+        return false;
+
     return location == other.location
         && length == other.length
         && frameIdentifier == other.frameIdentifier
@@ -57,6 +62,9 @@ std::optional<WebFoundTextRange> WebFoundTextRange::decode(IPC::Decoder& decoder
         return std::nullopt;
 
     if (!decoder.decode(result.frameIdentifier))
+        return std::nullopt;
+
+    if (result.frameIdentifier.isHashTableDeletedValue())
         return std::nullopt;
 
     if (!decoder.decode(result.order))
