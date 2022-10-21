@@ -11,15 +11,15 @@ PASS parse('rgba(%, 50%, 50.0%, 1)') is 'RGBA[102, 102, 102, 255]'
 PASS parse('rgba(50.0%, 50%, a%, 1)') is 'RGBA[102, 102, 102, 255]'
 PASS parse('rgba(500%, 0%, 0%, 1)') is 'RGBA[255, 0, 0, 255]'
 PASS parse('rgba(100%, 100%, 100%, 1)') is 'RGBA[255, 255, 255, 255]'
-FAIL parse('rgba(10.5%, 80%, 70%, 1)') should be RGBA[27, 204, 179, 255]. Was RGBA[26, 204, 178, 255].
+PASS parse('rgba(10.5%, 80%, 70%, 1)') is 'RGBA[27, 204, 179, 255]'
 PASS parse('rgba(0%, 0%, 0%, 1)') is 'RGBA[0, 0, 0, 255]'
-FAIL parse('rgba(50.0%, 50.0%, 50.0%, 1)') should be RGBA[128, 128, 128, 255]. Was RGBA[127, 127, 127, 255].
+PASS parse('rgba(50.0%, 50.0%, 50.0%, 1)') is 'RGBA[128, 128, 128, 255]'
 PASS parse('rgba(100%, 100%, 100%, 1)') is 'RGBA[255, 255, 255, 255]'
-FAIL parse('rgba(10.5%, 80%, 70%, 1)') should be RGBA[27, 204, 179, 255]. Was RGBA[26, 204, 178, 255].
-FAIL parse('rgba(55.5%, 0.5%, 110%, 1)') should be RGBA[142, 1, 255, 255]. Was RGBA[141, 1, 255, 255].
-FAIL parse('rgba(60.59998%, 0.59999%, 110.12345%, 1)') should be RGBA[155, 2, 255, 255]. Was RGBA[154, 1, 255, 255].
-FAIL parse('rgba(10.999%, 0.999%, 0.000009%, 1)') should be RGBA[28, 3, 0, 255]. Was RGBA[28, 2, 0, 255].
-FAIL parse('rgba(79.99999%, 99.99999%, 500%, 1)') should be RGBA[204, 255, 255, 255]. Was RGBA[203, 254, 255, 255].
+PASS parse('rgba(10.5%, 80%, 70%, 1)') is 'RGBA[27, 204, 179, 255]'
+PASS parse('rgba(55.5%, 0.5%, 110%, 1)') is 'RGBA[142, 1, 255, 255]'
+PASS parse('rgba(60.59998%, 0.59999%, 110.12345%, 1)') is 'RGBA[155, 2, 255, 255]'
+PASS parse('rgba(10.999%, 0.999%, 0.000009%, 1)') is 'RGBA[28, 3, 0, 255]'
+PASS parse('rgba(79.99999%, 99.99999%, 500%, 1)') is 'RGBA[204, 255, 255, 255]'
 PASS parse('rgba(0, 0, 0, -0.10)') is 'RGBA[0, 0, 0, 0]'
 PASS parse('rgba(0, 0, 0, -5.0)') is 'RGBA[0, 0, 0, 0]'
 PASS parse('rgba(0, 0, 0, 5.0)') is 'RGBA[0, 0, 0, 255]'

@@ -27,15 +27,15 @@ shouldBe("parse('rgba(%, 50%, 50.0%, 1)')", "'RGBA[102, 102, 102, 255]'");
 shouldBe("parse('rgba(50.0%, 50%, a%, 1)')", "'RGBA[102, 102, 102, 255]'");
 shouldBe("parse('rgba(500%, 0%, 0%, 1)')", "'RGBA[255, 0, 0, 255]'");
 shouldBe("parse('rgba(100%, 100%, 100%, 1)')", "'RGBA[255, 255, 255, 255]'");
-shouldBe("parse('rgba(10.5%, 80%, 70%, 1)')", "'RGBA[27, 204, 179, 255]'"); // FIXME: Different rounding from other browsers.
+shouldBe("parse('rgba(10.5%, 80%, 70%, 1)')", "'RGBA[27, 204, 179, 255]'");
 shouldBe("parse('rgba(0%, 0%, 0%, 1)')", "'RGBA[0, 0, 0, 255]'");
-shouldBe("parse('rgba(50.0%, 50.0%, 50.0%, 1)')", "'RGBA[128, 128, 128, 255]'"); // FIXME: Different rounding from other browsers.
+shouldBe("parse('rgba(50.0%, 50.0%, 50.0%, 1)')", "'RGBA[128, 128, 128, 255]'");
 shouldBe("parse('rgba(100%, 100%, 100%, 1)')", "'RGBA[255, 255, 255, 255]'");
-shouldBe("parse('rgba(10.5%, 80%, 70%, 1)')", "'RGBA[27, 204, 179, 255]'"); // FIXME: Different rounding from other browsers.
-shouldBe("parse('rgba(55.5%, 0.5%, 110%, 1)')", "'RGBA[142, 1, 255, 255]'"); // FIXME: Different rounding from other browsers.
-shouldBe("parse('rgba(60.59998%, 0.59999%, 110.12345%, 1)')", "'RGBA[155, 2, 255, 255]'"); // FIXME: Different rounding from other browsers.
-shouldBe("parse('rgba(10.999%, 0.999%, 0.000009%, 1)')", "'RGBA[28, 3, 0, 255]'"); // FIXME: Different rounding from other browsers.
-shouldBe("parse('rgba(79.99999%, 99.99999%, 500%, 1)')", "'RGBA[204, 255, 255, 255]'"); // FIXME: Different rounding from other browsers.
+shouldBe("parse('rgba(10.5%, 80%, 70%, 1)')", "'RGBA[27, 204, 179, 255]'");
+shouldBe("parse('rgba(55.5%, 0.5%, 110%, 1)')", "'RGBA[142, 1, 255, 255]'");
+shouldBe("parse('rgba(60.59998%, 0.59999%, 110.12345%, 1)')", "'RGBA[155, 2, 255, 255]'");
+shouldBe("parse('rgba(10.999%, 0.999%, 0.000009%, 1)')", "'RGBA[28, 3, 0, 255]'");
+shouldBe("parse('rgba(79.99999%, 99.99999%, 500%, 1)')", "'RGBA[204, 255, 255, 255]'");
 shouldBe("parse('rgba(0, 0, 0, -0.10)')", "'RGBA[0, 0, 0, 0]'");
 shouldBe("parse('rgba(0, 0, 0, -5.0)')", "'RGBA[0, 0, 0, 0]'");
 shouldBe("parse('rgba(0, 0, 0, 5.0)')", "'RGBA[0, 0, 0, 255]'");
