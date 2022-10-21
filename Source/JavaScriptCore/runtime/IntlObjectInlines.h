@@ -201,6 +201,24 @@ ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(UChar character)
     return isASCII(character) && ducetLevel1Weights[character];
 }
 
+ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(LChar character)
+{
+    return ducetLevel1Weights[character];
+}
+
+ALWAYS_INLINE bool followedByNonLatinCharacter(const UChar* characters, unsigned length, unsigned index)
+{
+    unsigned nextIndex = index + 1;
+    if (length > nextIndex)
+        return !isLatin1(characters[nextIndex]);
+    return false;
+}
+
+ALWAYS_INLINE bool followedByNonLatinCharacter(const LChar*, unsigned, unsigned)
+{
+    return false;
+}
+
 template<typename CharacterType1, typename CharacterType2>
 UCollationResult compareASCIIWithUCADUCETLevel3(const CharacterType1* characters1, const CharacterType2* characters2, unsigned length)
 {
@@ -217,31 +235,48 @@ UCollationResult compareASCIIWithUCADUCETLevel3(const CharacterType1* characters
 }
 
 template<typename CharacterType1, typename CharacterType2>
-inline UCollationResult compareASCIIWithUCADUCET(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
+inline std::optional<UCollationResult> compareASCIIWithUCADUCET(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
 {
-    bool notSameCharacters = false;
+    if (length1 == length2) {
+        if (equal(characters1, characters2, length1))
+            return UCOL_EQUAL;
+    }
+
     unsigned commonLength = std::min(length1, length2);
     for (unsigned position = 0; position < commonLength; ++position) {
         auto lhs = characters1[position];
         auto rhs = characters2[position];
-        ASSERT(canUseASCIIUCADUCETComparison(lhs));
-        ASSERT(canUseASCIIUCADUCETComparison(rhs));
-        if (lhs == rhs)
-            continue;
-        notSameCharacters = true;
+
+        if (!canUseASCIIUCADUCETComparison(lhs) || !canUseASCIIUCADUCETComparison(rhs))
+            return std::nullopt;
+
         uint8_t leftWeight = ducetLevel1Weights[lhs];
         uint8_t rightWeight = ducetLevel1Weights[rhs];
         if (leftWeight == rightWeight)
             continue;
+
+        // If the following character is a non-latin, then it is possible that current and next characters can be combined into different character.
+        if (followedByNonLatinCharacter(characters1, length1, position) || followedByNonLatinCharacter(characters2, length2, position))
+            return std::nullopt;
+
         return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
     }
 
-    if (length1 == length2) {
-        if (notSameCharacters)
-            return compareASCIIWithUCADUCETLevel3(characters1, characters2, length1);
-        return UCOL_EQUAL;
+    if (length1 == length2)
+        return compareASCIIWithUCADUCETLevel3(characters1, characters2, length1);
+
+    // If the next character is valid, then we do not need to look into the rest of characters.
+    if (length1 > length2) {
+        auto lhs = characters1[length2];
+        if (!canUseASCIIUCADUCETComparison(lhs))
+            return std::nullopt;
+        return UCOL_GREATER;
     }
-    return length1 > length2 ? UCOL_GREATER : UCOL_LESS;
+
+    auto rhs = characters2[length1];
+    if (!canUseASCIIUCADUCETComparison(rhs))
+        return std::nullopt;
+    return UCOL_LESS;
 }
 
 // https://tc39.es/ecma402/#sec-getoptionsobject
