@@ -7,7 +7,9 @@ The original list looks like this. 'two' is selected and is going to be dropped 
 |   "one"
 | <li>
 |   id="two"
-|   "<#selection-anchor>two<#selection-focus>"
+|   <#selection-anchor>
+|   "two"
+|   <#selection-focus>
 | <li>
 |   id="three"
 |   "three"
@@ -38,10 +40,12 @@ The original list looks like this. 'two' and 'three' are selected and are going 
 |   "one"
 | <li>
 |   id="two"
-|   "<#selection-anchor>two"
+|   <#selection-anchor>
+|   "two"
 | <li>
 |   id="three"
-|   "three<#selection-focus>"
+|   "three"
+|   <#selection-focus>
 | <li>
 |   id="four"
 |   "four"

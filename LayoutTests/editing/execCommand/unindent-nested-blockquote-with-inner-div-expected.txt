@@ -39,9 +39,10 @@ before outdent:
 |     <blockquote>
 |       "first"
 |     <br>
-|     "second<#selection-caret>"
+|     "second"
 |     <span>
 |       id="select1"
+|       <#selection-caret>
 |     <br>
 
 after outdent:
@@ -59,9 +60,10 @@ before outdent (second inside <div>):
 |       "first"
 |     <br>
 |     <div>
-|       "second<#selection-caret>"
+|       "second"
 |       <span>
 |         id="select2"
+|         <#selection-caret>
 |       <br>
 
 after outdent:
@@ -79,9 +81,10 @@ before outdent (second inside <b>):
 |       "first"
 |     <br>
 |     <b>
-|       "second<#selection-caret>"
+|       "second"
 |       <span>
 |         id="select3"
+|         <#selection-caret>
 |       <br>
 
 after outdent:

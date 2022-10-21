@@ -56,8 +56,7 @@ Before copy:
 |   "<#selection-anchor>There is a tide in the affairs of men,"
 |   <div>
 |     class="editing"
-|     <#selection-focus>
-|     "Which taken at the flood leads on to fortune."
+|     "<#selection-focus>Which taken at the flood leads on to fortune."
 |     <div>
 |       class="editing"
 |       "Omitted, all the voyage of their life,"

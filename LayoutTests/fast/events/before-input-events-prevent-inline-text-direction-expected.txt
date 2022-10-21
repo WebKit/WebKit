@@ -4,10 +4,10 @@ beforeinput, formatSetInlineTextDirection, ltr on #notPrevented:
 | "Hello <#selection-anchor>מקור<#selection-focus> השם עברית world"
 
 input, formatSetInlineTextDirection, ltr on #notPrevented:
-| "Hello "
+| "Hello <#selection-anchor>"
 | <span>
 |   style="unicode-bidi: embed;"
-|   "<#selection-anchor>מקור<#selection-focus>"
+|   "מקור<#selection-focus>"
 | " השם עברית world"
 
 beforeinput, formatSetInlineTextDirection, rtl on #notPrevented:
@@ -22,10 +22,10 @@ input, formatSetInlineTextDirection, rtl on #notPrevented:
 | <span>
 |   style="unicode-bidi: embed;"
 |   "מקור"
-| " השם עברית "
+| " השם עברית <#selection-anchor>"
 | <span>
 |   style="unicode-bidi: embed; direction: rtl;"
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 
 beforeinput, formatSetInlineTextDirection, ltr on #prevented:
 | "Hello <#selection-anchor>מקור<#selection-focus> השם עברית world"

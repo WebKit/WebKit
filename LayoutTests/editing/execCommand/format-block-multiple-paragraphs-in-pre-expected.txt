@@ -13,10 +13,12 @@ Formatting all paragraphs by h3 yields:
 | "\n"
 
 Undo yields:
+| <#selection-anchor>
 | "\n"
 | <pre>
-|   "<#selection-anchor>hello\n\nworld\n\nwebkit<#selection-focus>\n"
+|   "hello\n\nworld\n\nwebkit\n"
 | "\n"
+| <#selection-focus>
 
 Formatting all but the last paragraph by h3 yields:
 | "\n"

@@ -27,10 +27,11 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 Markup before:
+| <#selection-caret>
 | "\n"
 | <span>
 |   style="background-color: rgb(255, 0, 0);"
-|   "<#selection-caret>Red background"
+|   "Red background"
 | "\n"
 | <div>
 |   id="test2"

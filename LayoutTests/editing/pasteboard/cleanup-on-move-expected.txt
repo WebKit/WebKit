@@ -7,10 +7,12 @@ The original list looks like this. 'two' and 'three' are selected and are going 
 |   "one"
 | <li>
 |   id="two"
-|   "<#selection-anchor>two"
+|   <#selection-anchor>
+|   "two"
 | <li>
 |   id="three"
-|   "three<#selection-focus>"
+|   "three"
+|   <#selection-focus>
 | <li>
 |   id="four"
 |   "four"

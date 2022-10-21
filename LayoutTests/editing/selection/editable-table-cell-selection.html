@@ -33,7 +33,7 @@
 
             const lastHeadCell = [ ...document.querySelectorAll('thead th') ].pop();
             select(lastHeadCell);
-            if (document.getSelection().toString() == "D\n")
+            if (document.getSelection().toString() == "D")
                 output += 'PASS: Correctly Selects last cell in thead';
             else
                 output += 'FAIL: Incorrect Selection: ' + document.getSelection().toString();
@@ -48,7 +48,7 @@
 
             const lastBodyCell = [ ...document.querySelectorAll('tbody td') ].pop();
             select(lastBodyCell);
-            if (document.getSelection().toString() == "5D\n")
+            if (document.getSelection().toString() == "5D")
                 output += 'PASS: Correctly Selects last cell in tbody';
             else
                 output += 'FAIL: Incorrect Selection: ' + document.getSelection().toString();

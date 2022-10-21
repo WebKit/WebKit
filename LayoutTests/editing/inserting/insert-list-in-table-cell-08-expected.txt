@@ -1,10 +1,10 @@
 Exec insertOrderedList twice in a table removes the previously inserted list item:
 
 Before:
-| <#selection-anchor>
 | <table>
 |   border="1"
 |   id="element"
+|   <#selection-anchor>
 |   <tbody>
 |     <tr>
 |       <td>
@@ -16,7 +16,7 @@ Before:
 |         "gghfg"
 |       <td>
 |         "fsfg"
-| <#selection-focus>
+|   <#selection-focus>
 
 After:
 | <#selection-anchor>

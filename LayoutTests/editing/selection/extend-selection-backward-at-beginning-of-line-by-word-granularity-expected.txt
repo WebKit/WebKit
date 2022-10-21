@@ -3,5 +3,4 @@ This tests moving the selection backwards at the beginning of a line by word gra
 |   "<#selection-focus>first"
 | <div>
 |   id="target"
-|   <#selection-anchor>
-|   "second"
+|   "<#selection-anchor>second"

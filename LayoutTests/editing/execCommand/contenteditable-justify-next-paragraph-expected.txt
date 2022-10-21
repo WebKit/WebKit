@@ -7,6 +7,5 @@ This test is for a bug when selection extends complete line on first paragraph a
 | "\n    "
 | <p>
 |   id="paragraph2"
-|   <#selection-focus>
-|   "Paragraph two."
+|   "<#selection-focus>Paragraph two."
 | "\n"

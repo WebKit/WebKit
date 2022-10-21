@@ -1,9 +1,9 @@
 
 "world" should be red:
-| "hello "
+| "hello <#selection-anchor>"
 | <font>
 |   color="#ff0000"
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 
 there should be no span or font elements:
 | "<#selection-anchor>hello "

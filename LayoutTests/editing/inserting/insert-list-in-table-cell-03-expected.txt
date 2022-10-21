@@ -5,9 +5,10 @@ Before:
 |   border="1"
 |   <tbody>
 |     id="element"
+|     <#selection-anchor>
 |     <tr>
 |       <td>
-|         "<#selection-anchor>fsdf"
+|         "fsdf"
 |       <td>
 |         "fsdf"
 |     <tr>
@@ -15,7 +16,7 @@ Before:
 |         "gghfg"
 |       <td>
 |         "fsfg"
-| <#selection-focus>
+|     <#selection-focus>
 
 After:
 | <table>

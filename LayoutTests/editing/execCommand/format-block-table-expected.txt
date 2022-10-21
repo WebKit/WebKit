@@ -1,7 +1,7 @@
 
 Formatting:
-| "\n"
 | <#selection-anchor>
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -9,8 +9,8 @@ Formatting:
 |         "hello"
 |       <td>
 |         "world"
-| <#selection-focus>
 | "\n"
+| <#selection-focus>
 
 by p yields:
 | "\n"
@@ -32,7 +32,9 @@ Formatting:
 |   <tbody>
 |     <tr>
 |       <td>
-|         "<#selection-anchor>hello<#selection-focus>"
+|         <#selection-anchor>
+|         "hello"
+|         <#selection-focus>
 |       <td>
 |         "world"
 | "\n"
@@ -55,10 +57,12 @@ Formatting:
 |   <tbody>
 |     <tr>
 |       <td>
+|         <#selection-anchor>
 |         <p>
-|           "<#selection-anchor>hello"
+|           "hello"
 |         <div>
-|           "world<#selection-focus>"
+|           "world"
+|         <#selection-focus>
 |       <td>
 |         "WebKit"
 | "\n"
@@ -83,11 +87,13 @@ Formatting:
 |   <tbody>
 |     <tr>
 |       <td>
+|         <#selection-anchor>
 |         <ul>
 |           <li>
-|             "<#selection-anchor>hello"
+|             "hello"
 |           <li>
-|             "world<#selection-focus>"
+|             "world"
+|         <#selection-focus>
 |       <td>
 |         "WebKit"
 | "\n"

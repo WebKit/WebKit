@@ -1,10 +1,10 @@
 Insert a list item in a table:
 
 Before:
-| <#selection-anchor>
 | <table>
 |   border="1"
 |   id="element"
+|   <#selection-anchor>
 |   <tbody>
 |     <tr>
 |       <td>
@@ -16,7 +16,7 @@ Before:
 |         "gghfg"
 |       <td>
 |         "fsfg"
-| <#selection-focus>
+|   <#selection-focus>
 
 After:
 | <ol>

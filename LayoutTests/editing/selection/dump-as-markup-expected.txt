@@ -8,7 +8,8 @@ Tests basic dump-as-markup functionality.
 |   <body>
 |     <div>
 |       id="bar"
-|       "<#selection-anchor>foo"
+|       <#selection-anchor>
+|       "foo"
 |       <hr>
 |       <#selection-focus>
 |     "\n"

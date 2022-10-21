@@ -8,7 +8,8 @@ Before:
 | "\n        "
 | <p>
 |   id="paragraph"
-|   "<#selection-caret>First"
+|   <#selection-caret>
+|   "First"
 |   <span>
 |     class="noteditable"
 |     contenteditable="false"

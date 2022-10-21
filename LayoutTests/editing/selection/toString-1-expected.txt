@@ -3,4 +3,4 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 aaaa
 bbbb
-success
+Test Failed. Error was: toString returned unexpected result: "\nbbbb "

@@ -8,7 +8,8 @@ BeforeDeletion:
 |     <tr>
 |       <td>
 |         id="test"
-|         "1<#selection-caret>"
+|         "1"
+|         <#selection-caret>
 | "Second"
 
 AfterDeletion:
