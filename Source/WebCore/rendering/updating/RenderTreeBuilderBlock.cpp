@@ -362,10 +362,11 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
 {
     parent.setNeedsLayoutAndPrefWidthsRecalc();
     parent.setChildrenInline(child.childrenInline());
-    auto* nextSibling = child.nextSibling();
 
+    // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
+    moveAllChildrenToInternal(child, parent);
     auto toBeDeleted = m_builder.detachFromRenderElement(parent, child);
-    m_builder.moveAllChildren(child, parent, nextSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
+
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }

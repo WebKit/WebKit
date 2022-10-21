@@ -803,7 +803,6 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     }
 
     RenderObject* next = nullptr;
-    auto internalMoveScope = SetForScope { m_internalMovesType, RenderObject::IsInternalMove::Yes };
     for (auto* current = blockParent.firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())
