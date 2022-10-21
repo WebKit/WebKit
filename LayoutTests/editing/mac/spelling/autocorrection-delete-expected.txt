@@ -88,6 +88,7 @@ layer at (0,0) size 800x600
           text run at (0,36) width 274: "this, remove all files in ~/Library/Spelling."
       RenderBlock {DIV} at (0,122) size 784x56 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 127x28
-          text run at (14,14) width 127: "the notationl "
-        RenderInline {SPAN} at (0,0) size 1x28
+          text run at (14,14) width 121: "the notationl"
+          text run at (134,14) width 7: " "
+        RenderInline {SPAN} at (0,0) size 0x28
 caret: position 14 of child 0 {#text} of child 5 {DIV} of body

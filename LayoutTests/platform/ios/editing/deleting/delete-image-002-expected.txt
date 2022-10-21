@@ -18,16 +18,16 @@ layer at (0,0) size 800x600
             text run at (14,15) width 11: "a"
           RenderText {#text} at (24,15) size 47x28
             text run at (24,15) width 47: "new "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (70,15) size 1x28
           RenderText {#text} at (14,125) size 66x28
             text run at (14,125) width 66: "nation "
-          RenderInline {I} at (0,0) size 0x0
+          RenderInline {I} at (0,0) size 0x28
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderImage {IMG} at (79,44) size 77x103
           RenderText {#text} at (155,125) size 111x28
             text run at (155,125) width 111: " conceived "
-          RenderBR {BR} at (265,124) size 1x28
+          RenderBR {BR} at (265,125) size 1x28
           RenderText {#text} at (14,235) size 60x28
             text run at (14,235) width 60: "nation"
           RenderImage {IMG} at (73,154) size 77x103

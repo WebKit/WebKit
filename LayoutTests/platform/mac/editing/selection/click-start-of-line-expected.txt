@@ -27,7 +27,6 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 250x110
         RenderText {#text} at (0,0) size 234x110
-          text run at (0,0) width 154: "Alice in"
-          text run at (153,0) width 13: " "
+          text run at (0,0) width 166: "Alice in "
           text run at (0,55) width 234: "Wonderland"
 caret: position 10 of child 0 {#text} of child 7 {DIV} of body

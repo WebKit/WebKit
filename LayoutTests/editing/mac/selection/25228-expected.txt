@@ -1,42 +1,29 @@
-layer at (0,0) size 1100x585
+layer at (0,0) size 1103x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (0,0) size 800x585
       RenderBlock {DIV} at (798,0) size 302x272 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 300x270
-          text run at (1,1) width 123: "This tests for a bug"
-          text run at (123,1) width 5: " "
+        RenderText {#text} at (1,1) size 304x270
+          text run at (1,1) width 127: "This tests for a bug "
           text run at (1,19) width 254: "(https://bugs.webkit.org/show_bug.cgi?"
-          text run at (1,37) width 110: "id=25228) where"
-          text run at (110,37) width 5: " "
-          text run at (1,55) width 300: "SelectionController::absoluteCaretBounds was"
-          text run at (300,55) width 1: " "
+          text run at (1,37) width 114: "id=25228) where "
+          text run at (1,55) width 304: "SelectionController::absoluteCaretBounds was "
           text run at (1,73) width 173: "returning an inflated caret. "
-          text run at (173,73) width 114: "It would manifest"
-          text run at (286,73) width 5: " "
+          text run at (173,73) width 118: "It would manifest "
           text run at (1,91) width 222: "itself during revealSelection calls. "
-          text run at (222,91) width 68: "Before the"
-          text run at (289,91) width 5: " "
-          text run at (1,109) width 283: "change we would reveal one pixel too much"
-          text run at (283,109) width 5: " "
+          text run at (222,91) width 72: "Before the "
+          text run at (1,109) width 287: "change we would reveal one pixel too much "
           text run at (1,127) width 157: "because of the inflation. "
-          text run at (157,127) width 110: "To run manually,"
-          text run at (266,127) width 5: " "
-          text run at (1,145) width 272: "place the caret just after the first character,"
-          text run at (272,145) width 5: " "
+          text run at (157,127) width 114: "To run manually, "
+          text run at (1,145) width 276: "place the caret just after the first character, "
           text run at (1,163) width 235: "scroll to 0, 0 and hit the back arrow. "
-          text run at (235,163) width 60: "The caret"
-          text run at (294,163) width 5: " "
-          text run at (1,181) width 264: "should be right up against the edge of the"
-          text run at (264,181) width 5: " "
-          text run at (1,199) width 268: "window and the window should still be at"
-          text run at (268,199) width 5: " "
+          text run at (235,163) width 64: "The caret "
+          text run at (1,181) width 268: "should be right up against the edge of the "
+          text run at (1,199) width 272: "window and the window should still be at "
           text run at (1,217) width 72: "scroll 0, 0. "
-          text run at (72,217) width 228: "If we change the way selections are"
-          text run at (299,217) width 2: " "
-          text run at (1,235) width 291: "revealed the results for this test might change"
-          text run at (291,235) width 5: " "
+          text run at (72,217) width 232: "If we change the way selections are "
+          text run at (1,235) width 295: "revealed the results for this test might change "
           text run at (1,253) width 237: "and it may no longer test for the bug."
       RenderBlock {DIV} at (0,272) size 2000x0
 caret: position 0 of child 0 {#text} of child 1 {DIV} of body

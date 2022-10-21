@@ -17,17 +17,14 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
       RenderBlock (anonymous) at (0,0) size 784x112
         RenderText {#text} at (0,0) size 757x84
-          text run at (0,0) width 751: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box with"
-          text run at (750,0) width 7: " "
-          text run at (0,28) width 747: "with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\". Fix for"
-          text run at (746,28) width 7: " "
+          text run at (0,0) width 757: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box with "
+          text run at (0,28) width 753: "with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\". Fix for "
           text run at (0,56) width 90: "this bug: "
         RenderInline {A} at (0,0) size 257x28 [color=#0000EE]
           RenderText {#text} at (89,56) size 257x28
             text run at (89,56) width 257: "<rdar://problem/3927554>"
         RenderText {#text} at (345,56) size 783x56
-          text run at (345,56) width 432: " Style info applied to remainder of document"
-          text run at (776,56) width 7: " "
+          text run at (345,56) width 438: " Style info applied to remainder of document "
           text run at (0,84) width 242: "after a newline is entered"
       RenderBlock {DIV} at (0,112) size 784x12
       RenderBlock {P} at (0,148) size 784x56 [border: (2px solid #0000FF)]

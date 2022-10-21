@@ -34,5 +34,5 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 38x28
           RenderText {#text} at (14,14) size 38x28
             text run at (14,14) width 38: "Foo"
-        RenderInline {SPAN} at (0,0) size 1x28
+        RenderInline {SPAN} at (0,0) size 0x28
 caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

@@ -14,8 +14,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,15) size 712x58
-          text run at (14,15) width 706: "Should see the \"foo\" and \"baz\" lines centered in their own red boxes. The"
-          text run at (719,15) width 7: " "
+          text run at (14,15) width 712: "Should see the \"foo\" and \"baz\" lines centered in their own red boxes. The "
           text run at (14,45) width 324: "\"baz\" line should not be centered."
       RenderBlock {DIV} at (0,112) size 784x146
         RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]

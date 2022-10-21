@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (1,1) size 782x18
           RenderText {#text} at (0,0) size 13x18
             text run at (0,0) width 13: "hi"
-          RenderInline {SPAN} at (0,0) size 1x18
+          RenderInline {SPAN} at (0,0) size 0x18
         RenderBlock (anonymous) at (1,19) size 782x36
           RenderBR {BR} at (0,0) size 0x18
           RenderText {#text} at (0,18) size 23x18

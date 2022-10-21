@@ -74,8 +74,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,122) size 784x84 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
           RenderText {#text} at (0,0) size 138x28
-            text run at (0,0) width 138: "the notational "
-          RenderInline {SPAN} at (0,0) size 1x28
+            text run at (0,0) width 132: "the notational"
+            text run at (131,0) width 7: " "
+          RenderInline {SPAN} at (0,0) size 0x28
         RenderBlock {DIV} at (14,42) size 756x28
           RenderBR {BR} at (0,0) size 0x28
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 5 {DIV} of body

@@ -42,5 +42,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
           RenderInline {B} at (0,0) size 32x28
             RenderText {#text} at (2,3) size 32x28
-              text run at (2,3) width 32: "a b"
+              text run at (2,3) width 12: "a"
+              text run at (14,3) width 6: " "
+              text run at (20,3) width 14: "b"
 caret: position 3 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

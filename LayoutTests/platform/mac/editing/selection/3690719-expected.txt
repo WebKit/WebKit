@@ -57,21 +57,21 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 30x15 [color=#0000CC]
                       RenderText {#text} at (240,4) size 30x15
                         text run at (240,4) width 30: "Local"
-                      RenderInline {SUP} at (0,0) size 1x14
+                      RenderInline {SUP} at (0,0) size 0x13
                     RenderInline {A} at (0,0) size 30x15
                       RenderInline {FONT} at (0,0) size 30x15 [color=#FF0000]
                         RenderText {#text} at (269,4) size 30x15
                           text run at (269,4) width 30: "New!"
                     RenderText {#text} at (298,4) size 14x15
                       text run at (298,4) width 14: "    "
-                    RenderInline {B} at (0,0) size 40x15
-                      RenderInline {A} at (0,0) size 40x15 [color=#0000CC]
+                    RenderInline {B} at (0,0) size 39x15
+                      RenderInline {A} at (0,0) size 39x15 [color=#0000CC]
                         RenderText {#text} at (311,4) size 40x15
                           text run at (311,4) width 40: "more \x{BB}"
           RenderTable {TABLE} at (2,25) size 780x39
             RenderTableSection {TBODY} at (0,0) size 780x39
               RenderTableRow {TR} at (0,0) size 780x39
-                RenderTableCell {TD} at (0,10) size 194x19 [r=0 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (0,10) size 195x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,-1) size 4x20
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (194,1) size 392x37 [r=0 c=1 rs=1 cs=1]

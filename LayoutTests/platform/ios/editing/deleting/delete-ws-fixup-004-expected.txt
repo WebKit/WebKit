@@ -24,7 +24,9 @@ layer at (0,0) size 800x600
             text run at (14,15) width 31: "bar"
           RenderInline {SPAN} at (0,0) size 19x28
             RenderText {#text} at (44,15) size 19x28
-              text run at (44,15) width 19: "   "
+              text run at (44,15) width 7: " "
+              text run at (50,15) width 7: " "
+              text run at (56,15) width 7: " "
           RenderText {#text} at (62,15) size 33x28
             text run at (62,15) width 33: "foo"
         RenderText {#text} at (0,0) size 0x0

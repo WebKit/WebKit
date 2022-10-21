@@ -14,8 +14,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
       RenderBlock (anonymous) at (0,0) size 784x56
         RenderText {#text} at (0,0) size 745x56
-          text run at (0,0) width 739: "Test inserting paragraphs: should see an empty blue box above an empty line"
-          text run at (738,0) width 7: " "
+          text run at (0,0) width 745: "Test inserting paragraphs: should see an empty blue box above an empty line "
           text run at (0,28) width 235: "between \"foo\" and \"bar\""
       RenderBlock {DIV} at (0,56) size 784x36
       RenderBlock {P} at (0,116) size 784x56 [border: (2px solid #FF0000)]

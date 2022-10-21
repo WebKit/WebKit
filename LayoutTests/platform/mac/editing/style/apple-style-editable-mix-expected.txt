@@ -13,29 +13,27 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 776x24
           RenderTableRow {TR} at (0,2) size 776x20
             RenderTableCell {TD} at (2,2) size 660x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 658x18
-                text run at (1,1) width 658: "This tests that a style can be applied to a selection that contains both editable and non-editable content."
-                text run at (658,1) width 1: "             "
+              RenderText {#text} at (1,1) size 662x18
+                text run at (1,1) width 662: "This tests that a style can be applied to a selection that contains both editable and non-editable content. "
             RenderTableCell {TD} at (663,2) size 111x20 [r=0 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 109x18
                 RenderInline {B} at (0,0) size 109x18
                   RenderText {#text} at (1,1) size 109x18
                     text run at (1,1) width 109: "Editable - line 1"
-              RenderText {#text} at (109,1) size 1x18
-                text run at (109,1) width 1: "             "
+              RenderText {#text} at (109,1) size 5x18
+                text run at (109,1) width 5: " "
       RenderTable {TABLE} at (0,24) size 725x24
         RenderTableSection {TBODY} at (0,0) size 725x24
           RenderTableRow {TR} at (0,2) size 725x20
             RenderTableCell {TD} at (2,2) size 609x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 607x18
-                text run at (1,1) width 607: "The test passes if the editable content is bold, and the non editable content remains unchanged."
-                text run at (607,1) width 1: "             "
+              RenderText {#text} at (1,1) size 611x18
+                text run at (1,1) width 611: "The test passes if the editable content is bold, and the non editable content remains unchanged. "
             RenderTableCell {TD} at (612,2) size 111x20 [r=0 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 109x18
                 RenderInline {B} at (0,0) size 109x18
                   RenderText {#text} at (1,1) size 109x18
                     text run at (1,1) width 109: "Editable - line 2"
-              RenderText {#text} at (109,1) size 1x18
-                text run at (109,1) width 1: "             "
+              RenderText {#text} at (109,1) size 5x18
+                text run at (109,1) width 5: " "
 selection start: position 0 of child 1 {TABLE} of body
 selection end:   position 2 of child 3 {TABLE} of body

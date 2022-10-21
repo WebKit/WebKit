@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
             text run at (98,0) width 172: "<rdar://problem/3927554>"
         RenderText {#text} at (269,0) size 390x18
           text run at (269,0) width 390: " REGRESSION (Mail): Paste inserts content in wrong place "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (658,0) size 1x18
         RenderText {#text} at (0,18) size 384x18
           text run at (0,18) width 384: "***TEST*** line should be second, following the first line."
       RenderBlock {DIV} at (0,36) size 784x12

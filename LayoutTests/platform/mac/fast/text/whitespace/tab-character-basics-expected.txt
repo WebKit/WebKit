@@ -51,10 +51,11 @@ layer at (0,0) size 800x481
         RenderText {#text} at (0,0) size 577x20
           text run at (0,0) width 577: "-- Following text mixes whitespace:NORMAL and whitespace:PRE"
       RenderBlock {P} at (3,404) size 640x42
-        RenderText {#text} at (0,0) size 471x20
-          text run at (0,0) width 471: "AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII JJJJ"
-        RenderInline {SPAN} at (0,0) size 299x20
-          RenderText {#text} at (470,0) size 299x20
-            text run at (470,0) width 299: "\x{9}\x{9}\x{9}\x{9}"
-        RenderText {#text} at (0,21) size 39x20
-          text run at (0,21) width 39: "KKKK"
+        RenderText {#text} at (0,0) size 433x41
+          text run at (0,0) width 433: "AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII "
+          text run at (0,21) width 39: "JJJJ"
+        RenderInline {SPAN} at (0,0) size 270x20
+          RenderText {#text} at (38,21) size 270x20
+            text run at (38,21) width 270: "\x{9}\x{9}\x{9}\x{9}"
+        RenderText {#text} at (307,21) size 39x20
+          text run at (307,21) width 39: "KKKK"

@@ -18,6 +18,8 @@ layer at (0,0) size 800x600
           text run at (0,18) width 463: "To test manually double click on the \"hello\" and drag it to after \"world\"."
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 74x18
-          text run at (0,0) width 74: "world hello"
+          text run at (0,0) width 38: "world"
+          text run at (37,0) width 5: " "
+          text run at (41,0) width 33: "hello"
 selection start: position 5 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 11 of child 0 {#text} of child 3 {DIV} of body

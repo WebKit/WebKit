@@ -9,19 +9,14 @@ layer at (0,0) size 800x600
           text run at (439,0) width 75: "documents."
       RenderBlock {DIV} at (0,34) size 600x217
         RenderText {#text} at (0,0) size 592x93
-          text run at (0,0) width 580: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-          text run at (579,0) width 8: " "
-          text run at (0,31) width 585: "Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit"
-          text run at (584,31) width 8: " "
+          text run at (0,0) width 587: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+          text run at (0,31) width 592: "Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit "
           text run at (0,62) width 535: "arcu eu elit vulputate non hendrerit velit consequat."
-        RenderBR {BR} at (534,72) size 1x18
+        RenderBR {BR} at (534,62) size 1x31
         RenderText {#text} at (0,93) size 585x124
-          text run at (0,93) width 578: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt"
-          text run at (577,93) width 8: " "
-          text run at (0,124) width 545: "velit at sapien porta ornare. Morbi egestas, diam nec"
-          text run at (544,124) width 7: " "
-          text run at (0,155) width 574: "ultricies molestie, est velit ultricies leo, aliquet placerat"
-          text run at (573,155) width 8: " "
+          text run at (0,93) width 585: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt "
+          text run at (0,124) width 551: "velit at sapien porta ornare. Morbi egestas, diam nec "
+          text run at (0,155) width 581: "ultricies molestie, est velit ultricies leo, aliquet placerat "
           text run at (0,186) width 203: "justo libero id arcu."
       RenderBlock (anonymous) at (0,251) size 784x154
         RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
@@ -32,18 +27,13 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 269x217
                 RenderBlock {DIV} at (0,0) size 600x217
                   RenderText {#text} at (0,0) size 592x93
-                    text run at (0,0) width 580: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                    text run at (579,0) width 8: " "
-                    text run at (0,31) width 585: "Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit"
-                    text run at (584,31) width 8: " "
+                    text run at (0,0) width 587: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                    text run at (0,31) width 592: "Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit "
                     text run at (0,62) width 535: "arcu eu elit vulputate non hendrerit velit consequat."
-                  RenderBR {BR} at (534,72) size 1x18
+                  RenderBR {BR} at (534,62) size 1x31
                   RenderText {#text} at (0,93) size 585x124
-                    text run at (0,93) width 578: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt"
-                    text run at (577,93) width 8: " "
-                    text run at (0,124) width 545: "velit at sapien porta ornare. Morbi egestas, diam nec"
-                    text run at (544,124) width 7: " "
-                    text run at (0,155) width 574: "ultricies molestie, est velit ultricies leo, aliquet placerat"
-                    text run at (573,155) width 8: " "
+                    text run at (0,93) width 585: "Etiam venenatis posuere nisl id sagittis. Fusce tincidunt "
+                    text run at (0,124) width 551: "velit at sapien porta ornare. Morbi egestas, diam nec "
+                    text run at (0,155) width 581: "ultricies molestie, est velit ultricies leo, aliquet placerat "
                     text run at (0,186) width 203: "justo libero id arcu."
         RenderText {#text} at (0,0) size 0x0

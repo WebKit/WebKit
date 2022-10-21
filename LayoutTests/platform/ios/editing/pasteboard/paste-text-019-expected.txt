@@ -55,5 +55,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (80,3) size 40x28
             text run at (80,3) width 40: " baz"
         RenderText {#text} at (119,3) size 41x28
-          text run at (119,3) width 41: " Bar"
+          text run at (119,3) width 7: " "
+          text run at (125,3) width 35: "Bar"
 caret: position 4 of child 2 {#text} of child 3 {DIV} of body

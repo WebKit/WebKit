@@ -18,9 +18,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x60
         RenderText {#text} at (0,0) size 771x59
-          text run at (0,0) width 726: "This tests to make sure that when the enclosing block is the body element, and when the html element is editable,"
-          text run at (0,20) width 767: "inserting a paragraph separator doesn't split the body (inserting a paragraph separator usually splits/clones the enclosing"
-          text run at (766,20) width 5: " "
+          text run at (0,0) width 730: "This tests to make sure that when the enclosing block is the body element, and when the html element is editable, "
+          text run at (0,20) width 771: "inserting a paragraph separator doesn't split the body (inserting a paragraph separator usually splits/clones the enclosing "
           text run at (0,40) width 133: "block flow element)."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,60) size 784x20

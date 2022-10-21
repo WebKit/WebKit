@@ -881,7 +881,7 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
         EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, yPos, 25, height), textRects[6].CGRectValue); // m
         EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, yPos, 25, height), textRects[7].CGRectValue); // p
         EXPECT_EQ(CGRectMake(x + 8 * glyphWidth, yPos, 25, height), textRects[8].CGRectValue); // s
-        EXPECT_EQ(CGRectMake(x + 9 * glyphWidth, yPos, 23, height), textRects[9].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 9 * glyphWidth, yPos, 25, height), textRects[9].CGRectValue); //
 
         x = 1;
         EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 25 + yPos, 25, height), textRects[10].CGRectValue); // o

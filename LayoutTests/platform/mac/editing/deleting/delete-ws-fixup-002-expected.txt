@@ -62,9 +62,11 @@ layer at (0,0) size 800x600
               text run at (287,14) width 7: " "
           RenderText {#text} at (293,14) size 734x56
             text run at (293,14) width 111: "our fathers "
-            text run at (403,14) width 339: "f upon this continent, a new nation,"
-            text run at (741,14) width 7: " "
-            text run at (14,42) width 228: "conceived    in Liberty, "
+            text run at (403,14) width 345: "f upon this continent, a new nation, "
+            text run at (14,42) width 104: "conceived "
+            text run at (117,42) width 7: " "
+            text run at (123,42) width 7: " "
+            text run at (129,42) width 113: " in Liberty, "
             text run at (241,42) width 380: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 3 {DIV} of body

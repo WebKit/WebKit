@@ -43,11 +43,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 744x84
-          text run at (14,14) width 723: "Size check should say: 24px. The first two words of the second line should"
-          text run at (737,14) width 6: " "
+          text run at (14,14) width 729: "Size check should say: 24px. The first two words of the second line should "
           text run at (14,42) width 332: "appear to be 24px. The rest of the "
-          text run at (346,42) width 406: "words on the second line should appear to"
-          text run at (752,42) width 6: " "
+          text run at (346,42) width 412: "words on the second line should appear to "
           text run at (14,70) width 83: "be 30px."
       RenderBlock {DIV} at (0,136) size 784x28
         RenderText {#text} at (0,0) size 118x28
