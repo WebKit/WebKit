@@ -6548,6 +6548,7 @@ void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, Compl
 {
     MESSAGE_CHECK(m_process, !shareData.url || shareData.url->protocolIsInHTTPFamily() || shareData.url->protocolIsData());
     MESSAGE_CHECK(m_process, shareData.files.isEmpty() || m_preferences->webShareFileAPIEnabled());
+    MESSAGE_CHECK(m_process, shareData.originator == ShareDataOriginator::Web);
     pageClient().showShareSheet(shareData, WTFMove(completionHandler));
 }
 

@@ -182,6 +182,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         data,
         url,
         { },
+        ShareDataOriginator::Web,
     };
 #if ENABLE(FILE_SHARE)
     if (document.settings().webShareFileAPIEnabled() && !data.files.isEmpty()) {

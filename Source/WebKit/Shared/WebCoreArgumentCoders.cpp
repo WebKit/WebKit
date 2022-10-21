@@ -1759,6 +1759,7 @@ void ArgumentCoder<ShareDataWithParsedURL>::encode(Encoder& encoder, const Share
     encoder << settings.shareData;
     encoder << settings.url;
     encoder << settings.files;
+    encoder << settings.originator;
 }
 
 bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWithParsedURL& settings)
@@ -1768,6 +1769,8 @@ bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWi
     if (!decoder.decode(settings.url))
         return false;
     if (!decoder.decode(settings.files))
+        return false;
+    if (!decoder.decode(settings.originator))
         return false;
     return true;
 }

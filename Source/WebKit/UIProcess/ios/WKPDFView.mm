@@ -640,6 +640,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebCore::ShareDataWithParsedURL shareData;
     shareData.url = { url };
+    shareData.originator = WebCore::ShareDataOriginator::User;
     
     [_shareSheet dismiss];
 
