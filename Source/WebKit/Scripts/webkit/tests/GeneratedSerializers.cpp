@@ -38,7 +38,9 @@
 #include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/ReturnRefClass.h>
+#include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {
@@ -110,13 +112,15 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
     } else
         nullableTestMember = std::optional<RetainPtr<CFTypeRef>> { RetainPtr<CFTypeRef> { } };
 
-    return { Namespace::Subnamespace::StructName {
-        WTFMove(*firstMemberName),
+    return {
+        Namespace::Subnamespace::StructName {
+            WTFMove(*firstMemberName),
 #if ENABLE(SECOND_MEMBER)
-        WTFMove(*secondMemberName),
+            WTFMove(*secondMemberName),
 #endif
-        WTFMove(*nullableTestMember)
-    } };
+            WTFMove(*nullableTestMember)
+        }
+    };
 }
 
 #endif
@@ -127,11 +131,13 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
     static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.isNull)>>, bool>);
     static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
     static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.b)>>, bool>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.dataDetectorResults)>>, RetainPtr<NSArray>>);
     encoder << instance.isNull;
     if (instance.isNull)
         return;
     encoder << instance.a;
     encoder << instance.b;
+    encoder << instance.dataDetectorResults;
 }
 
 std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decode(Decoder& decoder)
@@ -153,11 +159,19 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
     if (!b)
         return std::nullopt;
 
-    return { Namespace::OtherClass {
-        WTFMove(*isNull),
-        WTFMove(*a),
-        WTFMove(*b)
-    } };
+    std::optional<RetainPtr<NSArray>> dataDetectorResults;
+    dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
+    if (!dataDetectorResults)
+        return std::nullopt;
+
+    return {
+        Namespace::OtherClass {
+            WTFMove(*isNull),
+            WTFMove(*a),
+            WTFMove(*b),
+            WTFMove(*dataDetectorResults)
+        }
+    };
 }
 
 
@@ -199,11 +213,13 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
     } else
         uniqueMember = std::optional<std::unique_ptr<int>> { std::unique_ptr<int> { } };
 
-    return { Namespace::ReturnRefClass::create(
-        WTFMove(*functionCallmember1),
-        WTFMove(*functionCallmember2),
-        WTFMove(*uniqueMember)
-    ) };
+    return {
+        Namespace::ReturnRefClass::create(
+            WTFMove(*functionCallmember1),
+            WTFMove(*functionCallmember2),
+            WTFMove(*uniqueMember)
+        )
+    };
 }
 
 
@@ -302,9 +318,11 @@ std::optional<WithoutNamespace> ArgumentCoder<WithoutNamespace>::decode(Decoder&
     if (!a)
         return std::nullopt;
 
-    return { WithoutNamespace {
-        WTFMove(*a)
-    } };
+    return {
+        WithoutNamespace {
+            WTFMove(*a)
+        }
+    };
 }
 
 
@@ -327,16 +345,18 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
     if (!a)
         return std::nullopt;
 
-    return { WithoutNamespaceWithAttributes {
-        WTFMove(*a)
-    } };
+    return {
+        WithoutNamespaceWithAttributes {
+            WTFMove(*a)
+        }
+    };
 }
 
 
 void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCore::InheritsFrom& instance)
 {
     static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
-    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.b)>>, int>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.b)>>, float>);
     encoder << instance.a;
     encoder << instance.b;
 }
@@ -348,22 +368,69 @@ std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decod
     if (!a)
         return std::nullopt;
 
-    std::optional<int> b;
+    std::optional<float> b;
     decoder >> b;
     if (!b)
         return std::nullopt;
 
-    return { WebCore::InheritsFrom {
-        {
-            WTFMove(*a),
-        },
-        WTFMove(*b)
-    } };
+    return {
+        WebCore::InheritsFrom {
+            WithoutNamespace {
+                WTFMove(*a)
+            }
+            ,
+            WTFMove(*b)
+        }
+    };
+}
+
+
+void ArgumentCoder<WebCore::InheritanceGrandchild>::encode(Encoder& encoder, const WebCore::InheritanceGrandchild& instance)
+{
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.a)>>, int>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.b)>>, float>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.c)>>, double>);
+    encoder << instance.a;
+    encoder << instance.b;
+    encoder << instance.c;
+}
+
+std::optional<WebCore::InheritanceGrandchild> ArgumentCoder<WebCore::InheritanceGrandchild>::decode(Decoder& decoder)
+{
+    std::optional<int> a;
+    decoder >> a;
+    if (!a)
+        return std::nullopt;
+
+    std::optional<float> b;
+    decoder >> b;
+    if (!b)
+        return std::nullopt;
+
+    std::optional<double> c;
+    decoder >> c;
+    if (!c)
+        return std::nullopt;
+
+    return {
+        WebCore::InheritanceGrandchild {
+            WebCore::InheritsFrom {
+                WithoutNamespace {
+                    WTFMove(*a)
+                }
+                ,
+                WTFMove(*b)
+            }
+            ,
+            WTFMove(*c)
+        }
+    };
 }
 
 
 void ArgumentCoder<WTF::Seconds>::encode(Encoder& encoder, const WTF::Seconds& instance)
 {
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.value())>>, double>);
     encoder << instance.value();
 }
 
@@ -374,9 +441,32 @@ std::optional<WTF::Seconds> ArgumentCoder<WTF::Seconds>::decode(Decoder& decoder
     if (!value)
         return std::nullopt;
 
-    return { WTF::Seconds {
-        WTFMove(*value)
-    } };
+    return {
+        WTF::Seconds {
+            WTFMove(*value)
+        }
+    };
+}
+
+
+void ArgumentCoder<WTF::CreateUsingClass>::encode(Encoder& encoder, const WTF::CreateUsingClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.value)>>, double>);
+    encoder << instance.value;
+}
+
+std::optional<WTF::CreateUsingClass> ArgumentCoder<WTF::CreateUsingClass>::decode(Decoder& decoder)
+{
+    std::optional<double> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+
+    return {
+        WTF::CreateUsingClass::fromDouble(
+            WTFMove(*value)
+        )
+    };
 }
 
 } // namespace IPC

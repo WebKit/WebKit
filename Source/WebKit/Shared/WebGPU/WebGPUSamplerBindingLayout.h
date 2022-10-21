@@ -34,21 +34,6 @@ namespace WebKit::WebGPU {
 
 struct SamplerBindingLayout {
     PAL::WebGPU::SamplerBindingType type { PAL::WebGPU::SamplerBindingType::Filtering };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << type;
-    }
-
-    template<class Decoder> static std::optional<SamplerBindingLayout> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::SamplerBindingType> type;
-        decoder >> type;
-        if (!type)
-            return std::nullopt;
-
-        return { { WTFMove(*type) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

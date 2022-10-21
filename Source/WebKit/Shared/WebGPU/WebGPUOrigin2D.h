@@ -37,27 +37,6 @@ namespace WebKit::WebGPU {
 struct Origin2DDict {
     PAL::WebGPU::IntegerCoordinate x { 0 };
     PAL::WebGPU::IntegerCoordinate y { 0 };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << x;
-        encoder << y;
-    }
-
-    template<class Decoder> static std::optional<Origin2DDict> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::IntegerCoordinate> x;
-        decoder >> x;
-        if (!x)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::IntegerCoordinate> y;
-        decoder >> y;
-        if (!y)
-            return std::nullopt;
-
-        return { { WTFMove(*x), WTFMove(*y) } };
-    }
 };
 
 using Origin2D = std::variant<Vector<PAL::WebGPU::IntegerCoordinate>, Origin2DDict>;

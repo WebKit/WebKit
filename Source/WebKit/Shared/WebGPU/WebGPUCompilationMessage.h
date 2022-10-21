@@ -41,51 +41,6 @@ struct CompilationMessage {
     uint64_t linePos { 0 };
     uint64_t offset { 0 };
     uint64_t length { 0 };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << message;
-        encoder << type;
-        encoder << lineNum;
-        encoder << linePos;
-        encoder << offset;
-        encoder << length;
-    }
-
-    template<class Decoder> static std::optional<CompilationMessage> decode(Decoder& decoder)
-    {
-        std::optional<String> message;
-        decoder >> message;
-        if (!message)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::CompilationMessageType> type;
-        decoder >> type;
-        if (!type)
-            return std::nullopt;
-
-        std::optional<uint64_t> lineNum;
-        decoder >> lineNum;
-        if (!lineNum)
-            return std::nullopt;
-
-        std::optional<uint64_t> linePos;
-        decoder >> linePos;
-        if (!linePos)
-            return std::nullopt;
-
-        std::optional<uint64_t> offset;
-        decoder >> offset;
-        if (!offset)
-            return std::nullopt;
-
-        std::optional<uint64_t> length;
-        decoder >> length;
-        if (!length)
-            return std::nullopt;
-
-        return { { WTFMove(*message), WTFMove(*type), WTFMove(*lineNum), WTFMove(*linePos), WTFMove(*offset), WTFMove(*length) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -31,16 +31,7 @@
 
 namespace WebKit::WebGPU {
 
-struct OutOfMemoryError {
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-    }
-
-    template<class Decoder> static std::optional<OutOfMemoryError> decode(Decoder& decoder)
-    {
-        return { { } };
-    }
-};
+struct OutOfMemoryError { };
 
 } // namespace WebKit::WebGPU
 

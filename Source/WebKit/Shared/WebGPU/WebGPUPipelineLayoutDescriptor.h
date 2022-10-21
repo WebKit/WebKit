@@ -36,27 +36,6 @@ namespace WebKit::WebGPU {
 
 struct PipelineLayoutDescriptor : public ObjectDescriptorBase {
     Vector<WebGPUIdentifier> bindGroupLayouts;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << bindGroupLayouts;
-    }
-
-    template<class Decoder> static std::optional<PipelineLayoutDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<Vector<WebGPUIdentifier>> bindGroupLayouts;
-        decoder >> bindGroupLayouts;
-        if (!bindGroupLayouts)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*bindGroupLayouts) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

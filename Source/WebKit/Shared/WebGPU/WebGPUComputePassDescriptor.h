@@ -35,27 +35,6 @@ namespace WebKit::WebGPU {
 
 struct ComputePassDescriptor : public ObjectDescriptorBase {
     ComputePassTimestampWrites timestampWrites;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << timestampWrites;
-    }
-
-    template<class Decoder> static std::optional<ComputePassDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<ComputePassTimestampWrites> timestampWrites;
-        decoder >> timestampWrites;
-        if (!timestampWrites)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*timestampWrites) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

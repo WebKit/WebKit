@@ -36,27 +36,6 @@ namespace WebKit::WebGPU {
 
 struct VertexState : public ProgrammableStage {
     Vector<std::optional<VertexBufferLayout>> buffers;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ProgrammableStage&>(*this);
-        encoder << buffers;
-    }
-
-    template<class Decoder> static std::optional<VertexState> decode(Decoder& decoder)
-    {
-        std::optional<ProgrammableStage> programmableStage;
-        decoder >> programmableStage;
-        if (!programmableStage)
-            return std::nullopt;
-
-        std::optional<Vector<std::optional<VertexBufferLayout>>> buffers;
-        decoder >> buffers;
-        if (!buffers)
-            return std::nullopt;
-
-        return { { WTFMove(*programmableStage), WTFMove(*buffers) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -36,33 +36,6 @@ struct MultisampleState {
     PAL::WebGPU::Size32 count { 1 };
     PAL::WebGPU::SampleMask mask { 0xFFFFFFFF };
     bool alphaToCoverageEnabled { false };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << count;
-        encoder << mask;
-        encoder << alphaToCoverageEnabled;
-    }
-
-    template<class Decoder> static std::optional<MultisampleState> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::Size32> count;
-        decoder >> count;
-        if (!count)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::SampleMask> mask;
-        decoder >> mask;
-        if (!mask)
-            return std::nullopt;
-
-        std::optional<bool> alphaToCoverageEnabled;
-        decoder >> alphaToCoverageEnabled;
-        if (!alphaToCoverageEnabled)
-            return std::nullopt;
-
-        return { { WTFMove(*count), WTFMove(*mask), WTFMove(*alphaToCoverageEnabled) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -43,7 +43,9 @@ namespace Namespace { class EmptyConstructorNullable; }
 class WithoutNamespace;
 class WithoutNamespaceWithAttributes;
 namespace WebCore { class InheritsFrom; }
+namespace WebCore { class InheritanceGrandchild; }
 namespace WTF { class Seconds; }
+namespace WTF { class CreateUsingClass; }
 
 namespace IPC {
 
@@ -90,9 +92,19 @@ template<> struct ArgumentCoder<WebCore::InheritsFrom> {
     static std::optional<WebCore::InheritsFrom> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WebCore::InheritanceGrandchild> {
+    static void encode(Encoder&, const WebCore::InheritanceGrandchild&);
+    static std::optional<WebCore::InheritanceGrandchild> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<WTF::Seconds> {
     static void encode(Encoder&, const WTF::Seconds&);
     static std::optional<WTF::Seconds> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WTF::CreateUsingClass> {
+    static void encode(Encoder&, const WTF::CreateUsingClass&);
+    static std::optional<WTF::CreateUsingClass> decode(Decoder&);
 };
 
 } // namespace IPC

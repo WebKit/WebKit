@@ -36,27 +36,6 @@ namespace WebKit::WebGPU {
 
 struct BindGroupLayoutDescriptor : public ObjectDescriptorBase {
     Vector<BindGroupLayoutEntry> entries;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << entries;
-    }
-
-    template<class Decoder> static std::optional<BindGroupLayoutDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<Vector<BindGroupLayoutEntry>> entries;
-        decoder >> entries;
-        if (!entries)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*entries) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -24,3 +24,4 @@
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ObjectDescriptorBase {
     String label
 }
+#endif

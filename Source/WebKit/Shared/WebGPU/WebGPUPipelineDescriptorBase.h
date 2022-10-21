@@ -35,27 +35,6 @@ namespace WebKit::WebGPU {
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
     WebGPUIdentifier layout;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const ObjectDescriptorBase&>(*this);
-        encoder << layout;
-    }
-
-    template<class Decoder> static std::optional<PipelineDescriptorBase> decode(Decoder& decoder)
-    {
-        std::optional<ObjectDescriptorBase> objectDescriptorBase;
-        decoder >> objectDescriptorBase;
-        if (!objectDescriptorBase)
-            return std::nullopt;
-
-        std::optional<WebGPUIdentifier> layout;
-        decoder >> layout;
-        if (!layout)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*layout) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

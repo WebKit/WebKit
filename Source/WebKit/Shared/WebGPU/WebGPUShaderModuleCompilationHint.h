@@ -34,21 +34,6 @@ namespace WebKit::WebGPU {
 
 struct ShaderModuleCompilationHint {
     WebGPUIdentifier pipelineLayout;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << pipelineLayout;
-    }
-
-    template<class Decoder> static std::optional<ShaderModuleCompilationHint> decode(Decoder& decoder)
-    {
-        std::optional<WebGPUIdentifier> pipelineLayout;
-        decoder >> pipelineLayout;
-        if (!pipelineLayout)
-            return std::nullopt;
-
-        return { { WTFMove(*pipelineLayout) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

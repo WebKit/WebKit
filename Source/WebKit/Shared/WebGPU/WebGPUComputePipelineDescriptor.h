@@ -35,27 +35,6 @@ namespace WebKit::WebGPU {
 
 struct ComputePipelineDescriptor : public PipelineDescriptorBase {
     ProgrammableStage compute;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << static_cast<const PipelineDescriptorBase&>(*this);
-        encoder << compute;
-    }
-
-    template<class Decoder> static std::optional<ComputePipelineDescriptor> decode(Decoder& decoder)
-    {
-        std::optional<PipelineDescriptorBase> pipelineDescriptorBase;
-        decoder >> pipelineDescriptorBase;
-        if (!pipelineDescriptorBase)
-            return std::nullopt;
-
-        std::optional<ProgrammableStage> compute;
-        decoder >> compute;
-        if (!compute)
-            return std::nullopt;
-
-        return { { WTFMove(*pipelineDescriptorBase), WTFMove(*compute) } };
-    }
 };
 
 } // namespace WebKit::WebGPU
