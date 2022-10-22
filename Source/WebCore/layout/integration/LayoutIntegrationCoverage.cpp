@@ -153,6 +153,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowIsUnsupportedListItem:
         stream << "list item with text-indent";
         break;
+    case AvoidanceReason::FlowHasInitialLetter:
+        stream << "intial letter";
+        break;
     default:
         break;
     }
@@ -309,6 +312,8 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
     if (!style.hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
+    if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.
     if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
@@ -356,13 +361,13 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     if (is<RenderLineBreak>(child))
         return reasons;
 
+    auto& style = child.style();
+    if (style.styleType() == PseudoId::FirstLetter) {
+        if (auto styleReasons = canUseForStyle(downcast<RenderElement>(child), includeReasons))
+            ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
+    }
+
     auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
-        if (renderer.style().styleType() == PseudoId::FirstLetter) {
-            // Initial letter implementation uses a specialized float behavior internally.
-            auto& style = renderer.style();
-            if (renderer.isFloating() && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
-                return false;
-        }
 #if !ALLOW_FLOATS
         if (renderer.isFloating())
             return false;
@@ -375,7 +380,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
             return false;
 #endif
-        if (renderer.style().shapeOutside())
+        if (style.shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
             // FIXME: We don't collect out-of-flow boxes from nested subtrees.
