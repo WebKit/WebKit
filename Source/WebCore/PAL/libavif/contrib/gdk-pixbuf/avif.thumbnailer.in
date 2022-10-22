@@ -1,0 +1,4 @@
+[Thumbnailer Entry]
+TryExec=@CMAKE_INSTALL_FULL_BINDIR@/gdk-pixbuf-thumbnailer
+Exec=@CMAKE_INSTALL_FULL_BINDIR@/gdk-pixbuf-thumbnailer -s %s %u %o
+MimeType=image/avif;

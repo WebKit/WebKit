@@ -1,0 +1,64 @@
+image: Visual Studio 2022
+configuration: Release
+skip_commits:
+  files:
+    - '.github/*'
+    - '.travis.yml'
+    - '.gitignore'
+    - '*.md'
+
+install:
+ # Get submodules
+ - git submodule update --init --recursive
+ # Prepare Visual Studio environment
+ - call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+ # Install Nasm
+ - appveyor DownloadFile "https://github.com/joedrago/nasm_mirror/raw/master/nasm-2.15.05-win64.zip" -FileName "nasm.zip"
+ - 7z x "nasm.zip" > nul
+ - move nasm-* NASM
+ - set PATH=%PATH%;%CD%\NASM;
+ - nasm -v
+ # Build all external libraries statically
+ - cd ext
+ - aom.cmd
+ - dav1d.cmd
+ - libjpeg.cmd
+ - zlibpng.cmd
+ - set "CC=clang-cl" && set "CXX=clang-cl"
+ - libyuv.cmd
+ - set "CC=" && set "CXX="
+ - cd ..
+ # Configure with CMake
+ - mkdir build
+ - cd build
+ - cmake --version
+ - cmake .. -DAVIF_CODEC_AOM=ON -DAVIF_LOCAL_AOM=ON -DAVIF_CODEC_DAV1D=ON -DAVIF_LOCAL_DAV1D=ON -DBUILD_SHARED_LIBS=OFF -DAVIF_LOCAL_JPEG=ON -DAVIF_LOCAL_ZLIBPNG=ON -DAVIF_LOCAL_LIBYUV=ON -DAVIF_BUILD_APPS=ON
+
+build:
+  project: build/libavif.sln
+  parallel: true
+  verbosity: minimal
+
+after_build:
+ - copy %CONFIGURATION%\avifenc.exe .
+ - copy %CONFIGURATION%\avifdec.exe .
+ - mkdir lib
+ - set ARTIFACT_ZIP=libavif_vs2022_x64_%APPVEYOR_REPO_COMMIT:~0,8%_%CONFIGURATION%.zip
+ - copy %CONFIGURATION%\avif.lib lib\avif_x64_%CONFIGURATION%.lib
+ - 7z a %ARTIFACT_ZIP% lib
+ - cd ..
+ - 7z a build\%ARTIFACT_ZIP% include examples
+
+artifacts:
+- path: 'build\libavif_vs2022_x64_*.zip'
+  name: Static Lib and Includes
+- path: 'build\*.exe'
+  name: Basic apps
+
+deploy:
+ - provider: GitHub
+   auth_token:
+     secure: 'RsUpI1cVgIyervo85gkQ/qRr9BRx9n6WfqcHrFLB4VNi4BBnfuMt+9dY399oP/EF'
+   prerelease: true
+   on:
+     appveyor_repo_tag: true
