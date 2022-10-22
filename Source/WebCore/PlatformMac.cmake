@@ -557,8 +557,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ScrollingStateOverflowScrollProxyNode.h
 
     page/scrolling/cocoa/ScrollingTreeFixedNodeCocoa.h
-    page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.h
-    page/scrolling/cocoa/ScrollingTreePositionedNode.h
+    page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNodeCocoa.h
+    page/scrolling/cocoa/ScrollingTreePositionedNodeCocoa.h
     page/scrolling/cocoa/ScrollingTreeStickyNodeCocoa.h
 
     page/scrolling/mac/ScrollingCoordinatorMac.h

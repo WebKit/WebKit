@@ -56,10 +56,12 @@ public:
 #if PLATFORM(COCOA)
     bool isFixedNodeCocoa() const { return isFixedNode(); }
     bool isPositionedNodeCocoa() const { return isPositionedNode(); }
+    bool isOverflowScrollProxyNodeCocoa() const { return isOverflowScrollProxyNode(); }
 #endif
 #if USE(NICOSIA)
     bool isFixedNodeNicosia() const { return isFixedNode(); }
     bool isPositionedNodeNicosia() const { return isPositionedNode(); }
+    bool isOverflowScrollProxyNodeNicosia() const { return isOverflowScrollProxyNode(); }
 #endif
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
     bool isFrameScrollingNode() const { return nodeType() == ScrollingNodeType::MainFrame || nodeType() == ScrollingNodeType::Subframe; }
