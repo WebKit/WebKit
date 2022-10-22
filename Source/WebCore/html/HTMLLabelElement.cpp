@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +30,8 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "FormAssociatedElement.h"
+#include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "SelectionRestorationMode.h"
@@ -133,6 +135,11 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
     static bool processingClick = false;
 
     if (event.type() == eventNames().clickEvent && !processingClick) {
+        // If text of label element is selected, do not pass
+        // the event to control element.
+        if (document().frame()->selection().selection().isRange())
+            return;
+
         auto control = this->control();
 
         // If we can't find a control or if the control received the click
