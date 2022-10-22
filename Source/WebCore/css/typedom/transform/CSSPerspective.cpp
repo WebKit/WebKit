@@ -148,8 +148,12 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
     if (!is<CSSUnitValue>(length))
         return Exception { TypeError };
 
+    auto valuePx = downcast<CSSUnitValue>(*length).convertTo(CSSUnitType::CSS_PX);
+    if (!valuePx)
+        return Exception { TypeError, "Length unit is not compatible with 'px'"_s };
+
     TransformationMatrix matrix { };
-    matrix.applyPerspective(downcast<CSSUnitValue>(*length).value());
+    matrix.applyPerspective(valuePx->value());
 
     return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::No) };
 }

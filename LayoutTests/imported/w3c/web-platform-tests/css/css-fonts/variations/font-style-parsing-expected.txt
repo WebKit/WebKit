@@ -11,8 +11,8 @@ PASS Font-style (supports): 'oblique' followed by positive angle in turns is val
 PASS Font-style (supports): 'oblique' followed by number with invalid unit type is in valid
 PASS Font-style (supports): 'oblique' followed by negative angle is valid
 PASS Font-style (supports): 'oblique' followed by fractional angle is valid
-FAIL Font-style (supports): 'oblique' followed by maxumum 90 degree angle is valid assert_equals: Font-style supports: 'oblique' followed by maxumum 90 degree angle is valid expected true but got false
-FAIL Font-style (supports): 'oblique' followed by minimum -90 degree angle is valid assert_equals: Font-style supports: 'oblique' followed by minimum -90 degree angle is valid expected true but got false
+PASS Font-style (supports): 'oblique' followed by maxumum 90 degree angle is valid
+PASS Font-style (supports): 'oblique' followed by minimum -90 degree angle is valid
 PASS Font-style (supports): 'oblique' followed by positive out of range angle is in invalid
 PASS Font-style (supports): 'oblique' followed by negative out of range angle is in invalid
 PASS Font-style (supports): 'oblique' followed by unit-less value is invalid
@@ -35,8 +35,8 @@ PASS Font-style (computed): 'oblique' followed by positive angle in gradians is 
 PASS Font-style (computed): 'oblique' followed by positive angle in turns is valid
 PASS Font-style (computed): 'oblique' followed by negative angle is valid
 PASS Font-style (computed): 'oblique' followed by fractional angle is valid
-FAIL Font-style (computed): 'oblique' followed by maxumum 90 degree angle is valid assert_equals: Font-style computed style: 'oblique' followed by maxumum 90 degree angle is valid expected "oblique 90deg" but got "normal"
-FAIL Font-style (computed): 'oblique' followed by minimum -90 degree angle is valid assert_equals: Font-style computed style: 'oblique' followed by minimum -90 degree angle is valid expected "oblique -90deg" but got "normal"
+PASS Font-style (computed): 'oblique' followed by maxumum 90 degree angle is valid
+PASS Font-style (computed): 'oblique' followed by minimum -90 degree angle is valid
 PASS Font-style (computed): 'oblique' followed by positive angle is valid
 PASS Font-style (computed): 'oblique' followed by calc is valid
 FAIL Font-style (computed): 'oblique' followed by calc is valid even if it must be clamped (no computation) assert_equals: Font-style computed style: 'oblique' followed by calc is valid even if it must be clamped (no computation) expected "oblique -90deg" but got "normal"

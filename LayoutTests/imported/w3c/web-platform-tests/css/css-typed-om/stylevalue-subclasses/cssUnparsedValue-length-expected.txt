@@ -1,6 +1,6 @@
 
 PASS Length of CSSUnparsedValue with no fragments is zero
 PASS Length of CSSUnparsedValue with multiple fragments is the number of fragments
-FAIL Length of CSSUnparsedValue updates when fragments are appended Index 1 exceeds index range for unparsed segments.
+PASS Length of CSSUnparsedValue updates when fragments are appended
 PASS Length of CSSUnparsedValue does not change when fragments are modified
 

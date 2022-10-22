@@ -137,9 +137,12 @@ ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::item(size_t index)
 
 ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnparsedSegment&& val)
 {
-    if (index >= m_segments.size())
+    if (index > m_segments.size())
         return Exception { RangeError, makeString("Index ", index, " exceeds index range for unparsed segments.") };
-    m_segments[index] = WTFMove(val);
+    if (index == m_segments.size())
+        m_segments.append(WTFMove(val));
+    else
+        m_segments[index] = WTFMove(val);
     return CSSUnparsedSegment { m_segments[index] };
 }
 

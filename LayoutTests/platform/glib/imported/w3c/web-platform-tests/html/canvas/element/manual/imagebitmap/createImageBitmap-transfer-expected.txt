@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: Type error
 
 PASS Transfer ImageBitmap created from an HTMLCanvasElement
 PASS Transfer ImageBitmap created from an HTMLVideoElement
@@ -11,5 +10,5 @@ PASS Transfer ImageBitmap created from an OffscreenCanvas
 PASS Transfer ImageBitmap created from an ImageData
 PASS Transfer ImageBitmap created from an ImageBitmap
 PASS Transfer ImageBitmap created from a Blob
-FAIL Transferring a non-origin-clean ImageBitmap throws. assert_throws_dom: function "() => worker.postMessage(bitmap, [bitmap])" did not throw
+PASS Transferring a non-origin-clean ImageBitmap throws.
 
