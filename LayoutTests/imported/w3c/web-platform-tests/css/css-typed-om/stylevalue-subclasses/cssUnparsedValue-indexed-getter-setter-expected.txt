@@ -2,7 +2,7 @@
 PASS Getting invalid index in CSSUnparsedValue returns undefined
 PASS Can update fragment in CSSUnparsedValue to a String
 PASS Can update fragment in CSSUnparsedValue to a CSSVariableReference
-FAIL Setting one past the last fragment in a CSSUnparsedValue to a String appends the new fragment Index 0 exceeds index range for unparsed segments.
-FAIL Setting one past the last fragment in a CSSUnparsedValue to a CSSVariableReferenceValue appends the new fragment Index 1 exceeds index range for unparsed segments.
+PASS Setting one past the last fragment in a CSSUnparsedValue to a String appends the new fragment
+PASS Setting one past the last fragment in a CSSUnparsedValue to a CSSVariableReferenceValue appends the new fragment
 PASS Setting out of range index in CSSUnparsedValue throws RangeError
 
