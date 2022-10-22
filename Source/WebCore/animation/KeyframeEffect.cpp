@@ -2237,6 +2237,15 @@ Seconds KeyframeEffect::timeToNextTick(BasicEffectTiming timing) const
     return AnimationEffect::timeToNextTick(timing);
 }
 
+void KeyframeEffect::setIterationComposite(IterationCompositeOperation iterationCompositeOperation)
+{
+    if (m_iterationCompositeOperation == iterationCompositeOperation)
+        return;
+
+    m_iterationCompositeOperation = iterationCompositeOperation;
+    invalidate();
+}
+
 void KeyframeEffect::setComposite(CompositeOperation compositeOperation)
 {
     if (m_compositeOperation == compositeOperation)

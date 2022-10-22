@@ -118,7 +118,7 @@ public:
     ExceptionOr<void> setKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
 
     IterationCompositeOperation iterationComposite() const { return m_iterationCompositeOperation; }
-    void setIterationComposite(IterationCompositeOperation iterationCompositeOperation) { m_iterationCompositeOperation = iterationCompositeOperation; }
+    void setIterationComposite(IterationCompositeOperation);
     CompositeOperation composite() const { return m_compositeOperation; }
     void setComposite(CompositeOperation);
     CompositeOperation bindingsComposite() const;
