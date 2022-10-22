@@ -850,16 +850,18 @@ static std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const Inli
     return { };
 }
 
-std::tuple<InlineRect, bool> LineBuilder::lineRectForCandidateInlineContent(const LineCandidate& lineCandidate) const
+std::tuple<InlineRect, bool> LineBuilder::lineBoxForCandidateInlineContent(const LineCandidate& lineCandidate) const
 {
     auto& inlineContent = lineCandidate.inlineContent;
     // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
     if (isInIntrinsicWidthMode())
         return { m_lineLogicalRect, false };
     auto maximumLineLogicalHeight = m_lineLogicalRect.height();
+    // FIXME: Use InlineFormattingGeometry::inlineLevelBoxAffectsLineBox instead.
+    auto lineBoxContain = formattingContext().root().style().lineBoxContain();
     for (auto& run : inlineContent.continuousContent().runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isBox())
+        if (inlineItem.isBox() && lineBoxContain.contains(LineBoxContain::Replaced))
             maximumLineLogicalHeight = std::max(maximumLineLogicalHeight, InlineLayoutUnit { formattingContext().geometryForBox(run.inlineItem.layoutBox()).marginBoxHeight() });
         else if (inlineItem.isText()) {
             auto& styleToUse = isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
@@ -981,7 +983,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         inlineContentBreaker.setHyphenationDisabled();
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
-    auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineRectForCandidateInlineContent(lineCandidate);
+    auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineBoxForCandidateInlineContent(lineCandidate);
     auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
     auto lineIsConsideredContentful = m_line.hasContent() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, trimmableTrailingContentWidth(m_line), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineIsConsideredContentful, !m_wrapOpportunityList.isEmpty() };
