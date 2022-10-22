@@ -2701,7 +2701,7 @@ void WebViewImpl::selectionDidChange()
         m_softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if HAVE(TOUCH_BAR)
     updateTouchBar();
-    if (!m_page->editorState().isMissingPostLayoutData())
+    if (m_page->editorState().hasPostLayoutData())
         requestCandidatesForSelectionIfNeeded();
 #endif
 
@@ -3156,7 +3156,7 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     if (!editorState.isContentEditable)
         return;
 
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;
@@ -3188,7 +3188,7 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;
@@ -3237,7 +3237,7 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;
@@ -5639,7 +5639,7 @@ void WebViewImpl::updateTextTouchBar()
     // the text when changing selection throughout the document.
     if (isRichlyEditableForTouchBar()) {
         const EditorState& editorState = m_page->editorState();
-        if (!editorState.isMissingPostLayoutData()) {
+        if (editorState.hasPostLayoutData()) {
             [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeBold)];
             [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeItalics)];
             [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeUnderline)];

@@ -436,7 +436,7 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 
 void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& result) const
 {
-    if (result.isMissingPostLayoutData())
+    if (!result.hasPostLayoutAndVisualData())
         return;
 
     const auto& selection = frame.selection().selection();

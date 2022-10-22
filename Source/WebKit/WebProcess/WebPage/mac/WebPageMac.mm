@@ -153,7 +153,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     result.canEnableAutomaticSpellingCorrection = result.isContentEditable && frame.editor().canEnableAutomaticSpellingCorrection();
 
-    if (result.isMissingPostLayoutData())
+    if (!result.hasPostLayoutAndVisualData())
         return;
 
     auto& selection = frame.selection().selection();

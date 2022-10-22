@@ -2553,7 +2553,7 @@ void WebPageProxy::updateFontAttributesAfterEditorStateChange()
 {
     m_cachedFontAttributesAtSelectionStart.reset();
 
-    if (m_editorState.isMissingPostLayoutData())
+    if (!m_editorState.hasPostLayoutData())
         return;
 
     if (auto fontAttributes = m_editorState.postLayoutData->fontAttributes) {
@@ -7939,18 +7939,37 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
-    if (updateEditorState(editorState))
+    // FIXME: This should not merge VisualData; they should only be merged
+    // if the drawing area says to.
+    if (updateEditorState(editorState, ShouldMergeVisualEditorState::Yes))
         dispatchDidUpdateEditorState();
 }
 
-bool WebPageProxy::updateEditorState(const EditorState& newEditorState)
+bool WebPageProxy::updateEditorState(const EditorState& newEditorState, ShouldMergeVisualEditorState shouldMergeVisualEditorState)
 {
-    if (newEditorState.identifier < m_editorState.identifier)
-        return false;
+    if (shouldMergeVisualEditorState == ShouldMergeVisualEditorState::Default)
+        shouldMergeVisualEditorState = (!m_drawingArea || !m_drawingArea->shouldCoalesceVisualEditorStateUpdates()) ? ShouldMergeVisualEditorState::Yes : ShouldMergeVisualEditorState::No;
 
-    auto oldEditorState = std::exchange(m_editorState, newEditorState);
-    didUpdateEditorState(oldEditorState, newEditorState);
-    return true;
+    bool isStaleEditorState = newEditorState.identifier < m_editorState.identifier;
+    bool shouldKeepExistingVisualEditorState = shouldMergeVisualEditorState == ShouldMergeVisualEditorState::No && m_editorState.hasVisualData();
+    bool shouldMergeNewVisualEditorState = shouldMergeVisualEditorState == ShouldMergeVisualEditorState::Yes && newEditorState.hasVisualData();
+    
+    std::optional<EditorState> oldEditorState;
+    if (!isStaleEditorState) {
+        oldEditorState = std::exchange(m_editorState, newEditorState);
+        if (shouldKeepExistingVisualEditorState)
+            m_editorState.visualData = oldEditorState->visualData;
+    } else if (shouldMergeNewVisualEditorState) {
+        oldEditorState = m_editorState;
+        m_editorState.visualData = newEditorState.visualData;
+    }
+
+    if (oldEditorState) {
+        didUpdateEditorState(*oldEditorState, newEditorState);
+        return true;
+    }
+
+    return false;
 }
 
 #if !PLATFORM(IOS_FAMILY)

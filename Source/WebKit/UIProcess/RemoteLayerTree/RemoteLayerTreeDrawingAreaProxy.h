@@ -69,6 +69,8 @@ public:
 protected:
     void updateDebugIndicatorPosition();
 
+    bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
+
 private:
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
