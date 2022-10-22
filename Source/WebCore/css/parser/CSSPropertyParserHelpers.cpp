@@ -4478,34 +4478,32 @@ std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&
     return consumeIdentRaw<CSSValueUltraCondensed, CSSValueExtraCondensed, CSSValueCondensed, CSSValueSemiCondensed, CSSValueNormal, CSSValueSemiExpanded, CSSValueExpanded, CSSValueExtraExpanded, CSSValueUltraExpanded>(range);
 }
 
-std::optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange& range)
-{
-    return consumeIdentRaw<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
-}
-
 std::optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
-    auto result = consumeFontStyleKeywordValueRaw(range);
-    if (!result)
+#if ENABLE(VARIATION_FONTS)
+    CSSParserTokenRange rangeBeforeKeyword = range;
+#endif
+
+    auto keyword = consumeIdentRaw<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
+    if (!keyword)
         return std::nullopt;
 
-    auto ident = *result;
-    if (ident == CSSValueNormal || ident == CSSValueItalic)
-        return { { ident, std::nullopt } };
-    ASSERT(ident == CSSValueOblique);
 #if ENABLE(VARIATION_FONTS)
-    if (!range.atEnd()) {
+    if (*keyword == CSSValueOblique && !range.atEnd()) {
         // FIXME: This angle does specify that unitless 0 is allowed - see https://drafts.csswg.org/css-fonts-4/#valdef-font-style-oblique-angle
         if (auto angle = consumeAngleRaw(range, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
             if (isFontStyleAngleInRange(CSSPrimitiveValue::computeDegrees(angle->type, angle->value)))
                 return { { CSSValueOblique, WTFMove(angle) } };
+            // Must not consume anything on error.
+            range = rangeBeforeKeyword;
             return std::nullopt;
         }
     }
 #else
     UNUSED_PARAM(parserMode);
 #endif
-    return { { CSSValueOblique, std::nullopt } };
+
+    return { { *keyword, std::nullopt } };
 }
 
 AtomString concatenateFamilyName(CSSParserTokenRange& range)
