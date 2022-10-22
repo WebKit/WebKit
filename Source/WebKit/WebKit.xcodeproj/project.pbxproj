@@ -15605,7 +15605,6 @@
 				650994D828C942B7006EE6DB /* Process WebContent entitlements */,
 				650994D928C942B7006EE6DB /* Create Symlink to Alt Root Path */,
 				650994DA28C942B7006EE6DB /* Copy XPC Service to Secondary Path */,
-				65793ACF28FF4E92005F01CE /* Update Info.plist for RunningBoard management */,
 			);
 			buildRules = (
 			);
@@ -16591,25 +16590,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
-		};
-		65793ACF28FF4E92005F01CE /* Update Info.plist for RunningBoard management */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Update Info.plist for RunningBoard management";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "Scripts/update-info-plist-for-runningboard.sh\n";
 		};
 		7A7E8DF22748392500DCC97A /* Process WebContent entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
