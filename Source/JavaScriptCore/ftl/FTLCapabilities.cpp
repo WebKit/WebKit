@@ -157,6 +157,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetArgument:
     case InvalidationPoint:
     case StringCharAt:
+    case StringLocaleCompare:
     case CheckIsConstant:
     case CheckBadValue:
     case CheckNotEmpty:

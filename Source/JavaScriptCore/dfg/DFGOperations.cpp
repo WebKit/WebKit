@@ -46,6 +46,7 @@
 #include "HasOwnPropertyCache.h"
 #include "Interpreter.h"
 #include "InterpreterInlines.h"
+#include "IntlCollator.h"
 #include "JITCodeInlines.h"
 #include "JITWorklist.h"
 #include "JSArrayInlines.h"
@@ -2799,6 +2800,25 @@ JSC_DEFINE_JIT_OPERATION(operationToLowerCase, JSString*, (JSGlobalObject* globa
     if (lowercasedString.impl() == inputString.impl())
         return string;
     RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(lowercasedString)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String string = base->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    String that = argument->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto* collator = globalObject->defaultCollator();
+
+    RELEASE_AND_RETURN(scope, toUCPUStrictInt32(collator->compareStrings(globalObject, string, that)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationInt32ToString, char*, (JSGlobalObject* globalObject, int32_t value, int32_t radix))

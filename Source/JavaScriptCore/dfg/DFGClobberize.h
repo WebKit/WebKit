@@ -254,6 +254,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
+    case StringLocaleCompare:
+        read(World);
+        write(SideState);
+        def(PureValue(node));
+        return;
+
     case ArithMin:
     case ArithMax:
         def(PureValue(graph, node));

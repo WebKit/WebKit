@@ -27,184 +27,190 @@
 
 #include "IterationKind.h"
 #include <optional>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
+#define JSC_FOR_EACH_INTRINSIC(macro) \
+    /* Call intrinsics. */ \
+    macro(NoIntrinsic) \
+    macro(AbsIntrinsic) \
+    macro(ACosIntrinsic) \
+    macro(ASinIntrinsic) \
+    macro(ATanIntrinsic) \
+    macro(ACoshIntrinsic) \
+    macro(ASinhIntrinsic) \
+    macro(ATanhIntrinsic) \
+    macro(MinIntrinsic) \
+    macro(MaxIntrinsic) \
+    macro(SqrtIntrinsic) \
+    macro(SinIntrinsic) \
+    macro(CbrtIntrinsic) \
+    macro(Clz32Intrinsic) \
+    macro(CosIntrinsic) \
+    macro(TanIntrinsic) \
+    macro(CoshIntrinsic) \
+    macro(SinhIntrinsic) \
+    macro(TanhIntrinsic) \
+    macro(ArrayPushIntrinsic) \
+    macro(ArrayPopIntrinsic) \
+    macro(ArraySliceIntrinsic) \
+    macro(ArrayIndexOfIntrinsic) \
+    macro(ArrayValuesIntrinsic) \
+    macro(ArrayKeysIntrinsic) \
+    macro(ArrayEntriesIntrinsic) \
+    macro(CharCodeAtIntrinsic) \
+    macro(CharAtIntrinsic) \
+    macro(DatePrototypeGetTimeIntrinsic) \
+    macro(DatePrototypeGetFullYearIntrinsic) \
+    macro(DatePrototypeGetUTCFullYearIntrinsic) \
+    macro(DatePrototypeGetMonthIntrinsic) \
+    macro(DatePrototypeGetUTCMonthIntrinsic) \
+    macro(DatePrototypeGetDateIntrinsic) \
+    macro(DatePrototypeGetUTCDateIntrinsic) \
+    macro(DatePrototypeGetDayIntrinsic) \
+    macro(DatePrototypeGetUTCDayIntrinsic) \
+    macro(DatePrototypeGetHoursIntrinsic) \
+    macro(DatePrototypeGetUTCHoursIntrinsic) \
+    macro(DatePrototypeGetMinutesIntrinsic) \
+    macro(DatePrototypeGetUTCMinutesIntrinsic) \
+    macro(DatePrototypeGetSecondsIntrinsic) \
+    macro(DatePrototypeGetUTCSecondsIntrinsic) \
+    macro(DatePrototypeGetMillisecondsIntrinsic) \
+    macro(DatePrototypeGetUTCMillisecondsIntrinsic) \
+    macro(DatePrototypeGetTimezoneOffsetIntrinsic) \
+    macro(DatePrototypeGetYearIntrinsic) \
+    macro(FromCharCodeIntrinsic) \
+    macro(PowIntrinsic) \
+    macro(FloorIntrinsic) \
+    macro(CeilIntrinsic) \
+    macro(RoundIntrinsic) \
+    macro(ExpIntrinsic) \
+    macro(Expm1Intrinsic) \
+    macro(LogIntrinsic) \
+    macro(Log10Intrinsic) \
+    macro(Log1pIntrinsic) \
+    macro(Log2Intrinsic) \
+    macro(RegExpExecIntrinsic) \
+    macro(RegExpTestIntrinsic) \
+    macro(RegExpTestFastIntrinsic) \
+    macro(RegExpMatchFastIntrinsic) \
+    macro(ObjectAssignIntrinsic) \
+    macro(ObjectCreateIntrinsic) \
+    macro(ObjectGetOwnPropertyNamesIntrinsic) \
+    macro(ObjectGetPrototypeOfIntrinsic) \
+    macro(ObjectIsIntrinsic) \
+    macro(ObjectKeysIntrinsic) \
+    macro(ObjectToStringIntrinsic) \
+    macro(ReflectGetPrototypeOfIntrinsic) \
+    macro(StringPrototypeCodePointAtIntrinsic) \
+    macro(StringPrototypeLocaleCompareIntrinsic) \
+    macro(StringPrototypeValueOfIntrinsic) \
+    macro(StringPrototypeReplaceIntrinsic) \
+    macro(StringPrototypeReplaceRegExpIntrinsic) \
+    macro(StringPrototypeReplaceStringIntrinsic) \
+    macro(StringPrototypeSliceIntrinsic) \
+    macro(StringPrototypeSubstringIntrinsic) \
+    macro(StringPrototypeToLowerCaseIntrinsic) \
+    macro(NumberPrototypeToStringIntrinsic) \
+    macro(NumberIsIntegerIntrinsic) \
+    macro(IMulIntrinsic) \
+    macro(RandomIntrinsic) \
+    macro(FRoundIntrinsic) \
+    macro(TruncIntrinsic) \
+    macro(TypedArrayValuesIntrinsic) \
+    macro(TypedArrayKeysIntrinsic) \
+    macro(TypedArrayEntriesIntrinsic) \
+    macro(IsTypedArrayViewIntrinsic) \
+    macro(BoundFunctionCallIntrinsic) \
+    macro(RemoteFunctionCallIntrinsic) \
+    macro(JSMapGetIntrinsic) \
+    macro(JSMapHasIntrinsic) \
+    macro(JSMapSetIntrinsic) \
+    macro(JSMapValuesIntrinsic) \
+    macro(JSMapKeysIntrinsic) \
+    macro(JSMapEntriesIntrinsic) \
+    macro(JSMapBucketHeadIntrinsic) \
+    macro(JSMapBucketNextIntrinsic) \
+    macro(JSMapBucketKeyIntrinsic) \
+    macro(JSMapBucketValueIntrinsic) \
+    macro(JSSetHasIntrinsic) \
+    macro(JSSetAddIntrinsic) \
+    macro(JSSetValuesIntrinsic) \
+    macro(JSSetEntriesIntrinsic) \
+    macro(JSSetBucketHeadIntrinsic) \
+    macro(JSSetBucketNextIntrinsic) \
+    macro(JSSetBucketKeyIntrinsic) \
+    macro(JSWeakMapGetIntrinsic) \
+    macro(JSWeakMapHasIntrinsic) \
+    macro(JSWeakMapSetIntrinsic) \
+    macro(JSWeakSetHasIntrinsic) \
+    macro(JSWeakSetAddIntrinsic) \
+    macro(HasOwnPropertyIntrinsic) \
+    macro(AtomicsAddIntrinsic) \
+    macro(AtomicsAndIntrinsic) \
+    macro(AtomicsCompareExchangeIntrinsic) \
+    macro(AtomicsExchangeIntrinsic) \
+    macro(AtomicsIsLockFreeIntrinsic) \
+    macro(AtomicsLoadIntrinsic) \
+    macro(AtomicsNotifyIntrinsic) \
+    macro(AtomicsOrIntrinsic) \
+    macro(AtomicsStoreIntrinsic) \
+    macro(AtomicsSubIntrinsic) \
+    macro(AtomicsWaitIntrinsic) \
+    macro(AtomicsXorIntrinsic) \
+    macro(ParseIntIntrinsic) \
+    macro(FunctionToStringIntrinsic) \
+    \
+    /* Getter intrinsics. */ \
+    macro(TypedArrayLengthIntrinsic) \
+    macro(TypedArrayByteLengthIntrinsic) \
+    macro(TypedArrayByteOffsetIntrinsic) \
+    macro(UnderscoreProtoIntrinsic) \
+    \
+    /* Debugging intrinsics. These are meant to be used as testing hacks within jsc.cpp and should never be exposed to users.*/ \
+    macro(DFGTrueIntrinsic) \
+    macro(FTLTrueIntrinsic) \
+    macro(OSRExitIntrinsic) \
+    macro(IsFinalTierIntrinsic) \
+    macro(SetInt32HeapPredictionIntrinsic) \
+    macro(CheckInt32Intrinsic) \
+    macro(FiatInt52Intrinsic) \
+    \
+    /* These are used for $vm performance debugging features. */ \
+    macro(CPUMfenceIntrinsic) \
+    macro(CPURdtscIntrinsic) \
+    macro(CPUCpuidIntrinsic) \
+    macro(CPUPauseIntrinsic) \
+    \
+    macro(DataViewGetInt8) \
+    macro(DataViewGetUint8) \
+    macro(DataViewGetInt16) \
+    macro(DataViewGetUint16) \
+    macro(DataViewGetInt32) \
+    macro(DataViewGetUint32) \
+    macro(DataViewGetFloat32) \
+    macro(DataViewGetFloat64) \
+    macro(DataViewSetInt8) \
+    macro(DataViewSetUint8) \
+    macro(DataViewSetInt16) \
+    macro(DataViewSetUint16) \
+    macro(DataViewSetInt32) \
+    macro(DataViewSetUint32) \
+    macro(DataViewSetFloat32) \
+    macro(DataViewSetFloat64) \
+    \
+    macro(WasmFunctionIntrinsic) \
+
 enum Intrinsic : uint8_t {
-    // Call intrinsics.
-    NoIntrinsic,
-    AbsIntrinsic,
-    ACosIntrinsic,
-    ASinIntrinsic,
-    ATanIntrinsic,
-    ACoshIntrinsic,
-    ASinhIntrinsic,
-    ATanhIntrinsic,
-    MinIntrinsic,
-    MaxIntrinsic,
-    SqrtIntrinsic,
-    SinIntrinsic,
-    CbrtIntrinsic,
-    Clz32Intrinsic,
-    CosIntrinsic,
-    TanIntrinsic,
-    CoshIntrinsic,
-    SinhIntrinsic,
-    TanhIntrinsic,
-    ArrayPushIntrinsic,
-    ArrayPopIntrinsic,
-    ArraySliceIntrinsic,
-    ArrayIndexOfIntrinsic,
-    ArrayValuesIntrinsic,
-    ArrayKeysIntrinsic,
-    ArrayEntriesIntrinsic,
-    CharCodeAtIntrinsic,
-    CharAtIntrinsic,
-    DatePrototypeGetTimeIntrinsic,
-    DatePrototypeGetFullYearIntrinsic,
-    DatePrototypeGetUTCFullYearIntrinsic,
-    DatePrototypeGetMonthIntrinsic,
-    DatePrototypeGetUTCMonthIntrinsic,
-    DatePrototypeGetDateIntrinsic,
-    DatePrototypeGetUTCDateIntrinsic,
-    DatePrototypeGetDayIntrinsic,
-    DatePrototypeGetUTCDayIntrinsic,
-    DatePrototypeGetHoursIntrinsic,
-    DatePrototypeGetUTCHoursIntrinsic,
-    DatePrototypeGetMinutesIntrinsic,
-    DatePrototypeGetUTCMinutesIntrinsic,
-    DatePrototypeGetSecondsIntrinsic,
-    DatePrototypeGetUTCSecondsIntrinsic,
-    DatePrototypeGetMillisecondsIntrinsic,
-    DatePrototypeGetUTCMillisecondsIntrinsic,
-    DatePrototypeGetTimezoneOffsetIntrinsic,
-    DatePrototypeGetYearIntrinsic,
-    FromCharCodeIntrinsic,
-    PowIntrinsic,
-    FloorIntrinsic,
-    CeilIntrinsic,
-    RoundIntrinsic,
-    ExpIntrinsic,
-    Expm1Intrinsic,
-    LogIntrinsic,
-    Log10Intrinsic,
-    Log1pIntrinsic,
-    Log2Intrinsic,
-    RegExpExecIntrinsic,
-    RegExpTestIntrinsic,
-    RegExpTestFastIntrinsic,
-    RegExpMatchFastIntrinsic,
-    ObjectAssignIntrinsic,
-    ObjectCreateIntrinsic,
-    ObjectGetOwnPropertyNamesIntrinsic,
-    ObjectGetPrototypeOfIntrinsic,
-    ObjectIsIntrinsic,
-    ObjectKeysIntrinsic,
-    ObjectToStringIntrinsic,
-    ReflectGetPrototypeOfIntrinsic,
-    StringPrototypeCodePointAtIntrinsic,
-    StringPrototypeValueOfIntrinsic,
-    StringPrototypeReplaceIntrinsic,
-    StringPrototypeReplaceRegExpIntrinsic,
-    StringPrototypeReplaceStringIntrinsic,
-    StringPrototypeSliceIntrinsic,
-    StringPrototypeSubstringIntrinsic,
-    StringPrototypeToLowerCaseIntrinsic,
-    NumberPrototypeToStringIntrinsic,
-    NumberIsIntegerIntrinsic,
-    IMulIntrinsic,
-    RandomIntrinsic,
-    FRoundIntrinsic,
-    TruncIntrinsic,
-    TypedArrayValuesIntrinsic,
-    TypedArrayKeysIntrinsic,
-    TypedArrayEntriesIntrinsic,
-    IsTypedArrayViewIntrinsic,
-    BoundFunctionCallIntrinsic,
-    RemoteFunctionCallIntrinsic,
-    JSMapGetIntrinsic,
-    JSMapHasIntrinsic,
-    JSMapSetIntrinsic,
-    JSMapValuesIntrinsic,
-    JSMapKeysIntrinsic,
-    JSMapEntriesIntrinsic,
-    JSMapBucketHeadIntrinsic,
-    JSMapBucketNextIntrinsic,
-    JSMapBucketKeyIntrinsic,
-    JSMapBucketValueIntrinsic,
-    JSSetHasIntrinsic,
-    JSSetAddIntrinsic,
-    JSSetValuesIntrinsic,
-    JSSetEntriesIntrinsic,
-    JSSetBucketHeadIntrinsic,
-    JSSetBucketNextIntrinsic,
-    JSSetBucketKeyIntrinsic,
-    JSWeakMapGetIntrinsic,
-    JSWeakMapHasIntrinsic,
-    JSWeakMapSetIntrinsic,
-    JSWeakSetHasIntrinsic,
-    JSWeakSetAddIntrinsic,
-    HasOwnPropertyIntrinsic,
-    AtomicsAddIntrinsic,
-    AtomicsAndIntrinsic,
-    AtomicsCompareExchangeIntrinsic,
-    AtomicsExchangeIntrinsic,
-    AtomicsIsLockFreeIntrinsic,
-    AtomicsLoadIntrinsic,
-    AtomicsNotifyIntrinsic,
-    AtomicsOrIntrinsic,
-    AtomicsStoreIntrinsic,
-    AtomicsSubIntrinsic,
-    AtomicsWaitIntrinsic,
-    AtomicsXorIntrinsic,
-    ParseIntIntrinsic,
-    FunctionToStringIntrinsic,
-
-    // Getter intrinsics.
-    TypedArrayLengthIntrinsic,
-    TypedArrayByteLengthIntrinsic,
-    TypedArrayByteOffsetIntrinsic,
-    UnderscoreProtoIntrinsic,
-
-    // Debugging intrinsics. These are meant to be used as testing hacks within
-    // jsc.cpp and should never be exposed to users.
-    DFGTrueIntrinsic,
-    FTLTrueIntrinsic,
-    OSRExitIntrinsic,
-    IsFinalTierIntrinsic,
-    SetInt32HeapPredictionIntrinsic,
-    CheckInt32Intrinsic,
-    FiatInt52Intrinsic,
-
-    // These are used for $vm performance debugging features.
-    CPUMfenceIntrinsic,
-    CPURdtscIntrinsic,
-    CPUCpuidIntrinsic,
-    CPUPauseIntrinsic,
-
-    DataViewGetInt8,
-    DataViewGetUint8,
-    DataViewGetInt16,
-    DataViewGetUint16,
-    DataViewGetInt32,
-    DataViewGetUint32,
-    DataViewGetFloat32,
-    DataViewGetFloat64,
-    DataViewSetInt8,
-    DataViewSetUint8,
-    DataViewSetInt16,
-    DataViewSetUint16,
-    DataViewSetInt32,
-    DataViewSetUint32,
-    DataViewSetFloat32,
-    DataViewSetFloat64,
-
-    WasmFunctionIntrinsic,
+#define JSC_DEFINE_INTRINSIC(name) name,
+    JSC_FOR_EACH_INTRINSIC(JSC_DEFINE_INTRINSIC)
+#undef JSC_DEFINE_INTRINSIC
 };
 
 std::optional<IterationKind> interationKindForIntrinsic(Intrinsic);
 
-const char* intrinsicName(Intrinsic);
+ASCIILiteral intrinsicName(Intrinsic);
 
 } // namespace JSC
 

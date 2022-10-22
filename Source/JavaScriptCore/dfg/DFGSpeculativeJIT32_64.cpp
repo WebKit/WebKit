@@ -2561,6 +2561,11 @@ void SpeculativeJIT::compile(Node* node)
         compileFromCharCode(node);
         break;
     }
+
+    case StringLocaleCompare: {
+        compileStringLocaleCompare(node);
+        break;
+    }
         
     case CheckDetached: {
         compileCheckDetached(node);

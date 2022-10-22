@@ -2208,6 +2208,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, m_vm.stringStructure.get());
         break;
 
+    case StringLocaleCompare:
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+
     case EnumeratorGetByVal: {
         // FIXME: This should be able to do code motion for OwnStructureMode but we'd need to teach AI about the enumerator's cached structure for that to be profitable.
         clobberWorld();

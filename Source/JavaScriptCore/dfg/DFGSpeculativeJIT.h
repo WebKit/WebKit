@@ -1571,6 +1571,7 @@ public:
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
     void compileStringCodePointAt(Node*);
+    void compileStringLocaleCompare(Node*);
     void compileDateGet(Node*);
 
     template<typename JSClass, typename Operation>

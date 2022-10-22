@@ -16590,6 +16590,26 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
     }
 }
 
+void SpeculativeJIT::compileStringLocaleCompare(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand argument(this, node->child2());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg argumentGPR = argument.gpr();
+
+    speculateString(node->child1(), baseGPR);
+    speculateString(node->child2(), argumentGPR);
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationStringLocaleCompare, resultGPR, JITCompiler::LinkableConstant::globalObject(m_jit, node), baseGPR, argumentGPR);
+    m_jit.exceptionCheck();
+
+    strictInt32Result(resultGPR, node);
+}
+
 } } // namespace JSC::DFG
 
 #endif
