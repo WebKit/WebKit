@@ -246,7 +246,7 @@ template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(C
 
 inline bool isFontStyleAngleInRange(double angleInDegrees)
 {
-    return angleInDegrees > -90 && angleInDegrees < 90;
+    return angleInDegrees >= -90 && angleInDegrees <= 90;
 }
 
 inline bool isSystemFontShorthand(CSSValueID valueID)
