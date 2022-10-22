@@ -83,12 +83,17 @@ LineLayout::~LineLayout()
     layoutState().destroyInlineFormattingState(rootLayoutBox());
 }
 
-RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
+static inline bool isContentRenderer(const RenderObject& renderer)
 {
     // FIXME: These fake renderers have their parent set but are not actually in the tree.
-    if (renderer.isReplica() || renderer.isRenderScrollbarPart())
+    return !renderer.isReplica() && !renderer.isRenderScrollbarPart();
+}
+
+RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
+{
+    if (!isContentRenderer(renderer))
         return nullptr;
-    
+
     for (auto* parent = renderer.parent(); parent; parent = parent->parent()) {
         if (!parent->childrenInline())
             return nullptr;
@@ -101,6 +106,9 @@ RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
 
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
+    if (!isContentRenderer(renderer))
+        return nullptr;
+
     if (!renderer.isInline()) {
         // FIXME: See canUseForChild on out-of-flow nested boxes.
         if (!renderer.isFloatingOrOutOfFlowPositioned() || renderer.parent() != renderer.containingBlock())
