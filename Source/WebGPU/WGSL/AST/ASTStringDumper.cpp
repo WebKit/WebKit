@@ -93,39 +93,28 @@ void StringDumper::visit(GlobalDirective& directive)
 }
 
 // Attribute
-void StringDumper::visit(BindingAttribute& binding)
+void StringDumper::visit(Attribute& attribute)
 {
-    m_out.print("@binding(", binding.binding(), ")");
-}
+    WTF::switchOn(attribute,
+                  [&](BindingAttribute& attribute) { m_out.print("@binding(", attribute.binding, ")"); },
+                  [&](BuiltinAttribute& attribute) { m_out.print("@builtin(", attribute.name, ")"); },
+                  [&](GroupAttribute& attribute) { m_out.print("@group(", attribute.group, ")"); },
+                  [&](LocationAttribute& attribute) { m_out.print("@location(", attribute.location, ")"); },
+                  [&](StageAttribute& attribute) {
+        switch (attribute) {
+        case StageAttribute::Compute:
+            m_out.print("@compute");
+            break;
+        case StageAttribute::Fragment:
+            m_out.print("@fragment");
+            break;
+        case StageAttribute::Vertex:
+            m_out.print("@vertex");
+            break;
+        }
 
-void StringDumper::visit(BuiltinAttribute& builtin)
-{
-    m_out.print("@builtin(", builtin.name(), ")");
-}
+    });
 
-void StringDumper::visit(GroupAttribute& group)
-{
-    m_out.print("@group(", group.group(), ")");
-}
-
-void StringDumper::visit(LocationAttribute& location)
-{
-    m_out.print("@location(", location.location(), ")");
-}
-
-void StringDumper::visit(StageAttribute& stage)
-{
-    switch (stage.stage()) {
-    case StageAttribute::Stage::Compute:
-        m_out.print("@compute");
-        break;
-    case StageAttribute::Stage::Fragment:
-        m_out.print("@fragment");
-        break;
-    case StageAttribute::Stage::Vertex:
-        m_out.print("@vertex");
-        break;
-    }
 }
 
 // Declaration

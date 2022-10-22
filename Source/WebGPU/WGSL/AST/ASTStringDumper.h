@@ -44,11 +44,7 @@ public:
     void visit(GlobalDirective&) override;
 
     // Attribute
-    void visit(BindingAttribute&) override;
-    void visit(BuiltinAttribute&) override;
-    void visit(GroupAttribute&) override;
-    void visit(LocationAttribute&) override;
-    void visit(StageAttribute&) override;
+    void visit(Attribute&) override;
 
     // Declaration
     void visit(FunctionDecl&) override;

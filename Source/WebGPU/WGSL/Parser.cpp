@@ -214,7 +214,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(GroupAttribute, id.m_literalValue);
+        RETURN_NODE_REF(Attribute, AST::GroupAttribute{ unsigned(id.m_literalValue) });
     }
 
     if (ident.m_ident == "binding"_s) {
@@ -222,7 +222,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(BindingAttribute, id.m_literalValue);
+        RETURN_NODE_REF(Attribute, AST::BindingAttribute { unsigned(id.m_literalValue) });
     }
 
     if (ident.m_ident == "location"_s) {
@@ -230,23 +230,23 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(LocationAttribute, id.m_literalValue);
+        RETURN_NODE_REF(Attribute, AST::LocationAttribute { unsigned(id.m_literalValue) });
     }
 
     if (ident.m_ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         CONSUME_TYPE_NAMED(name, Identifier);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(BuiltinAttribute, name.m_ident);
+        RETURN_NODE_REF(Attribute, AST::BuiltinAttribute { name.m_ident });
     }
 
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
-    if (ident.m_ident == "vertex"_s)
-        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
     if (ident.m_ident == "compute"_s)
-        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Compute);
+        RETURN_NODE_REF(Attribute, AST::StageAttribute::Compute);
     if (ident.m_ident == "fragment"_s)
-        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
+        RETURN_NODE_REF(Attribute, AST::StageAttribute::Fragment);
+    if (ident.m_ident == "vertex"_s)
+        RETURN_NODE_REF(Attribute, AST::StageAttribute::Vertex);
 
     FAIL("Unknown attribute. Supported attributes are 'group', 'binding', 'location', 'builtin', 'vertex', 'compute', 'fragment'."_s);
 }

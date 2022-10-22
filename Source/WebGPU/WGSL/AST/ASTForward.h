@@ -31,11 +31,6 @@ class ShaderModule;
 class GlobalDirective;
 
 class Attribute;
-class BindingAttribute;
-class BuiltinAttribute;
-class GroupAttribute;
-class LocationAttribute;
-class StageAttribute;
 
 class Decl;
 class FunctionDecl;

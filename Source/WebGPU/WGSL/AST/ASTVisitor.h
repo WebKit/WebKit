@@ -42,11 +42,6 @@ public:
 
     // Attribute
     virtual void visit(Attribute&);
-    virtual void visit(BindingAttribute&);
-    virtual void visit(BuiltinAttribute&);
-    virtual void visit(GroupAttribute&);
-    virtual void visit(LocationAttribute&);
-    virtual void visit(StageAttribute&);
 
     // Declaration
     virtual void visit(Decl&);

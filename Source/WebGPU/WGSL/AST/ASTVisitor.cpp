@@ -72,44 +72,7 @@ void Visitor::visit(GlobalDirective&)
 
 // Attribute
 
-void Visitor::visit(Attribute& attribute)
-{
-    switch (attribute.kind()) {
-    case Attribute::Kind::Binding:
-        checkErrorAndVisit(downcast<BindingAttribute>(attribute));
-        break;
-    case Attribute::Kind::Builtin:
-        checkErrorAndVisit(downcast<BuiltinAttribute>(attribute));
-        break;
-    case Attribute::Kind::Group:
-        checkErrorAndVisit(downcast<GroupAttribute>(attribute));
-        break;
-    case Attribute::Kind::Location:
-        checkErrorAndVisit(downcast<LocationAttribute>(attribute));
-        break;
-    case Attribute::Kind::Stage:
-        checkErrorAndVisit(downcast<StageAttribute>(attribute));
-        break;
-    }
-}
-
-void Visitor::visit(BindingAttribute&)
-{
-}
-
-void Visitor::visit(BuiltinAttribute&)
-{
-}
-
-void Visitor::visit(GroupAttribute&)
-{
-}
-
-void Visitor::visit(LocationAttribute&)
-{
-}
-
-void Visitor::visit(StageAttribute&)
+void Visitor::visit(Attribute&)
 {
 }
 
