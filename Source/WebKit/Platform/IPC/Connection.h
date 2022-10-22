@@ -242,7 +242,7 @@ public:
     void addMessageReceiver(FunctionDispatcher&, MessageReceiver&, ReceiverName, uint64_t destinationID = 0);
     void removeMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    bool open(Client&, RunLoop& = RunLoop::current());
+    bool open(Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
 
@@ -417,7 +417,7 @@ private:
     bool isThrottlingIncomingMessages() const { return *m_incomingMessagesThrottlingLevel > 0; }
 
     // Only valid between open() and invalidate().
-    RunLoop& runLoop();
+    SerialFunctionDispatcher& dispatcher();
 
     class SyncMessageState;
     struct SyncMessageStateRelease {

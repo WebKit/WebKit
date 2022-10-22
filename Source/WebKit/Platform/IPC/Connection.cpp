@@ -78,8 +78,8 @@ struct Connection::WaitForMessageState {
 
 class Connection::SyncMessageState {
 public:
-    static std::unique_ptr<SyncMessageState, SyncMessageStateRelease> get(RunLoop&);
-    RunLoop& runLoop() { return m_runLoop; }
+    static std::unique_ptr<SyncMessageState, SyncMessageStateRelease> get(SerialFunctionDispatcher&);
+    SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
     void wakeUpClientRunLoop()
     {
@@ -105,14 +105,14 @@ public:
     void dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection&);
 
 private:
-    explicit SyncMessageState(RunLoop& runLoop)
-        : m_runLoop(runLoop)
+    explicit SyncMessageState(SerialFunctionDispatcher& dispatcher)
+        : m_dispatcher(dispatcher)
     {
     }
     static Lock syncMessageStateMapLock;
-    static HashMap<RunLoop*, SyncMessageState*>& syncMessageStateMap() WTF_REQUIRES_LOCK(syncMessageStateMapLock)
+    static HashMap<SerialFunctionDispatcher*, SyncMessageState*>& syncMessageStateMap() WTF_REQUIRES_LOCK(syncMessageStateMapLock)
     {
-        static NeverDestroyed<HashMap<RunLoop*, SyncMessageState*>> map;
+        static NeverDestroyed<HashMap<SerialFunctionDispatcher*, SyncMessageState*>> map;
         return map;
     }
 
@@ -136,17 +136,17 @@ private:
     Deque<ConnectionAndIncomingMessage> m_messagesBeingDispatched; // Only used on the main thread.
     Deque<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply WTF_GUARDED_BY_LOCK(m_lock);
 
-    RunLoop& m_runLoop;
+    SerialFunctionDispatcher& m_dispatcher;
     unsigned m_clients WTF_GUARDED_BY_LOCK(syncMessageStateMapLock) { 0 };
     friend struct Connection::SyncMessageStateRelease;
 };
 
 Lock Connection::SyncMessageState::syncMessageStateMapLock;
 
-std::unique_ptr<Connection::SyncMessageState, Connection::SyncMessageStateRelease> Connection::SyncMessageState::get(RunLoop& runLoop)
+std::unique_ptr<Connection::SyncMessageState, Connection::SyncMessageStateRelease> Connection::SyncMessageState::get(SerialFunctionDispatcher& dispatcher)
 {
     Locker locker { syncMessageStateMapLock };
-    auto result = syncMessageStateMap().ensure(&runLoop, [&runLoop] { return new SyncMessageState { runLoop }; }); // NOLINT.
+    auto result = syncMessageStateMap().ensure(&dispatcher, [&dispatcher] { return new SyncMessageState { dispatcher }; }); // NOLINT.
     auto* state = result.iterator->value;
     state->m_clients++;
     return { state, Connection::SyncMessageStateRelease { } };
@@ -161,14 +161,14 @@ void Connection::SyncMessageStateRelease::operator()(SyncMessageState* instance)
         --instance->m_clients;
         if (instance->m_clients)
             return;
-        Connection::SyncMessageState::syncMessageStateMap().remove(&instance->m_runLoop);
+        Connection::SyncMessageState::syncMessageStateMap().remove(&instance->m_dispatcher);
     }
     delete instance;
 }
 
 void Connection::SyncMessageState::enqueueMatchingMessages(Connection& connection, MessageReceiveQueue& receiveQueue, const ReceiverMatcher& receiverMatcher)
 {
-    assertIsCurrent(m_runLoop);
+    assertIsCurrent(m_dispatcher);
     auto enqueueMatchingMessagesInContainer = [&](Deque<ConnectionAndIncomingMessage>& connectionAndMessages) {
         Deque<ConnectionAndIncomingMessage> rest;
         for (auto& connectionAndMessage : connectionAndMessages) {
@@ -211,7 +211,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     }
 
     if (shouldDispatch) {
-        m_runLoop.dispatch([protectedConnection = Ref { connection }]() mutable {
+        m_dispatcher.dispatch([protectedConnection = Ref { connection }]() mutable {
             protectedConnection->dispatchSyncStateMessages();
         });
     }
@@ -223,7 +223,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
 
 void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage)
 {
-    assertIsCurrent(m_runLoop);
+    assertIsCurrent(m_dispatcher);
     {
         Locker locker { m_lock };
         if (m_messagesBeingDispatched.isEmpty())
@@ -244,7 +244,7 @@ void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, u
 
 void Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection& connection)
 {
-    assertIsCurrent(m_runLoop);
+    assertIsCurrent(m_dispatcher);
     {
         Locker locker { m_lock };
         ASSERT(m_didScheduleDispatchMessagesWorkSet.contains(&connection));
@@ -324,7 +324,6 @@ Connection::Connection(Identifier identifier, bool isServer)
 
 Connection::~Connection()
 {
-    ASSERT(RunLoop::isMain());
     ASSERT(!isValid());
 
     {
@@ -340,6 +339,7 @@ RefPtr<Connection> Connection::connection(UniqueID uniqueID)
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=238493): Removing with lock in destructor is not thread-safe.
     Locker locker { s_connectionMapLock };
     return connectionMap().get(uniqueID);
+
 }
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)
@@ -452,14 +452,15 @@ void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWo
     m_didCloseOnConnectionWorkQueueCallback = callback;
 }
 
-bool Connection::open(Client& client, RunLoop& runLoop)
+bool Connection::open(Client& client, SerialFunctionDispatcher& dispatcher)
 {
     ASSERT(!m_client);
     if (!platformPrepareForOpen())
         return false;
     m_client = &client;
-    m_syncState = SyncMessageState::get(runLoop);
+    m_syncState = SyncMessageState::get(dispatcher);
     platformOpen();
+
     return true;
 }
 
@@ -475,7 +476,7 @@ void Connection::invalidate()
     m_isValid = false;
     if (!m_client)
         return;
-    assertIsCurrent(runLoop());
+    assertIsCurrent(dispatcher());
     m_client = nullptr;
     [this] {
         Locker locker { m_incomingMessagesLock };
@@ -574,7 +575,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
 {
     if (!isValid())
         return nullptr;
-    assertIsCurrent(runLoop());
+    assertIsCurrent(dispatcher());
     Ref protectedThis { *this };
 
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
@@ -692,7 +693,7 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(SyncRequestID syncRequestID
         didFailToSendSyncMessage();
         return nullptr;
     }
-    assertIsCurrent(runLoop());
+    assertIsCurrent(dispatcher());
     if (!pushPendingSyncRequestID(syncRequestID)) {
         didFailToSendSyncMessage();
         return nullptr;
@@ -1013,7 +1014,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
     // FIXME: If the message is invalid, we should send back a SyncMessageError.
     // Currently we just wait for a timeout to happen, which will block the WebContent process.
 
-    assertIsCurrent(runLoop());
+    assertIsCurrent(dispatcher());
     ASSERT(decoder.isSyncMessage());
 
     SyncRequestID syncRequestID;
@@ -1122,11 +1123,11 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
     if (!m_syncState)
         return;
     if (isIncomingMessagesThrottlingEnabled()) {
-        runLoop().dispatch([protectedThis = Ref { *this }] {
+        dispatcher().dispatch([protectedThis = Ref { *this }] {
             protectedThis->dispatchIncomingMessages();
         });
     } else {
-        runLoop().dispatch([protectedThis = Ref { *this }] {
+        dispatcher().dispatch([protectedThis = Ref { *this }] {
             protectedThis->dispatchOneIncomingMessage();
         });
     }
@@ -1134,7 +1135,7 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 
 void Connection::dispatchMessage(Decoder& decoder)
 {
-    assertIsCurrent(runLoop());
+    assertIsCurrent(dispatcher());
     RELEASE_ASSERT(m_client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
         auto handler = takeAsyncReplyHandler(*this, decoder.destinationID());
@@ -1172,7 +1173,7 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
 {
     if (!isValid())
         return;
-    assertIsCurrent(runLoop());
+    assertIsCurrent(dispatcher());
     {
         // FIXME: The matches here come from
         // m_messagesToDispatchWhileWaitingForSyncReply. This causes message
@@ -1244,19 +1245,19 @@ size_t Connection::numberOfMessagesToProcess(size_t totalMessages)
     return std::min(totalMessages, batchSize);
 }
 
-RunLoop& Connection::runLoop()
+SerialFunctionDispatcher& Connection::dispatcher()
 {
-    // RunLoop can only be accessed while the connection is valid,
+    // dispatcher can only be accessed while the connection is valid,
     // and must have the incoming message lock held if not being
-    // called from the RunLoop.
+    // called from the SerialFunctionDispatcher.
     RELEASE_ASSERT(m_syncState);
     if (!m_incomingMessagesLock.isLocked())
-        assertIsCurrent(m_syncState->runLoop());
+        assertIsCurrent(m_syncState->dispatcher());
 
-    // Our syncState is specific to the RunLoop we have been
-    // bound to during open(), so we can retrieve the RunLoop
+    // Our syncState is specific to the SerialFunctionDispatcher we have been
+    // bound to during open(), so we can retrieve the SerialFunctionDispatcher
     // from it (rather than storing another pointer on this class).
-    return m_syncState->runLoop();
+    return m_syncState->dispatcher();
 }
 
 void Connection::dispatchOneIncomingMessage()
@@ -1276,7 +1277,7 @@ void Connection::dispatchOneIncomingMessage()
 void Connection::dispatchSyncStateMessages()
 {
     if (m_syncState) {
-        assertIsCurrent(runLoop());
+        assertIsCurrent(dispatcher());
         m_syncState->dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(*this);
     }
 }
@@ -1309,7 +1310,7 @@ void Connection::dispatchIncomingMessages()
         // Re-schedule ourselves *before* we dispatch the messages because we want to process follow-up messages if the client
         // spins a nested run loop while we're dispatching a message. Note that this means we can re-enter this method.
         if (!m_incomingMessages.isEmpty()) {
-            runLoop().dispatch([protectedThis = Ref { *this }] {
+            dispatcher().dispatch([protectedThis = Ref { *this }] {
                 protectedThis->dispatchIncomingMessages();
             });
         }
@@ -1374,7 +1375,8 @@ void Connection::wakeUpRunLoop()
 {
     if (!isValid())
         return;
-    runLoop().wakeUp();
+    if (&dispatcher() == &RunLoop::main())
+        RunLoop::main().wakeUp();
 }
 
 template<typename F>
@@ -1383,7 +1385,7 @@ void Connection::dispatchToClient(F&& clientRunLoopTask)
     Locker lock { m_incomingMessagesLock };
     if (!m_syncState)
         return;
-    runLoop().dispatch(WTFMove(clientRunLoopTask));
+    dispatcher().dispatch(WTFMove(clientRunLoopTask));
 }
 
 #if !USE(UNIX_DOMAIN_SOCKETS) && !OS(DARWIN) && !OS(WINDOWS)
