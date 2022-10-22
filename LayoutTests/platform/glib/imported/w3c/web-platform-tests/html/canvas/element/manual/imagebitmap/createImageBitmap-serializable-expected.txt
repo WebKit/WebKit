@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: Type error
 
 PASS Serialize ImageBitmap created from an HTMLCanvasElement
 PASS Serialize ImageBitmap created from an HTMLVideoElement
@@ -11,5 +10,5 @@ PASS Serialize ImageBitmap created from an OffscreenCanvas
 PASS Serialize ImageBitmap created from an ImageData
 PASS Serialize ImageBitmap created from an ImageBitmap
 PASS Serialize ImageBitmap created from a Blob
-FAIL Serializing a non-origin-clean ImageBitmap throws. assert_throws_dom: function "() => worker.postMessage(bitmap)" did not throw
+PASS Serializing a non-origin-clean ImageBitmap throws.
 
