@@ -1808,6 +1808,8 @@ void KeyframeEffect::animationDidChangeTimingProperties()
         }
     } else if (canBeAccelerated())
         m_runningAccelerated = RunningAccelerated::NotStarted;
+
+    invalidate();
 }
 
 void KeyframeEffect::transformRelatedPropertyDidChange()
