@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "ElementName.h"
 #include "FEComponentTransfer.h"
 #include "SVGElement.h"
 #include <wtf/SortedArrayMap.h>
@@ -69,6 +70,7 @@ struct SVGPropertyTraits<ComponentTransferType> {
 class SVGComponentTransferFunctionElement : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGComponentTransferFunctionElement);
 public:
+    virtual ComponentTransferChannel channel() const = 0;
     ComponentTransferFunction transferFunction() const;
 
     ComponentTransferType type() const { return m_type->currentValue<ComponentTransferType>(); }
