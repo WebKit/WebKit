@@ -1548,11 +1548,9 @@ RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange& range, Val
 
 std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
 {
-    // Values less than or equal to 0 or greater than or equal to 1000 are parse errors.
-
 #if !ENABLE(VARIATION_FONTS)
     auto isIntegerAndDivisibleBy100 = [](double value) {
-        ASSERT(value > 0 && value <= 1000);
+        ASSERT(value >= 1 && value <= 1000);
         return static_cast<int>(value / 100) * 100 == value;
     };
 #endif
@@ -1563,33 +1561,29 @@ std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
         // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
         auto result = NumberRawKnownTokenTypeFunctionConsumer::consume(range, { }, ValueRange::All, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
         if (!result)
-            break;
+            return std::nullopt;
 #if !ENABLE(VARIATION_FONTS)
-        if (!(result->value > 0 && result->value < 1000) || !isIntegerAndDivisibleBy100(result->value))
-            break;
+        if (!(result->value >= 1 && result->value <= 1000) || !isIntegerAndDivisibleBy100(result->value))
+            return std::nullopt;
 #endif
-        return std::clamp(result->value, std::nextafter(0.0, 1.0), std::nextafter(1000.0, 0.0));
+        return std::clamp(result->value, 1.0, 1000.0);
     }
 
     case NumberToken: {
         auto result = token.numericValue();
-        
-        // FIXME: This allows value of 1000, unlike the comment above and the behavior of the FunctionToken parsing path.
         if (!(result >= 1 && result <= 1000))
-            break;
+            return std::nullopt;
 #if !ENABLE(VARIATION_FONTS)
         if (token.numericValueType() != IntegerValueType || !isIntegerAndDivisibleBy100(result))
-            break;
+            return std::nullopt;
 #endif
         range.consumeIncludingWhitespace();
         return result;
     }
-    
-    default:
-        break;
-    }
 
-    return std::nullopt;
+    default:
+        return std::nullopt;
+    }
 }
 
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)

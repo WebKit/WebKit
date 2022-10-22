@@ -5,7 +5,7 @@ PASS Font shorthand: Font weight specified as number
 PASS Font shorthand: Font weight specified as number, value less than 1
 PASS Font shorthand: Font weight specified as number, value greater than 1000
 PASS Font shorthand: Font weight specified as calc()
-FAIL Font shorthand: Font weight specified as calc(), value smaller than 1 assert_equals: Font shorthand expected weight: Font weight specified as calc(), value smaller than 1 expected "1" but got "0.25"
+PASS Font shorthand: Font weight specified as calc(), value smaller than 1
 PASS Font shorthand: Font weight specified as calc(), value greater than 1000
 PASS Font shorthand: 'oblique' with positive angle
 PASS Font shorthand: 'oblique' with negative angle
