@@ -2208,9 +2208,13 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
         LayoutUnit pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
         LayoutUnit pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
 
-        if (pointLogicalTop < 0 || (pointLogicalTop < logicalHeight() && pointLogicalLeft < 0))
+        if (pointLogicalTop < 0)
             return createVisiblePosition(caretMinOffset(), Affinity::Downstream);
-        if (pointLogicalTop >= logicalHeight() || (pointLogicalTop >= 0 && pointLogicalLeft >= logicalWidth()))
+        if (pointLogicalLeft >= logicalWidth())
+            return createVisiblePosition(caretMaxOffset(), Affinity::Downstream);
+        if (pointLogicalTop < 0)
+            return createVisiblePosition(caretMinOffset(), Affinity::Downstream);
+        if (pointLogicalTop >= logicalHeight())
             return createVisiblePosition(caretMaxOffset(), Affinity::Downstream);
     }
     if (isFlexibleBoxIncludingDeprecated() || isRenderGrid())
