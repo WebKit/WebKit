@@ -101,11 +101,12 @@ void WebPage::sendMessageToWebExtension(UserMessage&& message)
 
 void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
-    if (result.isMissingPostLayoutData() || !frame.view() || frame.view()->needsLayout())
+    if (!result.hasPostLayoutAndVisualData() || !frame.view() || frame.view()->needsLayout())
         return;
 
     auto& postLayoutData = *result.postLayoutData;
-    postLayoutData.caretRectAtStart = frame.selection().absoluteCaretBounds();
+    auto& visualData = *result.visualData;
+    visualData.caretRectAtStart = frame.selection().absoluteCaretBounds();
 
     const VisibleSelection& selection = frame.selection().selection();
     if (selection.isNone())

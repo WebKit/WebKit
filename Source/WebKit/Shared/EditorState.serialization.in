@@ -38,13 +38,11 @@ struct WebKit::EditorState {
     bool canEnableAutomaticSpellingCorrection;
 #endif
     std::optional<WebKit::EditorState::PostLayoutData> postLayoutData;
+    std::optional<WebKit::EditorState::VisualData> visualData;
 };
 
 [Nested] struct WebKit::EditorState::PostLayoutData {
     uint32_t typingAttributes;
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
-    WebCore::IntRect caretRectAtStart;
-#endif
 #if PLATFORM(COCOA)
     uint64_t selectedTextLength;
     uint32_t textAlignment;
@@ -53,13 +51,7 @@ struct WebKit::EditorState {
     WebCore::WritingDirection baseWritingDirection;
 #endif
 #if PLATFORM(IOS_FAMILY)
-    WebCore::IntRect selectionClipRect;
-    WebCore::IntRect caretRectAtEnd;
-    Vector<WebCore::SelectionGeometry> selectionGeometries;
-    Vector<WebCore::SelectionGeometry> markedTextRects;
     String markedText;
-    WebCore::IntRect markedTextCaretRectAtStart;
-    WebCore::IntRect markedTextCaretRectAtEnd;
     String wordAtSelection;
     UChar32 characterAfterSelection;
     UChar32 characterBeforeSelection;
@@ -96,4 +88,18 @@ struct WebKit::EditorState {
     bool canCut;
     bool canCopy;
     bool canPaste;
+};
+
+[Nested] struct WebKit::EditorState::VisualData {
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+    WebCore::IntRect caretRectAtStart;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    WebCore::IntRect selectionClipRect;
+    WebCore::IntRect caretRectAtEnd;
+    Vector<WebCore::SelectionGeometry> selectionGeometries;
+    Vector<WebCore::SelectionGeometry> markedTextRects;
+    WebCore::IntRect markedTextCaretRectAtStart;
+    WebCore::IntRect markedTextCaretRectAtEnd;
+#endif
 };

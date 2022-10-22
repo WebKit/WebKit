@@ -1297,6 +1297,10 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
         result.postLayoutData->canCut = editor.canCut();
         result.postLayoutData->canCopy = editor.canCopy();
         result.postLayoutData->canPaste = editor.canPaste();
+
+        if (!result.visualData)
+            result.visualData = std::optional<EditorState::VisualData> { EditorState::VisualData { } };
+
         if (m_needsFontAttributes)
             result.postLayoutData->fontAttributes = editor.fontAttributesAtSelectionStart();
     }
@@ -4443,9 +4447,10 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     m_pendingPageExtendedBackgroundColorChange = false;
     m_pendingSampledPageTopColorChange = false;
 
-    if (hasPendingEditorStateUpdate()) {
+    if (hasPendingEditorStateUpdate() || m_needsEditorStateVisualDataUpdate) {
         layerTransaction.setEditorState(editorState());
         m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;
+        m_needsEditorStateVisualDataUpdate = false;
     }
 }
 
@@ -6962,6 +6967,8 @@ void WebPage::reportUsedFeatures()
 
 void WebPage::sendEditorStateUpdate()
 {
+    m_needsEditorStateVisualDataUpdate = true;
+
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     if (frame->editor().ignoreSelectionChanges() || !frame->document() || !frame->document()->hasLivingRenderTree())
         return;
@@ -6973,12 +6980,14 @@ void WebPage::sendEditorStateUpdate()
     // next layer tree commit to compute and send the complete EditorState over.
     auto state = editorState();
     send(Messages::WebPageProxy::EditorStateChanged(state));
-    if (state.isMissingPostLayoutData() && !shouldAvoidComputingPostLayoutDataForEditorState())
+    if (!state.hasPostLayoutData() && !shouldAvoidComputingPostLayoutDataForEditorState())
         scheduleFullEditorStateUpdate();
 }
 
 void WebPage::scheduleFullEditorStateUpdate()
 {
+    m_needsEditorStateVisualDataUpdate = true;
+
     if (hasPendingEditorStateUpdate()) {
         if (m_isChangingSelectionForAccessibility)
             m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::ScheduledDuringAccessibilitySelectionChange;

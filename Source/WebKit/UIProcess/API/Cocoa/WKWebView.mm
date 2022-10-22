@@ -1781,7 +1781,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
 {
-    if (state.isMissingPostLayoutData())
+    if (!state.hasPostLayoutData())
         return @{ @"post-layout-data" : @NO };
 
     auto& postLayoutData = *state.postLayoutData;

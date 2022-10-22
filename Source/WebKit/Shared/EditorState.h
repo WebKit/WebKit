@@ -89,24 +89,15 @@ struct EditorState {
 
     struct PostLayoutData {
         uint32_t typingAttributes { AttributeNone };
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
-        WebCore::IntRect caretRectAtStart;
-#endif
 #if PLATFORM(COCOA)
         uint64_t selectedTextLength { 0 };
         uint32_t textAlignment { NoAlignment };
-        WebCore::Color textColor { WebCore::Color::black };
+        WebCore::Color textColor { WebCore::Color::black }; // FIXME: Maybe this should be on VisualData?
         uint32_t enclosingListType { NoList };
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
 #endif
 #if PLATFORM(IOS_FAMILY)
-        WebCore::IntRect selectionClipRect;
-        WebCore::IntRect caretRectAtEnd;
-        Vector<WebCore::SelectionGeometry> selectionGeometries;
-        Vector<WebCore::SelectionGeometry> markedTextRects;
         String markedText;
-        WebCore::IntRect markedTextCaretRectAtStart;
-        WebCore::IntRect markedTextCaretRectAtEnd;
         String wordAtSelection;
         UChar32 characterAfterSelection { 0 };
         UChar32 characterBeforeSelection { 0 };
@@ -120,14 +111,14 @@ struct EditorState {
         bool insideFixedPosition { false };
         bool hasPlainText { false };
         bool editableRootIsTransparentOrFullyClipped { false };
-        WebCore::Color caretColor;
+        WebCore::Color caretColor; // FIXME: Maybe this should be on VisualData?
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
         std::optional<WebCore::ElementContext> selectedEditableImage;
 #endif
 #if PLATFORM(MAC)
-        WebCore::IntRect selectionBoundingRect;
+        WebCore::IntRect selectionBoundingRect; // FIXME: Maybe this should be on VisualData?
         uint64_t candidateRequestStartPosition { 0 };
         String paragraphContextForCandidateRequest;
         String stringForCandidateRequest;
@@ -145,9 +136,35 @@ struct EditorState {
         bool canPaste { false };
     };
 
-    bool isMissingPostLayoutData() const { return !postLayoutData; }
+    bool hasPostLayoutData() const { return !!postLayoutData; }
+
+    // Visual data is only updated in sync with rendering updates.
+    struct VisualData {
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+        WebCore::IntRect caretRectAtStart;
+#endif
+#if PLATFORM(IOS_FAMILY)
+        WebCore::IntRect selectionClipRect;
+        WebCore::IntRect caretRectAtEnd;
+        Vector<WebCore::SelectionGeometry> selectionGeometries;
+        Vector<WebCore::SelectionGeometry> markedTextRects;
+        WebCore::IntRect markedTextCaretRectAtStart;
+        WebCore::IntRect markedTextCaretRectAtEnd;
+#endif
+    };
+
+    bool hasVisualData() const { return !!visualData; }
+
+    void encode(IPC::Encoder&) const;
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, EditorState&);
+
+    bool hasPostLayoutAndVisualData() const { return hasPostLayoutData() && hasVisualData(); }
 
     std::optional<PostLayoutData> postLayoutData;
+    std::optional<VisualData> visualData;
+
+private:
+    friend TextStream& operator<<(TextStream&, const EditorState&);
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const EditorState&);

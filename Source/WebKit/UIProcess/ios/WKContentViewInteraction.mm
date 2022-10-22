@@ -299,10 +299,11 @@ WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
     if (!editorState.postLayoutData)
         return;
     auto& postLayoutData = *editorState.postLayoutData;
-    caretRect = postLayoutData.caretRectAtEnd;
+    auto& visualData = *editorState.visualData;
+    caretRect = visualData.caretRectAtEnd;
     caretColor = postLayoutData.caretColor;
-    selectionGeometries = postLayoutData.selectionGeometries;
-    selectionClipRect = postLayoutData.selectionClipRect;
+    selectionGeometries = visualData.selectionGeometries;
+    selectionClipRect = visualData.selectionClipRect;
 }
 
 inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
@@ -1532,7 +1533,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         return _focusedElementInformation.insideFixedPosition;
 
     auto& editorState = _page->editorState();
-    return !editorState.isMissingPostLayoutData() && editorState.selectionIsRange && editorState.postLayoutData->insideFixedPosition;
+    return editorState.hasPostLayoutData() && editorState.selectionIsRange && editorState.postLayoutData->insideFixedPosition;
 }
 
 - (BOOL)isEditable
@@ -2407,7 +2408,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!mayContainSelectableText(_focusedElementInformation.elementType))
         return elementInteractionRect;
 
-    if (_page->editorState().isMissingPostLayoutData())
+    if (!_page->editorState().hasPostLayoutAndVisualData())
         return elementInteractionRect;
 
     auto boundingRect = _page->selectionBoundingRectInRootViewCoordinates();
@@ -2516,8 +2517,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
         return _focusedElementInformation.interactionRect;
 
-    if (_page->editorState().postLayoutData && !_page->editorState().postLayoutData->selectionClipRect.isEmpty())
-        return _page->editorState().postLayoutData->selectionClipRect;
+    if (!_page->editorState().visualData->selectionClipRect.isEmpty())
+        return _page->editorState().visualData->selectionClipRect;
 
     return CGRectNull;
 }
@@ -3026,7 +3027,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 
     auto& state = _page->editorState();
-    return !state.isMissingPostLayoutData() && !state.selectionIsNone;
+    return state.hasPostLayoutData() && !state.selectionIsNone;
 }
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
@@ -3188,9 +3189,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (NSArray *)webSelectionRects
 {
-    if (_page->editorState().isMissingPostLayoutData() || _page->editorState().selectionIsNone)
+    if (!_page->editorState().hasPostLayoutAndVisualData() || _page->editorState().selectionIsNone)
         return nil;
-    const auto& selectionGeometries = _page->editorState().postLayoutData->selectionGeometries;
+    const auto& selectionGeometries = _page->editorState().visualData->selectionGeometries;
     return [self webSelectionRectsForSelectionGeometries:selectionGeometries];
 }
 
@@ -3636,14 +3637,14 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return;
 
         auto& editorState = view->_page->editorState();
-        if (!editorState.postLayoutData)
+        if (!editorState.hasPostLayoutAndVisualData())
             return;
-        auto& postLayoutData = *editorState.postLayoutData;
+        auto& visualData = *editorState.visualData;
         CGRect presentationRect;
-        if (editorState.selectionIsRange && !postLayoutData.selectionGeometries.isEmpty())
+        if (editorState.selectionIsRange && !visualData.selectionGeometries.isEmpty())
             presentationRect = view->_page->selectionBoundingRectInRootViewCoordinates();
         else
-            presentationRect = postLayoutData.caretRectAtStart;
+            presentationRect = visualData.caretRectAtStart;
         
         String selectionContext = textBefore + selectedText + textAfter;
         NSRange selectedRangeInContext = NSMakeRange(textBefore.length(), selectedText.length());
@@ -3657,10 +3658,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 {
     RetainPtr<WKContentView> view = self;
     _page->getSelectionOrContentsAsString([view](const String& string) {
-        if (!view->_textInteractionAssistant || !string || view->_page->editorState().isMissingPostLayoutData())
+        if (!view->_textInteractionAssistant || !string || !view->_page->editorState().hasVisualData())
             return;
 
-        auto& selectionGeometries = view->_page->editorState().postLayoutData->selectionGeometries;
+        auto& selectionGeometries = view->_page->editorState().visualData->selectionGeometries;
         if (selectionGeometries.isEmpty())
             return;
 
@@ -3678,10 +3679,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return;
 
         auto strongSelf = weakSelf.get();
-        if (strongSelf->_page->editorState().isMissingPostLayoutData())
+        if (!strongSelf->_page->editorState().hasVisualData())
             return;
 
-        if (strongSelf->_page->editorState().postLayoutData->selectionGeometries.isEmpty())
+        if (strongSelf->_page->editorState().visualData->selectionGeometries.isEmpty())
             return;
 
         if ([strongSelf->_textInteractionAssistant respondsToSelector:@selector(translate:fromRect:)])
@@ -3691,9 +3692,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)_addShortcutForWebView:(id)sender
 {
-    if (!_page->editorState().postLayoutData)
+    if (!_page->editorState().visualData)
         return;
-    [_textInteractionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData->selectionGeometries[0].rect()];
+    [_textInteractionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().visualData->selectionGeometries[0].rect()];
 }
 
 - (NSString *)selectedText
@@ -3914,7 +3915,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (!_page->preferences().textInteractionEnabled())
         return [UIColor clearColor];
 
-    if (!_page->editorState().isMissingPostLayoutData()) {
+    if (_page->editorState().hasPostLayoutData()) {
         if (auto caretColor = _page->editorState().postLayoutData->caretColor; caretColor.isValid())
             return cocoaColor(caretColor).autorelease();
     }
@@ -4295,7 +4296,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 {
     if (!_page->editorState().postLayoutData)
         return;
-    CGRect presentationRect = _page->editorState().postLayoutData->selectionGeometries[0].rect();
+    CGRect presentationRect = _page->editorState().visualData->selectionGeometries[0].rect();
     if (_textInteractionAssistant)
         [_textInteractionAssistant showDictionaryFor:text fromRect:presentationRect];
 }
@@ -4758,7 +4759,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (!_page || !_page->preferences().removeBackgroundEnabled())
         return nil;
 
-    if (_page->editorState().isMissingPostLayoutData() || !_removeBackgroundData)
+    if (!_page->editorState().hasPostLayoutData() || !_removeBackgroundData)
         return nil;
 
     if (_removeBackgroundData->element != _page->editorState().postLayoutData->selectedEditableImage)
@@ -4777,7 +4778,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)doAfterComputingImageAnalysisResultsForBackgroundRemoval:(CompletionHandler<void()>&&)completion
 {
-    if (_page->editorState().isMissingPostLayoutData()) {
+    if (!_page->editorState().hasPostLayoutData()) {
         completion();
         return;
     }
@@ -4971,9 +4972,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     auto& editorState = _page->editorState();
     if (editorState.hasComposition) {
-        if (!editorState.postLayoutData)
+        if (!editorState.hasVisualData())
             return CGRectZero;
-        auto& markedTextRects = editorState.postLayoutData->markedTextRects;
+        auto& markedTextRects = editorState.visualData->markedTextRects;
         return markedTextRects.isEmpty() ? CGRectZero : markedTextRects.first().rect();
     }
     return _autocorrectionData.textFirstRect;
@@ -4983,9 +4984,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     auto& editorState = _page->editorState();
     if (editorState.hasComposition) {
-        if (!editorState.postLayoutData)
+        if (!editorState.hasVisualData())
             return CGRectZero;
-        auto& markedTextRects = editorState.postLayoutData->markedTextRects;
+        auto& markedTextRects = editorState.visualData->markedTextRects;
         return markedTextRects.isEmpty() ? CGRectZero : markedTextRects.last().rect();
     }
     return _autocorrectionData.textLastRect;
@@ -5413,7 +5414,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return nil;
 
     auto& editorState = _page->editorState();
-    if (self.selectedTextRange == range && !editorState.isMissingPostLayoutData() && editorState.selectionIsRange)
+    if (self.selectedTextRange == range && editorState.hasPostLayoutData() && editorState.selectionIsRange)
         return editorState.postLayoutData->wordAtSelection;
 
     return nil;
@@ -5465,7 +5466,7 @@ static NSArray<WKTextSelectionRect *> *textSelectionRects(const Vector<WebCore::
 {
     auto& editorState = _page->editorState();
     auto hasSelection = !editorState.selectionIsNone;
-    if (!hasSelection || editorState.isMissingPostLayoutData())
+    if (!hasSelection || !editorState.hasPostLayoutAndVisualData())
         return nil;
 
     auto isRange = editorState.selectionIsRange;
@@ -5477,12 +5478,11 @@ static NSArray<WKTextSelectionRect *> *textSelectionRects(const Vector<WebCore::
     if (_cachedSelectedTextRange)
         return _cachedSelectedTextRange.get();
 
-    if (!_page->editorState().postLayoutData)
-        return nil;
-    auto caretStartRect = [self _scaledCaretRectForSelectionStart:_page->editorState().postLayoutData->caretRectAtStart];
-    auto caretEndRect = [self _scaledCaretRectForSelectionEnd:_page->editorState().postLayoutData->caretRectAtEnd];
-    auto selectionRects = textSelectionRects(_page->editorState().postLayoutData->selectionGeometries, self._contentZoomScale);
+    auto caretStartRect = [self _scaledCaretRectForSelectionStart:_page->editorState().visualData->caretRectAtStart];
+    auto caretEndRect = [self _scaledCaretRectForSelectionEnd:_page->editorState().visualData->caretRectAtEnd];
+    auto selectionRects = textSelectionRects(_page->editorState().visualData->selectionGeometries, self._contentZoomScale);
     auto selectedTextLength = editorState.postLayoutData->selectedTextLength;
+
     _cachedSelectedTextRange = [WKTextRange textRangeWithState:!hasSelection isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
     return _cachedSelectedTextRange.get();
 }
@@ -5522,16 +5522,17 @@ static NSArray<WKTextSelectionRect *> *textSelectionRects(const Vector<WebCore::
 {
     auto& editorState = _page->editorState();
     bool hasComposition = editorState.hasComposition;
-    if (!hasComposition || editorState.isMissingPostLayoutData())
+    if (!hasComposition || !editorState.hasPostLayoutAndVisualData())
         return nil;
     auto& postLayoutData = *editorState.postLayoutData;
-    auto unscaledCaretRectAtStart = postLayoutData.markedTextCaretRectAtStart;
-    auto unscaledCaretRectAtEnd = postLayoutData.markedTextCaretRectAtEnd;
+    auto& visualData = *editorState.visualData;
+    auto unscaledCaretRectAtStart = visualData.markedTextCaretRectAtStart;
+    auto unscaledCaretRectAtEnd = visualData.markedTextCaretRectAtEnd;
     auto isRange = unscaledCaretRectAtStart != unscaledCaretRectAtEnd;
     auto isContentEditable = editorState.isContentEditable;
     auto caretStartRect = [self _scaledCaretRectForSelectionStart:unscaledCaretRectAtStart];
     auto caretEndRect = [self _scaledCaretRectForSelectionEnd:unscaledCaretRectAtEnd];
-    auto selectionRects = textSelectionRects(postLayoutData.markedTextRects, self._contentZoomScale);
+    auto selectionRects = textSelectionRects(visualData.markedTextRects, self._contentZoomScale);
     auto selectedTextLength = postLayoutData.markedText.length();
     return [WKTextRange textRangeWithState:!hasComposition isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
 }
@@ -5782,7 +5783,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 - (BOOL)hasText
 {
     auto& editorState = _page->editorState();
-    return !editorState.isMissingPostLayoutData() && editorState.postLayoutData->hasPlainText;
+    return editorState.hasPostLayoutData() && editorState.postLayoutData->hasPlainText;
 }
 
 - (void)addTextAlternatives:(NSTextAlternatives *)alternatives
@@ -7599,18 +7600,19 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 4;
 
     auto& editorState = _page->editorState();
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutAndVisualData())
         return;
 
     BOOL editableRootIsTransparentOrFullyClipped = NO;
     BOOL focusedElementIsTooSmall = NO;
     if (!editorState.selectionIsNone) {
         auto& postLayoutData = *editorState.postLayoutData;
+        auto& visualData = *editorState.visualData;
         if (postLayoutData.editableRootIsTransparentOrFullyClipped)
             editableRootIsTransparentOrFullyClipped = YES;
 
         if (self._hasFocusedElement) {
-            auto elementArea = postLayoutData.selectionClipRect.area<RecordOverflow>();
+            auto elementArea = visualData.selectionClipRect.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;
         }
@@ -7648,7 +7650,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     
     [_webView _didChangeEditorState];
 
-    if (!_page->editorState().isMissingPostLayoutData()) {
+    if (_page->editorState().hasPostLayoutAndVisualData()) {
         _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
         if (!_usingGestureForSelection && _focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words)
             [UIKeyboardImpl.sharedInstance clearShiftState];
@@ -7690,7 +7692,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)_updateChangedSelection:(BOOL)force
 {
     auto& editorState = _page->editorState();
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutAndVisualData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;

@@ -286,21 +286,24 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
     getPlatformEditorStateCommon(frame, result);
 
-    if (result.isMissingPostLayoutData())
+    if (!result.hasPostLayoutAndVisualData())
         return;
+
     ASSERT(frame.view());
     auto& postLayoutData = *result.postLayoutData;
+    auto& visualData = *result.visualData;
+
     Ref view = *frame.view();
 
     if (frame.editor().hasComposition()) {
         if (auto compositionRange = frame.editor().compositionRange()) {
-            postLayoutData.markedTextRects = RenderObject::collectSelectionGeometries(*compositionRange);
-            convertContentToRootView(view, postLayoutData.markedTextRects);
+            visualData.markedTextRects = RenderObject::collectSelectionGeometries(*compositionRange);
+            convertContentToRootView(view, visualData.markedTextRects);
 
             postLayoutData.markedText = plainTextForContext(*compositionRange);
             VisibleSelection compositionSelection(*compositionRange);
-            postLayoutData.markedTextCaretRectAtStart = view->contentsToRootView(compositionSelection.visibleStart().absoluteCaretBounds(nullptr /* insideFixed */));
-            postLayoutData.markedTextCaretRectAtEnd = view->contentsToRootView(compositionSelection.visibleEnd().absoluteCaretBounds(nullptr /* insideFixed */));
+            visualData.markedTextCaretRectAtStart = view->contentsToRootView(compositionSelection.visibleStart().absoluteCaretBounds(nullptr /* insideFixed */));
+            visualData.markedTextCaretRectAtEnd = view->contentsToRootView(compositionSelection.visibleEnd().absoluteCaretBounds(nullptr /* insideFixed */));
 
         }
     }
@@ -311,9 +314,9 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     bool startNodeIsInsideFixedPosition = false;
     bool endNodeIsInsideFixedPosition = false;
     if (selection.isCaret()) {
-        postLayoutData.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        visualData.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds(&startNodeIsInsideFixedPosition));
         endNodeIsInsideFixedPosition = startNodeIsInsideFixedPosition;
-        postLayoutData.caretRectAtEnd = postLayoutData.caretRectAtStart;
+        visualData.caretRectAtEnd = visualData.caretRectAtStart;
         // FIXME: The following check should take into account writing direction.
         postLayoutData.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), TextGranularity::WordGranularity, SelectionDirection::Forward);
 
@@ -323,13 +326,13 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         if (selection.isContentEditable())
             charactersAroundPosition(selection.start(), postLayoutData.characterAfterSelection, postLayoutData.characterBeforeSelection, postLayoutData.twoCharacterBeforeSelection);
     } else if (selection.isRange()) {
-        postLayoutData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
-        postLayoutData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
+        visualData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        visualData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
         selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
-            postLayoutData.selectionGeometries = RenderObject::collectSelectionGeometries(*selectedRange);
-            convertContentToRootView(view, postLayoutData.selectionGeometries);
+            visualData.selectionGeometries = RenderObject::collectSelectionGeometries(*selectedRange);
+            convertContentToRootView(view, visualData.selectionGeometries);
             selectedText = plainTextForDisplay(*selectedRange);
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
@@ -381,7 +384,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         }
 
         if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
-            postLayoutData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
+            visualData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
             postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);

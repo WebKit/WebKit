@@ -129,7 +129,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
     m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
 
-    bool didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState());
+    bool didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState(), WebPageProxy::ShouldMergeVisualEditorState::Yes);
 
     if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
