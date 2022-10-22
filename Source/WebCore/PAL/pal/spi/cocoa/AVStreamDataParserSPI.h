@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #include <CoreMedia/CoreMedia.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -66,6 +68,10 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
 @end
 
 @interface AVStreamDataParser (AVStreamDataParserContentKeyEligibility) <AVContentKeyRecipient>
+@end
+
+@interface AVStreamDataParser (AVStreamDataParserSandboxedParsing)
+@property (nonatomic) BOOL preferSandboxedParsing;
 @end
 
 NS_ASSUME_NONNULL_END
