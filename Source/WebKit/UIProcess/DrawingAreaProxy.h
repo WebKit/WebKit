@@ -46,6 +46,8 @@ class MachSendRight;
 
 namespace WebCore {
 enum class DelegatedScrollingMode : uint8_t;
+using FramesPerSecond = unsigned;
+using PlatformDisplayID = uint32_t;
 }
 
 namespace WebKit {
@@ -73,6 +75,8 @@ public:
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
     virtual void deviceScaleFactorDidChange() = 0;
+    
+    virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond> /* nominalFramesPerSecond */) { }
 
     // FIXME: These should be pure virtual.
     virtual void setBackingStoreIsDiscardable(bool) { }

@@ -317,10 +317,9 @@ struct TextRecognitionResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 
-
 template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
-
+using FramesPerSecond = unsigned;
 }
 
 #if PLATFORM(GTK)
@@ -1129,7 +1128,7 @@ public:
 
     void accessibilitySettingsDidChange();
 
-    void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
+    void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond> nominalFramesPerSecond);
     std::optional<WebCore::PlatformDisplayID> displayId() const { return m_displayID; }
 
 #if PLATFORM(IOS_FAMILY)
