@@ -65,6 +65,7 @@
 #include "Settings.h"
 #include "TextBoxPainter.h"
 #include "TextDecorationPainter.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -505,13 +506,29 @@ LayoutUnit LineLayout::firstLinePhysicalBaseline() const
     }
 
     auto& firstLine = m_inlineContent->lines.first();
+    return physicalBaselineForLine(firstLine); 
+}
+
+LayoutUnit LineLayout::lastLinePhysicalBaseline() const
+{
+    if (!m_inlineContent || m_inlineContent->lines.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto lastLine = m_inlineContent->lines.last();
+    return physicalBaselineForLine(lastLine);
+}
+
+LayoutUnit LineLayout::physicalBaselineForLine(LayoutIntegration::Line& line) const
+{
     switch (rootLayoutBox().style().writingMode()) {
     case WritingMode::TopToBottom:
-        return LayoutUnit { firstLine.lineBoxTop() + firstLine.baseline() };
+        return LayoutUnit { line.lineBoxTop() + line.baseline() };
     case WritingMode::LeftToRight:
-        return LayoutUnit { firstLine.lineBoxLeft() + (firstLine.lineBoxWidth() - firstLine.baseline()) };
+        return LayoutUnit { line.lineBoxLeft() + (line.lineBoxWidth() - line.baseline()) };
     case WritingMode::RightToLeft:
-        return LayoutUnit { firstLine.lineBoxLeft() + firstLine.baseline() };
+        return LayoutUnit { line.lineBoxLeft() + line.baseline() };
     default:
         ASSERT_NOT_REACHED();
         return { };

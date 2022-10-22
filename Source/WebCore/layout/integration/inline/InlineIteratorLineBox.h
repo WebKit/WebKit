@@ -70,6 +70,8 @@ public:
 
     float inkOverflowTop() const;
     float inkOverflowBottom() const;
+    
+    const RenderStyle& style() const { return isFirst() ? containingBlock().firstLineStyle() : containingBlock().style(); }
 
     const RenderBlockFlow& containingBlock() const;
     RenderFragmentContainer* containingFragment() const;
