@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "StylePropertyMapReadOnly.h"
 
 namespace WebCore {
@@ -37,5 +35,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

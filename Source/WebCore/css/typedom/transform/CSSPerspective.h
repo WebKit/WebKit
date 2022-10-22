@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericValue.h"
 #include "CSSTransformComponent.h"
 
@@ -64,5 +62,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSPerspective)
     static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::Perspective; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

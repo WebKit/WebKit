@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSMathProduct.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSMathInvert.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
@@ -117,5 +115,3 @@ auto CSSMathProduct::toSumValue() const -> std::optional<SumValue>
 }
 
 } // namespace WebCore
-
-#endif

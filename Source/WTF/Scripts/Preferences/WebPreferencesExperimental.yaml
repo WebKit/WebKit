@@ -483,7 +483,6 @@ CSSTypedOMEnabled:
   type: bool
   humanReadableName: "CSS Typed OM"
   humanReadableDescription: "Enable the CSS Typed OM"
-  condition: ENABLE(CSS_TYPED_OM)
   defaultValue:
     WebKitLegacy:
       default: false

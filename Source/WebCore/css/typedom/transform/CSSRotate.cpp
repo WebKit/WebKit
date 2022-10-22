@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSRotate.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
@@ -205,5 +203,3 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 }
 
 } // namespace WebCore
-
-#endif

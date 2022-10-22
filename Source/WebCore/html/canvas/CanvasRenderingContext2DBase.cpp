@@ -1409,7 +1409,6 @@ static inline FloatSize size(HTMLVideoElement& video)
 
 #endif
 
-#if ENABLE(CSS_TYPED_OM)
 static inline FloatSize size(CSSStyleImageValue& image)
 {
     auto* cachedImage = image.image();
@@ -1418,7 +1417,6 @@ static inline FloatSize size(CSSStyleImageValue& image)
 
     return cachedImage->imageSizeForRenderer(nullptr, 1.0f);
 }
-#endif
 
 #if ENABLE(WEB_CODECS)
 static inline FloatSize size(const WebCodecsVideoFrame& frame)
@@ -1493,7 +1491,6 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     return result;
 }
 
-#if ENABLE(CSS_TYPED_OM)
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& image, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     auto* cachedImage = image.image();
@@ -1507,7 +1504,6 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& im
         checkOrigin(image);
     return result;
 }
-#endif
 
 static std::pair<FloatRect, FloatRect> normalizeSourceAndDestination(const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect)
 {
@@ -2078,13 +2074,11 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     return Exception { TypeError };
 }
 
-#if ENABLE(CSS_TYPED_OM)
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)
 {
     // FIXME: Implement.
     return Exception { TypeError };
 }
-#endif
 
 void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 {

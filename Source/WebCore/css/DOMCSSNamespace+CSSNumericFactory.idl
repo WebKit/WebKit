@@ -26,7 +26,6 @@
 // https://www.w3.org/TR/css-typed-om-1/#numeric-factory
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     ImplementedBy=CSSNumericFactory
 ] partial namespace DOMCSSNamespace {
 

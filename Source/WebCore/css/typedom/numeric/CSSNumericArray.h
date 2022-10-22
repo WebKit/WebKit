@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericBaseType.h"
 #include "CSSNumericType.h"
 #include "CSSNumericValue.h"
@@ -54,5 +52,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

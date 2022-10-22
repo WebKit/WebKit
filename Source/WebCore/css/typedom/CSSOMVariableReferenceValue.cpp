@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSOMVariableReferenceValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSUnparsedValue.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -77,5 +75,3 @@ void CSSOMVariableReferenceValue::serialize(StringBuilder& builder, OptionSet<Se
 }
 
 } // namespace WebCore
-
-#endif

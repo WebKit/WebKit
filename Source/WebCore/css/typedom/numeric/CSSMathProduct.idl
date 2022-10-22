@@ -28,7 +28,6 @@ typedef (double or CSSNumericValue) CSSNumberish;
 // https://drafts.css-houdini.org/css-typed-om/#cssmathproduct
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSMathProduct : CSSMathValue {
     constructor(CSSNumberish... args);

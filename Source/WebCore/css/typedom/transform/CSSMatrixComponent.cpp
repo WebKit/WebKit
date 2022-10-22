@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSMatrixComponent.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSStyleValueFactory.h"
@@ -179,5 +177,3 @@ void CSSMatrixComponent::setMatrix(Ref<DOMMatrix>&& matrix)
 }
 
 } // namespace WebCore
-
-#endif

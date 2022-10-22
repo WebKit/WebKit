@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericBaseType.h"
 #include <optional>
 #include <wtf/Markable.h>
@@ -88,5 +86,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

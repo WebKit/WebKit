@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -69,5 +67,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSUnitValue)
 static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSUnitValue; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

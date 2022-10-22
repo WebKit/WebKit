@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSNumericFactory.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "DOMCSSNamespace.h"
 #include "Document.h"
 #include <wtf/text/WTFString.h>
@@ -51,4 +49,3 @@ const char* CSSNumericFactory::supplementName()
 }
 
 }
-#endif

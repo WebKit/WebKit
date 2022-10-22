@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#csstranslate
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSTranslate : CSSTransformComponent {
     constructor(CSSNumericValue x, CSSNumericValue y, optional CSSNumericValue z);

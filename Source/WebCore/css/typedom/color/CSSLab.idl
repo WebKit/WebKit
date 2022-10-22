@@ -31,7 +31,6 @@ typedef (CSSNumberish or CSSKeywordish) CSSColorPercent;
 // https://drafts.css-houdini.org/css-typed-om/#csslab
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
 ] interface CSSLab : CSSColorValue {

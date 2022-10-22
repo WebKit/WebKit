@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSMathValue.h"
 
 namespace WebCore {
@@ -60,5 +58,3 @@ static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue
 static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathClamp; }
 static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathClamp; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

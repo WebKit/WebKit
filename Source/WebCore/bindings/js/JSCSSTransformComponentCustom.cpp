@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSCSSTransformComponent.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "JSCSSMatrixComponent.h"
 #include "JSCSSPerspective.h"
 #include "JSCSSRotate.h"
@@ -71,5 +69,3 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
 }
 
 } // namespace WebCore
-
-#endif

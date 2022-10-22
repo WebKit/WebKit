@@ -551,16 +551,12 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(argument), RecordingSwizzleType::Boolean }};
 }
 
-#if ENABLE(CSS_TYPED_OM)
-
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<CSSStyleImageValue>& argument)
 {
     if (!argument)
         return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
-
-#endif // ENABLE(CSS_TYPED_OM)
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
@@ -1186,7 +1182,6 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             item = WTFMove(stackTrace);
         },
-#if ENABLE(CSS_TYPED_OM)
         [&] (const RefPtr<CSSStyleImageValue>& cssImageValue) {
             String dataURL = "data:,"_s;
 
@@ -1201,7 +1196,6 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             index = indexForData(dataURL);
         },
-#endif
         [&] (const ScriptCallFrame& scriptCallFrame) {
             auto array = JSON::ArrayOf<double>::create();
             array->addItem(indexForData(scriptCallFrame.functionName()));

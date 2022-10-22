@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSStyleValueFactory.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSCustomPropertyValue.h"
 #include "CSSKeywordValue.h"
 #include "CSSNumericFactory.h"
@@ -288,5 +286,3 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
 }
 
 } // namespace WebCore
-
-#endif

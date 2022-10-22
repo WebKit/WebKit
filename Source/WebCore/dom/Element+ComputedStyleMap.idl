@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om-1/#computed-stylepropertymapreadonly-objects
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM
 ] partial interface Element {
     StylePropertyMapReadOnly computedStyleMap();
 };

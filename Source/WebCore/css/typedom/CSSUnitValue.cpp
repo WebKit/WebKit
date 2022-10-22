@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSUnitValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
 #include <wtf/IsoMallocInlines.h>
@@ -183,5 +181,3 @@ bool CSSUnitValue::equals(const CSSNumericValue& other) const
 }
 
 } // namespace WebCore
-
-#endif

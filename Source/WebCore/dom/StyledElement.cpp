@@ -79,8 +79,6 @@ CSSStyleDeclaration& StyledElement::cssomStyle()
     return ensureMutableInlineStyle().ensureInlineCSSStyleDeclaration(*this);
 }
 
-#if ENABLE(CSS_TYPED_OM)
-
 class StyledElementInlineStylePropertyMap final : public StylePropertyMap {
 public:
     static Ref<StylePropertyMap> create(StyledElement& element)
@@ -162,7 +160,6 @@ StylePropertyMap& StyledElement::ensureAttributeStyleMap()
         setAttributeStyleMap(StyledElementInlineStylePropertyMap::create(*this));
     return *attributeStyleMap();
 }
-#endif
 
 MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
 {

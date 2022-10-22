@@ -28,8 +28,6 @@
 
 #include "CSSNumericArray.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/FixedVector.h>
@@ -102,5 +100,3 @@ auto CSSMathMax::toSumValue() const -> std::optional<SumValue>
 }
 
 } // namespace WebCore
-
-#endif

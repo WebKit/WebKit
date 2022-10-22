@@ -28,7 +28,6 @@ typedef (DOMString or CSSKeywordValue) CSSKeywordish;
 // https://drafts.css-houdini.org/css-typed-om/#csscolorvalue
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
 ] interface CSSColorValue : CSSStyleValue {

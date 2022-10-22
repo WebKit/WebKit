@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSKeywordValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -74,5 +72,3 @@ void CSSKeywordValue::serialize(StringBuilder& builder, OptionSet<SerializationA
 }
 
 } // namespace WebCore
-
-#endif

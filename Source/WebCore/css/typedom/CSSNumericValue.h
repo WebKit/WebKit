@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericType.h"
 #include "CSSStyleValue.h"
 #include <variant>
@@ -90,5 +88,3 @@ protected:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSNumericValue)
     static bool isType(const WebCore::CSSStyleValue& styleValue) { return isCSSNumericValue(styleValue.getType()); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

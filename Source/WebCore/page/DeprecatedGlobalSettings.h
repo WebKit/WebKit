@@ -154,10 +154,8 @@ public:
     static bool cssPaintingAPIEnabled() { return shared().m_CSSPaintingAPIEnabled; }
 #endif
 
-#if ENABLE(CSS_TYPED_OM)
     static void setCSSTypedOMEnabled(bool isEnabled) { shared().m_CSSTypedOMEnabled = isEnabled; }
     static bool cssTypedOMEnabled() { return shared().m_CSSTypedOMEnabled; }
-#endif
 
     static void setWebSQLEnabled(bool isEnabled) { shared().m_webSQLEnabled = isEnabled; }
     static bool webSQLEnabled() { return shared().m_webSQLEnabled; }
@@ -359,9 +357,7 @@ private:
     bool m_CSSPaintingAPIEnabled { false };
 #endif
 
-#if ENABLE(CSS_TYPED_OM)
     bool m_CSSTypedOMEnabled { false };
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };

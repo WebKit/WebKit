@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSKeywordValue.h"
 #include "CSSNumericValue.h"
 #include "CSSStyleValue.h"
@@ -48,5 +46,3 @@ public:
 };
     
 } // namespace WebCore
-
-#endif

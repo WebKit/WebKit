@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericValue.h"
 #include "CSSTransformComponent.h"
 
@@ -68,5 +66,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSTranslate)
     static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::Translate; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

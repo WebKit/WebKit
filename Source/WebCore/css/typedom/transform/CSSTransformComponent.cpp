@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSTransformComponent.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -44,5 +42,3 @@ String CSSTransformComponent::toString() const
 }
 
 } // namespace WebCore
-
-#endif

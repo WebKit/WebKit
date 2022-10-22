@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSStyleValue.h"
 #include <variant>
 #include <wtf/text/WTFString.h>
@@ -63,5 +61,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSUnparsedValue)
     static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSUnparsedValue; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

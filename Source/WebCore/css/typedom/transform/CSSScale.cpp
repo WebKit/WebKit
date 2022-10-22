@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSScale.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
@@ -167,5 +165,3 @@ ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
 }
 
 } // namespace WebCore
-
-#endif

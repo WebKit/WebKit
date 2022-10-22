@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleValue.h"
@@ -58,5 +56,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif

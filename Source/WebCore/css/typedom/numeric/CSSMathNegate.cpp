@@ -28,8 +28,6 @@
 
 #include "CSSNumericValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -88,5 +86,3 @@ bool CSSMathNegate::equals(const CSSNumericValue& other) const
 }
 
 } // namespace WebCore
-
-#endif

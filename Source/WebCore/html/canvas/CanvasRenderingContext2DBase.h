@@ -71,9 +71,7 @@ class DrawingContext;
 }
 
 using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
-#if ENABLE(CSS_TYPED_OM)
     , RefPtr<CSSStyleImageValue>
-#endif
 #if ENABLE(OFFSCREEN_CANVAS)
     , RefPtr<OffscreenCanvas>
 #endif
@@ -358,9 +356,7 @@ private:
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, bool repeatX, bool repeatY);
 #endif
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(ImageBitmap&, bool repeatX, bool repeatY);
-#if ENABLE(CSS_TYPED_OM)
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CSSStyleImageValue&, bool repeatX, bool repeatY);
-#endif
 #if ENABLE(WEB_CODECS)
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(WebCodecsVideoFrame&, bool repeatX, bool repeatY);
 #endif
@@ -372,9 +368,7 @@ private:
 #if ENABLE(VIDEO)
     ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
-#if ENABLE(CSS_TYPED_OM)
     ExceptionOr<void> drawImage(CSSStyleImageValue&, const FloatRect& srcRect, const FloatRect& dstRect);
-#endif
     ExceptionOr<void> drawImage(ImageBitmap&, const FloatRect& srcRect, const FloatRect& dstRect);
 #if ENABLE(WEB_CODECS)
     ExceptionOr<void> drawImage(WebCodecsVideoFrame&, const FloatRect& srcRect, const FloatRect& dstRect);

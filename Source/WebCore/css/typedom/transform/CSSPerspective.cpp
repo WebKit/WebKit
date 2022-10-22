@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSPerspective.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSKeywordValue.h"
 #include "CSSNumericFactory.h"
@@ -157,5 +155,3 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
 }
 
 } // namespace WebCore
-
-#endif

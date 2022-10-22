@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSTransformValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSMatrixComponent.h"
 #include "CSSPerspective.h"
@@ -182,5 +180,3 @@ void CSSTransformValue::serialize(StringBuilder& builder, OptionSet<Serializatio
 }
 
 } // namespace WebCore
-
-#endif

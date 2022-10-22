@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSCSSStyleValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "JSCSSKeywordValue.h"
 #include "JSCSSMathClamp.h"
 #include "JSCSSMathInvert.h"
@@ -88,5 +86,3 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
 }
 
 } // namespace WebCore
-
-#endif

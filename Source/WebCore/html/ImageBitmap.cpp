@@ -598,12 +598,10 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 }
 #endif
 
-#if ENABLE(CSS_TYPED_OM)
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
 {
     promise.reject(InvalidStateError, "Not implemented"_s);
 }
-#endif
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
