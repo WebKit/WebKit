@@ -38,6 +38,8 @@ enum AnimationReplaceState {
 
 typedef unsigned long FramesPerSecond;
 
+typedef (double or CSSNumericValue) CSSNumberish;
+
 [
     ActiveDOMObject,
     InterfaceName=Animation,
@@ -50,8 +52,8 @@ typedef unsigned long FramesPerSecond;
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
     [EnabledConditionallyReadWriteBySetting=WebAnimationsMutableTimelinesEnabled] attribute AnimationTimeline? timeline;
-    [ImplementedAs=bindingsStartTime] attribute double? startTime;
-    [ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
+    [ImplementedAs=bindingsStartTime] attribute CSSNumberish? startTime;
+    [ImplementedAs=bindingsCurrentTime] attribute CSSNumberish? currentTime;
     attribute double playbackRate;
     [ImplementedAs=bindingsFrameRate, EnabledBySetting=WebAnimationsCustomFrameRateEnabled] attribute (FramesPerSecond or AnimationFrameRatePreset) frameRate;
     [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;

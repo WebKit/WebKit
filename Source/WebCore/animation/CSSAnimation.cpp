@@ -178,7 +178,7 @@ void CSSAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
     }
 }
 
-void CSSAnimation::setBindingsStartTime(std::optional<double> startTime)
+ExceptionOr<void> CSSAnimation::setBindingsStartTime(const std::optional<CSSNumberish>& startTime)
 {
     // https://drafts.csswg.org/css-animations-2/#animations
 
@@ -187,10 +187,14 @@ void CSSAnimation::setBindingsStartTime(std::optional<double> startTime)
     // change to the animation-play-state will no longer cause the CSSAnimation to be played or paused.
 
     auto previousPlayState = playState();
-    DeclarativeAnimation::setBindingsStartTime(startTime);
+    auto result = DeclarativeAnimation::setBindingsStartTime(startTime);
+    if (result.hasException())
+        return result.releaseException();
     auto currentPlayState = playState();
     if (currentPlayState != previousPlayState && (currentPlayState == PlayState::Paused || previousPlayState == PlayState::Paused))
         m_overriddenProperties.add(Property::PlayState);
+
+    return { };
 }
 
 ExceptionOr<void> CSSAnimation::bindingsReverse()

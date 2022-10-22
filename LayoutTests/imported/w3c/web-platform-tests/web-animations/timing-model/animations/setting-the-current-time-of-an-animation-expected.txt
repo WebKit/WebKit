@@ -2,9 +2,7 @@
 PASS Setting the current time of a pending animation to unresolved does not throw a TypeError
 PASS Setting the current time of a playing animation to unresolved throws a TypeError
 PASS Setting the current time of a paused animation to unresolved throws a TypeError
-FAIL Validate different value types that can be used to set current time assert_throws_dom: function "() => {
-    animation.currentTime = CSSNumericValue.parse("30%");
-  }" threw object "TypeError: The provided value is non-finite" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+PASS Validate different value types that can be used to set current time
 PASS Setting the current time of a pausing animation applies a pending playback rate
 PASS Setting the current time after the end with a positive playback rate
 PASS Setting a negative current time with a positive playback rate

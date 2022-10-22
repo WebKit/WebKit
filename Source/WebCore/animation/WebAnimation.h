@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "AnimationFrameRate.h"
 #include "AnimationFrameRatePreset.h"
+#include "CSSNumericValue.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
@@ -109,11 +110,11 @@ public:
     ExceptionOr<void> commitStyles();
 
     virtual std::optional<double> bindingsStartTime() const;
-    virtual void setBindingsStartTime(std::optional<double>);
+    virtual ExceptionOr<void> setBindingsStartTime(const std::optional<CSSNumberish>&);
     std::optional<Seconds> startTime() const { return m_startTime; }
     void setStartTime(std::optional<Seconds>);
     virtual std::optional<double> bindingsCurrentTime() const;
-    virtual ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
+    virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<CSSNumberish>&);
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
@@ -172,6 +173,7 @@ private:
     enum class AutoRewind : uint8_t { Yes, No };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
 
+    ExceptionOr<std::optional<Seconds>> validateCSSNumberishValue(const std::optional<CSSNumberish>&) const;
     void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
     Seconds effectEndTime() const;
