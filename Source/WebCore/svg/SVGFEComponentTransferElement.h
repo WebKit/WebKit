@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+class SVGComponentTransferFunctionElement;
+
 class SVGFEComponentTransferElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_ISO_ALLOCATED(SVGFEComponentTransferElement);
 public:
@@ -33,6 +35,11 @@ public:
 
     String in1() const { return m_in1->currentValue(); }
     SVGAnimatedString& in1Animated() { return m_in1; }
+
+    void transferFunctionAttributeChanged(SVGComponentTransferFunctionElement&, const QualifiedName&);
+
+protected:
+    bool setFilterEffectAttributeFromChild(FilterEffect&, const Element&, const QualifiedName&) final;
 
 private:
     SVGFEComponentTransferElement(const QualifiedName&, Document&);

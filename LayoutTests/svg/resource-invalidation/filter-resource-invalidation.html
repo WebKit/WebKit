@@ -38,6 +38,13 @@
         <filter id="f10c" xlink:href="#f10a">
             <feFlood flood-color="blue"/>
         </filter>
+        <filter id="f11">
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="1" intercept="0"/>
+                <feFuncG type="linear" slope="1" intercept="0"/>
+                <feFuncB type="linear" slope="1" intercept="0"/>
+            </feComponentTransfer>
+        </filter>
     </defs>
 
     <rect id="r1" x="50" y="50" width="50" height="50" fill="purple"/>
@@ -50,6 +57,7 @@
     <rect id="r8" x="350" y="150" width="50" height="50" fill="purple" filter="url(#f8)"/>
     <rect id="r9" x="50" y="250" width="50" height="50" fill="purple" filter="url(#f9b)"/>
     <rect id="r10" x="150" y="250" width="50" height="50" fill="purple" filter="url(#f10c)"/>
+    <rect id="r11" x="250" y="250" width="50" height="50" fill="purple" filter="url(#f11)"/>
 </svg>
 <script>
 function run() {
@@ -66,6 +74,7 @@ function run() {
             f8.firstElementChild.setAttribute("values", "240"); // change other attribute of filter contents
             f9a.setAttribute("x", "50%"); // change linked filter resource attribute
             f10c.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#f10b"); // change xlink:href of filter resource
+            f11.querySelector("feFuncR").setAttribute("intercept", "1"); // change filter primitive child attribute
             testRunner.notifyDone();
         });
     }
