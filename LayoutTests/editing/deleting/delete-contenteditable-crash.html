@@ -8,7 +8,7 @@ function runTest()
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    getSelection().setBaseAndExtent(span, 0, span, 2);
+    getSelection().setBaseAndExtent(span, 0, span, 1);
     document.execCommand("delete", false);
     document.write("Test passes if no crashes with asan.")
 }
