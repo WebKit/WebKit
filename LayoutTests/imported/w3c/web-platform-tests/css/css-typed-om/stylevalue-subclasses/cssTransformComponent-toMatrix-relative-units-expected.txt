@@ -1,6 +1,4 @@
 
 PASS CSSTranslate.toMatrix() containing relative units throws TypeError
-FAIL CSSPerspective.toMatrix() containing relative units throws TypeError assert_throws_js: function "() => {
-    return new CSSPerspective(new CSSUnitValue(1, 'em')).toMatrix();
-  }" did not throw
+PASS CSSPerspective.toMatrix() containing relative units throws TypeError
 
