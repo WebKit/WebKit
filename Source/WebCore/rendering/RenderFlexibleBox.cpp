@@ -1430,23 +1430,12 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
         LayoutUnit contentSize;
         Length childCrossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
 
+        bool canComputeSizeThroughAspectRatio = child.isRenderReplaced() && childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength);
 
-        
-        bool mainSizeAxisIsInline = mainAxisIsChildInlineAxis(child);
-        bool canComputeSizeThroughAspectRatio = childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength);
-        auto computeMinContentSize = [this](RenderBox &child) -> LayoutUnit {
-            return computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0);
-        };
-        auto computeSizeThroughAspectRatio = [this, canComputeSizeThroughAspectRatio] (RenderBox &child, Length childCrossSizeLength) {
-            return canComputeSizeThroughAspectRatio ? computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength) : 0_lu; 
-        };
-        
-        if (mainSizeAxisIsInline && canComputeSizeThroughAspectRatio)
-            contentSize = computeSizeThroughAspectRatio(child, childCrossSizeLength);
-        else if (mainSizeAxisIsInline)
-            contentSize = computeMinContentSize(child);
+        if (canComputeSizeThroughAspectRatio)
+            contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
         else
-            contentSize = std::max(computeSizeThroughAspectRatio(child, childCrossSizeLength), computeMinContentSize(child));
+            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0_lu);
 
         if (childHasComputableAspectRatio(child) && (!crossSizeLengthForChild(MinSize, child).isAuto() || !crossSizeLengthForChild(MaxSize, child).isAuto()))
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
