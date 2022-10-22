@@ -23,12 +23,11 @@
 #include "SVGFEComponentTransferElement.h"
 
 #include "ElementIterator.h"
+#include "ElementName.h"
 #include "FEComponentTransfer.h"
+#include "SVGComponentTransferFunctionElement.h"
+#include "SVGComponentTransferFunctionElementInlines.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGFEFuncAElement.h"
-#include "SVGFEFuncBElement.h"
-#include "SVGFEFuncGElement.h"
-#include "SVGFEFuncRElement.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -75,23 +74,72 @@ void SVGFEComponentTransferElement::svgAttributeChanged(const QualifiedName& att
 
 RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
-    ComponentTransferFunction red;
-    ComponentTransferFunction green;
-    ComponentTransferFunction blue;
-    ComponentTransferFunction alpha;
+    ComponentTransferFunctions functions;
 
-    for (auto& child : childrenOfType<SVGElement>(*this)) {
-        if (is<SVGFEFuncRElement>(child))
-            red = downcast<SVGFEFuncRElement>(child).transferFunction();
-        else if (is<SVGFEFuncGElement>(child))
-            green = downcast<SVGFEFuncGElement>(child).transferFunction();
-        else if (is<SVGFEFuncBElement>(child))
-            blue = downcast<SVGFEFuncBElement>(child).transferFunction();
-        else if (is<SVGFEFuncAElement>(child))
-            alpha = downcast<SVGFEFuncAElement>(child).transferFunction();
+    for (auto& child : childrenOfType<SVGComponentTransferFunctionElement>(*this))
+        functions[child.channel()] = child.transferFunction();
+
+    return FEComponentTransfer::create(WTFMove(functions));
+}
+
+static bool isRelevantTransferFunctionElement(const Element& child)
+{
+    auto name = child.elementName();
+
+    ASSERT(is<SVGComponentTransferFunctionElement>(child));
+
+    for (auto laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
+        if (laterSibling->elementName() == name)
+            return false;
     }
 
-    return FEComponentTransfer::create(red, green, blue, alpha);
+    return true;
+}
+
+bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffect& effect, const Element& childElement, const QualifiedName& attrName)
+{
+    ASSERT(isRelevantTransferFunctionElement(childElement));
+
+    if (!is<SVGComponentTransferFunctionElement>(childElement)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto& feComponentTransfer = downcast<FEComponentTransfer>(effect);
+    auto& child = downcast<SVGComponentTransferFunctionElement>(childElement);
+
+    if (attrName == SVGNames::typeAttr)
+        return feComponentTransfer.setType(child.channel(), child.type());
+
+    if (attrName == SVGNames::slopeAttr)
+        return feComponentTransfer.setSlope(child.channel(), child.slope());
+
+    if (attrName == SVGNames::interceptAttr)
+        return feComponentTransfer.setIntercept(child.channel(), child.intercept());
+
+    if (attrName == SVGNames::amplitudeAttr)
+        return feComponentTransfer.setAmplitude(child.channel(), child.amplitude());
+
+    if (attrName == SVGNames::exponentAttr)
+        return feComponentTransfer.setExponent(child.channel(), child.exponent());
+
+    if (attrName == SVGNames::offsetAttr)
+        return feComponentTransfer.setOffset(child.channel(), child.offset());
+
+    if (attrName == SVGNames::tableValuesAttr)
+        return feComponentTransfer.setTableValues(child.channel(), child.tableValues());
+
+    return false;
+}
+
+void SVGFEComponentTransferElement::transferFunctionAttributeChanged(SVGComponentTransferFunctionElement& child, const QualifiedName& attrName)
+{
+    ASSERT(child.parentNode() == this);
+
+    if (!isRelevantTransferFunctionElement(child))
+        return;
+
+    primitiveAttributeOnChildChanged(child, attrName);
 }
 
 } // namespace WebCore

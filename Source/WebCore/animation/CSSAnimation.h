@@ -59,7 +59,7 @@ private:
     ExceptionOr<void> bindingsPlay() final;
     ExceptionOr<void> bindingsPause() final;
     void setBindingsEffect(RefPtr<AnimationEffect>&&) final;
-    void setBindingsStartTime(std::optional<double>) final;
+    ExceptionOr<void> setBindingsStartTime(const std::optional<CSSNumberish>&) final;
     ExceptionOr<void> bindingsReverse() final;
 
     enum class Property : uint16_t {

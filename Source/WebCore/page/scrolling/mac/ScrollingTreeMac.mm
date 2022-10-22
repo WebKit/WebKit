@@ -32,7 +32,7 @@
 #import "ScrollingTreeFixedNodeCocoa.h"
 #import "ScrollingTreeFrameHostingNode.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
-#import "ScrollingTreeOverflowScrollProxyNode.h"
+#import "ScrollingTreeOverflowScrollProxyNodeCocoa.h"
 #import "ScrollingTreeOverflowScrollingNodeMac.h"
 #import "ScrollingTreePositionedNodeCocoa.h"
 #import "ScrollingTreeStickyNodeCocoa.h"
@@ -67,7 +67,7 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     case ScrollingNodeType::Overflow:
         return ScrollingTreeOverflowScrollingNodeMac::create(*this, nodeID);
     case ScrollingNodeType::OverflowProxy:
-        return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
+        return ScrollingTreeOverflowScrollProxyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Sticky:

@@ -35,7 +35,7 @@
 #include "ScrollingTreeFixedNodeNicosia.h"
 #include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeNicosia.h"
-#include "ScrollingTreeOverflowScrollProxyNode.h"
+#include "ScrollingTreeOverflowScrollProxyNodeNicosia.h"
 #include "ScrollingTreeOverflowScrollingNodeNicosia.h"
 #include "ScrollingTreePositionedNodeNicosia.h"
 #include "ScrollingTreeStickyNodeNicosia.h"
@@ -63,7 +63,7 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
     case ScrollingNodeType::Overflow:
         return ScrollingTreeOverflowScrollingNodeNicosia::create(*this, nodeID);
     case ScrollingNodeType::OverflowProxy:
-        return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
+        return ScrollingTreeOverflowScrollProxyNodeNicosia::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNodeNicosia::create(*this, nodeID);
     case ScrollingNodeType::Sticky:

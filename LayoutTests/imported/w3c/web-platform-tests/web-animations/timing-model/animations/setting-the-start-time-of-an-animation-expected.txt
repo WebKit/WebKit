@@ -1,7 +1,5 @@
 
-FAIL Validate different value types that can be used to set start time assert_throws_dom: function "() => {
-    animation.startTime = CSSNumericValue.parse("30%");
-  }" threw object "TypeError: The provided value is non-finite" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+PASS Validate different value types that can be used to set start time
 PASS Setting the start time of an animation without an active timeline
 PASS Setting an unresolved start time an animation without an active timeline does not clear the current time
 PASS Setting the start time clears the hold time

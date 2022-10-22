@@ -259,7 +259,7 @@ void InsertParagraphSeparatorCommand::doApply()
         if (!appendBlockPlaceholder(WTFMove(parent)))
             return;
 
-        setEndingSelection(VisibleSelection(firstPositionInNode(parentPtr), Affinity::Downstream, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInNode(parentPtr), Affinity::Downstream), endingSelection().isDirectional()));
         return;
     }
     
@@ -299,7 +299,7 @@ void InsertParagraphSeparatorCommand::doApply()
             return;
         
         // In this case, we need to set the new ending selection.
-        setEndingSelection(VisibleSelection(insertionPosition, Affinity::Downstream, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(VisiblePosition(insertionPosition, Affinity::Downstream), endingSelection().isDirectional()));
         return;
     }
 
@@ -319,7 +319,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // If the insertion point is a break element, there is nothing else
         // we need to do.
         if (auto* renderer = visiblePos.deepEquivalent().anchorNode()->renderer(); renderer && renderer->isBR()) {
-            setEndingSelection(VisibleSelection(insertionPosition, Affinity::Downstream, endingSelection().isDirectional()));
+            setEndingSelection(VisibleSelection(VisiblePosition(insertionPosition, Affinity::Downstream), endingSelection().isDirectional()));
             return;
         }
     }
@@ -422,7 +422,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(VisibleSelection(firstPositionInNode(blockToInsert.get()), Affinity::Downstream, endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInNode(blockToInsert.get()), Affinity::Downstream), endingSelection().isDirectional()));
     applyStyleAfterInsertion(startBlock.get());
 }
 

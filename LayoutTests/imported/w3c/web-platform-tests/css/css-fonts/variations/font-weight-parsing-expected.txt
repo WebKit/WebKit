@@ -22,7 +22,7 @@ PASS Computed style: Non-integer Values should be parsed successfully
 PASS Computed style: Minimum allowed value should be parsed successfully
 PASS Computed style: Maximum allowed value should be parsed successfully
 PASS Computed style: Simple calc value
-FAIL Computed style: Negative simple calc value (to be clamped) assert_equals: Negative simple calc value (to be clamped) expected "1" but got "0"
+PASS Computed style: Negative simple calc value (to be clamped)
 PASS Computed style: Out-of-range simple calc value (to be clamped)
 PASS Computed style: Valid calc expression
 PASS Computed style: Valid calc expression with out-of-range value (to be clamped)

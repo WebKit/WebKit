@@ -262,7 +262,7 @@ public:
     }
 
 private:
-    typename UnderlyingType::size_type index(size_type pos)
+    typename UnderlyingType::size_type index(size_type pos) const
     {
         return static_cast<typename UnderlyingType::size_type>(pos);
     }

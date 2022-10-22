@@ -32,7 +32,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #include <WebCore/ScrollingTreeFrameHostingNode.h>
-#include <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
+#include <WebCore/ScrollingTreeOverflowScrollProxyNodeCocoa.h>
 #include <WebCore/ScrollingTreePositionedNodeCocoa.h>
 #include <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
@@ -83,7 +83,7 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
     case ScrollingNodeType::FrameHosting:
         return ScrollingTreeFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::OverflowProxy:
-        return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
+        return ScrollingTreeOverflowScrollProxyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Sticky:

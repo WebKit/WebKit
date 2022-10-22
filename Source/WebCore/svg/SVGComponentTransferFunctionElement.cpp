@@ -91,8 +91,13 @@ void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& na
 void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
-        InstanceInvalidationGuard guard(*this);
-        SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent(this);
+        RefPtr parent = parentElement();
+
+        if (parent && is<SVGFEComponentTransferElement>(*parent)) {
+            InstanceInvalidationGuard guard(*this);
+            downcast<SVGFEComponentTransferElement>(*parent).transferFunctionAttributeChanged(*this, attrName);
+        }
+
         return;
     }
 

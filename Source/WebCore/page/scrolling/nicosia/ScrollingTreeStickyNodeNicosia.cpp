@@ -37,7 +37,6 @@
 #include "ScrollingTree.h"
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeFrameScrollingNode.h"
-#include "ScrollingTreeOverflowScrollProxyNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include <wtf/text/TextStream.h>
 

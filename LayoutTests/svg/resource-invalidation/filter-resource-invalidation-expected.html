@@ -37,6 +37,13 @@
         <filter id="f10c" xlink:href="#f10b">
             <feFlood flood-color="blue"/>
         </filter>
+        <filter id="f11">
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="1" intercept="1"/>
+                <feFuncG type="linear" slope="1" intercept="0"/>
+                <feFuncB type="linear" slope="1" intercept="0"/>
+            </feComponentTransfer>
+        </filter>
     </defs>
 
     <rect id="r1" x="50" y="50" width="50" height="50" fill="purple" filter="url(#f1)"/>
@@ -49,4 +56,5 @@
     <rect id="r8" x="350" y="150" width="50" height="50" fill="purple" filter="url(#f8)"/>
     <rect id="r9" x="50" y="250" width="50" height="50" fill="purple" filter="url(#f9b)"/>
     <rect id="r10" x="150" y="250" width="50" height="50" fill="purple" filter="url(#f10c)"/>
+    <rect id="r11" x="250" y="250" width="50" height="50" fill="purple" filter="url(#f11)"/>
 </svg>

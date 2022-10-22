@@ -40,12 +40,20 @@ Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunc
     return adoptRef(*new FEComponentTransfer(redFunction, greenFunction, blueFunction, alphaFunction));
 }
 
+Ref<FEComponentTransfer> FEComponentTransfer::create(ComponentTransferFunctions&& functions)
+{
+    return adoptRef(*new FEComponentTransfer(WTFMove(functions)));
+}
+
 FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
     : FilterEffect(FilterEffect::Type::FEComponentTransfer)
-    , m_redFunction(redFunction)
-    , m_greenFunction(greenFunction)
-    , m_blueFunction(blueFunction)
-    , m_alphaFunction(alphaFunction)
+    , m_functions(std::array { redFunction, greenFunction, blueFunction, alphaFunction })
+{
+}
+
+FEComponentTransfer::FEComponentTransfer(ComponentTransferFunctions&& functions)
+    : FilterEffect(FilterEffect::Type::FEComponentTransfer)
+    , m_functions(WTFMove(functions))
 {
 }
 
@@ -70,6 +78,69 @@ std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createAcceleratedAppli
 std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEComponentTransferSoftwareApplier>(*this);
+}
+
+bool FEComponentTransfer::setType(ComponentTransferChannel channel, ComponentTransferType type)
+{
+    if (m_functions[channel].type == type)
+        return false;
+
+    m_functions[channel].type = type;
+    return true;
+}
+
+bool FEComponentTransfer::setSlope(ComponentTransferChannel channel, float value)
+{
+    if (m_functions[channel].slope == value)
+        return false;
+
+    m_functions[channel].slope = value;
+    return true;
+}
+
+bool FEComponentTransfer::setIntercept(ComponentTransferChannel channel, float value)
+{
+    if (m_functions[channel].intercept == value)
+        return false;
+
+    m_functions[channel].intercept = value;
+    return true;
+}
+
+bool FEComponentTransfer::setAmplitude(ComponentTransferChannel channel, float value)
+{
+    if (m_functions[channel].amplitude == value)
+        return false;
+
+    m_functions[channel].amplitude = value;
+    return true;
+}
+
+bool FEComponentTransfer::setExponent(ComponentTransferChannel channel, float value)
+{
+    if (m_functions[channel].exponent == value)
+        return false;
+
+    m_functions[channel].exponent = value;
+    return true;
+}
+
+bool FEComponentTransfer::setOffset(ComponentTransferChannel channel, float value)
+{
+    if (m_functions[channel].offset == value)
+        return false;
+
+    m_functions[channel].offset = value;
+    return true;
+}
+
+bool FEComponentTransfer::setTableValues(ComponentTransferChannel channel, Vector<float>&& values)
+{
+    if (m_functions[channel].tableValues == values)
+        return false;
+
+    m_functions[channel].tableValues = WTFMove(values);
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, ComponentTransferType type)
@@ -131,10 +202,10 @@ TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, FilterRe
 
     {
         TextStream::IndentScope indentScope(ts, 2);
-        ts << indent << "{red: " << m_redFunction << "}\n";
-        ts << indent << "{green: " << m_greenFunction << "}\n";
-        ts << indent << "{blue: " << m_blueFunction << "}\n";
-        ts << indent << "{alpha: " << m_alphaFunction << "}";
+        ts << indent << "{red: " << m_functions[ComponentTransferChannel::Red] << "}\n";
+        ts << indent << "{green: " << m_functions[ComponentTransferChannel::Green] << "}\n";
+        ts << indent << "{blue: " << m_functions[ComponentTransferChannel::Blue] << "}\n";
+        ts << indent << "{alpha: " << m_functions[ComponentTransferChannel::Alpha] << "}";
     }
 
     ts << "]\n";

@@ -98,6 +98,17 @@ void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const Quali
         static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
 }
 
+void SVGFilterPrimitiveStandardAttributes::primitiveAttributeOnChildChanged(const Element& child, const QualifiedName& attribute)
+{
+    ASSERT(child.parentNode() == this);
+
+    if (m_effect && !setFilterEffectAttributeFromChild(*m_effect, child, attribute))
+        return;
+
+    if (auto* renderer = this->renderer())
+        static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
+}
+
 void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
 {
     if (auto* renderer = this->renderer())

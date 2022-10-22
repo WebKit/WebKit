@@ -69,8 +69,10 @@ protected:
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
+    void primitiveAttributeOnChildChanged(const Element&, const QualifiedName&);
 
     virtual bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) { return false; }
+    virtual bool setFilterEffectAttributeFromChild(FilterEffect&, const Element&, const QualifiedName&) { return false; }
     virtual RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const = 0;
 
 private:

@@ -200,7 +200,6 @@ std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
-std::optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
 AtomString concatenateFamilyName(CSSParserTokenRange&);
 AtomString consumeFamilyNameRaw(CSSParserTokenRange&);

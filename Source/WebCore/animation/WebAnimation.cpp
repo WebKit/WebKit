@@ -30,6 +30,8 @@
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "CSSStyleDeclaration.h"
+#include "CSSUnitValue.h"
+#include "CSSUnits.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComputedStyleExtractor.h"
@@ -301,6 +303,28 @@ void WebAnimation::effectTargetDidChange(const std::optional<const Styleable>& p
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
+ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(const std::optional<CSSNumberish>& optionalCSSNumberish) const
+{
+    // https://drafts.csswg.org/web-animations/#validating-a-css-numberish-time
+    // FIXME: Revisit this when we know how to deal with a progress-based (ie. scroll) timeline.
+
+    if (!optionalCSSNumberish)
+        return { std::nullopt };
+
+    if (std::holds_alternative<double>(*optionalCSSNumberish))
+        return { Seconds::fromMilliseconds(std::get<double>(*optionalCSSNumberish)) };
+
+    auto numericValue = std::get<RefPtr<CSSNumericValue>>(*optionalCSSNumberish);
+    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
+        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER)
+            return { Seconds::fromMilliseconds(unitValue->value()) };
+        if (auto milliseconds = unitValue->convertTo(CSSUnitType::CSS_MS))
+            return { Seconds::fromMilliseconds(milliseconds->value()) };
+    }
+
+    return Exception { TypeError };
+}
+
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)
@@ -308,12 +332,13 @@ std::optional<double> WebAnimation::bindingsStartTime() const
     return secondsToWebAnimationsAPITime(*m_startTime);
 }
 
-void WebAnimation::setBindingsStartTime(std::optional<double> newStartTime)
+ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<CSSNumberish>& startTime)
 {
-    if (newStartTime)
-        setStartTime(Seconds::fromMilliseconds(*newStartTime));
-    else
-        setStartTime(std::nullopt);
+    auto validStartTimeOrException = validateCSSNumberishValue(startTime);
+    if (validStartTimeOrException.hasException())
+        return validStartTimeOrException.releaseException();
+    setStartTime(validStartTimeOrException.releaseReturnValue());
+    return { };
 }
 
 void WebAnimation::setStartTime(std::optional<Seconds> newStartTime)
@@ -372,11 +397,12 @@ std::optional<double> WebAnimation::bindingsCurrentTime() const
     return secondsToWebAnimationsAPITime(time.value());
 }
 
-ExceptionOr<void> WebAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
+ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<CSSNumberish>& currentTime)
 {
-    if (!currentTime)
-        return setCurrentTime(std::nullopt);
-    return setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
+    auto validCurrentTimeOrException = validateCSSNumberishValue(currentTime);
+    if (validCurrentTimeOrException.hasException())
+        return validCurrentTimeOrException.releaseException();
+    return setCurrentTime(validCurrentTimeOrException.releaseReturnValue());
 }
 
 std::optional<Seconds> WebAnimation::currentTime(std::optional<Seconds> startTime) const

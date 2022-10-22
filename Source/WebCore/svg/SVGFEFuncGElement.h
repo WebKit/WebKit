@@ -28,6 +28,8 @@ class SVGFEFuncGElement final : public SVGComponentTransferFunctionElement {
 public:
     static Ref<SVGFEFuncGElement> create(const QualifiedName&, Document&);
 
+    ComponentTransferChannel channel() const final { return ComponentTransferChannel::Green; }
+
 private:
     SVGFEFuncGElement(const QualifiedName&, Document&);
 };
