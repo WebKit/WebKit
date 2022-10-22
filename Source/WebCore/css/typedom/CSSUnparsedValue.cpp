@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSUnparsedValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSOMVariableReferenceValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
@@ -146,5 +144,3 @@ ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnpar
 }
 
 } // namespace WebCore
-
-#endif

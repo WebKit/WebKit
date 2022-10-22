@@ -30,8 +30,6 @@
 #include "config.h"
 #include "StylePropertyMapReadOnly.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSCustomPropertyValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
@@ -98,5 +96,3 @@ std::optional<StylePropertyMapReadOnly::StylePropertyMapEntry> StylePropertyMapR
 }
 
 } // namespace WebCore
-
-#endif

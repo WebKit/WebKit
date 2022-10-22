@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSColorValue.h"
 
 namespace WebCore {
@@ -57,5 +55,3 @@ private:
 };
     
 } // namespace WebCore
-
-#endif

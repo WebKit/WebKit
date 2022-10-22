@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSMathMin.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/FixedVector.h>
@@ -100,5 +98,3 @@ auto CSSMathMin::toSumValue() const -> std::optional<SumValue>
 }
 
 } // namespace WebCore
-
-#endif

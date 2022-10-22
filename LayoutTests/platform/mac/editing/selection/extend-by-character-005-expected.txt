@@ -336,11 +336,13 @@ layer at (0,0) size 800x600
               text run at (192,14) width 28: "as "
           RenderText {#text} at (219,14) size 660x56
             text run at (219,14) width 111: "our fathers "
-            text run at (329,14) width 339: "f upon this continent, a new nation,"
-            text run at (667,14) width 7: " "
-            text run at (14,42) width 228: "conceived    in Liberty, "
+            text run at (329,14) width 345: "f upon this continent, a new nation, "
+            text run at (14,42) width 104: "conceived "
+            text run at (117,42) width 7: " "
+            text run at (123,42) width 7: " "
+            text run at (129,42) width 113: " in Liberty, "
             text run at (241,42) width 386: "and dedicated to the proposition that all "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (626,42) size 1x28
           RenderText {#text} at (14,70) size 216x28
             text run at (14,70) width 216: "men are created equal."
         RenderText {#text} at (0,0) size 0x0

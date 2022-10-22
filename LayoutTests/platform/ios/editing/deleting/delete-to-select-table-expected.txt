@@ -31,20 +31,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56
-        RenderTable {TABLE} at (0,0) size 87x56 [border: (3px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (3,3) size 81x50
-            RenderTableRow {TR} at (0,2) size 81x22
-              RenderTableCell {TD} at (2,2) size 27x22 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 95x56 [border: (3px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (3,3) size 89x50
+            RenderTableRow {TR} at (0,2) size 89x22
+              RenderTableCell {TD} at (2,2) size 31x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 25x19
                   text run at (1,1) width 25: "Foo"
-              RenderTableCell {TD} at (30,2) size 49x22 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (34,2) size 53x22 [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 23x19
                   text run at (1,1) width 23: "baz"
-            RenderTableRow {TR} at (0,26) size 81x22
-              RenderTableCell {TD} at (2,26) size 27x22 [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,26) size 89x22
+              RenderTableCell {TD} at (2,26) size 31x22 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 21x19
                   text run at (1,1) width 21: "bar"
-              RenderTableCell {TD} at (30,26) size 49x22 [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (34,26) size 53x22 [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 46x19
                   text run at (1,1) width 46: "buffalo"
 selection start: position 0 of child 1 {TABLE} of child 0 {DIV} of body

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "DOMMatrix.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
@@ -66,5 +64,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

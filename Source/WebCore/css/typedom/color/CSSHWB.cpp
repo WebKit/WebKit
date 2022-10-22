@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSHWB.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,5 +41,3 @@ CSSHWB::CSSHWB(Ref<CSSNumericValue> hue, CSSNumberish whiteness, CSSNumberish bl
 }
 
 } // namespace WebCore
-
-#endif

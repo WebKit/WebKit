@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSNumericValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSCalcExpressionNode.h"
 #include "CSSCalcExpressionNodeParser.h"
 #include "CSSCalcInvertNode.h"
@@ -490,5 +488,3 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
 } // namespace WebCore
 
 #undef RETURN_IF_EXCEPTION
-
-#endif

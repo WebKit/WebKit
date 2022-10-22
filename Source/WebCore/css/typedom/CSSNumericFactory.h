@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
 #include "Supplementable.h"
@@ -128,4 +126,3 @@ private:
 };
 
 } // namespace WebCore
-#endif

@@ -30,5 +30,5 @@ PASS iteration composition of transform of matrix3d function
 PASS iteration composition of transform of rotate3d function
 PASS iteration composition starts with non-zero value animation
 PASS iteration composition with negative final value animation
-FAIL duration changes with an iteration composition operation of accumulate assert_equals: Animated style at 25s of the first iteration expected "12.5px" but got "25px"
+PASS duration changes with an iteration composition operation of accumulate
 

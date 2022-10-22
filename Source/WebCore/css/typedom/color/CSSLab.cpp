@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSLab.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,5 +41,3 @@ CSSLab::CSSLab(CSSColorPercent lightness, CSSColorNumber a, CSSColorNumber b, CS
 }
 
 } // namespace WebCore
-
-#endif

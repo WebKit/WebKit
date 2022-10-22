@@ -136,7 +136,10 @@ SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData
 
     Vector<uint8_t> buffer;
     buffer.resize(spsPpsLength + 2);
+IGNORE_GCC_WARNINGS_BEGIN("restrict")
+    // https://bugs.webkit.org/show_bug.cgi?id=246862
     std::memcpy(buffer.data(), frameData, spsPpsLength);
+IGNORE_GCC_WARNINGS_END
     buffer[spsPpsLength] = 0x25;
     buffer[spsPpsLength + 1] = 0xb8;
     return { buffer.data(), buffer.size(), WTFMove(buffer) };

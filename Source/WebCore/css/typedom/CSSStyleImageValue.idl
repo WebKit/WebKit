@@ -27,7 +27,6 @@
 [
     InterfaceName=CSSImageValue,
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     JSGenerateToNativeObject,
 ] interface CSSStyleImageValue : CSSStyleValue {

@@ -59,7 +59,7 @@ public:
     DECLARE_INFO;
 
     void initializeCollator(JSGlobalObject*, JSValue locales, JSValue optionsValue);
-    JSValue compareStrings(JSGlobalObject*, StringView, StringView) const;
+    UCollationResult compareStrings(JSGlobalObject*, StringView, StringView) const;
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
     JSBoundFunction* boundCompare() const { return m_boundCompare.get(); }

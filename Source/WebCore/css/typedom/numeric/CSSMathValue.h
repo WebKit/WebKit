@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSMathOperator.h"
 #include "CSSNumericArray.h"
 #include "CSSNumericValue.h"
@@ -66,5 +64,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

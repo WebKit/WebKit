@@ -57,9 +57,7 @@ public:
     void synchronizeStyleAttributeInternal() const { const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
     
     WEBCORE_EXPORT CSSStyleDeclaration& cssomStyle();
-#if ENABLE(CSS_TYPED_OM)
     StylePropertyMap& ensureAttributeStyleMap();
-#endif
 
     // https://html.spec.whatwg.org/#presentational-hints
     const StyleProperties* presentationalHintStyle() const;

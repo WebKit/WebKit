@@ -77,7 +77,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 168x28
             text run at (0,0) width 168: "the notational bar"
           RenderBR {BR} at (167,0) size 1x28
-          RenderInline {SPAN} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 0x28
           RenderText {#text} at (0,28) size 34x28
             text run at (0,28) width 34: "baz"
         RenderBlock {DIV} at (14,70) size 756x28

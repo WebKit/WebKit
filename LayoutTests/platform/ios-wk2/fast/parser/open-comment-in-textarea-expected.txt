@@ -11,8 +11,7 @@ layer at (8,8) size 168x34 clip at (9,9) size 151x32 scrollHeight 60
       RenderText {#text} at (0,0) size 139x42
         text run at (0,0) width 21: "<!--"
         text run at (20,0) width 1: " "
-        text run at (0,14) width 136: "This should be part of the"
-        text run at (135,14) width 4: " "
+        text run at (0,14) width 139: "This should be part of the "
         text run at (0,28) width 47: "textarea."
         text run at (46,28) width 1: " "
       RenderBR {BR} at (0,42) size 0x14

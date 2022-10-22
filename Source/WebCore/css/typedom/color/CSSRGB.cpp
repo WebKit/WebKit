@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSRGB.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,5 +41,3 @@ CSSRGB::CSSRGB(CSSColorRGBComp red, CSSColorRGBComp green, CSSColorRGBComp blue,
 }
 
 } // namespace WebCore
-
-#endif

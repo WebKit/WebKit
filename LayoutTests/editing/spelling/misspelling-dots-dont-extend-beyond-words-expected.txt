@@ -57,6 +57,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 492: "There should not be any misspelling dots between the two misspelled words."
       RenderBlock {DIV} at (0,18) size 784x18
         RenderText {#text} at (0,0) size 110x17
-          text run at (0,0) width 110: "wafewe rewdfea "
-        RenderInline {SPAN} at (0,0) size 1x17
+          text run at (0,0) width 106: "wafewe rewdfea"
+          text run at (105,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 0x17
 caret: position 15 of child 0 {#text} of child 3 {DIV} of body

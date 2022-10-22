@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 379x19
             text run at (0,0) width 379: "The test should add a single blank line after this paragraph."
-          RenderInline {SPAN} at (0,0) size 1x19
+          RenderInline {SPAN} at (0,0) size 0x19
           RenderBR {BR} at (378,0) size 1x19
         RenderBlock (anonymous) at (0,20) size 784x20
           RenderBR {BR} at (0,0) size 0x19

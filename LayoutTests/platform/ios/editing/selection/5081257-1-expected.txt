@@ -4,11 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 784x59
-          text run at (0,0) width 744: "This tests for setting the selection at a position inside the document when the document node is non-editable and the"
-          text run at (743,0) width 5: " "
+        RenderText {#text} at (0,0) size 786x59
+          text run at (0,0) width 748: "This tests for setting the selection at a position inside the document when the document node is non-editable and the "
           text run at (0,20) width 257: "document's body element *is* editable. "
-          text run at (256,20) width 526: "The expected behavior is to create a selection at [body, 0]. There should be a caret"
-          text run at (781,20) width 3: " "
+          text run at (256,20) width 530: "The expected behavior is to create a selection at [body, 0]. There should be a caret "
           text run at (0,40) width 184: "at the start of this paragraph."
 caret: position 0 of child 0 {#text} of child 1 {P} of body

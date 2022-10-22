@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "ScriptWrappable.h"
@@ -133,5 +131,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif

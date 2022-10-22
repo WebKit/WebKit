@@ -38,9 +38,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     Vector<std::unique_ptr<ElementAnimationRareData>> animationRareData;
     void* pointers[13];
     void* intersectionObserverData;
-#if ENABLE(CSS_TYPED_OM)
     void* typedOMData[2];
-#endif
     void* resizeObserverData;
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
 };

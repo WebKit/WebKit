@@ -5,5 +5,5 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > A > T
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 
-Canton Repository (subscription)                                                      	all 7hello world9 news articles                                                      	
+Canton Repository (subscription) 	all 7hello world9 news articles 	
 

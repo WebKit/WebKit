@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSStyleValue.h"
 #include "CSSValue.h"
 #include <wtf/RefCounted.h>
@@ -67,5 +65,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif

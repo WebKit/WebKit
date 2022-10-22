@@ -27,7 +27,6 @@
 [
     InterfaceName=CSSUnitValue,
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSUnitValue : CSSNumericValue {
     constructor(double value, USVString unit);

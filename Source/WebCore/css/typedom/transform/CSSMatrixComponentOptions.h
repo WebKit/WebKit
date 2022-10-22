@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <optional>
 
 namespace WebCore {
@@ -36,5 +34,3 @@ struct CSSMatrixComponentOptions {
 };
 
 } // namespace WebCore
-
-#endif

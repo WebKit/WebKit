@@ -27,5 +27,5 @@
 // https://drafts.csswg.org/cssom/#the-elementcssinlinestyle-interface
 interface mixin ElementCSSInlineStyle {
     [ImplementedAs=cssomStyle, SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
-    [ImplementedAs=ensureAttributeStyleMap, SameObject, CachedAttribute, EnabledBySetting=CSSTypedOMEnabled, Conditional=CSS_TYPED_OM] readonly attribute StylePropertyMap attributeStyleMap;
+    [ImplementedAs=ensureAttributeStyleMap, SameObject, CachedAttribute, EnabledBySetting=CSSTypedOMEnabled] readonly attribute StylePropertyMap attributeStyleMap;
 };

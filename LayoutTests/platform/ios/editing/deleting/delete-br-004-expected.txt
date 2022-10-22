@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
             text run at (14,15) width 102: "Fourscore "
             text run at (115,15) width 42: "and "
             text run at (156,15) width 62: "seven "
-          RenderBR {BR} at (217,14) size 1x28
+          RenderBR {BR} at (217,15) size 1x28
           RenderBR {BR} at (14,45) size 0x28
           RenderText {#text} at (14,75) size 92x28
             text run at (14,75) width 92: "years ago"

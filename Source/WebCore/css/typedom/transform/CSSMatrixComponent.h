@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSMatrixComponentOptions.h"
 #include "CSSTransformComponent.h"
 #include <wtf/IsoMalloc.h>
@@ -60,5 +58,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMatrixComponent)
     static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::MatrixComponent; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

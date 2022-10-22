@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSScale.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
@@ -46,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSScale);
 
-ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish> z)
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish>&& z)
 {
     auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
     auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
@@ -163,5 +161,3 @@ ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
 }
 
 } // namespace WebCore
-
-#endif

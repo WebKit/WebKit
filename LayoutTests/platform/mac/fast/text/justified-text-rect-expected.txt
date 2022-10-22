@@ -12,15 +12,19 @@ layer at (0,0) size 800x600
           text run at (0,36) width 201: "show the caret in that position. "
           text run at (200,36) width 481: "The test also writes out the rect returned from firstRectForCharacterRange."
       RenderBlock {P} at (0,70) size 70x50 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 60x18
-          text run at (0,0) width 60: "this    "
+        RenderText {#text} at (0,0) size 56x18
+          text run at (0,0) width 24: "this"
+          text run at (23,0) width 9: " "
+          text run at (31,0) width 9: " "
+          text run at (39,0) width 9: " "
+          text run at (47,0) width 9: " "
         RenderInline {SPAN} at (0,0) size 11x18
-          RenderText {#text} at (59,0) size 11x18
-            text run at (59,0) width 11: "is"
-        RenderText {#text} at (70,0) size 70x36
-          text run at (70,0) width 0: " "
+          RenderText {#text} at (55,0) size 11x18
+            text run at (55,0) width 11: "is"
+        RenderText {#text} at (66,0) size 70x36
+          text run at (66,0) width 4: " "
           text run at (0,18) width 52: "justified"
       RenderBlock (anonymous) at (0,136) size 800x18
         RenderText {#text} at (0,0) size 76x18
-          text run at (0,0) width 76: "59,512,5,18"
+          text run at (0,0) width 76: "55,512,5,18"
 caret: position 8 of child 0 {#text} of child 3 {P} of body

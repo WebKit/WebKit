@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,30) size 756x60
             RenderText {#text} at (0,1) size 43x28
               text run at (0,1) width 43: "Two"
-            RenderBR {BR} at (42,0) size 1x28
+            RenderBR {BR} at (42,1) size 1x28
             RenderBR {BR} at (0,31) size 0x28
           RenderBlock (anonymous) at (0,90) size 756x30
             RenderText {#text} at (0,1) size 56x28

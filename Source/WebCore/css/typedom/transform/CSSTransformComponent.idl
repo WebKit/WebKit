@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#csstransformcomponent
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     CustomToJSObject,
 ] interface CSSTransformComponent {

@@ -227,10 +227,6 @@
 #define ENABLE_CSS_PAINTING_API 1
 #endif
 
-#if !defined(ENABLE_CSS_TYPED_OM)
-#define ENABLE_CSS_TYPED_OM 1
-#endif
-
 #if !defined(ENABLE_CURSOR_VISIBILITY)
 #define ENABLE_CURSOR_VISIBILITY 1
 #endif

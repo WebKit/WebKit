@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSLCH.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,5 +41,3 @@ CSSLCH::CSSLCH(CSSColorPercent lightness, CSSColorPercent chroma, CSSColorAngle 
 }
 
 } // namespace WebCore
-
-#endif

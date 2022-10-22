@@ -595,7 +595,6 @@ void SpeculativeJIT::emitCall(Node* node)
     GPRReg calleePayloadGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
     
-    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
     ExecutableBase* executable = nullptr;
     FunctionExecutable* functionExecutable = nullptr;
     if (isDirect) {
@@ -2560,6 +2559,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case StringFromCharCode: {
         compileFromCharCode(node);
+        break;
+    }
+
+    case StringLocaleCompare: {
+        compileStringLocaleCompare(node);
         break;
     }
         

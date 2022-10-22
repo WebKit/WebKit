@@ -58,7 +58,9 @@ void GCAwareJITStubRoutine::observeZeroRefCountImpl()
         // this guy. In that case the GC informs us that we're jettisoned already
         // and that we should delete ourselves as soon as the ref count reaches
         // zero.
+IGNORE_GCC_WARNINGS_BEGIN("sequence-point")
         delete this;
+IGNORE_GCC_WARNINGS_END
         return;
     }
     
@@ -72,8 +74,10 @@ void GCAwareJITStubRoutine::deleteFromGC()
     ASSERT(m_isJettisoned);
     ASSERT(!m_refCount);
     ASSERT(!m_mayBeExecuting);
-    
+
+IGNORE_GCC_WARNINGS_BEGIN("sequence-point")
     delete this;
+IGNORE_GCC_WARNINGS_END
 }
 
 PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures)

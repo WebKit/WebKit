@@ -28,8 +28,6 @@
 #include "CSSNumericValue.h"
 #include "CSSUnits.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 namespace WebCore {
 
 std::optional<CSSNumericType> CSSNumericType::create(CSSUnitType unit, int exponent)
@@ -218,5 +216,3 @@ size_t CSSNumericType::nonZeroEntryCount() const
 }
 
 } // namespace WebCore
-
-#endif

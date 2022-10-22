@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#cssskewy
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSSkewY : CSSTransformComponent {
     constructor(CSSNumericValue ay);

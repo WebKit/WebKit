@@ -14,15 +14,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x78 [border: (2px solid #FF0000)]
-        RenderTable {TABLE} at (14,14) size 29x50
-          RenderTableSection {TBODY} at (0,0) size 29x50
-            RenderTableRow {TR} at (0,2) size 29x22
-              RenderTableCell {TD} at (2,2) size 25x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 23x20
-                  text run at (1,1) width 23: "foo"
-            RenderTableRow {TR} at (0,26) size 29x22
-              RenderTableCell {TD} at (2,26) size 25x22 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 23x20
-                  text run at (1,1) width 23: "bar"
+        RenderTable {TABLE} at (14,14) size 33x50
+          RenderTableSection {TBODY} at (0,0) size 33x50
+            RenderTableRow {TR} at (0,2) size 33x22
+              RenderTableCell {TD} at (2,2) size 29x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (3,1) size 23x20
+                  text run at (3,1) width 23: "foo"
+            RenderTableRow {TR} at (0,26) size 33x22
+              RenderTableCell {TD} at (2,26) size 29x22 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (3,1) size 23x20
+                  text run at (3,1) width 23: "bar"
 selection start: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {DIV} of body
 selection end:   position 2 of child 1 {TABLE} of child 1 {DIV} of body

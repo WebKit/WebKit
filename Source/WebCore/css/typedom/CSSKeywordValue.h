@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSStyleValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -62,5 +60,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSKeywordValue)
     static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSKeywordValue; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

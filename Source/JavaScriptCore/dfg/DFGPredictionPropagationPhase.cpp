@@ -1001,6 +1001,11 @@ private:
             break;
         }
 
+        case StringLocaleCompare: {
+            setPrediction(SpecInt32Only);
+            break;
+        }
+
         case StringValueOf:
         case StringSlice:
         case StringSubstring:

@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#cssmatrixcomponent
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSMatrixComponent : CSSTransformComponent {
     constructor(DOMMatrixReadOnly matrix, optional CSSMatrixComponentOptions options = {});

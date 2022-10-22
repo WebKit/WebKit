@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
 
 [
-    Conditional=CSS_TYPED_OM,
     JSGenerateToJSObject,
 ] dictionary CSSNumericType {
     long length;

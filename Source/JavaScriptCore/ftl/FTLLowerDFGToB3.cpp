@@ -1246,6 +1246,9 @@ private:
         case StringFromCharCode:
             compileStringFromCharCode();
             break;
+        case StringLocaleCompare:
+            compileStringLocaleCompare();
+            break;
         case GetByOffset:
         case GetGetterSetterByOffset:
             compileGetByOffset();
@@ -9337,6 +9340,12 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
 
         setJSValue(m_out.phi(Int64, fastResult, slowResult));
+    }
+
+    void compileStringLocaleCompare()
+    {
+        auto* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        setInt32(m_out.castToInt32(vmCall(Int64, operationStringLocaleCompare, weakPointer(globalObject), lowString(m_node->child1()), lowString(m_node->child2()))));
     }
     
     void compileGetByOffset()

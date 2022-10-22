@@ -75,9 +75,7 @@ public:
 #if ENABLE(OFFSCREEN_CANVAS)
         RefPtr<OffscreenCanvas>,
 #endif
-#if ENABLE(CSS_TYPED_OM)
         RefPtr<CSSStyleImageValue>,
-#endif
 #if ENABLE(WEB_CODECS)
         RefPtr<WebCodecsVideoFrame>,
 #endif

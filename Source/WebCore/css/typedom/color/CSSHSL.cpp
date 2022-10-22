@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSHSL.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,5 +41,3 @@ CSSHSL::CSSHSL(CSSColorAngle hue, CSSColorPercent saturation, CSSColorPercent li
 }
 
 } // namespace WebCore
-
-#endif

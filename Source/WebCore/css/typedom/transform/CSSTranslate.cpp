@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSTranslate.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
@@ -162,5 +160,3 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
 }
 
 } // namespace WebCore
-
-#endif

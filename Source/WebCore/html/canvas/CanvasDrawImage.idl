@@ -25,9 +25,7 @@
 
 // FIXME: This should include SVGImageElement.
 typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
-#if defined(ENABLE_CSS_TYPED_OM) && ENABLE_CSS_TYPED_OM
     or CSSStyleImageValue
-#endif
 #if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
     or OffscreenCanvas
 #endif

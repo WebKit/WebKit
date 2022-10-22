@@ -32,8 +32,6 @@
 
 #include "Document.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -57,5 +55,3 @@ Document* CSSStyleImageValue::document() const
 }
 
 } // namespace WebCore
-
-#endif

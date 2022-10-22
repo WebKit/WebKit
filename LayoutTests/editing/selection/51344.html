@@ -31,8 +31,8 @@ function assert(bool) {
 
 var test = document.getElementById('test');
 var selection = window.getSelection();
-selection.setPosition(test.firstChild, 6);
-selection.modify('move', 'right', 'character');
+selection.setPosition(test.firstChild, 2);
+selection.modify('move', 'left', 'character');
 var offset = selection.anchorOffset;
 assert(offset == 1);
 test.style.display = "none";

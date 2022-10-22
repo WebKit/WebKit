@@ -53,6 +53,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 431: "The misspelling dots on the text below should be visually centered."
       RenderBlock {DIV} at (0,18) size 784x18
         RenderText {#text} at (0,0) size 106x17
-          text run at (0,0) width 106: "wafewerewdfea "
-        RenderInline {SPAN} at (0,0) size 1x17
+          text run at (0,0) width 102: "wafewerewdfea"
+          text run at (101,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 0x17
 caret: position 14 of child 0 {#text} of child 3 {DIV} of body

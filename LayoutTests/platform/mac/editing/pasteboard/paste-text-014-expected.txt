@@ -25,8 +25,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (86,0) size 172x18
             text run at (86,0) width 172: "<rdar://problem/3918712>"
         RenderText {#text} at (257,0) size 756x36
-          text run at (257,0) width 495: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost)."
-          text run at (751,0) width 5: " "
+          text run at (257,0) width 499: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost). "
           text run at (0,18) width 590: "Should see two boxes with blockquoted \"foo\" text, followed by a box with an unquoted \"x\"."
       RenderBlock {DIV} at (0,36) size 784x24
       RenderBlock {DIV} at (0,60) size 784x104 [border: (2px solid #FF0000)]

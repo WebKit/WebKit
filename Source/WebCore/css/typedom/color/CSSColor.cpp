@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSColor.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -45,5 +43,3 @@ CSSColor::CSSColor(CSSKeywordish, Vector<CSSColorPercent>, CSSNumberish alpha)
 }
 
 } // namespace WebCore
-
-#endif

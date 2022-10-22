@@ -695,9 +695,7 @@ public:
 
     virtual void updateUserAgentShadowTree() { }
 
-#if ENABLE(CSS_TYPED_OM)
     StylePropertyMapReadOnly* computedStyleMap();
-#endif
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
@@ -723,10 +721,8 @@ protected:
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 
-#if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap();
     void setAttributeStyleMap(Ref<StylePropertyMap>&&);
-#endif
 
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 

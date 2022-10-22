@@ -934,9 +934,9 @@ WebThreadContext* WebThreadCurrentContext(void)
 void WebThreadEnable(void)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
-    if (WebCore::IOSApplication::isSpringBoard()) {
+    if (WebCore::IOSApplication::isAppleApplication()) {
         using WebCore::LogThreading;
-        RELEASE_LOG_FAULT(Threading, "SpringBoard enabled WebThread.");
+        RELEASE_LOG_FAULT(Threading, "WebThread enabled");
     }
 
     static std::once_flag flag;

@@ -21,7 +21,7 @@ table, th, td {
 Markup.description('This tests moving the selection backwards at the end of a table by sentence granularity. The caret should move to the beginning of the table.');
 
 editor.focus();
-getSelection().setPosition(target, 5);
+getSelection().setPosition(target, 1);
 getSelection().modify('move', 'left', 'sentence');
 
 Markup.dump(editor);

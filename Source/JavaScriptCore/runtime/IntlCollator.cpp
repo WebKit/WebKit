@@ -291,7 +291,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
 }
 
 // https://tc39.es/ecma402/#sec-collator-comparestrings
-JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x, StringView y) const
+UCollationResult IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x, StringView y) const
 {
     ASSERT(m_collator);
 
@@ -319,9 +319,11 @@ JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x,
     if (!result)
         result = ucol_strcoll(m_collator.get(), x.upconvertedCharacters(), x.length(), y.upconvertedCharacters(), y.length());
 
-    if (U_FAILURE(status))
-        return throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
-    return jsNumber(result.value());
+    if (U_FAILURE(status)) {
+        throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
+        return { };
+    }
+    return result.value();
 }
 
 ASCIILiteral IntlCollator::usageString(Usage usage)

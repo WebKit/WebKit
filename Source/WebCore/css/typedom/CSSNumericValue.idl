@@ -29,7 +29,6 @@ typedef (double or CSSNumericValue) CSSNumberish;
 [
     InterfaceName=CSSNumericValue,
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     JSGenerateToNativeObject,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSNumericValue : CSSStyleValue {

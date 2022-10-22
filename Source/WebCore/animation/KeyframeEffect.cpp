@@ -1805,6 +1805,8 @@ void KeyframeEffect::animationDidChangeTimingProperties()
         }
     } else if (canBeAccelerated())
         m_runningAccelerated = RunningAccelerated::NotStarted;
+
+    invalidate();
 }
 
 void KeyframeEffect::transformRelatedPropertyDidChange()
@@ -2230,6 +2232,15 @@ Seconds KeyframeEffect::timeToNextTick(BasicEffectTiming timing) const
     }
 
     return AnimationEffect::timeToNextTick(timing);
+}
+
+void KeyframeEffect::setIterationComposite(IterationCompositeOperation iterationCompositeOperation)
+{
+    if (m_iterationCompositeOperation == iterationCompositeOperation)
+        return;
+
+    m_iterationCompositeOperation = iterationCompositeOperation;
+    invalidate();
 }
 
 void KeyframeEffect::setComposite(CompositeOperation compositeOperation)

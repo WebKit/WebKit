@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericValue.h"
 #include "CSSTransformComponent.h"
 
@@ -39,7 +37,7 @@ template<typename> class ExceptionOr;
 class CSSScale : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSScale);
 public:
-    static ExceptionOr<Ref<CSSScale>> create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish> z);
+    static ExceptionOr<Ref<CSSScale>> create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish>&& z);
     static ExceptionOr<Ref<CSSScale>> create(CSSFunctionValue&);
 
     void serialize(StringBuilder&) const final;
@@ -68,5 +66,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSScale)
     static bool isType(const WebCore::CSSTransformComponent& transform) { return transform.getType() == WebCore::CSSTransformType::Scale; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

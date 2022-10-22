@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSMathClamp.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSNumericValue.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -106,5 +104,3 @@ bool CSSMathClamp::equals(const CSSNumericValue& other) const
 }
 
 } // namespace WebCore
-
-#endif

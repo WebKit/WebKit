@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<head>
+    <script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div id="editorcontainer" contenteditable="true">
+        Will select from here
+        <div contenteditable="false">
+            over this contenteditable=false div
+        </div>
+        until here.
+    </div>
+</body>
+<script>
+    Markup.description('formatblock on selection with a contenteditable="false" child.');
+    
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+
+    var container = document.getElementById('editorcontainer');
+    var range = document.createRange()
+    range.setStartBefore(container.firstChild);
+    range.setEndAfter(container.lastChild);
+    selection.addRange(range);
+
+    document.execCommand('italic', false, "");
+    document.execCommand('formatblock', false, "<h1>");
+
+    Markup.dump(container);
+</script>
+</html>

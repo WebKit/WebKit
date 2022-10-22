@@ -149,5 +149,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
         -Wno-missing-field-initializers
         -Wno-missing-format-attribute
         -Wno-discarded-qualifiers
+        -Wno-cast-align
     )
 endif ()

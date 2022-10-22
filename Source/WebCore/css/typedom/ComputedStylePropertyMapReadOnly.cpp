@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ComputedStylePropertyMapReadOnly.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyParser.h"
 #include "Document.h"
@@ -144,5 +142,3 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_TYPED_OM)

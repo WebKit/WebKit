@@ -35,9 +35,7 @@ typedef (HTMLImageElement
 #if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
     or OffscreenCanvas
 #endif
-#if defined(ENABLE_CSS_TYPED_OM) && ENABLE_CSS_TYPED_OM
     or CSSStyleImageValue
-#endif
 #if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
     or WebCodecsVideoFrame
 #endif

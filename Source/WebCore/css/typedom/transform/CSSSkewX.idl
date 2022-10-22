@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#cssskewx
 [
     EnabledBySetting=CSSTypedOMEnabled,
-    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSSkewX : CSSTransformComponent {
     constructor(CSSNumericValue ax);

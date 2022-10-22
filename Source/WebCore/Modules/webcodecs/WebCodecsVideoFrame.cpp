@@ -65,7 +65,6 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
             return Exception { InvalidStateError,  "Image element has a bad size"_s };
         return { };
     },
-#if ENABLE(CSS_TYPED_OM)
     [] (const RefPtr<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
         auto* image = cssImage->image() ? cssImage->image()->image() : nullptr;
         if (!image)
@@ -74,7 +73,6 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
             return Exception { InvalidStateError,  "CSS Image has a bad size"_s };
         return { };
     },
-#endif
 #if ENABLE(VIDEO)
     [] (const RefPtr<HTMLVideoElement>& video) -> std::optional<Exception> {
         auto readyState = video->readyState();
@@ -119,7 +117,6 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
 
         return initializeFrameWithResourceAndSize(image.releaseNonNull(), WTFMove(init));
     },
-#if ENABLE(CSS_TYPED_OM)
     [&] (RefPtr<CSSStyleImageValue>& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
@@ -130,7 +127,6 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
 
         return initializeFrameWithResourceAndSize(image.releaseNonNull(), WTFMove(init));
     },
-#endif
 #if ENABLE(VIDEO)
     [&] (RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         RefPtr<VideoFrame> videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;

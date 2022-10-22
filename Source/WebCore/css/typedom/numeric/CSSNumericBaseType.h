@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include <array>
 
 namespace WebCore {
@@ -76,5 +74,3 @@ constexpr const char* debugString(CSSNumericBaseType type)
 }
 
 } // namespace WebCore
-
-#endif

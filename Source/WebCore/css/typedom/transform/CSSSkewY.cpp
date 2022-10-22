@@ -30,8 +30,6 @@
 #include "config.h"
 #include "CSSSkewY.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
@@ -110,5 +108,3 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewY::toMatrix()
 }
 
 } // namespace WebCore
-
-#endif
