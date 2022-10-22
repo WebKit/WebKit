@@ -1103,8 +1103,12 @@ private:
         }
 
         auto& imageBitmap = jsCast<JSImageBitmap*>(obj)->wrapped();
-        auto* buffer = imageBitmap.buffer();
+        if (!imageBitmap.originClean()) {
+            code = SerializationReturnCode::DataCloneError;
+            return;
+        }
 
+        auto* buffer = imageBitmap.buffer();
         if (!buffer) {
             code = SerializationReturnCode::ValidationError;
             return;
@@ -4350,6 +4354,8 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 
         if (auto imageBitmap = JSImageBitmap::toWrapped(vm, transferable.get())) {
             if (imageBitmap->isDetached())
+                return Exception { DataCloneError };
+            if (!imageBitmap->originClean())
                 return Exception { DataCloneError };
 
             imageBitmaps.append(WTFMove(imageBitmap));
