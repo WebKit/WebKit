@@ -1,0 +1,22 @@
+<!DOCTYPE html><!--  webkit-test-runner [ LiveRangeSelectionEnabled=true ]  -->
+<html>
+<head>
+    <meta charset="utf8">
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script>
+        addEventListener("DOMContentLoaded", () => {
+            document.designMode = "on";
+            Markup.description("Verifies that inserting a paragraph before a space does not cause text after the insertion position to be deleted.");
+
+            getSelection().setPosition(document.querySelector("p").childNodes[0], 5);
+
+            Markup.dump(document.body, "Before inserting paragraph");
+            document.execCommand("InsertParagraph");
+            Markup.dump(document.body, "After inserting paragraph");
+        });
+    </script>
+</head>
+<body>
+    <p>Hello world</p>
+</body>
+</html>

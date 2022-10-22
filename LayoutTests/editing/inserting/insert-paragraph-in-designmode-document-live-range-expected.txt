@@ -1,0 +1,18 @@
+Verifies that after inserting a newline after a period doesn't insert an extra space in front of the newly inserted line.
+| <!DOCTYPE html>
+| <!--   webkit-test-runner [ LiveRangeSelectionEnabled=true ]   -->
+| <html>
+|   <head>
+|     "\n    "
+|     "\n    "
+|     "\n"
+|   "\n"
+|   <body>
+|     "\n    "
+|     <div>
+|       class="container"
+|       "Hello."
+|     <div>
+|       class="container"
+|       "<#selection-caret>This is a test."
+|     "\n\n\n"

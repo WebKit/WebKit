@@ -1,0 +1,21 @@
+<!DOCTYPE html><!--  webkit-test-runner [ LiveRangeSelectionEnabled=true ]  -->
+<html>
+<head>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script>
+        addEventListener("DOMContentLoaded", () => {
+            document.designMode = "on";
+
+            const container = document.querySelector(".container");
+            getSelection().setPosition(container.childNodes[0], 6);
+            document.execCommand("InsertParagraph");
+            document.querySelectorAll("script").forEach(script => script.remove());
+            Markup.description("Verifies that after inserting a newline after a period doesn't insert an extra space in front of the newly inserted line.");
+            Markup.dump("document.body");
+        });
+    </script>
+</head>
+<body>
+    <div class="container">Hello.This is a test.</div>
+</body>
+</html>
