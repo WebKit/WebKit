@@ -164,6 +164,49 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForText(StringView textContent
     return fallbackFonts;
 }
 
+template <typename TextIterator>
+static TextUtil::EnclosingAscentDescent enclosingGlyphBoundsForRunWithIterator(const FontCascade& fontCascade, bool isRTL, TextIterator& textIterator)
+{
+    auto enclosingAscent = std::optional<InlineLayoutUnit> { };
+    auto enclosingDescent = std::optional<InlineLayoutUnit> { };
+    auto isSmallCaps = fontCascade.isSmallCaps();
+    auto& primaryFont = fontCascade.primaryFont();
+
+    UChar32 currentCharacter = 0;
+    unsigned clusterLength = 0;
+    while (textIterator.consume(currentCharacter, clusterLength)) {
+
+        auto computeTopAndBottomForCharacter = [&](auto character) {
+            if (isSmallCaps && character != u_toupper(character))
+                character = u_toupper(character);
+
+            auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
+            auto& font = glyphData.font ? *glyphData.font : primaryFont;
+            // FIXME: This may need some adjustment for ComplexTextController. See glyphOrigin.
+            auto bounds = font.boundsForGlyph(glyphData.glyph);
+
+            enclosingAscent = std::min(enclosingAscent.value_or(bounds.y()), bounds.y());
+            enclosingDescent = std::max(enclosingDescent.value_or(bounds.maxY()), bounds.maxY());
+        };
+        computeTopAndBottomForCharacter(currentCharacter);
+        textIterator.advance(clusterLength);
+    }
+    return { enclosingAscent.value_or(0.f), enclosingDescent.value_or(0.f) };
+}
+
+TextUtil::EnclosingAscentDescent TextUtil::enclosingGlyphBoundsForText(StringView textContent, const RenderStyle& style)
+{
+    if (textContent.isEmpty())
+        return { };
+
+    if (textContent.is8Bit()) {
+        auto textIterator = Latin1TextIterator { textContent.characters8(), 0, textContent.length(), textContent.length() };
+        return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
+    }
+    auto textIterator = SurrogatePairAwareTextIterator { textContent.characters16(), 0, textContent.length(), textContent.length() };
+    return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
+}
+
 TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
     return breakWord(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), textWidth, availableWidth, contentLogicalLeft, fontCascade);
