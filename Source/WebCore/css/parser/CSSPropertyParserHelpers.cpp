@@ -3523,7 +3523,7 @@ static std::optional<CSSGradientColorStopList> consumeGradientColorStops(CSSPars
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
     do {
-        CSSGradientColorStop stop { consumeColor(range, context), consumeStopPosition(), { } };
+        CSSGradientColorStop stop { consumeColor(range, context), consumeStopPosition() };
         if (!stop.color && !stop.position)
             return std::nullopt;
 
@@ -3971,18 +3971,25 @@ RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange& range, const CSSParserC
 
 static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, const CSSParserContext& context, bool prefixed)
 {
-    auto fromImageValue = consumeImageOrNone(args, context);
-    if (!fromImageValue || !consumeCommaIncludingWhitespace(args))
+    // FIXME: The current CSS Images spec has a pretty different construction than is being parsed here:
+    //
+    //    cross-fade() = cross-fade( <cf-image># )
+    //    <cf-image> = <percentage [0,100]>? && [ <image> | <color> ]
+    //
+    //  https://drafts.csswg.org/css-images-4/#funcdef-cross-fade
+
+    auto fromImageValueOrNone = consumeImageOrNone(args, context);
+    if (!fromImageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    auto toImageValue = consumeImageOrNone(args, context);
-    if (!toImageValue || !consumeCommaIncludingWhitespace(args))
+    auto toImageValueOrNone = consumeImageOrNone(args, context);
+    if (!toImageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
     auto percentage = consumeNumberOrPercentRaw<NumberOrPercentDividedBy100Transformer>(args);
     if (!percentage)
         return nullptr;
     auto percentageValue = CSSValuePool::singleton().createValue(clampTo<double>(*percentage, 0, 1), CSSUnitType::CSS_NUMBER);
-    return CSSCrossfadeValue::create(fromImageValue.releaseNonNull(), toImageValue.releaseNonNull(), WTFMove(percentageValue), prefixed);
+    return CSSCrossfadeValue::create(fromImageValueOrNone.releaseNonNull(), toImageValueOrNone.releaseNonNull(), WTFMove(percentageValue), prefixed);
 }
 
 static RefPtr<CSSValue> consumeWebkitCanvas(CSSParserTokenRange& args)
@@ -4007,8 +4014,16 @@ static RefPtr<CSSValue> consumeWebkitNamedImage(CSSParserTokenRange& args)
 
 static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    auto imageValue = consumeImageOrNone(args, context);
-    if (!imageValue || !consumeCommaIncludingWhitespace(args))
+    // FIXME: The current Filter Effects spec has a different construction than is being parsed here:
+    //
+    //    filter() = filter( [ <image> | <string> ], <filter-value-list> )
+    //
+    //  https://drafts.fxtf.org/filter-effects/#funcdef-filter
+    //
+    // Importantly, `none` is not a valid value for the first parameter.
+
+    auto imageValueOrNone = consumeImageOrNone(args, context);
+    if (!imageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
     auto filterValue = consumeFilter(args, context, AllowedFilterFunctions::PixelFilters);
@@ -4019,7 +4034,7 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
     if (!args.atEnd())
         return nullptr;
 
-    return CSSFilterImageValue::create(imageValue.releaseNonNull(), filterValue.releaseNonNull());
+    return CSSFilterImageValue::create(imageValueOrNone.releaseNonNull(), filterValue.releaseNonNull());
 }
 
 #if ENABLE(CSS_PAINTING_API)

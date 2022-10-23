@@ -114,6 +114,10 @@ public:
     bool isOffsetRotateValue() const { return m_classType == OffsetRotateClass; }
     bool isRayValue() const { return m_classType == RayClass; }
 
+    // NOTE: This returns true for all image like values except CSSCursorImageValues, as these are
+    //       the values that corrispond to the CSS <image> production.
+    bool isImage() const { return isImageValue() || isImageSetValue() || isImageGeneratorValue(); }
+
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

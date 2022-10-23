@@ -350,7 +350,7 @@ static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const N
 
     RefPtr<CSSValue> imageValue;
     if (image.image())
-        imageValue = image.image()->cssValue();
+        imageValue = image.image()->computedStyleValue(style);
 
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
     const LengthBox& slices = image.borderSlices();
@@ -576,7 +576,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
 }
 
-Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color) const
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
     return CSSValuePool::singleton().createColorValue(style.colorResolvingCurrentColor(color));
@@ -2139,7 +2139,7 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
         if (is<CounterContentData>(*contentData))
             list->append(cssValuePool.createValue(downcast<CounterContentData>(*contentData).counter().identifier(), CSSUnitType::CSS_COUNTER_NAME));
         else if (is<ImageContentData>(*contentData))
-            list->append(downcast<ImageContentData>(*contentData).image().cssValue());
+            list->append(downcast<ImageContentData>(*contentData).image().computedStyleValue(style));
         else if (is<TextContentData>(*contentData))
             list->append(cssValuePool.createValue(downcast<TextContentData>(*contentData).text(), CSSUnitType::CSS_STRING));
     }
@@ -2583,7 +2583,7 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
 
     if (shapeValue->type() == ShapeValue::Type::Image) {
         if (shapeValue->image())
-            return shapeValue->image()->cssValue();
+            return shapeValue->image()->computedStyleValue(style);
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     }
 
@@ -2862,13 +2862,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         auto& layers = propertyID == CSSPropertyMaskImage ? style.maskLayers() : style.backgroundLayers();
         if (!layers.next()) {
             if (layers.image())
-                return layers.image()->cssValue();
+                return layers.image()->computedStyleValue(style);
             return cssValuePool.createIdentifierValue(CSSValueNone);
         }
         auto list = CSSValueList::createCommaSeparated();
         for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next()) {
             if (currLayer->image())
-                list->append(currLayer->image()->cssValue());
+                list->append(currLayer->image()->computedStyleValue(style));
             else
                 list->append(cssValuePool.createIdentifierValue(CSSValueNone));
         }
@@ -3000,7 +3000,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPixelValue(style.verticalBorderSpacing(), style);
     case CSSPropertyBorderImageSource:
         if (style.borderImageSource())
-            return style.borderImageSource()->cssValue();
+            return style.borderImageSource()->computedStyleValue(style);
         return cssValuePool.createIdentifierValue(CSSValueNone);
     case CSSPropertyBorderTopColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderTopColor)) : currentColorOrValidColor(style, style.borderTopColor());
@@ -3110,7 +3110,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             list = CSSValueList::createCommaSeparated();
             for (unsigned i = 0; i < cursors->size(); ++i) {
                 if (StyleImage* image = cursors->at(i).image())
-                    list->append(image->cssValue());
+                    list->append(image->computedStyleValue(style));
             }
         }
         auto value = cssValuePool.createValue(style.cursor());
@@ -3326,7 +3326,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return lineHeightFromStyle(style);
     case CSSPropertyListStyleImage:
         if (style.listStyleImage())
-            return style.listStyleImage()->cssValue();
+            return style.listStyleImage()->computedStyleValue(style);
         return cssValuePool.createIdentifierValue(CSSValueNone);
     case CSSPropertyListStylePosition:
         return cssValuePool.createValue(style.listStylePosition());
@@ -3736,7 +3736,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForNinePieceImageQuad(style.maskBoxImage().borderSlices(), style);
     case CSSPropertyWebkitMaskBoxImageSource:
         if (style.maskBoxImageSource())
-            return style.maskBoxImageSource()->cssValue();
+            return style.maskBoxImageSource()->computedStyleValue(style);
         return cssValuePool.createIdentifierValue(CSSValueNone);
     case CSSPropertyWebkitInitialLetter: {
         auto drop = !style.initialLetterDrop() ? cssValuePool.createIdentifierValue(CSSValueNormal) : cssValuePool.createValue(style.initialLetterDrop(), CSSUnitType::CSS_NUMBER);

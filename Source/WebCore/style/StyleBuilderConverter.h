@@ -36,7 +36,6 @@
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
-#include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSOffsetRotateValue.h"
@@ -901,11 +900,6 @@ inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(Builder
     return downcast<CSSLineBoxContainValue>(value).value();
 }
 
-static inline bool isImageShape(const CSSValue& value)
-{
-    return is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSImageGeneratorValue>(value);
-}
-
 inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
@@ -913,7 +907,7 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
         return nullptr;
     }
 
-    if (isImageShape(value))
+    if (value.isImage())
         return ShapeValue::create(builderState.createStyleImage(value).releaseNonNull());
 
     RefPtr<BasicShape> shape;

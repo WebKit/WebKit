@@ -23,18 +23,32 @@
 
 #pragma once
 
+#include "FloatSize.h"
+#include "FloatSizeHash.h"
 #include "StyleImage.h"
+#include <wtf/HashCountedSet.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class CSSImageGeneratorValue;
+class CSSValue;
+class CachedImage;
+class CachedResourceLoader;
+class GeneratedImage;
+class Image;
+class RenderElement;
+
+struct ResourceLoaderOptions;
 
 class StyleGeneratedImage : public StyleImage {
 public:
-    virtual CSSImageGeneratorValue& imageValue() = 0;
+    const HashCountedSet<RenderElement*>& clients() const { return m_clients; }
 
 protected:
-    explicit StyleGeneratedImage(Type, bool isFixedSize);
+    explicit StyleGeneratedImage(StyleImage::Type, bool fixedSize);
+    virtual ~StyleGeneratedImage();
+
+    WrappedImagePtr data() const final { return this; }
 
     FloatSize imageSize(const RenderElement*, float multiplier) const final;
     void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
@@ -42,12 +56,27 @@ protected:
     bool imageHasRelativeHeight() const final { return !m_fixedSize; }
     bool usesImageContainerSize() const final { return !m_fixedSize; }
     void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float) final { m_containerSize = containerSize; }
+    
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
+
+    // Allow subclasses to react to clients being added/removed.
+    virtual void didAddClient(RenderElement&) = 0;
+    virtual void didRemoveClient(RenderElement&) = 0;
 
     // All generated images must be able to compute their fixed size.
     virtual FloatSize fixedSize(const RenderElement&) const = 0;
 
+    class CachedGeneratedImage;
+    GeneratedImage* cachedImageForSize(FloatSize);
+    void saveCachedImageForSize(FloatSize, GeneratedImage&);
+    void evictCachedGeneratedImage(FloatSize);
+
     FloatSize m_containerSize;
     bool m_fixedSize;
+    HashCountedSet<RenderElement*> m_clients;
+    HashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;
 };
 
 } // namespace WebCore

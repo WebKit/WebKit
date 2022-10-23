@@ -45,7 +45,7 @@
 namespace WebCore {
 
 StyleMultiImage::StyleMultiImage(Type type)
-    : StyleImage(type)
+    : StyleImage { type }
 {
 }
 
@@ -62,47 +62,26 @@ void StyleMultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOpt
     ASSERT(loader.document());
 
     m_isPending = false;
-    auto imageWithScale = selectBestFitImage(*loader.document());
-    ASSERT(is<CSSImageValue>(imageWithScale.value) || is<CSSImageGeneratorValue>(imageWithScale.value));
 
-    if (is<CSSImageValue>(imageWithScale.value)) {
-        m_selectedImage = StyleCachedImage::create(downcast<CSSImageValue>(*imageWithScale.value.get()), imageWithScale.scaleFactor);
+    auto bestFitImage = selectBestFitImage(*loader.document());
+    ASSERT(is<StyleCachedImage>(bestFitImage.image) || is<StyleGeneratedImage>(bestFitImage.image));
+
+    if (is<StyleGeneratedImage>(bestFitImage.image)) {
+        m_selectedImage = bestFitImage.image;
+        m_selectedImage->load(loader, options);
+        return;
+    }
+    
+    if (is<StyleCachedImage>(bestFitImage.image)) {
+        if (downcast<StyleCachedImage>(*bestFitImage.image).imageScaleFactor() == bestFitImage.scaleFactor)
+            m_selectedImage = bestFitImage.image;
+        else
+            m_selectedImage = StyleCachedImage::copyOverridingScaleFactor(downcast<StyleCachedImage>(*bestFitImage.image), bestFitImage.scaleFactor);
+
         if (m_selectedImage->isPending())
             m_selectedImage->load(loader, options);
         return;
     }
-    if (is<CSSNamedImageValue>(imageWithScale.value)) {
-        m_selectedImage = StyleNamedImage::create(downcast<CSSNamedImageValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-        return;
-    }
-    if (is<CSSCanvasValue>(imageWithScale.value)) {
-        m_selectedImage = StyleCanvasImage::create(downcast<CSSCanvasValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-        return;
-    }
-    if (is<CSSCrossfadeValue>(imageWithScale.value)) {
-        m_selectedImage = StyleCrossfadeImage::create(downcast<CSSCrossfadeValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-        return;
-    }
-    if (is<CSSFilterImageValue>(imageWithScale.value)) {
-        m_selectedImage = StyleFilterImage::create(downcast<CSSFilterImageValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-        return;
-    }
-    if (is<CSSGradientValue>(imageWithScale.value)) {
-        m_selectedImage = StyleGradientImage::create(downcast<CSSGradientValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-        return;
-    }
-#if ENABLE(CSS_PAINTING_API)
-    if (is<CSSPaintImageValue>(imageWithScale.value)) {
-        m_selectedImage = StylePaintImage::create(downcast<CSSPaintImageValue>(*imageWithScale.value.get()));
-        m_selectedImage->load(loader, options);
-        return;
-    }
-#endif
 }
 
 CachedImage* StyleMultiImage::cachedImage() const
@@ -215,4 +194,4 @@ bool StyleMultiImage::knownToBeOpaque(const RenderElement& renderer) const
     return m_selectedImage && m_selectedImage->knownToBeOpaque(renderer);
 }
 
-}
+} // namespace WebCore

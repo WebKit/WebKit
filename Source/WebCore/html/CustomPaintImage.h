@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 
 #include "GeneratedImage.h"
 #include "PaintWorkletGlobalScope.h"
-
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,7 +38,7 @@ class RenderElement;
 
 class CustomPaintImage final : public GeneratedImage {
 public:
-    static Ref<CustomPaintImage> create(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
+    static Ref<CustomPaintImage> create(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, const RenderElement& element, const Vector<String>& arguments)
     {
         return adoptRef(*new CustomPaintImage(definition, size, element, arguments));
     }
@@ -48,7 +47,7 @@ public:
     bool isCustomPaintImage() const override { return true; }
 
 private:
-    CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&, RenderElement&, const Vector<String>& arguments);
+    CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&, const RenderElement&, const Vector<String>& arguments);
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 
@@ -57,7 +56,7 @@ private:
 
     WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;
     Vector<AtomString> m_inputProperties;
-    WeakPtr<RenderElement> m_element;
+    WeakPtr<const RenderElement> m_element;
     Vector<String> m_arguments;
 };
 

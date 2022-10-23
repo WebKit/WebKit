@@ -26,39 +26,92 @@
 
 #pragma once
 
+#include "CSSGradientValue.h"
+#include "StyleColor.h"
 #include "StyleGeneratedImage.h"
+#include <variant>
 
 namespace WebCore {
 
-class CSSGradientValue;
+struct StyleGradientImageStop {
+    RefPtr<CSSPrimitiveValue> color;
+    RefPtr<CSSPrimitiveValue> position;
+    Color resolvedColor;
+};
 
 class StyleGradientImage final : public StyleGeneratedImage {
 public:
-    static Ref<StyleGradientImage> create(Ref<CSSGradientValue>&& value)
+    using Stop = StyleGradientImageStop;
+
+    struct LinearData {
+        RefPtr<CSSPrimitiveValue> firstX;
+        RefPtr<CSSPrimitiveValue> firstY;
+        RefPtr<CSSPrimitiveValue> secondX;
+        RefPtr<CSSPrimitiveValue> secondY;
+        RefPtr<CSSPrimitiveValue> angle;
+    };
+
+    struct RadialData {
+        RefPtr<CSSPrimitiveValue> firstX;
+        RefPtr<CSSPrimitiveValue> firstY;
+        RefPtr<CSSPrimitiveValue> secondX;
+        RefPtr<CSSPrimitiveValue> secondY;
+        RefPtr<CSSPrimitiveValue> firstRadius;
+        RefPtr<CSSPrimitiveValue> secondRadius;
+        RefPtr<CSSPrimitiveValue> shape;
+        RefPtr<CSSPrimitiveValue> sizingBehavior;
+        RefPtr<CSSPrimitiveValue> endHorizontalSize;
+        RefPtr<CSSPrimitiveValue> endVerticalSize;
+    };
+
+    struct ConicData {
+        RefPtr<CSSPrimitiveValue> firstX;
+        RefPtr<CSSPrimitiveValue> firstY;
+        RefPtr<CSSPrimitiveValue> secondX;
+        RefPtr<CSSPrimitiveValue> secondY;
+        RefPtr<CSSPrimitiveValue> angle;
+    };
+
+    using Data = std::variant<LinearData, RadialData, ConicData>;
+
+    static Ref<StyleGradientImage> create(Data data, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<Stop> stops)
     {
-        return adoptRef(*new StyleGradientImage(WTFMove(value)));
+        return adoptRef(*new StyleGradientImage(WTFMove(data), repeat, gradientType, colorInterpolationMethod, WTFMove(stops)));
     }
     virtual ~StyleGradientImage();
 
-private:
-    explicit StyleGradientImage(Ref<CSSGradientValue>&&);
-
     bool operator==(const StyleImage&) const final;
+    bool equals(const StyleGradientImage&) const;
 
-    CSSImageGeneratorValue& imageValue() final;
-    Ref<CSSValue> cssValue() const final;
-    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
+    static constexpr bool isFixedSize = false;
+
+private:
+    explicit StyleGradientImage(Data&&, CSSGradientRepeat, CSSGradientType, CSSGradientColorInterpolationMethod, Vector<Stop>&&);
+
+    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
+    void didAddClient(RenderElement&) final { }
+    void didRemoveClient(RenderElement&) final { }
 
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
+    Ref<Gradient> createGradient(const LinearData&, const RenderElement&, const FloatSize&) const;
+    Ref<Gradient> createGradient(const RadialData&, const RenderElement&, const FloatSize&) const;
+    Ref<Gradient> createGradient(const ConicData&, const RenderElement&, const FloatSize&) const;
 
-    Ref<CSSGradientValue> m_imageGeneratorValue;
+    template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat) const;
+
+    bool hasColorDerivedFromElement() const;
+    bool isCacheable() const;
+
+    Data m_data;
+    CSSGradientRepeat m_repeat;
+    CSSGradientType m_gradientType;
+    CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    Vector<Stop> m_stops;
+    mutable std::optional<bool> m_hasColorDerivedFromElement;
 };
 
 } // namespace WebCore

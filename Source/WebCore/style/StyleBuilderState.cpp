@@ -96,52 +96,27 @@ bool BuilderState::useSVGZoomRulesForLength() const
     return is<SVGElement>(element()) && !(is<SVGSVGElement>(*element()) && element()->parentNode());
 }
 
-Ref<CSSValue> BuilderState::resolveImageStyles(CSSValue& value)
+RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
 {
     if (is<CSSImageValue>(value))
-        return downcast<CSSImageValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSImageValue>(value).createStyleImage(*this);
     if (is<CSSImageSetValue>(value))
-        return downcast<CSSImageSetValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSImageSetValue>(value).createStyleImage(*this);
     if (is<CSSCursorImageValue>(value))
-        return downcast<CSSCursorImageValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSCursorImageValue>(value).createStyleImage(*this);
     if (is<CSSNamedImageValue>(value))
-        return downcast<CSSNamedImageValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSNamedImageValue>(value).createStyleImage(*this);
     if (is<CSSCanvasValue>(value))
-        return downcast<CSSCanvasValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSCanvasValue>(value).createStyleImage(*this);
     if (is<CSSCrossfadeValue>(value))
-        return downcast<CSSCrossfadeValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSCrossfadeValue>(value).createStyleImage(*this);
     if (is<CSSFilterImageValue>(value))
-        return downcast<CSSFilterImageValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSFilterImageValue>(value).createStyleImage(*this);
     if (is<CSSGradientValue>(value))
-        return downcast<CSSGradientValue>(value).valueWithStylesResolved(*this);
+        return downcast<CSSGradientValue>(value).createStyleImage(*this);
 #if ENABLE(CSS_PAINTING_API)
     if (is<CSSPaintImageValue>(value))
-        return downcast<CSSPaintImageValue>(value).valueWithStylesResolved(*this);
-#endif
-    return value;
-}
-
-RefPtr<StyleImage> BuilderState::createStyleImage(CSSValue& value)
-{
-    if (is<CSSImageValue>(value))
-        return StyleCachedImage::create(downcast<CSSImageValue>(resolveImageStyles(value).get()));
-    if (is<CSSImageSetValue>(value))
-        return StyleImageSet::create(downcast<CSSImageSetValue>(resolveImageStyles(value).get()));
-    if (is<CSSCursorImageValue>(value))
-        return StyleCursorImage::create(downcast<CSSCursorImageValue>(resolveImageStyles(value).get()));
-    if (is<CSSNamedImageValue>(value))
-        return StyleNamedImage::create(downcast<CSSNamedImageValue>(resolveImageStyles(value).get()));
-    if (is<CSSCanvasValue>(value))
-        return StyleCanvasImage::create(downcast<CSSCanvasValue>(resolveImageStyles(value).get()));
-    if (is<CSSCrossfadeValue>(value))
-        return StyleCrossfadeImage::create(downcast<CSSCrossfadeValue>(resolveImageStyles(value).get()));
-    if (is<CSSFilterImageValue>(value))
-        return StyleFilterImage::create(downcast<CSSFilterImageValue>(resolveImageStyles(value).get()));
-    if (is<CSSGradientValue>(value))
-        return StyleGradientImage::create(downcast<CSSGradientValue>(resolveImageStyles(value).get()));
-#if ENABLE(CSS_PAINTING_API)
-    if (is<CSSPaintImageValue>(value))
-        return StylePaintImage::create(downcast<CSSPaintImageValue>(resolveImageStyles(value).get()));
+        return downcast<CSSPaintImageValue>(value).createStyleImage(*this);
 #endif
     return nullptr;
 }

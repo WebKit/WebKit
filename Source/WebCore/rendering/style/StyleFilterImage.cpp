@@ -27,74 +27,141 @@
 #include "config.h"
 #include "StyleFilterImage.h"
 
+#include "CSSFilter.h"
 #include "CSSFilterImageValue.h"
+#include "CachedImage.h"
+#include "CachedResourceLoader.h"
+#include "ComputedStyleExtractor.h"
+#include "ImageBuffer.h"
+#include "NullGraphicsContext.h"
+#include "RenderElement.h"
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
-StyleFilterImage::StyleFilterImage(Ref<CSSFilterImageValue>&& value)
-    : StyleGeneratedImage(Type::FilterImage, value->isFixedSize())
-    , m_imageGeneratorValue { WTFMove(value) }
+// MARK: - StyleFilterImage
+
+StyleFilterImage::StyleFilterImage(RefPtr<StyleImage>&& image, FilterOperations&& filterOperations)
+    : StyleGeneratedImage { Type::FilterImage, StyleFilterImage::isFixedSize }
+    , m_image { WTFMove(image) }
+    , m_filterOperations { WTFMove(filterOperations) }
+    , m_inputImageIsReady { false }
 {
 }
 
-StyleFilterImage::~StyleFilterImage() = default;
+StyleFilterImage::~StyleFilterImage()
+{
+    if (m_cachedImage)
+        m_cachedImage->removeClient(*this);
+}
 
 bool StyleFilterImage::operator==(const StyleImage& other) const
 {
-    if (is<StyleFilterImage>(other))
-        return arePointingToEqualData(m_imageGeneratorValue.ptr(), downcast<StyleFilterImage>(other).m_imageGeneratorValue.ptr());
-    return false;
+    return is<StyleFilterImage>(other) && equals(downcast<StyleFilterImage>(other));
 }
 
-CSSImageGeneratorValue& StyleFilterImage::imageValue()
+bool StyleFilterImage::equals(const StyleFilterImage& other) const
 {
-    return m_imageGeneratorValue;
+    return equalInputImages(other) && m_filterOperations == other.m_filterOperations;
 }
 
-Ref<CSSValue> StyleFilterImage::cssValue() const
+bool StyleFilterImage::equalInputImages(const StyleFilterImage& other) const
 {
-    return m_imageGeneratorValue.copyRef();
+    return arePointingToEqualData(m_image, other.m_image);
+}
+
+Ref<CSSValue> StyleFilterImage::computedStyleValue(const RenderStyle& style) const
+{
+    return CSSFilterImageValue::create(m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::createIdentifier(CSSValueNone)), ComputedStyleExtractor::valueForFilter(style, m_filterOperations));
 }
 
 bool StyleFilterImage::isPending() const
 {
-    return m_imageGeneratorValue->isPending();
+    return m_image ? m_image->isPending() : false;
 }
 
-void StyleFilterImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
+void StyleFilterImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    m_imageGeneratorValue->loadSubimages(loader, options);
+    CachedResourceHandle<CachedImage> oldCachedImage = m_cachedImage;
+
+    if (m_image) {
+        m_image->load(cachedResourceLoader, options);
+        m_cachedImage = m_image->cachedImage();
+    } else
+        m_cachedImage = nullptr;
+
+    if (m_cachedImage != oldCachedImage) {
+        if (oldCachedImage)
+            oldCachedImage->removeClient(*this);
+        if (m_cachedImage)
+            m_cachedImage->addClient(*this);
+    }
+
+    for (auto& filterOperation : m_filterOperations.operations()) {
+        if (!is<ReferenceFilterOperation>(filterOperation))
+            continue;
+        auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(*filterOperation);
+        referenceFilterOperation.loadExternalDocumentIfNeeded(cachedResourceLoader, options);
+    }
+
+    m_inputImageIsReady = true;
 }
 
 RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const FloatSize& size) const
 {
-    return renderer ? m_imageGeneratorValue->image(const_cast<RenderElement&>(*renderer), size) : &Image::nullImage();
+    if (!renderer)
+        return &Image::nullImage();
+
+    if (size.isEmpty())
+        return nullptr;
+
+    if (!m_image)
+        return &Image::nullImage();
+
+    auto image = m_image->image(renderer, size);
+    if (!image || image->isNull())
+        return &Image::nullImage();
+
+    auto renderingMode = renderer->page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto sourceImage = ImageBuffer::create(size, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(renderingMode), { renderer->hostWindow() });
+    if (!sourceImage)
+        return &Image::nullImage();
+
+    auto sourceImageRect = FloatRect { { }, size };
+    sourceImage->context().drawImage(*image, sourceImageRect);
+
+    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, renderingMode, FloatSize { 1, 1 }, Filter::ClipOperation::Intersect, sourceImageRect, NullGraphicsContext());
+    if (!cssFilter)
+        return &Image::nullImage();
+
+    cssFilter->setFilterRegion(sourceImageRect);
+
+    if (auto image = sourceImage->filteredImage(*cssFilter))
+        return image;
+
+    return &Image::nullImage();
 }
 
-bool StyleFilterImage::knownToBeOpaque(const RenderElement& renderer) const
+bool StyleFilterImage::knownToBeOpaque(const RenderElement&) const
 {
-    return m_imageGeneratorValue->knownToBeOpaque(renderer);
+    return false;
 }
 
 FloatSize StyleFilterImage::fixedSize(const RenderElement& renderer) const
 {
-    return m_imageGeneratorValue->fixedSize(renderer);
+    if (!m_image)
+        return { };
+
+    return m_image->imageSize(&renderer, 1);
 }
 
-void StyleFilterImage::addClient(RenderElement& renderer)
+void StyleFilterImage::imageChanged(CachedImage*, const IntRect*)
 {
-    m_imageGeneratorValue->addClient(renderer);
-}
+    if (!m_inputImageIsReady)
+        return;
 
-void StyleFilterImage::removeClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->removeClient(renderer);
-}
-
-bool StyleFilterImage::hasClient(RenderElement& renderer) const
-{
-    return m_imageGeneratorValue->clients().contains(&renderer);
+    for (auto& client : clients().values())
+        client->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
 } // namespace WebCore

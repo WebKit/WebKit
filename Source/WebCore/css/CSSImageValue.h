@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
 #include "ResourceLoaderOptions.h"
@@ -33,22 +34,16 @@ class CachedResourceLoader;
 class DeprecatedCSSOMValue;
 class CSSStyleDeclaration;
 class RenderElement;
+class StyleImage;
 
 namespace Style {
 class BuilderState;
 }
 
-struct ResolvedURL {
-    String specifiedURLString;
-    URL resolvedURL;
-    bool isLocalURL() const;
-};
-
 class CSSImageValue final : public CSSValue {
 public:
-    static Ref<CSSImageValue> create(ResolvedURL&&, LoadedFromOpaqueSource);
-    static Ref<CSSImageValue> create(URL&&, LoadedFromOpaqueSource);
-    static Ref<CSSImageValue> create(CachedImage&);
+    static Ref<CSSImageValue> create(ResolvedURL, LoadedFromOpaqueSource, AtomString = { });
+    static Ref<CSSImageValue> create(URL, LoadedFromOpaqueSource, AtomString = { });
     ~CSSImageValue();
 
     bool isPending() const;
@@ -70,13 +65,10 @@ public:
 
     bool knownToBeOpaque(const RenderElement&) const;
 
-    void setInitiator(const AtomString& name) { m_initiatorName = name; }
-
-    Ref<CSSImageValue> valueWithStylesResolved(Style::BuilderState&);
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
-    CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource);
-    explicit CSSImageValue(CachedImage&);
+    CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource, AtomString&&);
 
     ResolvedURL m_location;
     std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;

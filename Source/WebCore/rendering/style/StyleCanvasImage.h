@@ -26,42 +26,57 @@
 
 #pragma once
 
+#include "CanvasBase.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSCanvasValue;
+class HTMLCanvasElement;
 
-class StyleCanvasImage final : public StyleGeneratedImage {
+class StyleCanvasImage final : public StyleGeneratedImage, public CanvasObserver {
 public:
-    static Ref<StyleCanvasImage> create(Ref<CSSCanvasValue>&& value)
+    static Ref<StyleCanvasImage> create(String name)
     {
-        return adoptRef(*new StyleCanvasImage(WTFMove(value)));
+        return adoptRef(*new StyleCanvasImage(WTFMove(name)));
     }
     virtual ~StyleCanvasImage();
 
+    bool operator==(const StyleImage&) const final;
+    bool equals(const StyleCanvasImage&) const;
+    
+    static constexpr bool isFixedSize = true;
 
 private:
-    explicit StyleCanvasImage(Ref<CSSCanvasValue>&&);
+    explicit StyleCanvasImage(String&&);
 
-    bool operator==(const StyleImage&) const final;
-
-    CSSImageGeneratorValue& imageValue() final;
-    Ref<CSSValue> cssValue() const final;
-    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
+    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
+    void didAddClient(RenderElement&) final;
+    void didRemoveClient(RenderElement&) final;
 
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
+    // CanvasObserver.
+    bool isStyleCanvasImage() const final { return true; }
+    void canvasChanged(CanvasBase&, const std::optional<FloatRect>& changedRect) final;
+    void canvasResized(CanvasBase&) final;
+    void canvasDestroyed(CanvasBase&) final;
 
-    Ref<CSSCanvasValue> m_imageGeneratorValue;
+    HTMLCanvasElement* element(Document&) const;
+
+    // The name of the canvas.
+    String m_name;
+    // The document supplies the element and owns it.
+    mutable HTMLCanvasElement* m_element;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StyleCanvasImage, isCanvasImage)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleCanvasImage)
+    static bool isType(const WebCore::StyleImage& image) { return image.isCanvasImage(); }
+    static bool isType(const WebCore::CanvasObserver& canvasObserver) { return canvasObserver.isStyleCanvasImage(); }
+SPECIALIZE_TYPE_TRAITS_END()
+

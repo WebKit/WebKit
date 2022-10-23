@@ -36,6 +36,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "JSHTMLBodyElement.h"
+#include "ResourceLoaderOptions.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -76,8 +77,7 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     if (name == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {
-            auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No);
-            imageValue.get().setInitiator(localName());
+            auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No, localName());
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));
         }
     } else if (name == marginwidthAttr || name == leftmarginAttr) {

@@ -34,6 +34,7 @@
 #include "CSSValuePool.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
+#include "JSFontFace.h"
 #include "Quirks.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>

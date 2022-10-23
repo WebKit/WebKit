@@ -26,17 +26,20 @@
 #include "StyleImageSet.h"
 
 #include "CSSImageSetValue.h"
+#include "CSSPrimitiveValue.h"
+#include "Document.h"
+#include "Page.h"
 
 namespace WebCore {
 
-Ref<StyleImageSet> StyleImageSet::create(CSSImageSetValue& cssValue)
+Ref<StyleImageSet> StyleImageSet::create(Vector<ImageWithScale> images)
 { 
-    return adoptRef(*new StyleImageSet(cssValue));
+    return adoptRef(*new StyleImageSet(WTFMove(images)));
 }
 
-StyleImageSet::StyleImageSet(CSSImageSetValue& cssValue)
-    : StyleMultiImage(Type::ImageSet)
-    , m_cssValue(cssValue)
+StyleImageSet::StyleImageSet(Vector<ImageWithScale>&& images)
+    : StyleMultiImage { Type::ImageSet }
+    , m_images { WTFMove(images) }
 {
 }
 
@@ -47,14 +50,56 @@ bool StyleImageSet::operator==(const StyleImage& other) const
     return is<StyleImageSet>(other) && equals(downcast<StyleImageSet>(other));
 }
 
-Ref<CSSValue> StyleImageSet::cssValue() const
-{ 
-    return m_cssValue.copyRef(); 
-}
-
-ImageWithScale StyleImageSet::selectBestFitImage(const Document& document) const
+bool StyleImageSet::equals(const StyleImageSet& other) const
 {
-    return m_cssValue->selectBestFitImage(document);
+    return m_images == other.m_images && StyleMultiImage::equals(other);
 }
 
+Ref<CSSValue> StyleImageSet::computedStyleValue(const RenderStyle& style) const
+{
+    auto result = CSSImageSetValue::create();
+
+    for (auto& image : m_images) {
+        result->append(image.image->computedStyleValue(style));
+        result->append(CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX));
+    }
+
+    return result;
 }
+
+ImageWithScale StyleImageSet::selectBestFitImage(const Document& document)
+{
+    updateDeviceScaleFactor(document);
+
+    if (!m_accessedBestFitImage) {
+        m_accessedBestFitImage = true;
+        m_bestFitImage = bestImageForScaleFactor();
+    }
+
+    return m_bestFitImage;
+}
+
+ImageWithScale StyleImageSet::bestImageForScaleFactor()
+{
+    ImageWithScale result;
+    for (auto& image : m_images) {
+        if (image.scaleFactor >= m_deviceScaleFactor)
+            return image;
+        result = image;
+    }
+    return result;
+}
+
+void StyleImageSet::updateDeviceScaleFactor(const Document& document)
+{
+    // FIXME: In the future, we want to take much more than deviceScaleFactor into acount here.
+    // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
+    // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
+    float deviceScaleFactor = document.page() ? document.page()->deviceScaleFactor() : 1;
+    if (deviceScaleFactor == m_deviceScaleFactor)
+        return;
+    m_deviceScaleFactor = deviceScaleFactor;
+    m_accessedBestFitImage = false;
+}
+
+} // namespace WebCore

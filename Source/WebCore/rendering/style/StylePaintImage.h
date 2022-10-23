@@ -29,38 +29,38 @@
 #if ENABLE(CSS_PAINTING_API)
 
 #include "StyleGeneratedImage.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSPaintImageValue;
+class CSSVariableData;
 
 class StylePaintImage final : public StyleGeneratedImage {
 public:
-    static Ref<StylePaintImage> create(Ref<CSSPaintImageValue>&& value)
+    static Ref<StylePaintImage> create(String name, Ref<CSSVariableData> arguments)
     {
-        return adoptRef(*new StylePaintImage(WTFMove(value)));
+        return adoptRef(*new StylePaintImage(WTFMove(name), WTFMove(arguments)));
     }
     virtual ~StylePaintImage();
 
+    static constexpr bool isFixedSize = false;
+
 private:
-    explicit StylePaintImage(Ref<CSSPaintImageValue>&&);
+    explicit StylePaintImage(String&&, Ref<CSSVariableData>&&);
 
     bool operator==(const StyleImage&) const final;
 
-    CSSImageGeneratorValue& imageValue() final;
-    Ref<CSSValue> cssValue() const final;
-    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
+    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
+    void didAddClient(RenderElement&) final { }
+    void didRemoveClient(RenderElement&) final { }
 
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
-
-    Ref<CSSPaintImageValue> m_imageGeneratorValue;
+    String m_name;
+    Ref<CSSVariableData> m_arguments;
 };
 
 } // namespace WebCore
