@@ -52,7 +52,7 @@ std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy
     return makeUnique<RemoteScrollingCoordinatorProxyMac>(m_webPageProxy);
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayLink()
+void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
 {
     if (m_displayLinkTimer.isActive())
         return;
@@ -60,7 +60,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayLink()
     m_displayLinkTimer.startOneShot(displayLinkTimerInterval);
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::pauseDisplayLink()
+void RemoteLayerTreeDrawingAreaProxyMac::pauseDisplayRefreshCallbacks()
 {
     m_displayLinkTimer.stop();
 }

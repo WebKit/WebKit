@@ -43,8 +43,8 @@ private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
-    void scheduleDisplayLink() override;
-    void pauseDisplayLink() override;
+    void scheduleDisplayRefreshCallbacks() override;
+    void pauseDisplayRefreshCallbacks() override;
 
     void didChangeViewExposedRect() override;
 

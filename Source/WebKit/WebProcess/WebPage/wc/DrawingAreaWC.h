@@ -60,7 +60,7 @@ private:
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
     void updatePreferences(const WebPreferencesStore&) override;
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
-    void didUpdate() override;
+    void displayDidRefresh() override;
     // GraphicsLayerWC::Observer
     void graphicsLayerAdded(GraphicsLayerWC&) override;
     void graphicsLayerRemoved(GraphicsLayerWC&) override;

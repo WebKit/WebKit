@@ -99,7 +99,7 @@ private:
     WebCore::FloatRect exposedContentRect() const override;
     void setExposedContentRect(const WebCore::FloatRect&) override;
 
-    void didUpdate() override;
+    void displayDidRefresh() override;
 
 #if PLATFORM(IOS_FAMILY)
     void setDeviceScaleFactor(float) override;

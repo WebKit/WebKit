@@ -178,7 +178,7 @@ private:
                                          const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
 #endif
-    virtual void didUpdate() { }
+    virtual void displayDidRefresh() { }
 
     // DisplayRefreshMonitorFactory.
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
