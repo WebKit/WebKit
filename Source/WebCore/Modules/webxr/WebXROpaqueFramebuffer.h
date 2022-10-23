@@ -72,12 +72,12 @@ private:
     Attributes m_attributes;
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
-    PlatformGLObject m_depthStencilBuffer { 0 };
-    PlatformGLObject m_stencilBuffer { 0 };
-    PlatformGLObject m_multisampleColorBuffer { 0 };
-    PlatformGLObject m_resolvedFBO { 0 };
+    OwnedGLObject m_depthStencilBuffer;
+    OwnedGLObject m_stencilBuffer;
+    OwnedGLObject m_multisampleColorBuffer;
+    OwnedGLObject m_resolvedFBO;
     GCGLint m_sampleCount { 0 };
-    PlatformGLObject m_opaqueTexture { 0 };
+    OwnedGLObject m_opaqueTexture;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     void* m_ioSurfaceTextureHandle { nullptr };
     bool m_ioSurfaceTextureHandleIsShared { false };
