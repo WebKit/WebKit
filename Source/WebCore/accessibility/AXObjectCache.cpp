@@ -827,10 +827,7 @@ AXCoreObject* AXObjectCache::rootObject()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
 {
-    if (!m_pageID)
-        return nullptr;
-
-    auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
+    RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID);
     if (!tree) {
         tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
             return AXIsolatedTree::create(const_cast<AXObjectCache*>(this));
@@ -913,10 +910,8 @@ void AXObjectCache::remove(AXID axID)
         return;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
-            tree->removeNode(*object);
-    }
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->removeNode(*object);
 #endif
 
     object->detach(AccessibilityDetachmentType::ElementDestroyed);
@@ -3596,8 +3591,8 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredMenuListChange.clear();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_deferredRegenerateIsolatedTree && m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID)) {
+    if (m_deferredRegenerateIsolatedTree) {
+        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
             if (auto* webArea = rootWebArea()) {
                 AXLOG("Regenerating isolated tree from AXObjectCache::performDeferredCacheUpdate().");
                 tree->generateSubtree(*webArea);
@@ -4134,8 +4129,8 @@ void AXObjectCache::relationsNeedUpdate(bool needUpdate)
     m_relationsNeedUpdate = needUpdate;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_relationsNeedUpdate && m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+    if (m_relationsNeedUpdate) {
+        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
             tree->relationsNeedUpdate(true);
     }
 #endif
