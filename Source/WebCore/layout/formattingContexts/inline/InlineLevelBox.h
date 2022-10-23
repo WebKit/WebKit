@@ -69,7 +69,9 @@ public:
     bool hasLineBoxRelativeAlignment() const;
 
     InlineLayoutUnit preferredLineHeight() const;
-    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
+    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative() || (isInlineBox() && m_style.lineBoxContain.contains(LineBoxContain::Font)); } // FIXME: Adjust this property dynamically as the inline box gains content.
+
+    bool lineBoxContain() const;
 
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
@@ -147,6 +149,7 @@ private:
     struct Style {
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
+        WTF::OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
     };
@@ -166,7 +169,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)
@@ -241,6 +244,25 @@ inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, c
 inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
 {
     return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox };
+}
+
+inline bool InlineLevelBox::lineBoxContain() const
+{
+    if (isRootInlineBox())
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.contains(LineBoxContain::Font));
+
+    if (isAtomicInlineLevelBox())
+        return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
+
+    if (isInlineBox()) {
+        // Either the inline box itself is included or its text content thorugh Glyph and Font.
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.contains(LineBoxContain::Font));
+    }
+
+    if (isLineBreakBox())
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Font });
+
+    return true;
 }
 
 }
