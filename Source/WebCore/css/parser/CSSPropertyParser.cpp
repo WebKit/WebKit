@@ -994,11 +994,6 @@ static RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange& range)
     return numericParser.finalizeValue();
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontVariantCSS21(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueNormal, CSSValueSmallCaps>(range);
-}
-
 static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontWeightRaw(range)) {
@@ -5373,46 +5368,23 @@ bool CSSPropertyParser::consumeSystemFont(bool important)
     return true;
 }
 
+// FIXME: Share more code with consumeFontRaw.
 bool CSSPropertyParser::consumeFont(bool important)
 {
-    // Let's check if there is an inherit or initial somewhere in the shorthand.
-    CSSParserTokenRange range = m_range;
-    while (!range.atEnd()) {
-        CSSValueID id = range.consumeIncludingWhitespace().id();
-        if (id == CSSValueInherit || id == CSSValueInitial)
-            return false;
-    }
-
-    // Optional font-style, font-variant, font-stretch and font-weight.
+    // Optional font-style, font-variant, font-stretch and font-weight, in any order.
     RefPtr<CSSFontStyleValue> fontStyle;
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
     RefPtr<CSSPrimitiveValue> fontWeight;
     RefPtr<CSSPrimitiveValue> fontStretch;
-
     while (!m_range.atEnd()) {
-        CSSValueID id = m_range.peek().id();
-        if (!fontStyle) {
-            fontStyle = consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton());
-            if (fontStyle)
-                continue;
-        }
-        if (!fontVariantCaps && (id == CSSValueNormal || id == CSSValueSmallCaps)) {
-            // Font variant in the shorthand is particular, it only accepts normal or small-caps.
-            // See https://drafts.csswg.org/css-fonts/#propdef-font
-            fontVariantCaps = consumeFontVariantCSS21(m_range);
-            if (fontVariantCaps)
-                continue;
-        }
-        if (!fontWeight) {
-            fontWeight = consumeFontWeight(m_range);
-            if (fontWeight)
-                continue;
-        }
-        if (!fontStretch) {
-            fontStretch = consumeFontStretchKeywordValue(m_range, CSSValuePool::singleton());
-            if (fontStretch)
-                continue;
-        }
+        if (!fontStyle && (fontStyle = consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton())))
+            continue;
+        if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueNormal, CSSValueSmallCaps>(m_range)))
+            continue;
+        if (!fontWeight && (fontWeight = consumeFontWeight(m_range)))
+            continue;
+        if (!fontStretch && (fontStretch = consumeFontStretchKeywordValue(m_range, CSSValuePool::singleton())))
+            continue;
         break;
     }
 

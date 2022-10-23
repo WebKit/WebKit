@@ -1563,60 +1563,60 @@ PASS font: bolder oblique 16px simple, default bongo
 PASS font: bolder oblique 16px simple, default bongo (setter)
 PASS font-family: simple, initial bongo
 PASS font-family: simple, initial bongo (setter)
-FAIL font: 16px simple, initial bongo assert_not_equals: rule declaration should parse - .test1301 { font: 16px simple, initial bongo; } got disallowed value ""
-FAIL font: 16px simple, initial bongo (setter) assert_not_equals: font setter should parse - 16px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px simple, initial bongo assert_not_equals: rule declaration should parse - .test1302 { font: 900px simple, initial bongo; } got disallowed value ""
-FAIL font: 900px simple, initial bongo (setter) assert_not_equals: font setter should parse - 900px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em simple, initial bongo assert_not_equals: rule declaration should parse - .test1303 { font: 900em simple, initial bongo; } got disallowed value ""
-FAIL font: 900em simple, initial bongo (setter) assert_not_equals: font setter should parse - 900em simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% simple, initial bongo assert_not_equals: rule declaration should parse - .test1304 { font: 35% simple, initial bongo; } got disallowed value ""
-FAIL font: 35% simple, initial bongo (setter) assert_not_equals: font setter should parse - 35% simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% simple, initial bongo assert_not_equals: rule declaration should parse - .test1305 { font: 7832.3% simple, initial bongo; } got disallowed value ""
-FAIL font: 7832.3% simple, initial bongo (setter) assert_not_equals: font setter should parse - 7832.3% simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large simple, initial bongo assert_not_equals: rule declaration should parse - .test1306 { font: xx-large simple, initial bongo; } got disallowed value ""
-FAIL font: xx-large simple, initial bongo (setter) assert_not_equals: font setter should parse - xx-large simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger simple, initial bongo assert_not_equals: rule declaration should parse - .test1307 { font: lighter larger simple, initial bongo; } got disallowed value ""
-FAIL font: lighter larger simple, initial bongo (setter) assert_not_equals: font setter should parse - lighter larger simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px simple, initial bongo assert_not_equals: rule declaration should parse - .test1308 { font: italic 16px simple, initial bongo; } got disallowed value ""
-FAIL font: italic 16px simple, initial bongo (setter) assert_not_equals: font setter should parse - italic 16px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px simple, initial bongo assert_not_equals: rule declaration should parse - .test1309 { font: italic bold 16px simple, initial bongo; } got disallowed value ""
-FAIL font: italic bold 16px simple, initial bongo (setter) assert_not_equals: font setter should parse - italic bold 16px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller simple, initial bongo assert_not_equals: rule declaration should parse - .test1310 { font: normal smaller simple, initial bongo; } got disallowed value ""
-FAIL font: normal smaller simple, initial bongo (setter) assert_not_equals: font setter should parse - normal smaller simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px simple, initial bongo assert_not_equals: rule declaration should parse - .test1311 { font: normal normal 16px simple, initial bongo; } got disallowed value ""
-FAIL font: normal normal 16px simple, initial bongo (setter) assert_not_equals: font setter should parse - normal normal 16px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px simple, initial bongo assert_not_equals: rule declaration should parse - .test1312 { font: 400 normal 16px simple, initial bongo; } got disallowed value ""
-FAIL font: 400 normal 16px simple, initial bongo (setter) assert_not_equals: font setter should parse - 400 normal 16px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px simple, initial bongo assert_not_equals: rule declaration should parse - .test1313 { font: bolder oblique 16px simple, initial bongo; } got disallowed value ""
-FAIL font: bolder oblique 16px simple, initial bongo (setter) assert_not_equals: font setter should parse - bolder oblique 16px simple, initial bongo got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px simple, initial bongo
+PASS font: 16px simple, initial bongo (setter)
+PASS font: 900px simple, initial bongo
+PASS font: 900px simple, initial bongo (setter)
+PASS font: 900em simple, initial bongo
+PASS font: 900em simple, initial bongo (setter)
+PASS font: 35% simple, initial bongo
+PASS font: 35% simple, initial bongo (setter)
+PASS font: 7832.3% simple, initial bongo
+PASS font: 7832.3% simple, initial bongo (setter)
+PASS font: xx-large simple, initial bongo
+PASS font: xx-large simple, initial bongo (setter)
+PASS font: lighter larger simple, initial bongo
+PASS font: lighter larger simple, initial bongo (setter)
+PASS font: italic 16px simple, initial bongo
+PASS font: italic 16px simple, initial bongo (setter)
+PASS font: italic bold 16px simple, initial bongo
+PASS font: italic bold 16px simple, initial bongo (setter)
+PASS font: normal smaller simple, initial bongo
+PASS font: normal smaller simple, initial bongo (setter)
+PASS font: normal normal 16px simple, initial bongo
+PASS font: normal normal 16px simple, initial bongo (setter)
+PASS font: 400 normal 16px simple, initial bongo
+PASS font: 400 normal 16px simple, initial bongo (setter)
+PASS font: bolder oblique 16px simple, initial bongo
+PASS font: bolder oblique 16px simple, initial bongo (setter)
 PASS font-family: simple, inherit bongo
 PASS font-family: simple, inherit bongo (setter)
-FAIL font: 16px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1316 { font: 16px simple, inherit bongo; } got disallowed value ""
-FAIL font: 16px simple, inherit bongo (setter) assert_not_equals: font setter should parse - 16px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1317 { font: 900px simple, inherit bongo; } got disallowed value ""
-FAIL font: 900px simple, inherit bongo (setter) assert_not_equals: font setter should parse - 900px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em simple, inherit bongo assert_not_equals: rule declaration should parse - .test1318 { font: 900em simple, inherit bongo; } got disallowed value ""
-FAIL font: 900em simple, inherit bongo (setter) assert_not_equals: font setter should parse - 900em simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% simple, inherit bongo assert_not_equals: rule declaration should parse - .test1319 { font: 35% simple, inherit bongo; } got disallowed value ""
-FAIL font: 35% simple, inherit bongo (setter) assert_not_equals: font setter should parse - 35% simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% simple, inherit bongo assert_not_equals: rule declaration should parse - .test1320 { font: 7832.3% simple, inherit bongo; } got disallowed value ""
-FAIL font: 7832.3% simple, inherit bongo (setter) assert_not_equals: font setter should parse - 7832.3% simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large simple, inherit bongo assert_not_equals: rule declaration should parse - .test1321 { font: xx-large simple, inherit bongo; } got disallowed value ""
-FAIL font: xx-large simple, inherit bongo (setter) assert_not_equals: font setter should parse - xx-large simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger simple, inherit bongo assert_not_equals: rule declaration should parse - .test1322 { font: lighter larger simple, inherit bongo; } got disallowed value ""
-FAIL font: lighter larger simple, inherit bongo (setter) assert_not_equals: font setter should parse - lighter larger simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1323 { font: italic 16px simple, inherit bongo; } got disallowed value ""
-FAIL font: italic 16px simple, inherit bongo (setter) assert_not_equals: font setter should parse - italic 16px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1324 { font: italic bold 16px simple, inherit bongo; } got disallowed value ""
-FAIL font: italic bold 16px simple, inherit bongo (setter) assert_not_equals: font setter should parse - italic bold 16px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller simple, inherit bongo assert_not_equals: rule declaration should parse - .test1325 { font: normal smaller simple, inherit bongo; } got disallowed value ""
-FAIL font: normal smaller simple, inherit bongo (setter) assert_not_equals: font setter should parse - normal smaller simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1326 { font: normal normal 16px simple, inherit bongo; } got disallowed value ""
-FAIL font: normal normal 16px simple, inherit bongo (setter) assert_not_equals: font setter should parse - normal normal 16px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1327 { font: 400 normal 16px simple, inherit bongo; } got disallowed value ""
-FAIL font: 400 normal 16px simple, inherit bongo (setter) assert_not_equals: font setter should parse - 400 normal 16px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px simple, inherit bongo assert_not_equals: rule declaration should parse - .test1328 { font: bolder oblique 16px simple, inherit bongo; } got disallowed value ""
-FAIL font: bolder oblique 16px simple, inherit bongo (setter) assert_not_equals: font setter should parse - bolder oblique 16px simple, inherit bongo got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px simple, inherit bongo
+PASS font: 16px simple, inherit bongo (setter)
+PASS font: 900px simple, inherit bongo
+PASS font: 900px simple, inherit bongo (setter)
+PASS font: 900em simple, inherit bongo
+PASS font: 900em simple, inherit bongo (setter)
+PASS font: 35% simple, inherit bongo
+PASS font: 35% simple, inherit bongo (setter)
+PASS font: 7832.3% simple, inherit bongo
+PASS font: 7832.3% simple, inherit bongo (setter)
+PASS font: xx-large simple, inherit bongo
+PASS font: xx-large simple, inherit bongo (setter)
+PASS font: lighter larger simple, inherit bongo
+PASS font: lighter larger simple, inherit bongo (setter)
+PASS font: italic 16px simple, inherit bongo
+PASS font: italic 16px simple, inherit bongo (setter)
+PASS font: italic bold 16px simple, inherit bongo
+PASS font: italic bold 16px simple, inherit bongo (setter)
+PASS font: normal smaller simple, inherit bongo
+PASS font: normal smaller simple, inherit bongo (setter)
+PASS font: normal normal 16px simple, inherit bongo
+PASS font: normal normal 16px simple, inherit bongo (setter)
+PASS font: 400 normal 16px simple, inherit bongo
+PASS font: 400 normal 16px simple, inherit bongo (setter)
+PASS font: bolder oblique 16px simple, inherit bongo
+PASS font: bolder oblique 16px simple, inherit bongo (setter)
 PASS font-family: simple, bongo default
 PASS font-family: simple, bongo default (setter)
 PASS font: 16px simple, bongo default
@@ -1647,60 +1647,60 @@ PASS font: bolder oblique 16px simple, bongo default
 PASS font: bolder oblique 16px simple, bongo default (setter)
 PASS font-family: simple, bongo initial
 PASS font-family: simple, bongo initial (setter)
-FAIL font: 16px simple, bongo initial assert_not_equals: rule declaration should parse - .test1359 { font: 16px simple, bongo initial; } got disallowed value ""
-FAIL font: 16px simple, bongo initial (setter) assert_not_equals: font setter should parse - 16px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px simple, bongo initial assert_not_equals: rule declaration should parse - .test1360 { font: 900px simple, bongo initial; } got disallowed value ""
-FAIL font: 900px simple, bongo initial (setter) assert_not_equals: font setter should parse - 900px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em simple, bongo initial assert_not_equals: rule declaration should parse - .test1361 { font: 900em simple, bongo initial; } got disallowed value ""
-FAIL font: 900em simple, bongo initial (setter) assert_not_equals: font setter should parse - 900em simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% simple, bongo initial assert_not_equals: rule declaration should parse - .test1362 { font: 35% simple, bongo initial; } got disallowed value ""
-FAIL font: 35% simple, bongo initial (setter) assert_not_equals: font setter should parse - 35% simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% simple, bongo initial assert_not_equals: rule declaration should parse - .test1363 { font: 7832.3% simple, bongo initial; } got disallowed value ""
-FAIL font: 7832.3% simple, bongo initial (setter) assert_not_equals: font setter should parse - 7832.3% simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large simple, bongo initial assert_not_equals: rule declaration should parse - .test1364 { font: xx-large simple, bongo initial; } got disallowed value ""
-FAIL font: xx-large simple, bongo initial (setter) assert_not_equals: font setter should parse - xx-large simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger simple, bongo initial assert_not_equals: rule declaration should parse - .test1365 { font: lighter larger simple, bongo initial; } got disallowed value ""
-FAIL font: lighter larger simple, bongo initial (setter) assert_not_equals: font setter should parse - lighter larger simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px simple, bongo initial assert_not_equals: rule declaration should parse - .test1366 { font: italic 16px simple, bongo initial; } got disallowed value ""
-FAIL font: italic 16px simple, bongo initial (setter) assert_not_equals: font setter should parse - italic 16px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px simple, bongo initial assert_not_equals: rule declaration should parse - .test1367 { font: italic bold 16px simple, bongo initial; } got disallowed value ""
-FAIL font: italic bold 16px simple, bongo initial (setter) assert_not_equals: font setter should parse - italic bold 16px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller simple, bongo initial assert_not_equals: rule declaration should parse - .test1368 { font: normal smaller simple, bongo initial; } got disallowed value ""
-FAIL font: normal smaller simple, bongo initial (setter) assert_not_equals: font setter should parse - normal smaller simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px simple, bongo initial assert_not_equals: rule declaration should parse - .test1369 { font: normal normal 16px simple, bongo initial; } got disallowed value ""
-FAIL font: normal normal 16px simple, bongo initial (setter) assert_not_equals: font setter should parse - normal normal 16px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px simple, bongo initial assert_not_equals: rule declaration should parse - .test1370 { font: 400 normal 16px simple, bongo initial; } got disallowed value ""
-FAIL font: 400 normal 16px simple, bongo initial (setter) assert_not_equals: font setter should parse - 400 normal 16px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px simple, bongo initial assert_not_equals: rule declaration should parse - .test1371 { font: bolder oblique 16px simple, bongo initial; } got disallowed value ""
-FAIL font: bolder oblique 16px simple, bongo initial (setter) assert_not_equals: font setter should parse - bolder oblique 16px simple, bongo initial got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px simple, bongo initial
+PASS font: 16px simple, bongo initial (setter)
+PASS font: 900px simple, bongo initial
+PASS font: 900px simple, bongo initial (setter)
+PASS font: 900em simple, bongo initial
+PASS font: 900em simple, bongo initial (setter)
+PASS font: 35% simple, bongo initial
+PASS font: 35% simple, bongo initial (setter)
+PASS font: 7832.3% simple, bongo initial
+PASS font: 7832.3% simple, bongo initial (setter)
+PASS font: xx-large simple, bongo initial
+PASS font: xx-large simple, bongo initial (setter)
+PASS font: lighter larger simple, bongo initial
+PASS font: lighter larger simple, bongo initial (setter)
+PASS font: italic 16px simple, bongo initial
+PASS font: italic 16px simple, bongo initial (setter)
+PASS font: italic bold 16px simple, bongo initial
+PASS font: italic bold 16px simple, bongo initial (setter)
+PASS font: normal smaller simple, bongo initial
+PASS font: normal smaller simple, bongo initial (setter)
+PASS font: normal normal 16px simple, bongo initial
+PASS font: normal normal 16px simple, bongo initial (setter)
+PASS font: 400 normal 16px simple, bongo initial
+PASS font: 400 normal 16px simple, bongo initial (setter)
+PASS font: bolder oblique 16px simple, bongo initial
+PASS font: bolder oblique 16px simple, bongo initial (setter)
 PASS font-family: simple, bongo inherit
 PASS font-family: simple, bongo inherit (setter)
-FAIL font: 16px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1374 { font: 16px simple, bongo inherit; } got disallowed value ""
-FAIL font: 16px simple, bongo inherit (setter) assert_not_equals: font setter should parse - 16px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1375 { font: 900px simple, bongo inherit; } got disallowed value ""
-FAIL font: 900px simple, bongo inherit (setter) assert_not_equals: font setter should parse - 900px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em simple, bongo inherit assert_not_equals: rule declaration should parse - .test1376 { font: 900em simple, bongo inherit; } got disallowed value ""
-FAIL font: 900em simple, bongo inherit (setter) assert_not_equals: font setter should parse - 900em simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% simple, bongo inherit assert_not_equals: rule declaration should parse - .test1377 { font: 35% simple, bongo inherit; } got disallowed value ""
-FAIL font: 35% simple, bongo inherit (setter) assert_not_equals: font setter should parse - 35% simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% simple, bongo inherit assert_not_equals: rule declaration should parse - .test1378 { font: 7832.3% simple, bongo inherit; } got disallowed value ""
-FAIL font: 7832.3% simple, bongo inherit (setter) assert_not_equals: font setter should parse - 7832.3% simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large simple, bongo inherit assert_not_equals: rule declaration should parse - .test1379 { font: xx-large simple, bongo inherit; } got disallowed value ""
-FAIL font: xx-large simple, bongo inherit (setter) assert_not_equals: font setter should parse - xx-large simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger simple, bongo inherit assert_not_equals: rule declaration should parse - .test1380 { font: lighter larger simple, bongo inherit; } got disallowed value ""
-FAIL font: lighter larger simple, bongo inherit (setter) assert_not_equals: font setter should parse - lighter larger simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1381 { font: italic 16px simple, bongo inherit; } got disallowed value ""
-FAIL font: italic 16px simple, bongo inherit (setter) assert_not_equals: font setter should parse - italic 16px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1382 { font: italic bold 16px simple, bongo inherit; } got disallowed value ""
-FAIL font: italic bold 16px simple, bongo inherit (setter) assert_not_equals: font setter should parse - italic bold 16px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller simple, bongo inherit assert_not_equals: rule declaration should parse - .test1383 { font: normal smaller simple, bongo inherit; } got disallowed value ""
-FAIL font: normal smaller simple, bongo inherit (setter) assert_not_equals: font setter should parse - normal smaller simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1384 { font: normal normal 16px simple, bongo inherit; } got disallowed value ""
-FAIL font: normal normal 16px simple, bongo inherit (setter) assert_not_equals: font setter should parse - normal normal 16px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1385 { font: 400 normal 16px simple, bongo inherit; } got disallowed value ""
-FAIL font: 400 normal 16px simple, bongo inherit (setter) assert_not_equals: font setter should parse - 400 normal 16px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px simple, bongo inherit assert_not_equals: rule declaration should parse - .test1386 { font: bolder oblique 16px simple, bongo inherit; } got disallowed value ""
-FAIL font: bolder oblique 16px simple, bongo inherit (setter) assert_not_equals: font setter should parse - bolder oblique 16px simple, bongo inherit got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px simple, bongo inherit
+PASS font: 16px simple, bongo inherit (setter)
+PASS font: 900px simple, bongo inherit
+PASS font: 900px simple, bongo inherit (setter)
+PASS font: 900em simple, bongo inherit
+PASS font: 900em simple, bongo inherit (setter)
+PASS font: 35% simple, bongo inherit
+PASS font: 35% simple, bongo inherit (setter)
+PASS font: 7832.3% simple, bongo inherit
+PASS font: 7832.3% simple, bongo inherit (setter)
+PASS font: xx-large simple, bongo inherit
+PASS font: xx-large simple, bongo inherit (setter)
+PASS font: lighter larger simple, bongo inherit
+PASS font: lighter larger simple, bongo inherit (setter)
+PASS font: italic 16px simple, bongo inherit
+PASS font: italic 16px simple, bongo inherit (setter)
+PASS font: italic bold 16px simple, bongo inherit
+PASS font: italic bold 16px simple, bongo inherit (setter)
+PASS font: normal smaller simple, bongo inherit
+PASS font: normal smaller simple, bongo inherit (setter)
+PASS font: normal normal 16px simple, bongo inherit
+PASS font: normal normal 16px simple, bongo inherit (setter)
+PASS font: 400 normal 16px simple, bongo inherit
+PASS font: 400 normal 16px simple, bongo inherit (setter)
+PASS font: bolder oblique 16px simple, bongo inherit
+PASS font: bolder oblique 16px simple, bongo inherit (setter)
 PASS font-family: simple, normal
 PASS font-family: simple, normal (setter)
 PASS font: 16px simple, normal
@@ -1759,60 +1759,60 @@ PASS font: bolder oblique 16px simple default
 PASS font: bolder oblique 16px simple default (setter)
 PASS font-family: simple initial
 PASS font-family: simple initial (setter)
-FAIL font: 16px simple initial assert_not_equals: rule declaration should parse - .test1445 { font: 16px simple initial; } got disallowed value ""
-FAIL font: 16px simple initial (setter) assert_not_equals: font setter should parse - 16px simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px simple initial assert_not_equals: rule declaration should parse - .test1446 { font: 900px simple initial; } got disallowed value ""
-FAIL font: 900px simple initial (setter) assert_not_equals: font setter should parse - 900px simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em simple initial assert_not_equals: rule declaration should parse - .test1447 { font: 900em simple initial; } got disallowed value ""
-FAIL font: 900em simple initial (setter) assert_not_equals: font setter should parse - 900em simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% simple initial assert_not_equals: rule declaration should parse - .test1448 { font: 35% simple initial; } got disallowed value ""
-FAIL font: 35% simple initial (setter) assert_not_equals: font setter should parse - 35% simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% simple initial assert_not_equals: rule declaration should parse - .test1449 { font: 7832.3% simple initial; } got disallowed value ""
-FAIL font: 7832.3% simple initial (setter) assert_not_equals: font setter should parse - 7832.3% simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large simple initial assert_not_equals: rule declaration should parse - .test1450 { font: xx-large simple initial; } got disallowed value ""
-FAIL font: xx-large simple initial (setter) assert_not_equals: font setter should parse - xx-large simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger simple initial assert_not_equals: rule declaration should parse - .test1451 { font: lighter larger simple initial; } got disallowed value ""
-FAIL font: lighter larger simple initial (setter) assert_not_equals: font setter should parse - lighter larger simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px simple initial assert_not_equals: rule declaration should parse - .test1452 { font: italic 16px simple initial; } got disallowed value ""
-FAIL font: italic 16px simple initial (setter) assert_not_equals: font setter should parse - italic 16px simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px simple initial assert_not_equals: rule declaration should parse - .test1453 { font: italic bold 16px simple initial; } got disallowed value ""
-FAIL font: italic bold 16px simple initial (setter) assert_not_equals: font setter should parse - italic bold 16px simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller simple initial assert_not_equals: rule declaration should parse - .test1454 { font: normal smaller simple initial; } got disallowed value ""
-FAIL font: normal smaller simple initial (setter) assert_not_equals: font setter should parse - normal smaller simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px simple initial assert_not_equals: rule declaration should parse - .test1455 { font: normal normal 16px simple initial; } got disallowed value ""
-FAIL font: normal normal 16px simple initial (setter) assert_not_equals: font setter should parse - normal normal 16px simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px simple initial assert_not_equals: rule declaration should parse - .test1456 { font: 400 normal 16px simple initial; } got disallowed value ""
-FAIL font: 400 normal 16px simple initial (setter) assert_not_equals: font setter should parse - 400 normal 16px simple initial got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px simple initial assert_not_equals: rule declaration should parse - .test1457 { font: bolder oblique 16px simple initial; } got disallowed value ""
-FAIL font: bolder oblique 16px simple initial (setter) assert_not_equals: font setter should parse - bolder oblique 16px simple initial got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px simple initial
+PASS font: 16px simple initial (setter)
+PASS font: 900px simple initial
+PASS font: 900px simple initial (setter)
+PASS font: 900em simple initial
+PASS font: 900em simple initial (setter)
+PASS font: 35% simple initial
+PASS font: 35% simple initial (setter)
+PASS font: 7832.3% simple initial
+PASS font: 7832.3% simple initial (setter)
+PASS font: xx-large simple initial
+PASS font: xx-large simple initial (setter)
+PASS font: lighter larger simple initial
+PASS font: lighter larger simple initial (setter)
+PASS font: italic 16px simple initial
+PASS font: italic 16px simple initial (setter)
+PASS font: italic bold 16px simple initial
+PASS font: italic bold 16px simple initial (setter)
+PASS font: normal smaller simple initial
+PASS font: normal smaller simple initial (setter)
+PASS font: normal normal 16px simple initial
+PASS font: normal normal 16px simple initial (setter)
+PASS font: 400 normal 16px simple initial
+PASS font: 400 normal 16px simple initial (setter)
+PASS font: bolder oblique 16px simple initial
+PASS font: bolder oblique 16px simple initial (setter)
 PASS font-family: simple inherit
 PASS font-family: simple inherit (setter)
-FAIL font: 16px simple inherit assert_not_equals: rule declaration should parse - .test1460 { font: 16px simple inherit; } got disallowed value ""
-FAIL font: 16px simple inherit (setter) assert_not_equals: font setter should parse - 16px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px simple inherit assert_not_equals: rule declaration should parse - .test1461 { font: 900px simple inherit; } got disallowed value ""
-FAIL font: 900px simple inherit (setter) assert_not_equals: font setter should parse - 900px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em simple inherit assert_not_equals: rule declaration should parse - .test1462 { font: 900em simple inherit; } got disallowed value ""
-FAIL font: 900em simple inherit (setter) assert_not_equals: font setter should parse - 900em simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% simple inherit assert_not_equals: rule declaration should parse - .test1463 { font: 35% simple inherit; } got disallowed value ""
-FAIL font: 35% simple inherit (setter) assert_not_equals: font setter should parse - 35% simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% simple inherit assert_not_equals: rule declaration should parse - .test1464 { font: 7832.3% simple inherit; } got disallowed value ""
-FAIL font: 7832.3% simple inherit (setter) assert_not_equals: font setter should parse - 7832.3% simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large simple inherit assert_not_equals: rule declaration should parse - .test1465 { font: xx-large simple inherit; } got disallowed value ""
-FAIL font: xx-large simple inherit (setter) assert_not_equals: font setter should parse - xx-large simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger simple inherit assert_not_equals: rule declaration should parse - .test1466 { font: lighter larger simple inherit; } got disallowed value ""
-FAIL font: lighter larger simple inherit (setter) assert_not_equals: font setter should parse - lighter larger simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px simple inherit assert_not_equals: rule declaration should parse - .test1467 { font: italic 16px simple inherit; } got disallowed value ""
-FAIL font: italic 16px simple inherit (setter) assert_not_equals: font setter should parse - italic 16px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px simple inherit assert_not_equals: rule declaration should parse - .test1468 { font: italic bold 16px simple inherit; } got disallowed value ""
-FAIL font: italic bold 16px simple inherit (setter) assert_not_equals: font setter should parse - italic bold 16px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller simple inherit assert_not_equals: rule declaration should parse - .test1469 { font: normal smaller simple inherit; } got disallowed value ""
-FAIL font: normal smaller simple inherit (setter) assert_not_equals: font setter should parse - normal smaller simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px simple inherit assert_not_equals: rule declaration should parse - .test1470 { font: normal normal 16px simple inherit; } got disallowed value ""
-FAIL font: normal normal 16px simple inherit (setter) assert_not_equals: font setter should parse - normal normal 16px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px simple inherit assert_not_equals: rule declaration should parse - .test1471 { font: 400 normal 16px simple inherit; } got disallowed value ""
-FAIL font: 400 normal 16px simple inherit (setter) assert_not_equals: font setter should parse - 400 normal 16px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px simple inherit assert_not_equals: rule declaration should parse - .test1472 { font: bolder oblique 16px simple inherit; } got disallowed value ""
-FAIL font: bolder oblique 16px simple inherit (setter) assert_not_equals: font setter should parse - bolder oblique 16px simple inherit got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px simple inherit
+PASS font: 16px simple inherit (setter)
+PASS font: 900px simple inherit
+PASS font: 900px simple inherit (setter)
+PASS font: 900em simple inherit
+PASS font: 900em simple inherit (setter)
+PASS font: 35% simple inherit
+PASS font: 35% simple inherit (setter)
+PASS font: 7832.3% simple inherit
+PASS font: 7832.3% simple inherit (setter)
+PASS font: xx-large simple inherit
+PASS font: xx-large simple inherit (setter)
+PASS font: lighter larger simple inherit
+PASS font: lighter larger simple inherit (setter)
+PASS font: italic 16px simple inherit
+PASS font: italic 16px simple inherit (setter)
+PASS font: italic bold 16px simple inherit
+PASS font: italic bold 16px simple inherit (setter)
+PASS font: normal smaller simple inherit
+PASS font: normal smaller simple inherit (setter)
+PASS font: normal normal 16px simple inherit
+PASS font: normal normal 16px simple inherit (setter)
+PASS font: 400 normal 16px simple inherit
+PASS font: 400 normal 16px simple inherit (setter)
+PASS font: bolder oblique 16px simple inherit
+PASS font: bolder oblique 16px simple inherit (setter)
 PASS font-family: simple normal
 PASS font-family: simple normal (setter)
 PASS font: 16px simple normal
@@ -1871,60 +1871,60 @@ PASS font: bolder oblique 16px default simple
 PASS font: bolder oblique 16px default simple (setter)
 PASS font-family: initial simple
 PASS font-family: initial simple (setter)
-FAIL font: 16px initial simple assert_not_equals: rule declaration should parse - .test1531 { font: 16px initial simple; } got disallowed value ""
-FAIL font: 16px initial simple (setter) assert_not_equals: font setter should parse - 16px initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px initial simple assert_not_equals: rule declaration should parse - .test1532 { font: 900px initial simple; } got disallowed value ""
-FAIL font: 900px initial simple (setter) assert_not_equals: font setter should parse - 900px initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em initial simple assert_not_equals: rule declaration should parse - .test1533 { font: 900em initial simple; } got disallowed value ""
-FAIL font: 900em initial simple (setter) assert_not_equals: font setter should parse - 900em initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% initial simple assert_not_equals: rule declaration should parse - .test1534 { font: 35% initial simple; } got disallowed value ""
-FAIL font: 35% initial simple (setter) assert_not_equals: font setter should parse - 35% initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% initial simple assert_not_equals: rule declaration should parse - .test1535 { font: 7832.3% initial simple; } got disallowed value ""
-FAIL font: 7832.3% initial simple (setter) assert_not_equals: font setter should parse - 7832.3% initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large initial simple assert_not_equals: rule declaration should parse - .test1536 { font: xx-large initial simple; } got disallowed value ""
-FAIL font: xx-large initial simple (setter) assert_not_equals: font setter should parse - xx-large initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger initial simple assert_not_equals: rule declaration should parse - .test1537 { font: lighter larger initial simple; } got disallowed value ""
-FAIL font: lighter larger initial simple (setter) assert_not_equals: font setter should parse - lighter larger initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px initial simple assert_not_equals: rule declaration should parse - .test1538 { font: italic 16px initial simple; } got disallowed value ""
-FAIL font: italic 16px initial simple (setter) assert_not_equals: font setter should parse - italic 16px initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px initial simple assert_not_equals: rule declaration should parse - .test1539 { font: italic bold 16px initial simple; } got disallowed value ""
-FAIL font: italic bold 16px initial simple (setter) assert_not_equals: font setter should parse - italic bold 16px initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller initial simple assert_not_equals: rule declaration should parse - .test1540 { font: normal smaller initial simple; } got disallowed value ""
-FAIL font: normal smaller initial simple (setter) assert_not_equals: font setter should parse - normal smaller initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px initial simple assert_not_equals: rule declaration should parse - .test1541 { font: normal normal 16px initial simple; } got disallowed value ""
-FAIL font: normal normal 16px initial simple (setter) assert_not_equals: font setter should parse - normal normal 16px initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px initial simple assert_not_equals: rule declaration should parse - .test1542 { font: 400 normal 16px initial simple; } got disallowed value ""
-FAIL font: 400 normal 16px initial simple (setter) assert_not_equals: font setter should parse - 400 normal 16px initial simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px initial simple assert_not_equals: rule declaration should parse - .test1543 { font: bolder oblique 16px initial simple; } got disallowed value ""
-FAIL font: bolder oblique 16px initial simple (setter) assert_not_equals: font setter should parse - bolder oblique 16px initial simple got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px initial simple
+PASS font: 16px initial simple (setter)
+PASS font: 900px initial simple
+PASS font: 900px initial simple (setter)
+PASS font: 900em initial simple
+PASS font: 900em initial simple (setter)
+PASS font: 35% initial simple
+PASS font: 35% initial simple (setter)
+PASS font: 7832.3% initial simple
+PASS font: 7832.3% initial simple (setter)
+PASS font: xx-large initial simple
+PASS font: xx-large initial simple (setter)
+PASS font: lighter larger initial simple
+PASS font: lighter larger initial simple (setter)
+PASS font: italic 16px initial simple
+PASS font: italic 16px initial simple (setter)
+PASS font: italic bold 16px initial simple
+PASS font: italic bold 16px initial simple (setter)
+PASS font: normal smaller initial simple
+PASS font: normal smaller initial simple (setter)
+PASS font: normal normal 16px initial simple
+PASS font: normal normal 16px initial simple (setter)
+PASS font: 400 normal 16px initial simple
+PASS font: 400 normal 16px initial simple (setter)
+PASS font: bolder oblique 16px initial simple
+PASS font: bolder oblique 16px initial simple (setter)
 PASS font-family: inherit simple
 PASS font-family: inherit simple (setter)
-FAIL font: 16px inherit simple assert_not_equals: rule declaration should parse - .test1546 { font: 16px inherit simple; } got disallowed value ""
-FAIL font: 16px inherit simple (setter) assert_not_equals: font setter should parse - 16px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900px inherit simple assert_not_equals: rule declaration should parse - .test1547 { font: 900px inherit simple; } got disallowed value ""
-FAIL font: 900px inherit simple (setter) assert_not_equals: font setter should parse - 900px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 900em inherit simple assert_not_equals: rule declaration should parse - .test1548 { font: 900em inherit simple; } got disallowed value ""
-FAIL font: 900em inherit simple (setter) assert_not_equals: font setter should parse - 900em inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 35% inherit simple assert_not_equals: rule declaration should parse - .test1549 { font: 35% inherit simple; } got disallowed value ""
-FAIL font: 35% inherit simple (setter) assert_not_equals: font setter should parse - 35% inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 7832.3% inherit simple assert_not_equals: rule declaration should parse - .test1550 { font: 7832.3% inherit simple; } got disallowed value ""
-FAIL font: 7832.3% inherit simple (setter) assert_not_equals: font setter should parse - 7832.3% inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: xx-large inherit simple assert_not_equals: rule declaration should parse - .test1551 { font: xx-large inherit simple; } got disallowed value ""
-FAIL font: xx-large inherit simple (setter) assert_not_equals: font setter should parse - xx-large inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: lighter larger inherit simple assert_not_equals: rule declaration should parse - .test1552 { font: lighter larger inherit simple; } got disallowed value ""
-FAIL font: lighter larger inherit simple (setter) assert_not_equals: font setter should parse - lighter larger inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic 16px inherit simple assert_not_equals: rule declaration should parse - .test1553 { font: italic 16px inherit simple; } got disallowed value ""
-FAIL font: italic 16px inherit simple (setter) assert_not_equals: font setter should parse - italic 16px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: italic bold 16px inherit simple assert_not_equals: rule declaration should parse - .test1554 { font: italic bold 16px inherit simple; } got disallowed value ""
-FAIL font: italic bold 16px inherit simple (setter) assert_not_equals: font setter should parse - italic bold 16px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal smaller inherit simple assert_not_equals: rule declaration should parse - .test1555 { font: normal smaller inherit simple; } got disallowed value ""
-FAIL font: normal smaller inherit simple (setter) assert_not_equals: font setter should parse - normal smaller inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: normal normal 16px inherit simple assert_not_equals: rule declaration should parse - .test1556 { font: normal normal 16px inherit simple; } got disallowed value ""
-FAIL font: normal normal 16px inherit simple (setter) assert_not_equals: font setter should parse - normal normal 16px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: 400 normal 16px inherit simple assert_not_equals: rule declaration should parse - .test1557 { font: 400 normal 16px inherit simple; } got disallowed value ""
-FAIL font: 400 normal 16px inherit simple (setter) assert_not_equals: font setter should parse - 400 normal 16px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
-FAIL font: bolder oblique 16px inherit simple assert_not_equals: rule declaration should parse - .test1558 { font: bolder oblique 16px inherit simple; } got disallowed value ""
-FAIL font: bolder oblique 16px inherit simple (setter) assert_not_equals: font setter should parse - bolder oblique 16px inherit simple got disallowed value "16px onelittlepiggywenttomarket"
+PASS font: 16px inherit simple
+PASS font: 16px inherit simple (setter)
+PASS font: 900px inherit simple
+PASS font: 900px inherit simple (setter)
+PASS font: 900em inherit simple
+PASS font: 900em inherit simple (setter)
+PASS font: 35% inherit simple
+PASS font: 35% inherit simple (setter)
+PASS font: 7832.3% inherit simple
+PASS font: 7832.3% inherit simple (setter)
+PASS font: xx-large inherit simple
+PASS font: xx-large inherit simple (setter)
+PASS font: lighter larger inherit simple
+PASS font: lighter larger inherit simple (setter)
+PASS font: italic 16px inherit simple
+PASS font: italic 16px inherit simple (setter)
+PASS font: italic bold 16px inherit simple
+PASS font: italic bold 16px inherit simple (setter)
+PASS font: normal smaller inherit simple
+PASS font: normal smaller inherit simple (setter)
+PASS font: normal normal 16px inherit simple
+PASS font: normal normal 16px inherit simple (setter)
+PASS font: 400 normal 16px inherit simple
+PASS font: 400 normal 16px inherit simple (setter)
+PASS font: bolder oblique 16px inherit simple
+PASS font: bolder oblique 16px inherit simple (setter)
 PASS font-family: normal simple
 PASS font-family: normal simple (setter)
 PASS font: 16px normal simple
