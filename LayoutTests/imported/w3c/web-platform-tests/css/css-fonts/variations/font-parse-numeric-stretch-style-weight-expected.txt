@@ -29,27 +29,27 @@ PASS Invalid value italic 10deg for font property style used for styling.
 PASS Invalid value oblique -91deg for font property style used for styling.
 PASS Invalid value oblique 91deg for font property style used for styling.
 PASS Valid value 100 matches 100 for weight in @font-face.
-FAIL Valid value 700 matches 700 for weight in @font-face. assert_equals: expected "700" but got "bold"
+PASS Valid value 700 matches 700 for weight in @font-face.
 PASS Valid value 900 matches 900 for weight in @font-face.
 PASS Valid value bold matches bold for weight in @font-face.
 PASS Valid value normal matches normal for weight in @font-face.
 PASS Valid value 100 400 matches 100 400 for weight in @font-face.
 PASS Valid value 100 101.5 matches 100 101.5 for weight in @font-face.
-FAIL Valid value 999.8 999.9 matches 999.8 999.9 for weight in @font-face. assert_equals: expected "999.8 999.9" but got "999.75"
-FAIL Valid value 500 400 matches 500 400 for weight in @font-face. The string did not match the expected pattern.
+PASS Valid value 999.8 999.9 matches 999.8 999.9 for weight in @font-face.
+PASS Valid value 500 400 matches 500 400 for weight in @font-face.
 PASS Valid value 0% matches 0% for stretch in @font-face.
-FAIL Valid value calc(0% - 10%) matches calc(-10%) for stretch in @font-face. assert_equals: expected "calc(-10%)" but got "0%"
-FAIL Valid value 100% matches 100% for stretch in @font-face. assert_equals: expected "100%" but got "normal"
+PASS Valid value calc(0% - 10%) matches calc(-10%) for stretch in @font-face.
+PASS Valid value 100% matches 100% for stretch in @font-face.
 PASS Valid value 110% matches 110% for stretch in @font-face.
 PASS Valid value 111.5% matches 111.5% for stretch in @font-face.
 PASS Valid value 50% 200% matches 50% 200% for stretch in @font-face.
-FAIL Valid value 0.1% 1% matches 0.1% 1% for stretch in @font-face. assert_equals: expected "0.1% 1%" but got "0% 1%"
+PASS Valid value 0.1% 1% matches 0.1% 1% for stretch in @font-face.
 PASS Valid value 900% 901% matches 900% 901% for stretch in @font-face.
 PASS Valid value ultra-condensed matches ultra-condensed for stretch in @font-face.
 PASS Valid value ultra-expanded matches ultra-expanded for stretch in @font-face.
 PASS Valid value normal matches normal for style in @font-face.
 PASS Valid value italic matches italic for style in @font-face.
-FAIL Valid value oblique matches oblique for style in @font-face. assert_equals: expected "oblique" but got "italic"
+PASS Valid value oblique matches oblique for style in @font-face.
 PASS Valid value oblique 10deg matches oblique 10deg for style in @font-face.
 PASS Valid value oblique 10deg 20deg matches oblique 10deg 20deg for style in @font-face.
 PASS Value 0 must not be accepted as weight in @font-face.

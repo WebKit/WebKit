@@ -1829,19 +1829,8 @@ void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textO
 void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textOrder) const
 {
     String ariaLabeledBy = ariaLabeledByAttribute();
-    if (!ariaLabeledBy.isEmpty()) {
-        auto objectCache = axObjectCache();
-        if (!objectCache)
-            return;
-
-        auto elements = ariaLabeledByElements();
-
-        Vector<AXCoreObject*> axElements;
-        for (const auto& element : elements)
-            axElements.append(objectCache->getOrCreate(element));
-        
+    if (!ariaLabeledBy.isEmpty())
         textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative));
-    }
 }
     
 String AccessibilityNodeObject::alternativeTextForWebArea() const

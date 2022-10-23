@@ -627,6 +627,8 @@ static inline bool canInterpolate(const GridTrackList& from, const GridTrackList
         return false;
     }, [&](const GridTrackEntrySubgrid&) {
         return false;
+    }, [&](const GridTrackEntryMasonry&) {
+        return false;
     });
 
     for (i = 0; i < from.size(); i++) {
@@ -719,6 +721,7 @@ static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrack
         repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
         result.append(WTFMove(repeatResult));
     }, [&](const GridTrackEntrySubgrid&) {
+    }, [&](const GridTrackEntryMasonry&) {
     });
 
 

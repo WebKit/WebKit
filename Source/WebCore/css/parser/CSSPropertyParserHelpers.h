@@ -88,12 +88,6 @@ struct LengthRaw {
 };
 
 using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
-using NumberOrPercentRaw = std::variant<NumberRaw, PercentRaw>;
-using NumberOrNoneRaw = std::variant<NumberRaw, NoneRaw>;
-using PercentOrNoneRaw = std::variant<PercentRaw, NoneRaw>;
-using NumberOrPercentOrNoneRaw = std::variant<NumberRaw, PercentRaw, NoneRaw>;
-using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
-using AngleOrNumberOrNoneRaw = std::variant<AngleRaw, NumberRaw, NoneRaw>;
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
@@ -104,17 +98,11 @@ RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
 std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange&, ValueRange);
-std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumberWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
-std::optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange&, ValueRange, CSSValuePool&);
-std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
-std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngleWorkerSafe(CSSParserTokenRange&, CSSParserMode, CSSValuePool&, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
@@ -123,7 +111,6 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
-std::optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 template<CSSValueID, CSSValueID...> inline bool identMatches(CSSValueID id);
 template<CSSValueID... allowedIdents> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
@@ -196,8 +183,6 @@ RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
-std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
-std::optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
@@ -205,10 +190,6 @@ AtomString concatenateFamilyName(CSSParserTokenRange&);
 AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
 // https://drafts.csswg.org/css-fonts-4/#family-name-value
 Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange&);
-std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange&);
-std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
-std::optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
-std::optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange&, CSSParserMode);
 std::optional<FontRaw> consumeFontRaw(CSSParserTokenRange&, CSSParserMode);
 const AtomString& genericFontFamily(CSSValueID);
 WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);

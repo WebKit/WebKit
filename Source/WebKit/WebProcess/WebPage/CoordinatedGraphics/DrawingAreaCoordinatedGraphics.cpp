@@ -470,7 +470,7 @@ void DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
 #endif
 }
 
-void DrawingAreaCoordinatedGraphics::didUpdate()
+void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 {
     // We might get didUpdate messages from the UI process even after we've
     // entered accelerated compositing mode. Ignore them.

@@ -30,9 +30,7 @@
 
 #import "WebPageProxy.h"
 
-// FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
-// breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
-@interface WKOneShotDisplayLinkHandler : NSObject {
+@interface WKDisplayLinkHandler : NSObject {
     WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
     CADisplayLink *_displayLink;
 #if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
@@ -49,7 +47,7 @@
 
 @end
 
-@implementation WKOneShotDisplayLinkHandler
+@implementation WKDisplayLinkHandler
 
 - (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy
 {
@@ -166,10 +164,10 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyIOS::delegatedScrollingMod
     return DelegatedScrollingMode::DelegatedToNativeScrollView;
 }
 
-WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
+WKDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
 {
     if (!m_displayLinkHandler)
-        m_displayLinkHandler = adoptNS([[WKOneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
+        m_displayLinkHandler = adoptNS([[WKDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
     return m_displayLinkHandler.get();
 }
 
@@ -178,12 +176,12 @@ void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(FramesPerSe
     [displayLinkHandler() setPreferredFramesPerSecond:preferredFramesPerSecond];
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayLink()
+void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacks()
 {
     [displayLinkHandler() schedule];
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayLink()
+void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacks()
 {
     [displayLinkHandler() pause];
 }

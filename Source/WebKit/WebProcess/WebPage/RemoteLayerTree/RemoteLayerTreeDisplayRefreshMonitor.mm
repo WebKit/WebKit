@@ -79,7 +79,7 @@ bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
     return true;
 }
 
-void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
+void RemoteLayerTreeDisplayRefreshMonitor::triggerDisplayDidRefresh()
 {
     {
         Locker locker { lock() };

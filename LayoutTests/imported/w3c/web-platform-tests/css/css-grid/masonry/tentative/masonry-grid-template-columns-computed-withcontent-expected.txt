@@ -1,5 +1,5 @@
 
-FAIL Property grid-template-rows value 'masonry' assert_true: 'masonry' is a supported value for grid-template-rows. expected true got false
+FAIL Property grid-template-rows value 'masonry' assert_equals: expected "masonry" but got "600px"
 FAIL Property grid-template-columns value 'none' assert_equals: expected "none" but got "300px"
 PASS Property grid-template-columns value '20%'
 PASS Property grid-template-columns value 'calc(-0.5em + 10px)'

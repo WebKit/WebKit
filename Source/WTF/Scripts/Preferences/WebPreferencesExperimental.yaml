@@ -1057,6 +1057,18 @@ MaskWebGLStringsEnabled:
     WebCore:
       default: true
 
+MasonryEnabled:
+  type: bool
+  humanReadableName: "CSS Masonry Layout"
+  humanReadableDescription: "Enable Masonry Layout for CSS Grid"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 MediaCapabilitiesExtensionsEnabled:
   type: bool

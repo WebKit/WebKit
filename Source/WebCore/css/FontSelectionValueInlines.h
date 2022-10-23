@@ -43,11 +43,6 @@ inline bool isCSS21Weight(FontSelectionValue weight)
         || weight == FontSelectionValue(900);
 }
 
-inline bool isCSS21Weight(int weight)
-{
-    return !((weight % 100) || weight < 100 || weight > 900);
-}
-
 inline std::optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
 {
     if (weight == normalWeightValue())

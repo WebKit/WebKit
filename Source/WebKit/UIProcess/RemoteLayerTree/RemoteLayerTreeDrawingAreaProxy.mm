@@ -171,7 +171,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
         didRefreshDisplay();
-    scheduleDisplayLink();
+
+    scheduleDisplayRefreshCallbacks();
 
     if (didUpdateEditorState)
         m_webPageProxy.dispatchDidUpdateEditorState();
@@ -322,7 +323,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
 
     if (m_didUpdateMessageState != NeedsDidUpdate) {
         m_didUpdateMessageState = MissedCommit;
-        pauseDisplayLink();
+        pauseDisplayRefreshCallbacks();
         return;
     }
     
@@ -331,7 +332,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.
-    send(Messages::DrawingArea::DidUpdate());
+    send(Messages::DrawingArea::DisplayDidRefresh());
 
     m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;
 

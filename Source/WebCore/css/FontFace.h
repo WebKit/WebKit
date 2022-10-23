@@ -73,7 +73,7 @@ public:
     String stretch() const;
     String unicodeRange() const;
     String featureSettings() const;
-    String display(ScriptExecutionContext&) const;
+    String display() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
@@ -102,6 +102,7 @@ private:
     // Callback for LoadedPromise.
     FontFace& loadedPromiseResolve();
     void setErrorState();
+
     Ref<CSSFontFace> m_backing;
     UniqueRef<LoadedPromise> m_loadedPromise;
     bool m_mayLoadedPromiseBeScriptObservable { false };

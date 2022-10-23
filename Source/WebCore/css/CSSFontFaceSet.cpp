@@ -127,6 +127,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     for (auto item : capabilities) {
         auto face = CSSFontFace::create(*m_owningFontSelector, nullptr, nullptr, true);
         
+        // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
         Ref<CSSValueList> familyList = CSSValueList::createCommaSeparated();
         familyList->append(m_owningFontSelector->scriptExecutionContext()->cssValuePool().createFontFamilyValue(familyName));
         face->setFamilies(familyList.get());
@@ -169,12 +170,12 @@ String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
 
 void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
 {
-    if (!face.families()) {
+    auto families = face.families();
+    if (!families) {
         // If the font has failed, there's no point in actually adding it to m_facesLookupTable,
         // because no font requests can actually use it for anything. So, let's just ... not add it.
         return;
     }
-    auto families = face.families().value();
 
     for (auto& item : *families) {
         String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item.get()));
@@ -260,8 +261,8 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
         observer();
     });
     
-    if (face.families())
-        removeFromFacesLookupTable(face, *face.families().value());
+    if (auto families = face.families())
+        removeFromFacesLookupTable(face, *families);
 
     if (face.cssConnection()) {
         ASSERT(m_constituentCSSConnections.get(face.cssConnection()) == &face);
@@ -465,49 +466,49 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
     Vector<std::reference_wrapper<CSSFontFace>, 32> candidateFontFaces;
     for (int i = familyFontFaces.size() - 1; i >= 0; --i) {
         CSSFontFace& candidate = familyFontFaces[i];
-        if (auto capabilities = candidate.fontSelectionCapabilities()) {
-            if (!isItalic(request.slope) && isItalic(capabilities->slope.minimum))
-                continue;
-            candidateFontFaces.append(candidate);
-        }
+        if (candidate.status() == CSSFontFace::Status::Failure)
+            continue;
+        if (!isItalic(request.slope) && isItalic(candidate.fontSelectionCapabilities().slope.minimum))
+            continue;
+        candidateFontFaces.append(candidate);
     }
 
     auto localIterator = m_locallyInstalledFacesLookupTable.find(family);
     if (localIterator != m_locallyInstalledFacesLookupTable.end()) {
         for (auto& candidate : localIterator->value) {
-            if (auto capabilities = candidate->fontSelectionCapabilities()) {
-                if (!isItalic(request.slope) && isItalic(capabilities->slope.minimum))
-                    continue;
-                candidateFontFaces.append(candidate);
-            }
+            if (candidate->status() == CSSFontFace::Status::Failure)
+                continue;
+            if (!isItalic(request.slope) && isItalic(candidate->fontSelectionCapabilities().slope.minimum))
+                continue;
+            candidateFontFaces.append(candidate);
         }
     }
 
     if (!candidateFontFaces.isEmpty()) {
         auto capabilities = candidateFontFaces.map([](auto& face) {
-            return *face.get().fontSelectionCapabilities();
+            return face.get().fontSelectionCapabilities();
         });
         FontSelectionAlgorithm fontSelectionAlgorithm(request, capabilities);
         std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), [&fontSelectionAlgorithm](const CSSFontFace& first, const CSSFontFace& second) {
             auto firstCapabilities = first.fontSelectionCapabilities();
             auto secondCapabilities = second.fontSelectionCapabilities();
             
-            auto stretchDistanceFirst = fontSelectionAlgorithm.stretchDistance(*firstCapabilities).distance;
-            auto stretchDistanceSecond = fontSelectionAlgorithm.stretchDistance(*secondCapabilities).distance;
+            auto stretchDistanceFirst = fontSelectionAlgorithm.stretchDistance(firstCapabilities).distance;
+            auto stretchDistanceSecond = fontSelectionAlgorithm.stretchDistance(secondCapabilities).distance;
             if (stretchDistanceFirst < stretchDistanceSecond)
                 return true;
             if (stretchDistanceFirst > stretchDistanceSecond)
                 return false;
 
-            auto styleDistanceFirst = fontSelectionAlgorithm.styleDistance(*firstCapabilities).distance;
-            auto styleDistanceSecond = fontSelectionAlgorithm.styleDistance(*secondCapabilities).distance;
+            auto styleDistanceFirst = fontSelectionAlgorithm.styleDistance(firstCapabilities).distance;
+            auto styleDistanceSecond = fontSelectionAlgorithm.styleDistance(secondCapabilities).distance;
             if (styleDistanceFirst < styleDistanceSecond)
                 return true;
             if (styleDistanceFirst > styleDistanceSecond)
                 return false;
 
-            auto weightDistanceFirst = fontSelectionAlgorithm.weightDistance(*firstCapabilities).distance;
-            auto weightDistanceSecond = fontSelectionAlgorithm.weightDistance(*secondCapabilities).distance;
+            auto weightDistanceFirst = fontSelectionAlgorithm.weightDistance(firstCapabilities).distance;
+            auto weightDistanceSecond = fontSelectionAlgorithm.weightDistance(secondCapabilities).distance;
             if (weightDistanceFirst < weightDistanceSecond)
                 return true;
             return false;

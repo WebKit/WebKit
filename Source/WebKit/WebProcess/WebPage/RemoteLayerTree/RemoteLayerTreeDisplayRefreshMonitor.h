@@ -32,6 +32,7 @@
 namespace WebKit {
 
 class RemoteLayerTreeDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
+friend class RemoteLayerTreeDrawingArea;
 public:
     static Ref<RemoteLayerTreeDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     {
@@ -42,7 +43,6 @@ public:
 
     bool requestRefreshCallback() final;
 
-    void didUpdateLayers();
     void updateDrawingArea(RemoteLayerTreeDrawingArea&);
 
 private:
@@ -51,6 +51,8 @@ private:
     bool startNotificationMechanism() final { return true; }
     void stopNotificationMechanism() final { }
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
+
+    void triggerDisplayDidRefresh();
 
     void adjustPreferredFramesPerSecond(WebCore::FramesPerSecond) final;
 

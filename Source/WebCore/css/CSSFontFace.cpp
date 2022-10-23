@@ -95,8 +95,15 @@ Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector& fontSelector, StyleRuleFon
     return result;
 }
 
-CSSFontFace::CSSFontFace(const Settings::Values* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
-    : m_cssConnection(cssConnection)
+static std::variant<Ref<MutableStyleProperties>, Ref<StyleRuleFontFace>> propertiesOrCSSConnection(StyleRuleFontFace* connection)
+{
+    if (connection)
+        return Ref { *connection };
+    return MutableStyleProperties::create();
+}
+
+CSSFontFace::CSSFontFace(const Settings::Values* settings, StyleRuleFontFace* connection, FontFace* wrapper, bool isLocalFallback)
+    : m_propertiesOrCSSConnection(propertiesOrCSSConnection(connection))
     , m_wrapper(wrapper)
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
@@ -109,26 +116,53 @@ CSSFontFace::CSSFontFace(const Settings::Values* settings, StyleRuleFontFace* cs
 
 CSSFontFace::~CSSFontFace() = default;
 
-bool CSSFontFace::setFamilies(CSSValue& family)
+const StyleProperties& CSSFontFace::properties() const
 {
-    if (!is<CSSValueList>(family))
-        return false;
+    return WTF::switchOn(m_propertiesOrCSSConnection,
+        [] (const Ref<MutableStyleProperties>& properties) -> const StyleProperties& {
+            return properties;
+        },
+        [] (const Ref<StyleRuleFontFace>& connection) -> const StyleProperties& {
+            return connection->properties();
+        }
+    );
+}
 
-    CSSValueList& familyList = downcast<CSSValueList>(family);
-    if (!familyList.length())
-        return false;
+MutableStyleProperties& CSSFontFace::mutableProperties()
+{
+    return WTF::switchOn(m_propertiesOrCSSConnection,
+        [] (const Ref<MutableStyleProperties>& properties) -> MutableStyleProperties& {
+            return properties;
+        },
+        [] (const Ref<StyleRuleFontFace>& connection) -> MutableStyleProperties& {
+            return connection->mutableProperties();
+        }
+    );
+}
 
-    RefPtr<CSSValueList> oldFamilies = m_families;
-    m_families = &familyList;
+StyleRuleFontFace* CSSFontFace::cssConnection() const
+{
+    return WTF::switchOn(m_propertiesOrCSSConnection,
+        [] (const Ref<MutableStyleProperties>&) -> StyleRuleFontFace* {
+            return nullptr;
+        },
+        [] (const Ref<StyleRuleFontFace>& connection) {
+            return connection.ptr();
+        }
+    );
+}
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontFamily, &family);
+// FIXME: Don't use a list here and rename to setFamily. https://bugs.webkit.org/show_bug.cgi?id=196381
+void CSSFontFace::setFamilies(CSSValueList& family)
+{
+    ASSERT(family.length());
+
+    RefPtr oldFamily = std::exchange(m_families, &family);
+    mutableProperties().setProperty(CSSPropertyFontFamily, &family);
 
     iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this, oldFamilies.get());
+        client.fontPropertyChanged(*this, oldFamily.get());
     });
-
-    return true;
 }
 
 FontFace* CSSFontFace::existingWrapper()
@@ -160,14 +194,13 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
 
 void CSSFontFace::setWeight(CSSValue& weight)
 {
+    mutableProperties().setProperty(CSSPropertyFontWeight, &weight);
+
     auto range = calculateWeightRange(weight);
     if (m_fontSelectionCapabilities.weight == range)
         return;
 
-    setWeight(range);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontWeight, &weight);
+    m_fontSelectionCapabilities.weight = range;
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -198,14 +231,13 @@ static FontSelectionRange calculateStretchRange(CSSValue& value)
 
 void CSSFontFace::setStretch(CSSValue& style)
 {
+    mutableProperties().setProperty(CSSPropertyFontStretch, &style);
+
     auto range = calculateStretchRange(style);
     if (m_fontSelectionCapabilities.width == range)
         return;
 
-    setStretch(range);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontStretch, &style);
+    m_fontSelectionCapabilities.width = range;
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -246,26 +278,22 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
 
 void CSSFontFace::setStyle(CSSValue& style)
 {
+    mutableProperties().setProperty(CSSPropertyFontStyle, &style);
+
     auto range = calculateItalicRange(style);
     if (m_fontSelectionCapabilities.slope == range)
         return;
 
-    setStyle(range);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontStyle, &style);
+    m_fontSelectionCapabilities.slope = range;
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
 }
 
-bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
+void CSSFontFace::setUnicodeRange(CSSValueList& list)
 {
-    if (!is<CSSValueList>(unicodeRange))
-        return false;
-
-    auto& list = downcast<CSSValueList>(unicodeRange);
+    mutableProperties().setProperty(CSSPropertyUnicodeRange, &list);
 
     Vector<UnicodeRange> ranges;
     ranges.reserveInitialCapacity(list.length());
@@ -276,24 +304,21 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
     }
 
     if (ranges == m_ranges)
-        return true;
+        return;
 
     m_ranges = WTFMove(ranges);
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyUnicodeRange, &unicodeRange);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
-
-    return true;
 }
 
 void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 {
     // Can only call this with a primitive value of normal, or a value list containing font feature values.
     ASSERT(is<CSSPrimitiveValue>(featureSettings) || is<CSSValueList>(featureSettings));
+
+    mutableProperties().setProperty(CSSPropertyFontFeatureSettings, &featureSettings);
 
     FontFeatureSettings settings;
 
@@ -310,29 +335,74 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 
     m_featureSettings = WTFMove(settings);
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontFeatureSettings, &featureSettings);
-
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
 }
 
-void CSSFontFace::setLoadingBehavior(CSSValue& loadingBehaviorValue)
+void CSSFontFace::setDisplay(CSSPrimitiveValue& loadingBehaviorValue)
 {
-    auto loadingBehavior = static_cast<FontLoadingBehavior>(downcast<CSSPrimitiveValue>(loadingBehaviorValue));
+    mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
+
+    FontLoadingBehavior loadingBehavior = loadingBehaviorValue;
 
     if (m_loadingBehavior == loadingBehavior)
         return;
 
     m_loadingBehavior = loadingBehavior;
 
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
-
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
+}
+
+String CSSFontFace::family() const
+{
+    // Code to extract the name of the first family is needed because we incorrectly use a list of families.
+    // FIXME: Consider switching to getPropertyValue after https://bugs.webkit.org/show_bug.cgi?id=196381 is fixed.
+    auto family = properties().getPropertyCSSValue(CSSPropertyFontFamily);
+    auto familyList = dynamicDowncast<CSSValueList>(family.get());
+    if (!familyList)
+        return { };
+    auto firstFamily = dynamicDowncast<CSSPrimitiveValue>(familyList->item(0));
+    if (!firstFamily || !firstFamily->isFontFamily())
+        return { };
+    return firstFamily->fontFamily().familyName;
+}
+
+String CSSFontFace::style() const
+{
+    return properties().getPropertyValue(CSSPropertyFontStyle);
+}
+
+String CSSFontFace::weight() const
+{
+    return properties().getPropertyValue(CSSPropertyFontWeight);
+}
+
+String CSSFontFace::stretch() const
+{
+    return properties().getPropertyValue(CSSPropertyFontStretch);
+}
+
+String CSSFontFace::unicodeRange() const
+{
+    return properties().getPropertyValue(CSSPropertyUnicodeRange);
+}
+
+String CSSFontFace::featureSettings() const
+{
+    return properties().getPropertyValue(CSSPropertyFontFeatureSettings);
+}
+
+String CSSFontFace::display() const
+{
+    return properties().getPropertyValue(CSSPropertyFontDisplay);
+}
+
+RefPtr<CSSValueList> CSSFontFace::families() const
+{
+    return m_families;
 }
 
 bool CSSFontFace::rangesMatchCodePoint(UChar32 character) const

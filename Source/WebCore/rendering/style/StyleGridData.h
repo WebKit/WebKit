@@ -49,6 +49,12 @@ struct GridTrackEntrySubgrid {
         return true;
     }
 };
+struct GridTrackEntryMasonry {
+    bool operator==(const GridTrackEntryMasonry&) const
+    {
+        return true;
+    }
+};
 struct GridTrackEntryRepeat {
     bool operator==(const GridTrackEntryRepeat& other) const
     {
@@ -67,7 +73,7 @@ struct GridTrackEntryAutoRepeat {
     AutoRepeatType type;
     RepeatTrackList list;
 };
-typedef std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid> GridTrackEntry;
+typedef std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry> GridTrackEntry;
 typedef Vector<GridTrackEntry> GridTrackList;
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RepeatEntry& item);
@@ -80,7 +86,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount;
+        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -117,6 +123,9 @@ public:
     const bool& subgridRows() const { return m_subgridRows; };
     const bool& subgridColumns() const { return m_subgridColumns; }
 
+    bool masonryRows() const { return m_masonryRows; }
+    bool masonryColumns() const { return m_masonryColumns; }
+
     const GridTrackList& columns() const { return m_columns; };
     const GridTrackList& rows() const { return m_rows; };
 
@@ -136,7 +145,7 @@ public:
 
 private:
 
-    void computeCachedTrackData(const GridTrackList&, Vector<GridTrackSize>& sizes, NamedGridLinesMap& namedLines, OrderedNamedGridLinesMap& orderedNamedLines, Vector<GridTrackSize>& autoRepeatSizes, NamedGridLinesMap& autoRepeatNamedLines, OrderedNamedGridLinesMap& autoRepeatOrderedNamedLines, unsigned& autoRepeatInsertionPoint, AutoRepeatType&, bool& subgrid);
+    void computeCachedTrackData(const GridTrackList&, Vector<GridTrackSize>& sizes, NamedGridLinesMap& namedLines, OrderedNamedGridLinesMap& orderedNamedLines, Vector<GridTrackSize>& autoRepeatSizes, NamedGridLinesMap& autoRepeatNamedLines, OrderedNamedGridLinesMap& autoRepeatOrderedNamedLines, unsigned& autoRepeatInsertionPoint, AutoRepeatType&, bool& subgrid, bool& masonry);
 
     GridTrackList m_columns;
     GridTrackList m_rows;
@@ -167,6 +176,9 @@ private:
 
     bool m_subgridRows;
     bool m_subgridColumns;
+
+    bool m_masonryRows;
+    bool m_masonryColumns;
 
     StyleGridData();
     StyleGridData(const StyleGridData&);

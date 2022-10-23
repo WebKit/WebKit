@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-class CSSFontFaceRule;
 class CSSPrimitiveValue;
 class CSSSegmentedFontFace;
 class CSSValueList;

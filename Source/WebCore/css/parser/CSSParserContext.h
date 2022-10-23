@@ -74,6 +74,7 @@ struct CSSParserContext {
     bool gradientPremultipliedAlphaInterpolationEnabled { false };
     bool gradientInterpolationColorSpacesEnabled { false };
     bool subgridEnabled { false };
+    bool masonryEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

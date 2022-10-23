@@ -299,9 +299,9 @@ inline void add(Hasher& hasher, const FontSelectionValue& value)
 struct FontSelectionRange {
     using Value = FontSelectionValue;
 
-    constexpr FontSelectionRange(Value minimum, Value maximum)
-        : minimum(minimum)
-        , maximum(maximum)
+    constexpr FontSelectionRange(Value a, Value b)
+        : minimum(std::min(a, b))
+        , maximum(std::max(a, b))
     {
     }
 
