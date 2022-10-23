@@ -1515,7 +1515,9 @@ ExceptionOr<void> WebAnimation::commitStyles()
     auto& styledElement = downcast<StyledElement>(*target);
 
     // 2.2 If, after applying any pending style changes, target is not being rendered, throw an "InvalidStateError" DOMException and abort these steps.
-    styledElement.document().updateStyleIfNeeded();
+    // Note that while the spec says to "apply pending style changes", we update the layout as well because layout may not
+    // have happened yet and we must make sure that any value that is layout-dependent can be resolved.
+    styledElement.document().updateLayoutIgnorePendingStylesheets();
     auto* renderer = styledElement.renderer();
     if (!renderer)
         return Exception { InvalidStateError };
