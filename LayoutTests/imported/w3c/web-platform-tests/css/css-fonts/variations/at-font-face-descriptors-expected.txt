@@ -26,7 +26,7 @@ PASS font-weight(invalid): Upper bound out of range: 100 1001
 PASS font-weight(valid): Lower bound calc(): calc(100 + 100) 400
 PASS font-weight(valid): Upper bound calc(): 200 calc(200 + 200)
 PASS font-weight(valid): Both bounds are calc(): calc(100 + 100) calc(200 + 200)
-FAIL font-weight(valid): Bounds out of order are valid: 400 200 assert_not_equals: Valid value should be accepted. got disallowed value ""
+PASS font-weight(valid): Bounds out of order are valid: 400 200
 PASS font-weight(invalid): Extra content after upper bound: 100 200 300
 PASS font-stretch(valid): 'ultra-condensed' keyword: ultra-condensed
 PASS font-stretch(valid): 'extra-condensed' keyword: extra-condensed
@@ -59,7 +59,7 @@ PASS font-stretch(invalid): Lower bound out of range: -100% 100%
 FAIL font-stretch(valid): Lower bound calc(): calc(10% + 10%) 30% assert_equals: Unexpected resulting value. expected "20% 30%" but got "calc(20%) 30%"
 FAIL font-stretch(valid): Upper bound calc(): 10% calc(10% + 10%) assert_equals: Unexpected resulting value. expected "10% 20%" but got "10% calc(20%)"
 FAIL font-stretch(valid): Both bounds are calc(): calc(10% + 10%) calc(20% + 20%) assert_equals: Unexpected resulting value. expected "20% 40%" but got "calc(20%) calc(40%)"
-FAIL font-stretch(valid): Bounds out of order: 200% 100% assert_not_equals: Valid value should be accepted. got disallowed value ""
+PASS font-stretch(valid): Bounds out of order: 200% 100%
 PASS font-stretch(invalid): Extra content after upper bound: 100% 200% 300%
 PASS font-style(valid): 'normal' keyword: normal
 PASS font-style(valid): 'italic' keyword: italic
@@ -83,7 +83,7 @@ PASS font-style(invalid): 'oblique' followed by minus and non-number: oblique -a
 PASS font-style(valid): Simple range: oblique 10deg 20deg
 FAIL font-style(valid): Simple range with equal upper and lower bounds: oblique 10deg 10deg assert_equals: Unexpected resulting value. expected "oblique 10deg" but got "oblique 10deg 10deg"
 FAIL font-style(valid): Simple range with  default angle for both bounds: oblique 20deg 20deg assert_equals: Unexpected resulting value. expected "oblique" but got "oblique 20deg 20deg"
-FAIL font-style(valid): Bounds out of order: oblique 20deg 10deg assert_not_equals: Valid value should be accepted. got disallowed value ""
+PASS font-style(valid): Bounds out of order: oblique 20deg 10deg
 PASS font-style(invalid): Lower bound out of range: oblique -100deg 20deg
 PASS font-style(invalid): Upper bound out of range: oblique 20deg 100deg
 PASS font-style(invalid): Extra content after upper bound: oblique 10deg 20deg 30deg

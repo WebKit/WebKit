@@ -153,7 +153,7 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceStretch(const String&
     return parsedValue;
 }
 
-RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceUnicodeRange(const String& string, ScriptExecutionContext& context)
+RefPtr<CSSValueList> CSSPropertyParserWorkerSafe::parseFontFaceUnicodeRange(const String& string, ScriptExecutionContext& context)
 {
     CSSParserContext parserContext(parserMode(context));
     CSSParserImpl parser(parserContext, string);
@@ -183,7 +183,7 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceFeatureSettings(const
     return parsedValue;
 }
 
-RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(const String& string, ScriptExecutionContext& context)
+RefPtr<CSSPrimitiveValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(const String& string, ScriptExecutionContext& context)
 {
     CSSParserContext parserContext(parserMode(context));
     CSSParserImpl parser(parserContext, string);
@@ -305,7 +305,7 @@ RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range,
         if (!secondAngle)
             return nullptr;
         auto secondAngleInDegrees = secondAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!CSSPropertyParserHelpers::isFontStyleAngleInRange(secondAngleInDegrees) || firstAngleInDegrees > secondAngleInDegrees)
+        if (!CSSPropertyParserHelpers::isFontStyleAngleInRange(secondAngleInDegrees))
             return nullptr;
         auto result = CSSValueList::createSpaceSeparated();
         result->append(firstAngle.releaseNonNull());
@@ -333,7 +333,7 @@ RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange& range, CSSV
     if (range.atEnd())
         return firstNumber;
     auto secondNumber = CSSPropertyParserHelpers::consumeFontWeightNumberWorkerSafe(range, pool);
-    if (!secondNumber || firstNumber->floatValue() > secondNumber->floatValue())
+    if (!secondNumber)
         return nullptr;
     auto result = CSSValueList::createSpaceSeparated();
     result->append(firstNumber.releaseNonNull());
@@ -385,7 +385,7 @@ RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range, CSSValuePoo
     if (range.atEnd())
         return firstPercent;
     auto secondPercent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRange::NonNegative, pool);
-    if (!secondPercent || !fontStretchIsWithinRange(secondPercent->value<float>()) || firstPercent->floatValue() > secondPercent->floatValue())
+    if (!secondPercent || !fontStretchIsWithinRange(secondPercent->value<float>()))
         return nullptr;
     auto result = CSSValueList::createSpaceSeparated();
     result->append(firstPercent.releaseNonNull());

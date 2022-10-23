@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class CSSPrimitiveValue;
+class CSSSegmentedFontFace;
 class FontFaceSet;
 
 template<typename> class ExceptionOr;

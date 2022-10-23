@@ -21,7 +21,7 @@ shouldBeEqualToString("fontFace.display", "auto");
 let values = ["auto", "block", "swap", "fallback", "optional"];
 for (let value of values) {
     fontFace.display = value;
-    shouldBeEqualToString("fontFaceRule.style.getPropertyValue('font-display')", value == "auto" ? "" : value);
+    shouldBeEqualToString("fontFaceRule.style.getPropertyValue('font-display')", value);
     shouldBeEqualToString("fontFace.display", value);
 }
 shouldThrow("fontFace.display = 'garbage'");

@@ -183,7 +183,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr<CSSValue> src = style.getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
     RefPtr<CSSValue> featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings);
-    RefPtr<CSSValue> loadingBehavior = style.getPropertyCSSValue(CSSPropertyFontDisplay);
+    RefPtr<CSSValue> display = style.getPropertyCSSValue(CSSPropertyFontDisplay);
     if (!is<CSSValueList>(fontFamily) || !is<CSSValueList>(src) || (unicodeRange && !is<CSSValueList>(*unicodeRange)))
         return;
 
@@ -200,20 +200,19 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     SetForScope creatingFont(m_creatingFont, true);
     auto fontFace = CSSFontFace::create(*this, &fontFaceRule);
 
-    if (!fontFace->setFamilies(*fontFamily))
-        return;
+    fontFace->setFamilies(familyList);
     if (fontStyle)
         fontFace->setStyle(*fontStyle);
     if (fontWeight)
         fontFace->setWeight(*fontWeight);
     if (fontStretch)
         fontFace->setStretch(*fontStretch);
-    if (rangeList && !fontFace->setUnicodeRange(*rangeList))
-        return;
+    if (rangeList)
+        fontFace->setUnicodeRange(*rangeList);
     if (featureSettings)
         fontFace->setFeatureSettings(*featureSettings);
-    if (loadingBehavior)
-        fontFace->setLoadingBehavior(*loadingBehavior);
+    if (display)
+        fontFace->setDisplay(downcast<CSSPrimitiveValue>(*display));
 
     CSSFontFace::appendSources(fontFace, srcList, m_context.get(), isInitiatingElementInUserAgentShadowTree);
 

@@ -1,6 +1,6 @@
 PASS fontFaceRule.style.getPropertyValue('font-display') is ""
 PASS fontFace.display is "auto"
-PASS fontFaceRule.style.getPropertyValue('font-display') is ""
+PASS fontFaceRule.style.getPropertyValue('font-display') is "auto"
 PASS fontFace.display is "auto"
 PASS fontFaceRule.style.getPropertyValue('font-display') is "block"
 PASS fontFace.display is "block"

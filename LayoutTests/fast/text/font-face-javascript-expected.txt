@@ -7,7 +7,7 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {}).featureSettings is "normal
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'normal'}).style is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'inherit'}).status is "error"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic'}).style is "italic"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'oblique'}).style is "italic"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'oblique'}).style is "oblique"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'asdf'}).status is "error"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'normal'}).weight is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': '200'}).weight is "200"

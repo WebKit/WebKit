@@ -2304,7 +2304,6 @@ webrtc/h265.html [ Pass Failure ]
 
 webrtc/vp9-vtb.html [ Skip ]
 
-webrtc/simulcast-h264.html [ Slow ]
 webrtc/h264-baseline.html [ Slow ]
 webrtc/h264-high.html [ Slow ]
 
