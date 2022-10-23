@@ -2803,7 +2803,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-016.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-017.html [ ImageOnlyFailure ]
-webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-019.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-002.html [ ImageOnlyFailure ]
@@ -2905,7 +2904,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/tra
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-other-space-separators-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-other-space-separators-003.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-other-space-separators-004.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-align-start.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-003.html [ ImageOnlyFailure ]
@@ -3607,7 +3605,6 @@ webkit.org/b/242467 imported/w3c/web-platform-tests/css/css-values/calc-text-ind
 # wpt css-sizing failures
 webkit.org/b/203509 imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203510 imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size.html [ ImageOnlyFailure ]
-webkit.org/b/203511 imported/w3c/web-platform-tests/css/css-sizing/clone-nowrap-intrinsic-size-bidi.html [ ImageOnlyFailure ]
 webkit.org/b/203512 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-004.html [ ImageOnlyFailure ]
 webkit.org/b/203512 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-005.html [ ImageOnlyFailure ]
 webkit.org/b/203513 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-replaced-content-in-auto-cb.html [ Pass Failure ]
