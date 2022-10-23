@@ -1,0 +1,6 @@
+list item 1
+list item 2
+list item 3Paragraph
+
+PASS make a paragraph into a list by backspace
+

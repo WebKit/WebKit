@@ -53,6 +53,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "NodeList.h"
@@ -911,18 +912,27 @@ VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent() cons
 static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const Position& insertionPos)
 {
     RefPtr topNode { fragment.firstChild() };
+    if (!is<HTMLSpanElement>(topNode))
+        return false;
 
     // Handling the case where we are doing Paste as Quotation or pasting into quoted content is more complicated (see handleStyleSpans)
     // and doesn't receive the optimization.
     if (isMailPasteAsQuotationNode(topNode.get()) || enclosingNodeOfType(firstPositionInOrBeforeNode(topNode.get()), isMailBlockquote, CanCrossEditingBoundary))
         return false;
 
+    // Remove style spans to follow the styles of list item when |fragment| becomes a list item.
+    // See bug - https://bugs.webkit.org/show_bug.cgi?id=127242
+    auto& wrappingStyleSpan = downcast<HTMLSpanElement>(*topNode);
+    if (isListItem(enclosingBlock(insertionPos.anchorNode()))) {
+        fragment.removeNodePreservingChildren(wrappingStyleSpan);
+        return true;
+    }
+
     // Either there are no style spans in the fragment or a WebKit client has added content to the fragment
     // before inserting it.  Look for and handle style spans after insertion.
     if (!isLegacyAppleStyleSpan(topNode.get()))
         return false;
 
-    auto& wrappingStyleSpan = downcast<HTMLElement>(*topNode);
     auto styleAtInsertionPos = EditingStyle::create(insertionPos.parentAnchoredEquivalent());
     String styleText = styleAtInsertionPos->style()->asText();
 
