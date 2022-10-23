@@ -1012,9 +1012,15 @@ inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value
 
 inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTrackList& trackList, BuilderState& builderState)
 {
-    // Handle 'none'.
-    if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone;
+    // Handle 'none' or 'masonry'.
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueMasonry) {
+
+            trackList.append(GridTrackEntryMasonry());
+            return true;
+        }
+        return primitiveValue->valueID() == CSSValueNone;
+    }
 
     if (!is<CSSValueList>(value))
         return false;

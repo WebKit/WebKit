@@ -1153,6 +1153,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     bool isRowAxis = direction == ForColumns;
     bool isRenderGrid = is<RenderGrid>(renderer);
     bool isSubgrid = isRowAxis ? style.gridSubgridColumns() : style.gridSubgridRows();
+    bool isMasonry = (direction == ForRows) ? style.gridMasonryRows() : style.gridMasonryColumns();
     auto& trackSizes = isRowAxis ? style.gridColumns() : style.gridRows();
     auto& autoRepeatTrackSizes = isRowAxis ? style.gridAutoRepeatColumns() : style.gridAutoRepeatRows();
 
@@ -1167,7 +1168,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     }
 
     if (trackListIsEmpty && !isSubgrid)
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+        return isMasonry ? CSSValuePool::singleton().createIdentifierValue(CSSValueMasonry) : CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
 
@@ -1234,6 +1235,8 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
         list->append(repeatedValues);
     }, [&](const GridTrackEntrySubgrid&) {
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSubgrid));
+    }, [&](const GridTrackEntryMasonry) {
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueMasonry));
     });
 
     for (const auto& entry : computedTracks)

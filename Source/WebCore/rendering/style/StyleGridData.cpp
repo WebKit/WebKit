@@ -57,6 +57,8 @@ StyleGridData::StyleGridData()
     , m_autoRepeatRowsType(RenderStyle::initialGridAutoRepeatType())
     , m_subgridRows(false)
     , m_subgridColumns(false)
+    , m_masonryRows(false)
+    , m_masonryColumns(false)
 {
 }
 
@@ -90,19 +92,21 @@ inline StyleGridData::StyleGridData(const StyleGridData& o)
     , m_autoRepeatRowsType(o.m_autoRepeatRowsType)
     , m_subgridRows(o.m_subgridRows)
     , m_subgridColumns(o.m_subgridColumns)
+    , m_masonryRows(o.m_masonryRows)
+    , m_masonryColumns(o.m_masonryColumns)
 {
 }
 
 void StyleGridData::setRows(const GridTrackList& list)
 {
     m_rows = list;
-    computeCachedTrackData(m_rows, m_gridRows, m_namedGridRowLines, m_orderedNamedGridRowLines, m_gridAutoRepeatRows, m_autoRepeatNamedGridRowLines, m_autoRepeatOrderedNamedGridRowLines, m_autoRepeatRowsInsertionPoint, m_autoRepeatRowsType, m_subgridRows);
+    computeCachedTrackData(m_rows, m_gridRows, m_namedGridRowLines, m_orderedNamedGridRowLines, m_gridAutoRepeatRows, m_autoRepeatNamedGridRowLines, m_autoRepeatOrderedNamedGridRowLines, m_autoRepeatRowsInsertionPoint, m_autoRepeatRowsType, m_subgridRows, m_masonryRows);
 }
 
 void StyleGridData::setColumns(const GridTrackList& list)
 {
     m_columns = list;
-    computeCachedTrackData(m_columns, m_gridColumns, m_namedGridColumnLines, m_orderedNamedGridColumnLines, m_gridAutoRepeatColumns, m_autoRepeatNamedGridColumnLines, m_autoRepeatOrderedNamedGridColumnLines, m_autoRepeatColumnsInsertionPoint, m_autoRepeatColumnsType, m_subgridColumns);
+    computeCachedTrackData(m_columns, m_gridColumns, m_namedGridColumnLines, m_orderedNamedGridColumnLines, m_gridAutoRepeatColumns, m_autoRepeatNamedGridColumnLines, m_autoRepeatOrderedNamedGridColumnLines, m_autoRepeatColumnsInsertionPoint, m_autoRepeatColumnsType, m_subgridColumns, m_subgridColumns);
 }
 
 static void createGridLineNamesList(const Vector<String>& names, unsigned currentNamedGridLine, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines)
@@ -117,7 +121,7 @@ static void createGridLineNamesList(const Vector<String>& names, unsigned curren
     }
 }
 
-void StyleGridData::computeCachedTrackData(const GridTrackList& list, Vector<GridTrackSize>& sizes, NamedGridLinesMap& namedLines, OrderedNamedGridLinesMap& orderedNamedLines, Vector<GridTrackSize>& autoRepeatSizes, NamedGridLinesMap& autoRepeatNamedLines, OrderedNamedGridLinesMap& autoRepeatOrderedNamedLines, unsigned& autoRepeatInsertionPoint, AutoRepeatType& autoRepeatType, bool& subgrid)
+void StyleGridData::computeCachedTrackData(const GridTrackList& list, Vector<GridTrackSize>& sizes, NamedGridLinesMap& namedLines, OrderedNamedGridLinesMap& orderedNamedLines, Vector<GridTrackSize>& autoRepeatSizes, NamedGridLinesMap& autoRepeatNamedLines, OrderedNamedGridLinesMap& autoRepeatOrderedNamedLines, unsigned& autoRepeatInsertionPoint, AutoRepeatType& autoRepeatType, bool& subgrid, bool& masonry)
 {
     sizes.clear();
     namedLines.clear();
@@ -177,6 +181,8 @@ void StyleGridData::computeCachedTrackData(const GridTrackList& list, Vector<Gri
             currentNamedGridLine++;
     }, [&](const GridTrackEntrySubgrid&) {
         subgrid = true;
+    }, [&](const GridTrackEntryMasonry&) {
+        masonry = true;
     });
 
     for (const auto& entry : list)
@@ -184,7 +190,7 @@ void StyleGridData::computeCachedTrackData(const GridTrackList& list, Vector<Gri
 
     // The parser should have rejected any <track-list> without any <track-size> as
     // this is not conformant to the syntax.
-    ASSERT(!sizes.isEmpty() || !autoRepeatSizes.isEmpty() || subgrid);
+    ASSERT(!sizes.isEmpty() || !autoRepeatSizes.isEmpty() || subgrid || masonry);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const RepeatEntry& entry)
@@ -211,6 +217,8 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const GridTrackEntry& entry)
         ts << "repeat(" << repeat.type << ", " << repeat.list << ")";
     }, [&](const GridTrackEntrySubgrid&) {
         ts << "subgrid";
+    }, [&](const GridTrackEntryMasonry&) {
+        ts << "masonry";
     });
 
     std::visit(visitor, entry);

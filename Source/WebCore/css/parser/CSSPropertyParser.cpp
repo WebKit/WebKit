@@ -3934,6 +3934,8 @@ static RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange& r
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
+    if (context.masonryEnabled && range.peek().id() == CSSValueMasonry)
+        return consumeIdent(range);
     return consumeGridTrackList(range, context, GridTemplate);
 }
 

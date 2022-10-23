@@ -1412,6 +1412,7 @@ span
 // grid-template-{columns|rows}
 minmax
 subgrid
+masonry
 
 // grid-auto-flow
 auto-flow
