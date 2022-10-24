@@ -499,6 +499,61 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
     }
 };
 
+template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const std::array<T, size>& array)
+    {
+        for (auto& item : array)
+            encoder << item;
+    }
+
+    template<typename Decoder>
+    static std::optional<std::array<T, size>> decode(Decoder& decoder)
+    {
+        std::array<std::optional<T>, size> items;
+
+        for (auto& item : items) {
+            decoder >> item;
+            if (!item)
+                return std::nullopt;
+        }
+
+        return unwrapArray(WTFMove(items));
+    }
+
+private:
+    static std::array<T, size> unwrapArray(std::array<std::optional<T>, size>&& array)
+    {
+        return unwrapArrayHelper(WTFMove(array), std::make_index_sequence<size>());
+    }
+
+    template<size_t... index>
+    static std::array<T, size> unwrapArrayHelper(std::array<std::optional<T>, size>&& array, std::index_sequence<index...>)
+    {
+        return { WTFMove(*array[index])... };
+    }
+};
+
+template<typename Key, typename T, Key lastValue> struct ArgumentCoder<EnumeratedArray<Key, T, lastValue>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const EnumeratedArray<Key, T, lastValue>& array)
+    {
+        for (auto& item : array)
+            encoder << item;
+    }
+
+    template<typename Decoder>
+    static std::optional<EnumeratedArray<Key, T, lastValue>> decode(Decoder& decoder)
+    {
+        std::optional<typename EnumeratedArray<Key, T, lastValue>::UnderlyingType> array;
+        decoder >> array;
+        if (!array)
+            return std::nullopt;
+
+        return { WTFMove(*array) };
+    }
+};
+
 template<bool fixedSizeElements, typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder;
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder<false, T, inlineCapacity, OverflowHandler, minCapacity> {
