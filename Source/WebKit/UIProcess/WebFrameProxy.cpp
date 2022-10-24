@@ -346,4 +346,11 @@ void WebFrameProxy::addChildFrame(Ref<WebFrameProxy>&& child)
     m_childFrames.add(WTFMove(child));
 }
 
+void WebFrameProxy::swapToProcess(WebProcessProxy& process)
+{
+    ASSERT(!isMainFrame());
+    m_process = process;
+    // FIXME: Do more here.
+}
+
 } // namespace WebKit

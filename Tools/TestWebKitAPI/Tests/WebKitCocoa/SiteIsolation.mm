@@ -28,7 +28,9 @@
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
 
 namespace TestWebKitAPI {
@@ -41,7 +43,15 @@ TEST(SiteIsolation, ProcessIdentifiers)
     }, HTTPServer::Protocol::HttpsProxy);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+
+    auto configuration = server.httpsProxyConfiguration();
+    auto preferences = [configuration preferences];
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
+            [preferences _setEnabled:YES forExperimentalFeature:feature];
+    }
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = delegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [delegate waitForDidFinishNavigation];
@@ -51,8 +61,8 @@ TEST(SiteIsolation, ProcessIdentifiers)
         pid_t mainFramePid = mainFrame._processIdentifier;
         pid_t childFramePid = mainFrame.childFrames.firstObject._processIdentifier;
         EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_EQ(mainFramePid, childFramePid);
+        EXPECT_EQ(childFramePid, 0); // FIXME: The child frame should actually start its process.
+        EXPECT_NE(mainFramePid, childFramePid);
         done = true;
     }];
     Util::run(&done);
