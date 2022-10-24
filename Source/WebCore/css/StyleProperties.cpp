@@ -456,7 +456,7 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
         return;
     }
 
-    char prefix = '\0';
+    const char* prefix = "";
     switch (propertyID) {
     case CSSPropertyFontStyle:
         break; // No prefix.
@@ -469,19 +469,17 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
     case CSSPropertyFontVariantEastAsian:
     case CSSPropertyFontWeight:
     case CSSPropertyFontStretch:
-        prefix = ' ';
+        prefix = " ";
         break;
     case CSSPropertyLineHeight:
-        prefix = '/';
+        prefix = " / ";
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    if (prefix && !result.isEmpty())
-        result.append(prefix);
     String value = propertyAt(foundPropertyIndex).value()->cssText();
-    result.append(value);
+    result.append(result.isEmpty() ? "" : prefix, value);
     if (!commonValue.isNull() && commonValue != value)
         commonValue = String();
 }

@@ -18,7 +18,7 @@ line-height: 24px (original property was font)
 font-family: serif (original property was font)
 
 Font for 'normal 12px serif':
-font-style: normal (original property was font)
+font-style: normal (original property was font and property was implicitly set.)
 font-variant-caps: normal (original property was font and property was implicitly set.)
 font-weight: normal (original property was font and property was implicitly set.)
 font-stretch: normal (original property was font and property was implicitly set.)
@@ -27,8 +27,8 @@ line-height: normal (original property was font and property was implicitly set.
 font-family: serif (original property was font)
 
 Font for 'normal normal 12px serif':
-font-style: normal (original property was font)
-font-variant-caps: normal (original property was font)
+font-style: normal (original property was font and property was implicitly set.)
+font-variant-caps: normal (original property was font and property was implicitly set.)
 font-weight: normal (original property was font and property was implicitly set.)
 font-stretch: normal (original property was font and property was implicitly set.)
 font-size: 12px (original property was font)
@@ -36,9 +36,9 @@ line-height: normal (original property was font and property was implicitly set.
 font-family: serif (original property was font)
 
 Font for 'normal normal normal 12px serif':
-font-style: normal (original property was font)
-font-variant-caps: normal (original property was font)
-font-weight: normal (original property was font)
+font-style: normal (original property was font and property was implicitly set.)
+font-variant-caps: normal (original property was font and property was implicitly set.)
+font-weight: normal (original property was font and property was implicitly set.)
 font-stretch: normal (original property was font and property was implicitly set.)
 font-size: 12px (original property was font)
 line-height: normal (original property was font and property was implicitly set.)

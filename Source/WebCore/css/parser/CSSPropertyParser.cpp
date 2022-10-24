@@ -5376,10 +5376,12 @@ bool CSSPropertyParser::consumeFont(bool important)
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
     RefPtr<CSSPrimitiveValue> fontWeight;
     RefPtr<CSSPrimitiveValue> fontStretch;
-    while (!m_range.atEnd()) {
+    for (unsigned i = 0; i < 4 && !m_range.atEnd(); ++i) {
+        if (consumeIdent<CSSValueNormal>(m_range))
+            continue;
         if (!fontStyle && (fontStyle = consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton())))
             continue;
-        if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueNormal, CSSValueSmallCaps>(m_range)))
+        if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueSmallCaps>(m_range)))
             continue;
         if (!fontWeight && (fontWeight = consumeFontWeight(m_range)))
             continue;

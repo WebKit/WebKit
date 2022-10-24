@@ -1,10 +1,10 @@
 This tests platform specific system font styles. If any of the styles appear in monospace the test fails.
-caption: normal normal normal normal 13px/normal system-ui
-icon: normal normal normal normal 13px/normal system-ui
-menu: normal normal normal normal 13px/normal -apple-menu
-message-box: normal normal normal normal 13px/normal system-ui
-small-caption: normal normal normal normal 11px/normal system-ui
-status-bar: normal normal normal normal 10px/normal -apple-status-bar
--webkit-mini-control: normal normal normal normal 9px/normal system-ui
--webkit-small-control: normal normal normal normal 11px/normal system-ui
--webkit-control: normal normal normal normal 13px/normal system-ui
+caption: 13px system-ui
+icon: 13px system-ui
+menu: 13px -apple-menu
+message-box: 13px system-ui
+small-caption: 11px system-ui
+status-bar: 10px -apple-status-bar
+-webkit-mini-control: 9px system-ui
+-webkit-small-control: 11px system-ui
+-webkit-control: 13px system-ui

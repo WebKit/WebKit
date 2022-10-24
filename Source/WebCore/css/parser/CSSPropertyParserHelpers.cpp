@@ -4563,10 +4563,12 @@ std::optional<FontRaw> consumeFontRaw(CSSParserTokenRange& range, CSSParserMode 
 {
     FontRaw result;
 
-    while (!range.atEnd()) {
+    for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
+        if (consumeIdentRaw<CSSValueNormal>(range))
+            continue;
         if (!result.style && (result.style = consumeFontStyleRaw(range, parserMode)))
             continue;
-        if (!result.variantCaps && (result.variantCaps = consumeIdentRaw<CSSValueNormal, CSSValueSmallCaps>(range)))
+        if (!result.variantCaps && (result.variantCaps = consumeIdentRaw<CSSValueSmallCaps>(range)))
             continue;
         if (!result.weight && (result.weight = consumeFontWeightRaw(range)))
             continue;

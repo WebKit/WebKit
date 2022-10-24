@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -25,64 +25,63 @@ function computedFontCSSValue(fontString) {
     return cssValue.cssText;
 }
 
-shouldBe("computedFont('10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('10px SANS-SERIF')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('12px sans-serif')", "'normal normal normal normal 12px/normal sans-serif'");
-shouldBe("computedFont('12px  sans-serif')", "'normal normal normal normal 12px/normal sans-serif'");
-shouldBe("computedFont('10px sans-serif, sans-serif')", "'normal normal normal normal 10px/normal sans-serif, sans-serif'");
-shouldBe("computedFont('10px sans-serif, serif')", "'normal normal normal normal 10px/normal sans-serif, serif'");
-shouldBe("computedFont('12px ahem')", "'normal normal normal normal 12px/normal ahem'");
-shouldBe("computedFont('12px unlikely-font-name')", "'normal normal normal normal 12px/normal unlikely-font-name'");
-shouldBe("computedFont('100 10px sans-serif')", "'normal normal 100 normal 10px/normal sans-serif'");
-shouldBe("computedFont('200 10px sans-serif')", "'normal normal 200 normal 10px/normal sans-serif'");
-shouldBe("computedFont('300 10px sans-serif')", "'normal normal 300 normal 10px/normal sans-serif'");
-shouldBe("computedFont('400 10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('normal 10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('500 10px sans-serif')", "'normal normal 500 normal 10px/normal sans-serif'");
-shouldBe("computedFont('600 10px sans-serif')", "'normal normal 600 normal 10px/normal sans-serif'");
-shouldBe("computedFont('700 10px sans-serif')", "'normal normal bold normal 10px/normal sans-serif'");
-shouldBe("computedFont('bold 10px sans-serif')", "'normal normal bold normal 10px/normal sans-serif'");
-shouldBe("computedFont('800 10px sans-serif')", "'normal normal 800 normal 10px/normal sans-serif'");
-shouldBe("computedFont('900 10px sans-serif')", "'normal normal 900 normal 10px/normal sans-serif'");
-shouldBe("computedFont('italic 10px sans-serif')", "'italic normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('small-caps 10px sans-serif')", "'normal small-caps normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('italic small-caps 10px sans-serif')", "'italic small-caps normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('italic small-caps bold 10px sans-serif')", "'italic small-caps bold normal 10px/normal sans-serif'");
-shouldBe("computedFont('10px/100% sans-serif')", "'normal normal normal normal 10px/10px sans-serif'");
-shouldBe("computedFont('10px/100px sans-serif')", "'normal normal normal normal 10px/100px sans-serif'");
-shouldBe("computedFont('10px/normal sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFont('10px/normal sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
+shouldBe("computedFont('10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFont('10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFont('10px SANS-SERIF')", "'10px sans-serif'");
+shouldBe("computedFont('12px sans-serif')", "'12px sans-serif'");
+shouldBe("computedFont('12px  sans-serif')", "'12px sans-serif'");
+shouldBe("computedFont('10px sans-serif, sans-serif')", "'10px sans-serif, sans-serif'");
+shouldBe("computedFont('10px sans-serif, serif')", "'10px sans-serif, serif'");
+shouldBe("computedFont('12px ahem')", "'12px ahem'");
+shouldBe("computedFont('12px unlikely-font-name')", "'12px unlikely-font-name'");
+shouldBe("computedFont('100 10px sans-serif')", "'100 10px sans-serif'");
+shouldBe("computedFont('200 10px sans-serif')", "'200 10px sans-serif'");
+shouldBe("computedFont('300 10px sans-serif')", "'300 10px sans-serif'");
+shouldBe("computedFont('400 10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFont('normal 10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFont('500 10px sans-serif')", "'500 10px sans-serif'");
+shouldBe("computedFont('600 10px sans-serif')", "'600 10px sans-serif'");
+shouldBe("computedFont('700 10px sans-serif')", "'700 10px sans-serif'");
+shouldBe("computedFont('bold 10px sans-serif')", "'700 10px sans-serif'");
+shouldBe("computedFont('800 10px sans-serif')", "'800 10px sans-serif'");
+shouldBe("computedFont('900 10px sans-serif')", "'900 10px sans-serif'");
+shouldBe("computedFont('italic 10px sans-serif')", "'italic 10px sans-serif'");
+shouldBe("computedFont('small-caps 10px sans-serif')", "'small-caps 10px sans-serif'");
+shouldBe("computedFont('italic small-caps 10px sans-serif')", "'italic small-caps 10px sans-serif'");
+shouldBe("computedFont('italic small-caps bold 10px sans-serif')", "'italic small-caps 700 10px sans-serif'");
+shouldBe("computedFont('10px/100% sans-serif')", "'10px / 10px sans-serif'");
+shouldBe("computedFont('10px/100px sans-serif')", "'10px / 100px sans-serif'");
+shouldBe("computedFont('10px/normal sans-serif')", "'10px sans-serif'");
+shouldBe("computedFont('10px/normal sans-serif')", "'10px sans-serif'");
 
-shouldBe("computedFontCSSValue('10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('10px SANS-SERIF')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('12px sans-serif')", "'normal normal normal normal 12px/normal sans-serif'");
-shouldBe("computedFontCSSValue('12px  sans-serif')", "'normal normal normal normal 12px/normal sans-serif'");
-shouldBe("computedFontCSSValue('10px sans-serif, sans-serif')", "'normal normal normal normal 10px/normal sans-serif, sans-serif'");
-shouldBe("computedFontCSSValue('10px sans-serif, serif')", "'normal normal normal normal 10px/normal sans-serif, serif'");
-shouldBe("computedFontCSSValue('12px ahem')", "'normal normal normal normal 12px/normal ahem'");
-shouldBe("computedFontCSSValue('12px unlikely-font-name')", "'normal normal normal normal 12px/normal unlikely-font-name'");
-shouldBe("computedFontCSSValue('100 10px sans-serif')", "'normal normal 100 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('200 10px sans-serif')", "'normal normal 200 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('300 10px sans-serif')", "'normal normal 300 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('400 10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('normal 10px sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('500 10px sans-serif')", "'normal normal 500 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('600 10px sans-serif')", "'normal normal 600 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('700 10px sans-serif')", "'normal normal bold normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('bold 10px sans-serif')", "'normal normal bold normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('800 10px sans-serif')", "'normal normal 800 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('900 10px sans-serif')", "'normal normal 900 normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('italic 10px sans-serif')", "'italic normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('small-caps 10px sans-serif')", "'normal small-caps normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('italic small-caps 10px sans-serif')", "'italic small-caps normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('italic small-caps bold 10px sans-serif')", "'italic small-caps bold normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('10px/100% sans-serif')", "'normal normal normal normal 10px/10px sans-serif'");
-shouldBe("computedFontCSSValue('10px/100px sans-serif')", "'normal normal normal normal 10px/100px sans-serif'");
-shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
-shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'normal normal normal normal 10px/normal sans-serif'");
+shouldBe("computedFontCSSValue('10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFontCSSValue('10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFontCSSValue('10px SANS-SERIF')", "'10px sans-serif'");
+shouldBe("computedFontCSSValue('12px sans-serif')", "'12px sans-serif'");
+shouldBe("computedFontCSSValue('12px  sans-serif')", "'12px sans-serif'");
+shouldBe("computedFontCSSValue('10px sans-serif, sans-serif')", "'10px sans-serif, sans-serif'");
+shouldBe("computedFontCSSValue('10px sans-serif, serif')", "'10px sans-serif, serif'");
+shouldBe("computedFontCSSValue('12px ahem')", "'12px ahem'");
+shouldBe("computedFontCSSValue('12px unlikely-font-name')", "'12px unlikely-font-name'");
+shouldBe("computedFontCSSValue('100 10px sans-serif')", "'100 10px sans-serif'");
+shouldBe("computedFontCSSValue('200 10px sans-serif')", "'200 10px sans-serif'");
+shouldBe("computedFontCSSValue('300 10px sans-serif')", "'300 10px sans-serif'");
+shouldBe("computedFontCSSValue('400 10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFontCSSValue('normal 10px sans-serif')", "'10px sans-serif'");
+shouldBe("computedFontCSSValue('500 10px sans-serif')", "'500 10px sans-serif'");
+shouldBe("computedFontCSSValue('600 10px sans-serif')", "'600 10px sans-serif'");
+shouldBe("computedFontCSSValue('700 10px sans-serif')", "'700 10px sans-serif'");
+shouldBe("computedFontCSSValue('bold 10px sans-serif')", "'700 10px sans-serif'");
+shouldBe("computedFontCSSValue('800 10px sans-serif')", "'800 10px sans-serif'");
+shouldBe("computedFontCSSValue('900 10px sans-serif')", "'900 10px sans-serif'");
+shouldBe("computedFontCSSValue('italic 10px sans-serif')", "'italic 10px sans-serif'");
+shouldBe("computedFontCSSValue('small-caps 10px sans-serif')", "'small-caps 10px sans-serif'");
+shouldBe("computedFontCSSValue('italic small-caps 10px sans-serif')", "'italic small-caps 10px sans-serif'");
+shouldBe("computedFontCSSValue('italic small-caps bold 10px sans-serif')", "'italic small-caps 700 10px sans-serif'");
+shouldBe("computedFontCSSValue('10px/100% sans-serif')", "'10px / 10px sans-serif'");
+shouldBe("computedFontCSSValue('10px/100px sans-serif')", "'10px / 100px sans-serif'");
+shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'10px sans-serif'");
+shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'10px sans-serif'");
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

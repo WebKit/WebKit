@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <div id="testDiv""></div>
 <script>
 description("Tests assigning a calculated value to 'font' CSS property.");
@@ -10,8 +10,7 @@ var testDiv = document.getElementById("testDiv");
 shouldBeEmptyString("testDiv.style['font']");
 evalAndLog("testDiv.style['font'] = 'italic small-caps calc(100 * 9) 12px arial'");
 shouldBeEqualToString("testDiv.style['font']", "italic small-caps 900 12px arial");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('font')", "italic small-caps 900 normal 12px/normal arial");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('font')", "italic small-caps 900 12px arial");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
