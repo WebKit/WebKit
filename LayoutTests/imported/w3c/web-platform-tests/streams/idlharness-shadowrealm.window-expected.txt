@@ -1,5 +1,4 @@
 
-PASS setup
 PASS ReadableStreamDefaultReader includes ReadableStreamGenericReader: member names are unique
 PASS ReadableStreamBYOBReader includes ReadableStreamGenericReader: member names are unique
 PASS ReadableStream interface: existence and properties of interface object
@@ -14,7 +13,7 @@ FAIL ReadableStream interface: operation getReader(optional ReadableStreamGetRea
 FAIL ReadableStream interface: operation pipeThrough(ReadableWritablePair, optional StreamPipeOptions) assert_true: property should be enumerable expected true got false
 FAIL ReadableStream interface: operation pipeTo(WritableStream, optional StreamPipeOptions) assert_true: property should be enumerable expected true got false
 FAIL ReadableStream interface: operation tee() assert_true: property should be enumerable expected true got false
-FAIL ReadableStream interface: async iterable<any> undefined is not an object (evaluating 'iteratorDesc.writable')
+FAIL ReadableStream interface: async iterable<any> undefined is not an object (evaluating 'desc.value')
 FAIL ReadableStreamDefaultReader interface: existence and properties of interface object assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface object length assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface object name assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing

@@ -1,5 +1,4 @@
 
-PASS setup
 PASS Partial interface Window: original interface defined
 PASS Partial interface Window: member names are unique
 PASS Partial interface Document: member names are unique
