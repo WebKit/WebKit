@@ -2184,12 +2184,18 @@ static Ref<CSSValue> fontFamily(const RenderStyle& style)
     return fontFamilyList(style);
 }
 
-static RefPtr<CSSPrimitiveValue> optionalLineHeight(const RenderStyle& style)
+static RefPtr<CSSPrimitiveValue> optionalLineHeight(const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
     Length length = style.lineHeight();
     if (length.isNegative())
         return nullptr;
     if (length.isPercent()) {
+        // BuilderConverter::convertLineHeight() will convert a percentage value to a fixed value,
+        // and a number value to a percentage value. To be able to roundtrip a number value, we thus
+        // look for a percent value and convert it back to a number.
+        if (valueType == ComputedStyleExtractor::PropertyValueType::Computed)
+            return CSSValuePool::singleton().createValue(length.value() / 100, CSSUnitType::CSS_NUMBER);
+
         // This is imperfect, because it doesn't include the zoom factor and the real computation
         // for how high to be in pixels does include things like minimum font size and the zoom factor.
         // On the other hand, since font-size doesn't include the zoom factor, we really can't do
@@ -2199,9 +2205,9 @@ static RefPtr<CSSPrimitiveValue> optionalLineHeight(const RenderStyle& style)
     return zoomAdjustedPixelValue(floatValueForLength(length, 0), style);
 }
 
-static Ref<CSSPrimitiveValue> lineHeight(const RenderStyle& style)
+static Ref<CSSPrimitiveValue> lineHeight(const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
-    if (auto lineHeight = optionalLineHeight(style))
+    if (auto lineHeight = optionalLineHeight(style, valueType))
         return lineHeight.releaseNonNull();
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
 }
@@ -3156,7 +3162,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyFont: {
         auto computedFont = fontShorthandValueForSelectionProperties(style.fontDescription());
         computedFont->size = fontSize(style);
-        computedFont->lineHeight = optionalLineHeight(style);
+        computedFont->lineHeight = optionalLineHeight(style, valueType);
         computedFont->family = fontFamilyList(style);
         return computedFont;
     }
@@ -3308,7 +3314,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createIdentifierValue(CSSValueNone);
         return cssValuePool.createValue(style.lineClamp().value(), style.lineClamp().isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_INTEGER);
     case CSSPropertyLineHeight:
-        return lineHeight(style);
+        return lineHeight(style, valueType);
     case CSSPropertyListStyleImage:
         if (style.listStyleImage())
             return style.listStyleImage()->computedStyleValue(style);
