@@ -82,6 +82,21 @@ list(APPEND WebCore_LIBRARIES
     WPE::libwpe
 )
 
+if (ENABLE_GAMEPAD)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/gamepad/libwpe"
+    )
+
+    list(APPEND WebCore_SOURCES
+        platform/gamepad/libwpe/GamepadLibWPE.cpp
+        platform/gamepad/libwpe/GamepadProviderLibWPE.cpp
+    )
+
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/gamepad/libwpe/GamepadProviderLibWPE.h
+    )
+endif ()
+
 # Find the extras needed to copy for EGL besides the libraries
 set(EGL_EXTRAS)
 foreach (EGL_EXTRA_NAME ${EGL_EXTRA_NAMES})

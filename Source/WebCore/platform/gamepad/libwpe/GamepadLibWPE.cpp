@@ -25,16 +25,16 @@
  */
 
 #include "config.h"
-#include "WPEGamepad.h"
+#include "GamepadLibWPE.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && USE(LIBWPE)
 
-#include "WPEGamepadProvider.h"
+#include "GamepadProviderLibWPE.h"
 #include <wpe/wpe.h>
 
 namespace WebCore {
 
-WPEGamepad::WPEGamepad(struct wpe_gamepad_provider* provider, uintptr_t gamepadId, unsigned index)
+GamepadLibWPE::GamepadLibWPE(struct wpe_gamepad_provider* provider, uintptr_t gamepadId, unsigned index)
     : PlatformGamepad(index)
     , m_buttonValues(WPE_GAMEPAD_BUTTON_COUNT)
     , m_axisValues(WPE_GAMEPAD_AXIS_COUNT)
@@ -50,12 +50,12 @@ WPEGamepad::WPEGamepad(struct wpe_gamepad_provider* provider, uintptr_t gamepadI
     static const struct wpe_gamepad_client_interface s_client = {
         // button_event
         [](void* data, enum wpe_gamepad_button button, bool pressed) {
-            auto& self = *static_cast<WPEGamepad*>(data);
+            auto& self = *static_cast<GamepadLibWPE*>(data);
             self.buttonPressedOrReleased(static_cast<unsigned>(button), pressed);
         },
         // axis_event
         [](void* data, enum wpe_gamepad_axis axis, double value) {
-            auto& self = *static_cast<WPEGamepad*>(data);
+            auto& self = *static_cast<GamepadLibWPE*>(data);
             self.absoluteAxisChanged(static_cast<unsigned>(axis), value);
         },
         nullptr, nullptr, nullptr,
@@ -63,27 +63,27 @@ WPEGamepad::WPEGamepad(struct wpe_gamepad_provider* provider, uintptr_t gamepadI
     wpe_gamepad_set_client(m_gamepad.get(), &s_client, this);
 }
 
-WPEGamepad::~WPEGamepad()
+GamepadLibWPE::~GamepadLibWPE()
 {
     wpe_gamepad_set_client(m_gamepad.get(), nullptr, nullptr);
 }
 
-void WPEGamepad::buttonPressedOrReleased(unsigned button, bool pressed)
+void GamepadLibWPE::buttonPressedOrReleased(unsigned button, bool pressed)
 {
     m_lastUpdateTime = MonotonicTime::now();
     m_buttonValues[button].setValue(pressed ? 1.0 : 0.0);
 
-    WPEGamepadProvider::singleton().scheduleInputNotification(*this, pressed ? WPEGamepadProvider::ShouldMakeGamepadsVisible::Yes : WPEGamepadProvider::ShouldMakeGamepadsVisible::No);
+    GamepadProviderLibWPE::singleton().scheduleInputNotification(*this, pressed ? GamepadProviderLibWPE::ShouldMakeGamepadsVisible::Yes : GamepadProviderLibWPE::ShouldMakeGamepadsVisible::No);
 }
 
-void WPEGamepad::absoluteAxisChanged(unsigned axis, double value)
+void GamepadLibWPE::absoluteAxisChanged(unsigned axis, double value)
 {
     m_lastUpdateTime = MonotonicTime::now();
     m_axisValues[axis].setValue(value);
 
-    WPEGamepadProvider::singleton().scheduleInputNotification(*this, WPEGamepadProvider::ShouldMakeGamepadsVisible::No);
+    GamepadProviderLibWPE::singleton().scheduleInputNotification(*this, GamepadProviderLibWPE::ShouldMakeGamepadsVisible::No);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && USE(LIBWPE)

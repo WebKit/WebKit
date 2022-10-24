@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && USE(LIBWPE)
 
 #include "GamepadProvider.h"
 #include <wtf/HashMap.h>
@@ -38,16 +38,16 @@ struct wpe_view_backend;
 
 namespace WebCore {
 
-class WPEGamepad;
+class GamepadLibWPE;
 
-class WPEGamepadProvider final : public GamepadProvider {
-    WTF_MAKE_NONCOPYABLE(WPEGamepadProvider);
-    friend class NeverDestroyed<WPEGamepadProvider>;
+class GamepadProviderLibWPE final : public GamepadProvider {
+    WTF_MAKE_NONCOPYABLE(GamepadProviderLibWPE);
+    friend class NeverDestroyed<GamepadProviderLibWPE>;
 
 public:
-    static WPEGamepadProvider& singleton();
+    static GamepadProviderLibWPE& singleton();
 
-    virtual ~WPEGamepadProvider();
+    virtual ~GamepadProviderLibWPE();
 
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
@@ -55,32 +55,32 @@ public:
 
     enum class ShouldMakeGamepadsVisible : bool { No,
         Yes };
-    void scheduleInputNotification(WPEGamepad&, ShouldMakeGamepadsVisible);
+    void scheduleInputNotification(GamepadLibWPE&, ShouldMakeGamepadsVisible);
 
     struct wpe_view_backend* inputView();
 
 private:
-    WPEGamepadProvider();
+    GamepadProviderLibWPE();
 
     void gamepadConnected(unsigned);
     void gamepadDisconnected(unsigned);
-    std::unique_ptr<WPEGamepad> removeGamepadForId(unsigned);
+    std::unique_ptr<GamepadLibWPE> removeGamepadForId(unsigned);
 
     unsigned indexForNewlyConnectedDevice();
     void initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
     Vector<PlatformGamepad*> m_gamepadVector;
-    HashMap<unsigned, std::unique_ptr<WPEGamepad>> m_gamepadMap;
+    HashMap<unsigned, std::unique_ptr<GamepadLibWPE>> m_gamepadMap;
     bool m_initialGamepadsConnected { false };
 
     std::unique_ptr<struct wpe_gamepad_provider, void (*)(struct wpe_gamepad_provider*)> m_provider;
     struct wpe_gamepad* m_lastActiveGamepad { nullptr };
 
-    RunLoop::Timer<WPEGamepadProvider> m_initialGamepadsConnectedTimer;
-    RunLoop::Timer<WPEGamepadProvider> m_inputNotificationTimer;
+    RunLoop::Timer<GamepadProviderLibWPE> m_initialGamepadsConnectedTimer;
+    RunLoop::Timer<GamepadProviderLibWPE> m_inputNotificationTimer;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && USE(LIBWPE)
