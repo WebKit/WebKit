@@ -260,62 +260,67 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, const CSSPar
     return values;
 }
 
-RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSValuePool& pool)
-{
-    if (auto result = CSSPropertyParserHelpers::consumeFontStyleRaw(range, cssParserMode)) {
 #if ENABLE(VARIATION_FONTS)
-        if (result->style == CSSValueOblique && result->angle) {
-            return CSSFontStyleValue::create(pool.createIdentifierValue(CSSValueOblique),
-                pool.createValue(result->angle->value, result->angle->type));
-        }
-#endif
-        return CSSFontStyleValue::create(pool.createIdentifierValue(result->style));
-    }
-    return nullptr;
+
+static RefPtr<CSSPrimitiveValue> consumeFontStyleAngle(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
+{
+    auto rangeAfterAngle = range;
+    auto angle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(rangeAfterAngle, mode, pool);
+    if (!angle)
+        return nullptr;
+    if (!angle->isCalculated() && !CSSPropertyParserHelpers::isFontStyleAngleInRange(angle->doubleValue(CSSUnitType::CSS_DEG)))
+        return nullptr;
+    range = rangeAfterAngle;
+    return angle;
 }
 
-#if ENABLE(VARIATION_FONTS)
-static RefPtr<CSSPrimitiveValue> consumeFontStyleKeywordValue(CSSParserTokenRange& range, CSSValuePool& pool)
+RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
 {
-    return CSSPropertyParserHelpers::consumeIdentWorkerSafe<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range, pool);
-}
-
-RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSValuePool& pool)
-{
-    auto keyword = consumeFontStyleKeywordValue(range, pool);
+    auto keyword = CSSPropertyParserHelpers::consumeIdentWorkerSafe<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range, pool);
     if (!keyword)
         return nullptr;
 
     if (keyword->valueID() != CSSValueOblique || range.atEnd())
         return CSSFontStyleRangeValue::create(keyword.releaseNonNull());
 
-    // FIXME: This should probably not allow the unitless zero.
-    if (auto firstAngle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(range, cssParserMode, pool, CSSPropertyParserHelpers::UnitlessQuirk::Forbid, CSSPropertyParserHelpers::UnitlessZeroQuirk::Allow)) {
-        auto firstAngleInDegrees = firstAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!CSSPropertyParserHelpers::isFontStyleAngleInRange(firstAngleInDegrees))
-            return nullptr;
-        if (range.atEnd()) {
-            auto result = CSSValueList::createSpaceSeparated();
-            result->append(firstAngle.releaseNonNull());
-            return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
-        }
+    auto rangeAfterAngles = range;
+    auto firstAngle = consumeFontStyleAngle(rangeAfterAngles, mode, pool);
+    if (!firstAngle)
+        return nullptr;
 
-        // FIXME: This should probably not allow the unitless zero.
-        auto secondAngle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(range, cssParserMode, pool, CSSPropertyParserHelpers::UnitlessQuirk::Forbid, CSSPropertyParserHelpers::UnitlessZeroQuirk::Allow);
+    auto result = CSSValueList::createSpaceSeparated();
+    result->append(firstAngle.releaseNonNull());
+
+    if (!rangeAfterAngles.atEnd()) {
+        auto secondAngle = consumeFontStyleAngle(rangeAfterAngles, mode, pool);
         if (!secondAngle)
             return nullptr;
-        auto secondAngleInDegrees = secondAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!CSSPropertyParserHelpers::isFontStyleAngleInRange(secondAngleInDegrees))
-            return nullptr;
-        auto result = CSSValueList::createSpaceSeparated();
-        result->append(firstAngle.releaseNonNull());
         result->append(secondAngle.releaseNonNull());
-        return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
     }
 
-    return nullptr;
+    range = rangeAfterAngles;
+    return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
 }
+
 #endif
+
+RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
+{
+    auto keyword = CSSPropertyParserHelpers::consumeIdentWorkerSafe<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range, pool);
+    if (!keyword)
+        return nullptr;
+
+#if ENABLE(VARIATION_FONTS)
+    if (keyword->valueID() == CSSValueOblique && !range.atEnd()) {
+        if (auto angle = consumeFontStyleAngle(range, mode, pool))
+            return CSSFontStyleValue::create(keyword.releaseNonNull(), angle.releaseNonNull());
+    }
+#else
+    UNUSED_PARAM(mode);
+#endif
+
+    return CSSFontStyleValue::create(keyword.releaseNonNull());
+}
 
 static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range, CSSValuePool& pool)
 {

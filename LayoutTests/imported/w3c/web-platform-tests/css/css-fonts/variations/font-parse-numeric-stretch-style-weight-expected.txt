@@ -18,7 +18,7 @@ PASS Valid value oblique for font property style used for styling.
 PASS Valid value oblique 50deg for font property style used for styling.
 PASS Valid value oblique -90deg for font property style used for styling.
 PASS Valid value oblique 90deg for font property style used for styling.
-FAIL Valid value oblique calc(90deg + 20deg) for font property style used for styling. assert_true: expected true got false
+PASS Valid value oblique calc(90deg + 20deg) for font property style used for styling.
 PASS Valid value oblique calc(30deg + 20deg) for font property style used for styling.
 PASS Invalid value 100 400 for font property weight used for styling.
 PASS Invalid value 100% 110% for font property stretch used for styling.
@@ -74,9 +74,7 @@ PASS Value 50% 0 must not be accepted as stretch in @font-face.
 PASS Value oblique 100deg must not be accepted as style in @font-face.
 PASS Value oblique italic must not be accepted as style in @font-face.
 PASS Value oblique -91deg must not be accepted as style in @font-face.
-FAIL Value oblique 0 must not be accepted as style in @font-face. assert_throws_dom: Value must not be accepted as weight value. function "() => {
-              fontFace[theProperty] = faceTest;
-            }" did not throw
+PASS Value oblique 0 must not be accepted as style in @font-face.
 PASS Value oblique 10 must not be accepted as style in @font-face.
 PASS Value iiitalic must not be accepted as style in @font-face.
 PASS Value 90deg must not be accepted as style in @font-face.

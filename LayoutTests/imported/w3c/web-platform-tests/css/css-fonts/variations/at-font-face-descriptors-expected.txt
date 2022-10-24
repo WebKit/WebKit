@@ -71,8 +71,8 @@ PASS font-style(valid): 'oblique' followed by zero degrees: oblique 0deg
 FAIL font-style(valid): 'oblique' followed by default 20deg angle: oblique 20deg assert_equals: Unexpected resulting value. expected "oblique" but got "oblique 20deg"
 PASS font-style(valid): 'oblique' followed by maxumum 90 degree angle: oblique 90deg
 PASS font-style(valid): 'oblique' followed by minimum -90 degree angle: oblique -90deg
-FAIL font-style(valid): 'oblique' followed by calc with out of range value (should be clamped): oblique calc(91deg) assert_not_equals: Valid value should be accepted. got disallowed value ""
-FAIL font-style(valid): 'oblique' followed by calc with out of range value (should be clamped): oblique calc(-91deg) assert_not_equals: Valid value should be accepted. got disallowed value ""
+FAIL font-style(valid): 'oblique' followed by calc with out of range value (should be clamped): oblique calc(91deg) assert_equals: Unexpected resulting value. expected "oblique 90deg" but got "oblique calc(91deg)"
+FAIL font-style(valid): 'oblique' followed by calc with out of range value (should be clamped): oblique calc(-91deg) assert_equals: Unexpected resulting value. expected "oblique -90deg" but got "oblique calc(-91deg)"
 FAIL font-style(valid): 'oblique' followed by  angle in radians: oblique 0rad assert_equals: Unexpected resulting value. expected "oblique 0deg" but got "oblique 0rad"
 PASS font-style(invalid): 'oblique' followed by unit-less number: oblique 20
 PASS font-style(invalid): 'oblique' followed by non-angle: oblique 20px

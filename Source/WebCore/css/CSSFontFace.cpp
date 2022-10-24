@@ -246,34 +246,26 @@ void CSSFontFace::setStretch(CSSValue& style)
 
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
-    if (value.isFontStyleValue()) {
-        auto result = Style::BuilderConverter::convertFontStyleFromValue(value);
-        return { result.value_or(normalItalicValue()), result.value_or(normalItalicValue()) };
-    }
+    if (value.isFontStyleValue())
+        return FontSelectionRange { Style::BuilderConverter::convertFontStyleFromValue(value).value_or(normalItalicValue()) };
 
-    ASSERT(value.isFontStyleRangeValue());
     auto& rangeValue = downcast<CSSFontStyleRangeValue>(value);
-    ASSERT(rangeValue.fontStyleValue->isValueID());
-    auto valueID = rangeValue.fontStyleValue->valueID();
+    auto keyword = rangeValue.fontStyleValue->valueID();
     if (!rangeValue.obliqueValues) {
-        if (valueID == CSSValueNormal)
-            return { normalItalicValue(), normalItalicValue() };
-        ASSERT(valueID == CSSValueItalic || valueID == CSSValueOblique);
-        return { italicValue(), italicValue() };
+        if (keyword == CSSValueNormal)
+            return FontSelectionRange { normalItalicValue() };
+        ASSERT(keyword == CSSValueItalic || keyword == CSSValueOblique);
+        return FontSelectionRange { italicValue() };
     }
-    ASSERT(valueID == CSSValueOblique);
+    ASSERT(keyword == CSSValueOblique);
     auto length = rangeValue.obliqueValues->length();
-    if (length == 1) {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(0));
-        FontSelectionValue result(primitiveValue.value<float>(CSSUnitType::CSS_DEG));
-        return { result, result };
-    }
-    ASSERT(length == 2);
-    auto& primitiveValue1 = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(0));
-    auto& primitiveValue2 = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(1));
-    FontSelectionValue result1(primitiveValue1.value<float>(CSSUnitType::CSS_DEG));
-    FontSelectionValue result2(primitiveValue2.value<float>(CSSUnitType::CSS_DEG));
-    return { result1, result2 };
+    ASSERT(length == 1 || length == 2);
+    auto angleAtIndex = [&] (size_t index) {
+        return Style::BuilderConverter::convertFontStyleAngle(*rangeValue.obliqueValues->itemWithoutBoundsCheck(index));
+    };
+    if (length == 1)
+        return FontSelectionRange { angleAtIndex(0) };
+    return { angleAtIndex(0), angleAtIndex(1) };
 }
 
 void CSSFontFace::setStyle(CSSValue& style)
