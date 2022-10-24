@@ -151,7 +151,7 @@ static inline float parentTextZoomFactor(Frame* frame)
 }
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient)
-    : AbstractFrame(page, FrameIdentifier::generate(), ownerElement)
+    : AbstractFrame(page, FrameIdentifier::generate(), ownerElement ? ownerElement->document().frame() : nullptr)
     , m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_settings(&page.settings())
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
