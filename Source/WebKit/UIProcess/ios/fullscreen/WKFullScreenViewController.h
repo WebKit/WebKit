@@ -45,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)invalidate;
 - (void)showUI;
 - (void)hideUI;
+- (void)showBanner;
+- (void)hideBanner;
 - (void)videoControlsManagerDidChange;
 - (void)setAnimatingViewAlpha:(CGFloat)alpha;
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;

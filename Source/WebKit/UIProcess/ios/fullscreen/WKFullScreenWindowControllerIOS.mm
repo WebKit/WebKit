@@ -498,6 +498,8 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
 
     self._webView = webView;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
+
     return self;
 }
 
@@ -733,6 +735,8 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
             manager->didEnterFullScreen();
             manager->setAnimatingFullScreen(false);
             page->setSuppressVisibilityUpdates(false);
+
+            [_fullscreenViewController showBanner];
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
             configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, [_window frame].size);
@@ -1295,6 +1299,11 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
     [_interactiveDismissTransitionCoordinator updateInteractiveTransition:progress withScale:scale andTranslation:CGSizeMake(translation.x, translation.y)];
 }
 #endif // ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+
+- (void)_applicationDidBecomeActive:(NSNotification*)notification
+{
+    [_fullscreenViewController showBanner];
+}
 
 @end
 
