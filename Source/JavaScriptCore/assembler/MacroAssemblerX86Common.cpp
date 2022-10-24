@@ -32,7 +32,7 @@
 #include <wtf/InlineASM.h>
 
 #if OS(DARWIN)
-#include <sys/sysctl.h>
+#include <machine/cpu_capabilities.h>
 #endif
 
 #if COMPILER(MSVC)
@@ -802,6 +802,15 @@ void MacroAssemblerX86Common::collectCPUFeatures()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+#if OS(DARWIN)
+        uint64_t capabilities = *reinterpret_cast<volatile const uint64_t*>(_COMM_PAGE_CPU_CAPABILITIES64);
+        s_sse4_1CheckState = (capabilities & kHasSSE4_1) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_sse4_2CheckState = (capabilities & kHasSSE4_2) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_popcntCheckState = (capabilities & kHasSSE4_2) ? CPUIDCheckState::Set : CPUIDCheckState::Clear; // POPCNT is part of SSE4.2.
+        s_avxCheckState = (capabilities & kHasAVX1_0) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_bmi1CheckState = (capabilities & kHasBMI1) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_lzcntCheckState = (capabilities & kHasBMI1) ? CPUIDCheckState::Set : CPUIDCheckState::Clear; // LZCNT is part of BMI1.
+#else
         {
             CPUID cpuid = getCPUID(0x1);
             s_sse4_1CheckState = (cpuid[2] & (1 << 19)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
@@ -809,23 +818,15 @@ void MacroAssemblerX86Common::collectCPUFeatures()
             s_popcntCheckState = (cpuid[2] & (1 << 23)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_avxCheckState = (cpuid[2] & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
-#if OS(DARWIN)
-        {
-            uint32_t val = 0;
-            size_t valSize = sizeof(val);
-            int rc = sysctlbyname("hw.optional.bmi1", &val, &valSize, nullptr, 0);
-            s_bmi1CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-        }
-#else
         {
             CPUID cpuid = getCPUID(0x7);
             s_bmi1CheckState = (cpuid[2] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
-#endif
         {
             CPUID cpuid = getCPUID(0x80000001);
             s_lzcntCheckState = (cpuid[2] & (1 << 5)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
+#endif
     });
 }
 
