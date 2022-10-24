@@ -28,11 +28,75 @@
 #include "StyleResolver.h"
 
 namespace WebCore {
-    
-StyleGeneratedImage::StyleGeneratedImage(Type type, bool fixedSize)
+
+static const Seconds timeToKeepCachedGeneratedImages { 3_s };
+
+// MARK: - CachedGeneratedImage
+
+class StyleGeneratedImage::CachedGeneratedImage {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    CachedGeneratedImage(StyleGeneratedImage&, FloatSize, GeneratedImage&);
+    GeneratedImage& image() const { return m_image; }
+    void puntEvictionTimer() { m_evictionTimer.restart(); }
+
+private:
+    void evictionTimerFired();
+
+    StyleGeneratedImage& m_owner;
+    const FloatSize m_size;
+    const Ref<GeneratedImage> m_image;
+    DeferrableOneShotTimer m_evictionTimer;
+};
+
+inline StyleGeneratedImage::CachedGeneratedImage::CachedGeneratedImage(StyleGeneratedImage& owner, FloatSize size, GeneratedImage& image)
+    : m_owner(owner)
+    , m_size(size)
+    , m_image(image)
+    , m_evictionTimer(*this, &StyleGeneratedImage::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImages)
+{
+    m_evictionTimer.restart();
+}
+
+void StyleGeneratedImage::CachedGeneratedImage::evictionTimerFired()
+{
+    // NOTE: This is essentially a "delete this", the object is no longer valid after this line.
+    m_owner.evictCachedGeneratedImage(m_size);
+}
+
+// MARK: - StyleGeneratedImage.
+
+StyleGeneratedImage::StyleGeneratedImage(StyleImage::Type type, bool fixedSize)
     : StyleImage { type }
     , m_fixedSize { fixedSize }
 {
+}
+
+StyleGeneratedImage::~StyleGeneratedImage() = default;
+
+GeneratedImage* StyleGeneratedImage::cachedImageForSize(FloatSize size)
+{
+    if (size.isEmpty())
+        return nullptr;
+
+    auto* cachedGeneratedImage = m_images.get(size);
+    if (!cachedGeneratedImage)
+        return nullptr;
+
+    cachedGeneratedImage->puntEvictionTimer();
+    return &cachedGeneratedImage->image();
+}
+
+void StyleGeneratedImage::saveCachedImageForSize(FloatSize size, GeneratedImage& image)
+{
+    ASSERT(!m_images.contains(size));
+    m_images.add(size, makeUnique<CachedGeneratedImage>(*this, size, image));
+}
+
+void StyleGeneratedImage::evictCachedGeneratedImage(FloatSize size)
+{
+    ASSERT(m_images.contains(size));
+    m_images.remove(size);
 }
 
 FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
@@ -63,10 +127,39 @@ FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float mu
 void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     // At a zoom level of 1 the image is guaranteed to have a device pixel size.
-    FloatSize size = floorSizeToDevicePixels(LayoutSize(imageSize(renderer, 1)), renderer ? renderer->document().deviceScaleFactor() : 1);
+    FloatSize size = floorSizeToDevicePixels(LayoutSize(this->imageSize(renderer, 1)), renderer ? renderer->document().deviceScaleFactor() : 1);
     intrinsicWidth = Length(size.width(), LengthType::Fixed);
     intrinsicHeight = Length(size.height(), LengthType::Fixed);
     intrinsicRatio = size;
 }
 
+// MARK: Client support.
+
+void StyleGeneratedImage::addClient(RenderElement& renderer)
+{
+    if (m_clients.isEmpty())
+        ref();
+
+    m_clients.add(&renderer);
+
+    this->didAddClient(renderer);
 }
+
+void StyleGeneratedImage::removeClient(RenderElement& renderer)
+{
+    ASSERT(m_clients.contains(&renderer));
+    if (!m_clients.remove(&renderer))
+        return;
+
+    this->didRemoveClient(renderer);
+
+    if (m_clients.isEmpty())
+        deref();
+}
+
+bool StyleGeneratedImage::hasClient(RenderElement& renderer) const
+{
+    return m_clients.contains(&renderer);
+}
+
+} // namespace WebCore

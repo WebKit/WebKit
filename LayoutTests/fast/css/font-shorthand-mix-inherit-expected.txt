@@ -1,12 +1,12 @@
 Test for WebKit bug 20181 : font shorthand with inherit keyword incorrectly parsed and rendered
 
-PASS setFontTest("12pt/14pt sans-serif") is "12pt/14pt sans-serif"
+PASS setFontTest("12pt/14pt sans-serif") is "12pt / 14pt sans-serif"
 PASS setFontTest("inherit") is "inherit"
 PASS setFontTest("") is ""
 PASS setFontTest("12pt/14pt inherit") is ""
-PASS setFontTest("12pt/14pt bold inherit") is "12pt/14pt \"bold inherit\""
-PASS setFontTest("italic 12pt/14pt bold inherit") is "italic 12pt/14pt \"bold inherit\""
-PASS setFontTest("italic 12pt/14pt bold arial inherit") is "italic 12pt/14pt \"bold arial inherit\""
+PASS setFontTest("12pt/14pt bold inherit") is "12pt / 14pt \"bold inherit\""
+PASS setFontTest("italic 12pt/14pt bold inherit") is "italic 12pt / 14pt \"bold inherit\""
+PASS setFontTest("italic 12pt/14pt bold arial inherit") is "italic 12pt / 14pt \"bold arial inherit\""
 PASS setFontTest("italic 12pt/14pt bold arial, inherit") is ""
 PASS setFontTest("x-large/110% 'new century schoolbook', serif, inherit") is ""
 PASS setFontTest(" 'inherit'") is ""

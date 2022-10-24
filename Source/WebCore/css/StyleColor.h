@@ -39,9 +39,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-class StyleColor;
-
 enum class StyleColorOptions : uint8_t {
     ForVisitedLink = 1 << 0,
     UseSystemAppearance = 1 << 1,
@@ -133,7 +130,6 @@ private:
     ColorKind m_color;
 };
 
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const StyleColor&);
 WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
 
 } // namespace WebCore

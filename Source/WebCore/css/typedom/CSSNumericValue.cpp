@@ -60,7 +60,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
 
-#define RETURN_IF_EXCEPTION(resultVariable, expression) \
+// Explicitly prefixed name used to avoid conflicts with existing macros that can be indirectly #included.
+#define CSS_NUMERIC_RETURN_IF_EXCEPTION(resultVariable, expression) \
     auto resultOrException = expression; \
     if (resultOrException.hasException()) \
         return resultOrException.releaseException(); \
@@ -90,7 +91,7 @@ static Ref<CSSNumericValue> negateOrInvertIfRequired(CalcOperator parentOperator
 
 template<typename T> static ExceptionOr<Ref<CSSNumericValue>> convertToExceptionOrNumericValue(ExceptionOr<Ref<T>>&& input)
 {
-    RETURN_IF_EXCEPTION(result, WTFMove(input));
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(result, WTFMove(input));
     return static_reference_cast<CSSNumericValue>(WTFMove(result));
 }
 
@@ -109,13 +110,13 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcPrimit
 
 static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcNegateNode& root)
 {
-    RETURN_IF_EXCEPTION(child, reifyMathExpression(root.child()));
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(child, reifyMathExpression(root.child()));
     return convertToExceptionOrNumericValue(CSSMathNegate::create(WTFMove(child)));
 }
 
 static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcInvertNode& root)
 {
-    RETURN_IF_EXCEPTION(child, reifyMathExpression(root.child()));
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(child, reifyMathExpression(root.child()));
     return convertToExceptionOrNumericValue(CSSMathInvert::create(WTFMove(child)));
 }
 
@@ -124,7 +125,7 @@ static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const Vect
     Vector<Ref<CSSNumericValue>> values;
     values.reserveInitialCapacity(nodes.size());
     for (auto& node : nodes) {
-        RETURN_IF_EXCEPTION(value, reifyMathExpression(node));
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(value, reifyMathExpression(node));
         values.uncheckedAppend(WTFMove(value));
     }
     return values;
@@ -133,15 +134,15 @@ static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const Vect
 static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperationNode& root)
 {
     if (root.calcOperator() == CalcOperator::Min) {
-        RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
         return convertToExceptionOrNumericValue(CSSMathMin::create(WTFMove(values)));
     }
     if (root.calcOperator() == CalcOperator::Max) {
-        RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
         return convertToExceptionOrNumericValue(CSSMathMax::create(WTFMove(values)));
     }
     if (root.calcOperator() == CalcOperator::Clamp) {
-        RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
         return convertToExceptionOrNumericValue(CSSMathClamp::create(WTFMove(values[0]), WTFMove(values[1]), WTFMove(values[2])));
     }
 
@@ -150,13 +151,13 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperat
     do {
         auto* binaryOperation = downcast<CSSCalcOperationNode>(currentNode);
         ASSERT(binaryOperation->children().size() == 2);
-        RETURN_IF_EXCEPTION(value, reifyMathExpression(binaryOperation->children()[1].get()));
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(value, reifyMathExpression(binaryOperation->children()[1].get()));
         values.append(negateOrInvertIfRequired(binaryOperation->calcOperator(), WTFMove(value)));
         currentNode = binaryOperation->children()[0].ptr();
     } while (canCombineNodes(root, *currentNode));
 
     ASSERT(currentNode);
-    RETURN_IF_EXCEPTION(reifiedCurrentNode, reifyMathExpression(*currentNode));
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(reifiedCurrentNode, reifyMathExpression(*currentNode));
     values.append(WTFMove(reifiedCurrentNode));
 
     std::reverse(values.begin(), values.end());
@@ -304,7 +305,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::div(FixedVector<CSSNumberish>
     Vector<Ref<CSSNumericValue>> invertedValues;
     invertedValues.reserveInitialCapacity(values.size());
     for (auto&& value : WTFMove(values)) {
-        RETURN_IF_EXCEPTION(inverted, invert(rectifyNumberish(WTFMove(value))));
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(inverted, invert(rectifyNumberish(WTFMove(value))));
         invertedValues.uncheckedAppend(WTFMove(inverted));
     }
     return multiplyInternal(WTFMove(invertedValues));
@@ -487,4 +488,4 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
 
 } // namespace WebCore
 
-#undef RETURN_IF_EXCEPTION
+#undef CSS_NUMERIC_RETURN_IF_EXCEPTION

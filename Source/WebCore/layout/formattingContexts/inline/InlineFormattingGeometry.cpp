@@ -121,32 +121,14 @@ ContentHeightAndMargin InlineFormattingGeometry::inlineBlockContentHeightAndMarg
 
 bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
-    auto lineBoxContain = formattingContext().root().style().lineBoxContain();
-    if (inlineLevelBox.isRootInlineBox()) {
-        auto shouldContain = lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline });
-        if (!shouldContain)
-            return false;
+    if (!inlineLevelBox.lineBoxContain())
+        return false;
+
+    if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox())
         return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
-    }
-    if (inlineLevelBox.isInlineBox()) {
-        // Either the inline box itself is included or its text content thorugh Glyph and Font.
-        auto shouldContain = lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox });
-        if (!shouldContain)
-            return false;
-        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
-    }
-    if (inlineLevelBox.isLineBreakBox()) {
-        auto shouldContain = lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Font });
-        if (!shouldContain)
-            return false;
-        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
-    }
     if (inlineLevelBox.isListMarker())
         return inlineLevelBox.layoutBounds().height();
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
-        auto shouldContain = lineBoxContain.contains(LineBoxContain::Replaced);
-        if (!shouldContain)
-            return false;
         if (inlineLevelBox.layoutBounds().height())
             return true;
         // While in practice when the negative vertical margin makes the layout bounds empty (e.g: height: 100px; margin-top: -100px;), and this inline

@@ -25,12 +25,14 @@
 
 #pragma once
 
-#include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
 #include "ColorInterpolationMethod.h"
 #include "Gradient.h"
 
 namespace WebCore {
+
+struct StyleGradientImageStop;
+class StyleImage;
 
 namespace Style {
 class BuilderState;
@@ -50,7 +52,6 @@ enum CSSGradientRepeat { NonRepeating, Repeating };
 struct CSSGradientColorStop {
     RefPtr<CSSPrimitiveValue> color;
     RefPtr<CSSPrimitiveValue> position; // percentage or length
-    Color resolvedColor;
 };
 
 inline bool operator==(const CSSGradientColorStop& a, const CSSGradientColorStop& b)
@@ -77,29 +78,20 @@ inline bool operator==(const CSSGradientColorInterpolationMethod& a, const CSSGr
 
 using CSSGradientColorStopList = Vector<CSSGradientColorStop, 2>;
 
-class CSSGradientValue : public CSSImageGeneratorValue {
+class CSSGradientValue : public CSSValue {
 public:
     void setFirstX(RefPtr<CSSPrimitiveValue>&& value) { m_firstX = WTFMove(value); }
     void setFirstY(RefPtr<CSSPrimitiveValue>&& value) { m_firstY = WTFMove(value); }
     void setSecondX(RefPtr<CSSPrimitiveValue>&& value) { m_secondX = WTFMove(value); }
     void setSecondY(RefPtr<CSSPrimitiveValue>&& value) { m_secondY = WTFMove(value); }
-    void resolveRGBColors();
 
     CSSGradientType gradientType() const { return m_gradientType; }
 
-    RefPtr<Image> image(RenderElement&, const FloatSize&);
-    bool knownToBeOpaque(const RenderElement&) const;
-
-    static constexpr bool isFixedSize() { return false; }
-    static FloatSize fixedSize(const RenderElement&) { return FloatSize(); }
-    static constexpr bool isPending() { return false; }
-    static void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
-
-    Ref<CSSGradientValue> valueWithStylesResolved(Style::BuilderState&);
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSImageGeneratorValue(classType)
+        : CSSValue(classType)
         , m_stops(WTFMove(stops))
         , m_gradientType(gradientType)
         , m_repeating(repeat == Repeating)
@@ -108,7 +100,7 @@ protected:
     }
 
     CSSGradientValue(const CSSGradientValue& other, ClassType classType)
-        : CSSImageGeneratorValue(classType)
+        : CSSValue(classType)
         , m_firstX(other.m_firstX)
         , m_firstY(other.m_firstY)
         , m_secondX(other.m_secondX)
@@ -117,11 +109,10 @@ protected:
         , m_gradientType(other.m_gradientType)
         , m_repeating(other.m_repeating)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
-        , m_hasColorDerivedFromElement(other.m_hasColorDerivedFromElement)
     {
     }
 
-    template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat);
+    Vector<StyleGradientImageStop> computeStops(Style::BuilderState&) const;
 
     auto firstX() const { return m_firstX.get(); }
     auto firstY() const { return m_firstY.get(); }
@@ -134,9 +125,6 @@ protected:
     bool equals(const CSSGradientValue&) const;
 
 private:
-    bool hasColorDerivedFromElement() const;
-    bool isCacheable() const;
-
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
     RefPtr<CSSPrimitiveValue> m_secondX;
@@ -145,8 +133,6 @@ private:
     CSSGradientType m_gradientType;
     bool m_repeating { false };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
-
-    mutable std::optional<bool> m_hasColorDerivedFromElement;
 };
 
 class CSSLinearGradientValue final : public CSSGradientValue {
@@ -156,19 +142,13 @@ public:
         return adoptRef(*new CSSLinearGradientValue(repeat, gradientType, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    void setAngle(Ref<CSSPrimitiveValue>&& value) { m_angle = WTFMove(value); }
+    void setAngle(RefPtr<CSSPrimitiveValue>&& value) { m_angle = WTFMove(value); }
 
     String customCSSText() const;
 
-    // Create the gradient for a given size.
-    Ref<Gradient> createGradient(RenderElement&, const FloatSize&);
-
-    Ref<CSSLinearGradientValue> clone() const
-    {
-        return adoptRef(*new CSSLinearGradientValue(*this));
-    }
-
     bool equals(const CSSLinearGradientValue&) const;
+
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
     CSSLinearGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -192,11 +172,6 @@ public:
         return adoptRef(*new CSSRadialGradientValue(repeat, gradientType, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    Ref<CSSRadialGradientValue> clone() const
-    {
-        return adoptRef(*new CSSRadialGradientValue(*this));
-    }
-
     String customCSSText() const;
 
     void setFirstRadius(RefPtr<CSSPrimitiveValue>&& value) { m_firstRadius = WTFMove(value); }
@@ -208,10 +183,9 @@ public:
     void setEndHorizontalSize(RefPtr<CSSPrimitiveValue>&& value) { m_endHorizontalSize = WTFMove(value); }
     void setEndVerticalSize(RefPtr<CSSPrimitiveValue>&& value) { m_endVerticalSize = WTFMove(value); }
 
-    // Create the gradient for a given size.
-    Ref<Gradient> createGradient(RenderElement&, const FloatSize&);
-
     bool equals(const CSSRadialGradientValue&) const;
+
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
     CSSRadialGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -229,9 +203,6 @@ private:
         , m_endVerticalSize(other.m_endVerticalSize)
     {
     }
-
-    // Resolve points/radii to front end values.
-    float resolveRadius(CSSPrimitiveValue&, const CSSToLengthConversionData&, float* widthOrHeight = 0);
 
     // These may be null for non-deprecated gradients.
     RefPtr<CSSPrimitiveValue> m_firstRadius;
@@ -252,19 +223,13 @@ public:
         return adoptRef(*new CSSConicGradientValue(repeat, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    Ref<CSSConicGradientValue> clone() const
-    {
-        return adoptRef(*new CSSConicGradientValue(*this));
-    }
-
     String customCSSText() const;
 
     void setAngle(RefPtr<CSSPrimitiveValue>&& value) { m_angle = WTFMove(value); }
 
-    // Create the gradient for a given size.
-    Ref<Gradient> createGradient(RenderElement&, const FloatSize&);
-
     bool equals(const CSSConicGradientValue&) const;
+
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
     explicit CSSConicGradientValue(CSSGradientRepeat repeat, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)

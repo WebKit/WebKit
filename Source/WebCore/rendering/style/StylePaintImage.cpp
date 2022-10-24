@@ -31,13 +31,17 @@
 
 #include "CSSPaintImageValue.h"
 #include "CSSVariableData.h"
+#include "CustomPaintImage.h"
+#include "PaintWorkletGlobalScope.h"
+#include "RenderElement.h"
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
-StylePaintImage::StylePaintImage(Ref<CSSPaintImageValue>&& value)
-    : StyleGeneratedImage(Type::PaintImage, value->isFixedSize())
-    , m_imageGeneratorValue { WTFMove(value) }
+StylePaintImage::StylePaintImage(String&& name, Ref<CSSVariableData>&& arguments)
+    : StyleGeneratedImage { Type::PaintImage, StylePaintImage::isFixedSize }
+    , m_name { WTFMove(name) }
+    , m_arguments { WTFMove(arguments) }
 {
 }
 
@@ -45,62 +49,75 @@ StylePaintImage::~StylePaintImage() = default;
 
 bool StylePaintImage::operator==(const StyleImage& other) const
 {
-    if (is<StylePaintImage>(other))
-        return arePointingToEqualData(m_imageGeneratorValue.ptr(), downcast<StylePaintImage>(other).m_imageGeneratorValue.ptr());
-    return false;
+    // FIXME: Should probably also compare arguments?
+    return is<StylePaintImage>(other) && downcast<StylePaintImage>(other).m_name == m_name;
 }
 
-CSSImageGeneratorValue& StylePaintImage::imageValue()
+Ref<CSSValue> StylePaintImage::computedStyleValue(const RenderStyle&) const
 {
-    return m_imageGeneratorValue;
-}
-
-Ref<CSSValue> StylePaintImage::cssValue() const
-{
-    return m_imageGeneratorValue.copyRef();
+    return CSSPaintImageValue::create(m_name, m_arguments);
 }
 
 bool StylePaintImage::isPending() const
 {
-    return m_imageGeneratorValue->isPending();
+    return false;
 }
 
-void StylePaintImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
+void StylePaintImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
-    m_imageGeneratorValue->loadSubimages(loader, options);
 }
 
 RefPtr<Image> StylePaintImage::image(const RenderElement* renderer, const FloatSize& size) const
 {
-    return renderer ? m_imageGeneratorValue->image(const_cast<RenderElement&>(*renderer), size) : &Image::nullImage();
+    if (!renderer)
+        return &Image::nullImage();
+
+    if (size.isEmpty())
+        return nullptr;
+
+    auto* selectedGlobalScope = renderer->document().paintWorkletGlobalScopeForName(m_name);
+    if (!selectedGlobalScope)
+        return nullptr;
+
+    Locker locker { selectedGlobalScope->paintDefinitionLock() };
+    auto* registration = selectedGlobalScope->paintDefinitionMap().get(m_name);
+
+    if (!registration)
+        return nullptr;
+
+    // FIXME: Check if argument list matches syntax.
+    Vector<String> arguments;
+    CSSParserTokenRange localRange(m_arguments->tokenRange());
+
+    while (!localRange.atEnd()) {
+        StringBuilder builder;
+        while (!localRange.atEnd() && localRange.peek() != CommaToken) {
+            if (localRange.peek() == CommentToken)
+                localRange.consume();
+            else if (localRange.peek().getBlockType() == CSSParserToken::BlockStart) {
+                localRange.peek().serialize(builder);
+                builder.append(localRange.consumeBlock().serialize(), ')');
+            } else
+                localRange.consume().serialize(builder);
+        }
+        if (!localRange.atEnd())
+            localRange.consume(); // comma token
+        arguments.append(builder.toString());
+    }
+
+    return CustomPaintImage::create(*registration, size, *renderer, arguments);
 }
 
-bool StylePaintImage::knownToBeOpaque(const RenderElement& renderer) const
+bool StylePaintImage::knownToBeOpaque(const RenderElement&) const
 {
-    return m_imageGeneratorValue->knownToBeOpaque(renderer);
+    return false;
 }
 
-FloatSize StylePaintImage::fixedSize(const RenderElement& renderer) const
+FloatSize StylePaintImage::fixedSize(const RenderElement&) const
 {
-    return m_imageGeneratorValue->fixedSize(renderer);
-}
-
-void StylePaintImage::addClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->addClient(renderer);
-}
-
-void StylePaintImage::removeClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->removeClient(renderer);
-}
-
-bool StylePaintImage::hasClient(RenderElement& renderer) const
-{
-    return m_imageGeneratorValue->clients().contains(&renderer);
+    return { };
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(CSS_PAINTING_API)
-

@@ -29,7 +29,6 @@
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
 #include "Length.h"
-#include "StyleImage.h"
 #include <variant>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ class CSSParserToken;
 
 class CSSCustomPropertyValue final : public CSSValue {
 public:
-    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, Ref<StyleImage>>;
+    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length>;
 
     static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 
@@ -63,11 +62,6 @@ public:
     {
         ASSERT(!value.isUndefined());
         ASSERT(!value.isCalculated());
-        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
-    }
-
-    static Ref<CSSCustomPropertyValue> createSyntaxImage(const AtomString& name, Ref<StyleImage>&& value)
-    {
         return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
 

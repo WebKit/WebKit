@@ -287,7 +287,7 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect, 1
 void DrawingAreaWC::sendUpdateNonAC()
 {
     if (m_dirtyRegion.isEmpty()) {
-        didUpdate();
+        displayDidRefresh();
         return;
     }
     IntRect bounds = m_dirtyRegion.bounds();
@@ -328,7 +328,7 @@ void DrawingAreaWC::sendUpdateNonAC()
             if (!weakThis)
                 return;
             if (stateID != m_backingStoreStateID) {
-                didUpdate();
+                displayDidRefresh();
                 return;
             }
 

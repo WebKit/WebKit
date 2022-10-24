@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS testDiv.style['font'] is ""
 testDiv.style['font'] = 'italic small-caps calc(100 * 9) 12px arial'
 PASS testDiv.style['font'] is "italic small-caps 900 12px arial"
-PASS window.getComputedStyle(testDiv).getPropertyValue('font') is "italic small-caps 900 normal 12px/normal arial"
+PASS window.getComputedStyle(testDiv).getPropertyValue('font') is "italic small-caps 900 12px arial"
 PASS successfullyParsed is true
 
 TEST COMPLETE

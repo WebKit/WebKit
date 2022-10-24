@@ -24,24 +24,18 @@
 #include "SVGRenderStyleDefs.h"
 #include "TextFlags.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Animation;
-class CSSBorderImageSliceValue;
-class CSSFontStyleValue;
 class CSSPrimitiveValue;
 class CSSValueList;
-class Color;
 class Element;
 class FilterOperations;
-class FontSelectionValue;
 class MutableStyleProperties;
 class Node;
 class RenderElement;
 class RenderStyle;
-class SVGPaint;
 class ShadowData;
 class StylePropertyShorthand;
 
@@ -66,17 +60,9 @@ public:
     bool propertyMatches(CSSPropertyID, const CSSValue*);
 
     enum class AdjustPixelValuesForComputedStyle : uint8_t { Yes, No };
-    static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double, const RenderStyle&);
-    static Ref<CSSPrimitiveValue> zoomAdjustedPixelValueForLength(const Length&, const RenderStyle&);
-
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
-    static Ref<CSSPrimitiveValue> fontNonKeywordWeightFromStyleValue(FontSelectionValue);
-    static Ref<CSSPrimitiveValue> fontWeightFromStyleValue(FontSelectionValue);
-    static Ref<CSSPrimitiveValue> fontNonKeywordStretchFromStyleValue(FontSelectionValue);
-    static Ref<CSSPrimitiveValue> fontStretchFromStyleValue(FontSelectionValue);
-    static Ref<CSSFontStyleValue> fontNonKeywordStyleFromStyleValue(FontSelectionValue);
-    static Ref<CSSFontStyleValue> fontStyleFromStyleValue(std::optional<FontSelectionValue>, FontStyleAxis);
+    static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
 
     static void addValueForAnimationPropertyToList(CSSValueList&, CSSPropertyID, const Animation*);
 
@@ -89,7 +75,6 @@ private:
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID);
     Ref<CSSValue> adjustSVGPaint(SVGPaintType, const String& url, Ref<CSSPrimitiveValue> color) const;
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
-    Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&) const;
 
     Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
     RefPtr<CSSValueList> getCSSPropertyValuesFor2SidesShorthand(const StylePropertyShorthand&);

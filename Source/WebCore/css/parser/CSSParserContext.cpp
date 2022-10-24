@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSParserContext.h"
 
-#include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -35,6 +34,12 @@
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+// https://drafts.csswg.org/css-values/#url-local-url-flag
+bool ResolvedURL::isLocalURL() const
+{
+    return specifiedURLString.startsWith('#');
+}
 
 const CSSParserContext& strictCSSParserContext()
 {

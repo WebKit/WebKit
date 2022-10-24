@@ -18,13 +18,13 @@
         return test.style.getPropertyValue("font");
     }
 
-    shouldBeEqualToString('setFontTest("12pt/14pt sans-serif")', '12pt/14pt sans-serif');
+    shouldBeEqualToString('setFontTest("12pt/14pt sans-serif")', '12pt / 14pt sans-serif');
     shouldBeEqualToString('setFontTest("inherit")', 'inherit');
     shouldBeEqualToString('setFontTest("")', '');
     shouldBeEqualToString('setFontTest("12pt/14pt inherit")', '');
-    shouldBeEqualToString('setFontTest("12pt/14pt bold inherit")', '12pt/14pt "bold inherit"');
-    shouldBeEqualToString('setFontTest("italic 12pt/14pt bold inherit")', 'italic 12pt/14pt "bold inherit"');
-    shouldBeEqualToString('setFontTest("italic 12pt/14pt bold arial inherit")', 'italic 12pt/14pt "bold arial inherit"');
+    shouldBeEqualToString('setFontTest("12pt/14pt bold inherit")', '12pt / 14pt "bold inherit"');
+    shouldBeEqualToString('setFontTest("italic 12pt/14pt bold inherit")', 'italic 12pt / 14pt "bold inherit"');
+    shouldBeEqualToString('setFontTest("italic 12pt/14pt bold arial inherit")', 'italic 12pt / 14pt "bold arial inherit"');
     shouldBeEqualToString('setFontTest("italic 12pt/14pt bold arial, inherit")', '');
     shouldBeEqualToString('setFontTest("x-large/110% \'new century schoolbook\', serif, inherit")', '');
     shouldBeEqualToString('setFontTest(" \'inherit\'")', '');

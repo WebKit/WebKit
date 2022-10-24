@@ -43,14 +43,7 @@ public:
     using const_reference = const value_type&;
     using pointer = value_type*;
     using const_pointer = const value_type*;
-
-private:
-    // We add 1 to the size because we expect that LastValue is the maximum value of the enum,
-    // rather than the count of items in the enum.
-    // We're assuming the values in the enum are zero-indexed.
     using UnderlyingType = std::array<T, static_cast<std::size_t>(LastValue) + 1>;
-
-public:
     using iterator = typename UnderlyingType::iterator;
     using const_iterator = typename UnderlyingType::const_iterator;
     using reverse_iterator = std::reverse_iterator<iterator>;

@@ -28,6 +28,9 @@
 namespace WebCore {
 
 class Animation;
+class CSSBorderImageSliceValue;
+class CSSBorderImageWidthValue;
+class CSSPrimitiveValue;
 class CSSValue;
 class FillLayer;
 class LengthBox;
@@ -72,9 +75,12 @@ public:
 
     void mapNinePieceImage(CSSValue*, NinePieceImage&);
     void mapNinePieceImageSlice(CSSValue&, NinePieceImage&);
+    void mapNinePieceImageSlice(CSSBorderImageSliceValue&, NinePieceImage&);
     void mapNinePieceImageWidth(CSSValue&, NinePieceImage&);
+    void mapNinePieceImageWidth(CSSBorderImageWidthValue&, NinePieceImage&);
     LengthBox mapNinePieceImageQuad(CSSValue&);
     void mapNinePieceImageRepeat(CSSValue&, NinePieceImage&);
+    void mapNinePieceImageRepeat(CSSPrimitiveValue&, NinePieceImage&);
 
 private:
     RenderStyle* style() const;

@@ -92,6 +92,7 @@ public:
         Entry& mark() const { ASSERT(m_mark); return *m_mark; }
 
     private:
+        friend class HTMLFormattingElementList;
         bool m_hasBeenMoved;
         Entry* m_mark;
     };
@@ -105,6 +106,7 @@ public:
     bool contains(Element&);
     void append(HTMLStackItem&&);
     void remove(Element&);
+    void removeUpdatingBookmark(Element&, Bookmark&);
 
     Bookmark bookmarkFor(Element&);
     void swapTo(Element& oldElement, HTMLStackItem&& newItem, const Bookmark&);

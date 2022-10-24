@@ -1,10 +1,10 @@
 This tests platform specific system font styles. If any of the styles appear in monospace the test fails.
-caption: normal normal normal normal 16px/normal -webkit-standard
-icon: normal normal normal normal 16px/normal -webkit-standard
-menu: normal normal normal normal 16px/normal -webkit-standard
-message-box: normal normal normal normal 16px/normal -webkit-standard
-small-caption: normal normal normal normal 16px/normal -webkit-standard
-status-bar: normal normal normal normal 16px/normal -webkit-standard
--webkit-mini-control: normal normal normal normal 16px/normal -webkit-standard
--webkit-small-control: normal normal normal normal 16px/normal -webkit-standard
--webkit-control: normal normal normal normal 16px/normal -webkit-standard
+caption: 16px -webkit-standard
+icon: 16px -webkit-standard
+menu: 16px -webkit-standard
+message-box: 16px -webkit-standard
+small-caption: 16px -webkit-standard
+status-bar: 16px -webkit-standard
+-webkit-mini-control: 16px -webkit-standard
+-webkit-small-control: 16px -webkit-standard
+-webkit-control: 16px -webkit-standard

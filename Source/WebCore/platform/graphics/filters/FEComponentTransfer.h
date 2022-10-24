@@ -58,8 +58,8 @@ using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, Com
 
 class FEComponentTransfer : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
-    static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
+    static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+    WEBCORE_EXPORT static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
 
     ComponentTransferFunction redFunction() const { return m_functions[ComponentTransferChannel::Red]; }
     ComponentTransferFunction greenFunction() const { return m_functions[ComponentTransferChannel::Green]; }
@@ -146,36 +146,18 @@ std::optional<ComponentTransferFunction> ComponentTransferFunction::decode(Decod
 template<class Encoder>
 void FEComponentTransfer::encode(Encoder& encoder) const
 {
-    encoder << m_functions[ComponentTransferChannel::Red];
-    encoder << m_functions[ComponentTransferChannel::Green];
-    encoder << m_functions[ComponentTransferChannel::Blue];
-    encoder << m_functions[ComponentTransferChannel::Alpha];
+    encoder << m_functions;
 }
 
 template<class Decoder>
 std::optional<Ref<FEComponentTransfer>> FEComponentTransfer::decode(Decoder& decoder)
 {
-    std::optional<ComponentTransferFunction> redFunction;
-    decoder >> redFunction;
-    if (!redFunction)
+    std::optional<ComponentTransferFunctions> functions;
+    decoder >> functions;
+    if (!functions)
         return std::nullopt;
 
-    std::optional<ComponentTransferFunction> greenFunction;
-    decoder >> greenFunction;
-    if (!greenFunction)
-        return std::nullopt;
-
-    std::optional<ComponentTransferFunction> blueFunction;
-    decoder >> blueFunction;
-    if (!blueFunction)
-        return std::nullopt;
-
-    std::optional<ComponentTransferFunction> alphaFunction;
-    decoder >> alphaFunction;
-    if (!alphaFunction)
-        return std::nullopt;
-
-    return FEComponentTransfer::create(*redFunction, *greenFunction, *blueFunction, *alphaFunction);
+    return FEComponentTransfer::create(WTFMove(*functions));
 }
 
 } // namespace WebCore

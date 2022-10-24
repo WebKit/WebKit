@@ -1,6 +1,6 @@
 /**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Inc.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,6 +17,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "CSSFontValue.h"
 
@@ -28,43 +29,21 @@ namespace WebCore {
 String CSSFontValue::customCSSText() const
 {
     // font variant weight size / line-height family
-
     StringBuilder result;
-
     if (style)
         result.append(style->cssText());
-    if (variant) {
-        if (!result.isEmpty())
-            result.append(' ');
-        result.append(variant->cssText());
-    }
-    if (weight) {
-        if (!result.isEmpty())
-            result.append(' ');
-        result.append(weight->cssText());
-    }
-    if (stretch) {
-        if (!result.isEmpty())
-            result.append(' ');
-        result.append(stretch->cssText());
-    }
-    if (size) {
-        if (!result.isEmpty())
-            result.append(' ');
-        result.append(size->cssText());
-    }
-    if (lineHeight) {
-        if (!size)
-            result.append(' ');
-        result.append('/');
-        result.append(lineHeight->cssText());
-    }
-    if (family) {
-        if (!result.isEmpty())
-            result.append(' ');
-        result.append(family->cssText());
-    }
-
+    if (variant)
+        result.append(result.isEmpty() ? "" : " ", variant->cssText());
+    if (weight)
+        result.append(result.isEmpty() ? "" : " ", weight->cssText());
+    if (stretch)
+        result.append(result.isEmpty() ? "" : " ", stretch->cssText());
+    if (size)
+        result.append(result.isEmpty() ? "" : " ", size->cssText());
+    if (lineHeight)
+        result.append(size ? " / " : result.isEmpty() ? "" : " ", lineHeight->cssText());
+    if (family)
+        result.append(result.isEmpty() ? "" : " ", family->cssText());
     return result.toString();
 }
 
