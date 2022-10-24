@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HitTestResult.h"
 #include "Page.h"
@@ -95,7 +96,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
 
     auto cursor = cursorTypeForElement(*element);
-    if (cursor != CursorType::Pointer && !is<HTMLFormControlElement>(element))
+    if (cursor != CursorType::Pointer && (!is<HTMLFormControlElement>(element) || is<HTMLFieldSetElement>(element)))
         return std::nullopt;
 
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
