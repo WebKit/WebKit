@@ -1535,196 +1535,6 @@ Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<Style
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-const CGSize attachmentSize = { 160, 119 };
-
-const CGFloat attachmentBorderRadius = 16;
-constexpr auto attachmentBorderColor = SRGBA<uint8_t> { 204, 204, 204 };
-static CGFloat attachmentBorderThickness = 1;
-
-constexpr auto attachmentProgressColor = SRGBA<uint8_t> { 222, 222, 222 };
-const CGFloat attachmentProgressBorderThickness = 3;
-
-const CGFloat attachmentProgressSize = 36;
-const CGFloat attachmentIconSize = 48;
-
-const CGFloat attachmentItemMargin = 8;
-
-const CGFloat attachmentWrappingTextMaximumWidth = 140;
-const CFIndex attachmentWrappingTextMaximumLineCount = 2;
-
-static RetainPtr<CTFontRef> attachmentActionFont()
-{
-    auto style = kCTUIFontTextStyleFootnote;
-    auto size = contentSizeCategory();
-    auto attributes = static_cast<CFDictionaryRef>(@{ (id)kCTFontTraitsAttribute: @{ (id)kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) } });
-#if HAVE(CTFONTDESCRIPTOR_CREATE_WITH_TEXT_STYLE_AND_ATTRIBUTES)
-    auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyleAndAttributes(style, size, attributes));
-#else
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(style, size, 0));
-    auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes));
-#endif
-
-    return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));
-}
-
-static RetainPtr<UIColor> attachmentActionColor(const RenderAttachment& attachment)
-{
-    return cocoaColor(attachment.style().visitedDependentColor(CSSPropertyColor));
-}
-
-static RetainPtr<CTFontRef> attachmentTitleFont()
-{
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, contentSizeCategory(), 0));
-    return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
-}
-
-static CGFloat shortCaptionPointSizeWithContentSizeCategory(CFStringRef contentSizeCategory)
-{
-    auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, contentSizeCategory, 0));
-    auto pointSize = adoptCF(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontSizeAttribute));
-    return [dynamic_objc_cast<NSNumber>((__bridge id)pointSize.get()) floatValue];
-}
-
-static CGFloat attachmentDynamicTypeScaleFactor()
-{
-    CGFloat fixedPointSize = shortCaptionPointSizeWithContentSizeCategory(kCTFontContentSizeCategoryL);
-    CGFloat dynamicPointSize = shortCaptionPointSizeWithContentSizeCategory(contentSizeCategory());
-    if (!dynamicPointSize || !fixedPointSize)
-        return 1;
-    return std::max<CGFloat>(1, dynamicPointSize / fixedPointSize);
-}
-
-static UIColor *attachmentTitleColor(const RenderAttachment& renderer)
-{
-    return cocoaColor(RenderTheme::singleton().systemColor(CSSValueAppleSystemGray, renderer.styleColorOptions())).autorelease();
-}
-
-static RetainPtr<CTFontRef> attachmentSubtitleFont() { return attachmentTitleFont(); }
-
-static UIColor *attachmentSubtitleColor(const RenderAttachment& renderer) { return attachmentTitleColor(renderer); }
-
-struct RenderAttachmentInfo {
-    explicit RenderAttachmentInfo(const RenderAttachment&);
-
-    FloatRect iconRect;
-    FloatRect attachmentRect;
-    FloatRect progressRect;
-
-    BOOL hasProgress { NO };
-    float progress;
-
-    RefPtr<Image> icon;
-    RefPtr<Image> thumbnailIcon;
-
-    int baseline { 0 };
-
-    struct LabelLine {
-        FloatRect rect;
-        RetainPtr<CTLineRef> line;
-        RetainPtr<CTFontRef> font;
-    };
-    Vector<LabelLine> lines;
-
-    CGFloat contentYOrigin { 0 };
-
-private:
-    void buildWrappedLines(const String&, CTFontRef, UIColor *, unsigned maximumLineCount);
-    void buildSingleLine(const String&, CTFontRef, UIColor *);
-
-    void addLine(CTFontRef, CTLineRef);
-};
-
-void RenderAttachmentInfo::addLine(CTFontRef font, CTLineRef line)
-{
-    CGRect lineBounds = CTLineGetBoundsWithOptions(line, kCTLineBoundsExcludeTypographicLeading);
-    CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
-    CGFloat lineWidthIgnoringTrailingWhitespace = lineBounds.size.width - trailingWhitespaceWidth;
-    CGFloat lineHeight = CGCeiling(lineBounds.size.height + lineBounds.origin.y);
-
-    CGFloat xOffset = (attachmentRect.width() / 2) - (lineWidthIgnoringTrailingWhitespace / 2);
-    LabelLine labelLine;
-    labelLine.font = font;
-    labelLine.line = line;
-    labelLine.rect = FloatRect(xOffset, 0, lineWidthIgnoringTrailingWhitespace, lineHeight);
-
-    lines.append(labelLine);
-}
-
-void RenderAttachmentInfo::buildWrappedLines(const String& text, CTFontRef font, UIColor *color, unsigned maximumLineCount)
-{
-    if (text.isEmpty())
-        return;
-
-    NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: (id)font,
-        (id)kCTForegroundColorAttributeName: color
-    };
-    RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
-    RetainPtr<CTFramesetterRef> framesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText.get()));
-
-    CFRange fitRange;
-    CGFloat wrappingWidth = attachmentWrappingTextMaximumWidth * attachmentDynamicTypeScaleFactor();
-    CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(wrappingWidth, CGFLOAT_MAX), &fitRange);
-
-    RetainPtr<CGPathRef> textPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, textSize.width, textSize.height), nullptr));
-    RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(framesetter.get(), fitRange, textPath.get(), nullptr));
-
-    CFArrayRef ctLines = CTFrameGetLines(textFrame.get());
-    CFIndex lineCount = CFArrayGetCount(ctLines);
-    if (!lineCount)
-        return;
-
-    // Lay out and record the first (maximumLineCount - 1) lines.
-    CFIndex lineIndex = 0;
-    CFIndex nonTruncatedLineCount = std::min<CFIndex>(maximumLineCount - 1, lineCount);
-    for (; lineIndex < nonTruncatedLineCount; ++lineIndex)
-        addLine(font, (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
-
-    if (lineIndex == lineCount)
-        return;
-
-    // We had text that didn't fit in the first (maximumLineCount - 1) lines.
-    // Combine it into one last line, and center-truncate it.
-    CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-    CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
-    CFRange remainingRange = CFRangeMake(remainingRangeStart, [attributedText length] - remainingRangeStart);
-    RetainPtr<CGPathRef> remainingPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), nullptr));
-    RetainPtr<CTFrameRef> remainingFrame = adoptCF(CTFramesetterCreateFrame(framesetter.get(), remainingRange, remainingPath.get(), nullptr));
-    RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
-    RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-    CTLineRef remainingLine = (CTLineRef)CFArrayGetValueAtIndex(CTFrameGetLines(remainingFrame.get()), 0);
-    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine, wrappingWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
-
-    if (!truncatedLine)
-        truncatedLine = remainingLine;
-
-    addLine(font, truncatedLine.get());
-}
-
-void RenderAttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor *color)
-{
-    if (text.isEmpty())
-        return;
-
-    NSDictionary *textAttributes = @{
-        (id)kCTFontAttributeName: (id)font,
-        (id)kCTForegroundColorAttributeName: color
-    };
-    RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
-
-    addLine(font, adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedText.get())).get());
-}
-
-static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& progress)
-{
-    auto& progressString = attachment.attachmentElement().attributeWithoutSynchronization(progressAttr);
-    if (progressString.isEmpty())
-        return NO;
-    bool validProgress;
-    progress = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
-    return validProgress;
-}
-
 RenderThemeIOS::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -1775,67 +1585,12 @@ RenderThemeIOS::IconAndSize RenderThemeIOS::iconForAttachment(const String& file
     return IconAndSize { result, size };
 }
 
-RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
-{
-    attachmentRect = FloatRect(0, 0, attachment.width().toFloat(), attachment.height().toFloat());
-
-    hasProgress = getAttachmentProgress(attachment, progress);
-
-    String title = attachment.attachmentElement().attachmentTitleForDisplay();
-    String action = attachment.attachmentElement().attributeWithoutSynchronization(actionAttr);
-    String subtitle = attachment.attachmentElement().attributeWithoutSynchronization(subtitleAttr);
-
-    CGFloat yOffset = 0;
-
-    if (hasProgress) {
-        progressRect = FloatRect((attachmentRect.width() / 2) - (attachmentProgressSize / 2), 0, attachmentProgressSize, attachmentProgressSize);
-        yOffset += attachmentProgressSize + attachmentItemMargin;
-    }
-
-    if (action.isEmpty() && !hasProgress) {
-        FloatSize iconSize = attachment.attachmentElement().iconSize();
-        icon = attachment.attachmentElement().icon();
-        if (!icon)
-            attachment.attachmentElement().requestIconWithSize(FloatSize());
-        thumbnailIcon = attachment.attachmentElement().thumbnail();
-        if (thumbnailIcon)
-            iconSize = largestRectWithAspectRatioInsideRect(thumbnailIcon->size().aspectRatio(), FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
-        
-        if (thumbnailIcon || icon) {
-            iconRect = FloatRect(FloatPoint((attachmentRect.width() / 2) - (iconSize.width() / 2), 0), iconSize);
-            yOffset += iconRect.height() + attachmentItemMargin;
-        }
-    } else
-        buildWrappedLines(action, attachmentActionFont().get(), attachmentActionColor(attachment).get(), attachmentWrappingTextMaximumLineCount);
-
-    bool forceSingleLineTitle = !action.isEmpty() || !subtitle.isEmpty() || hasProgress;
-    buildWrappedLines(title, attachmentTitleFont().get(), attachmentTitleColor(attachment), forceSingleLineTitle ? 1 : attachmentWrappingTextMaximumLineCount);
-    buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor(attachment));
-
-    if (!lines.isEmpty()) {
-        for (auto& line : lines) {
-            line.rect.setY(yOffset);
-            yOffset += line.rect.height() + attachmentItemMargin;
-        }
-    }
-
-    yOffset -= attachmentItemMargin;
-
-    contentYOrigin = (attachmentRect.height() / 2) - (yOffset / 2);
-}
-
 LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment&) const
 {
     return LayoutSize(FloatSize(attachmentSize) * attachmentDynamicTypeScaleFactor());
 }
 
-int RenderThemeIOS::attachmentBaseline(const RenderAttachment& attachment) const
-{
-    RenderAttachmentInfo info(attachment);
-    return info.baseline;
-}
-
-static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& info)
+static void paintAttachmentIcon(GraphicsContext& context, AttachmentLayout& info)
 {
     RefPtr<Image> iconImage;
     if (info.thumbnailIcon)
@@ -1846,15 +1601,7 @@ static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& 
     context.drawImage(*iconImage, info.iconRect);
 }
 
-static void paintAttachmentText(GraphicsContext& context, RenderAttachmentInfo& info)
-{
-    DrawGlyphsRecorder recorder(context, 1, DrawGlyphsRecorder::DeriveFontFromContext::Yes);
-
-    for (const auto& line : info.lines)
-        recorder.drawNativeText(line.font.get(), CTFontGetSize(line.font.get()), line.line.get(), line.rect);
-}
-
-static void paintAttachmentProgress(GraphicsContext& context, RenderAttachmentInfo& info)
+static void paintAttachmentProgress(GraphicsContext& context, AttachmentLayout& info)
 {
     GraphicsContextStateSaver saver(context);
 
@@ -1873,7 +1620,7 @@ static void paintAttachmentProgress(GraphicsContext& context, RenderAttachmentIn
     context.fillPath(progressPath);
 }
 
-static Path attachmentBorderPath(RenderAttachmentInfo& info)
+static Path attachmentBorderPath(AttachmentLayout& info)
 {
     auto insetAttachmentRect = info.attachmentRect;
     insetAttachmentRect.inflate(-attachmentBorderThickness / 2);
@@ -1897,7 +1644,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
 
-    RenderAttachmentInfo info(attachment);
+    AttachmentLayout info(attachment);
 
     GraphicsContext& context = paintInfo.context();
     GraphicsContextStateSaver saver(context);
@@ -1917,7 +1664,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
     else if (info.icon || info.thumbnailIcon)
         paintAttachmentIcon(context, info);
 
-    paintAttachmentText(context, info);
+    paintAttachmentText(context, &info);
 
     return true;
 }
