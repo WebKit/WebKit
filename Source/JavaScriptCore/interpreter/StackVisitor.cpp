@@ -28,6 +28,7 @@
 
 #include "ClonedArguments.h"
 #include "DebuggerPrimitives.h"
+#include "ExecutableBaseInlines.h"
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
 #include "RegisterAtOffsetList.h"
