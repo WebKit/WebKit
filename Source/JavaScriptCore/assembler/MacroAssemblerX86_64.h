@@ -1090,6 +1090,11 @@ public:
         m_assembler.xchgq_rm(src, dest.offset, dest.base);
     }
 
+    void move32ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.movd_rr(src, dest);
+    }
+
     void move64ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.movq_rr(src, dest);
@@ -1098,6 +1103,39 @@ public:
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
     {
         m_assembler.movq_rr(src, dest);
+    }
+    
+    void moveVector(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.movaps_rr(src, dest);
+    }
+    
+    void loadVector(TrustedImmPtr address, FPRegisterID dest)
+    {
+        move(address, scratchRegister());
+        loadVector(Address(scratchRegister()), dest);
+    }
+
+    void loadVector(Address address, FPRegisterID dest)
+    {
+        m_assembler.vmovups_mr(address.offset, address.base, dest);
+    }
+
+    void loadVector(BaseIndex address, FPRegisterID dest)
+    {
+        m_assembler.vmovups_mr(address.offset, address.base, address.index, address.scale, dest);
+    }
+    
+    void storeVector(FPRegisterID src, Address address)
+    {
+        ASSERT(Options::useWebAssemblySIMD());
+        m_assembler.vmovups_rm(src, address.offset, address.base);
+    }
+    
+    void storeVector(FPRegisterID src, BaseIndex address)
+    {
+        ASSERT(Options::useWebAssemblySIMD());
+        m_assembler.vmovups_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
     void compare64(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
@@ -2039,6 +2077,53 @@ public:
         m_assembler.addss_rr(dest, dest);
         m_assembler.linkJump(done, m_assembler.label());
     }
+
+    // SIMD
+
+    void signExtendForSIMDLane(RegisterID reg, SIMDLane simdLane)
+    {
+        RELEASE_ASSERT(scalarTypeIsIntegral(simdLane));
+        if (elementByteSize(simdLane) == 1)
+            m_assembler.movsbl_rr(reg, reg);
+        else if (elementByteSize(simdLane) == 2)
+            m_assembler.movswl_rr(reg, reg);
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.pinsr(dest, src, simdLane, lane.m_value);
+    }
+
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    {
+        RegisterID scratch = scratchRegister();
+        moveDoubleTo64(src, scratch);
+        m_assembler.pinsr(dest, scratch, simdLane, lane.m_value);
+    }
+
+    DEFINE_SIMD_FUNCS(vectorReplaceLane);
+    
+    void vectorExtractLane(SIMDLane simdLane, SIMDSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.pextr(dest, src, simdLane, lane.m_value);
+        if (signMode == SIMDSignMode::Signed)
+            signExtendForSIMDLane(dest, simdLane);
+    }
+
+    void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(lane.m_value < 4);
+        RELEASE_ASSERT(simdLane == SIMDLane::f32x4);
+        if (src != dest)
+            m_assembler.movaps_rr(src, dest);
+        m_assembler.shufps(dest, dest, lane.m_value);
+    }
+
+    DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);
+
+    // Misc helper functions.
 
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }

@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"
+#include "SIMDInfo.h"
 #include "Width.h"
 
 namespace JSC {
@@ -98,6 +99,7 @@ public:
         ASSERT(entry.width() == pointerWidth() || entry.width() == Width64);
         auto& jit = m_jit;
         JIT_COMMENT(jit, "Execute Spooler: ", entry);
+        ASSERT(entry.width() == pointerWidth() || entry.width() == Width64);
 
         if constexpr (!hasPairOp)
             return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()));
@@ -140,6 +142,15 @@ public:
         }
     }
 
+    template<typename RegType>
+    void executeVector(const RegisterAtOffset& entry)
+    {
+        ASSERT(RegDispatch<RegType>::hasSameType(entry.reg()));
+        ASSERT(entry.reg().isFPR());
+        finalize<RegType>();
+        op().executeVector(entry.offset(), RegDispatch<RegType>::get(entry.reg()));
+    }
+
 private:
     static constexpr bool hasPairOp = isARM() || isARM64();
 
@@ -163,6 +174,7 @@ public:
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
     ALWAYS_INLINE void loadFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
+    ALWAYS_INLINE void loadVector(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width128); Base::executeVector<FPRReg>(entry); }
 
 private:
 #if CPU(ARM64) || CPU(ARM)
@@ -197,6 +209,17 @@ private:
         m_jit.loadDouble(Address(m_baseGPR, offset), reg);
     }
 
+    ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
+    {
+#if USE(JSVALUE64)
+        m_jit.loadVector(Address(m_baseGPR, offset), reg);
+#else
+        UNUSED_PARAM(offset);
+        UNUSED_PARAM(reg);
+        UNREACHABLE_FOR_PLATFORM();
+#endif
+    }
+
     friend class AssemblyHelpers::Spooler<LoadRegSpooler>;
 };
 
@@ -212,6 +235,7 @@ public:
     ALWAYS_INLINE void finalizeGPR() { finalize<GPRReg>(); }
     ALWAYS_INLINE void storeFPR(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width64); execute<FPRReg>(entry); }
     ALWAYS_INLINE void finalizeFPR() { finalize<FPRReg>(); }
+    ALWAYS_INLINE void storeVector(const RegisterAtOffset& entry) { ASSERT(entry.width() == Width128); Base::executeVector<FPRReg>(entry); }
 
 private:
 #if CPU(ARM64) || CPU(ARM)
@@ -244,6 +268,17 @@ private:
     ALWAYS_INLINE void executeSingle(ptrdiff_t offset, FPRReg reg)
     {
         m_jit.storeDouble(reg, Address(m_baseGPR, offset));
+    }
+
+    ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
+    {
+#if USE(JSVALUE64)
+        m_jit.storeVector(reg, Address(m_baseGPR, offset));
+#else
+        UNUSED_PARAM(offset);
+        UNUSED_PARAM(reg);
+        UNREACHABLE_FOR_PLATFORM();
+#endif
     }
 
     friend class AssemblyHelpers::Spooler<StoreRegSpooler>;
@@ -598,7 +633,7 @@ private:
     int m_dstOffsetAdjustment { 0 };
     int m_deferredStoreOffset;
 
-    template<typename RegType> friend struct RegDispatch;
+    template<typename RegTypem> friend struct RegDispatch;
 };
 
 } // namespace JSC

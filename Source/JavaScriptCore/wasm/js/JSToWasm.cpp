@@ -277,6 +277,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     result->entrypoint.calleeSaveRegisters = registersToSpill;
 
     size_t totalFrameSize = registersToSpill.sizeOfAreaInBytes();
+#if USE(JSVALUE64)
+    ASSERT(totalFrameSize == toSave.numberOfSetGPRs() * sizeof(CPURegister));
+#endif
     CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(typeDefinition);
     RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
     totalFrameSize += wasmFrameConvention.headerAndArgumentStackSizeInBytes;

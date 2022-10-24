@@ -237,7 +237,7 @@ ALWAYS_INLINE constexpr Width conservativeWidthWithoutVectors(const Reg reg)
 
 ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
 {
-    return reg.isFPR() ? Width64 : widthForBytes(sizeof(CPURegister));
+    return reg.isFPR() ? Width128 : widthForBytes(sizeof(CPURegister));
 }
 
 ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)

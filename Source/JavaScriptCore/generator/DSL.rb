@@ -60,7 +60,83 @@ module DSL
         assert("`op_group` can only be called in between `begin_section` and `end_section`") { not @current_section.nil? }
         @current_section.add_opcode_group(desc, ops, config)
     end
+    
+    def self.simd_op_group(desc, ops, config)
+        assert("`simd_op_group` can only be called in between `begin_section` and `end_section`") { not @current_section.nil? }
 
+        for op in ops do
+            variants = ["i32x4", "i64x2", "f32x4", "f64x2"]
+            if config[:makeSignedVariants] then
+                variants += ["i8x16_u", "i8x16_s", "i16x8_u", "i16x8_s"]
+            else
+                variants += ["i8x16", "i16x8"]
+            end
+
+            if config[:makeAllSignedAndUnsignedVariants] then
+                variants = ["i8x16_u", "i8x16_s", "i16x8_u", "i16x8_s", "i32x4_u", "i32x4_s", "i64x2_u", "i64x2_s", "f32x4", "f64x2"]
+            end
+
+            if config[:makeOnlyFloatingPointVariants] then
+                variants = ["f32x4", "f64x2"]
+            end
+
+            if config[:makeOnlyV128] then
+                variants = ["v128"]
+            end
+
+            if config[:makeOnlyI8] then
+                variants = ["i8x16"]
+            end
+
+            if config[:makeOnlyF32] then
+                variants = ["f32x4"]
+            end
+
+            if config[:makeOnlyF64] then
+                variants = ["f64x2"]
+            end
+            
+
+            if config[:skipI64Variant] then
+                variants = variants.filter do |v| 
+                    isI64 = v =~ /i64x2/
+                    !isI64
+                end
+            end
+
+            if config[:skipI32Variant] then
+                variants = variants.filter do |v| 
+                    isI32 = v =~ /i32x4/
+                    !isI32
+                end
+            end
+
+            if config[:skipI8Variant] then
+                variants = variants.filter do |v| 
+                    isI8 = v =~ /i8x16/
+                    !isI8
+                end
+            end
+
+            if config[:skipFloatVariants] then
+                variants = variants.filter do |v| 
+                    isFloat = v =~ /f32x4|f64x2/
+                    !isFloat
+                end
+            end
+
+            if config[:variants] then
+                variants = config[:variants]
+            end
+
+            opList = []
+            for v in variants do
+                opList << ((op.to_s + "_" + v).to_sym)
+            end
+            @current_section.add_opcode_group((desc.to_s + op.to_s).to_sym, opList, config)
+        end
+    end
+    
     def self.types(types)
         types.map do |type|
             type = (@namespaces + [type]).join "::"

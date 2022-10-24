@@ -29,6 +29,7 @@
 
 #include "B3Bank.h"
 #include "B3Type.h"
+#include "SIMDInfo.h"
 #include "Width.h"
 
 #if !ASSERT_ENABLED
@@ -50,6 +51,8 @@ inline Width widthForType(Type type)
     case Int64:
     case Double:
         return Width64;
+    case V128:
+        return Width128;
     }
     ASSERT_NOT_REACHED();
     return Width8;

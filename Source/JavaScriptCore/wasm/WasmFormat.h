@@ -74,6 +74,8 @@ inline bool isValueType(Type type)
     case TypeKind::Ref:
     case TypeKind::RefNull:
         return Options::useWebAssemblyTypedFunctionReferences();
+    case TypeKind::V128:
+        return Options::useWebAssemblySIMD();
     default:
         break;
     }

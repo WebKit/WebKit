@@ -90,7 +90,9 @@ public:
         WidthArg,
 
         // ZeroReg is interpreted as a zero register in ARM64
-        ZeroReg
+        ZeroReg,
+        
+        SIMDInfo
     };
     
     enum Temperature : int8_t {
@@ -492,6 +494,22 @@ public:
         : Arg(Air::Tmp(reg))
     {
     }
+    
+    static Arg simdInfo(SIMDLane simdLane, SIMDSignMode signMode = SIMDSignMode::None)
+    {
+        Arg result;
+        result.m_kind = SIMDInfo;
+        result.m_simdInfo = ::JSC::SIMDInfo { simdLane, signMode };
+        return result;
+    }
+
+    static Arg simdInfo(::JSC::SIMDInfo info)
+    {
+        Arg result;
+        result.m_kind = SIMDInfo;
+        result.m_simdInfo = info;
+        return result;
+    }
 
     static Arg imm(int64_t value)
     {
@@ -624,6 +642,8 @@ public:
             return 2;
         case 8:
             return 3;
+        case 16:
+            return 4;
         default:
             ASSERT_NOT_REACHED();
             return 0;
@@ -909,6 +929,11 @@ public:
     {
         return isTmp() || isStack();
     }
+    
+    bool isSIMDInfo() const
+    {
+        return kind() == SIMDInfo;
+    }
 
     Air::Tmp tmp() const
     {
@@ -1103,6 +1128,7 @@ public:
             return true;
         case Tmp:
             return isGPTmp();
+        case SIMDInfo:
         case Invalid:
             return false;
         }
@@ -1124,6 +1150,7 @@ public:
         case WidthArg:
         case Invalid:
         case ZeroReg:
+        case SIMDInfo:
             return false;
         case SimpleAddr:
         case Addr:
@@ -1318,6 +1345,7 @@ public:
         case ZeroReg:
         case SimpleAddr:
         case ExtendedOffsetAddr:
+        case SIMDInfo:
             return true;
         case Addr:
         case Stack:
@@ -1488,6 +1516,18 @@ public:
         return static_cast<MacroAssembler::StatusCondition>(m_offset);
     }
     
+    ::JSC::SIMDInfo simdInfo() const
+    {
+        ASSERT(isSIMDInfo());
+        return m_simdInfo;
+    }
+    
+    SIMDSignMode simdSignMode() const
+    {
+        ASSERT(isSIMDInfo());
+        return m_simdInfo.signMode;
+    }
+    
     // Tells you if the Arg is invertible. Only condition arguments are invertible, and even for those, there
     // are a few exceptions - notably Overflow and Signed.
     bool isInvertible() const
@@ -1570,6 +1610,7 @@ private:
     int32_t m_scale { 1 };
     Air::Tmp m_base;
     Air::Tmp m_index;
+    JSC::SIMDInfo m_simdInfo;
 };
 
 struct ArgHash {

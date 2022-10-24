@@ -372,6 +372,7 @@ bool tryTrivialStackAllocation(Code& code)
 
 void allocateStackByGraphColoring(Code& code)
 {
+    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateStackByGraphColoring");
 
     handleCalleeSaves(code);
