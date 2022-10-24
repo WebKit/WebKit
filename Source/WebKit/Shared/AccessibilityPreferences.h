@@ -41,6 +41,7 @@ struct AccessibilityPreferences {
     AXValueState darkenSystemColors { AXValueStateEmpty };
     AXValueState invertColorsEnabled { AXValueStateEmpty };
 #endif
+    bool imageAnimationEnabled { true };
     bool enhanceTextLegibilityOverall { false };
 };
 

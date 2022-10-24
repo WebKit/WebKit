@@ -379,6 +379,7 @@ public:
 #endif
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+    bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
 
     void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
     bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
@@ -740,6 +741,7 @@ private:
     std::unique_ptr<SpeechRecognitionRealtimeMediaSourceManager> m_speechRecognitionRealtimeMediaSourceManager;
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
+    bool m_imageAnimationEnabled { true };
 };
 
 } // namespace WebKit

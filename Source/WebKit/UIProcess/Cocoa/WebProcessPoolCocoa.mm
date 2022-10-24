@@ -69,6 +69,7 @@
 #import <pal/Logging.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
@@ -260,6 +261,9 @@ static AccessibilityPreferences accessibilityPreferences()
     preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
 #endif
     preferences.enhanceTextLegibilityOverall = _AXSEnhanceTextLegibilityEnabled();
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
+    preferences.imageAnimationEnabled = _AXSReduceMotionAutoplayAnimatedImagesEnabled();
+#endif
     return preferences;
 }
 
@@ -816,6 +820,9 @@ void WebProcessPool::registerNotificationObservers()
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSEnhanceTextLegibilityChangedNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification);
+#endif
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSReduceMotionAutoplayAnimatedImagesChangedNotification);
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);

@@ -1051,10 +1051,8 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
 
 void Internals::setImageAnimationEnabled(bool enabled)
 {
-    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr) {
-        if (page->settings().imageAnimationControlEnabled())
-            page->setImageAnimationEnabled(enabled);
-    }
+    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr)
+        page->setImageAnimationEnabled(enabled);
 }
 
 void Internals::resumeImageAnimation(HTMLImageElement& element)
