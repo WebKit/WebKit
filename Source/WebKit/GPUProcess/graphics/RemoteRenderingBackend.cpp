@@ -517,4 +517,7 @@ void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
 
 } // namespace WebKit
 
+#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
+
 #endif // ENABLE(GPU_PROCESS)
