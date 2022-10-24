@@ -18,6 +18,7 @@ PASS flood-color presentation attribute supported on an unknown SVG element
 PASS flood-opacity presentation attribute supported on an unknown SVG element
 PASS font-family presentation attribute supported on an unknown SVG element
 PASS font-size presentation attribute supported on an unknown SVG element
+PASS font-size-adjust presentation attribute supported on an unknown SVG element
 PASS font-stretch presentation attribute supported on an unknown SVG element
 PASS font-style presentation attribute supported on an unknown SVG element
 PASS font-variant presentation attribute supported on an unknown SVG element

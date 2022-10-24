@@ -47,6 +47,7 @@ public:
     float computedSize() const { return m_computedSize; }
     unsigned computedPixelSize() const { return unsigned(m_computedSize + 0.5f); }
     std::optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }
+    std::optional<float> fontSizeAdjust() const { return m_sizeAdjust; }
     FontSelectionValue stretch() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
     FontSelectionRequest fontSelectionRequest() const { return m_fontSelectionRequest; }
@@ -107,6 +108,7 @@ public:
     FontPalette fontPalette() const { return m_fontPalette; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
+    void setFontSizeAdjust(std::optional<float> sizeAdjust) { m_sizeAdjust = sizeAdjust; }
     void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
     void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
     void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
@@ -161,6 +163,7 @@ private:
     AtomString m_specifiedLocale;
 
     FontSelectionRequest m_fontSelectionRequest;
+    std::optional<float> m_sizeAdjust; // Size adjust for font-size-adjust
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
@@ -225,7 +228,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_fontStyleAxis == other.m_fontStyleAxis
         && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
         && m_shouldDisableLigaturesForSpacing == other.m_shouldDisableLigaturesForSpacing
-        && m_fontPalette == other.m_fontPalette;
+        && m_fontPalette == other.m_fontPalette
+        && m_sizeAdjust == other.m_sizeAdjust;
 }
 
 template<class Encoder>
@@ -266,6 +270,7 @@ void FontDescription::encode(Encoder& encoder) const
     encoder << shouldAllowUserInstalledFonts();
     encoder << shouldDisableLigaturesForSpacing();
     encoder << fontPalette();
+    encoder << fontSizeAdjust();
 }
 
 template<class Decoder>
@@ -345,6 +350,11 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     std::optional<FontSynthesisLonghandValue> fontSynthesisSmallCaps;
     decoder >> fontSynthesisSmallCaps;
     if (!fontSynthesisSmallCaps)
+        return std::nullopt;
+
+    std::optional<std::optional<float>> sizeAdjust;
+    decoder >> sizeAdjust;
+    if (!sizeAdjust)
         return std::nullopt;
 
     std::optional<FontVariantLigatures> variantCommonLigatures;
@@ -482,6 +492,7 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     fontDescription.setShouldAllowUserInstalledFonts(*shouldAllowUserInstalledFonts);
     fontDescription.setShouldDisableLigaturesForSpacing(*shouldDisableLigaturesForSpacing);
     fontDescription.setFontPalette(*fontPalette);
+    fontDescription.setFontSizeAdjust(*sizeAdjust);
 
     return fontDescription;
 }

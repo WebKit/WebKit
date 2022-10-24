@@ -31,6 +31,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "FontMetrics.h"
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "RenderStyle.h"
@@ -183,5 +184,22 @@ int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize
     return findNearestLegacyFontSize<float>(pixelFontSize, fontSizeFactors, mediumSize);
 }
 
+static float adjustedFontSize(float size, float sizeAdjust, float xHeight)
+{
+    if (!size)
+        return 0;
+
+    float aspectValue = xHeight / size;
+    return size * (sizeAdjust / aspectValue);
 }
+
+float adjustedFontSize(float size, float sizeAdjust, const FontMetrics& metrics)
+{
+    if (!metrics.hasXHeight())
+        return size;
+
+    return adjustedFontSize(size, sizeAdjust, metrics.xHeight());
 }
+
+} // namespace Style
+} // namespace WebCore

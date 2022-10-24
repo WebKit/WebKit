@@ -23,6 +23,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "Font.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -182,5 +183,22 @@ String FontPlatformData::familyName() const
         return adoptCF(CTFontCopyFamilyName(platformFont)).get();
     return { };
 }
+
+#if PLATFORM(COCOA)
+FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
+{
+    FontPlatformData copy(source);
+    copy.updateSize(size);
+    return copy;
+}
+
+void FontPlatformData::updateSize(float size)
+{
+    m_size = size;
+    ASSERT(m_font.get());
+    m_font = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, nullptr));
+    m_ctFont = nullptr;
+}
+#endif
 
 } // namespace WebCore

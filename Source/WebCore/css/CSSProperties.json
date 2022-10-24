@@ -379,6 +379,18 @@
                 "url": "https://www.w3.org/TR/css-fonts-3/#font-size-prop"
             }
         },
+        "font-size-adjust": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "Value",
+                "font-property": true,
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://www.w3.org/TR/css-fonts-4/#font-size-adjust-prop"
+            }
+        },
         "font-style": {
             "inherited": true,
             "values": [

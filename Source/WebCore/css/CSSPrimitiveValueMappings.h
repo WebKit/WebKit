@@ -5518,6 +5518,28 @@ template<> inline CSSPrimitiveValue::operator FontSynthesisLonghandValue() const
     return FontSynthesisLonghandValue::Auto;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(std::optional<float> sizeAdjust)
+    : CSSValue(PrimitiveClass)
+{
+    if (!sizeAdjust.has_value()) {
+        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+        m_value.valueID = CSSValueNone;
+        return;
+    }
+
+    setPrimitiveUnitType(CSSUnitType::CSS_NUMBER);
+    m_value.num = static_cast<double>(sizeAdjust.value());
+}
+
+template<> inline CSSPrimitiveValue::operator std::optional<float>() const
+{
+    if (!isNumber())
+        return std::nullopt;
+
+    return floatValue();
+}
+
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontLoadingBehavior behavior)
     : CSSValue(PrimitiveClass)
 {

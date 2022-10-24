@@ -31,6 +31,7 @@ namespace WebCore {
 
 class Document;
 class RenderStyle;
+class FontMetrics;
 
 namespace Style {
 
@@ -39,6 +40,7 @@ enum class MinimumFontSizeRule : uint8_t { None, Absolute, AbsoluteAndRelative }
 float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const Settings::Values&);
 float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle*, const Document&);
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
+float adjustedFontSize(float size, float sizeAdjust, const FontMetrics&);
 
 // Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueXxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).

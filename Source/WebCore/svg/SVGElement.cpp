@@ -98,6 +98,7 @@ static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, CSSPrope
         &flood_opacityAttr,
         &font_familyAttr,
         &font_sizeAttr,
+        &font_size_adjustAttr,
         &font_stretchAttr,
         &font_styleAttr,
         &font_variantAttr,

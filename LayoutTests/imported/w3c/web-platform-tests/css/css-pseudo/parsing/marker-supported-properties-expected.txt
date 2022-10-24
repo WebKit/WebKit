@@ -4,7 +4,7 @@ PASS Property font-family value 'Ahem' in ::marker
 PASS Property font-feature-settings value '"smcp"' in ::marker
 PASS Property font-kerning value 'none' in ::marker
 PASS Property font-size value '25px' in ::marker
-FAIL Property font-size-adjust value '1' in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
+PASS Property font-size-adjust value '1' in ::marker
 PASS Property font-stretch value 'expanded' in ::marker
 PASS Property font-style value 'italic' in ::marker
 PASS Property font-synthesis value 'none' in ::marker

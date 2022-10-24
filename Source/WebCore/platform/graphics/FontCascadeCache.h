@@ -43,9 +43,9 @@ namespace WebCore {
 struct FontDescriptionKeyRareData : public RefCounted<FontDescriptionKeyRareData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette)
+    static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette, std::optional<float>&& fontSizeAdjust)
     {
-        return adoptRef(*new FontDescriptionKeyRareData(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette)));
+        return adoptRef(*new FontDescriptionKeyRareData(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette), WTFMove(fontSizeAdjust)));
     }
 
     const FontFeatureSettings& featureSettings() const
@@ -68,20 +68,27 @@ public:
         return m_variantAlternates;
     }
 
+    const std::optional<float>& fontSizeAdjust() const
+    {
+        return m_fontSizeAdjust;
+    }
+
     bool operator==(const FontDescriptionKeyRareData& other) const
     {
         return m_featureSettings == other.m_featureSettings
             && m_variationSettings == other.m_variationSettings
             && m_variantAlternates == other.m_variantAlternates
-            && m_fontPalette == other.m_fontPalette;
+            && m_fontPalette == other.m_fontPalette
+            && m_fontSizeAdjust == other.m_fontSizeAdjust;
     }
 
 private:
-    FontDescriptionKeyRareData(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette)
+    FontDescriptionKeyRareData(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette, std::optional<float>&& fontSizeAdjust)
         : m_featureSettings(WTFMove(featureSettings))
         , m_variationSettings(WTFMove(variationSettings))
         , m_variantAlternates(WTFMove(variantAlternates))
         , m_fontPalette(WTFMove(fontPalette))
+        , m_fontSizeAdjust(WTFMove(fontSizeAdjust))
     {
     }
 
@@ -89,11 +96,12 @@ private:
     FontVariationSettings m_variationSettings;
     FontVariantAlternates m_variantAlternates;
     FontPalette m_fontPalette;
+    std::optional<float> m_fontSizeAdjust;
 };
 
 inline void add(Hasher& hasher, const FontDescriptionKeyRareData& key)
 {
-    add(hasher, key.featureSettings(), key.variationSettings(), key.variantAlternates(), key.fontPalette());
+    add(hasher, key.featureSettings(), key.variationSettings(), key.variantAlternates(), key.fontPalette(), key.fontSizeAdjust());
 }
 
 
@@ -111,8 +119,9 @@ struct FontDescriptionKey {
         auto variationSettings = description.variationSettings();
         auto variantAlternates = description.variantAlternates();
         auto fontPalette = description.fontPalette();
-        if (!featureSettings.isEmpty() || !variationSettings.isEmpty() || !variantAlternates.isNormal() || fontPalette.type != FontPalette::Type::Normal)
-            m_rareData = FontDescriptionKeyRareData::create(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette));
+        auto fontSizeAdjust = description.fontSizeAdjust();
+        if (!featureSettings.isEmpty() || !variationSettings.isEmpty() || !variantAlternates.isNormal() || fontPalette.type != FontPalette::Type::Normal || fontSizeAdjust.has_value())
+            m_rareData = FontDescriptionKeyRareData::create(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette), WTFMove(fontSizeAdjust));
     }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)

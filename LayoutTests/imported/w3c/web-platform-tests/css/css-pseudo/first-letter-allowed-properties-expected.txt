@@ -17,7 +17,7 @@ PASS color should be applied to first-letter pseudo elements.
 PASS float should be applied to first-letter pseudo elements.
 PASS font should be applied to first-letter pseudo elements.
 PASS fontFeatureSettings should be applied to first-letter pseudo elements.
-FAIL fontSizeAdjust should be applied to first-letter pseudo elements. assert_equals: expected (string) "0.5" but got (undefined) undefined
+PASS fontSizeAdjust should be applied to first-letter pseudo elements.
 PASS fontKerning should be applied to first-letter pseudo elements.
 PASS fontVariationSettings should be applied to first-letter pseudo elements.
 PASS letterSpacing should be applied to first-letter pseudo elements.

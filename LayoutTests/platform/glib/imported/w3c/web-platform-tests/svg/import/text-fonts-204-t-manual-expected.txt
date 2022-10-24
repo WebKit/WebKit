@@ -47,13 +47,13 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (60,209) size 123x31 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 123x30
               chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 123.00: "Blue is lighter"
-        RenderSVGContainer {g} at (50,433) size 258x58
-          RenderSVGText {text} at (30,260) size 143x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 143x14
-              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 142.54: "ZalamanderCaps is an OpenType font"
-          RenderSVGText {text} at (30,280) size 155x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 155x14
-              chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 37 width 154.56: "by Tim Ahrens of Just Another Foundry"
+        RenderSVGContainer {g} at (50,433) size 257x58
+          RenderSVGText {text} at (30,260) size 142x15 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 142x14
+              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 141.34: "ZalamanderCaps is an OpenType font"
+          RenderSVGText {text} at (30,280) size 154x15 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 154x14
+              chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 37 width 153.96: "by Tim Ahrens of Just Another Foundry"
     RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 228x36

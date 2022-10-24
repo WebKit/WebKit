@@ -371,6 +371,7 @@ public:
     float specifiedFontSize() const;
     float computedFontSize() const;
     unsigned computedFontPixelSize() const;
+    std::optional<float> fontSizeAdjust() const { return fontDescription().fontSizeAdjust(); }
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
     FontVariationSettings fontVariationSettings() const { return fontDescription().variationSettings(); }
@@ -1021,6 +1022,7 @@ public:
 
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
+    void setFontSizeAdjust(std::optional<float>);
 
     void setFontVariationSettings(FontVariationSettings);
     void setFontWeight(FontSelectionValue);

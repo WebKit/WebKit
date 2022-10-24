@@ -366,6 +366,11 @@ static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const N
     return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
 }
 
+static Ref<CSSPrimitiveValue> fontSizeAdjustFromStyle(const RenderStyle& style)
+{
+    return CSSValuePool::singleton().createValue(style.fontSizeAdjust());
+}
+
 static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle& style)
 {
     return CSSValuePool::singleton().createValue(adjustFloatForAbsoluteZoom(value, style), CSSUnitType::CSS_PX);
@@ -3170,6 +3175,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return fontFamily(style);
     case CSSPropertyFontSize:
         return fontSize(style);
+    case CSSPropertyFontSizeAdjust:
+        return fontSizeAdjustFromStyle(style);
     case CSSPropertyFontStyle:
         return fontStyle(style);
     case CSSPropertyFontStretch:
