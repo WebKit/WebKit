@@ -203,6 +203,11 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
             if (!sendFrame(WebCore::WebSocketFrame::OpCodePong, data, length))
                 didFail("Failed to send WebSocket frame."_s);
             break;
+
+        case WebCore::WebSocketFrame::OpCodeContinuation:
+        case WebCore::WebSocketFrame::OpCodePong:
+        case WebCore::WebSocketFrame::OpCodeInvalid:
+            break;
         }
     });
 
