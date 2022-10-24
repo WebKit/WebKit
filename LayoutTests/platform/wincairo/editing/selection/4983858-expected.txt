@@ -7,8 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 778x39
           text run at (0,0) width 545: "This tests for a bug where selecting a word would select the line break and word before it. "
           text run at (545,0) width 127: "Only the word in the "
-          text run at (672,0) width 102: "paragraph below"
-          text run at (774,0) width 4: " "
+          text run at (672,0) width 106: "paragraph below "
           text run at (0,20) width 114: "should be selected:"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,40) size 784x20

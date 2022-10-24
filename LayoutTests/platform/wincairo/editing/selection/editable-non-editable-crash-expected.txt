@@ -11,8 +11,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 782x48
             RenderTableRow {TR} at (0,2) size 782x44
               RenderTableCell {TD} at (2,2) size 778x44 [border: (1px solid #AAAAAA)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 774x39
-                  text run at (2,2) width 771: "This tests for a Mail crasher that happened when a selection was created with one endpoint in non-editable content and the other"
-                  text run at (773,2) width 3: " "
+                RenderText {#text} at (2,2) size 775x39
+                  text run at (2,2) width 775: "This tests for a Mail crasher that happened when a selection was created with one endpoint in non-editable content and the other "
                   text run at (2,22) width 113: "in editable content."
 caret: position 0 of child 0 {TABLE} of child 1 {DIV} of body

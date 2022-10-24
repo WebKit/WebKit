@@ -10,38 +10,32 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x356 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x56
-          RenderInline {SPAN} at (0,0) size 756x55
-            RenderText {#text} at (0,0) size 756x55
-              text run at (0,0) width 751: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the english"
-              text run at (751,0) width 5: " "
+          RenderInline {SPAN} at (0,0) size 757x55
+            RenderText {#text} at (0,0) size 757x55
+              text run at (0,0) width 757: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the english "
               text run at (0,28) width 91: "language."
         RenderBlock (anonymous) at (14,94) size 756x224
           RenderBlock {P} at (0,0) size 756x224
-            RenderText {#text} at (0,0) size 756x223
+            RenderText {#text} at (0,0) size 761x223
               text run at (0,0) width 457: "Here's to the crazy ones, the misfits, the rebels, "
               text run at (457,0) width 191: "the trouble makers, "
-              text run at (648,0) width 92: "the round"
-              text run at (740,0) width 6: " "
+              text run at (648,0) width 98: "the round "
               text run at (0,28) width 240: "pegs in the square holes, "
               text run at (240,28) width 346: "the ones who see things differently. "
-              text run at (586,28) width 169: "There not fond of"
-              text run at (755,28) width 1: " "
+              text run at (586,28) width 175: "There not fond of "
               text run at (0,56) width 483: "rules, and they have no respect for the status quo, "
-              text run at (483,56) width 190: "you can quote then,"
+              text run at (483,56) width 196: "you can quote then, "
               text run at (0,84) width 193: "disagree with them, "
               text run at (193,84) width 211: "glorify or vilify them, "
-              text run at (404,84) width 336: "about the only thing you can't do is"
-              text run at (740,84) width 6: " "
+              text run at (404,84) width 342: "about the only thing you can't do is "
               text run at (0,112) width 126: "ignore them. "
               text run at (126,112) width 278: "Because they change things. "
-              text run at (404,112) width 342: "They push the human race forward."
+              text run at (404,112) width 348: "They push the human race forward. "
               text run at (0,140) width 475: "And while some may see them as the crazy ones, "
               text run at (475,140) width 144: "we see genius. "
-              text run at (619,140) width 117: "Because the"
-              text run at (736,140) width 6: " "
+              text run at (619,140) width 123: "Because the "
               text run at (0,168) width 626: "people who are crazy enough to think they can change the world "
-              text run at (626,168) width 116: "are the ones"
-              text run at (742,168) width 6: " "
+              text run at (626,168) width 122: "are the ones "
               text run at (0,196) width 77: "who do."
         RenderBlock (anonymous) at (14,342) size 756x0
           RenderInline {SPAN} at (0,0) size 0x0

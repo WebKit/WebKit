@@ -31,6 +31,7 @@ layer at (0,0) size 800x600
             text run at (14,14) width 32: "foo"
           RenderBR {BR} at (46,14) size 0x27
           RenderText {#text} at (14,42) size 39x27
-            text run at (14,42) width 39: " baz"
+            text run at (14,42) width 6: " "
+            text run at (20,42) width 33: "baz"
         RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of body
