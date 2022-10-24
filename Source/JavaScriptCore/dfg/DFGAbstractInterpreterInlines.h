@@ -2209,7 +2209,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case StringLocaleCompare:
-        clobberWorld();
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
 
