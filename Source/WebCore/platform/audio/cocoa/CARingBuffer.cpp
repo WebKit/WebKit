@@ -161,14 +161,17 @@ static void StoreABL(Vector<Byte*>& pointers, size_t destOffset, const AudioBuff
 static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytesTarget, AudioStreamDescription::PCMFormat format, CARingBuffer::FetchMode mode, bool shouldUpdateListDataByteSize)
 {
     ASSERT(list->mNumberBuffers == pointers.size());
-    AudioBuffer* dest = list->mBuffers;
-    for (auto& pointer : pointers) {
-        if (destOffset > dest->mDataByteSize)
+    auto bufferCount = std::min<size_t>(list->mNumberBuffers, pointers.size());
+    for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex) {
+        auto& pointer = pointers[bufferIndex];
+        auto& dest = list->mBuffers[bufferIndex];
+
+        if (destOffset > dest.mDataByteSize)
             continue;
 
-        auto* destinationData = static_cast<Byte*>(dest->mData) + destOffset;
+        auto* destinationData = static_cast<Byte*>(dest.mData) + destOffset;
         auto* sourceData = pointer + srcOffset;
-        auto nbytes = std::min<size_t>(nbytesTarget, dest->mDataByteSize - destOffset);
+        auto nbytes = std::min<size_t>(nbytesTarget, dest.mDataByteSize - destOffset);
         if (mode == CARingBuffer::Copy)
             memcpy(destinationData, sourceData, nbytes);
         else {
@@ -202,9 +205,8 @@ static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& po
         }
 
         if (shouldUpdateListDataByteSize)
-            dest->mDataByteSize = destOffset + nbytes;
+            dest.mDataByteSize = destOffset + nbytes;
 
-        ++dest;
     }
 }
 
