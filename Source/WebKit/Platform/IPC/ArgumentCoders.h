@@ -332,8 +332,7 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
         static_assert(Index == std::tuple_size_v<OptionalTuple>);
 
         if constexpr (Index < sizeof...(Elements)) {
-            std::optional<std::tuple_element_t<Index, std::tuple<Elements...>>> optional;
-            decoder >> optional;
+            auto optional = decoder.template decode<std::tuple_element_t<Index, std::tuple<Elements...>>>();
             if (!optional)
                 return std::nullopt;
             return decode(decoder, std::forward_as_tuple(std::get<Indices>(WTFMove(optionalTuple))..., WTFMove(optional)), std::make_index_sequence<Index + 1> { });
