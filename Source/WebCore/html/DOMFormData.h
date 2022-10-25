@@ -75,7 +75,7 @@ public:
         Ref<DOMFormData> m_target;
         size_t m_index { 0 };
     };
-    Iterator createIterator() { return Iterator { *this }; }
+    Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }
 
 private:
     explicit DOMFormData(const PAL::TextEncoding& = PAL::UTF8Encoding());

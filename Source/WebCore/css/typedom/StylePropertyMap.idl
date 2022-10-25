@@ -30,4 +30,8 @@
     SkipVTableValidation,
     JSGenerateToJSObject
 ] interface StylePropertyMap : StylePropertyMapReadOnly {
+    [CallWith=CurrentDocument] undefined set([AtomString] USVString property, (CSSStyleValue or USVString)... values);
+    [CallWith=CurrentDocument] undefined append([AtomString] USVString property, (CSSStyleValue or USVString)... values);
+    [ImplementedAs=remove, CallWith=CurrentDocument] undefined delete([AtomString] USVString property);
+    undefined clear();
 };

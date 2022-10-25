@@ -1,5 +1,5 @@
 
-FAIL Deleting a shorthand property not in the css rule is a no-op undefined is not an object (evaluating 'styleMap.delete')
-FAIL Deleting a shorthand property in the css rule removes both it and its longhands undefined is not an object (evaluating 'styleMap.delete')
-FAIL Deleting a longhand property in the css rule removes both it and its shorthand undefined is not an object (evaluating 'styleMap.delete')
+PASS Deleting a shorthand property not in the css rule is a no-op
+PASS Deleting a shorthand property in the css rule removes both it and its longhands
+PASS Deleting a longhand property in the css rule removes both it and its shorthand
 

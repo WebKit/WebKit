@@ -73,7 +73,7 @@ public:
         Ref<FontFaceSet> m_target;
         size_t m_index { 0 }; // FIXME: There needs to be a mechanism to handle when fonts are added or removed from the middle of the FontFaceSet.
     };
-    Iterator createIterator() { return Iterator(*this); }
+    Iterator createIterator(ScriptExecutionContext*) { return Iterator(*this); }
 
     using RefCounted::ref;
     using RefCounted::deref;

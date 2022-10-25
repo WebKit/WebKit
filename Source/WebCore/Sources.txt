@@ -899,6 +899,8 @@ css/typedom/CSSStyleValueFactory.cpp
 css/typedom/CSSUnitValue.cpp
 css/typedom/CSSUnparsedValue.cpp
 css/typedom/CSSOMVariableReferenceValue.cpp
+css/typedom/DeclaredStylePropertyMap.cpp
+css/typedom/StylePropertyMap.cpp
 css/typedom/color/CSSColor.cpp
 css/typedom/color/CSSHSL.cpp
 css/typedom/color/CSSHWB.cpp

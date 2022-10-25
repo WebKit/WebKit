@@ -1,4 +1,4 @@
 
-FAIL Getting a shorthand property set explicitly in css rule returns a base CSSStyleValue undefined is not an object (evaluating 'styleMap.get')
-FAIL Getting a shorthand property that is partially set in css rule returns null undefined is not an object (evaluating 'styleMap.get')
+PASS Getting a shorthand property set explicitly in css rule returns a base CSSStyleValue
+PASS Getting a shorthand property that is partially set in css rule returns null
 

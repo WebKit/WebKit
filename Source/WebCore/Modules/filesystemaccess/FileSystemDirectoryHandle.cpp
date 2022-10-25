@@ -144,7 +144,7 @@ void FileSystemDirectoryHandle::getHandle(const String& name, CompletionHandler<
 
 using FileSystemDirectoryHandleIterator = FileSystemDirectoryHandle::Iterator;
 
-Ref<FileSystemDirectoryHandleIterator> FileSystemDirectoryHandle::createIterator()
+Ref<FileSystemDirectoryHandleIterator> FileSystemDirectoryHandle::createIterator(ScriptExecutionContext*)
 {
     return Iterator::create(*this);
 }

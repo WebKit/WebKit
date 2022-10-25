@@ -1,10 +1,10 @@
 
-FAIL Calling StylePropertyMap.has with an unsupported property throws a TypeError assert_throws_js: function "() => styleMap.has('lemon')" did not throw
+PASS Calling StylePropertyMap.has with an unsupported property throws a TypeError
 PASS Calling StylePropertyMap.has with a property not in the property model returns false
 PASS Calling StylePropertyMap.has with a custom property not in the property model returns false
 PASS Calling StylePropertyMap.has with a valid property in mixed case returns false
-FAIL Calling StylePropertyMap.has with a valid property returns true assert_equals: expected true but got false
-FAIL Calling StylePropertyMap.has with a valid property in mixed case returns true assert_equals: expected true but got false
-FAIL Calling StylePropertyMap.has with a valid custom property returns true assert_equals: expected true but got false
-FAIL Calling StylePropertyMap.has with a valid list-valued property returns true assert_equals: expected true but got false
+PASS Calling StylePropertyMap.has with a valid property returns true
+PASS Calling StylePropertyMap.has with a valid property in mixed case returns true
+PASS Calling StylePropertyMap.has with a valid custom property returns true
+PASS Calling StylePropertyMap.has with a valid list-valued property returns true
 

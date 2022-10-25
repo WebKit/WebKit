@@ -24,6 +24,7 @@
 
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
+#include "DeclaredStylePropertyMap.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "RuleSet.h"
 #include "StyleProperties.h"
@@ -43,6 +44,7 @@ static SelectorTextCache& selectorTextCache()
 CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_styleRule(styleRule)
+    , m_styleMap(DeclaredStylePropertyMap::create(*this))
 {
 }
 
@@ -62,6 +64,11 @@ CSSStyleDeclaration& CSSStyleRule::style()
     if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
+}
+
+StylePropertyMap& CSSStyleRule::styleMap()
+{
+    return m_styleMap.get();
 }
 
 String CSSStyleRule::generateSelectorText() const

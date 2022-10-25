@@ -1,6 +1,6 @@
 
 PASS CSSStyleValue from specified CSSOM serializes correctly
 PASS CSSStyleValue from computed CSSOM serializes correctly
-FAIL Shorthand CSSStyleValue from inline CSSOM serializes correctly assert_equals: expected "blue" but got "initial"
+PASS Shorthand CSSStyleValue from inline CSSOM serializes correctly
 PASS Shorthand CSSStyleValue from computed CSSOM serializes correctly
 

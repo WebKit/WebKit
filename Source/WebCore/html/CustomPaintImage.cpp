@@ -31,6 +31,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleImageValue.h"
 #include "CSSUnitValue.h"
@@ -59,74 +60,80 @@ CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& def
 
 CustomPaintImage::~CustomPaintImage() = default;
 
-static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Element& element)
+static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
 {
     ComputedStyleExtractor extractor(&element);
 
-    if (isCustomPropertyName(name)) {
-        auto value = extractor.customPropertyValue(name);
-        return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
-    }
+    if (isCustomPropertyName(name))
+        return extractor.customPropertyValue(name);
 
     CSSPropertyID propertyID = cssPropertyID(name);
     if (!propertyID)
         return nullptr;
 
-    auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
-    return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
+    return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
 }
 
+// FIXME: This should subclass StylePropertyMapReadonly (or similar), not StylePropertyMap
+// since this is readonly.
 class HashMapStylePropertyMap final : public StylePropertyMap {
 public:
-    static Ref<StylePropertyMap> create(HashMap<AtomString, RefPtr<CSSStyleValue>>&& map)
+    static Ref<StylePropertyMap> create(HashMap<AtomString, RefPtr<CSSValue>>&& map)
     {
         return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
     }
 
-    static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Element& element)
+    static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
     {
         ComputedStyleExtractor extractor(&element);
 
-        if (isCustomPropertyName(name)) {
-            auto value = extractor.customPropertyValue(name);
-            return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
-        }
+        if (isCustomPropertyName(name))
+            return extractor.customPropertyValue(name);
 
         CSSPropertyID propertyID = cssPropertyID(name);
         if (!propertyID)
             return nullptr;
 
-        auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
-        return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
+        return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
     }
 
 private:
-    explicit HashMapStylePropertyMap(HashMap<AtomString, RefPtr<CSSStyleValue>>&& map)
+    HashMapStylePropertyMap(HashMap<AtomString, RefPtr<CSSValue>>&& map)
         : m_map(WTFMove(map))
     {
     }
 
-    void clearElement() override { }
-
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const final { return m_map.get(property); }
-
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final
+    CSSValue* propertyValue(CSSPropertyID propertyID) const final
     {
-        // FIXME: implement.
-        return Vector<RefPtr<CSSStyleValue>>();
+        return m_map.get(getPropertyNameAtomString(propertyID));
+    }
+
+    CSSValue* customPropertyValue(const AtomString& property) const final
+    {
+        return m_map.get(property);
     }
 
     unsigned size() const final { return m_map.size(); }
 
-    Vector<StylePropertyMapEntry> entries() const final
+    Vector<StylePropertyMapEntry> entries(ScriptExecutionContext* context) const final
     {
-        // FIXME: implement.
-        return { };
+        auto* document = context ? documentFromContext(*context) : nullptr;
+        if (!document)
+            return { };
+
+        Vector<StylePropertyMapEntry> result;
+        result.reserveInitialCapacity(m_map.size());
+        for (auto& [propertyName, cssValue] : m_map)
+            result.uncheckedAppend(makeKeyValuePair(propertyName,  Vector<RefPtr<CSSStyleValue>> { reifyValue(cssValue.get(), *document) }));
+        return result;
     }
 
-    ExceptionOr<bool> has(const AtomString& property) const final { return m_map.contains(property); }
+    // FIXME: This type is readonly and we shouldn't need to override functions that modify the map.
+    void removeProperty(CSSPropertyID) final { }
+    void removeCustomProperty(const AtomString&) final { }
+    void clear() final { }
 
-    HashMap<AtomString, RefPtr<CSSStyleValue>> m_map;
+    HashMap<AtomString, RefPtr<CSSValue>> m_map;
 };
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
@@ -150,7 +157,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     auto canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
     RefPtr context = canvas->getContext();
 
-    HashMap<AtomString, RefPtr<CSSStyleValue>> propertyValues;
+    HashMap<AtomString, RefPtr<CSSValue>> propertyValues;
 
     if (auto* element = m_element->element()) {
         for (auto& name : m_inputProperties)

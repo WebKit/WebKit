@@ -1,26 +1,26 @@
 
 PASS CSS.cqw function
 PASS Reify value with cqw unit
-FAIL Set value with cqw unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqw unit (CSS.cqw) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+FAIL Set value with cqw unit (string) set() is not yet supported
+FAIL Set value with cqw unit (CSS.cqw) set() is not yet supported
 PASS CSS.cqh function
 PASS Reify value with cqh unit
-FAIL Set value with cqh unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqh unit (CSS.cqh) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+FAIL Set value with cqh unit (string) set() is not yet supported
+FAIL Set value with cqh unit (CSS.cqh) set() is not yet supported
 PASS CSS.cqi function
 PASS Reify value with cqi unit
-FAIL Set value with cqi unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqi unit (CSS.cqi) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+FAIL Set value with cqi unit (string) set() is not yet supported
+FAIL Set value with cqi unit (CSS.cqi) set() is not yet supported
 PASS CSS.cqb function
 PASS Reify value with cqb unit
-FAIL Set value with cqb unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqb unit (CSS.cqb) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+FAIL Set value with cqb unit (string) set() is not yet supported
+FAIL Set value with cqb unit (CSS.cqb) set() is not yet supported
 PASS CSS.cqmin function
 PASS Reify value with cqmin unit
-FAIL Set value with cqmin unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqmin unit (CSS.cqmin) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+FAIL Set value with cqmin unit (string) set() is not yet supported
+FAIL Set value with cqmin unit (CSS.cqmin) set() is not yet supported
 PASS CSS.cqmax function
 PASS Reify value with cqmax unit
-FAIL Set value with cqmax unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqmax unit (CSS.cqmax) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+FAIL Set value with cqmax unit (string) set() is not yet supported
+FAIL Set value with cqmax unit (CSS.cqmax) set() is not yet supported
 

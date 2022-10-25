@@ -32,8 +32,10 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
 class Document;
 class Element;
+class ScriptExecutionContext;
 class StyledElement;
 
 class StylePropertyMapReadOnly : public RefCounted<StylePropertyMapReadOnly> {
@@ -41,27 +43,27 @@ public:
     using StylePropertyMapEntry = KeyValuePair<String, Vector<RefPtr<CSSStyleValue>>>;
     class Iterator {
     public:
-        explicit Iterator(StylePropertyMapReadOnly&);
+        explicit Iterator(StylePropertyMapReadOnly&, ScriptExecutionContext*);
         std::optional<StylePropertyMapEntry> next();
 
     private:
         Vector<StylePropertyMapEntry> m_values;
         size_t m_index { 0 };
     };
-    Iterator createIterator() { return Iterator(*this); }
+    Iterator createIterator(ScriptExecutionContext* context) { return Iterator(*this, context); }
 
     virtual ~StylePropertyMapReadOnly() = default;
-    virtual ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const = 0;
-    virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const = 0;
-    virtual ExceptionOr<bool> has(const AtomString&) const = 0;
+    virtual ExceptionOr<RefPtr<CSSStyleValue>> get(ScriptExecutionContext&, const AtomString& property) const = 0;
+    virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const = 0;
+    virtual ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const = 0;
     virtual unsigned size() const = 0;
 
-    static RefPtr<CSSStyleValue> reifyValue(CSSValue*, Document&, Element* = nullptr);
-    static RefPtr<CSSStyleValue> customPropertyValueOrDefault(const String& name, Document&, CSSValue*, Element* = nullptr);
-    static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(CSSValue*, Document&, Element* = nullptr);
+    static RefPtr<CSSStyleValue> reifyValue(CSSValue*, Document&);
+    static RefPtr<CSSStyleValue> customPropertyValueOrDefault(const String& name, Document&, CSSValue*);
+    static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(CSSValue*, Document&);
 
 protected:
-    virtual Vector<StylePropertyMapEntry> entries() const = 0;
+    virtual Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const = 0;
 };
 
 } // namespace WebCore

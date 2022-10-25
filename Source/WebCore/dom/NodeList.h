@@ -50,7 +50,7 @@ public:
         size_t m_index { 0 };
         Ref<NodeList> m_list;
     };
-    Iterator createIterator() { return Iterator(*this); }
+    Iterator createIterator(ScriptExecutionContext*) { return Iterator(*this); }
 
     // Other methods (not part of DOM)
     virtual bool isLiveNodeList() const { return false; }

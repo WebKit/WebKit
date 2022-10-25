@@ -1,6 +1,10 @@
 
-PASS Setting a shorthand with an invalid CSSStyleValue on css rule throws TypeError
-PASS Setting a shorthand with an invalid String on css rule throws TypeError
-FAIL Setting a shorthand with a CSSStyleValue updates css rule undefined is not an object (evaluating 'styleMap.get')
-FAIL Setting a shorthand with a string updates css rule undefined is not an object (evaluating 'styleMap.set')
+FAIL Setting a shorthand with an invalid CSSStyleValue on css rule throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Setting a shorthand with an invalid String on css rule throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Setting a shorthand with a CSSStyleValue updates css rule set() is not yet supported
+FAIL Setting a shorthand with a string updates css rule set() is not yet supported
 

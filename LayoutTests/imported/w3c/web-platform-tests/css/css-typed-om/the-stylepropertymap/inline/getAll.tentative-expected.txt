@@ -1,9 +1,9 @@
 
-FAIL Calling StylePropertyMap.getAll with an unsupported property throws a TypeError assert_throws_js: function "() => styleMap.getAll('lemon')" did not throw
+PASS Calling StylePropertyMap.getAll with an unsupported property throws a TypeError
 PASS Calling StylePropertyMap.getAll with a property not in the property model returns an empty list
 PASS Calling StylePropertyMap.getAll with a custom property not in the property model returns an empty list
-FAIL Calling StylePropertyMap.getAll with a valid property returns a single element list with the correct entry assert_equals: expected 1 but got 0
-FAIL StylePropertyMap.getAll is case-insensitive assert_equals: expected 1 but got 0
-FAIL Calling StylePropertyMap.getAll with a valid custom property returns a single element list with the correct entry assert_equals: expected 1 but got 0
-FAIL Calling StylePropertyMap.getAll with a list-valued property returns all the values assert_equals: expected 2 but got 0
+PASS Calling StylePropertyMap.getAll with a valid property returns a single element list with the correct entry
+PASS StylePropertyMap.getAll is case-insensitive
+FAIL Calling StylePropertyMap.getAll with a valid custom property returns a single element list with the correct entry assert_equals: expected " auto" but got "auto"
+PASS Calling StylePropertyMap.getAll with a list-valued property returns all the values
 
