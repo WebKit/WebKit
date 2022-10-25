@@ -42,17 +42,6 @@ ScrollingTreeScrollingNodeDelegateNicosia::ScrollingTreeScrollingNodeDelegateNic
 
 ScrollingTreeScrollingNodeDelegateNicosia::~ScrollingTreeScrollingNodeDelegateNicosia() = default;
 
-std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> ScrollingTreeScrollingNodeDelegateNicosia::createUpdateScope()
-{
-    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollingNode().scrollContainerLayer());
-    if (is<ScrollingTreeFrameScrollingNode>(scrollingNode()))
-        scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollingNode().scrolledContentsLayer());
-
-    ASSERT(scrollLayer);
-    auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
-    return compositionLayer.createUpdateScope();
-}
-
 void ScrollingTreeScrollingNodeDelegateNicosia::updateVisibleLengths()
 {
     m_scrollController.contentsSizeChanged();
@@ -65,12 +54,6 @@ bool ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent(const PlatformW
     updateUserScrollInProgressForEvent(wheelEvent);
 
     return m_scrollController.handleWheelEvent(wheelEvent);
-}
-
-void ScrollingTreeScrollingNodeDelegateNicosia::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)
-{
-    auto updateScope = createUpdateScope();
-    ThreadedScrollingTreeScrollingNodeDelegate::immediateScrollBy(delta, clamping);
 }
 
 } // namespace WebCore
