@@ -3,7 +3,7 @@
      http://creativecommons.org/publicdomain/zero/1.0/
 -->
 <svg xmlns="http://www.w3.org/2000/svg" >
-
+<meta name="fuzzy" content="maxDifference=0-84; totalPixels=0-668" />
 <title>Testcase for rect with missing and clamped ry</title>
 
 <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=552830s -->

@@ -6034,6 +6034,9 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-width-001.html [ ImageOnlyFailure ]
 
+# webkit.org/b/246976 This test renders incorrectly after enabling accelerated drawing
+imported/mozilla/svg/blend-color-burn.svg [ Pass ImageOnlyFailure ]
+
 webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
 
 # Flaky because of network ordering

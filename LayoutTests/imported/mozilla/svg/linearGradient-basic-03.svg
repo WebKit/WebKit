@@ -4,6 +4,7 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
      xmlns:xlink="http://www.w3.org/1999/xlink">
+  <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-215" />
   <title>Testing that spreadMethod="reflect" works</title>
   <linearGradient id="g" gradientUnits="objectBoundingBox"
                   x1="0" x2="0.5" spreadMethod="reflect">
