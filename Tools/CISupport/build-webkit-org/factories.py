@@ -177,7 +177,7 @@ class BuildAndTestAllButJSCFactory(BuildAndTestFactory):
     JSCTestClass = None
 
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        BuildAndTestFactory.__init__(self, platform, configuration, architectures, additionalArguments, device_model, **kwargs)
+        BuildAndTestFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, device_model, **kwargs)
         self.addStep(RunWebDriverTests())
 
 
