@@ -136,8 +136,6 @@
 
 namespace JSC {
 
-Atomic<unsigned> VM::s_numberOfIDs;
-
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
 
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
@@ -190,20 +188,10 @@ void VM::computeCanUseJIT()
 #endif
 }
 
-inline unsigned VM::nextID()
-{
-    for (;;) {
-        unsigned currentNumberOfIDs = s_numberOfIDs.load();
-        unsigned newID = currentNumberOfIDs + 1;
-        if (s_numberOfIDs.compareExchangeWeak(currentNumberOfIDs, newID))
-            return newID;
-    }
-}
-
 static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
-    : m_id(nextID())
+    : m_identifier(VMIdentifier::generateThreadSafe())
     , m_apiLock(adoptRef(new JSLock(this)))
     , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
     , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber())
