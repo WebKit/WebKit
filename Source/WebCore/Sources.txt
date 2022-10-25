@@ -882,6 +882,7 @@ css/parser/LegacyMediaQueryParser.cpp
 css/parser/MediaQueryBlockWatcher.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
+css/query/ContainerQueryFeatures.cpp
 css/query/GenericMediaQueryEvaluator.cpp
 css/query/GenericMediaQueryParser.cpp
 css/query/GenericMediaQuerySerialization.cpp

@@ -24,12 +24,17 @@
 
 #pragma once
 
+#include "CSSToLengthConversionData.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
-namespace WebCore::MQ {
+namespace WebCore {
+
+class RenderElement;
+
+namespace MQ {
 
 enum class LogicalOperator : uint8_t { And, Or, Not };
 enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
@@ -64,6 +69,13 @@ struct Condition {
     Vector<QueryInParens> queries;
 };
 
+enum class EvaluationResult : uint8_t { False, True, Unknown };
+
+struct FeatureEvaluationContext {
+    CSSToLengthConversionData conversionData;
+    const RenderElement* renderer { nullptr };
+};
+
 struct FeatureSchema {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
@@ -80,6 +92,17 @@ struct FeatureSchema {
     Type type;
     OptionSet<ValueType> valueTypes;
     Vector<CSSValueID> valueIdentifiers;
+
+    virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
+
+    FeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID> valueIdentifiers)
+        : name(name)
+        , type(type)
+        , valueTypes(valueTypes)
+        , valueIdentifiers(valueIdentifiers)
+    { }
+    virtual ~FeatureSchema() = default;
 };
 
+}
 }

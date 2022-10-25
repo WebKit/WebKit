@@ -35,8 +35,6 @@ class RenderElement;
 
 namespace MQ {
 
-enum class EvaluationResult : uint8_t { False, True, Unknown };
-
 EvaluationResult evaluateLengthFeature(const Feature&, LayoutUnit, const CSSToLengthConversionData&);
 EvaluationResult evaluateRatioFeature(const Feature&, double);
 EvaluationResult evaluateDiscreteFeature(const Feature&, CSSValueID);
@@ -44,12 +42,9 @@ EvaluationResult evaluateDiscreteFeature(const Feature&, CSSValueID);
 template<typename ConcreteEvaluator>
 class GenericMediaQueryEvaluator {
 public:
-    struct FeatureEvaluationContext {
-        CSSToLengthConversionData conversionData;
-        const RenderElement* renderer { nullptr };
-    };
     EvaluationResult evaluateQueryInParens(const QueryInParens&, const FeatureEvaluationContext&) const;
     EvaluationResult evaluateCondition(const Condition&, const FeatureEvaluationContext&) const;
+    EvaluationResult evaluateFeature(const Feature&, const FeatureEvaluationContext&) const;
 
 private:
     const ConcreteEvaluator& concreteEvaluator() const { return static_cast<const ConcreteEvaluator&>(*this); }
@@ -103,6 +98,16 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
+
+template<typename ConcreteEvaluator>
+EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateFeature(const Feature& feature, const FeatureEvaluationContext& context) const
+{
+    if (!feature.schema)
+        return MQ::EvaluationResult::Unknown;
+
+    return feature.schema->evaluate(feature, context);
+}
+
 
 inline EvaluationResult operator&(EvaluationResult left, EvaluationResult right)
 {
