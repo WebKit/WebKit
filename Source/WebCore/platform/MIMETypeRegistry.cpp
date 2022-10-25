@@ -96,12 +96,19 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #endif
 #if HAVE(AVIF) || USE(AVIF)
     "image/avif",
+    "image/avif-sequence",
 #endif
     "image/bmp",
 #if PLATFORM(IOS_FAMILY)
     "image/gi_",
 #endif
     "image/gif",
+#if HAVE(HEIC)
+    "image/heic",
+    "image/heic-sequence",
+    "image/heif",
+    "image/heif-sequence",
+#endif
 #if USE(CG) || USE(OPENJPEG)
     "image/jp2",
 #endif

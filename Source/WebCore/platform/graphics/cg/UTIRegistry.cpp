@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,11 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "public.avif"_s,
             "public.avis"_s,
 #endif
+#if HAVE(HEIC)
+            "public.heic"_s,
+            "public.heics"_s,
+            "public.heif"_s,
+#endif
         };
 
         auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
@@ -94,6 +99,8 @@ void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
 {
     MIMETypeRegistry::additionalSupportedImageMIMETypes().clear();
     for (const auto& imageType : imageTypes) {
+        if (isSupportedImageType(imageType))
+            continue;
         additionalSupportedImageTypes().add(imageType);
         auto mimeType = MIMETypeForImageType(imageType);
         if (!mimeType.isEmpty())

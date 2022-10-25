@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google, Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,7 +135,16 @@ static constexpr ASCIILiteral acceptHeaderValueForWebPImageResource()
 static constexpr ASCIILiteral acceptHeaderValueForAVIFImageResource()
 {
 #if HAVE(AVIF) || USE(AVIF)
-    return "image/avif,"_s;
+    return "image/avif,image/avif-sequence,"_s;
+#else
+    return ""_s;
+#endif
+}
+
+static constexpr ASCIILiteral acceptHeaderValueForHEICImageResource()
+{
+#if HAVE(HEIC)
+    return "image/heic,image/heic-sequence,image/heif,image/heif-sequence"_s;
 #else
     return ""_s;
 #endif
@@ -151,6 +161,7 @@ static String acceptHeaderValueForImageResource()
 {
     return String(acceptHeaderValueForWebPImageResource())
         + acceptHeaderValueForAVIFImageResource()
+        + acceptHeaderValueForHEICImageResource()
         + acceptHeaderValueForVideoImageResource(ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video))
         + "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"_s;
 }

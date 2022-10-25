@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -1267,6 +1267,10 @@
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED >= 160000) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 90000)
 #define HAVE_AVIF 1
+#endif
+
+#if PLATFORM(COCOA)
+#define HAVE_HEIC 1
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

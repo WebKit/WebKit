@@ -10,8 +10,6 @@
         canvas.height = 8;
 
         description("This is a test of the unsupported mime-types for canvas.toDataURL().");
-        shouldBe("canvas.toDataURL('image/heic')", "canvas.toDataURL('image/png')");
-        shouldBe("canvas.toDataURL('image/heic-sequence')", "canvas.toDataURL('image/png')");
         shouldBe("canvas.toDataURL('image/vnd.adobe.photoshop')", "canvas.toDataURL('image/png')");
         shouldBe("canvas.toDataURL('application/pdf')", "canvas.toDataURL('image/png')");
         shouldBe("canvas.toDataURL('image/targa')", "canvas.toDataURL('image/png')");
