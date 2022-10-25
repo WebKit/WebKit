@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import "SettingsViewController.h"
 
-@class WKWebView;
-@class TabViewController;
-@class SettingsViewController;
+#import "WebViewController.h"
 
-@interface WebViewController : UIViewController
+static NSString * const defaultURL = @"https://webkit.org";
+static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
 
-@property (strong, nonatomic) IBOutlet UIView *webViewContainer;
-@property (strong, nonatomic) IBOutlet UITextField *urlField;
-@property (strong, nonatomic) IBOutlet UIProgressView *progressView;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *tabButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
-@property (strong, nonatomic) IBOutlet TabViewController *tabViewController;
-@property (strong, nonatomic) IBOutlet SettingsViewController *settingsViewController;
-@property (strong, nonatomic) WKWebView *currentWebView;
-@property (strong, nonatomic) NSMutableArray<WKWebView *> *webViews;
+@implementation SettingsViewController
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button addTarget:self action:@selector(setDefaultURLToCurrentURL:) forControlEvents:UIControlEventTouchUpInside];
+    [button setTitle:@"Set Default URL To Current URL" forState:UIControlStateNormal];
+    button.frame = CGRectMake(80.0, 210.0, 160.0, 40.0);
+    [self.view addSubview:button];
+}
 
-- (IBAction)reload:(id)sender;
-- (IBAction)goBack:(id)sender;
-- (IBAction)goForward:(id)sender;
-- (IBAction)urlFieldEditingBegan:(id)sender;
-- (IBAction)navigateTo:(id)sender;
-- (IBAction)showTabs:(id)sender;
-- (IBAction)showSettings:(id)sender;
+- (NSString *)defaultURL
+{
+    NSString *customDefaultURL = [[NSUserDefaults standardUserDefaults] stringForKey:DefaultURLPreferenceKey];
+    if (customDefaultURL)
+        return customDefaultURL;
+    return defaultURL;
+}
 
-- (void)selectWebViewAtIndex:(NSUInteger)index;
-- (void)removeWebViewAtIndex:(NSUInteger)index;
-- (void)addWebView;
+#pragma mark Internal Methods
 
-- (NSURL *)currentURL;
+- (void)setDefaultURLToCurrentURL:(id)sender
+{
+    NSString *customDefaultURL = [[self.parent currentURL] absoluteString];
+    [[NSUserDefaults standardUserDefaults] setObject:customDefaultURL forKey:DefaultURLPreferenceKey];
+}
 
 @end
-
