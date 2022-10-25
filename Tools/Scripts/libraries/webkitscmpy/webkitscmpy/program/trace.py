@@ -35,6 +35,8 @@ REVERT_RE = [
     re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Reverts? \[{}\]'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Reverts? \({}\)'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Reverts? "{}"'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'Reverts? "?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
 ]
 FOLLOW_UP_FIXES_RE = [
     re.compile(r'Fix following {}'.format(COMPOUND_COMMIT_REF)),
