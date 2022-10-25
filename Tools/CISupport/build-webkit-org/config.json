@@ -1,5 +1,19 @@
 {
     "workers":     [
+                    { "name": "bot211", "platform": "mac-ventura" },
+                    { "name": "bot212", "platform": "mac-ventura" },
+                    { "name": "bot215", "platform": "mac-ventura" },
+                    { "name": "bot216", "platform": "mac-ventura" },
+                    { "name": "bot220", "platform": "mac-ventura" },
+                    { "name": "bot245", "platform": "mac-ventura" },
+                    { "name": "bot246", "platform": "mac-ventura" },
+                    { "name": "bot249", "platform": "mac-ventura" },
+                    { "name": "bot254", "platform": "mac-ventura" },
+                    { "name": "bot256", "platform": "mac-ventura" },
+                    { "name": "bot257", "platform": "mac-ventura" },
+                    { "name": "bot258", "platform": "mac-ventura" },
+                    { "name": "bot260", "platform": "mac-ventura" },
+
                     { "name": "bot105", "platform": "mac-monterey" },
                     { "name": "bot111", "platform": "mac-monterey" },
                     { "name": "bot135", "platform": "mac-monterey" },
@@ -20,17 +34,11 @@
                     { "name": "bot1026", "platform": "mac-monterey" },
 
                     { "name": "bot121", "platform": "mac-bigsur" },
-                    { "name": "bot124", "platform": "mac-bigsur" },
                     { "name": "bot126", "platform": "mac-bigsur" },
                     { "name": "bot131", "platform": "mac-bigsur" },
-                    { "name": "bot132", "platform": "mac-bigsur" },
-                    { "name": "bot137", "platform": "mac-bigsur" },
-                    { "name": "bot140", "platform": "mac-bigsur" },
-                    { "name": "bot142", "platform": "mac-bigsur" },
                     { "name": "bot178", "platform": "mac-bigsur" },
                     { "name": "bot183", "platform": "mac-bigsur" },
                     { "name": "bot184", "platform": "mac-bigsur" },
-                    { "name": "bot260", "platform": "mac-bigsur" },
                     { "name": "bot302", "platform": "mac-bigsur" },
                     { "name": "bot610", "platform": "mac-bigsur" },
                     { "name": "bot638", "platform": "mac-bigsur" },
@@ -40,11 +48,7 @@
                     { "name": "bot1027", "platform": "mac-bigsur" },
 
                     { "name": "bot205", "platform": "*" },
-                    { "name": "bot242", "platform": "*" },
-                    { "name": "bot243", "platform": "*" },
                     { "name": "bot244", "platform": "*" },
-                    { "name": "bot245", "platform": "*" },
-                    { "name": "bot246", "platform": "*" },
                     { "name": "bot247", "platform": "*" },
                     { "name": "bot248", "platform": "*" },
                     { "name": "bot611", "platform": "*" },
@@ -65,15 +69,11 @@
                     { "name": "bot308", "platform": "ios-simulator-16" },
                     { "name": "bot600", "platform": "ios-simulator-16" },
                     { "name": "bot673", "platform": "ios-16" },
-                    { "name": "bot614", "platform": "ios-simulator-16" },
                     { "name": "bot651", "platform": "ios-simulator-16" },
                     { "name": "bot652", "platform": "ios-simulator-16" },
                     { "name": "bot653", "platform": "ios-simulator-16" },
                     { "name": "bot641", "platform": "ios-simulator-16" },
                     { "name": "bot682", "platform": "ios-simulator-16" },
-                    { "name": "bot685", "platform": "ios-simulator-16" },
-                    { "name": "bot694", "platform": "ios-simulator-16" },
-                    { "name": "bot695", "platform": "ios-simulator-16" },
                     { "name": "bot667", "platform": "ios-simulator-16"},
                     { "name": "bot664", "platform": "ios-simulator-16"},
 
@@ -140,6 +140,67 @@
                   ],
 
     "builders":   [
+                    { "name": "Apple-Ventura-Release-Build", "factory": "BuildFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "triggers": [
+                        "ventura-release-tests-wk1", "ventura-release-tests-wk2",
+                        "ventura-release-applesilicon-tests-wk1", "ventura-release-applesilicon-tests-wk2"
+                    ],
+                    "workernames": ["bot245", "bot246"]
+                    },
+                    { "name": "Apple-Ventura-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot212"]
+                    },
+                    { "name": "Apple-Ventura-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot256"]
+                    },
+                    { "name": "Apple-Ventura-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot257"]
+                    },
+                    { "name": "Apple-Ventura-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot211"]
+                    },
+                    { "name": "Apple-Ventura-Debug-Build", "factory": "BuildFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "triggers": [
+                        "ventura-debug-tests-wk1", "ventura-debug-tests-wk2", "ventura-debug-applesilicon-tests-wk1",
+                        "ventura-debug-applesilicon-tests-wk2", "ventura-debug-tests-wk2-gpuprocess"
+                    ],
+                    "workernames": ["bot249", "bot254"]
+                    },
+                    { "name": "Apple-Ventura-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot216"]
+                    },
+                    { "name": "Apple-Ventura-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot215"]
+                    },
+                    { "name": "Apple-Ventura-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot260"]
+                    },
+                    { "name": "Apple-Ventura-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures"],
+                    "workernames": ["bot258"]
+                    },
+                    { "name": "Apple-Ventura-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                    "workernames": ["bot220"]
+                    },
                     { "name": "Apple-Monterey-Release-Build", "factory": "BuildFactory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": [
@@ -226,24 +287,14 @@
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": [
                           "bigsur-release-tests-jsc", "bigsur-release-perf-tests", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2",
-                          "bigsur-release-applesilicon-tests-wk1", "bigsur-release-applesilicon-tests-wk2", "bigsur-release-tests-wk2-webgl-gpuprocess"
+                          "bigsur-release-tests-wk2-webgl-gpuprocess"
                       ],
-                      "workernames": ["bot121", "bot124"]
+                      "workernames": ["bot121"]
                     },
                     { "name": "Apple-BigSur-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1020"]
-                    },
-                    { "name": "Apple-BigSur-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot132"]
-                    },
-                    { "name": "Apple-BigSur-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot137"]
                     },
                     { "name": "Apple-BigSur-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -258,8 +309,7 @@
                     { "name": "Apple-BigSur-Debug-Build", "factory": "BuildFactory",
                       "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "triggers": [
-                          "bigsur-debug-tests-jsc", "bigsur-debug-tests-wk1", "bigsur-debug-tests-wk2", "bigsur-debug-applesilicon-tests-wk1",
-                          "bigsur-debug-applesilicon-tests-wk2", "bigsur-debug-tests-wk2-gpuprocess"
+                          "bigsur-debug-tests-jsc", "bigsur-debug-tests-wk1", "bigsur-debug-tests-wk2"
                       ],
                       "workernames": ["bot126", "bot131"]
                     },
@@ -273,16 +323,6 @@
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1027"]
                     },
-                    { "name": "Apple-BigSur-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot140"]
-                    },
-                    { "name": "Apple-BigSur-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot142"]
-                    },
                     { "name": "Apple-BigSur-Debug-JSC-Tests", "factory": "TestJSCFactory",
                       "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot638"]
@@ -290,11 +330,6 @@
                     { "name": "Apple-BigSur-Release-JSC-Tests", "factory": "TestJSCFactory",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot610"]
-                    },
-                    { "name": "Apple-BigSur-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
-                      "workernames": ["bot260"]
                     },
                     { "name": "Apple-BigSur-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
                       "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
@@ -319,13 +354,13 @@
                       "name": "Apple-iOS-16-Simulator-Release-Build", "factory": "BuildFactory",
                       "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": ["ios-simulator-16-release-arm64-tests-wk2", "ios-simulator-16-release-gpuprocess-tests-wk2", "ios-simulator-16-release-tests-wk2", "ipados-simulator-16-release-tests-wk2"],
-                      "workernames": ["bot614", "bot641", "bot682", "bot685", "bot303", "bot305", "bot306"]
+                      "workernames": ["bot641", "bot682", "bot303", "bot305", "bot306"]
                     },
                     {
                       "name": "Apple-iOS-16-Simulator-Debug-Build", "factory": "BuildFactory",
                       "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-16-debug-tests-wk2", "ipados-simulator-16-debug-tests-wk2"],
-                      "workernames": ["bot694", "bot695", "bot307", "bot308"]
+                      "workernames": ["bot307", "bot308"]
                     },
                     {
                       "name": "Apple-iOS-16-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -651,6 +686,36 @@
                                        "WPE-Linux-64-bit-Release-Non-Unified-Build"]
                     },
 
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-ventura", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-Ventura-Release-Build", "Apple-Ventura-Debug-Build"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-release-tests-wk1",
+                    "builderNames": ["Apple-Ventura-Release-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-release-tests-wk2",
+                    "builderNames": ["Apple-Ventura-Release-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-release-applesilicon-tests-wk1",
+                    "builderNames": ["Apple-Ventura-Release-AppleSilicon-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-release-applesilicon-tests-wk2",
+                    "builderNames": ["Apple-Ventura-Release-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-debug-tests-wk1",
+                    "builderNames": ["Apple-Ventura-Debug-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-debug-tests-wk2",
+                    "builderNames": ["Apple-Ventura-Debug-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-debug-applesilicon-tests-wk1",
+                    "builderNames": ["Apple-Ventura-Debug-AppleSilicon-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-debug-applesilicon-tests-wk2",
+                    "builderNames": ["Apple-Ventura-Debug-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ventura-debug-tests-wk2-gpuprocess",
+                    "builderNames": ["Apple-Ventura-Debug-WK2-GPUProcess-Tests"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-monterey", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Monterey-Release-Build", "Apple-Monterey-Debug-Build"]
                     },
@@ -711,12 +776,6 @@
                     { "type": "Triggerable", "name": "bigsur-release-tests-wk2",
                       "builderNames": ["Apple-BigSur-Release-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "bigsur-release-applesilicon-tests-wk1",
-                      "builderNames": ["Apple-BigSur-Release-AppleSilicon-WK1-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "bigsur-release-applesilicon-tests-wk2",
-                      "builderNames": ["Apple-BigSur-Release-AppleSilicon-WK2-Tests"]
-                    },
                     { "type": "Triggerable", "name": "bigsur-release-tests-wk2-webgl-gpuprocess",
                       "builderNames": ["Apple-BigSur-Release-WK2-WebGL-GPUProcess-Tests"]
                     },
@@ -728,15 +787,6 @@
                     },
                     { "type": "Triggerable", "name": "bigsur-debug-tests-wk2",
                       "builderNames": ["Apple-BigSur-Debug-WK2-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "bigsur-debug-applesilicon-tests-wk1",
-                      "builderNames": ["Apple-BigSur-Debug-AppleSilicon-WK1-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "bigsur-debug-applesilicon-tests-wk2",
-                      "builderNames": ["Apple-BigSur-Debug-AppleSilicon-WK2-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "bigsur-debug-tests-wk2-gpuprocess",
-                      "builderNames": ["Apple-BigSur-Debug-WK2-GPUProcess-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-16", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-16-Release-Build"]
