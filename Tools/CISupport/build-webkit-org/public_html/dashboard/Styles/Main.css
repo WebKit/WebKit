@@ -259,7 +259,7 @@ table.queue-grid tr.platform.macos-monterey img.logo {
     content: url(../Images/Monterey.png);
 }
 
-table.queue-grid tr.platform.macos-monterey img.logo {
+table.queue-grid tr.platform.macos-ventura img.logo {
     content: url(../Images/Ventura.png);
 }
 
