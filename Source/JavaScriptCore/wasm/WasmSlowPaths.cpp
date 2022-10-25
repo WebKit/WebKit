@@ -338,7 +338,7 @@ WASM_SLOW_PATH_DECL(array_new_default)
 
     Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
     ASSERT(arraySignature.is<Wasm::ArrayType>());
-    Wasm::Type elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 
     EncodedJSValue value = 0;
     if (Wasm::isRefType(elementType))
@@ -347,21 +347,35 @@ WASM_SLOW_PATH_DECL(array_new_default)
     WASM_RETURN(Wasm::operationWasmArrayNew(instance, instruction.m_typeIndex, size, value));
 }
 
-WASM_SLOW_PATH_DECL(array_get)
+template <typename WasmOp, auto operation>
+auto ArrayGetOperation(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance)
 {
-    auto instruction = pc->as<WasmArrayGet>();
+    auto instruction = pc->as<WasmOp>();
     EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
     if (JSValue::decode(arrayref).isNull())
         WASM_THROW(Wasm::ExceptionType::NullArrayGet);
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
-
     JSValue arrayValue = JSValue::decode(arrayref);
     ASSERT(arrayValue.isObject());
     JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
+    WASM_RETURN(operation(instance, instruction.m_typeIndex, arrayref, index));
+}
 
-    WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
+WASM_SLOW_PATH_DECL(array_get)
+{
+    return ArrayGetOperation<WasmArrayGet, Wasm::operationWasmArrayGet>(callFrame, pc, instance);
+}
+
+WASM_SLOW_PATH_DECL(array_get_s)
+{
+    return ArrayGetOperation<WasmArrayGetS, Wasm::operationWasmArrayGetSigned>(callFrame, pc, instance);
+}
+
+WASM_SLOW_PATH_DECL(array_get_u)
+{
+    return ArrayGetOperation<WasmArrayGetU, Wasm::operationWasmArrayGetUnsigned>(callFrame, pc, instance);
 }
 
 WASM_SLOW_PATH_DECL(array_set)

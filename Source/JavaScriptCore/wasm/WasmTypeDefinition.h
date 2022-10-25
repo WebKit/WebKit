@@ -188,8 +188,108 @@ enum Mutability : uint8_t {
     Immutable = 0
 };
 
-struct FieldType {
-    Type type;
+struct StorageType {
+public:
+    template <typename T>
+    bool is() const { return std::holds_alternative<T>(m_storageType); }
+
+    template <typename T>
+    const T* as() const { ASSERT(is<T>()); return std::get_if<T>(&m_storageType); }
+
+    StorageType() = default;
+
+    StorageType(Type t)
+    {
+        m_storageType = std::variant<Type, PackedType>(t);
+    }
+
+    StorageType(PackedType t)
+    {
+        m_storageType = std::variant<Type, PackedType>(t);
+    }
+
+    // If this is a type, returns itself; if it's a packed type, returns i32
+    Type unpacked() const
+    {
+        if (is<Type>())
+            return *as<Type>();
+        return Types::I32;
+    }
+
+    size_t elementSize() const
+    {
+        if (is<Type>()) {
+            switch (as<Type>()->kind) {
+            case Wasm::TypeKind::I32:
+            case Wasm::TypeKind::F32:
+                return sizeof(uint32_t);
+            default:
+                return sizeof(uint64_t);
+            }
+        }
+        switch (*as<PackedType>()) {
+        case PackedType::I8:
+            return sizeof(uint8_t);
+        case PackedType::I16:
+            return sizeof(uint16_t);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    bool operator==(const StorageType& rhs) const
+    {
+        if (rhs.is<PackedType>())
+            return (is<PackedType>() && as<PackedType>() == rhs.as<PackedType>());
+        if (!is<Type>())
+            return false;
+        return(as<Type>() == rhs.as<Type>());
+    }
+    bool operator!=(const StorageType& rhs) const { return !(*this == rhs); };
+
+    int8_t typeCode() const
+    {
+        if (is<Type>())
+            return static_cast<int8_t>(as<Type>()->kind);
+        return static_cast<int8_t>(*as<PackedType>());
+    }
+
+    TypeIndex index() const
+    {
+        if (is<Type>())
+            return as<Type>()->index;
+        return 0;
+    }
+    void dump(WTF::PrintStream& out) const;
+
+    // private:
+    std::variant<Type, PackedType> m_storageType;
+
+};
+
+inline const char* makeString(const StorageType& storageType)
+{
+    return(storageType.is<Type>() ? makeString(storageType.as<Type>()->kind) :
+        makeString(*storageType.as<PackedType>()));
+}
+
+inline size_t typeSizeInBytes(const StorageType& storageType)
+{
+    if (storageType.is<PackedType>()) {
+        switch (*storageType.as<PackedType>()) {
+        case PackedType::I8: {
+            return 1;
+        }
+        case PackedType::I16: {
+            return 2;
+        }
+        }
+    }
+    return typeKindSizeInBytes(storageType.as<Type>()->kind);
+}
+
+class FieldType {
+public:
+    StorageType type;
     Mutability mutability;
 
     bool operator==(const FieldType& rhs) const { return type == rhs.type && mutability == rhs.mutability; }
@@ -203,13 +303,16 @@ public:
     StructFieldCount fieldCount() const { return m_fieldCount; }
     bool hasRecursiveReference() const { return m_hasRecursiveReference; }
     void setHasRecursiveReference(bool value) { m_hasRecursiveReference = value; }
+
     FieldType field(StructFieldCount i) const { return const_cast<StructType*>(this)->getField(i); }
+    FieldType operator[](size_t i) const { return field(i); }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
 
     FieldType& getField(StructFieldCount i) { ASSERT(i < fieldCount()); return *storage(i); }
     FieldType* storage(StructFieldCount i) { return i + m_payload; }
+
     const FieldType* storage(StructFieldCount i) const { return const_cast<StructType*>(this)->storage(i); }
 
     const unsigned* getFieldOffset(StructFieldCount i) const { ASSERT(i < fieldCount()); return bitwise_cast<const unsigned*>(m_payload + m_fieldCount) + i; }
@@ -243,7 +346,6 @@ public:
     FieldType& getElementType() { return *storage(); }
     FieldType* storage() { return m_payload; }
     const FieldType* storage() const { return const_cast<ArrayType*>(this)->storage(); }
-
 private:
     FieldType* m_payload;
     bool m_hasRecursiveReference;

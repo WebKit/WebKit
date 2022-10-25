@@ -842,8 +842,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* inst
     const StructType& structType = *structTypeDefinition->as<StructType>();
 
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
-    for (unsigned i = 0; i < structType.fieldCount(); ++i)
-        structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type, arguments[i]));
+    for (unsigned i = 0; i < structType.fieldCount(); ++i) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+        ASSERT(structType.field(i).type.is<Type>());
+        structValue->set(globalObject, i, toJSValue(globalObject, *structType.field(i).type.as<Type>(), arguments[i]));
+    }
     return JSValue::encode(structValue);
 }
 
@@ -872,7 +875,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructSet, void, (Instance* instance, Enco
     JSObject* structureAsObject = jsCast<JSObject*>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
     JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
-    const auto fieldType = structPointer->structType()->field(fieldIndex).type;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structPointer->structType()->field(fieldIndex).type.is<Type>());
+
+    const auto fieldType = *structPointer->structType()->field(fieldIndex).type.as<Type>();
     return structPointer->set(jsInstance->globalObject(), fieldIndex, toJSValue(jsInstance->globalObject(), fieldType, argument));
 }
 
@@ -1113,26 +1120,54 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* insta
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
+    size_t elementSize = fieldType.type.elementSize();
+
     JSWebAssemblyArray* array = nullptr;
-    switch (fieldType.type.kind) {
-    case Wasm::TypeKind::I32:
-    case Wasm::TypeKind::F32: {
+
+    switch (elementSize) {
+    case sizeof(uint8_t): {
+        FixedVector<uint8_t> values(size);
+        for (unsigned i = 0; i < size; i++) {
+            // `encValue` must be an unboxed int (since the typechecker guarantees that its type is i32);
+            // so it's safe to truncate it to 8 bits
+            values[i] = static_cast<uint8_t>(encValue);
+        }
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        break;
+    }
+    case sizeof(uint16_t): {
+        FixedVector<uint16_t> values(size);
+        // Truncate to 16 bits (analogous to the i8 case above)
+        for (unsigned i = 0; i < size; i++)
+            values[i] = static_cast<uint16_t>(encValue);
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        break;
+    }
+    case sizeof(uint32_t): {
         FixedVector<uint32_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint32_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType.type, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
         break;
     }
-    default: {
+    case sizeof(uint64_t): {
         FixedVector<uint64_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint64_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType.type, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
         break;
     }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
-
     return JSValue::encode(JSValue(array));
+}
+
+JSWebAssemblyArray* jsValueToArrayObject(EncodedJSValue arrayValue)
+{
+    JSValue arrayRef = JSValue::decode(arrayValue);
+    ASSERT(arrayRef.isObject());
+    return jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index))
@@ -1146,11 +1181,82 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* insta
     UNUSED_PARAM(typeIndex);
 #endif
 
-    JSValue arrayRef = JSValue::decode(arrayValue);
-    ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
-
+    JSWebAssemblyArray* arrayObject = jsValueToArrayObject(arrayValue);
     return arrayObject->get(index);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayGetSigned, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index))
+{
+    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+
+    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
+    ASSERT(arraySignature.is<ArrayType>());
+
+    JSWebAssemblyArray* arrayObject = jsValueToArrayObject(arrayValue);
+
+    int32_t element = arrayObject->get(index);
+
+    StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    ASSERT(elementType.is<PackedType>());
+    switch (*elementType.as<PackedType>()) {
+    case PackedType::I8: {
+        // The value should already be less than the max uint8 value
+        ASSERT(element <= UINT8_MAX);
+        uint8_t bitShift = (sizeof(uint32_t) - sizeof(uint8_t)) * 8;
+        // Truncate to 8 bits with sign extension
+        element = element << bitShift;
+        element = element >> bitShift;
+        ASSERT(element <= INT8_MAX);
+        ASSERT(element >= INT8_MIN);
+        break;
+    }
+    case PackedType::I16: {
+        // The value should already be less than the max uint16 value
+        ASSERT(element <= UINT16_MAX);
+        uint8_t bitShift = (sizeof(uint32_t) - sizeof(uint16_t)) * 8;
+        // Truncate to 16 bits with sign extension
+        element = element << bitShift;
+        element = element >> bitShift;
+        ASSERT(element <= INT16_MAX);
+        ASSERT(element >= INT16_MIN);
+        break;
+    }
+    }
+    return element;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayGetUnsigned, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index))
+{
+#if ASSERT_ENABLED
+    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
+#else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(typeIndex);
+#endif
+
+    JSWebAssemblyArray* arrayObject = jsValueToArrayObject(arrayValue);
+
+    uint32_t element = arrayObject->get(index);
+
+#if ASSERT_ENABLED
+    StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    ASSERT(elementType.is<PackedType>());
+    switch (*elementType.as<PackedType>()) {
+    case PackedType::I8: {
+        // The value should already be less than the max uint8 value
+        ASSERT(element <= UINT8_MAX);
+        break;
+    }
+    case PackedType::I16: {
+        // The value should already be less than the max uint16 value
+        ASSERT(element <= UINT16_MAX);
+        break;
+    }
+    }
+#endif
+    return element;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index, EncodedJSValue value))

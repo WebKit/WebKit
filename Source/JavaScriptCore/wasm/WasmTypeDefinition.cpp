@@ -93,7 +93,7 @@ void StructType::dump(PrintStream& out) const
     out.print("(");
     CommaPrinter comma;
     for (StructFieldCount fieldIndex = 0; fieldIndex < fieldCount(); ++fieldIndex) {
-        out.print(comma, makeString(field(fieldIndex).type.kind));
+        out.print(comma, makeString(field(fieldIndex).type));
         out.print(comma, field(fieldIndex).mutability ? "immutable" : "mutable");
     }
     out.print(")");
@@ -111,7 +111,7 @@ StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const Fi
         hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
         getField(fieldIndex) = fieldType;
         *getFieldOffset(fieldIndex) = currentFieldOffset;
-        currentFieldOffset += typeKindSizeInBytes(field(fieldIndex).type.kind);
+        currentFieldOffset += typeSizeInBytes(field(fieldIndex).type);
     }
 
     m_instancePayloadSize = WTF::roundUpToMultipleOf<sizeof(uint64_t)>(currentFieldOffset);
@@ -127,7 +127,7 @@ void ArrayType::dump(PrintStream& out) const
 {
     out.print("(");
     CommaPrinter comma;
-    out.print(comma, makeString(elementType().type.kind));
+    out.print(comma, makeString(elementType().type));
     out.print(comma, elementType().mutability ? "immutable" : "mutable");
     out.print(")");
 }
@@ -162,6 +162,16 @@ void Projection::dump(PrintStream& out) const
     out.print(")");
 }
 
+void StorageType::dump(PrintStream& out) const
+{
+    if (is<Type>())
+        out.print(makeString(*as<Type>()));
+    else {
+        ASSERT(is<PackedType>());
+        out.print(makeString(*as<PackedType>()));
+    }
+}
+
 static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes, size_t argumentCount, const Type* argumentTypes)
 {
     unsigned accumulator = 0xa1bcedd8u;
@@ -178,10 +188,11 @@ static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes
 
 static unsigned computeStructTypeHash(size_t fieldCount, const FieldType* fields)
 {
-    unsigned accumulator = 0x15d2546;
+    unsigned init = 0x15d2546;
+    unsigned accumulator = init;
     for (uint32_t i = 0; i < fieldCount; ++i) {
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.kind)));
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.index)));
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<int8_t>::hash(static_cast<int8_t>(fields[i].type.typeCode())));
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.index())));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].mutability)));
     }
     return accumulator;
@@ -190,8 +201,9 @@ static unsigned computeStructTypeHash(size_t fieldCount, const FieldType* fields
 static unsigned computeArrayTypeHash(FieldType elementType)
 {
     unsigned accumulator = 0x7835ab;
-    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(elementType.type.kind)));
-    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(elementType.type.index));
+
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<int8_t>::hash(static_cast<int8_t>(elementType.type.typeCode())));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(elementType.type.index()));
     accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(elementType.mutability)));
     return accumulator;
 }
@@ -341,7 +353,8 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
         newFields.tryReserveCapacity(structType->fieldCount());
         for (unsigned i = 0; i < structType->fieldCount(); i++) {
             FieldType field = structType->field(i);
-            newFields.uncheckedAppend(FieldType { substitute(field.type, projectee), field.mutability });
+            StorageType substituted = field.type.is<PackedType>() ? field.type : StorageType(substitute(*field.type.as<Type>(), projectee));
+            newFields.uncheckedAppend(FieldType { substituted, field.mutability });
         }
 
         RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForStruct(newFields);

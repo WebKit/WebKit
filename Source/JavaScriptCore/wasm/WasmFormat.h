@@ -104,6 +104,14 @@ inline bool isRefType(Type type)
     return type.isFuncref() || type.isExternref();
 }
 
+// If this is a type, returns true iff its a ref type; if it's a packed type, returns false
+inline bool isRefType(StorageType type)
+{
+    if (type.is<Type>())
+        return isRefType(*type.as<Type>());
+    return false;
+}
+
 inline bool isExternref(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
@@ -155,12 +163,16 @@ inline bool isRefWithTypeIndex(Type type)
 }
 
 // Determine if the ref type has a placeholder type index that is used
-// for an unresoled recursive reference in a recursion group.
-inline bool isRefWithRecursiveReference(Type type)
+// for an unresolved recursive reference in a recursion group.
+inline bool isRefWithRecursiveReference(StorageType storageType)
 {
     if (!Options::useWebAssemblyGC())
         return false;
 
+    if (storageType.is<PackedType>())
+        return false;
+
+    Type type = *storageType.as<Type>();
     if (isRefWithTypeIndex(type)) {
         const TypeDefinition& def = TypeInformation::get(type.index);
         if (def.is<Projection>())
@@ -215,6 +227,14 @@ inline bool isValidHeapTypeKind(TypeKind kind)
 inline bool isDefaultableType(Type type)
 {
     return !type.isRef();
+}
+
+inline bool isDefaultableType(StorageType type)
+{
+    if (type.is<Type>())
+        return !type.as<Type>()->isRef();
+    // All packed types are defaultable.
+    return true;
 }
 
 enum class ExternalKind : uint8_t {
