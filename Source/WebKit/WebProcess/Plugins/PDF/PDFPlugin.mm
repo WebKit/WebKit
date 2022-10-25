@@ -285,11 +285,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return 0;
 }
 
-- (CPReadingModel *)readingModel
-{
-    return [_pdfLayerController readingModel];
-}
-
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
