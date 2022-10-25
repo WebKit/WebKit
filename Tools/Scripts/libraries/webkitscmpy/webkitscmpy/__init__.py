@@ -58,6 +58,9 @@ AutoInstall.register(Package('webkitbugspy', Version(0, 8, 0)), local=True)
 if sys.version_info < (3, 0):
     AutoInstall.register(Package('inspect2', Version(0, 1, 2)))
 
+if sys.version_info > (3, 6):
+    AutoInstall.register(Package('rapidfuzz', Version(2, 11, 1)))
+
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit
 from webkitscmpy.pull_request import PullRequest
