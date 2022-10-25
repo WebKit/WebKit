@@ -217,7 +217,6 @@
 		3A15784528D1505B00142DB1 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
 		3A5DDADA28D15169004DA950 /* LexerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5DDAD228D15169004DA950 /* LexerTests.cpp */; };
 		3A5DDAEE28D156FC004DA950 /* ParserTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5DDAED28D156FC004DA950 /* ParserTests.cpp */; };
-		3A5DDAF028D15BF7004DA950 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDF3A83728930475005920CF /* libgtest.a */; };
 		3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDAF428D1638A004DA950 /* libicucore.tbd */; };
 		3A5DDB0C28D53325004DA950 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		3A5DDB2C28D5525E004DA950 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
@@ -1036,6 +1035,7 @@
 		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD403D4928EB932F009B4684 /* libbmalloc.a */; };
 		DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DDADB22628FA094400918467 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB3724528ECE32F00A2F32D /* libbmalloc.a */; };
 		DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		DF1C7CE927F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF1C7CE827F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm */; };
@@ -3497,7 +3497,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */,
-				3A5DDAF028D15BF7004DA950 /* libgtest.a in Frameworks */,
+				DDADB22628FA094400918467 /* libgtest.a in Frameworks */,
 				3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */,
 				3A5DDB2D28D55265004DA950 /* libwgsl.a in Frameworks */,
 				3A5DDB2C28D5525E004DA950 /* libWTF.a in Frameworks */,
