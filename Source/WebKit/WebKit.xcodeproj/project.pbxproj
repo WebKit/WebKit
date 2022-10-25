@@ -3062,6 +3062,8 @@
 		0F45A334239D89AF00294ABF /* WKWebViewTestingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTestingMac.mm; sourceTree = "<group>"; };
 		0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTesting.h; sourceTree = "<group>"; };
 		0F45A33C239D8CC400294ABF /* WKWebViewTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTesting.mm; sourceTree = "<group>"; };
+		0F49294628FF0F4B00AF8509 /* DisplayLinkProcessProxyClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLinkProcessProxyClient.h; sourceTree = "<group>"; };
+		0F49294728FF0F4B00AF8509 /* DisplayLinkProcessProxyClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLinkProcessProxyClient.cpp; sourceTree = "<group>"; };
 		0F4A438428F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaMac.mm; sourceTree = "<group>"; };
 		0F4A438528F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaMac.h; sourceTree = "<group>"; };
 		0F5403002531006E00082BB9 /* WebWheelEventCoalescer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebWheelEventCoalescer.cpp; sourceTree = "<group>"; };
@@ -13042,6 +13044,8 @@
 				07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */,
 				C1817362205844A900DFDA65 /* DisplayLink.cpp */,
 				C18173602058424700DFDA65 /* DisplayLink.h */,
+				0F49294728FF0F4B00AF8509 /* DisplayLinkProcessProxyClient.cpp */,
+				0F49294628FF0F4B00AF8509 /* DisplayLinkProcessProxyClient.h */,
 				31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */,
 				31ABA79D215AF9E000C90E31 /* HighPerformanceGPUManager.mm */,
 				1AFDE65B1954E8D500C48FFA /* LegacySessionStateCoding.cpp */,

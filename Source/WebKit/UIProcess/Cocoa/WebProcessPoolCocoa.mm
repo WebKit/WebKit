@@ -902,6 +902,7 @@ bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 }
 
 #if HAVE(CVDISPLAYLINK)
+
 std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
@@ -914,45 +915,45 @@ std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore
     return frameRate;
 }
 
-void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void WebProcessPool::startDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
-        displayLink->addObserver(connection.uniqueID(), observerID, preferredFramesPerSecond);
+        displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
         return;
     }
 
     auto displayLink = makeUnique<DisplayLink>(displayID);
-    displayLink->addObserver(connection.uniqueID(), observerID, preferredFramesPerSecond);
+    displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
     m_displayLinks.add(WTFMove(displayLink));
 }
 
-void WebProcessPool::stopDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
+void WebProcessPool::stopDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->removeObserver(connection.uniqueID(), observerID);
+        displayLink->removeObserver(processProxy.displayLinkClient(), observerID);
 }
 
-void WebProcessPool::stopDisplayLinks(IPC::Connection& connection)
+void WebProcessPool::stopDisplayLinks(WebProcessProxy& processProxy)
 {
     for (auto& displayLink : m_displayLinks.displayLinks())
-        displayLink->removeObservers(connection.uniqueID());
+        displayLink->removeClient(processProxy.displayLinkClient());
 }
 
-void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
 
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->setPreferredFramesPerSecond(connection.uniqueID(), observerID, preferredFramesPerSecond);
+        displayLink->setObserverPreferredFramesPerSecond(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
 }
 
-void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(IPC::Connection& connection, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
+void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebProcessProxy& processProxy, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
         if (wantsFullSpeedUpdates)
-            displayLink->incrementFullSpeedRequestClientCount(connection.uniqueID());
+            displayLink->incrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
         else
-            displayLink->decrementFullSpeedRequestClientCount(connection.uniqueID());
+            displayLink->decrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
     }
 }
 
