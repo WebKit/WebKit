@@ -161,7 +161,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     if (!regExp->isValid())
         return throwVMError(globalObject, scope, regExp->errorToThrow(globalObject));
 
-    globalObject->regExpRecompiledWatchpoint()->fireAll(vm, "RegExp is recompiled");
+    globalObject->regExpRecompiledWatchpointSet().fireAll(vm, "RegExp is recompiled");
 
     thisRegExp->setRegExp(vm, regExp);
     scope.release();

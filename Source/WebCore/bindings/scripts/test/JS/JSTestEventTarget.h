@@ -32,7 +32,7 @@ public:
     using DOMWrapped = TestEventTarget;
     static JSTestEventTarget* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
     {
-        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), "Allocated masquerading object");
+        globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(globalObject->vm(), "Allocated masquerading object");
         JSTestEventTarget* ptr = new (NotNull, JSC::allocateCell<JSTestEventTarget>(globalObject->vm())) JSTestEventTarget(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;

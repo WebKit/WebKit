@@ -2815,7 +2815,7 @@ end
 macro varInjectionCheck(slowPath, scratch)
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_globalObject[scratch], scratch
-    loadp JSGlobalObject::m_varInjectionWatchpoint[scratch], scratch
+    loadp JSGlobalObject::m_varInjectionWatchpointSet[scratch], scratch
     bbeq WatchpointSet::m_state[scratch], IsInvalidated, slowPath
 end
 

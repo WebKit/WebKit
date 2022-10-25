@@ -526,11 +526,11 @@ public:
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
 #endif
 
-    RefPtr<WatchpointSet> m_masqueradesAsUndefinedWatchpoint;
-    RefPtr<WatchpointSet> m_havingABadTimeWatchpoint;
-    RefPtr<WatchpointSet> m_varInjectionWatchpoint;
-    RefPtr<WatchpointSet> m_varReadOnlyWatchpoint;
-    RefPtr<WatchpointSet> m_regExpRecompiledWatchpoint;
+    Ref<WatchpointSet> m_masqueradesAsUndefinedWatchpointSet;
+    Ref<WatchpointSet> m_havingABadTimeWatchpointSet;
+    Ref<WatchpointSet> m_varInjectionWatchpointSet;
+    Ref<WatchpointSet> m_varReadOnlyWatchpointSet;
+    Ref<WatchpointSet> m_regExpRecompiledWatchpointSet;
 
     std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
@@ -553,7 +553,7 @@ public:
     InlineWatchpointSet m_objectPrototypeChainIsSaneWatchpointSet { IsWatched };
     InlineWatchpointSet m_stringPrototypeChainIsSaneWatchpointSet { IsWatched };
     InlineWatchpointSet m_numberToStringWatchpointSet { IsWatched };
-    InlineWatchpointSet m_structureCacheClearedWatchpoint { IsWatched };
+    InlineWatchpointSet m_structureCacheClearedWatchpointSet { IsWatched };
     InlineWatchpointSet m_arrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_typedArrayConstructorSpeciesWatchpointSet { IsWatched };
@@ -663,7 +663,7 @@ public:
         RELEASE_ASSERT(Options::useJIT());
         return m_numberToStringWatchpointSet;
     }
-    InlineWatchpointSet& structureCacheClearedWatchpoint() { return m_structureCacheClearedWatchpoint; }
+    InlineWatchpointSet& structureCacheClearedWatchpointSet() { return m_structureCacheClearedWatchpointSet; }
     InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode sharingMode)
     {
         switch (sharingMode) {
@@ -1066,8 +1066,8 @@ public:
     static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSGlobalObject, m_vm); }
     static ptrdiff_t offsetOfGlobalLexicalEnvironment() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalEnvironment); }
     static ptrdiff_t offsetOfGlobalLexicalBindingEpoch() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
-    static ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint); }
-    static ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpoint); }
+    static ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpointSet); }
+    static ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpointSet); }
     static ptrdiff_t offsetOfFunctionProtoHasInstanceSymbolFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction); }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1202,15 +1202,15 @@ public:
         return result;
     }
 
-    WatchpointSet* masqueradesAsUndefinedWatchpoint() { return m_masqueradesAsUndefinedWatchpoint.get(); }
-    WatchpointSet* havingABadTimeWatchpoint() { return m_havingABadTimeWatchpoint.get(); }
-    WatchpointSet* varInjectionWatchpoint() { return m_varInjectionWatchpoint.get(); }
-    WatchpointSet* varReadOnlyWatchpoint() { return m_varReadOnlyWatchpoint.get(); }
-    WatchpointSet* regExpRecompiledWatchpoint() { return m_regExpRecompiledWatchpoint.get(); }
+    WatchpointSet& masqueradesAsUndefinedWatchpointSet() { return m_masqueradesAsUndefinedWatchpointSet.get(); }
+    WatchpointSet& havingABadTimeWatchpointSet() { return m_havingABadTimeWatchpointSet.get(); }
+    WatchpointSet& varInjectionWatchpointSet() { return m_varInjectionWatchpointSet.get(); }
+    WatchpointSet& varReadOnlyWatchpointSet() { return m_varReadOnlyWatchpointSet.get(); }
+    WatchpointSet& regExpRecompiledWatchpointSet() { return m_regExpRecompiledWatchpointSet.get(); }
         
     bool isHavingABadTime() const
     {
-        return m_havingABadTimeWatchpoint->hasBeenInvalidated();
+        return m_havingABadTimeWatchpointSet->hasBeenInvalidated();
     }
         
     void haveABadTime(VM&);
@@ -1225,7 +1225,7 @@ public:
 
     bool isRegExpRecompiled() const
     {
-        return m_regExpRecompiledWatchpoint->hasBeenInvalidated();
+        return m_regExpRecompiledWatchpointSet->hasBeenInvalidated();
     }
 
     void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }

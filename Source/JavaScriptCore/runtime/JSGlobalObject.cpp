@@ -686,11 +686,11 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_vm(&vm)
     , m_linkTimeConstants(numberOfLinkTimeConstants)
     , m_structureCache(vm)
-    , m_masqueradesAsUndefinedWatchpoint(WatchpointSet::create(IsWatched))
-    , m_havingABadTimeWatchpoint(WatchpointSet::create(IsWatched))
-    , m_varInjectionWatchpoint(WatchpointSet::create(IsWatched))
-    , m_varReadOnlyWatchpoint(WatchpointSet::create(IsWatched))
-    , m_regExpRecompiledWatchpoint(WatchpointSet::create(IsWatched))
+    , m_masqueradesAsUndefinedWatchpointSet(WatchpointSet::create(IsWatched))
+    , m_havingABadTimeWatchpointSet(WatchpointSet::create(IsWatched))
+    , m_varInjectionWatchpointSet(WatchpointSet::create(IsWatched))
+    , m_varReadOnlyWatchpointSet(WatchpointSet::create(IsWatched))
+    , m_regExpRecompiledWatchpointSet(WatchpointSet::create(IsWatched))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_runtimeFlags()
     , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
@@ -1868,7 +1868,7 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalO
         if (descriptor.writablePresent() && !descriptor.writable() && !entry.isReadOnly()) {
             entry.setReadOnly();
             thisObject->symbolTable()->set(propertyName.uid(), entry);
-            thisObject->varReadOnlyWatchpoint()->fireAll(vm, "GlobalVar was redefined as ReadOnly");
+            thisObject->varReadOnlyWatchpointSet().fireAll(vm, "GlobalVar was redefined as ReadOnly");
         }
         return true;
     }
@@ -2184,14 +2184,14 @@ void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
     // making all the array structures SlowPut. This ensures that the concurrent
     // JIT threads will always get the SlowPut versions of the structures if
     // isHavingABadTime() returns true. The concurrent JIT relies on this.
-    m_havingABadTimeWatchpoint->fireAll(vm, "Having a bad time");
+    m_havingABadTimeWatchpointSet->fireAll(vm, "Having a bad time");
     ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
 };
 
 void JSGlobalObject::clearStructureCache(VM& vm)
 {
     m_structureCache.clear(); // We may be caching array structures in here.
-    m_structureCacheClearedWatchpoint.fireAll(vm, "Clearing StructureCache");
+    m_structureCacheClearedWatchpointSet.fireAll(vm, "Clearing StructureCache");
 }
 
 void JSGlobalObject::haveABadTime(VM& vm)

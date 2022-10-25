@@ -16698,7 +16698,7 @@ IGNORE_CLANG_WARNINGS_END
     
     void speculateTruthyObject(Edge edge, LValue cell, SpeculatedType filter)
     {
-        if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+        if (m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_node)) {
             FTL_TYPE_CHECK(jsValueValue(cell), edge, filter, isNotObject(cell));
             return;
         }
@@ -17604,7 +17604,7 @@ IGNORE_CLANG_WARNINGS_END
             
             m_out.appendTo(notStringNorHeapBigIntCase, notCellCase);
             LValue isTruthyObject;
-            if (masqueradesAsUndefinedWatchpointIsStillValid())
+            if (m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_node))
                 isTruthyObject = m_out.booleanTrue;
             else {
                 LBasicBlock masqueradesCase = m_out.newBlock();
@@ -17689,8 +17689,6 @@ IGNORE_CLANG_WARNINGS_END
         Edge edge, StringOrObjectMode cellMode, EqualNullOrUndefinedMode primitiveMode,
         OperandSpeculationMode operandMode = AutomaticOperandSpeculation)
     {
-        bool validWatchpoint = masqueradesAsUndefinedWatchpointIsStillValid();
-        
         LValue value = lowJSValue(edge, operandMode);
         
         LBasicBlock cellCase = m_out.newBlock();
@@ -17712,7 +17710,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         
-        if (validWatchpoint) {
+        if (m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_node)) {
             results.append(m_out.anchor(m_out.booleanFalse));
             m_out.jump(continuation);
         } else {
@@ -20513,7 +20511,7 @@ IGNORE_CLANG_WARNINGS_END
     void speculateNonNullObject(Edge edge, LValue cell)
     {
         FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecObject, isNotObject(cell));
-        if (masqueradesAsUndefinedWatchpointIsStillValid())
+        if (m_graph.isWatchingObjectPrototypeIsSaneChainWatchpoint(m_node))
             return;
         
         speculate(
@@ -20663,11 +20661,6 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
     }
 
-    bool masqueradesAsUndefinedWatchpointIsStillValid()
-    {
-        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_origin.semantic);
-    }
-    
     LValue loadCellState(LValue base)
     {
         return m_out.load8ZeroExt32(base, m_heaps.JSCell_cellState);

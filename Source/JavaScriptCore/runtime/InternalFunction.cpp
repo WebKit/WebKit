@@ -171,7 +171,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
 InternalFunction* InternalFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeFunction nativeFunction)
 {
     Structure* structure = Structure::create(vm, globalObject, globalObject->objectPrototype(), TypeInfo(InternalFunctionType, InternalFunction::StructureFlags | MasqueradesAsUndefined), InternalFunction::info());
-    globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), "Allocated masquerading object");
+    globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(globalObject->vm(), "Allocated masquerading object");
     InternalFunction* function = new (NotNull, allocateCell<InternalFunction>(vm)) InternalFunction(vm, structure, nativeFunction);
     function->finishCreation(vm, length, name, PropertyAdditionMode::WithoutStructureTransition);
     return function;

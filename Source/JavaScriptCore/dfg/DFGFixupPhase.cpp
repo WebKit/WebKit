@@ -860,11 +860,8 @@ private:
                 fixEdge<StringUse>(node->child1());
             else if (node->child1()->shouldSpeculateStringOrOther())
                 fixEdge<StringOrOtherUse>(node->child1());
-            else {
-                WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
-                if (masqueradesAsUndefinedWatchpoint->isStillValid())
-                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
-            }
+            else
+                m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(node);
             break;
         }
 
@@ -1590,11 +1587,8 @@ private:
                 fixEdge<StringUse>(node->child1());
             else if (node->child1()->shouldSpeculateStringOrOther())
                 fixEdge<StringOrOtherUse>(node->child1());
-            else {
-                WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
-                if (masqueradesAsUndefinedWatchpoint->isStillValid())
-                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
-            }
+            else
+                m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(node);
             break;
         }
             
@@ -3005,18 +2999,7 @@ private:
 
     void watchHavingABadTime(Node* node)
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-
-        // If this global object is not having a bad time, watch it. We go down this path anytime the code
-        // does an array allocation. The types of array allocations may change if we start to have a bad
-        // time. It's easier to reason about this if we know that whenever the types change after we start
-        // optimizing, the code just gets thrown out. Doing this at FixupPhase is just early enough, since
-        // prior to this point nobody should have been doing optimizations based on the indexing type of
-        // the allocation.
-        if (!globalObject->isHavingABadTime()) {
-            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-            m_graph.freeze(globalObject);
-        }
+        m_graph.isWatchingHavingABadTimeWatchpoint(node);
     }
     
     template<UseKind useKind>

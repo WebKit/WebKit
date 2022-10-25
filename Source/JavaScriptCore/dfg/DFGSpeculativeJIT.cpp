@@ -1793,7 +1793,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();
     
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+    if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), m_jit.branchIfNotObject(op1GPR));
@@ -7851,7 +7851,7 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
 
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+    if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, m_jit.branchIfNotObject(op1GPR));
         DFG_TYPE_CHECK(

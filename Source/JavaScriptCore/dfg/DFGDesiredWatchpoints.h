@@ -235,7 +235,7 @@ public:
     DesiredWatchpoints();
     ~DesiredWatchpoints();
     
-    void addLazily(WatchpointSet*);
+    void addLazily(WatchpointSet&);
     void addLazily(InlineWatchpointSet&);
     void addLazily(SymbolTable*);
     void addLazily(FunctionExecutable*);
@@ -254,9 +254,9 @@ public:
     bool areStillValid() const;
     bool areStillValidOnMainThread(VM&, DesiredIdentifiers&);
     
-    bool isWatched(WatchpointSet* set)
+    bool isWatched(WatchpointSet& set)
     {
-        return m_sets.isWatched(set);
+        return m_sets.isWatched(&set);
     }
     bool isWatched(InlineWatchpointSet& set)
     {

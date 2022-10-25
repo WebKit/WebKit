@@ -505,13 +505,6 @@ public:
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
     }
     
-    bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
-    {
-        if (m_plan.isUnlinked())
-            return false;
-        return globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid();
-    }
-    
     bool hasGlobalExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
     {
         return baselineCodeBlockFor(codeOrigin)->unlinkedCodeBlock()->hasExitSite(FrequentExitSite(exitKind));
@@ -799,15 +792,8 @@ public:
         return result;
     }
 
-    bool isWatchingHavingABadTimeWatchpoint(Node* node)
-    {
-        if (m_plan.isUnlinked())
-            return false;
-        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
-        return watchpoints().isWatched(globalObject->havingABadTimeWatchpoint());
-    }
-
-    bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, InlineWatchpointSet& set)
+    template<typename WatchpointSet>
+    bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, WatchpointSet& set)
     {
         if (m_plan.isUnlinked())
             return false;
@@ -826,6 +812,26 @@ public:
         }
 
         return false;
+    }
+
+    bool isWatchingHavingABadTimeWatchpoint(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        WatchpointSet& set = globalObject->havingABadTimeWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
+    bool isWatchingMasqueradesAsUndefinedWatchpointSet(Node* node)
+    {
+        if (m_plan.isUnlinked())
+            return false;
+
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        WatchpointSet& set = globalObject->masqueradesAsUndefinedWatchpointSet();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
@@ -848,12 +854,13 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
-    bool isWatchingStructureCacheClearedWatchpoint(JSGlobalObject* globalObject)
+    bool isWatchingStructureCacheClearedWatchpoint(Node* node)
     {
         if (m_plan.isUnlinked())
             return false;
 
-        InlineWatchpointSet& set = globalObject->structureCacheClearedWatchpoint();
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->structureCacheClearedWatchpointSet();
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 

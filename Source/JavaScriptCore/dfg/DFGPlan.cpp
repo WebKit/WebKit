@@ -73,7 +73,6 @@
 #include "DFGValueRepReductionPhase.h"
 #include "DFGVarargsForwardingPhase.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
-#include "DFGWatchpointCollectionPhase.h"
 #include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
 #include "ProfilerDatabase.h"
@@ -333,7 +332,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performPhantomInsertion);
         RUN_PHASE(performStackLayout);
         RUN_PHASE(performVirtualRegisterAllocation);
-        RUN_PHASE(performWatchpointCollection);
         if (m_mode == JITCompilationMode::UnlinkedDFG) {
             if (DFG::canCompileUnlinked(dfg) == DFG::CannotCompile) {
                 m_finalizer = makeUnique<FailedFinalizer>(*this);
@@ -436,7 +434,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performStackLayout);
         RUN_PHASE(performLivenessAnalysis);
         RUN_PHASE(performOSRAvailabilityAnalysis);
-        RUN_PHASE(performWatchpointCollection);
         
         if (FTL::canCompile(dfg) == FTL::CannotCompile) {
             m_finalizer = makeUnique<FailedFinalizer>(*this);
