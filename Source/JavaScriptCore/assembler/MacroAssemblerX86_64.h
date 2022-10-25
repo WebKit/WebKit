@@ -562,6 +562,17 @@ public:
             swap(src, X86Registers::ecx);
         }
     }
+
+    void lshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        if (src == dest)
+            lshift64(imm, src);
+        else {
+            move(src, dest);
+            lshift64(imm, dest);
+        }
+    }
+
     
     void rshift64(TrustedImm32 imm, RegisterID dest)
     {

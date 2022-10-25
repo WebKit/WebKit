@@ -143,7 +143,7 @@ void A64DOpcode::init()
         lastGroups[i] = 0;
     }
 
-    for (unsigned i = 0; i < sizeof(opcodeGroupList) / sizeof(struct OpcodeGroupInitializer); i++) {
+    for (unsigned i = 0; i < std::size(opcodeGroupList); i++) {
         OpcodeGroup* newOpcodeGroup = new OpcodeGroup(opcodeGroupList[i].m_mask, opcodeGroupList[i].m_pattern, opcodeGroupList[i].m_format);
         uint32_t opcodeGroupNumber = opcodeGroupList[i].m_opcodeGroupNumber;
 
@@ -1392,15 +1392,14 @@ const char* A64DOpcodeLoadStoreRegisterPair::opName()
 
 const char* A64DOpcodeLoadStoreRegisterPair::format()
 {
+    // https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/LDP--Load-Pair-of-Registers-
+    // https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/STP--Store-Pair-of-Registers-
     const char* thisOpName = opName();
     
     if (size() == 0x3)
         return A64DOpcode::format();
 
     if ((offsetMode() < 0x1) || (offsetMode() > 0x3))
-        return A64DOpcode::format();
-
-    if ((offsetMode() == 0x1) && !vBit() && !lBit())
         return A64DOpcode::format();
 
     appendInstructionName(thisOpName);

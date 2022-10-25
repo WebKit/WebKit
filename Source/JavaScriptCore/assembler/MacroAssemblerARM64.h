@@ -1607,6 +1607,16 @@ public:
         }
     }
 
+    void loadPair32(PreIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<32>(dest1, dest2, src.base, PairPreIndex(src.index));
+    }
+
+    void loadPair32(PostIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<32>(dest1, dest2, src.base, PairPostIndex(src.index));
+    }
+
     void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
     {
         loadPair64(src, TrustedImm32(0), dest1, dest2);
@@ -1626,6 +1636,16 @@ public:
             load64(Address(src, offset.m_value), dest1);
             load64(Address(src, offset.m_value + 8), dest2);
         }
+    }
+
+    void loadPair64(PreIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<64>(dest1, dest2, src.base, PairPreIndex(src.index));
+    }
+
+    void loadPair64(PostIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<64>(dest1, dest2, src.base, PairPostIndex(src.index));
     }
 
     void loadPair64WithNonTemporalAccess(RegisterID src, RegisterID dest1, RegisterID dest2)
@@ -2015,6 +2035,16 @@ public:
         store32(src2, Address(dest, offset.m_value + 4));
     }
 
+    void storePair32(RegisterID src1, RegisterID src2, PreIndexAddress dest)
+    {
+        m_assembler.stp<32>(src1, src2, dest.base, PairPreIndex(dest.index));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, PostIndexAddress dest)
+    {
+        m_assembler.stp<32>(src1, src2, dest.base, PairPostIndex(dest.index));
+    }
+
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair64(src1, src2, dest, TrustedImm32(0));
@@ -2028,6 +2058,16 @@ public:
         }
         store64(src1, Address(dest, offset.m_value));
         store64(src2, Address(dest, offset.m_value + 8));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, PreIndexAddress dest)
+    {
+        m_assembler.stp<64>(src1, src2, dest.base, PairPreIndex(dest.index));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, PostIndexAddress dest)
+    {
+        m_assembler.stp<64>(src1, src2, dest.base, PairPostIndex(dest.index));
     }
 
     void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest)
