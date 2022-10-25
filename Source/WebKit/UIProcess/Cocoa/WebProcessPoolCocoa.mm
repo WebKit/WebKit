@@ -186,7 +186,7 @@ SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
 SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
-SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionAutoplayAnimatedImagesChangedNotification, CFStringRef)
+SOFT_LINK_CONSTANT_MAY_FAIL(libAccessibility, kAXSReduceMotionAutoplayAnimatedImagesChangedNotification, CFStringRef)
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
@@ -829,8 +829,8 @@ void WebProcessPool::registerNotificationObservers()
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification);
 #endif
 #if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
-    if (auto notificationName = getkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
-        addCFNotificationObserver(accessibilityPreferencesChangedCallback, notificationName);
+    if (canLoadkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
+        addCFNotificationObserver(accessibilityPreferencesChangedCallback, getkAXSReduceMotionAutoplayAnimatedImagesChangedNotification());
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);
