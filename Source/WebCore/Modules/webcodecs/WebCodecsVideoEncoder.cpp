@@ -93,6 +93,22 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
     m_state = WebCodecsCodecState::Configured;
     m_isKeyChunkRequired = true;
 
+    if (m_internalEncoder) {
+        queueControlMessageAndProcess([this, config]() mutable {
+            m_isMessageQueueBlocked = true;
+            m_internalEncoder->flush([this, weakedThis = WeakPtr { *this }, config = WTFMove(config)]() mutable {
+                if (!weakedThis)
+                    return;
+
+                if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
+                    return;
+
+                m_isMessageQueueBlocked = false;
+                processControlMessageQueue();
+            });
+        });
+    }
+
     queueControlMessageAndProcess([this, config = WTFMove(config), identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
         m_baseConfiguration = config;
@@ -209,10 +225,12 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
     return { };
 }
 
-ExceptionOr<void> WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
+void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
 {
-    if (m_state != WebCodecsCodecState::Configured)
-        return Exception { InvalidStateError, "VideoEncoder is not configured"_s };
+    if (m_state != WebCodecsCodecState::Configured) {
+        promise->reject(Exception { InvalidStateError, "VideoEncoder is not configured"_s });
+        return;
+    }
 
     m_pendingFlushPromises.append(promise.copyRef());
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
@@ -223,7 +241,6 @@ ExceptionOr<void> WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
             m_pendingFlushPromises.takeFirst()->resolve();
         });
     });
-    return { };
 }
 
 ExceptionOr<void> WebCodecsVideoEncoder::reset()

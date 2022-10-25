@@ -64,7 +64,7 @@ public:
 
     ExceptionOr<void> configure(WebCodecsVideoEncoderConfig&&);
     ExceptionOr<void> encode(Ref<WebCodecsVideoFrame>&&, WebCodecsVideoEncoderEncodeOptions&&);
-    ExceptionOr<void> flush(Ref<DeferredPromise>&&);
+    void flush(Ref<DeferredPromise>&&);
     ExceptionOr<void> reset();
     ExceptionOr<void> close();
 
