@@ -39,12 +39,13 @@ class RemoteResourceCache {
 public:
     RemoteResourceCache(WebCore::ProcessIdentifier webProcessIdentifier);
 
-    void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&, QualifiedRenderingResourceIdentifier);
+    void cacheImageBuffer(Ref<RemoteImageBuffer>&&, QualifiedRenderingResourceIdentifier);
     void cacheNativeImage(Ref<WebCore::NativeImage>&&, QualifiedRenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
 
-    WebCore::ImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
+    RemoteImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
+    RefPtr<RemoteImageBuffer> takeImageBuffer(QualifiedRenderingResourceIdentifier);
     WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier) const;

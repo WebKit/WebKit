@@ -70,6 +70,7 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     if (!m_gpuProcessConnection)
         return;
     m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(renderingBackendIdentifier()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_remoteResourceCacheProxy.clear();
     disconnectGPUProcess();
 }
 
@@ -129,8 +130,20 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
 {
+    fprintf(stderr, "Creating %llu, sending message\n", imageBuffer.renderingResourceIdentifier().toUInt64());
     auto logicalSize = imageBuffer.logicalSize();
     sendToStream(Messages::RemoteRenderingBackend::CreateImageBuffer(logicalSize, imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
+}
+
+void RemoteRenderingBackendProxy::transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> existing, ImageBuffer& imageBuffer)
+{
+    // This sends a message to the GPUP, asking it to transfer ownership of the 'real' ImageBuffer from the old ImageBufferProxy to the new.
+    // This works even though 'existing' is owned by a different RemoteRenderingBackendProxy, since we ensure that all related remote rendering backends
+    // use the same resource cache and work queue on the GPUP side.
+    // Once we receive a response to confirm that the transfer has happened, we dispatch back to the thread that owns 'existing', and ask it to do any
+    // remaining cleanup.
+    sendToStreamWithAsyncReply(Messages::RemoteRenderingBackend::TransferImageBuffer(existing->renderingBackendIdentifier(), existing->renderingResourceIdentifier(), imageBuffer.renderingResourceIdentifier()), [existing = WTFMove(existing)]() {
+    });
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck)

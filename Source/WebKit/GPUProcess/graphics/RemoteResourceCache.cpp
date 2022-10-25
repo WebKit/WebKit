@@ -36,15 +36,23 @@ RemoteResourceCache::RemoteResourceCache(ProcessIdentifier webProcessIdentifier)
 {
 }
 
-void RemoteResourceCache::cacheImageBuffer(Ref<ImageBuffer>&& imageBuffer, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheImageBuffer(Ref<RemoteImageBuffer>&& imageBuffer, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(renderingResourceIdentifier.object() == imageBuffer->renderingResourceIdentifier());
     m_resourceHeap.add(renderingResourceIdentifier, WTFMove(imageBuffer));
 }
 
-ImageBuffer* RemoteResourceCache::cachedImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RemoteImageBuffer* RemoteResourceCache::cachedImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getImageBuffer(renderingResourceIdentifier);
+}
+
+RefPtr<RemoteImageBuffer> RemoteResourceCache::takeImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+{
+    RefPtr<RemoteImageBuffer> buffer = m_resourceHeap.getImageBuffer(renderingResourceIdentifier);
+    m_resourceHeap.removeImageBuffer(renderingResourceIdentifier);
+    ASSERT(buffer->hasOneRef());
+    return buffer;
 }
 
 void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)

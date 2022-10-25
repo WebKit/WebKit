@@ -45,6 +45,8 @@ public:
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
     void flushContext(WebCore::GraphicsContextFlushIdentifier);
+    void disconnect();
+    void connect(RemoteRenderingBackendProxy&);
 
 private:
     template<typename T> void send(T&& message);

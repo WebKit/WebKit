@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class NativeImage : public ThreadSafeRefCounted<NativeImage, WTF::DestructionThread::Main>, public CanMakeWeakPtr<NativeImage> {
+class NativeImage : public ThreadSafeRefCounted<NativeImage>, public CanMakeWeakPtr<NativeImage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Observer {

@@ -176,6 +176,31 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     createImageBufferWithQualifiedIdentifier(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, { imageBufferResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
 }
 
+void RemoteRenderingBackend::transferImageBuffer(RenderingBackendIdentifier existingBackendIdentifier, RenderingResourceIdentifier existingIdentifier, RenderingResourceIdentifier newIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    QualifiedRenderingResourceIdentifier existingQualified { existingIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    QualifiedRenderingResourceIdentifier newQualified = { newIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+
+    callOnMainRunLoop([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, existingBackendIdentifier, existingQualified, newBackend = Ref { *this }, newQualified, completionHandler = WTFMove(completionHandler)] () mutable {
+        auto* existingBackend = gpuConnectionToWebProcess->findRemoteRenderingBackend(existingBackendIdentifier);
+        if (!existingBackend) {
+            completionHandler();
+            return;
+
+        }
+        existingBackend->dispatch([existingBackend = Ref { *existingBackend }, existingQualified, newBackend, newQualified, completionHandler = WTFMove(completionHandler)] () mutable {
+            if (auto existingBuffer = existingBackend->m_remoteResourceCache.takeImageBuffer(existingQualified)) {
+                newBackend->dispatch([existingBuffer = existingBuffer.releaseNonNull(), newBackend, newQualified, completionHandler = WTFMove(completionHandler)] () mutable {
+                    auto newBuffer = RemoteImageBuffer::createTransfer(WTFMove(existingBuffer), newBackend.get(), newQualified);
+                    newBackend->m_remoteResourceCache.cacheImageBuffer(*newBuffer, newQualified);
+                    completionHandler();
+                });
+            } else
+                completionHandler();
+        });
+    });
+}
+
 void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, QualifiedRenderingResourceIdentifier imageBufferResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());

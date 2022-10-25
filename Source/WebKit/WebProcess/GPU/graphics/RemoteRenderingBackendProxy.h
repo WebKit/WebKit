@@ -63,6 +63,8 @@ enum class RenderingMode : bool;
 namespace WebKit {
 
 class WebPage;
+class RemoteImageBufferProxy;
+class RemoteSerializedImageBufferProxy;
 
 class RemoteRenderingBackendProxy
     : private IPC::MessageReceiver
@@ -80,6 +82,7 @@ public:
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
+    void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     bool isCached(const WebCore::ImageBuffer&) const;
 
     // IPC::MessageReceiver

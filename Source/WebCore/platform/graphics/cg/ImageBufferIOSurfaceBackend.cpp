@@ -154,6 +154,11 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
     return m_surface->bytesPerRow();
 }
 
+void ImageBufferIOSurfaceBackend::transferToNewContext(const CreationContext& creationContext)
+{
+    m_ioSurfacePool = creationContext.surfacePool;
+}
+
 void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
 {
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.

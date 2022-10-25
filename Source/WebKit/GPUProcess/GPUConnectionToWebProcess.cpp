@@ -319,6 +319,7 @@ uint64_t GPUConnectionToWebProcess::gObjectCountForTesting = 0;
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
+    Ref hold { *this };
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     m_routingArbitrator->processDidTerminate();
 #endif
@@ -599,6 +600,24 @@ void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsConte
     releaseGraphicsContextGL(identifier);
 }
 #endif
+
+RemoteRenderingBackend* GPUConnectionToWebProcess::findRemoteRenderingBackend(RenderingBackendIdentifier backendIdentifier)
+{
+    GPUConnectionToWebProcess* primary = gpuProcess().webProcessConnection(webProcessIdentifier());
+    auto it = primary->remoteRenderingBackendMap().find(backendIdentifier);
+    if (it != primary->remoteRenderingBackendMap().end())
+        return it->value.get();
+
+    auto* extra = gpuProcess().extraWebProcessConnections(webProcessIdentifier());
+    if (!extra)
+        return nullptr;
+    for (auto& connection : *extra) {
+        auto it = connection->remoteRenderingBackendMap().find(backendIdentifier);
+        if (it != connection->remoteRenderingBackendMap().end())
+            return it->value.get();
+    }
+    return nullptr;
+}
 
 void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
 {

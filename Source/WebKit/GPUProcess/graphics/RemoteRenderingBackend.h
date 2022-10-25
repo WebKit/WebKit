@@ -33,6 +33,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "QualifiedRenderingResourceIdentifier.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -98,7 +99,6 @@ public:
 #endif
 
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
-
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::Connection::Handle&&, IPC::StreamConnectionBuffer&&);
     void startListeningForIPC();
@@ -109,6 +109,7 @@ private:
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingResourceIdentifier);
+    void transferImageBuffer(RenderingBackendIdentifier, WebCore::RenderingResourceIdentifier, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
     void getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::PixelBufferFormat&&, WebCore::IntRect&& srcRect, CompletionHandler<void()>&&);
     void getPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier, SharedMemory::Handle&&, WebCore::PixelBufferFormat&& destinationFormat, WebCore::IntRect&& srcRect, CompletionHandler<void()>&&);
     void destroyGetPixelBufferSharedMemory();

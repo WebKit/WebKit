@@ -42,6 +42,7 @@
 #include "PageBanner.h"
 #include "PluginView.h"
 #include "RemoteGPUProxy.h"
+#include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "SharedBufferReference.h"
 #include "UserData.h"
@@ -892,6 +893,14 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
     }
 
     return m_page.ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheck);
+}
+
+RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
+{
+    if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
+        return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+    auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
+    return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTFMove(remote), m_page.ensureRemoteRenderingBackendProxy());
 }
 #endif
 

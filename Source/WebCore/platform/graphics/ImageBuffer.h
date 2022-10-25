@@ -85,7 +85,7 @@ struct CreationContext {
     { }
 };
 
-class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
+class ImageBuffer : public RefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
 public:
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, const CreationContext& = { });
@@ -150,6 +150,7 @@ public:
     virtual bool flushDrawingContextAsync() { return false; }
     virtual void didFlush(GraphicsContextFlushIdentifier) { }
 
+    WEBCORE_EXPORT std::unique_ptr<ImageBufferBackend> takeBackend();
     WEBCORE_EXPORT IntSize backendSize() const;
 
     ImageBufferBackend* backend() const { return m_backend.get(); }
@@ -172,6 +173,9 @@ public:
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
+    const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
+
+    WEBCORE_EXPORT static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) const;
@@ -220,13 +224,36 @@ public:
 
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
+    virtual bool isRemoteImageBufferProxy() const { return false; }
+
 protected:
     WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+
+    WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
 
     ImageBufferBackend::Parameters m_parameters;
     ImageBufferBackend::Info m_backendInfo;
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
+};
+
+class SerializedImageBuffer {
+    WTF_MAKE_NONCOPYABLE(SerializedImageBuffer);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+
+    SerializedImageBuffer() = default;
+    virtual ~SerializedImageBuffer() = default;
+
+    virtual size_t memoryCost() = 0;
+
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>);
+
+    virtual bool isRemoteSerializedImageBufferProxy() const { return false; }
+    virtual bool isSerializedRemoteImageBuffer() const { return false; }
+
+protected:
+    virtual RefPtr<ImageBuffer> sinkIntoImageBuffer() = 0;
 };
 
 inline OptionSet<ImageBufferOptions> bufferOptionsForRendingMode(RenderingMode renderingMode)

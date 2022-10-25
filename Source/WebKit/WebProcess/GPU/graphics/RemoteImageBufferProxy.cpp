@@ -32,13 +32,17 @@
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "ThreadSafeRemoteImageBufferFlusher.h"
+#include "WebPage.h"
+#include "WebWorkerClient.h"
+#include <WebCore/Document.h>
+#include <WebCore/WorkerGlobalScope.h>
 #include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-RemoteImageBufferProxy::RemoteImageBufferProxy(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
-    : ImageBuffer(parameters, info)
+RemoteImageBufferProxy::RemoteImageBufferProxy(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
+    : ImageBuffer(parameters, info, WTFMove(backend), identifier)
     , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
 {
@@ -315,6 +319,46 @@ void RemoteImageBufferProxy::prepareForBackingStoreChange()
         return;
     if (auto* backend = ensureBackendCreated())
         backend->ensureNativeImagesHaveCopiedBackingStore();
+}
+
+std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerializedImageBuffer()
+{
+    ASSERT(hasOneRef());
+
+    flushDrawingContext();
+    m_remoteDisplayList.disconnect();
+
+    if (!m_remoteRenderingBackendProxy)
+        return nullptr;
+
+    prepareForBackingStoreChange();
+
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(backend()->parameters(), backendInfo());
+    result->m_renderingResourceIdentifier = m_renderingResourceIdentifier;
+    result->m_remoteRenderingBackendProxy = m_remoteRenderingBackendProxy;
+    result->m_backendIdentifier = m_remoteRenderingBackendProxy->renderingBackendIdentifier();
+    result->m_dispatcher = &m_remoteRenderingBackendProxy->dispatcher();
+
+    clearBackend();
+    m_remoteRenderingBackendProxy = nullptr;
+
+    std::unique_ptr<SerializedImageBuffer> ret = WTFMove(result);
+    return ret;
+}
+
+RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
+{
+    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend));
+    backend.transferImageBuffer(WTFMove(buffer), *result);
+    return result;
+}
+
+RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
+{
+    m_dispatcher->dispatch([backend = m_remoteRenderingBackendProxy, identifier = m_renderingResourceIdentifier]() {
+        if (backend)
+            backend->remoteResourceCacheProxy().forgetImageBuffer(identifier);
+    });
 }
 
 } // namespace WebKit
