@@ -200,7 +200,6 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
 {
     AffineTransform absoluteTransform = currentContentTransformation();
 
-    float deviceScaleFactor = renderer.document().deviceScaleFactor();
     // Walk up the render tree, accumulating SVG transforms.
     const RenderObject* ancestor = &renderer;
     while (ancestor) {
@@ -213,17 +212,17 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
     // Continue walking up the layer tree, accumulating CSS transforms.
     RenderLayer* layer = ancestor ? ancestor->enclosingLayer() : nullptr;
     while (layer) {
-        if (TransformationMatrix* layerTransform = layer->transform())
-            absoluteTransform = layerTransform->toAffineTransform() * absoluteTransform;
-
         // We can stop at compositing layers, to match the backing resolution.
         if (layer->isComposited())
             break;
 
+        if (TransformationMatrix* layerTransform = layer->transform())
+            absoluteTransform = layerTransform->toAffineTransform() * absoluteTransform;
+
         layer = layer->parent();
     }
 
-    absoluteTransform.scale(deviceScaleFactor);
+    absoluteTransform.scale(renderer.document().deviceScaleFactor());
     return absoluteTransform;
 }
 
