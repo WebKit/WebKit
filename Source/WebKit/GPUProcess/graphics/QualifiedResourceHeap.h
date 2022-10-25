@@ -28,23 +28,24 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "QualifiedRenderingResourceIdentifier.h"
-#include <WebCore/DisplayListResourceHeap.h>
+#include "RemoteImageBuffer.h"
+#include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/Font.h>
-#include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SourceImage.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
 
-class QualifiedResourceHeap : public WebCore::DisplayList::ResourceHeap {
+class QualifiedResourceHeap {
 public:
     QualifiedResourceHeap(WebCore::ProcessIdentifier webProcessIdentifier)
         : m_webProcessIdentifier(webProcessIdentifier)
     {
     }
 
-    void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::ImageBuffer>&& imageBuffer)
+    void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<RemoteImageBuffer>&& imageBuffer)
     {
         add(renderingResourceIdentifier, WTFMove(imageBuffer), m_imageBufferCount);
     }
@@ -64,34 +65,9 @@ public:
         add(renderingResourceIdentifier, WTFMove(decomposedGlyphs), m_decomposedGlyphsCount);
     }
 
-    WebCore::ImageBuffer* getImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
+    RemoteImageBuffer* getImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
     {
-        return get<WebCore::ImageBuffer>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::NativeImage* getNativeImage(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::NativeImage>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    std::optional<WebCore::SourceImage> getSourceImage(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return getSourceImage({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::Font* getFont(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::Font>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::DecomposedGlyphs* getDecomposedGlyphs(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::DecomposedGlyphs>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::ImageBuffer* getImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
-    {
-        return get<WebCore::ImageBuffer>(renderingResourceIdentifier);
+        return get<RemoteImageBuffer>(renderingResourceIdentifier);
     }
 
     WebCore::NativeImage* getNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
@@ -125,7 +101,7 @@ public:
 
     bool removeImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
-        return remove<WebCore::ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
+        return remove<RemoteImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
     }
 
     bool removeNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
@@ -221,7 +197,7 @@ private:
         for (const auto& pair : m_resources) {
             WTF::switchOn(pair.value, [&] (std::monostate) {
                 ASSERT_NOT_REACHED();
-            }, [&] (const Ref<WebCore::ImageBuffer>&) {
+            }, [&] (const Ref<RemoteImageBuffer>&) {
                 ++imageBufferCount;
             }, [&] (const Ref<WebCore::NativeImage>&) {
                 ++nativeImageCount;
@@ -239,7 +215,7 @@ private:
 #endif
     }
 
-    using Resource = std::variant<std::monostate, Ref<WebCore::ImageBuffer>, Ref<WebCore::NativeImage>, Ref<WebCore::Font>, Ref<WebCore::DecomposedGlyphs>>;
+    using Resource = std::variant<std::monostate, Ref<RemoteImageBuffer>, Ref<WebCore::NativeImage>, Ref<WebCore::Font>, Ref<WebCore::DecomposedGlyphs>>;
     HashMap<QualifiedRenderingResourceIdentifier, Resource> m_resources;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     unsigned m_imageBufferCount { 0 };

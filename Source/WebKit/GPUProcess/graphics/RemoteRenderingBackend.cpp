@@ -180,7 +180,7 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
 {
     ASSERT(!RunLoop::isMain());
 
-    RefPtr<ImageBuffer> imageBuffer;
+    RefPtr<RemoteImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated) {
         if (auto acceleratedImageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier)) {
