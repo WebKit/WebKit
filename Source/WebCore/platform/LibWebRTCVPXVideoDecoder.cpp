@@ -62,7 +62,7 @@ public:
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void decode(Span<const uint8_t>, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
+    void decode(Span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
     void close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
@@ -98,8 +98,8 @@ LibWebRTCVPXVideoDecoder::~LibWebRTCVPXVideoDecoder()
 
 void LibWebRTCVPXVideoDecoder::decode(EncodedFrame&& frame, DecodeCallback&& callback)
 {
-    vpxQueue().dispatch([value = Vector<uint8_t> { frame.data }, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->decode({ value.data(), value.size() }, timestamp, duration, WTFMove(callback));
+    vpxQueue().dispatch([value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
+        decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration, WTFMove(callback));
     });
 }
 
@@ -121,14 +121,14 @@ void LibWebRTCVPXVideoDecoder::close()
 }
 
 
-void LibWebRTCVPXInternalVideoDecoder::decode(Span<const uint8_t> data, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&& callback)
+void LibWebRTCVPXInternalVideoDecoder::decode(Span<const uint8_t> data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&& callback)
 {
     m_timestamp = timestamp;
     m_duration = duration;
 
     webrtc::EncodedImage image;
     image.SetEncodedData(webrtc::WebKitEncodedImageBufferWrapper::create(const_cast<uint8_t*>(data.data()), data.size()));
-    image._frameType = webrtc::VideoFrameType::kVideoFrameKey;
+    image._frameType = isKeyFrame ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
 
     auto error = m_internalDecoder->Decode(image, false, 0);
 
