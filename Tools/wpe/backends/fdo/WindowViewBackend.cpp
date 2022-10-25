@@ -297,6 +297,8 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
             break;
         }
     },
+    // axis_value120
+    [](void*, struct wl_pointer*, uint32_t, int32_t) { }
 };
 
 const struct wl_keyboard_listener WindowViewBackend::s_keyboardListener = {

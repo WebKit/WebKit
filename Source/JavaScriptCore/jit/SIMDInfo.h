@@ -74,8 +74,8 @@ constexpr uint8_t elementCount(SIMDLane lane)
         return 2;
     case SIMDLane::v128:
         RELEASE_ASSERT_NOT_REACHED();
-        return 0;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 constexpr bool scalarTypeIsFloatingPoint(SIMDLane lane)
@@ -119,6 +119,7 @@ constexpr SIMDLane narrowedLane(SIMDLane lane)
     case SIMDLane::f64x2:
         return SIMDLane::f32x4;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 constexpr SIMDLane promotedLane(SIMDLane lane)
@@ -138,6 +139,7 @@ constexpr SIMDLane promotedLane(SIMDLane lane)
     case SIMDLane::f32x4:
         return SIMDLane::f64x2;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 constexpr unsigned elementByteSize(SIMDLane simdLane)
@@ -156,6 +158,7 @@ constexpr unsigned elementByteSize(SIMDLane simdLane)
     case SIMDLane::v128:
         return 16;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace JSC
