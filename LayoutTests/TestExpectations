@@ -2287,11 +2287,11 @@ fast/images/animated-webp.html [ Skip ]
 fast/images/eps-as-image.html [ Skip ]
 
 # AVIF images are only supported on GTK and on macOS and iOS post Ventura.
-fast/images/avif-image-decoding.html [ Skip ]
-fast/images/avif-as-image.html [ Skip ]
-fast/images/avif-heif-container-as-image.html [ Skip ]
-fast/images/animated-avif.html [ Skip ]
-http/tests/images/avif-partial-load-crash.html [ Skip ]
+fast/images/avif-image-decoding.html [ Pass Failure ]
+fast/images/avif-as-image.html [ Pass ImageOnlyFailure ]
+fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure ]
+fast/images/animated-avif.html [ Pass ImageOnlyFailure ]
+http/tests/images/avif-partial-load-crash.html [ Pass Failure ]
 
 # Only applicable on platforms with JPEG XL support
 fast/images/jpegxl-image-decoding.html [ Skip ]
