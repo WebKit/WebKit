@@ -26,6 +26,10 @@
 #include "config.h"
 #include "ImageBitmapBacking.h"
 
+#include "Chrome.h"
+#include "WorkerClient.h"
+#include "WorkerGlobalScope.h"
+
 namespace WebCore {
 
 ImageBitmapBacking::ImageBitmapBacking(RefPtr<ImageBuffer>&& bitmapData, OptionSet<SerializationState> serializationState)
@@ -55,6 +59,31 @@ unsigned ImageBitmapBacking::height() const
 {
     // FIXME: Is this the right height?
     return m_bitmapData ? m_bitmapData->truncatedLogicalSize().height() : 0;
+}
+    
+void ImageBitmapBacking::disconnect()
+{
+    // FIXME: It sucks that we have both the ImageBuffer and the SerializedImageBuffer here,
+    // but it's because ImageBitmapBacking is both the backing-store, and the serialization
+    // object. I should just split off a separate class for the serialized object.
+    if (m_bitmapData)
+        m_serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(m_bitmapData));
+    ASSERT(!m_bitmapData);
+}
+
+void ImageBitmapBacking::connect(ScriptExecutionContext& context)
+{
+    ASSERT(!m_bitmapData);
+
+    if (is<WorkerGlobalScope>(context)) {
+        auto* client = downcast<WorkerGlobalScope>(context).getWorkerClient();
+        ASSERT(client);
+        m_bitmapData = client->sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
+    } else if (is<Document>(context)) {
+        ASSERT(downcast<Document>(context).page());
+        m_bitmapData = downcast<Document>(context).page()->chrome().sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
+    } else
+        ASSERT(false);
 }
 
 } // namespace WebCore

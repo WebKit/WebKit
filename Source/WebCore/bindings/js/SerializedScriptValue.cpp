@@ -3360,8 +3360,10 @@ private:
             return JSValue();
         }
 
-        if (!m_imageBitmaps[index])
+        if (!m_imageBitmaps[index]) {
+            m_backingStores.at(index)->connect(*executionContext(m_lexicalGlobalObject));
             m_imageBitmaps[index] = ImageBitmap::create(WTFMove(m_backingStores.at(index)));
+        }
 
         auto bitmap = m_imageBitmaps[index].get();
         return getJSValue(bitmap);
@@ -4553,8 +4555,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedCanvases;
-    for (auto offscreenCanvas : offscreenCanvases)
-        detachedCanvases.append(offscreenCanvas->detach());
+    for (auto offscreenCanvas : offscreenCanvases) {
+        auto detached = offscreenCanvas->detach();
+        detachedCanvases.append(WTFMove(detached));
+    }
 #endif
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> detachedRTCDataChannels;

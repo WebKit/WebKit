@@ -166,7 +166,6 @@ public:
     RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
     const ImageBufferBackend::Parameters& parameters() const { return m_parameters; }
-    virtual bool isRemote() const { return false; }
 
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
     bool canMapBackingStore() const { return m_backendInfo.canMapBackingStore; }

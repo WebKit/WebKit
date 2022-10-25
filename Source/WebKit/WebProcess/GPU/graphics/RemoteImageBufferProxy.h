@@ -105,7 +105,6 @@ private:
     void flushContext() final;
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;
-    bool isRemote() const final { return true; }
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
     void prepareForBackingStoreChange();
