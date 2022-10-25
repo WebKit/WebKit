@@ -210,6 +210,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
     ++m_encodeQueueSize;
     queueControlMessageAndProcess([this, internalFrame = internalFrame.releaseNonNull(), timestamp = frame->timestamp(), duration = frame->duration(), options = WTFMove(options)]() mutable {
         --m_encodeQueueSize;
+        scheduleDequeueEvent();
         m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame, [this, weakedThis = WeakPtr { *this }](auto&& result) {
             if (!weakedThis)
                 return;
