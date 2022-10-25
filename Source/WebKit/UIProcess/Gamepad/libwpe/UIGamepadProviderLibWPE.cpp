@@ -28,9 +28,11 @@
 
 #if ENABLE(GAMEPAD) && USE(LIBWPE)
 
-#include "WPEView.h"
-
 #include <WebCore/GamepadProviderLibWPE.h>
+
+#if PLATFORM(WPE)
+#include "WPEView.h"
+#endif
 
 using namespace WebCore;
 
@@ -46,7 +48,11 @@ void UIGamepadProvider::platformSetDefaultGamepadProvider()
 
 WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 {
+#if PLATFORM(WPE)
     return WKWPE::View::platformWebPageProxyForGamepadInput();
+#else
+    return nullptr;
+#endif
 }
 
 void UIGamepadProvider::platformStopMonitoringInput()
@@ -56,6 +62,7 @@ void UIGamepadProvider::platformStopMonitoringInput()
 void UIGamepadProvider::platformStartMonitoringInput()
 {
 }
+
 }
 
 #endif // ENABLE(GAMEPAD) && USE(LIBWPE)
