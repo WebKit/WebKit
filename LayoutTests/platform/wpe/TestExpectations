@@ -445,8 +445,6 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 
 fast/dom/Window/watchos [ Skip ]
 
-fast/dom/Window/Plug-ins.html [ Failure ]
-
 # Pointer Lock API not implemented
 webkit.org/b/204001 pointer-lock/ [ Skip ]
 webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
