@@ -1258,7 +1258,31 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
             mock_step(CompileWebKitWithoutChange(), results=FAILURE),
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
-        self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without patch, retrying build (failure)')
+        self.expectOutcome(result=RETRY, state_string='Unable to build WebKit without patch, retrying build (retry)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('retry_count'), 1)
+        return rc
+
+    def test_patch_with_trunk_failure_first_retry(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitWithoutChange(), results=FAILURE),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.expectOutcome(result=RETRY, state_string='Unable to build WebKit without patch, retrying build (retry)')
+        self.setProperty('retry_count', 1)
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('retry_count'), 2)
+        return rc
+
+    def test_patch_with_trunk_failure_limit_retry(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitWithoutChange(), results=FAILURE),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.setProperty('retry_count', CompileWebKitWithoutChange.MAX_RETRY)
+        self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without patch, please check manually (failure)')
         return self.runStep()
 
     def test_pr_with_main_failure(self):
@@ -1269,8 +1293,10 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
-        self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without PR, retrying build (failure)')
-        return self.runStep()
+        self.expectOutcome(result=RETRY, state_string='Unable to build WebKit without PR, retrying build (retry)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('retry_count'), 1)
+        return rc
 
     def test_pr_with_branch_failure(self):
         previous_steps = [

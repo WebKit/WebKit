@@ -2526,6 +2526,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 class CompileWebKitWithoutChange(CompileWebKit):
     name = 'compile-webkit-without-change'
     haltOnFailure = False
+    MAX_RETRY = 3
 
     def __init__(self, retry_build_on_failure=False, **kwargs):
         self.retry_build_on_failure = retry_build_on_failure
@@ -2585,12 +2586,25 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 self.build.buildFinished([message], FAILURE)
                 return defer.succeed(None)
 
-            message = 'Unable to build WebKit without {}, retrying build'.format('PR' if pr_number else 'patch')
+            retry_count = int(self.getProperty('retry_count', 0))
+            self.setProperty('retry_count', retry_count + 1)
+
+            message = 'Unable to build WebKit without {}, '.format('PR' if pr_number else 'patch')
+
+            if retry_count < CompileWebKitWithoutChange.MAX_RETRY:
+                message += 'retrying build'
+                result = RETRY
+            else:
+                message += 'please check manually'
+                result = FAILURE
+
             self.descriptionDone = message
             self.send_email_for_preexisting_build_failure()
-            self.finished(FAILURE)
-            self.build.buildFinished([message], RETRY)
+            self.finished(result)
+            self.build.buildFinished([message], result)
             return defer.succeed(None)
+        else:
+            print(compile_without_patch_result)
 
         self.build.results = FAILURE
         sha = self.getProperty('github.head.sha')
