@@ -5424,9 +5424,11 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     RefPtr<CSSPrimitiveValue> lineHeight;
     if (consumeSlashIncludingWhitespace(m_range)) {
-        lineHeight = consumeLineHeight(m_range, m_context.mode);
-        if (!lineHeight)
-            return false;
+        if (!consumeIdent<CSSValueNormal>(m_range)) {
+            lineHeight = consumeLineHeight(m_range, m_context.mode);
+            if (!lineHeight)
+                return false;
+        }
     }
     addPropertyWithImplicitDefault(CSSPropertyLineHeight, CSSPropertyFont, lineHeight, valuePool.createIdentifierValue(CSSValueNormal), important);
 
