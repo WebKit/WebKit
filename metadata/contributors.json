@@ -232,12 +232,11 @@
    {
       "emails" : [
          "zalan@apple.com",
-         "zbujtas@gmail.com",
-         "zalan.bujtas@nokia.com"
+         "zbujtas@gmail.com"
       ],
       "expertise" : "Layout",
-      "github" : "alanbujtas",
-      "name" : "Alan Bujtas",
+      "github" : "alanbaradlay",
+      "name" : "Alan Baradlay",
       "nicks" : [
          "zalan"
       ],
