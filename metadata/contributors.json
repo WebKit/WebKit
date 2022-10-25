@@ -5795,6 +5795,16 @@
    },
    {
       "emails" : [
+         "pgorszkowski@igalia.com"
+      ],
+      "github" : "pgorszkowski-igalia",
+      "name" : "Przemyslaw Gorszkowski",
+      "nicks" : [
+         "pgorszkowski"
+      ]
+   },
+   {
+      "emails" : [
          "qi.2.zhang@nokia.com",
          "qi.zhang02180@gmail.com"
       ],
