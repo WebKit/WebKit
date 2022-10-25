@@ -460,13 +460,13 @@ IntRect transformedBoundingBox(const TransformationMatrix& transform, FloatRect 
         ASSERT(positive.w > 0);
         ASSERT(negative.w <= 0);
         auto v = positive.w * negative - negative.w * positive;
-        v.w = 0;
+        v.w = 1;
         return v;
     };
     auto boundingBoxPPP = [&](Point p1, Point p2, Point p3) -> IntRect {
-        ASSERT(p1.w >= 0);
-        ASSERT(p2.w >= 0);
-        ASSERT(p3.w >= 0);
+        ASSERT(p1.w > 0);
+        ASSERT(p2.w > 0);
+        ASSERT(p3.w > 0);
         auto xMinMax = minMax3(p1.x / p1.w, p2.x / p2.w, p3.x / p3.w);
         auto yMinMax = minMax3(p1.y / p1.w, p2.y / p2.w, p3.y / p3.w);
         return clipped(xMinMax, yMinMax);
