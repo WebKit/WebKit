@@ -1665,8 +1665,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         _page->setIsWindowResizingEnabled(self._isWindowResizingEnabled);
     [self _invalidateResizeAssertions];
 #endif
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
     [self _destroyEndLiveResizeObserver];
     [self _endLiveResize];
+#endif
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -2104,6 +2106,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
 - (void)_beginAutomaticLiveResizeIfNeeded
 {
     if (_perProcessState.liveResizeParameters)
@@ -2112,14 +2116,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!self.window)
         return;
 
-    // FIXME: This should use explicit live resize notifications instead of inferring it,
-    // especially since this means we may do some spurious live resizes.
-    if (self.window.windowScene.activationState != UISceneActivationStateForegroundInactive)
+    if (!self.window.windowScene._isInLiveResize)
         return;
 
     [self _beginLiveResize];
     
-    _endLiveResizeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UISceneDidActivateNotification object:self.window.windowScene queue:NSOperationQueue.mainQueue usingBlock:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] (NSNotification *) {
+    _endLiveResizeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:_UIWindowSceneDidEndLiveResizeNotification object:self.window.windowScene queue:NSOperationQueue.mainQueue usingBlock:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] (NSNotification *) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -2152,17 +2154,21 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_resizeAnimationView setTransform:transform];
 }
 
+#endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
     [_scrollView setFrame:bounds];
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
     if (_page && _page->preferences().automaticLiveResizeEnabled())
         [self _beginAutomaticLiveResizeIfNeeded];
 
     if (_perProcessState.liveResizeParameters)
         [self _updateLiveResizeTransform];
-    
+#endif
+
     if (!self._shouldDeferGeometryUpdates) {
         if (!_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
@@ -2961,6 +2967,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return [_contentView _shouldAvoidSecurityHeuristicScoreUpdates];
 }
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
 - (void)_beginLiveResize
 {
     if (_perProcessState.liveResizeParameters) {
@@ -3001,6 +3009,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         [liveResizeSnapshotView removeFromSuperview];
     }];    
 }
+
+#endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 
 #if HAVE(UIFINDINTERACTION)
 
