@@ -41,6 +41,12 @@ void RemoteScrollingCoordinatorProxyMac::didReceiveWheelEvent(bool /* wasHandled
     scrollingTree()->applyLayerPositions();
 }
 
+bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&)
+{
+    // Unlike iOS, we handle scrolling requests for the main frame in the same way we handle them for subscrollers.
+    return false;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
