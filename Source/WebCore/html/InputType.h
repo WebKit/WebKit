@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010-2021 Google Inc. All rights reserved.
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -366,6 +366,7 @@ public:
     virtual bool isFocusingWithDataListDropdown() const { return false; };
 #endif
     virtual void willUpdateCheckedness(bool /*nowChecked*/) { }
+    virtual void copyNonAttributeProperties(const HTMLInputElement&);
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

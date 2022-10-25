@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -564,6 +564,14 @@ String FileInputType::defaultToolTip() const
             names.append('\n');
     }
     return names.toString();
+}
+
+void FileInputType::copyNonAttributeProperties(const HTMLInputElement& source)
+{
+    ASSERT(m_fileList->isEmpty());
+    const FileList* sourceList = source.files();
+    for (unsigned i = 0; i < sourceList->length(); ++i)
+        m_fileList->append(sourceList->item(i)->clone());
 }
 
 

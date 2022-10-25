@@ -1,0 +1,3 @@
+
+PASS Make sure that Node.cloneNode() works as expected for file input type.	
+

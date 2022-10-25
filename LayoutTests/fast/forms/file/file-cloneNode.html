@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+function moveMouseToCenterOfElement(element) {
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX * devicePixelRatio, centerY * devicePixelRatio);
+}
+
+function dragFilesOntoInput(input, files) {
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(input);
+    eventSender.mouseUp();
+}
+
+function dragFilesOntoElement(element, files) {
+    eventSender.beginDragWithFiles(files);
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+    eventSender.mouseUp();
+}
+</script>
+<form  method="GET">
+<input onchange="changeCount++;" type="file" id="file1">
+</form>
+<script>
+var changeCount;
+test(() => {
+  var file1 = document.getElementById('file1');
+  dragFilesOntoInput(file1, ['file-cloneNode.html']);
+  changeCount = 0;
+  var clone = file1.cloneNode(true);
+  assert_equals(file1.value, 'C:\\fakepath\\file-cloneNode.html');
+  assert_equals(clone.value, 'C:\\fakepath\\file-cloneNode.html');
+  // Test for crbug.com/388795.
+  assert_equals(changeCount, 0);
+
+  // Make sure two file input don't share their values.
+  document.body.appendChild(clone);
+  dragFilesOntoInput(file1, ['resources/file-drag-common.js']);
+  assert_equals(file1.value, 'C:\\fakepath\\file-drag-common.js');
+  assert_equals(clone.value, 'C:\\fakepath\\file-cloneNode.html');
+}, 'Make sure that Node.cloneNode() works as expected for file input type.');
+</script>
+</body>
+</html>
