@@ -44,7 +44,6 @@ public:
     virtual ~ScrollingTreeScrollingNodeDelegateNicosia();
 
     void updateFromStateNode(const ScrollingStateScrollingNode&);
-    std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> createUpdateScope();
     void updateVisibleLengths();
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting);
 

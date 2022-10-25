@@ -62,17 +62,6 @@ void ScrollingTreeScrollingNodeDelegateNicosia::updateFromStateNode(const Scroll
         m_scrollController.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, scrollingStateNode.currentVerticalSnapPointIndex());
 }
 
-std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> ScrollingTreeScrollingNodeDelegateNicosia::createUpdateScope()
-{
-    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollingNode().scrollContainerLayer());
-    if (is<ScrollingTreeFrameScrollingNode>(scrollingNode()))
-        scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollingNode().scrolledContentsLayer());
-
-    ASSERT(scrollLayer);
-    auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
-    return compositionLayer.createUpdateScope();
-}
-
 void ScrollingTreeScrollingNodeDelegateNicosia::updateVisibleLengths()
 {
     m_scrollController.contentsSizeChanged();
@@ -125,7 +114,6 @@ bool ScrollingTreeScrollingNodeDelegateNicosia::allowsVerticalScrolling() const
 
 void ScrollingTreeScrollingNodeDelegateNicosia::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)
 {
-    auto updateScope = createUpdateScope();
     scrollingNode().scrollBy(delta, clamping);
 }
 
