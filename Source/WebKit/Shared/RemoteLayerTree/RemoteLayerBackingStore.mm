@@ -358,7 +358,7 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
-        ImageBuffer::CreationContext creationContext;
+        CreationContext creationContext;
         creationContext.useCGDisplayListImageCache = m_parameters.useCGDisplayListImageCache;
         m_displayListBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_parameters.size, m_parameters.scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
     }

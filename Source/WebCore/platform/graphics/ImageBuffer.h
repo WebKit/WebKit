@@ -43,46 +43,50 @@ class GraphicsClient;
 #if HAVE(IOSURFACE)
 class IOSurfacePool;
 #endif
+class ScriptExecutionContext;
 
 enum class ImageBufferOptions : uint8_t {
     Accelerated     = 1 << 0,
     UseDisplayList  = 1 << 1
 };
 
+class SerializedImageBuffer;
+
+struct CreationContext {
+    // clang 13.1.6 throws errors if we use default initializers here.
+    GraphicsClient* graphicsClient;
+#if HAVE(IOSURFACE)
+    IOSurfacePool* surfacePool;
+#endif
+    bool avoidIOSurfaceSizeCheckInWebProcessForTesting = false;
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    enum class UseCGDisplayListImageCache : bool { No, Yes };
+    UseCGDisplayListImageCache useCGDisplayListImageCache;
+#endif
+
+    CreationContext(GraphicsClient* client = nullptr
+#if HAVE(IOSURFACE)
+        , IOSurfacePool* pool = nullptr
+#endif
+        , bool avoidCheck = false
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
+#endif
+    )
+        : graphicsClient(client)
+#if HAVE(IOSURFACE)
+        , surfacePool(pool)
+#endif
+        , avoidIOSurfaceSizeCheckInWebProcessForTesting(avoidCheck)
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , useCGDisplayListImageCache(useCGDisplayListImageCache)
+#endif
+    { }
+};
+
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
 public:
-    struct CreationContext {
-        // clang 13.1.6 throws errors if we use default initializers here.
-        GraphicsClient* graphicsClient;
-#if HAVE(IOSURFACE)
-        IOSurfacePool* surfacePool;
-#endif
-        bool avoidIOSurfaceSizeCheckInWebProcessForTesting = false;
-
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        enum class UseCGDisplayListImageCache : bool { No, Yes };
-        UseCGDisplayListImageCache useCGDisplayListImageCache;
-#endif
-
-        CreationContext(GraphicsClient* client = nullptr
-#if HAVE(IOSURFACE)
-            , IOSurfacePool* pool = nullptr
-#endif
-            , bool avoidCheck = false
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-            , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
-#endif
-        )
-            : graphicsClient(client)
-#if HAVE(IOSURFACE)
-            , surfacePool(pool)
-#endif
-            , avoidIOSurfaceSizeCheckInWebProcessForTesting(avoidCheck)
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-            , useCGDisplayListImageCache(useCGDisplayListImageCache)
-#endif
-        { }
-    };
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, const CreationContext& = { });
 
