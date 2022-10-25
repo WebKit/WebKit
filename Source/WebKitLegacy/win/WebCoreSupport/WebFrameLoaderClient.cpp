@@ -951,7 +951,6 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFram
     RefPtr<Frame> childFrame = webFrame->createSubframeWithOwnerElement(m_webFrame->webView(), coreFrame->page(), &ownerElement);
 
     childFrame->tree().setName(name);
-    coreFrame->tree().appendChild(*childFrame);
     childFrame->init();
 
     return childFrame;

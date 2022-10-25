@@ -414,6 +414,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/webcodecs/WebCodecsEncodedVideoChunk.h
     Modules/webcodecs/WebCodecsEncodedVideoChunkData.h
     Modules/webcodecs/WebCodecsEncodedVideoChunkType.h
+    Modules/webcodecs/WebCodecsVideoFrame.h
+    Modules/webcodecs/WebCodecsVideoFrameData.h
 
     Modules/webdatabase/DatabaseDetails.h
     Modules/webdatabase/DatabaseManager.h

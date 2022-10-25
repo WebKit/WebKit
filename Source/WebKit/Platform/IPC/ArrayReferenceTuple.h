@@ -29,107 +29,30 @@
 
 namespace IPC {
 
-template <typename... Types> class ArrayReferenceTuple;
-
-template<typename T0, typename T1>
-class ArrayReferenceTuple<T0, T1> {
+template<typename... Types>
+class ArrayReferenceTuple {
 public:
     ArrayReferenceTuple() = default;
-    ArrayReferenceTuple(const T0* data0, const T1* data1, size_t size)
+
+    ArrayReferenceTuple(const Types*... data, size_t size)
         : m_size(size)
-        , m_data0(size ? data0 : nullptr)
-        , m_data1(size ? data1 : nullptr)
     {
+        if (m_size)
+            m_data = { data... };
     }
+
     bool isEmpty() const { return !m_size; }
     size_t size() const { return m_size; }
-    template<int I>
+
+    template<unsigned I>
     auto data() const
     {
-        if constexpr(I)
-            return m_data1;
-        else if constexpr(!I)
-            return m_data0;
+        return std::get<I>(m_data);
     }
+
 private:
     size_t m_size { 0 };
-    const T0* m_data0 { nullptr };
-    const T1* m_data1 { nullptr };
+    std::tuple<const Types*...> m_data;
 };
-
-template<typename T0, typename T1, typename T2>
-class ArrayReferenceTuple<T0, T1, T2> : public ArrayReferenceTuple<T0, T1> {
-public:
-    ArrayReferenceTuple() = default;
-    ArrayReferenceTuple(const T0* data0, const T1* data1, const T2* data2, size_t size)
-        : ArrayReferenceTuple<T0, T1>(data0, data1, size)
-        , m_data2(size ? data2 : nullptr)
-    {
-    }
-    template<int I>
-    auto data() const
-    {
-        if constexpr(I == 2)
-            return m_data2;
-        else
-            return ArrayReferenceTuple<T0, T1>::template data<I>();
-    }
-private:
-    const T2* m_data2 { nullptr };
-};
-
-template<typename T0, typename T1, typename T2, typename T3>
-class ArrayReferenceTuple<T0, T1, T2, T3> : public ArrayReferenceTuple<T0, T1, T2> {
-public:
-    ArrayReferenceTuple() = default;
-    ArrayReferenceTuple(const T0* data0, const T1* data1, const T2* data2, const T3* data3, size_t size)
-        : ArrayReferenceTuple<T0, T1, T2>(data0, data1, data2, size)
-        , m_data3(size ? data3 : nullptr)
-    {
-    }
-    template<int I>
-    auto data() const
-    {
-        if constexpr(I == 3)
-            return m_data3;
-        else
-            return ArrayReferenceTuple<T0, T1, T2>::template data<I>();
-    }
-private:
-    const T3* m_data3 { nullptr };
-};
-
-template<typename T0, typename T1, typename T2, typename T3, typename T4>
-class ArrayReferenceTuple<T0, T1, T2, T3, T4> : public ArrayReferenceTuple<T0, T1, T2, T3> {
-public:
-    ArrayReferenceTuple() = default;
-    ArrayReferenceTuple(const T0* data0, const T1* data1, const T2* data2, const T3* data3, const T4* data4, size_t size)
-        : ArrayReferenceTuple<T0, T1, T2, T3>(data0, data1, data2, data3, size)
-        , m_data4(size ? data4 : nullptr)
-    {
-    }
-    template<int I>
-    auto data() const
-    {
-        if constexpr(I == 4)
-            return m_data4;
-        else
-            return ArrayReferenceTuple<T0, T1, T2, T3>::template data<I>();
-    }
-private:
-    const T4* m_data4 { nullptr };
-};
-
-template<typename T0, typename T1>
-ArrayReferenceTuple(const T0*, const T1*, size_t) -> ArrayReferenceTuple<T0, T1>;
-
-template<typename T0, typename T1, typename T2>
-ArrayReferenceTuple(const T0*, const T1*, const T2*, size_t) -> ArrayReferenceTuple<T0, T1, T2>;
-
-template<typename T0, typename T1, typename T2, typename T3>
-ArrayReferenceTuple(const T0*, const T1*, const T2*, const T3*, size_t) -> ArrayReferenceTuple<T0, T1, T2, T3>;
-
-template<typename T0, typename T1, typename T2, typename T3, typename T4>
-ArrayReferenceTuple(const T0*, const T1*, const T2*, const T3*, const T4*, size_t) -> ArrayReferenceTuple<T0, T1, T2, T3, T4>;
 
 }

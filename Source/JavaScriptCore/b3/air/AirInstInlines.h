@@ -349,6 +349,16 @@ inline bool isBranchAtomicStrongCAS64Valid(const Inst& inst)
     return isBranchAtomicStrongCASValid(inst);
 }
 
+inline bool isVectorSwizzle2Valid(const Inst& inst)
+{
+#if CPU(ARM64)
+    return inst.args[0].fpr() == inst.args[0].fpr() + 1;
+#else
+    UNUSED_PARAM(inst);
+    return false;
+#endif
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

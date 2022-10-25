@@ -151,6 +151,12 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
 )
 
+if (ENABLE_GAMEPAD)
+    list(APPEND WebKit_SOURCES
+        UIProcess/Gamepad/libwpe/UIGamepadProviderLibWPE.cpp
+    )
+endif ()
+
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebKit_SOURCES
         Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp

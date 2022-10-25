@@ -18,6 +18,7 @@ PASS flood-color presentation attribute supported on an irrelevant element
 PASS flood-opacity presentation attribute supported on an irrelevant element
 PASS font-family presentation attribute supported on an irrelevant element
 PASS font-size presentation attribute supported on an irrelevant element
+PASS font-size-adjust presentation attribute supported on an irrelevant element
 PASS font-stretch presentation attribute supported on an irrelevant element
 PASS font-style presentation attribute supported on an irrelevant element
 PASS font-variant presentation attribute supported on an irrelevant element

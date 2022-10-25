@@ -95,6 +95,8 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
 
+    static constexpr bool tierSupportsSIMD = false;
+
     struct ControlData {
         ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
             : controlBlockType(type)

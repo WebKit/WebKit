@@ -141,6 +141,7 @@ public:
     WEBCORE_EXPORT void setDelegatedScrollingMode(DelegatedScrollingMode);
 
     bool delegatesScrolling() const { return m_delegatedScrollingMode != DelegatedScrollingMode::NotDelegated; }
+    bool delegatesScrollingToNativeView() const { return m_delegatedScrollingMode == DelegatedScrollingMode::DelegatedToNativeScrollView; }
 
     // Overridden by FrameView to create custom CSS scrollbars if applicable.
     virtual Ref<Scrollbar> createScrollbar(ScrollbarOrientation);

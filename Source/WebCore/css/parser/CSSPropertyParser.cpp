@@ -1163,6 +1163,13 @@ static RefPtr<CSSValue> consumeFontSize(CSSParserTokenRange& range, CSSParserMod
     return consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative, unitless);
 }
 
+static RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    return consumeNumber(range, ValueRange::NonNegative);
+}
+
 static RefPtr<CSSPrimitiveValue> consumeLineHeight(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueNormal)
@@ -4470,6 +4477,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #endif
     case CSSPropertyFontSize:
         return consumeFontSize(m_range, m_context.mode, UnitlessQuirk::Allow);
+    case CSSPropertyFontSizeAdjust:
+        return consumeFontSizeAdjust(m_range);
     case CSSPropertyLineHeight:
         return consumeLineHeight(m_range, m_context.mode);
     case CSSPropertyWebkitBorderHorizontalSpacing:

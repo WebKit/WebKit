@@ -25,13 +25,13 @@
  */
 
 #include "config.h"
-#include "WPEGamepadProvider.h"
+#include "GamepadProviderLibWPE.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && USE(LIBWPE)
 
+#include "GamepadLibWPE.h"
 #include "GamepadProviderClient.h"
 #include "Logging.h"
-#include "WPEGamepad.h"
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -40,26 +40,26 @@ namespace WebCore {
 static const Seconds connectionDelayInterval { 500_ms };
 static const Seconds inputNotificationDelay { 50_ms };
 
-WPEGamepadProvider& WPEGamepadProvider::singleton()
+GamepadProviderLibWPE& GamepadProviderLibWPE::singleton()
 {
-    static NeverDestroyed<WPEGamepadProvider> sharedProvider;
+    static NeverDestroyed<GamepadProviderLibWPE> sharedProvider;
     return sharedProvider;
 }
 
-WPEGamepadProvider::WPEGamepadProvider()
+GamepadProviderLibWPE::GamepadProviderLibWPE()
     : m_provider(wpe_gamepad_provider_create(), wpe_gamepad_provider_destroy)
-    , m_initialGamepadsConnectedTimer(RunLoop::current(), this, &WPEGamepadProvider::initialGamepadsConnectedTimerFired)
-    , m_inputNotificationTimer(RunLoop::current(), this, &WPEGamepadProvider::inputNotificationTimerFired)
+    , m_initialGamepadsConnectedTimer(RunLoop::current(), this, &GamepadProviderLibWPE::initialGamepadsConnectedTimerFired)
+    , m_inputNotificationTimer(RunLoop::current(), this, &GamepadProviderLibWPE::inputNotificationTimerFired)
 {
     static const struct wpe_gamepad_provider_client_interface s_client = {
         // connected
         [](void* data, uintptr_t gamepadId) {
-            auto& provider = *static_cast<WPEGamepadProvider*>(data);
+            auto& provider = *static_cast<GamepadProviderLibWPE*>(data);
             provider.gamepadConnected(gamepadId);
         },
         // disconnected
         [](void* data, uintptr_t gamepadId) {
-            auto& provider = *static_cast<WPEGamepadProvider*>(data);
+            auto& provider = *static_cast<GamepadProviderLibWPE*>(data);
             provider.gamepadDisconnected(gamepadId);
         },
         nullptr, nullptr, nullptr,
@@ -68,12 +68,12 @@ WPEGamepadProvider::WPEGamepadProvider()
     wpe_gamepad_provider_set_client(m_provider.get(), &s_client, this);
 }
 
-WPEGamepadProvider::~WPEGamepadProvider()
+GamepadProviderLibWPE::~GamepadProviderLibWPE()
 {
     wpe_gamepad_provider_set_client(m_provider.get(), nullptr, nullptr);
 }
 
-void WPEGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
+void GamepadProviderLibWPE::startMonitoringGamepads(GamepadProviderClient& client)
 {
     if (!m_provider)
         return;
@@ -98,7 +98,7 @@ void WPEGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
     wpe_gamepad_provider_start(m_provider.get());
 }
 
-void WPEGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
+void GamepadProviderLibWPE::stopMonitoringGamepads(GamepadProviderClient& client)
 {
     if (!m_provider)
         return;
@@ -117,15 +117,15 @@ void WPEGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     m_lastActiveGamepad = nullptr;
 }
 
-void WPEGamepadProvider::gamepadConnected(unsigned id)
+void GamepadProviderLibWPE::gamepadConnected(unsigned id)
 {
     ASSERT(!m_gamepadMap.get(id));
     ASSERT(m_provider);
 
-    LOG(Gamepad, "WPEGamepadProvider device %u added", id);
+    LOG(Gamepad, "GamepadProviderLibWPE device %u added", id);
 
     unsigned index = indexForNewlyConnectedDevice();
-    auto gamepad = makeUnique<WPEGamepad>(m_provider.get(), id, index);
+    auto gamepad = makeUnique<GamepadLibWPE>(m_provider.get(), id, index);
 
     if (m_gamepadVector.size() <= index)
         m_gamepadVector.grow(index + 1);
@@ -148,9 +148,9 @@ void WPEGamepadProvider::gamepadConnected(unsigned id)
         client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
 }
 
-void WPEGamepadProvider::gamepadDisconnected(unsigned id)
+void GamepadProviderLibWPE::gamepadDisconnected(unsigned id)
 {
-    LOG(Gamepad, "WPEGamepadProvider device %u removed", id);
+    LOG(Gamepad, "GamepadProviderLibWPE device %u removed", id);
 
     auto removedGamepad = removeGamepadForId(id);
     ASSERT(removedGamepad);
@@ -162,7 +162,7 @@ void WPEGamepadProvider::gamepadDisconnected(unsigned id)
         client->platformGamepadDisconnected(*removedGamepad);
 }
 
-unsigned WPEGamepadProvider::indexForNewlyConnectedDevice()
+unsigned GamepadProviderLibWPE::indexForNewlyConnectedDevice()
 {
     unsigned index = 0;
     while (index < m_gamepadVector.size() && m_gamepadVector[index])
@@ -171,7 +171,7 @@ unsigned WPEGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
-std::unique_ptr<WPEGamepad> WPEGamepadProvider::removeGamepadForId(unsigned id)
+std::unique_ptr<GamepadLibWPE> GamepadProviderLibWPE::removeGamepadForId(unsigned id)
 {
     auto removedGamepad = m_gamepadMap.take(id);
     ASSERT(removedGamepad);
@@ -186,12 +186,12 @@ std::unique_ptr<WPEGamepad> WPEGamepadProvider::removeGamepadForId(unsigned id)
     return removedGamepad;
 }
 
-void WPEGamepadProvider::initialGamepadsConnectedTimerFired()
+void GamepadProviderLibWPE::initialGamepadsConnectedTimerFired()
 {
     m_initialGamepadsConnected = true;
 }
 
-void WPEGamepadProvider::inputNotificationTimerFired()
+void GamepadProviderLibWPE::inputNotificationTimerFired()
 {
     if (!m_initialGamepadsConnected) {
         if (!m_inputNotificationTimer.isActive())
@@ -202,7 +202,7 @@ void WPEGamepadProvider::inputNotificationTimerFired()
     dispatchPlatformGamepadInputActivity();
 }
 
-void WPEGamepadProvider::scheduleInputNotification(WPEGamepad& gamepad, ShouldMakeGamepadsVisible shouldMakeGamepadsVisible)
+void GamepadProviderLibWPE::scheduleInputNotification(GamepadLibWPE& gamepad, ShouldMakeGamepadsVisible shouldMakeGamepadsVisible)
 {
     m_lastActiveGamepad = const_cast<struct wpe_gamepad*>(gamepad.wpeGamepad());
 
@@ -213,7 +213,7 @@ void WPEGamepadProvider::scheduleInputNotification(WPEGamepad& gamepad, ShouldMa
         setShouldMakeGamepadsVisibile();
 }
 
-struct wpe_view_backend* WPEGamepadProvider::inputView()
+struct wpe_view_backend* GamepadProviderLibWPE::inputView()
 {
     if (!m_provider || !m_lastActiveGamepad)
         return nullptr;
@@ -222,4 +222,4 @@ struct wpe_view_backend* WPEGamepadProvider::inputView()
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && USE(LIBWPE)

@@ -12,7 +12,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x40
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 104x19
-            text run at (0,0) width 104: "Some text that is "
+            text run at (0,0) width 100: "Some text that is"
+            text run at (100,0) width 4: " "
           RenderInline {SPAN} at (0,0) size 32x19
             RenderText {#text} at (104,0) size 32x19
               text run at (104,0) width 32: "bold."

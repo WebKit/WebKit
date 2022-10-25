@@ -28,10 +28,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 756x55
-          RenderText {#text} at (14,14) size 756x55
-            text run at (14,14) width 753: "This word should be selected, since the test deleted it a character at a time and"
-            text run at (767,14) width 3: " "
+        RenderInline {SPAN} at (0,0) size 759x55
+          RenderText {#text} at (14,14) size 759x55
+            text run at (14,14) width 759: "This word should be selected, since the test deleted it a character at a time and "
             text run at (14,42) width 167: "then did an undo."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

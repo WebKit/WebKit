@@ -1067,8 +1067,11 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
     if (_AXSInvertColorsEnabledApp(appID) != invertColorsEnabled)
         _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
 #endif
+    m_imageAnimationEnabled = preferences.imageAnimationEnabled;
     setOverrideEnhanceTextLegibility(preferences.enhanceTextLegibilityOverall);
     FontCache::invalidateAllFontCaches();
+    for (auto& page : m_pageMap.values())
+        page->updateImageAnimationEnabled();
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

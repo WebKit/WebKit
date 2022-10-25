@@ -1607,6 +1607,16 @@ public:
         }
     }
 
+    void loadPair32(PreIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<32>(dest1, dest2, src.base, PairPreIndex(src.index));
+    }
+
+    void loadPair32(PostIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<32>(dest1, dest2, src.base, PairPostIndex(src.index));
+    }
+
     void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
     {
         loadPair64(src, TrustedImm32(0), dest1, dest2);
@@ -1626,6 +1636,16 @@ public:
             load64(Address(src, offset.m_value), dest1);
             load64(Address(src, offset.m_value + 8), dest2);
         }
+    }
+
+    void loadPair64(PreIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<64>(dest1, dest2, src.base, PairPreIndex(src.index));
+    }
+
+    void loadPair64(PostIndexAddress src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<64>(dest1, dest2, src.base, PairPostIndex(src.index));
     }
 
     void loadPair64WithNonTemporalAccess(RegisterID src, RegisterID dest1, RegisterID dest2)
@@ -2015,6 +2035,16 @@ public:
         store32(src2, Address(dest, offset.m_value + 4));
     }
 
+    void storePair32(RegisterID src1, RegisterID src2, PreIndexAddress dest)
+    {
+        m_assembler.stp<32>(src1, src2, dest.base, PairPreIndex(dest.index));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, PostIndexAddress dest)
+    {
+        m_assembler.stp<32>(src1, src2, dest.base, PairPostIndex(dest.index));
+    }
+
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair64(src1, src2, dest, TrustedImm32(0));
@@ -2028,6 +2058,16 @@ public:
         }
         store64(src1, Address(dest, offset.m_value));
         store64(src2, Address(dest, offset.m_value + 8));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, PreIndexAddress dest)
+    {
+        m_assembler.stp<64>(src1, src2, dest.base, PairPreIndex(dest.index));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, PostIndexAddress dest)
+    {
+        m_assembler.stp<64>(src1, src2, dest.base, PairPostIndex(dest.index));
     }
 
     void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest)
@@ -2475,6 +2515,35 @@ public:
     {
         m_assembler.fdiv<32>(dest, op1, op2);
     }
+    
+    void loadVector(Address address, FPRegisterID dest)
+    {
+        if (tryLoadWithOffset<128>(dest, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.ldr<128>(dest, address.base, memoryTempRegister);
+    }
+
+    void loadVector(BaseIndex address, FPRegisterID dest)
+    {
+        if (address.scale == TimesOne || address.scale == TimesEight) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldr<128>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
+        }
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.add<128>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
+        m_assembler.ldr<128>(dest, address.base, memoryTempRegister);
+    }
+    
+    void loadVector(TrustedImmPtr address, FPRegisterID dest)
+    {
+        moveToCachedReg(address, cachedMemoryTempRegister());
+        m_assembler.ldr<128>(dest, memoryTempRegister, ARM64Registers::zr);
+    }
 
     void loadDouble(Address address, FPRegisterID dest)
     {
@@ -2537,6 +2606,11 @@ public:
     void moveDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fmov<64>(dest, src);
+    }
+    
+    void moveVector(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.vorr<128>(dest, src, src);
     }
 
     void moveZeroToDouble(FPRegisterID reg)
@@ -2828,6 +2902,38 @@ public:
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<32>(src, address.base, memoryTempRegister);
+    }
+    
+    void storeVector(FPRegisterID src, Address address)
+    {
+        ASSERT(Options::useWebAssemblySIMD());
+        if (tryStoreWithOffset<128>(src, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.str<128>(src, address.base, memoryTempRegister);
+    }
+
+    void storeVector(FPRegisterID src, TrustedImmPtr address)
+    {
+        ASSERT(Options::useWebAssemblySIMD());
+        moveToCachedReg(address, cachedMemoryTempRegister());
+        m_assembler.str<128>(src, memoryTempRegister, ARM64Registers::zr);
+    }
+
+    void storeVector(FPRegisterID src, BaseIndex address)
+    {
+        ASSERT(Options::useWebAssemblySIMD());
+        if (address.scale == TimesOne || address.scale == TimesEight) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.str<128>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
+        }
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
+        m_assembler.str<128>(src, address.base, memoryTempRegister);
     }
 
     void subDouble(FPRegisterID src, FPRegisterID dest)
@@ -4615,6 +4721,33 @@ public:
     }
 #endif // ENABLE(FAST_TLS_JIT)
     
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.ins(dest, src, simdLane, lane.m_value);
+    }
+
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.ins(dest, src, simdLane, lane.m_value);
+    }
+
+    DEFINE_SIMD_FUNCS(vectorReplaceLane);
+    
+    void vectorExtractLane(SIMDLane simdLane, SIMDSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
+    {
+        if (signMode == SIMDSignMode::Signed)
+            m_assembler.smov(dest, src, simdLane, lane.m_value);
+        else
+            m_assembler.umov(dest, src, simdLane, lane.m_value);
+    }
+
+    void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.dupElement(dest, src, simdLane, lane.m_value);
+    }
+
+    DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);
+
     // Misc helper functions.
 
     // Invert a relational condition, e.g. == becomes !=, < becomes >=, etc.

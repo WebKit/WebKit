@@ -33,8 +33,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 712x55
-          text run at (14,14) width 706: "Size check should say: 30px. All text in the red boxes should appear to be"
-          text run at (720,14) width 6: " "
+          text run at (14,14) width 712: "Size check should say: 30px. All text in the red boxes should appear to be "
           text run at (14,42) width 54: "30px."
       RenderBlock {DIV} at (0,108) size 784x28
         RenderText {#text} at (0,0) size 114x27

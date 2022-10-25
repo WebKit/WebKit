@@ -2193,6 +2193,7 @@ private:
 
 void allocateRegistersByGraphColoring(Code& code)
 {
+    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateRegistersByGraphColoring");
     
     if (traceDebug)

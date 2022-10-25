@@ -2043,11 +2043,11 @@ void RenderStyle::setWordSpacing(Length&& value)
 
 void RenderStyle::setLetterSpacing(float letterSpacing)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setShouldDisableLigaturesForSpacing(letterSpacing);
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 
     setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
 }
@@ -2068,63 +2068,73 @@ void RenderStyle::setFontSize(float size)
     else
         size = std::min(maximumAllowedFontSize, size);
 
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setSpecifiedSize(size);
     description.setComputedSize(size);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
+}
+
+void RenderStyle::setFontSizeAdjust(std::optional<float> sizeAdjust)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setFontSizeAdjust(sizeAdjust);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setVariationSettings(WTFMove(settings));
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontWeight(FontSelectionValue value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setWeight(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontStretch(FontSelectionValue value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setStretch(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setItalic(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontPalette(FontPalette value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setFontPalette(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)

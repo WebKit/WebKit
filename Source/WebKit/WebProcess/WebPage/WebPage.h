@@ -1308,6 +1308,8 @@ public:
     void didConcludeDrop();
 #endif
 
+    void updateImageAnimationEnabled();
+
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&);
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(StringView);

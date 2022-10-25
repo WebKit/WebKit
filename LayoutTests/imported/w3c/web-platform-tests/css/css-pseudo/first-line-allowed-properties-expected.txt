@@ -14,7 +14,7 @@ PASS fontFamily should be applied to first-line pseudo elements.
 PASS fontFeatureSettings should be applied to first-line pseudo elements.
 PASS fontKerning should be applied to first-line pseudo elements.
 PASS fontSize should be applied to first-line pseudo elements.
-FAIL fontSizeAdjust should be applied to first-line pseudo elements. assert_equals: expected (string) "0.5" but got (undefined) undefined
+PASS fontSizeAdjust should be applied to first-line pseudo elements.
 PASS fontStyle should be applied to first-line pseudo elements.
 PASS fontVariant should be applied to first-line pseudo elements.
 PASS fontWeight should be applied to first-line pseudo elements.

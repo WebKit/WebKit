@@ -43,6 +43,9 @@ inline Air::Opcode moveForType(Type type)
         return MoveFloat;
     case Double:
         return MoveDouble;
+    case V128:
+        ASSERT(Options::useWebAssemblySIMD());
+        return MoveVector;
     case Void:
     case Tuple:
         break;
@@ -77,6 +80,8 @@ inline Air::Opcode relaxedMoveForType(Type type)
         return MoveFloat;
     case Double:
         return MoveDouble;
+    case V128:
+        return MoveVector;
     case Void:
     case Tuple:
         break;

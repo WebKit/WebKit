@@ -47,7 +47,7 @@ void ValueRep::addUsedRegistersTo(RegisterSetBuilder& set) const
         return;
     case LateRegister:
     case Register:
-        set.add(reg(), conservativeWidth(reg()));
+        set.add(reg(), Options::useWebAssemblySIMD() ? conservativeWidth(reg()) : conservativeWidthWithoutVectors(reg()));
         return;
     case Stack:
     case StackArgument:

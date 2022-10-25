@@ -22,7 +22,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (101,96) size 6x27
             text run at (101,96) width 6: " "
           RenderText {#text} at (107,96) size 110x27
-            text run at (107,96) width 110: " conceived "
+            text run at (107,96) width 6: " "
+            text run at (113,96) width 104: "conceived "
           RenderBR {BR} at (217,96) size 0x27
           RenderText {#text} at (14,206) size 60x27
             text run at (14,206) width 60: "nation"

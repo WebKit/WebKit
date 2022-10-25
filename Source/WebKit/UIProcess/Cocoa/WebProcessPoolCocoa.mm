@@ -69,6 +69,7 @@
 #import <pal/Logging.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
@@ -182,6 +183,12 @@ SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
 
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
+SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionAutoplayAnimatedImagesChangedNotification, CFStringRef)
+#endif
+
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
 
 @interface WKProcessPoolWeakObserver : NSObject {
@@ -260,6 +267,10 @@ static AccessibilityPreferences accessibilityPreferences()
     preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
 #endif
     preferences.enhanceTextLegibilityOverall = _AXSEnhanceTextLegibilityEnabled();
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
+    if (auto* functionPointer = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr())
+        preferences.imageAnimationEnabled = functionPointer();
+#endif
     return preferences;
 }
 
@@ -816,6 +827,10 @@ void WebProcessPool::registerNotificationObservers()
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSEnhanceTextLegibilityChangedNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification);
+#endif
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGES)
+    if (auto notificationName = getkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
+        addCFNotificationObserver(accessibilityPreferencesChangedCallback, notificationName);
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);

@@ -161,14 +161,17 @@ static void StoreABL(Vector<Byte*>& pointers, size_t destOffset, const AudioBuff
 static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytes, AudioStreamDescription::PCMFormat format, CARingBuffer::FetchMode mode)
 {
     ASSERT(list->mNumberBuffers == pointers.size());
-    AudioBuffer* dest = list->mBuffers;
-    for (auto& pointer : pointers) {
-        if (destOffset > dest->mDataByteSize)
+    auto bufferCount = std::min<size_t>(list->mNumberBuffers, pointers.size());
+    for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex) {
+        auto& pointer = pointers[bufferIndex];
+        auto& dest = list->mBuffers[bufferIndex];
+
+        if (destOffset > dest.mDataByteSize)
             continue;
 
-        auto* destinationData = static_cast<Byte*>(dest->mData) + destOffset;
+        auto* destinationData = static_cast<Byte*>(dest.mData) + destOffset;
         auto* sourceData = pointer + srcOffset;
-        nbytes = std::min<size_t>(nbytes, dest->mDataByteSize - destOffset);
+        nbytes = std::min<size_t>(nbytes, dest.mDataByteSize - destOffset);
         if (mode == CARingBuffer::Copy)
             memcpy(destinationData, sourceData, nbytes);
         else {
@@ -200,7 +203,6 @@ static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& po
                 break;
             }
         }
-        ++dest;
     }
 }
 

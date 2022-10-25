@@ -10,7 +10,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,20) size 352x102 [border: (1px solid #0000FF)]
         RenderText {#text} at (1,1) size 11x19
-          text run at (1,1) width 11: "a "
+          text run at (1,1) width 7: "a"
+          text run at (8,1) width 4: " "
         RenderInline {SPAN} at (0,0) size 301x19 [color=#0000FF]
           RenderText {#text} at (12,1) size 301x19
             text run at (12,1) width 301: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

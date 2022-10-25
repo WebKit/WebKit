@@ -131,6 +131,7 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
         bitwise_cast<WriteBarrierBase<Unknown>*>(targetPointer)->set(vm(), this, argument);
         return;
     }
+    case TypeKind::V128:
     case TypeKind::Func:
     case TypeKind::Struct:
     case TypeKind::Array:

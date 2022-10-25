@@ -59,7 +59,10 @@ class Section
               raise "Bytecodes with checkpoints should have metadata: #{a.name}" if a.checkpoints and a.metadata.empty?
               raise "Bytecodes with checkpoints should have metadata: #{b.name}" if b.checkpoints and b.metadata.empty?
               result = a.checkpoints ? b.checkpoints ? 0 : -1 : 1
-          elsif
+          # SIMD opcodes should always use higher bytecode ids since they are more rare.
+          elsif a.name.downcase.include?("simd") or b.name.downcase.include?("simd")
+              result = a.name.include?("simd") ? b.name.include?("simd") ? 0 : 1 : -1 
+          else
               result = a.metadata.empty? ? b.metadata.empty? ? 0 : 1 : -1 
           end
           result

@@ -135,6 +135,7 @@ private:
             return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset, alignedWidth);
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset, alignedWidth);
         default:
             break;

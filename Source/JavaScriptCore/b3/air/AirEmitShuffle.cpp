@@ -309,7 +309,7 @@ Vector<Inst> emitShuffle(
         return moveFor(bank, width);
     };
 
-    Opcode conservativeMove = moveForWidth(conservativeWidth(bank));
+    Opcode conservativeMove = moveForWidth(Options::useWebAssemblySIMD() ? conservativeWidth(bank) : conservativeWidthWithoutVectors(bank));
 
     // We will emit things in reverse. We maintain a list of packs of instructions, and then we emit
     // append them together in reverse (for example the thing at the end of resultPacks is placed

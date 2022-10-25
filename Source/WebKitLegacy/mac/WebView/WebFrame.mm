@@ -306,10 +306,6 @@ WebView *getWebView(WebFrame *webFrame)
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setName(name);
-    if (ownerElement) {
-        ASSERT(ownerElement->document().frame());
-        ownerElement->document().frame()->tree().appendChild(coreFrame.get());
-    }
 
     coreFrame.get().init();
 

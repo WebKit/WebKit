@@ -34,12 +34,14 @@
 #include "DrawingArea.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/ThreadedScrollingTree.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -416,6 +418,18 @@ void LayerTreeHost::willRenderFrame()
 void LayerTreeHost::didRenderFrame()
 {
     m_surface->didRenderFrame();
+}
+
+void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
+{
+#if ENABLE(ASYNC_SCROLLING)
+    if (auto* scrollingCoordinator = m_webPage.scrollingCoordinator()) {
+        if (auto* scrollingTree = downcast<AsyncScrollingCoordinator>(*scrollingCoordinator).scrollingTree())
+            downcast<ThreadedScrollingTree>(*scrollingTree).displayDidRefresh(displayID);
+    }
+#else
+    UNUSED_PARAM(displayID);
+#endif
 }
 
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()

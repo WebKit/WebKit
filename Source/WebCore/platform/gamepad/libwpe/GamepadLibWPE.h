@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && USE(LIBWPE)
 
 #include "PlatformGamepad.h"
 
@@ -35,10 +35,10 @@ struct wpe_gamepad_provider;
 
 namespace WebCore {
 
-class WPEGamepad final : public PlatformGamepad {
+class GamepadLibWPE final : public PlatformGamepad {
 public:
-    WPEGamepad(struct wpe_gamepad_provider*, uintptr_t, unsigned);
-    virtual ~WPEGamepad();
+    GamepadLibWPE(struct wpe_gamepad_provider*, uintptr_t, unsigned);
+    virtual ~GamepadLibWPE();
 
     const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
     const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && USE(LIBWPE)

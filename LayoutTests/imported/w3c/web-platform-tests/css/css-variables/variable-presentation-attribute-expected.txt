@@ -20,7 +20,7 @@ FAIL Testing 'flood-color'. assert_equals: Default value. expected "" but got "r
 PASS Testing 'flood-opacity'.
 FAIL Testing 'font-family'. assert_equals: Default value. expected "Times New Roman" but got "-webkit-standard"
 PASS Testing 'font-size'.
-FAIL Testing 'font-size-adjust'. assert_equals: Default value. expected "none" but got ""
+PASS Testing 'font-size-adjust'.
 PASS Testing 'font-stretch'.
 PASS Testing 'font-style'.
 PASS Testing 'font-weight'.

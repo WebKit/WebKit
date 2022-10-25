@@ -29,12 +29,14 @@
 
 #include "B3Procedure.h"
 #include "JITCompilation.h"
+#include "SIMDInfo.h"
 #include "VirtualRegister.h"
 #include "WasmFormat.h"
 #include "WasmLimits.h"
 #include "WasmModuleInformation.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
+#include "Width.h"
 #include <type_traits>
 #include <wtf/Expected.h>
 #include <wtf/LEBDecoder.h>
@@ -83,6 +85,8 @@ protected:
     bool WARN_UNUSED_RETURN parseUInt8(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseUInt64(uint64_t&);
+    bool WARN_UNUSED_RETURN parseImmByteArray16(v128_t&);
+    PartialResult WARN_UNUSED_RETURN parseImmLaneIdx(uint8_t laneCount, uint8_t&);
     bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t&);
 
@@ -232,6 +236,25 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseUInt64(uint64_t& result)
     memcpy(&result, source() + m_offset, sizeof(uint64_t)); // src can be unaligned
     m_offset += 8;
     return true;
+}
+
+template<typename SuccessType>
+ALWAYS_INLINE bool Parser<SuccessType>::parseImmByteArray16(v128_t& result)
+{
+    if (length() < 16 || m_offset > length() - 16)
+        return false;
+    std::copy(source() + m_offset, source() + m_offset + 16, result.u8x16);
+    m_offset += 16;
+    return true;
+}
+
+template<typename SuccessType>
+ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseImmLaneIdx(uint8_t laneCount, uint8_t& result)
+{
+    RELEASE_ASSERT(laneCount == 2 || laneCount == 4 || laneCount == 8 || laneCount == 16 || laneCount == 32);
+    WASM_PARSER_FAIL_IF(!parseUInt8(result), "Could not parse the lane index immediate byte.");
+    WASM_PARSER_FAIL_IF(result >= laneCount, "Lane index immediate is too large, saw ", laneCount, ", expected an ImmLaneIdx", laneCount);
+    return { };
 }
 
 template<typename SuccessType>

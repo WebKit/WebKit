@@ -1234,7 +1234,6 @@ webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outsid
 
 webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ ImageOnlyFailure ]
 
-webkit.org/b/188973 fast/css/font-systemFontID-parsing.html [ Failure ]
 webkit.org/b/188975 fast/css/user-drag-none.html [ Failure ]
 
 webkit.org/b/188976 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]

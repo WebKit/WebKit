@@ -132,7 +132,6 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 
     coreFrame->tree().setName(frameName);
     ASSERT(ownerElement.document().frame());
-    ownerElement.document().frame()->tree().appendChild(coreFrame.get());
     coreFrame->init();
 
     return frame;

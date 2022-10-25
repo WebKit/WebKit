@@ -1527,7 +1527,7 @@ ScreenWakeLockAPIEnabled:
       default: true
     WebCore:
       default: false
-      
+
 ScrollToTextFragmentEnabled:
   type: bool
   humanReadableName: "Scroll To Text Fragment"
@@ -1592,6 +1592,18 @@ ShowMediaStatsContextMenuItemEnabled:
   type: bool
   humanReadableName: "Show Media Stats"
   humanReadableDescription: "Adds a 'Media Stats' context menu item to <video> when the Develop menu is enabled"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+SiteIsolationEnabled:
+  type: bool
+  humanReadableName: "Site Isolation"
+  humanReadableDescription: "Put cross-origin iframes in a different process"
   defaultValue:
     WebKitLegacy:
       default: false

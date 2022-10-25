@@ -73,7 +73,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
         if (!m_lockedRegisters.contains(reg, IgnoreVectors)
             && !m_usedRegisters.contains(reg, IgnoreVectors)
             && !m_scratchRegisters.contains(reg, IgnoreVectors)) {
-            m_scratchRegisters.add(reg, IgnoreVectors);
+            m_scratchRegisters.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
             return reg;
         }
     }
@@ -83,7 +83,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
         auto reg = BankInfo::toRegister(i);
         if (!m_lockedRegisters.contains(reg, IgnoreVectors) && !m_scratchRegisters.contains(reg, IgnoreVectors)) {
-            m_scratchRegisters.add(reg, IgnoreVectors);
+            m_scratchRegisters.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
             m_numberOfReusedRegisters++;
             return reg;
         }
@@ -110,13 +110,13 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
         if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToSpill.add(reg, IgnoreVectors);
+            registersToSpill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
         if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToSpill.add(reg, IgnoreVectors);
+            registersToSpill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
     }
 
     unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
@@ -138,13 +138,13 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
         if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToFill.add(reg, IgnoreVectors);
+            registersToFill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
         if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToFill.add(reg, IgnoreVectors);
+            registersToFill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
     }
 
     unsigned extraStackBytesAtTopOfStack =
@@ -158,7 +158,7 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
     if (!usedRegisters.numberOfSetRegisters())
         return 0;
-    ASSERT(!usedRegisters.hasAnyWideRegisters());
+    ASSERT(!usedRegisters.hasAnyWideRegisters() || Options::useWebAssemblySIMD());
     JIT_COMMENT(jit, "Preserve registers to stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
 
     unsigned stackOffset = usedRegisters.byteSizeOfSetRegisters();
@@ -180,7 +180,10 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     spooler.finalizeGPR();
 
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (usedRegisters.contains(reg, IgnoreVectors)) {
+        if (conservativeWidth(reg) == Width128 && usedRegisters.contains(reg, conservativeWidth(reg))) {
+            spooler.storeVector({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * conservativeRegisterBytesWithoutVectors(reg))), conservativeWidth(reg) });
+            count += 2;
+        } else if (usedRegisters.contains(reg, IgnoreVectors)) {
             spooler.storeFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * conservativeRegisterBytesWithoutVectors(reg))), conservativeWidthWithoutVectors(reg) });
             count++;
         }
@@ -188,9 +191,8 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     spooler.finalizeFPR();
 
 #if USE(JSVALUE64)
-    RELEASE_ASSERT(count * sizeof(EncodedJSValue) == usedRegisters.byteSizeOfSetRegisters());
+    ASSERT(count * sizeof(EncodedJSValue) == usedRegisters.byteSizeOfSetRegisters());
 #endif
-
     return stackOffset;
 }
 
@@ -201,7 +203,7 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
         RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == 0);
         return;
     }
-    ASSERT(!usedRegisters.hasAnyWideRegisters());
+    ASSERT(!usedRegisters.hasAnyWideRegisters() || Options::useWebAssemblySIMD());
     JIT_COMMENT(jit, "Restore registers from stack for call: ", usedRegisters, "; Extra bytes at top of stack: ", extraBytesAtTopOfStack);
 
     AssemblyHelpers::LoadRegSpooler spooler(jit, MacroAssembler::stackPointerRegister);
@@ -220,10 +222,16 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
         if (usedRegisters.contains(reg, IgnoreVectors)) {
             // You should never have to ignore only part of a register.
             ASSERT(ignore.contains(reg, IgnoreVectors) == ignore.contains(reg, Width128));
-            if (usedRegisters.contains(reg, IgnoreVectors)) {
-                if (!ignore.contains(reg, IgnoreVectors))
+            if (conservativeWidth(reg) == Width128 && usedRegisters.contains(reg, conservativeWidth(reg))) {
+                if (!ignore.contains(reg, IgnoreVectors)) {
+                    spooler.loadVector({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (conservativeRegisterBytesWithoutVectors(reg) * count)), conservativeWidth(reg) });
+                    count += 2;
+                }
+            } else if (usedRegisters.contains(reg, IgnoreVectors)) {
+                if (!ignore.contains(reg, IgnoreVectors)) {
                     spooler.loadFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (conservativeRegisterBytesWithoutVectors(reg) * count)), conservativeWidthWithoutVectors(reg) });
-                count++;
+                    count++;
+                }
             }
         }
     }
@@ -234,7 +242,7 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
     stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
 
 #if USE(JSVALUE64)
-    RELEASE_ASSERT(count * sizeof(EncodedJSValue) == usedRegisters.byteSizeOfSetRegisters());
+    ASSERT(count * sizeof(EncodedJSValue) <= usedRegisters.byteSizeOfSetRegisters());
 #endif
     RELEASE_ASSERT(stackOffset == numberOfStackBytesUsedForRegisterPreservation);
 

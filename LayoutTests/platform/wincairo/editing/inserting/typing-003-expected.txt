@@ -752,12 +752,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 738x111
-          text run at (14,14) width 696: "xxxx x xx xxxx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x xxxxx"
-          text run at (710,14) width 6: " "
-          text run at (14,42) width 732: "xxxxxxxxxxxx xxxxxxxx xxx xxxx xxxxx xx xxx xxxx xxxx xxxxx xxxxxx"
-          text run at (746,42) width 6: " "
-          text run at (14,70) width 714: "xxx xx xxxx xxx xxx xx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x"
-          text run at (728,70) width 6: " "
-          text run at (14,98) width 360: "xxxxx xxxxxxxxxxxx xxxxxxxx xxx "
+          text run at (14,14) width 702: "xxxx x xx xxxx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x xxxxx "
+          text run at (14,42) width 738: "xxxxxxxxxxxx xxxxxxxx xxx xxxx xxxxx xx xxx xxxx xxxx xxxxx xxxxxx "
+          text run at (14,70) width 720: "xxx xx xxxx xxx xxx xx xxxxxx xxxxx xxxxxx xxx xx xxxx xxx xxx xx x "
+          text run at (14,98) width 354: "xxxxx xxxxxxxxxxxx xxxxxxxx xxx"
+          text run at (368,98) width 6: " "
         RenderInline {SPAN} at (0,0) size 0x27
 caret: position 233 of child 0 {#text} of child 1 {DIV} of body

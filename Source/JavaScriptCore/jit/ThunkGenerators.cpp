@@ -551,9 +551,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
 #else
     const GPRReg extraTemp = JSInterfaceJIT::regT5;
 #endif
-#  if CPU(X86_64)
+    static_assert(noOverlap(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::regT3, GPRInfo::regT4, extraTemp));
+#if CPU(X86_64)
     jit.pop(JSInterfaceJIT::regT4);
-#  endif
+#endif
     jit.tagReturnAddress();
 #if CPU(ARM64E)
     jit.loadPtr(JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
@@ -570,17 +571,21 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     jit.add32(JSInterfaceJIT::TrustedImm32(CallFrame::headerSizeInRegisters), JSInterfaceJIT::argumentGPR2);
 
     // Check to see if we have extra slots we can use
-    jit.move(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::argumentGPR1);
-    jit.and32(JSInterfaceJIT::TrustedImm32(stackAlignmentRegisters() - 1), JSInterfaceJIT::argumentGPR1);
-    JSInterfaceJIT::Jump noExtraSlot = jit.branchTest32(MacroAssembler::Zero, JSInterfaceJIT::argumentGPR1);
+    //
+    // argumentGPR0's padding is `align2(numParameters + CallFrame::headerSizeInRegisters) - (argumentCountIncludingThis + CallFrame::headerSizeInRegisters)`
+    // And extra slot means the above padding is an odd number. And after filling extra slot, it becomes +1, thus even number.
+    JSInterfaceJIT::Jump noExtraSlot = jit.branchTest32(MacroAssembler::Zero, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TrustedImm32(stackAlignmentRegisters() - 1));
     jit.move(JSInterfaceJIT::TrustedImm64(JSValue::ValueUndefined), extraTemp);
-    JSInterfaceJIT::Label fillExtraSlots(jit.label());
+    static_assert(stackAlignmentRegisters() == 2);
     jit.store64(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR2, JSInterfaceJIT::TimesEight));
     jit.add32(JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2);
-    jit.branchSub32(JSInterfaceJIT::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR1).linkTo(fillExtraSlots, &jit);
     jit.and32(JSInterfaceJIT::TrustedImm32(-stackAlignmentRegisters()), JSInterfaceJIT::argumentGPR0);
     JSInterfaceJIT::Jump done = jit.branchTest32(MacroAssembler::Zero, JSInterfaceJIT::argumentGPR0);
     noExtraSlot.link(&jit);
+
+    // At this point, argumentGPR2 is `align2(argumentCountIncludingThis + CallFrame::headerSizeInRegisters)`,
+    // and argumentGPR0 is `align2(numParameters + CallFrame::headerSizeInRegisters) - align2(argumentCountIncludingThis + CallFrame::headerSizeInRegisters)`
+    // Thus both argumentGPR0 and argumentGPR2 are align2-ed.
 
     jit.neg64(JSInterfaceJIT::argumentGPR0);
 
@@ -588,14 +593,26 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     // We need to change the stack pointer first before performing copy/fill loops.
     // This stack space below the stack pointer is considered unused by OS. Therefore,
     // OS may corrupt this space when constructing a signal stack.
-    jit.move(JSInterfaceJIT::argumentGPR0, extraTemp);
-    jit.lshift64(JSInterfaceJIT::TrustedImm32(3), extraTemp);
+    jit.lshift64(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TrustedImm32(3), extraTemp);
     jit.addPtr(extraTemp, JSInterfaceJIT::callFrameRegister);
     jit.untagReturnAddress();
     jit.addPtr(extraTemp, JSInterfaceJIT::stackPointerRegister);
     jit.tagReturnAddress();
 
     // Move current frame down argumentGPR0 number of slots
+#if CPU(ARM64)
+    jit.addPtr(JSInterfaceJIT::regT3, extraTemp);
+    JSInterfaceJIT::Label copyLoop(jit.label());
+    jit.loadPair64(CCallHelpers::PostIndexAddress(JSInterfaceJIT::regT3, 16), GPRInfo::argumentGPR1, GPRInfo::regT6);
+    jit.storePair64(GPRInfo::argumentGPR1, GPRInfo::regT6, CCallHelpers::PostIndexAddress(extraTemp, 16));
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(2), JSInterfaceJIT::argumentGPR2).linkTo(copyLoop, &jit);
+
+    // Fill in argumentGPR0 missing arg slots with undefined
+    jit.move(JSInterfaceJIT::TrustedImm64(JSValue::ValueUndefined), GPRInfo::argumentGPR1);
+    JSInterfaceJIT::Label fillUndefinedLoop(jit.label());
+    jit.storePair64(GPRInfo::argumentGPR1, GPRInfo::argumentGPR1, CCallHelpers::PostIndexAddress(extraTemp, 16));
+    jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(2), JSInterfaceJIT::argumentGPR0).linkTo(fillUndefinedLoop, &jit);
+#else
     JSInterfaceJIT::Label copyLoop(jit.label());
     jit.load64(CCallHelpers::Address(JSInterfaceJIT::regT3), extraTemp);
     jit.store64(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
@@ -609,7 +626,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     jit.store64(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
     jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
     jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(fillUndefinedLoop, &jit);
-    
+#endif
+
     done.link(&jit);
 
 #if CPU(ARM64E)
@@ -622,9 +640,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
 #endif
 
-#  if CPU(X86_64)
+#if CPU(X86_64)
     jit.push(JSInterfaceJIT::regT4);
-#  endif
+#endif
     jit.ret();
 #else // USE(JSVALUE64) section above, USE(JSVALUE32_64) section below.
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);

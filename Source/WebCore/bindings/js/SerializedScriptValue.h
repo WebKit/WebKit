@@ -39,6 +39,7 @@
 
 #if ENABLE(WEB_CODECS)
 #include "WebCodecsEncodedVideoChunk.h"
+#include "WebCodecsVideoFrame.h"
 #endif
 
 typedef const struct OpaqueJSContext* JSContextRef;
@@ -61,10 +62,6 @@ class MessagePort;
 class ImageBitmapBacking;
 class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
-#if ENABLE(WEB_CODECS)
-class WebCodecsEncodedVideoChunk;
-class WebCodecsEncodedVideoChunkStorage;
-#endif
 
 enum class SerializationErrorMode { NonThrowing, Throwing };
 enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage };
@@ -127,6 +124,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
+        , Vector<WebCodecsVideoFrameData>&& = { }
 #endif
         );
 
@@ -143,6 +141,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
+        , Vector<WebCodecsVideoFrameData>&& = { }
 #endif
         );
 
@@ -164,6 +163,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
+    Vector<WebCodecsVideoFrameData> m_serializedVideoFrames;
 #endif
     Vector<URLKeepingBlobAlive> m_blobHandles;
     size_t m_memoryCost { 0 };
@@ -195,6 +195,8 @@ void SerializedScriptValue::encode(Encoder& encoder) const
     encoder << static_cast<uint64_t>(m_serializedVideoChunks.size());
     for (const auto &videoChunk : m_serializedVideoChunks)
         encoder << videoChunk->data();
+
+    // FIXME: encode video frames
 #endif
 }
 
@@ -265,6 +267,8 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
             return nullptr;
         serializedVideoChunks.append(WebCodecsEncodedVideoChunkStorage::create(WTFMove(*videoChunkData)));
     }
+    // FIXME: decode video frames
+    Vector<WebCodecsVideoFrameData> serializedVideoFrames;
 #endif
 
     return adoptRef(*new SerializedScriptValue(WTFMove(data), WTFMove(arrayBufferContentsArray)
@@ -273,6 +277,9 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
 #endif
 #if ENABLE(WEB_CODECS)
         , WTFMove(serializedVideoChunks)
+#endif
+#if ENABLE(WEB_CODECS)
+        , WTFMove(serializedVideoFrames)
 #endif
         ));
 }

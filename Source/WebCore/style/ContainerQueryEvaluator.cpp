@@ -29,6 +29,7 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValueList.h"
 #include "ComposedTreeAncestorIterator.h"
+#include "ContainerQueryFeatures.h"
 #include "Document.h"
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
@@ -56,7 +57,7 @@ bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery)
     return evaluateCondition(containerQuery.condition, *context) == MQ::EvaluationResult::True;
 }
 
-auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::ContainerQuery& containerQuery) const -> std::optional<FeatureEvaluationContext>
+auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::ContainerQuery& containerQuery) const -> std::optional<MQ::FeatureEvaluationContext>
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -71,11 +72,11 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
         return { };
 
     if (!container->renderer())
-        return FeatureEvaluationContext { };
+        return MQ::FeatureEvaluationContext { };
 
     auto& renderer = *container->renderer();
 
-    return FeatureEvaluationContext {
+    return MQ::FeatureEvaluationContext {
         CSSToLengthConversionData { renderer.style(), m_element->document().documentElement()->renderStyle(), nullptr, &renderer.view() },
         &renderer
     };
@@ -154,62 +155,6 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
             return ancestor;
     }
     return { };
-}
-
-auto ContainerQueryEvaluator::evaluateFeature(const MQ::Feature& sizeFeature, const FeatureEvaluationContext& context) const -> MQ::EvaluationResult
-{
-    if (!sizeFeature.schema)
-        return MQ::EvaluationResult::Unknown;
-
-    // "If the query container does not have a principal box, or the principal box is not a layout containment box,
-    // or the query container does not support container size queries on the relevant axes, then the result of
-    // evaluating the size feature is unknown."
-    // https://drafts.csswg.org/css-contain-3/#size-container
-    if (!is<RenderBox>(context.renderer))
-        return MQ::EvaluationResult::Unknown;
-
-    auto& renderer = downcast<RenderBox>(*context.renderer);
-
-    auto hasEligibleContainment = [&] {
-        if (!renderer.shouldApplyLayoutContainment())
-            return false;
-        switch (renderer.style().containerType()) {
-        case ContainerType::InlineSize:
-            return renderer.shouldApplyInlineSizeContainment();
-        case ContainerType::Size:
-            return renderer.shouldApplySizeContainment();
-        case ContainerType::Normal:
-            return true;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    };
-
-    if (!hasEligibleContainment())
-        return MQ::EvaluationResult::Unknown;
-
-    if (sizeFeature.schema == &CQ::FeatureSchemas::width())
-        return evaluateLengthFeature(sizeFeature, renderer.contentWidth(), context.conversionData);
-
-    if (sizeFeature.schema == &CQ::FeatureSchemas::height())
-        return evaluateLengthFeature(sizeFeature, renderer.contentHeight(), context.conversionData);
-
-    if (sizeFeature.schema == &CQ::FeatureSchemas::inlineSize())
-        return evaluateLengthFeature(sizeFeature, renderer.contentLogicalWidth(), context.conversionData);
-
-    if (sizeFeature.schema == &CQ::FeatureSchemas::blockSize())
-        return evaluateLengthFeature(sizeFeature, renderer.contentLogicalHeight(), context.conversionData);
-
-    if (sizeFeature.schema == &CQ::FeatureSchemas::aspectRatio()) {
-        auto boxRatio = renderer.contentWidth().toDouble() / renderer.contentHeight().toDouble();
-        return evaluateRatioFeature(sizeFeature, boxRatio);
-    }
-
-    if (sizeFeature.schema == &CQ::FeatureSchemas::orientation()) {
-        bool isPortrait = renderer.contentHeight() >= renderer.contentWidth();
-        return evaluateDiscreteFeature(sizeFeature, isPortrait ? CSSValuePortrait : CSSValueLandscape);
-    }
-
-    return MQ::EvaluationResult::Unknown;
 }
 
 }

@@ -7,5 +7,5 @@ PASS Item-based blockification of pseudo-elements
 FAIL Item-based blockification of nonexistent pseudo-elements assert_equals: Pseudo-styles of display: flex elements should get blockified expected "block" but got "inline"
 PASS display: contents on pseudo-elements
 PASS Dynamically change to display: contents on pseudo-elements
-FAIL Unknown pseudo-elements assert_equals: Should return an empty style for unknown pseudo-elements starting with double-colon expected 0 but got 389
+FAIL Unknown pseudo-elements assert_equals: Should return an empty style for unknown pseudo-elements starting with double-colon expected 0 but got 390
 

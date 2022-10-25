@@ -160,6 +160,7 @@ defines.append("\n\n")
 defines = "".join(defines)
 
 opValueSet = set([op for op in wasm.opcodeIterator(lambda op: True, lambda op: opcodes[op]["value"])])
+opValueSet.add(0xFD)  # ExtSIMD
 maxOpValue = max(opValueSet)
 
 
@@ -328,6 +329,7 @@ inline TypeKind linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
     macro(Ext1,  0xFC, Oops, 0) \\
+    macro(ExtSIMD, 0xFD, Oops, 0) \\
     macro(GCPrefix,  0xFB, Oops, 0) \\
     macro(ExtAtomic, 0xFE, Oops, 0)
 
@@ -365,6 +367,8 @@ enum class Ext1OpType : uint8_t {
     FOR_EACH_WASM_TABLE_OP(CREATE_ENUM_VALUE)
     FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_ENUM_VALUE)
 };
+
+enum class ExtSIMDOpType : uint8_t;
 
 enum class GCOpType : uint8_t {
     FOR_EACH_WASM_GC_OP(CREATE_ENUM_VALUE)

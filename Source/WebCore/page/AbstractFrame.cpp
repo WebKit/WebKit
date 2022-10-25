@@ -33,12 +33,14 @@
 
 namespace WebCore {
 
-AbstractFrame::AbstractFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement)
+AbstractFrame::AbstractFrame(Page& page, FrameIdentifier frameID, AbstractFrame* parent)
     : m_page(page)
     , m_frameID(frameID)
-    , m_treeNode(*this, ownerElement ? ownerElement->document().frame() : nullptr)
+    , m_treeNode(*this, parent)
     , m_windowProxy(WindowProxy::create(*this))
 {
+    if (parent)
+        parent->tree().appendChild(*this);
 }
 
 AbstractFrame::~AbstractFrame()

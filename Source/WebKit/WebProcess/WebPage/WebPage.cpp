@@ -967,6 +967,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif // HAVE(SANDBOX_STATE_FLAGS)
 
     updateThrottleState();
+    updateImageAnimationEnabled();
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -8347,6 +8348,12 @@ void WebPage::generateTestReport(String&& message, String&& group)
 {
     if (RefPtr document = m_page->mainFrame().document())
         document->reportingScope().generateTestReport(WTFMove(message), WTFMove(group));
+}
+
+void WebPage::updateImageAnimationEnabled()
+{
+    bool enabled = !m_page->settings().imageAnimationControlEnabled() || WebProcess::singleton().imageAnimationEnabled();
+    corePage()->setImageAnimationEnabled(enabled);
 }
 
 } // namespace WebKit

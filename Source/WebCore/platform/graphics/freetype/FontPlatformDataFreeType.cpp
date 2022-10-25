@@ -151,12 +151,17 @@ FontPlatformData FontPlatformData::cloneWithSyntheticOblique(const FontPlatformD
 FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
 {
     FontPlatformData copy(source);
-    copy.m_size = size;
+    copy.updateSize(size);
+    return copy;
+}
+
+void FontPlatformData::updateSize(float size)
+{
+    m_size = size;
     // We need to reinitialize the instance, because the difference in size
     // necessitates a new scaled font instance.
-    ASSERT(copy.m_scaledFont.get());
-    copy.buildScaledFont(cairo_scaled_font_get_font_face(copy.m_scaledFont.get()));
-    return copy;
+    ASSERT(m_scaledFont.get());
+    buildScaledFont(cairo_scaled_font_get_font_face(m_scaledFont.get()));
 }
 
 FcPattern* FontPlatformData::fcPattern() const

@@ -1951,6 +1951,25 @@ TEST(WKAttachmentTests, UserDragNonePreventsDragOnAttachmentElement)
 #endif
 }
 
+TEST(WKAttachmentTests, PasteRawUnnamedPDFData)
+{
+    RetainPtr pdfData = testPDFData();
+#if PLATFORM(MAC)
+    [NSPasteboard.generalPasteboard declareTypes:@[(__bridge NSString *)kUTTypePDF] owner:nil];
+    [NSPasteboard.generalPasteboard setData:pdfData.get() forType:(__bridge NSString *)kUTTypePDF];
+#else
+    [UIPasteboard.generalPasteboard setData:pdfData.get() forPasteboardType:UTTypePDF.identifier];
+#endif
+
+    auto webView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    EXPECT_EQ(1U, observer.observer().inserted.count);
+    _WKAttachment *attachment = observer.observer().inserted[0];
+    EXPECT_WK_STREQ("application/pdf", attachment.info.contentType);
+    EXPECT_TRUE([pdfData isEqualToData:attachment.info.data]);
+}
+
 #pragma mark - Platform-specific tests
 
 #if PLATFORM(MAC)

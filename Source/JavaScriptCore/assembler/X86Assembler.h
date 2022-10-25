@@ -31,6 +31,7 @@
 #include "AssemblerCommon.h"
 #include "JITCompilationEffort.h"
 #include "RegisterInfo.h"
+#include "SIMDInfo.h"
 #include <limits.h>
 #include <stdint.h>
 #include <wtf/Assertions.h>
@@ -307,6 +308,7 @@ private:
         OP2_XADDb           = 0xC0,
         OP2_XADD            = 0xC1,
         OP2_PEXTRW_GdUdIb   = 0xC5,
+        OP2_SHUFPS          = 0xC6,
         OP2_BSWAP           = 0xC8,
         OP2_PSLLQ_UdqIb     = 0x73,
         OP2_PSRLQ_UdqIb     = 0x73,
@@ -319,6 +321,11 @@ private:
         OP3_LFENCE           = 0xE8,
         OP3_MFENCE           = 0xF0,
         OP3_SFENCE           = 0xF8,
+        OP3_PEXTRB           = 0x14,
+        OP3_PEXTRD           = 0x16,
+        OP3_EXTRACTPS        = 0x17,
+        OP3_PINSRB           = 0x20,
+        OP3_PINSRD           = 0x22,
     } ThreeByteOpcodeID;
 
     struct VexPrefix {
@@ -2360,6 +2367,54 @@ public:
         m_formatter.oneByteOp64(OP_XCHG_EvGv, src, base, index, scale, offset);
     }
 #endif
+    
+    void pinsr(XMMRegisterID vd, RegisterID rn, SIMDLane lane, uint8_t laneIndex)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+
+        if (lane == SIMDLane::i64x2) {
+            RELEASE_ASSERT(laneIndex < 2);
+            m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_PINSRD, (RegisterID) vd, rn);
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        m_formatter.immediate8((uint8_t) laneIndex);
+    }
+    
+    void pextr(RegisterID rd, XMMRegisterID vn, SIMDLane lane, uint8_t laneIndex)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+
+        if (lane == SIMDLane::i8x16) {
+            ASSERT(laneIndex < 16);
+            m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_PEXTRB, (RegisterID) vn, rd);
+        } else if (lane == SIMDLane::i32x4) {
+            ASSERT(laneIndex < 4);
+            m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_PEXTRD, (RegisterID) vn, rd);
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        m_formatter.immediate8((uint8_t) laneIndex);
+    }
+
+    void vextractps(FPRegisterID rd, XMMRegisterID vn, SIMDLane lane, uint8_t laneIndex)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+
+        if (lane == SIMDLane::f32x4) {
+            ASSERT(laneIndex < 4);
+            m_formatter.threeByteOp64(OP2_3BYTE_ESCAPE_3A, OP3_EXTRACTPS, (RegisterID) vn, (RegisterID) rd);
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        m_formatter.immediate8((uint8_t) laneIndex);
+    }
+
+    void shufps(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    {
+        m_formatter.twoByteOp(OP2_SHUFPS, (RegisterID) vn, (RegisterID) vd);
+        m_formatter.immediate8((uint8_t) controlBits);
+    }
 
     void movl_rr(RegisterID src, RegisterID dst)
     {
@@ -3180,6 +3235,26 @@ public:
     void movaps_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         m_formatter.twoByteOp(OP2_MOVAPS_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+    
+    void vmovups_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.vexWigTwoByteOp(OP_2BYTE_ESCAPE, OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+    
+    void vmovups_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.vexWigTwoByteOp(OP_2BYTE_ESCAPE, OP2_MOVSD_VsdWsd, (RegisterID)dst, offset, base, index, scale);
+    }
+    
+    void vmovups_rm(XMMRegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.vexWigTwoByteOp(OP_2BYTE_ESCAPE, OP2_MOVSD_WsdVsd, (RegisterID)src, base, offset);
+    }
+    
+    void vmovups_rm(XMMRegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.vexWigTwoByteOp(OP_2BYTE_ESCAPE, OP2_MOVSD_WsdVsd, (RegisterID)src, offset, base, index, scale);
     }
 
     void movsd_rr(XMMRegisterID src, XMMRegisterID dst)
@@ -4280,7 +4355,7 @@ private:
             {
                 putByteUnchecked(VexPrefix::TwoBytes);
 
-                uint8_t secondByte = vexEncodeSimdPrefix(simdPrefix);
+                uint8_t secondByte = vexEncodeSIMDPrefix(simdPrefix);
                 secondByte |= (~inOpReg & 0xf) << 3;
                 secondByte |= !regRequiresRex(r) << 7;
                 putByteUnchecked(secondByte);
@@ -4296,7 +4371,7 @@ private:
                 secondByte |= !regRequiresRex(b) << 5;
                 putByteUnchecked(secondByte);
 
-                uint8_t thirdByte = vexEncodeSimdPrefix(simdPrefix);
+                uint8_t thirdByte = vexEncodeSIMDPrefix(simdPrefix);
                 thirdByte |= (~inOpReg & 0xf) << 3;
                 putByteUnchecked(thirdByte);
             }
@@ -4311,12 +4386,12 @@ private:
                 secondByte |= !regRequiresRex(b) << 5;
                 putByteUnchecked(secondByte);
 
-                uint8_t thirdByte = vexEncodeSimdPrefix(simdPrefix);
+                uint8_t thirdByte = vexEncodeSIMDPrefix(simdPrefix);
                 thirdByte |= (~inOpReg & 0xf) << 3;
                 putByteUnchecked(thirdByte);
             }
         private:
-            uint8_t vexEncodeSimdPrefix(OneByteOpcodeID simdPrefix)
+            uint8_t vexEncodeSIMDPrefix(OneByteOpcodeID simdPrefix)
             {
                 switch (simdPrefix) {
                 case 0x66:
@@ -4326,9 +4401,8 @@ private:
                 case 0xF2:
                     return 3;
                 default:
-                    RELEASE_ASSERT_NOT_REACHED();
+                    return 0;
                 }
-                return 0;
             }
 
         };
@@ -4455,6 +4529,22 @@ private:
             writer.putByteUnchecked(OP_2BYTE_ESCAPE);
             writer.putByteUnchecked(opcode);
             writer.memoryModRMAddr(reg, address);
+        }
+
+        void vexWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID base, int offset)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.threeBytesVexNds(simdPrefix, VexImpliedBytes::TwoBytesOp, dest, (RegisterID) 0, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(dest, base, offset);
+        }
+
+        void vexWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, int offset, RegisterID base, RegisterID index, int scale)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.threeBytesVexNds(simdPrefix, VexImpliedBytes::TwoBytesOp, dest, (RegisterID) 0, index, base);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRM(dest, base, index, scale, offset);
         }
 
         void vexNdsLigWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID b)
@@ -4628,6 +4718,16 @@ private:
             writer.putByteUnchecked(OP_2BYTE_ESCAPE);
             writer.putByteUnchecked(opcode);
             writer.memoryModRM(reg, base, index, scale, offset);
+        }
+            
+        void threeByteOp64(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRex(true, reg, 0, rm);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(twoBytePrefix);
+            writer.putByteUnchecked(opcode);
+            writer.registerModRM(reg, rm);
         }
 #endif
 

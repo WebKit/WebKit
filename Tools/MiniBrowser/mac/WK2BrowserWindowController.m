@@ -750,6 +750,11 @@ static NSSet *dataTypes(void)
     [[_webView printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];
 }
 
+static BOOL isJavaScriptURL(NSURL *url)
+{
+    return [url.scheme isEqualToString:@"javascript"];
+}
+
 #pragma mark WKNavigationDelegate
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
@@ -761,9 +766,11 @@ static NSSet *dataTypes(void)
         return;
     }
 
-    if (navigationAction._userInitiatedAction && !navigationAction._userInitiatedAction.isConsumed) {
+    NSURL *url = navigationAction.request.URL;
+    
+    if (!isJavaScriptURL(url) && navigationAction._userInitiatedAction && !navigationAction._userInitiatedAction.isConsumed) {
         [navigationAction._userInitiatedAction consume];
-        [[NSWorkspace sharedWorkspace] openURL:navigationAction.request.URL];
+        [[NSWorkspace sharedWorkspace] openURL:url];
     }
 
     decisionHandler(WKNavigationActionPolicyCancel);

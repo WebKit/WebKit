@@ -124,6 +124,7 @@ private:
     void resize(const WebCore::IntSize&) override;
     void willRenderFrame() override;
     void didRenderFrame() override;
+    void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
     // ThreadedDisplayRefreshMonitor::Client
     void requestDisplayRefreshMonitorUpdate() override;

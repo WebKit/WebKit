@@ -38,8 +38,14 @@ public:
     template<typename T>
     Decoder& operator>>(std::optional<T>& t)
     {
-        t = Coder<std::remove_const_t<std::remove_reference_t<T>>>::decode(*this);
+        t = decode<T>();
         return *this;
+    }
+
+    template<typename T>
+    std::optional<T> decode()
+    {
+        return Coder<std::remove_const_t<std::remove_reference_t<T>>>::decode(*this);
     }
 
     template<typename T>

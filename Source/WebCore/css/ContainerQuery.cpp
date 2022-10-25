@@ -27,65 +27,25 @@
 
 #include "CSSMarkup.h"
 #include "CSSValue.h"
+#include "ContainerQueryFeatures.h"
 #include "GenericMediaQuerySerialization.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace CQ {
-namespace FeatureSchemas {
-
-using namespace MQ;
-
-const FeatureSchema& width()
-{
-    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "width"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
-    return schema;
-}
-
-const FeatureSchema& height()
-{
-    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "height"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
-    return schema;
-}
-
-const FeatureSchema& inlineSize()
-{
-    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "inline-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
-    return schema;
-}
-
-const FeatureSchema& blockSize()
-{
-    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "block-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length }, { } } };
-    return schema;
-}
-
-const FeatureSchema& aspectRatio()
-{
-    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "aspect-ratio"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Ratio }, { } } };
-    return schema;
-}
-
-const FeatureSchema& orientation()
-{
-    static MainThreadNeverDestroyed<FeatureSchema> schema { FeatureSchema { "orientation"_s, FeatureSchema::Type::Discrete, { }, { CSSValuePortrait, CSSValueLandscape } } };
-    return schema;
-}
-
-}
 
 OptionSet<Axis> requiredAxesForFeature(const MQ::Feature& feature)
 {
-    if (feature.schema == &FeatureSchemas::width())
+    if (feature.schema == &Features::width())
         return { Axis::Width };
-    if (feature.schema == &FeatureSchemas::height())
+    if (feature.schema == &Features::height())
         return { Axis::Height };
-    if (feature.schema == &FeatureSchemas::inlineSize())
+    if (feature.schema == &Features::inlineSize())
         return { Axis::Inline };
-    if (feature.schema == &FeatureSchemas::blockSize())
+    if (feature.schema == &Features::blockSize())
         return { Axis::Block };
-    if (feature.schema == &FeatureSchemas::aspectRatio() || feature.schema == &FeatureSchemas::orientation())
+    if (feature.schema == &Features::aspectRatio() || feature.schema == &Features::orientation())
         return { Axis::Inline, Axis::Block };
     return { };
 }

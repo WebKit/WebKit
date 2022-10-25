@@ -33,6 +33,7 @@
 #include "FontDatabase.h"
 #include "FontFamilySpecificationCoreText.h"
 #include "FontPaletteValues.h"
+#include "StyleFontSizeFunctions.h"
 #include "SystemFontDatabaseCoreText.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -1101,7 +1102,6 @@ static void autoActivateFont(const String& name, CGFloat size)
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
 {
     float size = fontDescription.computedPixelSize();
-
     auto& fontDatabase = database(fontDescription.shouldAllowUserInstalledFonts());
     auto font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size);
 
@@ -1126,7 +1126,10 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription).boldObliquePair();
 
-    return makeUnique<FontPlatformData>(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+    FontPlatformData platformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    return makeUnique<FontPlatformData>(platformData);
 }
 
 void FontCache::platformPurgeInactiveFontData()

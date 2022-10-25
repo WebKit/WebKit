@@ -72,8 +72,7 @@ layer at (0,0) size 800x585
       RenderBlock {DIV} at (64,0) size 748x244 [border: (50px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 544x75
           RenderText {#text} at (74,84) size 544x75
-            text run at (74,84) width 538: "Fourscore and seven years ago our fathers brought forth"
-            text run at (612,84) width 6: " "
+            text run at (74,84) width 544: "Fourscore and seven years ago our fathers brought forth "
             text run at (74,132) width 301: "onthis continent a new nation..."
         RenderText {#text} at (0,0) size 0x0
 caret: position 58 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

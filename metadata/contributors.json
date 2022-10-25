@@ -4465,6 +4465,7 @@
       "emails" : [
          "kpiddington@apple.com"
       ],
+      "github" : "kpiddington",
       "name" : "Kyle Piddington",
       "nicks" : [
          "kpiddington"
@@ -4961,7 +4962,8 @@
          "m_dubet@apple.com"
       ],
       "github" : "mdubet",
-      "name" : "Matthieu Dubet"
+      "name" : "Matthieu Dubet",
+      "status" : "committer"
    },
    {
       "emails" : [

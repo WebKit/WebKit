@@ -8,9 +8,9 @@ PASS Commits values calculated mid-interval
 PASS Commits variable references as their computed values
 PASS Commits custom variables
 PASS Commits em units as pixel values
-FAIL Commits relative line-height assert_equals: line-height is committed as a relative value expected "1.5" but got "15px"
+PASS Commits relative line-height
 PASS Commits transforms
-FAIL Commits transforms as a transform list assert_equals: expected "translate(20px, 20px)" but got "matrix(1, 0, 0, 1, 20, 20)"
+PASS Commits transforms as a transform list
 FAIL Commits matrix-interpolated relative transforms assert_equals: Resolved transform is correct after commit. expected "matrix(2, 0, 0, 2, 100, 0)" but got "matrix(2, 0, 0, 2, 0, 0)"
 PASS Commits "none" transform
 PASS Commits the intermediate value of an animation in the middle of stack

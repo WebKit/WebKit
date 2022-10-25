@@ -34,7 +34,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 CCallSpecial::CCallSpecial()
 {
-    m_clobberedRegs = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
+    m_clobberedRegs = RegisterSetBuilder::registersToSaveForCCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
     m_clobberedRegs.remove(GPRInfo::returnValueGPR);
     m_clobberedRegs.remove(GPRInfo::returnValueGPR2);
     m_clobberedRegs.remove(FPRInfo::returnValueFPR);
@@ -51,13 +51,13 @@ void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
     for (unsigned i = 0; i < numReturnGPArgs; ++i)
         callback(inst.args[returnGPArgOffset + i], Arg::Def, GP, pointerWidth());
     for (unsigned i = 0; i < numReturnFPArgs; ++i)
-        callback(inst.args[returnFPArgOffset + i], Arg::Def, FP, Width64);
+        callback(inst.args[returnFPArgOffset + i], Arg::Def, FP, Options::useWebAssemblySIMD() ? conservativeWidth(FP) : conservativeWidthWithoutVectors(FP));
     
     for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
         // For the type, we can just query the arg's bank. The arg will have a bank, because we
         // require these args to be argument registers.
         Bank bank = inst.args[i].bank();
-        callback(inst.args[i], Arg::Use, bank, conservativeWidth(bank));
+        callback(inst.args[i], Arg::Use, bank, Options::useWebAssemblySIMD() ? conservativeWidth(bank) : conservativeWidthWithoutVectors(bank));
     }
 }
 

@@ -43,13 +43,13 @@ struct SameSizeAsFontCascadeDescription {
     AtomString string2;
     int16_t fontSelectionRequest[3];
     float size;
+    std::optional<float> sizeAdjust;
     unsigned bitfields1;
     unsigned bitfields2 : 22;
     void* array;
     float size2;
     unsigned bitfields3 : 10;
 };
-
 static_assert(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), "FontCascadeDescription should stay small");
 
 FontCascadeDescription::FontCascadeDescription()

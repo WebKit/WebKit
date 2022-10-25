@@ -58,6 +58,7 @@
 #include "JSRTCCertificate.h"
 #include "JSRTCDataChannel.h"
 #include "JSWebCodecsEncodedVideoChunk.h"
+#include "JSWebCodecsVideoFrame.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "WebCodecsEncodedVideoChunk.h"
@@ -208,6 +209,7 @@ enum SerializationTag {
     DOMExceptionTag = 51,
 #if ENABLE(WEB_CODECS)
     WebCodecsEncodedVideoChunkTag = 52,
+    WebCodecsVideoFrameTag = 53,
 #endif
     ErrorTag = 255
 };
@@ -634,6 +636,7 @@ public:
 #endif
 #if ENABLE(WEB_CODECS)
             Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
+            Vector<RefPtr<WebCodecsVideoFrame>>& serializedVideoFrames,
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
@@ -651,6 +654,7 @@ public:
 #endif
 #if ENABLE(WEB_CODECS)
             serializedVideoChunks,
+            serializedVideoFrames,
 #endif
 #if ENABLE(WEBASSEMBLY)
             wasmModules,
@@ -688,6 +692,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
             Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
+            Vector<RefPtr<WebCodecsVideoFrame>>& serializedVideoFrames,
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
@@ -706,6 +711,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
         , m_serializedVideoChunks(serializedVideoChunks)
+        , m_serializedVideoFrames(serializedVideoFrames)
 #endif
         , m_forStorage(forStorage)
     {
@@ -1205,6 +1211,22 @@ private:
         write(WebCodecsEncodedVideoChunkTag);
         write(static_cast<uint32_t>(index));
     }
+
+    bool dumpWebCodecsVideoFrame(JSObject* obj)
+    {
+        Ref videoFrame = jsCast<JSWebCodecsVideoFrame*>(obj)->wrapped();
+        if (videoFrame->isDetached())
+            return false;
+
+        auto index = m_serializedVideoFrames.find(videoFrame.ptr());
+        if (index == notFound) {
+            index = m_serializedVideoChunks.size();
+            m_serializedVideoFrames.append(WTFMove(videoFrame));
+        }
+        write(WebCodecsVideoFrameTag);
+        write(static_cast<uint32_t>(index));
+        return true;
+    }
 #endif
 
     void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
@@ -1390,6 +1412,7 @@ private:
                 Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
 #if ENABLE(WEB_CODECS)
                 Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> dummyVideoChunks;
+                Vector<RefPtr<WebCodecsVideoFrame>> dummyVideoFrames;
 #endif
 #if ENABLE(WEBASSEMBLY)
                 WasmModuleArray dummyModules;
@@ -1405,6 +1428,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
                     dummyVideoChunks,
+                    dummyVideoFrames,
 #endif
 #if ENABLE(WEBASSEMBLY)
                     dummyModules,
@@ -1503,6 +1527,11 @@ private:
                     return false;
                 dumpWebCodecsEncodedVideoChunk(obj);
                 return true;
+            }
+            if (obj->inherits<JSWebCodecsVideoFrame>()) {
+                if (m_forStorage == SerializationForStorage::Yes)
+                    return false;
+                return dumpWebCodecsVideoFrame(obj);
             }
 #endif
 
@@ -1951,6 +1980,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& m_serializedVideoChunks;
+    Vector<RefPtr<WebCodecsVideoFrame>>& m_serializedVideoFrames;
 #endif
     SerializationForStorage m_forStorage;
 };
@@ -2249,6 +2279,7 @@ public:
 #endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+        , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
 #endif
         )
     {
@@ -2267,6 +2298,7 @@ public:
 #endif
 #if ENABLE(WEB_CODECS)
             , WTFMove(serializedVideoChunks)
+            , WTFMove(serializedVideoFrames)
 #endif
             );
         if (!deserializer.isValid())
@@ -2327,6 +2359,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
+        , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -2356,6 +2389,8 @@ private:
 #if ENABLE(WEB_CODECS)
         , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
         , m_videoChunks(m_serializedVideoChunks.size())
+        , m_serializedVideoFrames(WTFMove(serializedVideoFrames))
+        , m_videoFrames(m_serializedVideoFrames.size())
 #endif
     {
         if (!read(m_version))
@@ -2375,6 +2410,7 @@ private:
 #endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
+        , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -2407,6 +2443,8 @@ private:
 #if ENABLE(WEB_CODECS)
         , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
         , m_videoChunks(m_serializedVideoChunks.size())
+        , m_serializedVideoFrames(WTFMove(serializedVideoFrames))
+        , m_videoFrames(m_serializedVideoFrames.size())
 #endif
     {
         if (!read(m_version))
@@ -3464,6 +3502,20 @@ private:
 
         return getJSValue(m_videoChunks[index].get());
     }
+    JSValue readWebCodecsVideoFrame()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_serializedVideoFrames.size()) {
+            fail();
+            return JSValue();
+        }
+
+        if (!m_videoFrames[index])
+            m_videoFrames[index] = WebCodecsVideoFrame::create(WTFMove(m_serializedVideoFrames.at(index)));
+
+        return getJSValue(m_videoFrames[index].get());
+    }
 #endif
 
     JSValue readImageBitmap()
@@ -3961,6 +4013,8 @@ private:
 #if ENABLE(WEB_CODECS)
         case WebCodecsEncodedVideoChunkTag:
             return readWebCodecsEncodedVideoChunk();
+        case WebCodecsVideoFrameTag:
+            return readWebCodecsVideoFrame();
 #endif
         case DOMExceptionTag:
             return readDOMException();
@@ -4010,6 +4064,8 @@ private:
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
     Vector<RefPtr<WebCodecsEncodedVideoChunk>> m_videoChunks;
+    Vector<WebCodecsVideoFrameData> m_serializedVideoFrames;
+    Vector<RefPtr<WebCodecsVideoFrame>> m_videoFrames;
 #endif
 
     String blobFilePathForBlobURL(const String& blobURL)
@@ -4215,6 +4271,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #endif
 #if ENABLE(WEB_CODECS)
     , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+    , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
 #endif
         )
     : m_data(WTFMove(buffer))
@@ -4224,6 +4281,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #endif
 #if ENABLE(WEB_CODECS)
     , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
+    , m_serializedVideoFrames(WTFMove(serializedVideoFrames))
 #endif
 {
     m_memoryCost = computeMemoryCost();
@@ -4242,6 +4300,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+        , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
 #endif
         )
     : m_data(WTFMove(buffer))
@@ -4260,6 +4319,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #endif
 #if ENABLE(WEB_CODECS)
     , m_serializedVideoChunks(WTFMove(serializedVideoChunks))
+    , m_serializedVideoFrames(WTFMove(serializedVideoFrames))
 #endif
     , m_blobHandles(crossThreadCopy(WTFMove(blobHandles)))
 {
@@ -4309,6 +4369,7 @@ size_t SerializedScriptValue::computeMemoryCost() const
         if (chunk)
             cost += chunk->memoryCost();
     }
+    // FIXME: Add memory cost to serialized video frames.
 #endif
 
     for (auto& handle : m_blobHandles)
@@ -4452,6 +4513,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #if ENABLE(WEB_RTC)
     Vector<Ref<RTCDataChannel>> dataChannels;
 #endif
+#if ENABLE(WEB_CODECS)
+    Vector<Ref<WebCodecsVideoFrame>> transferredVideoFrames;
+#endif
     HashSet<JSC::JSObject*> uniqueTransferables;
     for (auto& transferable : transferList) {
         if (!uniqueTransferables.add(transferable.get()).isNewEntry)
@@ -4499,6 +4563,14 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         }
 #endif
 
+#if ENABLE(WEB_CODECS)
+        if (auto videoFrame = JSWebCodecsVideoFrame::toWrapped(vm, transferable.get())) {
+            if (videoFrame->isDetached())
+                return Exception { DataCloneError };
+            transferredVideoFrames.append(*videoFrame);
+            continue;
+        }
+#endif
         return Exception { DataCloneError };
     }
 
@@ -4522,6 +4594,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     std::unique_ptr<ArrayBufferContentsArray> sharedBuffers = makeUnique<ArrayBufferContentsArray>();
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+    Vector<RefPtr<WebCodecsVideoFrame>> serializedVideoFrames;
 #endif
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -4532,6 +4605,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(WEB_CODECS)
         serializedVideoChunks,
+        serializedVideoFrames,
 #endif
 #if ENABLE(WEBASSEMBLY)
         wasmModules,
@@ -4562,6 +4636,14 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         detachedRTCDataChannels.append(channel->detach());
 #endif
 
+#if ENABLE(WEB_CODECS)
+    auto serializedVideoFrameData = map(serializedVideoFrames, [](auto& frame) -> WebCodecsVideoFrameData { return frame->data(); });
+#endif
+#if ENABLE(WEB_CODECS)
+    for (auto& videoFrame : transferredVideoFrames)
+        videoFrame->close();
+#endif
+
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                 , WTFMove(detachedCanvases)
@@ -4575,6 +4657,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(WEB_CODECS)
                 , WTFMove(serializedVideoChunks)
+                , WTFMove(serializedVideoFrameData)
 #endif
                 ));
 }
@@ -4639,6 +4722,7 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
 #endif
 #if ENABLE(WEB_CODECS)
         , WTFMove(m_serializedVideoChunks)
+        , WTFMove(m_serializedVideoFrames)
 #endif
         );
     if (throwExceptions == SerializationErrorMode::Throwing)

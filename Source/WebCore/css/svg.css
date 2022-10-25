@@ -1,7 +1,7 @@
 /*
  * The default style sheet used to render SVG.
  *
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,9 +56,13 @@ text, foreignObject {
     display: block
 }
 
-text, tspan, textPath {
-   white-space: nowrap
+text {
+   white-space: nowrap;
 }
+
+tspan, textPath {
+    white-space: inherit;
+ }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 text, tspan, tref {

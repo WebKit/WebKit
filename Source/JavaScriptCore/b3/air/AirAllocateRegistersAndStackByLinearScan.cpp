@@ -687,6 +687,7 @@ private:
 
 void allocateRegistersAndStackByLinearScan(Code& code)
 {
+    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateRegistersAndStackByLinearScan");
     if (verbose())
         dataLog("Air before linear scan:\n", code);

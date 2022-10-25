@@ -211,7 +211,7 @@ void FrameLoader::HistoryController::saveDocumentState()
         if (DocumentLoader* documentLoader = document.loader())
             item->setShouldOpenExternalURLsPolicy(documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
-        LOG(Loading, "WebCoreLoading %s: saving form state to %p", m_frame.tree().uniqueName().string().utf8().data(), item);
+        LOG(Loading, "WebCoreLoading frame %" PRIu64 ": saving form state to %p", m_frame.frameID().object().toUInt64(), item);
         item->setDocumentState(document.formElementsState());
     }
 }
@@ -256,7 +256,7 @@ void FrameLoader::HistoryController::restoreDocumentState()
 
     m_frame.loader().documentLoader()->setShouldOpenExternalURLsPolicy(m_currentItem->shouldOpenExternalURLsPolicy());
 
-    LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame.tree().uniqueName().string().utf8().data(), m_currentItem.get());
+    LOG(Loading, "WebCoreLoading frame %" PRIu64 ": restoring form state from %p", m_frame.frameID().object().toUInt64(), m_currentItem.get());
     m_frame.document()->setStateForNewFormElements(m_currentItem->documentState());
 }
 
