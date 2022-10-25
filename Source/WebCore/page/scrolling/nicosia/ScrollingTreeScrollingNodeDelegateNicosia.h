@@ -40,14 +40,11 @@ public:
     explicit ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
     virtual ~ScrollingTreeScrollingNodeDelegateNicosia();
 
-    std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> createUpdateScope();
     void updateVisibleLengths();
     bool handleWheelEvent(const PlatformWheelEvent&);
 
 private:
     // ScrollingEffectsControllerClient.
-    void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
-
     bool scrollAnimationEnabled() const final { return m_scrollAnimatorEnabled; }
 
     bool m_scrollAnimatorEnabled { false };
