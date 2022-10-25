@@ -1,128 +1,65 @@
 
 PASS .test 1
-FAIL .test 2 assert_equals:
-<div class="test cis-block" data-expected-client-width="0" data-expected-client-height="50"></div>
-clientHeight expected 50 but got 0
-FAIL .test 3 assert_equals:
-<div class="test cis-inline" data-expected-client-width="100" data-expected-client-height="0"></div>
-clientWidth expected 100 but got 0
-FAIL .test 4 assert_equals:
-<div class="test cis-both" data-expected-client-width="100" data-expected-client-height="50"></div>
-clientWidth expected 100 but got 0
+PASS .test 2
+PASS .test 3
+PASS .test 4
 PASS .test 5
-FAIL .test 6 assert_equals:
-<div class="test cis-block vertical" data-expected-client-height="0" data-expected-client-width="50"></div>
-clientWidth expected 50 but got 0
-FAIL .test 7 assert_equals:
-<div class="test cis-inline vertical" data-expected-client-height="100" data-expected-client-width="0"></div>
-clientHeight expected 100 but got 0
-FAIL .test 8 assert_equals:
-<div class="test cis-both vertical" data-expected-client-height="100" data-expected-client-width="50"></div>
-clientWidth expected 50 but got 0
+PASS .test 6
+PASS .test 7
+PASS .test 8
 PASS .test 9
-FAIL .test 10 assert_equals:
-<img class="test cis-block" src="/css/support/60x60-green.png" data-expected-client-width="0" data-expected-client-height="50">
-clientHeight expected 50 but got 0
-FAIL .test 11 assert_equals:
-<img class="test cis-inline" src="/css/support/60x60-green.png" data-expected-client-width="100" data-expected-client-height="0">
-clientWidth expected 100 but got 0
-FAIL .test 12 assert_equals:
-<img class="test cis-both" src="/css/support/60x60-green.png" data-expected-client-width="100" data-expected-client-height="50">
-clientWidth expected 100 but got 0
+PASS .test 10
+PASS .test 11
+PASS .test 12
 PASS .test 13
-FAIL .test 14 assert_equals:
-<img class="test cis-block vertical" src="/css/support/60x60-green.png" data-expected-client-height="0" data-expected-client-width="50">
-clientWidth expected 50 but got 0
-FAIL .test 15 assert_equals:
-<img class="test cis-inline vertical" src="/css/support/60x60-green.png" data-expected-client-height="100" data-expected-client-width="0">
-clientHeight expected 100 but got 0
-FAIL .test 16 assert_equals:
-<img class="test cis-both vertical" src="/css/support/60x60-green.png" data-expected-client-height="100" data-expected-client-width="50">
-clientWidth expected 50 but got 0
+PASS .test 14
+PASS .test 15
+PASS .test 16
 PASS .test 17
-FAIL .test 18 assert_equals:
-<svg class="test cis-block" data-expected-client-width="0" data-expected-client-height="50"></svg>
-clientHeight expected 50 but got 0
-FAIL .test 19 assert_equals:
-<svg class="test cis-inline" data-expected-client-width="100" data-expected-client-height="0"></svg>
-clientWidth expected 100 but got 0
-FAIL .test 20 assert_equals:
-<svg class="test cis-both" data-expected-client-width="100" data-expected-client-height="50"></svg>
-clientWidth expected 100 but got 0
+PASS .test 18
+PASS .test 19
+PASS .test 20
 PASS .test 21
-FAIL .test 22 assert_equals:
-<svg class="test cis-block vertical" data-expected-client-height="0" data-expected-client-width="50"></svg>
-clientWidth expected 50 but got 0
-FAIL .test 23 assert_equals:
-<svg class="test cis-inline vertical" data-expected-client-height="100" data-expected-client-width="0"></svg>
-clientHeight expected 100 but got 0
-FAIL .test 24 assert_equals:
-<svg class="test cis-both vertical" data-expected-client-height="100" data-expected-client-width="50"></svg>
-clientWidth expected 50 but got 0
+PASS .test 22
+PASS .test 23
+PASS .test 24
 FAIL .test 25 assert_equals:
 <canvas class="test cis-none" width="40" height="20" data-expected-client-width="0" data-expected-client-height="0"></canvas>
 clientWidth expected 0 but got 769
 FAIL .test 26 assert_equals:
 <canvas class="test cis-block" width="40" height="20" data-expected-client-width="0" data-expected-client-height="50"></canvas>
-clientWidth expected 0 but got 769
+clientWidth expected 0 but got 100
 FAIL .test 27 assert_equals:
 <canvas class="test cis-inline" width="40" height="20" data-expected-client-width="100" data-expected-client-height="0"></canvas>
-clientWidth expected 100 but got 769
-FAIL .test 28 assert_equals:
-<canvas class="test cis-both" width="40" height="20" data-expected-client-width="100" data-expected-client-height="50"></canvas>
-clientWidth expected 100 but got 769
+clientHeight expected 0 but got 50
+PASS .test 28
 FAIL .test 29 assert_equals:
 <canvas class="test cis-none vertical" width="40" height="20" data-expected-client-height="0" data-expected-client-width="0"></canvas>
 clientWidth expected 0 but got 1538
 FAIL .test 30 assert_equals:
 <canvas class="test cis-block vertical" width="40" height="20" data-expected-client-height="0" data-expected-client-width="50"></canvas>
-clientWidth expected 50 but got 1538
+clientHeight expected 0 but got 25
 FAIL .test 31 assert_equals:
 <canvas class="test cis-inline vertical" width="40" height="20" data-expected-client-height="100" data-expected-client-width="0"></canvas>
-clientWidth expected 0 but got 1538
-FAIL .test 32 assert_equals:
-<canvas class="test cis-both vertical" width="40" height="20" data-expected-client-height="100" data-expected-client-width="50"></canvas>
-clientWidth expected 50 but got 1538
+clientWidth expected 0 but got 200
+PASS .test 32
 PASS .test 33
-FAIL .test 34 assert_equals:
-<iframe class="test cis-block" data-expected-client-width="0" data-expected-client-height="50"></iframe>
-clientHeight expected 50 but got 0
-FAIL .test 35 assert_equals:
-<iframe class="test cis-inline" data-expected-client-width="100" data-expected-client-height="0"></iframe>
-clientWidth expected 100 but got 0
-FAIL .test 36 assert_equals:
-<iframe class="test cis-both" data-expected-client-width="100" data-expected-client-height="50"></iframe>
-clientWidth expected 100 but got 0
+PASS .test 34
+PASS .test 35
+PASS .test 36
 PASS .test 37
-FAIL .test 38 assert_equals:
-<iframe class="test cis-block vertical" data-expected-client-height="0" data-expected-client-width="50"></iframe>
-clientWidth expected 50 but got 0
-FAIL .test 39 assert_equals:
-<iframe class="test cis-inline vertical" data-expected-client-height="100" data-expected-client-width="0"></iframe>
-clientHeight expected 100 but got 0
-FAIL .test 40 assert_equals:
-<iframe class="test cis-both vertical" data-expected-client-height="100" data-expected-client-width="50"></iframe>
-clientWidth expected 50 but got 0
+PASS .test 38
+PASS .test 39
+PASS .test 40
 PASS .test 41
-FAIL .test 42 assert_equals:
-<video class="test cis-block" data-expected-client-width="0" data-expected-client-height="50"></video>
-clientHeight expected 50 but got 0
-FAIL .test 43 assert_equals:
-<video class="test cis-inline" data-expected-client-width="100" data-expected-client-height="0"></video>
-clientWidth expected 100 but got 0
-FAIL .test 44 assert_equals:
-<video class="test cis-both" data-expected-client-width="100" data-expected-client-height="50"></video>
-clientWidth expected 100 but got 0
+PASS .test 42
+PASS .test 43
+PASS .test 44
 PASS .test 45
-FAIL .test 46 assert_equals:
-<video class="test cis-block vertical" data-expected-client-height="0" data-expected-client-width="50"></video>
-clientWidth expected 50 but got 0
-FAIL .test 47 assert_equals:
-<video class="test cis-inline vertical" data-expected-client-height="100" data-expected-client-width="0"></video>
-clientHeight expected 100 but got 0
-FAIL .test 48 assert_equals:
-<video class="test cis-both vertical" data-expected-client-height="100" data-expected-client-width="50"></video>
-clientWidth expected 50 but got 0
+PASS .test 46
+PASS .test 47
+PASS .test 48
+
 
 
 

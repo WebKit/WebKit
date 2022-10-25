@@ -511,7 +511,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     if (!hasIntrinsicAspectRatio())
         return;
 
-    if (intrinsicSize.isEmpty())
+    // After supporting contain-intrinsic-size, the intrinsicSize of size containment is not always empty.
+    if (intrinsicSize.isEmpty() || shouldApplySizeContainment())
         return;
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();

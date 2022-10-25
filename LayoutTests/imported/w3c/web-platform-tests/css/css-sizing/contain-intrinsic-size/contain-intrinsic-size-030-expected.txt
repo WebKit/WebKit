@@ -1,62 +1,32 @@
 
 PASS .test 1
-FAIL .test 2 assert_equals:
-<div class="test small-contents overflow-auto cis-height" data-expected-client-width="0" data-expected-client-height="50" data-expected-scroll-width="40" data-expected-scroll-height="50"></div>
-clientHeight expected 50 but got 0
+PASS .test 2
 FAIL .test 3 assert_equals:
 <div class="test small-contents overflow-auto cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="100" data-expected-scroll-height="20"></div>
-clientWidth expected 100 but got 0
-FAIL .test 4 assert_equals:
-<div class="test small-contents overflow-auto cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="100" data-expected-scroll-height="50"></div>
-clientWidth expected 100 but got 0
+clientWidth expected 100 but got 85
+PASS .test 4
 PASS .test 5
-FAIL .test 6 assert_equals:
-<div class="test small-contents overflow-scroll cis-height" data-expected-client-width="0" data-expected-client-height="50" data-expected-scroll-width="40" data-expected-scroll-height="50"></div>
-clientHeight expected 50 but got 0
-FAIL .test 7 assert_equals:
-<div class="test small-contents overflow-scroll cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="100" data-expected-scroll-height="20"></div>
-clientWidth expected 100 but got 0
-FAIL .test 8 assert_equals:
-<div class="test small-contents overflow-scroll cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="100" data-expected-scroll-height="50"></div>
-clientWidth expected 100 but got 0
+PASS .test 6
+PASS .test 7
+PASS .test 8
 PASS .test 9
-FAIL .test 10 assert_equals:
-<div class="test small-contents overflow-hidden cis-height" data-expected-client-width="0" data-expected-client-height="50" data-expected-scroll-width="40" data-expected-scroll-height="50"></div>
-clientHeight expected 50 but got 0
-FAIL .test 11 assert_equals:
-<div class="test small-contents overflow-hidden cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="100" data-expected-scroll-height="20"></div>
-clientWidth expected 100 but got 0
-FAIL .test 12 assert_equals:
-<div class="test small-contents overflow-hidden cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="100" data-expected-scroll-height="50"></div>
-clientWidth expected 100 but got 0
+PASS .test 10
+PASS .test 11
+PASS .test 12
 PASS .test 13
-FAIL .test 14 assert_equals:
-<div class="test big-contents overflow-auto cis-height" data-expected-client-width="0" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientHeight expected 50 but got 0
+PASS .test 14
 FAIL .test 15 assert_equals:
 <div class="test big-contents overflow-auto cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 0
+clientWidth expected 100 but got 85
 FAIL .test 16 assert_equals:
 <div class="test big-contents overflow-auto cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 0
+clientWidth expected 100 but got 85
 PASS .test 17
-FAIL .test 18 assert_equals:
-<div class="test big-contents overflow-scroll cis-height" data-expected-client-width="0" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientHeight expected 50 but got 0
-FAIL .test 19 assert_equals:
-<div class="test big-contents overflow-scroll cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 0
-FAIL .test 20 assert_equals:
-<div class="test big-contents overflow-scroll cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 0
+PASS .test 18
+PASS .test 19
+PASS .test 20
 PASS .test 21
-FAIL .test 22 assert_equals:
-<div class="test big-contents overflow-hidden cis-height" data-expected-client-width="0" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientHeight expected 50 but got 0
-FAIL .test 23 assert_equals:
-<div class="test big-contents overflow-hidden cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 0
-FAIL .test 24 assert_equals:
-<div class="test big-contents overflow-hidden cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 0
+PASS .test 22
+PASS .test 23
+PASS .test 24
 
