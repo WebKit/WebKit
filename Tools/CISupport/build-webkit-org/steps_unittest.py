@@ -404,7 +404,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1800,
                 logEnviron=True,
-                command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -420,7 +420,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1800,
                 logEnviron=True,
-                command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -436,7 +436,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1800,
                 logEnviron=True,
-                command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--wpe'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -451,7 +451,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1800,
                 logEnviron=True,
-                command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--debug'],
             ) + 2
             + ExpectShell.log('stdio', stdout='1 error generated.'),
         )

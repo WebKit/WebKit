@@ -303,7 +303,7 @@ def appendCustomTestingFlags(step, platform, device_model):
 
 
 class CompileWebKit(shell.Compile):
-    command = ["perl", "Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/build-webkit", "--no-fatal-warnings", WithProperties("--%(configuration)s")]
     env = {'MFLAGS': ''}
     name = "compile-webkit"
     description = ["compiling"]
