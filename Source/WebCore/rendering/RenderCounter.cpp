@@ -73,18 +73,31 @@ static Element* ancestorStyleContainmentObject(const Element& element)
 }
 
 // This function processes the renderer tree in the order of the DOM tree
-// including pseudo elements as defined in CSS 2.1.
-static RenderElement* previousInPreOrder(const RenderElement& renderer)
+// including pseudo elements as defined in CSS 2.1. This method will always
+// return either a previous element within the same contain: style scope or nullptr.
+static RenderElement* previousInPreOrderRespectingContainment(const RenderElement& renderer)
 {
     ASSERT(renderer.element());
     Element* previous = ElementTraversal::previousIncludingPseudo(*renderer.element());
-    Element* styleContainAncestor = ancestorStyleContainmentObject(*renderer.element());
+    Element* styleContainmentAncestor = ancestorStyleContainmentObject(*renderer.element());
 
-    while (previous && !previous->renderer())
-        previous = ElementTraversal::previousIncludingPseudo(*previous, styleContainAncestor);
-    if (!previous)
-        return nullptr;
-    return previous->renderer();
+    while (previous) {
+        while (previous && !previous->renderer())
+            previous = ElementTraversal::previousIncludingPseudo(*previous, styleContainmentAncestor);
+        if (!previous)
+            break;
+        auto* previousStyleContainmentAncestor = ancestorStyleContainmentObject(*previous);
+        // If the candidate's containment ancestor is the same as elements, then
+        // that's a valid candidate.
+        if (previousStyleContainmentAncestor == styleContainmentAncestor)
+            return previous->renderer();
+
+        // If the candidate does have a containment ancestor, it could be
+        // that we entered a new sub-containment. Try again starting from the
+        // contain ancestor.
+        previous = previousStyleContainmentAncestor;
+    }
+    return nullptr;
 }
 
 static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
@@ -243,7 +256,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
     // We check renderers in preOrder from the renderer that our counter is attached to
     // towards the begining of the document for counters with the same identifier as the one
     // we are trying to find a place for. This is the next renderer to be checked.
-    RenderElement* currentRenderer = previousInPreOrder(counterOwner);
+    RenderElement* currentRenderer = previousInPreOrderRespectingContainment(counterOwner);
     RefPtr<CounterNode> previousSibling;
 
     while (currentRenderer) {
@@ -329,7 +342,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
         if (previousSibling)
             currentRenderer = previousSiblingOrParent(*currentRenderer);
         else
-            currentRenderer = previousInPreOrder(*currentRenderer);
+            currentRenderer = previousInPreOrderRespectingContainment(*currentRenderer);
     }
     return { };
 }
