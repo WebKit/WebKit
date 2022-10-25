@@ -2027,7 +2027,7 @@ static Ref<CSSValue> maskModeToCSSValue(MaskMode type)
     return CSSValuePool::singleton().createValue(CSSValueMatchSource);
 }
 
-static Ref<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderStyle& style)
+static Ref<CSSValue> fillSizeToCSSValue(CSSPropertyID propertyID, const FillSize& fillSize, const RenderStyle& style)
 {
     if (fillSize.type == FillSizeType::Contain)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueContain);
@@ -2035,7 +2035,7 @@ static Ref<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderSt
     if (fillSize.type == FillSizeType::Cover)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueCover);
 
-    if (fillSize.size.height.isAuto())
+    if (fillSize.size.height.isAuto() && (propertyID == CSSPropertyMaskSize || fillSize.size.width.isAuto()))
         return zoomAdjustedPixelValueForLength(fillSize.size.width, style);
 
     auto list = CSSValueList::createSpaceSeparated();
@@ -2797,10 +2797,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyMaskSize: {
             auto& layers = propertyID == CSSPropertyMaskSize ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return fillSizeToCSSValue(layers.size(), style);
+                return fillSizeToCSSValue(propertyID, layers.size(), style);
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(fillSizeToCSSValue(currLayer->size(), style));
+                list->append(fillSizeToCSSValue(propertyID, currLayer->size(), style));
             return list;
         }
         case CSSPropertyBackgroundRepeat:
