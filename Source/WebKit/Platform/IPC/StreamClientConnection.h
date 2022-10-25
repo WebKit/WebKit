@@ -96,6 +96,8 @@ public:
 
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
 
+    template<typename T, typename U, typename C> uint64_t sendWithAsyncReply(T&& message, ObjectIdentifier<U> destinationID, Timeout, C&& callback);
+
     template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
     template<typename T, typename U>
     SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout);
@@ -180,6 +182,19 @@ bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID
     if (!m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
         return false;
     return true;
+}
+
+template<typename T, typename U, typename C>
+uint64_t StreamClientConnection::sendWithAsyncReply(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout, C&& callback)
+{
+    static_assert(!T::isSync, "Message is sync!");
+    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
+        return 0;
+    auto span = tryAcquire(timeout);
+    if (!span)
+        return 0;
+    sendProcessOutOfStreamMessage(WTFMove(*span));
+    return m_connection->sendWithAsyncReply(WTFMove(message), WTFMove(callback), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 template<typename T>
