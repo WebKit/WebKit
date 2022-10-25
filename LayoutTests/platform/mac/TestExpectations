@@ -105,8 +105,9 @@ fast/images/animated-heics-verify.html [ Pass ]
 fast/images/heic-as-background-image.html [ Pass ]
 
 [ Ventura+ ] fast/images/avif-heif-container-as-image.html [ Pass ]
-[ Ventura+ ] http/tests/images/avif-partial-load-crash.html [ Pass ]
-[ Ventura+ ] fast/images/avif-image-decoding.html [ Pass ]
+http/tests/images/avif-partial-load-crash.html [ Pass ]
+fast/images/avif-image-decoding.html [ Pass ]
+[ Monterey BigSur ] fast/images/avif-as-image.html [ Pass ]
 
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html [ Failure ]

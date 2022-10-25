@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2021 Igalia S.L. All rights reserved.
  * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,43 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "ScalableImageDecoder.h"
+#include "config.h"
+#include "ImageBackingStore.h"
 
 namespace WebCore {
 
-class AVIFImageReader;
+PlatformImagePtr ImageBackingStore::image() const
+{
+    static const size_t bytesPerPixel = 4;
+    static const size_t bitsPerComponent = 8;
+    size_t width = size().width();
+    size_t height = size().height();
+    size_t bytesPerRow = bytesPerPixel * width;
 
-// This class decodes the AVIF image format.
-class AVIFImageDecoder final : public ScalableImageDecoder {
-public:
-    static Ref<ScalableImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    {
-        return adoptRef(*new AVIFImageDecoder(alphaOption, gammaAndColorProfileOption));
-    }
-
-    virtual ~AVIFImageDecoder();
-
-    // ScalableImageDecoder
-    String filenameExtension() const final { return "avif"_s; }
-    size_t frameCount() const final { return m_frameCount; };
-    RepetitionCount repetitionCount() const final;
-    ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final WTF_REQUIRES_LOCK(m_lock);
-    bool setFailed() final;
-
-private:
-    AVIFImageDecoder(AlphaOption, GammaAndColorProfileOption);
-
-    void tryDecodeSize(bool allDataReceived) final;
-    void decode(size_t frameIndex, bool allDataReceived) WTF_REQUIRES_LOCK(m_lock);
-    bool isComplete() WTF_REQUIRES_LOCK(m_lock);
-    size_t findFirstRequiredFrameToDecode(size_t frameIndex) WTF_REQUIRES_LOCK(m_lock);
-
-    std::unique_ptr<AVIFImageReader> m_reader { nullptr };
-
-    size_t m_frameCount { 0 };
-    int m_repetitionCount { 0 };
-};
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, m_pixelsPtr, height * bytesPerRow, nullptr));
+    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bytesPerPixel * 8, bytesPerRow, colorSpace.get(), (m_premultiplyAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst) | kCGImageByteOrder32Little, dataProvider.get(), nullptr, true, kCGRenderingIntentDefault));
+}
 
 } // namespace WebCore
