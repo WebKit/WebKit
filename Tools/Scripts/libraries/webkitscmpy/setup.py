@@ -58,7 +58,7 @@ setup(
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
-    install_requires=['fasteners', 'inspect2', 'jinja2', 'monotonic', 'webkitcorepy', 'webkitbugspy', 'xmltodict'],
+    install_requires=['fasteners', 'inspect2', 'jinja2', 'monotonic', 'webkitcorepy', 'webkitbugspy', 'xmltodict', 'rapidfuzz'],
     include_package_data=True,
     zip_safe=False,
 )
