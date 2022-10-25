@@ -79,6 +79,8 @@
 		5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD5B1EA822F900525281 /* ThreadMessage.cpp */; };
 		53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */ = {isa = PBXBuildFile; fileRef = 53534F291EC0E10E00141B2F /* MachExceptions.defs */; settings = {ATTRIBUTES = (Client, Server, ); }; };
 		53FC70D023FB950C005B1990 /* OSLogPrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FC70CF23FB950C005B1990 /* OSLogPrintStream.cpp */; };
+		5A3877A228B35D3400EBE6CB /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A3877A128B35D3400EBE6CB /* ScopedTimer.cpp */; };
+		5A7CBA1328B2F4E3000A23D9 /* ScopedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A7CBA1228B2F4E3000A23D9 /* ScopedTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C1F05932164356B0039302C /* CFURLExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F05912164356B0039302C /* CFURLExtras.cpp */; };
 		5C1F0595216437B30039302C /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F0594216437B30039302C /* URLCF.cpp */; };
 		5CB8CB6D28C16CB700539906 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB8CB6C28C16CB700539906 /* ArgumentCoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1141,6 +1143,8 @@
 		53FC70CF23FB950C005B1990 /* OSLogPrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSLogPrintStream.cpp; sourceTree = "<group>"; };
 		553071C91C40427200384898 /* TinyLRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyLRUCache.h; sourceTree = "<group>"; };
 		5597F82C1D94B9970066BC21 /* SynchronizedFixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronizedFixedQueue.h; sourceTree = "<group>"; };
+		5A3877A128B35D3400EBE6CB /* ScopedTimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedTimer.cpp; sourceTree = "<group>"; };
+		5A7CBA1228B2F4E3000A23D9 /* ScopedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedTimer.h; sourceTree = "<group>"; };
 		5B43383A5D0B463C9433D933 /* IndexMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexMap.h; sourceTree = "<group>"; };
 		5C1F05912164356B0039302C /* CFURLExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFURLExtras.cpp; sourceTree = "<group>"; };
 		5C1F05922164356B0039302C /* CFURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFURLExtras.h; sourceTree = "<group>"; };
@@ -1857,6 +1861,7 @@
 				DD3DC9FF27A4E176007E5B61 /* Scripts */,
 				A876DBD6151816E500DADB95 /* wtf */,
 				A8A4748B151A8264004123FF /* config.h */,
+				5A3877A128B35D3400EBE6CB /* ScopedTimer.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -2230,6 +2235,7 @@
 				1469419416EAAFF80024E146 /* SchedulePair.h */,
 				1A3524AA1D63A2FF0031729B /* Scope.h */,
 				0FEC84B01BDACD390080FF74 /* ScopedLambda.h */,
+				5A7CBA1228B2F4E3000A23D9 /* ScopedTimer.h */,
 				0F66B2841DC97BAB004A1D3F /* Seconds.cpp */,
 				0F66B2851DC97BAB004A1D3F /* Seconds.h */,
 				0FA6F38E20CC580E00A03DCD /* SegmentedVector.cpp */,
@@ -3155,6 +3161,7 @@
 				DD3DC91527A4BF8E007E5B61 /* SchedulePair.h in Headers */,
 				DD3DC87527A4BF8E007E5B61 /* Scope.h in Headers */,
 				DD3DC8CB27A4BF8E007E5B61 /* ScopedLambda.h in Headers */,
+				5A7CBA1328B2F4E3000A23D9 /* ScopedTimer.h in Headers */,
 				DD3DC8F327A4BF8E007E5B61 /* Seconds.h in Headers */,
 				DDF306DD27C08654006A526F /* SecuritySPI.h in Headers */,
 				DD3DC99227A4BF8E007E5B61 /* SegmentedVector.h in Headers */,
@@ -3715,6 +3722,7 @@
 				46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */,
 				A3EE5C3D21FFAC7D00FABD61 /* SchedulePairCF.cpp in Sources */,
 				A3EE5C4021FFACA200FABD61 /* SchedulePairMac.mm in Sources */,
+				5A3877A228B35D3400EBE6CB /* ScopedTimer.cpp in Sources */,
 				0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */,
 				0FA6F38F20CC580F00A03DCD /* SegmentedVector.cpp in Sources */,
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
