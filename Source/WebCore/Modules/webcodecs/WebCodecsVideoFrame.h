@@ -27,13 +27,11 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "DOMRectInit.h"
+#include "DOMRectReadOnly.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PlaneLayout.h"
-#include "VideoColorSpace.h"
-#include "VideoFrame.h"
-#include "VideoPixelFormat.h"
 #include "WebCodecsAlphaOption.h"
+#include "WebCodecsVideoFrameData.h"
 
 namespace WebCore {
 
@@ -46,6 +44,7 @@ class ImageBitmap;
 class ImageBuffer;
 class NativeImage;
 class OffscreenCanvas;
+class VideoColorSpace;
 
 class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame> {
 public:
@@ -92,21 +91,22 @@ public:
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(CanvasImageSource&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(Ref<WebCodecsVideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(BufferSource&&, BufferInit&&);
-    static Ref<WebCodecsVideoFrame> create(Ref<VideoFrame>&&, BufferInit&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ImageBuffer&, IntSize, Init&&);
+    static Ref<WebCodecsVideoFrame> create(Ref<VideoFrame>&&, BufferInit&&);
+    static Ref<WebCodecsVideoFrame> create(WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(WTFMove(data))); }
 
-    std::optional<VideoPixelFormat> format() const { return m_format; }
-    size_t codedWidth() const { return m_codedWidth; }
-    size_t codedHeight() const { return m_codedHeight; }
+    std::optional<VideoPixelFormat> format() const { return m_data.format; }
+    size_t codedWidth() const { return m_data.codedWidth; }
+    size_t codedHeight() const { return m_data.codedHeight; }
 
     DOMRectReadOnly* codedRect() const;
     DOMRectReadOnly* visibleRect() const;
 
-    size_t displayWidth() const { return m_displayWidth; }
-    size_t displayHeight() const { return m_displayHeight; }
-    std::optional<uint64_t> duration() const { return m_duration; }
-    int64_t timestamp() const { return m_timestamp; }
-    VideoColorSpace* colorSpace() const { return m_colorSpace.get(); }
+    size_t displayWidth() const { return m_data.displayWidth; }
+    size_t displayHeight() const { return m_data.displayHeight; }
+    std::optional<uint64_t> duration() const { return m_data.duration; }
+    int64_t timestamp() const { return m_data.timestamp; }
+    VideoColorSpace* colorSpace() const;
 
     struct CopyToOptions {
         std::optional<DOMRectInit> rect;
@@ -120,32 +120,26 @@ public:
     void close();
 
     bool isDetached() const { return m_isDetached; }
-    RefPtr<VideoFrame> internalFrame() const { return m_internalFrame; }
+    RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
 
     void setDisplaySize(size_t, size_t);
     void setVisibleRect(const DOMRectInit&);
-    bool shoudlDiscardAlpha() const { return m_format && (*m_format == VideoPixelFormat::RGBX || *m_format == VideoPixelFormat::BGRX); }
+    bool shoudlDiscardAlpha() const { return m_data.format && (*m_data.format == VideoPixelFormat::RGBX || *m_data.format == VideoPixelFormat::BGRX); }
+
+    const WebCodecsVideoFrameData& data() const { return m_data; }
 
 private:
+    WebCodecsVideoFrame();
+    explicit WebCodecsVideoFrame(WebCodecsVideoFrameData&&);
+
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(Ref<NativeImage>&&, Init&&);
 
-    RefPtr<VideoFrame> m_internalFrame;
-    std::optional<VideoPixelFormat> m_format;
-    size_t m_codedWidth { 0 };
-    size_t m_codedHeight { 0 };
+    WebCodecsVideoFrameData m_data;
+    mutable RefPtr<VideoColorSpace> m_colorSpace;
     mutable RefPtr<DOMRectReadOnly> m_codedRect;
-    size_t m_displayWidth { 0 };
-    size_t m_displayHeight { 0 };
-    size_t m_visibleWidth { 0 };
-    size_t m_visibleHeight { 0 };
-    size_t m_visibleLeft { 0 };
-    size_t m_visibleTop { 0 };
     mutable RefPtr<DOMRectReadOnly> m_visibleRect;
-    std::optional<uint64_t> m_duration { 0 };
-    int64_t m_timestamp { 0 };
-    RefPtr<VideoColorSpace> m_colorSpace;
     bool m_isDetached { false };
 };
 

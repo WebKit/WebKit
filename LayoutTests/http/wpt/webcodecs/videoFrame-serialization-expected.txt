@@ -1,0 +1,4 @@
+
+PASS Verify closing frames does not propagate accross contexts with Worker.postMessage.
+PASS Verify transferring frames closes them with Worker.postMessage.
+

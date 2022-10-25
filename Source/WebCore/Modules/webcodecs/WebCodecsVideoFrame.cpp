@@ -40,7 +40,7 @@
 #include "JSPlaneLayout.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
-#include "VideoColorSpaceInit.h"
+#include "VideoColorSpace.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
 
 #if PLATFORM(COCOA)
@@ -48,6 +48,15 @@
 #endif
 
 namespace WebCore {
+
+WebCodecsVideoFrame::WebCodecsVideoFrame()
+{
+}
+
+WebCodecsVideoFrame::WebCodecsVideoFrame(WebCodecsVideoFrameData&& data)
+    : m_data(WTFMove(data))
+{
+}
 
 WebCodecsVideoFrame::~WebCodecsVideoFrame()
 {
@@ -254,29 +263,29 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&& videoFram
     ASSERT(isValidVideoFrameBufferInit(init));
 
     auto result = adoptRef(*new WebCodecsVideoFrame);
-    result->m_internalFrame = WTFMove(videoFrame);
-    result->m_format = init.format;
+    result->m_data.internalFrame = WTFMove(videoFrame);
+    result->m_data.format = init.format;
 
-    result->m_codedWidth = result->m_internalFrame->presentationSize().width();
-    result->m_codedHeight = result->m_internalFrame->presentationSize().height();
+    result->m_data.codedWidth = result->m_data.internalFrame->presentationSize().width();
+    result->m_data.codedHeight = result->m_data.internalFrame->presentationSize().height();
 
-    result->m_visibleLeft = 0;
-    result->m_visibleTop = 0;
+    result->m_data.visibleLeft = 0;
+    result->m_data.visibleTop = 0;
 
     if (init.visibleRect) {
-        result->m_visibleWidth = init.visibleRect->width;
-        result->m_visibleHeight = init.visibleRect->height;
+        result->m_data.visibleWidth = init.visibleRect->width;
+        result->m_data.visibleHeight = init.visibleRect->height;
     } else {
-        result->m_visibleWidth = result->m_codedWidth;
-        result->m_visibleHeight = result->m_codedHeight;
+        result->m_data.visibleWidth = result->m_data.codedWidth;
+        result->m_data.visibleHeight = result->m_data.codedHeight;
     }
 
-    result->m_displayWidth = init.displayWidth.value_or(result->m_visibleWidth);
-    result->m_displayHeight = init.displayHeight.value_or(result->m_visibleHeight);
+    result->m_data.displayWidth = init.displayWidth.value_or(result->m_data.visibleWidth);
+    result->m_data.displayHeight = init.displayHeight.value_or(result->m_data.visibleHeight);
 
-    result->m_duration = init.duration;
-    result->m_timestamp = init.timestamp;
-    result->m_colorSpace = videoFramePickColorSpace(init.colorSpace, *result->m_format);
+    result->m_data.duration = init.duration;
+    result->m_data.timestamp = init.timestamp;
+    result->m_data.colorSpace = videoFramePickColorSpace(init.colorSpace, *result->m_data.format);
 
     return result;
 }
@@ -305,25 +314,25 @@ static VideoPixelFormat computeVideoPixelFormat(VideoPixelFormat baseFormat, boo
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-from-other-frame
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init)
 {
-    auto codedWidth = videoFrame->m_codedWidth;
-    auto codedHeight = videoFrame->m_codedHeight;
-    auto format = computeVideoPixelFormat(videoFrame->m_format.value_or(VideoPixelFormat::I420), init.alpha == WebCodecsAlphaOption::Discard);
+    auto codedWidth = videoFrame->m_data.codedWidth;
+    auto codedHeight = videoFrame->m_data.codedHeight;
+    auto format = computeVideoPixelFormat(videoFrame->m_data.format.value_or(VideoPixelFormat::I420), init.alpha == WebCodecsAlphaOption::Discard);
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
         return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame);
-    result->m_internalFrame = videoFrame->m_internalFrame;
-    if (videoFrame->m_format)
-        result->m_format = format;
+    result->m_data.internalFrame = videoFrame->m_data.internalFrame;
+    if (videoFrame->m_data.format)
+        result->m_data.format = format;
 
-    result->m_codedWidth = videoFrame->m_codedWidth;
-    result->m_codedHeight = videoFrame->m_codedHeight;
-    result->m_colorSpace = videoFrame->m_colorSpace;
+    result->m_data.codedWidth = videoFrame->m_data.codedWidth;
+    result->m_data.codedHeight = videoFrame->m_data.codedHeight;
+    result->m_data.colorSpace = videoFrame->m_data.colorSpace;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_visibleLeft), static_cast<double>(videoFrame->m_visibleTop), static_cast<double>(videoFrame->m_visibleWidth), static_cast<double>(videoFrame->m_visibleHeight) }, videoFrame->m_displayWidth, videoFrame->m_displayHeight);
+    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_data.visibleLeft), static_cast<double>(videoFrame->m_data.visibleTop), static_cast<double>(videoFrame->m_data.visibleWidth), static_cast<double>(videoFrame->m_data.visibleHeight) }, videoFrame->m_data.displayWidth, videoFrame->m_data.displayHeight);
 
-    result->m_duration = init.duration ? init.duration : videoFrame->m_duration;
-    result->m_timestamp = init.timestamp.value_or(videoFrame->m_timestamp);
+    result->m_data.duration = init.duration ? init.duration : videoFrame->m_data.duration;
+    result->m_data.timestamp = init.timestamp.value_or(videoFrame->m_data.timestamp);
 
     return result;
 }
@@ -337,16 +346,16 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
         return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame);
-    result->m_internalFrame = WTFMove(internalVideoFrame);
-    result->m_format = format;
-    result->m_codedWidth = codedWidth;
-    result->m_codedHeight = codedHeight;
+    result->m_data.internalFrame = WTFMove(internalVideoFrame);
+    result->m_data.format = format;
+    result->m_data.codedWidth = codedWidth;
+    result->m_data.codedHeight = codedHeight;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_codedWidth), static_cast<double>(result->m_codedHeight) }, result->m_codedWidth, result->m_codedHeight);
+    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, result->m_data.codedWidth, result->m_data.codedHeight);
 
-    result->m_duration = init.duration;
+    result->m_data.duration = init.duration;
     // FIXME: Use internalVideoFrame timestamp if available and init has no timestamp.
-    result->m_timestamp = init.timestamp.value_or(0);
+    result->m_data.timestamp = init.timestamp.value_or(0);
 
     return result;
 }
@@ -365,16 +374,16 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
         return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
     auto result = adoptRef(*new WebCodecsVideoFrame);
-    result->m_internalFrame = WTFMove(internalVideoFrame);
-    result->m_format = format;
-    result->m_codedWidth = codedWidth;
-    result->m_codedHeight = codedHeight;
+    result->m_data.internalFrame = WTFMove(internalVideoFrame);
+    result->m_data.format = format;
+    result->m_data.codedWidth = codedWidth;
+    result->m_data.codedHeight = codedHeight;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_codedWidth), static_cast<double>(result->m_codedHeight) }, result->m_codedWidth, result->m_codedHeight);
+    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, result->m_data.codedWidth, result->m_data.codedHeight);
 
-    result->m_duration = init.duration;
-    result->m_timestamp = init.timestamp.value_or(0);
-    // FIXME: Set m_colorSpace
+    result->m_data.duration = init.duration;
+    result->m_data.timestamp = init.timestamp.value_or(0);
+    // FIXME: Set m_data.colorSpace
 
     return result;
 }
@@ -385,7 +394,7 @@ ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(const CopyToOptions& opt
     if (isDetached())
         return Exception { InvalidStateError,  "VideoFrame is detached"_s };
 
-    if (!m_format)
+    if (!m_data.format)
         return Exception { NotSupportedError,  "VideoFrame has no format"_s };
 
     auto layoutOrException = parseVideoFrameCopyToOptions(*this, options);
@@ -401,7 +410,7 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
         promise.reject(Exception { InvalidStateError,  "VideoFrame is detached"_s });
         return;
     }
-    if (!m_format) {
+    if (!m_data.format) {
         promise.reject(Exception { NotSupportedError,  "VideoFrame has no format"_s });
         return;
     }
@@ -419,7 +428,7 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
     }
 
     Span<uint8_t> buffer { static_cast<uint8_t*>(source.mutableData()), source.length() };
-    m_internalFrame->copyTo(buffer, *m_format, WTFMove(combinedLayout.computedLayouts), [source = WTFMove(source), promise = WTFMove(promise)](auto planeLayouts) mutable {
+    m_data.internalFrame->copyTo(buffer, *m_data.format, WTFMove(combinedLayout.computedLayouts), [source = WTFMove(source), promise = WTFMove(promise)](auto planeLayouts) mutable {
         if (!planeLayouts) {
             promise.reject(Exception { TypeError,  "Unable to copy data"_s });
             return;
@@ -433,45 +442,25 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::clone()
     if (isDetached())
         return Exception { InvalidStateError,  "VideoFrame is detached"_s };
 
-    auto clone = adoptRef(*new WebCodecsVideoFrame);
-    clone->m_internalFrame = m_internalFrame;
+    auto clone = adoptRef(*new WebCodecsVideoFrame(WebCodecsVideoFrameData { m_data }));
+
+    clone->m_colorSpace = colorSpace();
+    clone->m_codedRect = codedRect();
+    clone->m_visibleRect = visibleRect();
     clone->m_isDetached = m_isDetached;
-    clone->m_format = m_format;
-    clone->m_codedWidth = m_codedWidth;
-    clone->m_codedHeight = m_codedHeight;
-    clone->m_codedRect = m_codedRect;
-    clone->m_displayWidth = m_displayWidth;
-    clone->m_displayHeight = m_displayHeight;
-    clone->m_visibleWidth = m_visibleWidth;
-    clone->m_visibleHeight = m_visibleHeight;
-    clone->m_visibleLeft = m_visibleLeft;
-    clone->m_visibleTop = m_visibleTop;
-    clone->m_visibleRect = m_visibleRect;
-    clone->m_duration = m_duration;
-    clone->m_timestamp = m_timestamp;
-    clone->m_colorSpace = m_colorSpace;
+
     return clone;
 }
 
 // https://w3c.github.io/webcodecs/#close-videoframe
 void WebCodecsVideoFrame::close()
 {
-    m_internalFrame = nullptr;
-    m_isDetached = true;
-    m_format = { };
-    m_codedWidth = 0;
-    m_codedHeight = 0;
+    m_data = { };
+
     m_codedRect = nullptr;
-    m_displayWidth = 0;
-    m_displayHeight = 0;
-    m_visibleWidth = 0;
-    m_visibleHeight = 0;
-    m_visibleLeft = 0;
-    m_visibleTop = 0;
     m_visibleRect = nullptr;
-    m_duration = { };
-    m_timestamp = 0;
     m_colorSpace = nullptr;
+    m_isDetached = true;
 }
 
 DOMRectReadOnly* WebCodecsVideoFrame::codedRect() const
@@ -479,7 +468,7 @@ DOMRectReadOnly* WebCodecsVideoFrame::codedRect() const
     if (m_isDetached)
         return nullptr;
     if (!m_codedRect)
-        m_codedRect = DOMRectReadOnly::create(0, 0, m_codedWidth, m_codedHeight);
+        m_codedRect = DOMRectReadOnly::create(0, 0, m_data.codedWidth, m_data.codedHeight);
 
     return m_codedRect.get();
 }
@@ -489,23 +478,30 @@ DOMRectReadOnly* WebCodecsVideoFrame::visibleRect() const
     if (m_isDetached)
         return nullptr;
     if (!m_visibleRect)
-        m_visibleRect = DOMRectReadOnly::create(m_visibleLeft, m_visibleTop, m_visibleWidth, m_visibleHeight);
+        m_visibleRect = DOMRectReadOnly::create(m_data.visibleLeft, m_data.visibleTop, m_data.visibleWidth, m_data.visibleHeight);
 
     return m_visibleRect.get();
 }
 
 void WebCodecsVideoFrame::setDisplaySize(size_t width, size_t height)
 {
-    m_displayWidth = width;
-    m_displayHeight = height;
+    m_data.displayWidth = width;
+    m_data.displayHeight = height;
 }
 
 void WebCodecsVideoFrame::setVisibleRect(const DOMRectInit& rect)
 {
-    m_visibleLeft = rect.x;
-    m_visibleTop = rect.y;
-    m_visibleWidth = rect.width;
-    m_visibleHeight = rect.height;
+    m_data.visibleLeft = rect.x;
+    m_data.visibleTop = rect.y;
+    m_data.visibleWidth = rect.width;
+    m_data.visibleHeight = rect.height;
+}
+
+VideoColorSpace* WebCodecsVideoFrame::colorSpace() const
+{
+    if (!m_colorSpace)
+        m_colorSpace = VideoColorSpace::create(m_data.colorSpace);
+    return m_colorSpace.get();
 }
 
 } // namespace WebCore
