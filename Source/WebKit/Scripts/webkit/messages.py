@@ -1100,7 +1100,7 @@ def generate_message_handler(receiver):
         if message.reply_parameters is not None:
             delayed_or_async_messages.append(message)
 
-    if delayed_or_async_messages and not receiver.has_attribute(STREAM_ATTRIBUTE):
+    if delayed_or_async_messages:
         result.append('namespace Messages {\n\nnamespace %s {\n\n' % receiver.name)
 
         for message in delayed_or_async_messages:

@@ -151,6 +151,18 @@ public:
         sendToStream(WTFMove(message), renderingBackendIdentifier());
     }
 
+    template<typename T, typename U, typename C>
+    void sendToStreamWithAsyncReply(T&& message, ObjectIdentifier<U> identifier, C&& callback)
+    {
+        streamConnection().sendWithAsyncReply(WTFMove(message), identifier, Seconds::infinity(), WTFMove(callback));
+    }
+
+    template<typename T, typename C>
+    void sendToStreamWithAsyncReply(T&& message, C&& callback)
+    {
+        sendToStreamWithAsyncReply(WTFMove(message), renderingBackendIdentifier(), WTFMove(callback));
+    }
+
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
 private:
