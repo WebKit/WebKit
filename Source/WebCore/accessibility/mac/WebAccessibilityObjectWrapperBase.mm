@@ -406,7 +406,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 #if HAVE(ACCESSIBILITY_FRAMEWORK)
 - (NSArray<AXCustomContent *> *)accessibilityCustomContent
 {
-    auto* backingObject = [self baseUpdateBackingStore];
+    RefPtr<AXCoreObject> backingObject = [self baseUpdateBackingStore];
     if (!backingObject)
         return nil;
     
@@ -1022,14 +1022,14 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
 
 - (NSString *)innerHTML
 {
-    if (auto* backingObject = self.axBackingObject)
+    if (RefPtr<AXCoreObject> backingObject = self.axBackingObject)
         return backingObject->innerHTML();
     return nil;
 }
 
 - (NSString *)outerHTML
 {
-    if (auto* backingObject = self.axBackingObject)
+    if (RefPtr<AXCoreObject> backingObject = self.axBackingObject)
         return backingObject->outerHTML();
     return nil;
 }

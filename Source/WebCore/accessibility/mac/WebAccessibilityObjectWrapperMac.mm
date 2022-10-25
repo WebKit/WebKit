@@ -1112,7 +1112,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray*)accessibilityActionNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 
@@ -1147,7 +1147,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSArray*)additionalAccessibilityAttributeNames
 {
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject)
         return nil;
 
@@ -1255,7 +1255,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray*)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject)
         return nil;
 
@@ -1913,7 +1913,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
 
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject) {
         [self logMissingBackingObject];
         return nil;
@@ -2410,7 +2410,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return backingObject->currentValue();
 
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && backingObject->isMenuButton()) {
-        if (auto* axRenderObject = dynamicDowncast<AccessibilityRenderObject>(backingObject)) {
+        if (auto* axRenderObject = dynamicDowncast<AccessibilityRenderObject>(backingObject.get())) {
             if (auto* uiElement = axRenderObject->menuForMenuButton())
                 return @[uiElement->wrapper()];
         }
@@ -2684,7 +2684,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)accessibilityFocusedUIElement
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 
@@ -2694,7 +2694,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 
@@ -2725,7 +2725,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return NO;
 
@@ -2784,7 +2784,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray* )accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 
@@ -2970,7 +2970,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(isMainThread());
 
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject) {
         [self logMissingBackingObject];
         return;
@@ -3019,7 +3019,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)accessibilityPerformAction:(NSString*)action
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return;
 
@@ -3077,7 +3077,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper _accessibilitySetValue: forAttribute:", String(attributeName)));
 
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject) {
         [self logMissingBackingObject];
         return;
@@ -3265,7 +3265,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSString *)debugDescriptionForTextMarkerRange:(AXTextMarkerRangeRef)textMarkerRange
 {
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject)
         return @"<null>";
 
@@ -3458,7 +3458,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attribute)));
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 
@@ -3561,7 +3561,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         NSUInteger widgetChildrenSize = 0;
-        if (isMatchingPlugin(backingObject, criteria)) {
+        if (isMatchingPlugin(backingObject.get(), criteria)) {
             // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
             // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
             if (auto* widgetChildren = [self renderWidgetChildren]) {
@@ -3580,7 +3580,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         NSArray *widgetChildren = nil;
-        if (isMatchingPlugin(backingObject, criteria)) {
+        if (isMatchingPlugin(backingObject.get(), criteria)) {
             // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
             // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
             if (auto* children = [self renderWidgetChildren]) {
@@ -4104,7 +4104,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 // API that AppKit uses for faster access
 - (NSUInteger)accessibilityIndexOfChild:(id)child
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return NSNotFound;
 
@@ -4142,7 +4142,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:", String(attribute)));
 
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return 0;
 
@@ -4171,7 +4171,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeValue:", String(attribute)));
-    auto* backingObject = self.updateObjectBackingStore;
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
 
