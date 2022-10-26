@@ -4,7 +4,7 @@
                     { "name": "bot212", "platform": "mac-ventura" },
                     { "name": "bot215", "platform": "mac-ventura" },
                     { "name": "bot216", "platform": "mac-ventura" },
-                    { "name": "bot220", "platform": "mac-ventura" },
+                    { "name": "bot234", "platform": "mac-ventura" },
                     { "name": "bot245", "platform": "mac-ventura" },
                     { "name": "bot246", "platform": "mac-ventura" },
                     { "name": "bot249", "platform": "mac-ventura" },
@@ -199,7 +199,7 @@
                     { "name": "Apple-Ventura-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
-                    "workernames": ["bot220"]
+                    "workernames": ["bot234"]
                     },
                     { "name": "Apple-Monterey-Release-Build", "factory": "BuildFactory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
