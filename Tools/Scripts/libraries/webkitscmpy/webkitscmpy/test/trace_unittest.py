@@ -59,6 +59,12 @@ class TestRelationship(TestCase):
                 message='(partial) Cherry-pick of 123@main. <rdar://54321>',
             ))
         )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Cherry-picked 123@main. <rdar://54321>',
+            ))
+        )
 
     def test_revert(self):
         self.assertEqual(
