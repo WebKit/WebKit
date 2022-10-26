@@ -134,9 +134,9 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
     return m_cachedImage.value().get();
 }
 
-bool CSSImageValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSImageValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    return m_cachedImage.value_or(nullptr) && handler(**m_cachedImage);
+    return m_cachedImage && *m_cachedImage && handler(**m_cachedImage);
 }
 
 bool CSSImageValue::equals(const CSSImageValue& other) const

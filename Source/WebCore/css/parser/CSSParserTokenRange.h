@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class StyleSheetContents;
+
 // A CSSParserTokenRange is an iterator over a subrange of a vector of CSSParserTokens.
 // Accessing outside of the range will return an endless stream of EOF tokens.
 // This class refers to half-open intervals [first, last).

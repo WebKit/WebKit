@@ -35,7 +35,7 @@ namespace WebCore {
 
 String CSSGridLineNamesValue::customCSSText() const
 {
-    return "[" + CSSValueList::customCSSText() + "]";
+    return makeString('[', CSSValueList::customCSSText(), ']');
 }
 
 CSSGridLineNamesValue::CSSGridLineNamesValue()

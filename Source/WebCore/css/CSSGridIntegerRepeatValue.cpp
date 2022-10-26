@@ -30,13 +30,14 @@
 
 #include "config.h"
 #include "CSSGridIntegerRepeatValue.h"
+
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
 String CSSGridIntegerRepeatValue::customCSSText() const
 {
-    return makeString("repeat(", repetitions(), ", ", CSSValueList::customCSSText(), ')');
+    return makeString("repeat("_s, repetitions(), ", "_s, CSSValueList::customCSSText(), ')');
 }
 
 bool CSSGridIntegerRepeatValue::equals(const CSSGridIntegerRepeatValue& other) const
