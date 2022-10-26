@@ -1025,6 +1025,51 @@ GraphicsLayer* FrameView::graphicsLayerForPlatformWidget(PlatformWidget platform
     return widgetLayer->backing()->parentForSublayers();
 }
 
+GraphicsLayer* FrameView::graphicsLayerForPageScale()
+{
+    auto* page = frame().page();
+    if (!page)
+        return nullptr;
+
+    if (page->delegatesScaling()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto* renderView = this->renderView();
+    if (!renderView)
+        return nullptr;
+
+    if (!renderView->hasLayer() || !renderView->layer()->isComposited())
+        return nullptr;
+
+    auto* backing = renderView->layer()->backing();
+    if (auto* contentsContainmentLayer = backing->contentsContainmentLayer())
+        return contentsContainmentLayer;
+
+    return backing->graphicsLayer();
+}
+
+#if HAVE(RUBBER_BANDING)
+GraphicsLayer* FrameView::graphicsLayerForTransientZoomShadow()
+{
+    auto* page = frame().page();
+    if (!page)
+        return nullptr;
+
+    if (page->delegatesScaling()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto* renderView = this->renderView();
+    if (!renderView)
+        return nullptr;
+
+    return renderView->compositor().layerForContentShadow();
+}
+#endif
+
 LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
 {
     LayoutPoint scrollPosition;
