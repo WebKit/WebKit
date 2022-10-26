@@ -74,6 +74,7 @@ public:
     void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer*) override;
     bool replaceChild(GraphicsLayer*, Ref<GraphicsLayer>&&) override;
     void removeFromParent() override;
+    void setEventRegion(EventRegion&&) override;
 #if ENABLE(SCROLLING_THREAD)
     void setScrollingNodeID(ScrollingNodeID) override;
 #endif
