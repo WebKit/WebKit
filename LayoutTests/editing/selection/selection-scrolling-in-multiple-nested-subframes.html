@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+iframe {
+    height: 160px;
+}
+</style>
+</head>
+<body>
+<iframe src="../resources/selection-scrolling-in-multiple-nested-subframes-iframe.html"></iframe>
+<div><button>Click me</button></div>
+<p>This test verifies that we don't crash when selection scrolling triggers recursive scrolling in subframes. To run the test manually, follow the steps above and verify that we do not crash.</p>
+<script>
+let button = document.querySelector("button");
+button.addEventListener("click", () => {
+    document.body.style.overflowY = "hidden";
+    document.querySelector("iframe").contentWindow.handleClick();
+    document.body.offsetHeight;
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    await UIHelper.activateAt(50, 50);
+    await UIHelper.keyDown("leftArrow");
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.activateAt(150, 50);
+    await UIHelper.keyDown("leftArrow");
+    await UIHelper.renderingUpdate();
+
+    document.querySelector("iframe").contentWindow.scrollDown();
+    await UIHelper.activateElement(button);
+
+    document.write("PASS: Did not crash");
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
