@@ -50,6 +50,7 @@ class Font;
 class FontCreationContext;
 class FontDescription;
 class FontFace;
+class FontFeatureValues;
 class FontPaletteValues;
 class ScriptExecutionContext;
 class StyleRuleFontFace;
@@ -119,7 +120,7 @@ public:
 
     void load();
 
-    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy, const FontPaletteValues&);
+    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy, const FontPaletteValues&, RefPtr<FontFeatureValues>);
 
     static void appendSources(CSSFontFace&, CSSValueList&, ScriptExecutionContext*, bool isInitiatingElementInUserAgentShadowTree);
 
