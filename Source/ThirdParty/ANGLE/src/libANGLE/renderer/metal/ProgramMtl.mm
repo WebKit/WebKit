@@ -1204,7 +1204,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
                                     bool uniformBuffersDirty)
 {
     ContextMtl *context = mtl::GetImpl(glContext);
-    if (pipelineDescChanged)
+    if (pipelineDescChanged || !cmdEncoder->hasPipelineState())
     {
         // Render pipeline state needs to be changed
         id<MTLRenderPipelineState> pipelineState =
