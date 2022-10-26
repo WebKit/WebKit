@@ -43,7 +43,6 @@
         return nil;
     
     _page = WTFMove(page);
-    _page->setUseFixedLayout(true);
 
     [self setWantsLayer:YES];
     return self;
