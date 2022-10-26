@@ -38,7 +38,6 @@ struct SameSizeAsFontCascadeDescription {
     Vector<void*> vector;
     Vector<void*> vector2;
     FontPalette palette;
-    FontVariantAlternates alternates;
     AtomString string;
     AtomString string2;
     int16_t fontSelectionRequest[3];

@@ -736,7 +736,6 @@ css/CSSFontSelector.cpp
 css/CSSFontStyleRangeValue.cpp
 css/CSSFontStyleValue.cpp
 css/CSSFontValue.cpp
-css/CSSFontVariantAlternatesValue.cpp
 css/CSSFontVariationValue.cpp
 css/CSSFunctionValue.cpp
 css/CSSGradientValue.cpp

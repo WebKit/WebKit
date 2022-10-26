@@ -64,7 +64,6 @@ public:
     bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontVariationValue() const { return m_classType == FontVariationClass; }
-    bool isFontVariantAlternatesValue() const { return m_classType == FontVariantAlternatesClass; }
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
     bool isFontPaletteValuesOverrideColorsValue() const { return m_classType == FontPaletteValuesOverrideColorsClass; }
     bool isFontValue() const { return m_classType == FontClass; }
@@ -167,7 +166,6 @@ protected:
         BorderImageWidthClass,
         FontFeatureClass,
         FontVariationClass,
-        FontVariantAlternatesClass,
         FontClass,
         FontStyleClass,
         FontStyleRangeClass,

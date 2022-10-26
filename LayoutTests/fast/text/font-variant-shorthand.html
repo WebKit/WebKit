@@ -106,9 +106,6 @@
 #t23 {
     font-variant-east-asian: garbage full-width;
 }
-#t24 {
-    font-variant-alternates: historical-forms historical-forms;
-}
 </style>
 </head>
 <body>
@@ -136,7 +133,6 @@
 <div class="test" id="t21">Hello</div>
 <div class="test" id="t22">Hello</div>
 <div class="test" id="t23">Hello</div>
-<div class="test" id="t24">Hello</div>
 <script>
 description("This test makes sure that the two shorthand properties which set font-variant-caps get resolved correctly.");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t1')).getPropertyValue('font-variant-caps')", "small-caps");
@@ -180,7 +176,6 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('t20')).g
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t21')).getPropertyValue('font-variant-east-asian')", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t22')).getPropertyValue('font-variant-east-asian')", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t23')).getPropertyValue('font-variant-east-asian')", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('t24')).getPropertyValue('font-variant-alternates')", "normal");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

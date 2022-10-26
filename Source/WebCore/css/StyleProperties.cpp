@@ -701,10 +701,10 @@ String StyleProperties::fontVariantValue() const
     appendFontLonghandValueIfExplicit(CSSPropertyFontVariantLigatures, result, commonValue);
     if (isCSSWideValueKeyword(result.toString()))
         return result.toString();
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontVariantAlternates, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantNumeric, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontVariantEastAsian, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantNumeric, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontVariantPosition, result, commonValue);
     return result.toString();
 }
