@@ -307,6 +307,15 @@ static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>&
     return map.get();
 }
 
+static void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)> completionHandler)
+{
+    Locker locker { asyncReplyHandlerMapLock };
+    auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
+        return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
+    }).iterator->value.add(identifier, WTFMove(completionHandler));
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
 static void clearAsyncReplyHandlers(const Connection&);
 
 Connection::Connection(Identifier identifier, bool isServer)
@@ -559,6 +568,26 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
         m_connectionQueue->dispatch(WTFMove(sendOutgoingMessages));
 
     return true;
+}
+
+bool Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncReplyHandler replyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
+{
+    ASSERT(replyHandler.replyID);
+    ASSERT(replyHandler.completionHandler);
+    auto replyID = replyHandler.replyID;
+    encoder.get() << replyID;
+    addAsyncReplyHandler(*this, replyID, WTFMove(replyHandler.completionHandler));
+    if (sendMessage(WTFMove(encoder), sendOptions, qos))
+        return true;
+    // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
+    if (auto replyHandlerToCancel = takeAsyncReplyHandler(*this, replyID)) {
+        // FIXME: Current contract is that completionHandler is called on the connection run loop.
+        // This does not make sense. However, this needs a change that is done later.
+        RunLoop::main().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+            completionHandler(nullptr);
+        });
+    }
+    return false;
 }
 
 bool Connection::sendSyncReply(UniqueRef<Encoder>&& encoder)
@@ -1334,15 +1363,6 @@ uint64_t nextAsyncReplyHandlerID()
 {
     static std::atomic<uint64_t> identifier { 0 };
     return ++identifier;
-}
-
-void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)>&& completionHandler)
-{
-    Locker locker { asyncReplyHandlerMapLock };
-    auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
-        return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
-    }).iterator->value.add(identifier, WTFMove(completionHandler));
-    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void clearAsyncReplyHandlers(const Connection& connection)

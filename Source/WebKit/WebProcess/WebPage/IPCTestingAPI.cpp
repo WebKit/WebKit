@@ -402,13 +402,15 @@ static JSValueRef sendMessageWithJSArguments(IPC::Connection& connection, JSCont
     auto messageName = static_cast<IPC::MessageName>(*messageID);
     auto encoder = makeUniqueRef<IPC::Encoder>(messageName, *destinationID);
 
+    if (argumentCount > 2) {
+        if (!encodeArgument(encoder.get(), context, arguments[2], exception))
+            return JSValueMakeUndefined(context);
+    }
+
     JSValueRef returnValue = JSValueMakeUndefined(context);
 
     bool hasReply = !!messageReplyArgumentDescriptions(messageName);
     if (hasReply) {
-        uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-        encoder.get() << listenerID;
-
         JSObjectRef resolve;
         JSObjectRef reject;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -420,36 +422,34 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         JSGlobalContextRetain(JSContextGetGlobalContext(context));
         JSValueProtect(context, resolve);
         JSValueProtect(context, reject);
-        IPC::addAsyncReplyHandler(connection, listenerID, [messageName, context, resolve, reject](IPC::Decoder* replyDecoder) {
-            auto* globalObject = toJS(context);
-            auto& vm = globalObject->vm();
-            JSC::JSLockHolder lock(vm);
+        IPC::Connection::AsyncReplyHandler handler {
+            [messageName, context, resolve, reject](IPC::Decoder* replyDecoder) {
+                auto* globalObject = toJS(context);
+                auto& vm = globalObject->vm();
+                JSC::JSLockHolder lock(vm);
 
-            auto scope = DECLARE_CATCH_SCOPE(vm);
-            auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
-            if (auto* exception = scope.exception()) {
-                scope.clearException();
-                JSValueRef arguments[] = { toRef(globalObject, exception) };
-                JSObjectCallAsFunction(context, reject, reject, 1, arguments, nullptr);
-            } else {
-                JSValueRef arguments[] = { toRef(globalObject, jsResult) };
-                JSObjectCallAsFunction(context, resolve, resolve, 1, arguments, nullptr);
-            }
-
-            JSValueUnprotect(context, reject);
-            JSValueUnprotect(context, resolve);
-            JSGlobalContextRelease(JSContextGetGlobalContext(context));
-        });
-    }
-
-    if (argumentCount > 2) {
-        if (!encodeArgument(encoder.get(), context, arguments[2], exception))
-            return JSValueMakeUndefined(context);
-    }
+                auto scope = DECLARE_CATCH_SCOPE(vm);
+                auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
+                if (auto* exception = scope.exception()) {
+                    scope.clearException();
+                    JSValueRef arguments[] = { toRef(globalObject, exception) };
+                    JSObjectCallAsFunction(context, reject, reject, 1, arguments, nullptr);
+                } else {
+                    JSValueRef arguments[] = { toRef(globalObject, jsResult) };
+                    JSObjectCallAsFunction(context, resolve, resolve, 1, arguments, nullptr);
+                }
+                JSValueUnprotect(context, reject);
+                JSValueUnprotect(context, resolve);
+                JSGlobalContextRelease(JSContextGetGlobalContext(context));
+            },
+            IPC::nextAsyncReplyHandlerID()
+        };
+        connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), { });
+    } else
+        connection.sendMessage(WTFMove(encoder), { });
 
     // FIXME: Add the support for specifying IPC options.
 
-    connection.sendMessage(WTFMove(encoder), { });
     return returnValue;
 }
 

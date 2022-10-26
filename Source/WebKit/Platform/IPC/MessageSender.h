@@ -92,19 +92,17 @@ public:
         static_assert(!T::isSync, "Async message expected");
 
         auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-        uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-        encoder.get() << listenerID;
         encoder.get() << WTFMove(message).arguments();
-        sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
-            if (decoder && decoder->isValid())
-                T::callReply(*decoder, WTFMove(completionHandler));
-            else
-                T::cancelReply(WTFMove(completionHandler));
-        }, listenerID }});
-        return listenerID;
+        auto asyncHandler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+        auto replyID = asyncHandler.replyID;
+        if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(asyncHandler), sendOptions))
+            return replyID;
+        return 0;
     }
 
-    virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>, std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& = std::nullopt);
+    virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);
+    using AsyncReplyHandler = Connection::AsyncReplyHandler;
+    virtual bool sendMessageWithAsyncReply(UniqueRef<Encoder>&&, AsyncReplyHandler, OptionSet<SendOption>);
 
 private:
     virtual Connection* messageSenderConnection() const = 0;
