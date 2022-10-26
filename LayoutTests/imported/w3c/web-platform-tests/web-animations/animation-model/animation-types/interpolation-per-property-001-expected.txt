@@ -310,9 +310,9 @@ PASS font-synthesis uses discrete animation when animating between "none" and "w
 PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with effect easing
 PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with keyframe easing
 PASS font-variant-alternates (type: discrete) has testInterpolation function
-FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with linear easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
-FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with effect easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
-FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with keyframe easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
+PASS font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with linear easing
+PASS font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with effect easing
+PASS font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with keyframe easing
 PASS font-variant-caps (type: discrete) has testInterpolation function
 PASS font-variant-caps uses discrete animation when animating between "small-caps" and "unicase" with linear easing
 PASS font-variant-caps uses discrete animation when animating between "small-caps" and "unicase" with effect easing

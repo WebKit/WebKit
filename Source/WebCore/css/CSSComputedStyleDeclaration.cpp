@@ -32,6 +32,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
+#include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
@@ -1333,16 +1334,10 @@ static Ref<CSSValue> fontVariantNumericPropertyValue(FontVariantNumericFigure fi
 
 static Ref<CSSValue> fontVariantAlternatesPropertyValue(FontVariantAlternates alternates)
 {
-    auto& cssValuePool = CSSValuePool::singleton();
-    CSSValueID valueID = CSSValueNormal;
-    switch (alternates) {
-    case FontVariantAlternates::Normal:
-        break;
-    case FontVariantAlternates::HistoricalForms:
-        valueID = CSSValueHistoricalForms;
-        break;
-    }
-    return cssValuePool.createIdentifierValue(valueID);
+    if (alternates.isNormal())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+
+    return CSSFontVariantAlternatesValue::create(WTFMove(alternates));
 }
 
 static Ref<CSSValue> fontVariantEastAsianPropertyValue(FontVariantEastAsianVariant variant, FontVariantEastAsianWidth width, FontVariantEastAsianRuby ruby)

@@ -29,6 +29,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSFontFamily.h"
 #include "CSSFontValue.h"
+#include "CSSFontVariantAlternatesValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPropertyParserHelpers.h"
@@ -95,6 +96,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontStyle);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantAlternates);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantLigatures);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
@@ -1727,6 +1729,40 @@ inline void BuilderCustom::applyValueFontVariantEastAsian(BuilderState& builderS
     fontDescription.setVariantEastAsianWidth(variantEastAsian.width);
     fontDescription.setVariantEastAsianRuby(variantEastAsian.ruby);
     builderState.setFontDescription(WTFMove(fontDescription));
+}
+
+inline void BuilderCustom::applyInheritFontVariantAlternates(BuilderState& builderState)
+{
+    auto fontDescription = builderState.fontDescription();
+    fontDescription.setVariantAlternates(builderState.parentFontDescription().variantAlternates());
+    builderState.setFontDescription(WTFMove(fontDescription));
+}
+
+inline void BuilderCustom::applyInitialFontVariantAlternates(BuilderState& builderState)
+{
+    auto fontDescription = builderState.fontDescription();
+    fontDescription.setVariantAlternates(FontVariantAlternates::Normal());
+    builderState.setFontDescription(WTFMove(fontDescription));
+}
+
+inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builderState, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        // Apply "normal" value (which is the same as initial).
+        applyInitialFontVariantAlternates(builderState);
+        return;
+    }
+    
+    if (value.isFontVariantAlternatesValue()) {
+        auto alternates = downcast<CSSFontVariantAlternatesValue>(value).value();
+        auto fontDescription = builderState.fontDescription();
+        fontDescription.setVariantAlternates(alternates);
+        builderState.setFontDescription(WTFMove(fontDescription));
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

@@ -45,6 +45,7 @@
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
+#include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
@@ -123,6 +124,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleValue>(*this));
     case FontStyleRangeClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleRangeValue>(*this));
+    case FontVariantAlternatesClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontVariantAlternatesValue>(*this));
     case FontVariationClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontVariationValue>(*this));
     case FunctionClass:
