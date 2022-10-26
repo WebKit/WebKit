@@ -120,11 +120,6 @@ public:
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
 
-#if ENABLE(WEBXR)
-    static void setWebXREnabled(bool isEnabled) { shared().m_webXREnabled = isEnabled; }
-    static bool webXREnabled() { return shared().m_webXREnabled; }
-#endif
-
     static void setAccessibilityObjectModelEnabled(bool isEnabled) { shared().m_accessibilityObjectModelEnabled = isEnabled; }
     static bool accessibilityObjectModelEnabled() { return shared().m_accessibilityObjectModelEnabled; }
 
@@ -335,9 +330,6 @@ private:
     bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
-#if ENABLE(WEBXR)
-    bool m_webXREnabled { false };
-#endif
     bool m_accessibilityObjectModelEnabled { false };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
