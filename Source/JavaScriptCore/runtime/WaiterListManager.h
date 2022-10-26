@@ -24,149 +24,127 @@
  */
 #pragma once
 
-#include "JSGlobalObject.h"
+#include "DeferredWorkTimer.h"
 #include "JSPromise.h"
-#include "ObjectConstructor.h"
-#include "runtime/DeferredWorkTimer.h"
-#include "runtime/JSCJSValue.h"
-#include <memory>
-#include <wtf/DataLog.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RawPointer.h>
+#include <wtf/Condition.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/SentinelLinkedList.h>
 
 namespace JSC {
 
-namespace WaiterListsManagerInternal {
-static constexpr bool verbose = false;
-}
+enum class AtomicsWait : uint8_t { Sync,
+    Async };
 
-struct WaiterList;
-
-struct Waiter {
+class Waiter final : public WTF::BasicRawSentinelNode<Waiter> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Waiter(bool isAsync)
-        : isAsync(isAsync)
+    Waiter(VM* vm)
+        : m_vm(vm)
+        , m_isAsync(false)
     {
     }
 
-    Waiter* remove();
-
-    bool isAsync { false };
-    WaiterList* list { nullptr };
-    Waiter* previous { nullptr };
-    Waiter* next { nullptr };
-};
-
-struct SyncWaiter : Waiter {
-    SyncWaiter(void* address)
-        : Waiter(false)
-        , address(address)
+    Waiter(JSPromise* promise)
+        : m_isAsync(true)
     {
-    }
-
-    ThreadCondition condition;
-    Mutex lock;
-    void* address;
-};
-
-struct AsyncWaiter : Waiter {
-    AsyncWaiter(JSPromise* promise)
-        : Waiter(true)
-    {
-        VM& vm = promise->globalObject()->vm();
+        VM& vm = promise->vm();
         vm.apiLock().lock();
-        ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, {});
+        m_ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, { });
         vm.apiLock().unlock();
     }
 
-    VM& getVM() const
+    VM* getVM()
     {
-        return jsCast<JSPromise*>(ticket->target())->globalObject()->vm();
+        return m_isAsync ? &jsCast<JSPromise*>(m_ticket->target())->vm() : m_vm;
     }
 
-    DeferredWorkTimer::Ticket ticket;
+    void setVM(VM* vm)
+    {
+        m_vm = vm;
+    }
+
+    DeferredWorkTimer::Ticket getTicket()
+    {
+        return m_ticket;
+    }
+
+    Condition& getCondition()
+    {
+        return m_condition;
+    }
+
+    bool isAsync()
+    {
+        return m_isAsync;
+    }
+
+private:
+    VM* m_vm { nullptr };
+    DeferredWorkTimer::Ticket m_ticket;
+    Condition m_condition;
+    bool m_isAsync { false };
 };
 
-struct WaiterList {
+class WaiterList {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    ~WaiterList()
+    {
+        deleteIf([] (auto&) {
+            return true;
+        });
+    }
+
     void addLast(Waiter* waiter)
     {
-        RELEASE_ASSERT(!waiter->list && !waiter->previous && !waiter->next);
-        if (head) {
-            tail->next = waiter;
-            waiter->previous = tail;
-            tail = waiter;
-        } else {
-            RELEASE_ASSERT(!size);
-            head = waiter;
-            tail = waiter;
-        }
-        waiter->list = this;
-        size++;
+        m_waiters.append(waiter);
+        m_size++;
     }
 
     Waiter* takeFirst()
     {
-        RELEASE_ASSERT(head && !head->previous && head->list == this);
-        Waiter* result = head;
-        if (head == tail) {
-            head = nullptr;
-            tail = nullptr;
-        } else {
-            head = head->next;
-            head->previous = nullptr;
-        }
-        size--;
-        return clear(result);
+        Waiter* result = &*m_waiters.begin();
+        return take(result);
     }
 
     Waiter* takeLast()
     {
-        RELEASE_ASSERT(tail && !tail->next && tail->list == this);
-        Waiter* result = tail;
-        if (head == tail) {
-            head = nullptr;
-            tail = nullptr;
-        } else {
-            tail = tail->previous;
-            tail->next = nullptr;
-        }
-        size--;
-        return clear(result);
+        Waiter* result = &*(--m_waiters.end());
+        return take(result);
     }
 
-    Waiter* remove(Waiter* waiter)
+    Waiter* take(Waiter* waiter)
     {
-        RELEASE_ASSERT(waiter && waiter->list == this);
-        if (waiter == head)
-            return takeFirst();
-        else if (waiter == tail)
-            return takeLast();
-        else {
-            waiter->previous->next = waiter->next;
-            waiter->next->previous = waiter->previous;
-            size--;
-            return clear(waiter);
-        }
-    }
-
-    Waiter* clear(Waiter* waiter)
-    {
-        waiter->list = nullptr;
-        waiter->previous = nullptr;
-        waiter->next = nullptr;
+        m_waiters.remove(waiter);
+        m_size--;
         return waiter;
+    }
+
+    template<typename Functor>
+    void deleteIf(const Functor& functor)
+    {
+        m_waiters.forEach([&](Waiter* waiter) {
+            if (functor(waiter)) {
+                take(waiter);
+                if (waiter->isAsync())
+                    delete waiter;
+            }
+        });
+    }
+
+    unsigned size()
+    {
+        return m_size;
     }
 
     Lock lock;
 
-    unsigned size { 0 };
-    Waiter* head { nullptr };
-    Waiter* tail { nullptr };
+private:
+    unsigned m_size { 0 };
+    SentinelLinkedList<Waiter, BasicRawSentinelNode<Waiter>> m_waiters;
 };
 
 class WaiterListManager {
@@ -175,119 +153,31 @@ class WaiterListManager {
 public:
     static WaiterListManager& singleton();
 
-    void addWaiter(void* ptr, Waiter* waiter)
-    {
-        WaiterList* queue = add(ptr);
-        RELEASE_ASSERT(queue);
+    JS_EXPORT_PRIVATE JSValue wait(JSGlobalObject*, VM&, void* ptr, bool didPassValidation, Seconds timeout, const AtomicsWait type);
 
-        {
-            LockHolder locker(queue->lock);
-            queue->addLast(waiter);
-        }
+    WaiterList* addSyncWaiter(void* ptr, Waiter*);
 
-        if (WaiterListsManagerInternal::verbose)
-            dataLogF("WaiterListManager added a new Waiter to a waiterList for ptr %p\n", ptr);
-    }
-
-    void addAsyncWaiter(void* ptr, JSPromise* promise, Seconds timeout)
-    {
-        WaiterList* queue = add(ptr);
-        RELEASE_ASSERT(queue);
-
-        AsyncWaiter* asyncWaiter = new AsyncWaiter(promise);
-        {
-            LockHolder locker(queue->lock);
-            queue->addLast(asyncWaiter);
-        }
-
-        RunLoop::current().dispatchAfter(timeout, [asyncWaiter] {
-            WaiterListManager::singleton().timeout(asyncWaiter);
-        });
-
-        if (WaiterListsManagerInternal::verbose)
-            dataLogF("WaiterListManager added a new AsyncWaiter to a waiterList for ptr %p\n", ptr);
-    }
+    void addAsyncWaiter(void* ptr, JSPromise*, Seconds timeout);
 
     enum class ResolveResult : uint8_t { OK, TIMEOUT };
-    unsigned notifyWaiter(void* ptr, unsigned count)
-    {
-        RELEASE_ASSERT(ptr);
-        unsigned notified = 0;
-        WaiterList* queue = find(ptr);
-        if (queue) {
-            LockHolder locker(queue->lock);
-            while (notified < count && queue->size) {
-                notifyWaiterImpl(locker, queue->takeFirst(), ResolveResult::OK);
-                notified++;
-            }
-        }
-        if (WaiterListsManagerInternal::verbose)
-            dataLogF("WaiterListManager notified waiters (count %d) for ptr %p\n", notified, ptr);
-        return notified;
-    }
+    unsigned notifyWaiter(void* ptr, unsigned count);
 
-    void notifyWaiterImpl(const AbstractLocker&, Waiter* waiter, const ResolveResult resolveResult)
-    {
-        RELEASE_ASSERT(waiter);
+    size_t waiterListSize(void* ptr);
 
-        if (waiter->isAsync) {
-            AsyncWaiter* asyncWaiter = static_cast<AsyncWaiter*>(waiter);
-            VM& vm = asyncWaiter->getVM();
-            auto ticket = asyncWaiter->ticket;
-            vm.deferredWorkTimer->scheduleWorkSoon(ticket, [resolveResult](DeferredWorkTimer::Ticket ticket) {
-                JSPromise* promise = jsCast<JSPromise*>(ticket->target());
-                JSGlobalObject* globalObject = promise->globalObject();
-                VM& vm = promise->globalObject()->vm();
-                JSValue result = resolveResult == ResolveResult::OK ? vm.smallStrings.okString() : vm.smallStrings.timedOutString();
-                promise->resolve(globalObject, result);
-            });
-            delete asyncWaiter;
-            return;
-        }
+    void unregisterVM(VM*);
 
-        SyncWaiter* syncWaiter = static_cast<SyncWaiter*>(waiter);
-        {
-            MutexLocker locker(syncWaiter->lock);
-            syncWaiter->address = nullptr;
-        }
-        syncWaiter->condition.signal();
-    }
-
-    void timeout(AsyncWaiter* target)
-    {
-        LockHolder locker(target->list->lock);
-        notifyWaiterImpl(locker, target->remove(), ResolveResult::TIMEOUT);
-    }
-
-    size_t waiterListSize(void* ptr)
-    {
-        WaiterList* queue = find(ptr);
-        size_t size = 0;
-        if (queue) {
-            LockHolder locker(queue->lock);
-            size = queue->size;
-        }
-        return size;
-    }
+    void unregisterSharedArrayBuffer(uint8_t* arrayPtr, size_t);
 
 private:
-    WaiterList* add(void* ptr)
-    {
-        LockHolder locker(lock);
-        return m_waiterLists.add(ptr, makeUnique<WaiterList>()).iterator->value.get();
-    }
+    void notifyWaiterImpl(const AbstractLocker&, Waiter*, const ResolveResult);
 
-    WaiterList* find(void* ptr)
-    {
-        LockHolder locker(lock);
-        WaiterList* result = nullptr;
-        auto it = m_waiterLists.find(ptr);
-        if (it != m_waiterLists.end())
-            result = it->value.get();
-        return result;
-    }
+    void timeoutAsyncWaiter(void* ptr, Waiter* target);
 
-    Lock lock;
+    WaiterList* findOrCreateList(void* ptr);
+
+    WaiterList* findList(void* ptr);
+
+    Lock m_waiterListsLock;
     HashMap<void*, std::unique_ptr<WaiterList>> m_waiterLists;
 };
 

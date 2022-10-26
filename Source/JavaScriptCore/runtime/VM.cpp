@@ -405,8 +405,9 @@ void waitForVMDestruction()
 VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
-    
-    // WaiterListManager::singleton().unregister(this);
+
+    if (Options::useWaitAsync() && vmType == Default)
+        WaiterListManager::singleton().unregisterVM(this);
 
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
@@ -1446,6 +1447,12 @@ void VM::addLoopHintExecutionCounter(const JSInstruction* instruction)
         addResult.iterator->value.second = WTFMove(ptr);
     }
     ++addResult.iterator->value.first;
+}
+
+void VM::addElementPtr(void* elementPtr)
+{
+    Locker locker { m_registeredElementPtrsLock };
+    m_registeredElementPtrs.add(elementPtr);
 }
 
 uintptr_t* VM::getLoopHintExecutionCounter(const JSInstruction* instruction)

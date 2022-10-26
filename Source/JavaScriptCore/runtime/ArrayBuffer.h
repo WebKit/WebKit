@@ -66,13 +66,7 @@ public:
     {
     }
 
-    ~SharedArrayBufferContents()
-    {
-        if (m_destructor) {
-            // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
-            m_destructor->run(m_data.getUnsafe());
-        }
-    }
+    ~SharedArrayBufferContents();
     
     void* data() const { return m_data.getMayBeNull(m_sizeInBytes); }
     

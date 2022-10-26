@@ -57,7 +57,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AtomicsObject);
 FOR_EACH_ATOMICS_FUNC(DECLARE_FUNC_PROTO)
 #undef DECLARE_FUNC_PROTO
 
-    static JSC_DECLARE_HOST_FUNCTION(atomicsFuncWaitAsync);
+static JSC_DECLARE_HOST_FUNCTION(atomicsFuncWaitAsync);
 
 const ClassInfo AtomicsObject::s_info = { "Atomics"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AtomicsObject) };
 
@@ -88,7 +88,7 @@ void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     FOR_EACH_ATOMICS_FUNC(PUT_DIRECT_NATIVE_FUNC)
 #undef PUT_DIRECT_NATIVE_FUNC
 
-    if (Options::useWaitAsync())
+    if (Options::useWaitAsync() && vm.vmType == VM::Default)
         putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "waitAsync"_s), 4, atomicsFuncWaitAsync, ImplementationVisibility::Public, AtomicsWaitAsyncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
@@ -434,7 +434,7 @@ JSC_DEFINE_HOST_FUNCTION(atomicsFuncSub, (JSGlobalObject* globalObject, CallFram
     return atomicReadModifyWrite(globalObject, callFrame, SubFunc());
 }
 
-enum class AtomicsWait : uint8_t { Sync, Async };
+
 template<typename ValueType, typename JSArrayType>
 JSValue atomicsWaitImpl(JSGlobalObject* globalObject, JSArrayType* typedArray, unsigned accessIndex, ValueType expectedValue, JSValue timeoutValue, const AtomicsWait type)
 {
@@ -455,56 +455,8 @@ JSValue atomicsWaitImpl(JSGlobalObject* globalObject, JSArrayType* typedArray, u
         return { };
     }
 
-    bool didPassValidation = false;
-    if (type == AtomicsWait::Async) {
-        JSObject* object = constructEmptyObject(globalObject->vm(), globalObject->objectStructureForObjectConstructor());
-
-        bool isAsync = false;
-        JSValue value;
-        didPassValidation = WTF::atomicLoad(ptr) == expectedValue;
-        if (!didPassValidation)
-            value = vm.smallStrings.notEqualString();
-        else if (!timeout)
-            value = vm.smallStrings.timedOutString();
-        else {
-            isAsync = true;
-            JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-            WaiterListManager::singleton().addAsyncWaiter(ptr, promise, timeout);
-            value = promise;
-        }
-
-        object->putDirect(vm, vm.propertyNames->async, jsBoolean(isAsync));
-        object->putDirect(vm, vm.propertyNames->value, value);
-        return object;
-    }
-
-    didPassValidation = WTF::atomicLoad(ptr) == expectedValue;
-    if (didPassValidation) {
-        SyncWaiter syncWaiter { ptr };
-        WaiterListManager::singleton().addWaiter(ptr, &syncWaiter);
-        const TimeWithDynamicClockType& time = MonotonicTime::now() + timeout;
-
-        bool didGetDequeued = false;
-        {
-            MutexLocker locker(syncWaiter.lock);
-            while (syncWaiter.address && time.nowWithSameClock() < time)
-                syncWaiter.condition.timedWait(syncWaiter.lock, time.approximateWallTime());
-            RELEASE_ASSERT(!syncWaiter.address || syncWaiter.address == ptr);
-            didGetDequeued = !syncWaiter.address;
-        }
-
-        if (didGetDequeued)
-            return vm.smallStrings.okString();
-
-        {
-            LockHolder locker(syncWaiter.list->lock);
-            syncWaiter.remove();
-        }
-
-        return vm.smallStrings.timedOutString();
-    } else {
-        return vm.smallStrings.notEqualString();
-    }
+    bool didPassValidation = WTF::atomicLoad(ptr) == expectedValue;
+    return WaiterListManager::singleton().wait(globalObject, vm, ptr, didPassValidation, timeout, type);
 }
 
 JSC_DEFINE_HOST_FUNCTION(atomicsFuncWait, (JSGlobalObject* globalObject, CallFrame* callFrame))
