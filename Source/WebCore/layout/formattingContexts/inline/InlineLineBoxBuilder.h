@@ -35,7 +35,8 @@ namespace Layout {
 class Box;
 class ElementBox;
 class LayoutState;
-struct LayoutBoundsMetrics;
+struct AscentAndDescent;
+struct TextMetrics;
 
 class LineBoxBuilder {
 public:
@@ -44,8 +45,8 @@ public:
     LineBox build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
-    void setLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;
-    void setAscentAndDescent(InlineLevelBox&, InlineLayoutUnit ascent, InlineLayoutUnit descent) const;
+    void setLayoutBounds(InlineLevelBox&, const TextMetrics&) const;
+    void setAscentAndDescent(InlineLevelBox&, AscentAndDescent) const;
     void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
 
