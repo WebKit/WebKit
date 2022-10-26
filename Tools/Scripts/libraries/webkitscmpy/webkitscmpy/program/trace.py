@@ -33,6 +33,7 @@ COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_RE
 CHERRY_PICK_RE = [
     re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'\S* ?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]icked {}'.format(COMPOUND_COMMIT_REF)),
 ]
 REVERT_RE = [
     re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF)),

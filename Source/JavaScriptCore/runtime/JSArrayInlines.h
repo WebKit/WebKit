@@ -61,21 +61,36 @@ inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
     return type;
 }
 
-inline bool JSArray::canFastCopy(JSArray* otherArray)
+ALWAYS_INLINE bool JSArray::holesMustForwardToPrototype() const
 {
-    if (otherArray == this)
-        return false;
+    Structure* structure = this->structure();
+    if (LIKELY(type() == ArrayType)) {
+        ASSERT(!structure->mayInterceptIndexedAccesses());
+        JSGlobalObject* globalObject = structure->globalObject();
+        if (LIKELY(structure->hasMonoProto() && structure->storedPrototype() == globalObject->arrayPrototype() && globalObject->arrayPrototypeChainIsSane()))
+            return false;
+    }
+    return structure->holesMustForwardToPrototype(const_cast<JSArray*>(this));
+}
+
+inline bool JSArray::canFastCopy(JSArray* otherArray) const
+{
     if (hasAnyArrayStorage(indexingType()) || hasAnyArrayStorage(otherArray->indexingType()))
         return false;
-    // FIXME: We should have a watchpoint for indexed properties on Array.prototype and Object.prototype
-    // instead of walking the prototype chain. https://bugs.webkit.org/show_bug.cgi?id=155592
-    if (structure()->holesMustForwardToPrototype(this)
-        || otherArray->structure()->holesMustForwardToPrototype(otherArray))
+    if (holesMustForwardToPrototype() || otherArray->holesMustForwardToPrototype())
         return false;
     return true;
 }
 
-inline bool JSArray::canDoFastIndexedAccess()
+inline bool JSArray::canFastAppend(JSArray* otherArray) const
+{
+    // Append can modify itself, thus, we cannot do fast-append if |this| and otherArray are the same.
+    if (otherArray == this)
+        return false;
+    return canFastCopy(otherArray);
+}
+
+inline bool JSArray::canDoFastIndexedAccess() const
 {
     JSGlobalObject* globalObject = this->globalObject();
     if (!globalObject->arrayPrototypeChainIsSane())

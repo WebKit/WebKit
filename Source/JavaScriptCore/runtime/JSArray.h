@@ -106,8 +106,10 @@ public:
 
     static JSArray* fastSlice(JSGlobalObject*, JSObject* source, uint64_t startIndex, uint64_t count);
 
-    bool canFastCopy(JSArray* otherArray);
-    bool canDoFastIndexedAccess();
+    bool holesMustForwardToPrototype() const;
+    bool canFastCopy(JSArray* otherArray) const;
+    bool canFastAppend(JSArray* otherArray) const;
+    bool canDoFastIndexedAccess() const;
     // This function returns NonArray if the indexing types are not compatable for copying.
     IndexingType mergeIndexingTypeForCopying(IndexingType other);
     bool appendMemcpy(JSGlobalObject*, VM&, unsigned startIndex, JSArray* otherArray);
@@ -145,27 +147,10 @@ public:
             return false;
         }
     }
-        
-    bool unshiftCountForShift(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
-    {
-        return unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(getVM(globalObject)));
-    }
-    bool unshiftCountForSplice(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
-    {
-        return unshiftCountWithAnyIndexingType(globalObject, startIndex, count);
-    }
-    template<ShiftCountMode shiftCountMode>
+
     bool unshiftCount(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
     {
-        switch (shiftCountMode) {
-        case ShiftCountForShift:
-            return unshiftCountForShift(globalObject, startIndex, count);
-        case ShiftCountForSplice:
-            return unshiftCountForSplice(globalObject, startIndex, count);
-        default:
-            CRASH();
-            return false;
-        }
+        return unshiftCountWithAnyIndexingType(globalObject, startIndex, count);
     }
 
     JS_EXPORT_PRIVATE void fillArgList(JSGlobalObject*, MarkedArgumentBuffer&);

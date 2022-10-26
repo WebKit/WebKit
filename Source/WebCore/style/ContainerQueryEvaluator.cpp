@@ -72,11 +72,12 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
         return { };
 
     if (!container->renderer())
-        return MQ::FeatureEvaluationContext { };
+        return MQ::FeatureEvaluationContext { m_element->document() };
 
     auto& renderer = *container->renderer();
 
     return MQ::FeatureEvaluationContext {
+        m_element->document(),
         CSSToLengthConversionData { renderer.style(), m_element->document().documentElement()->renderStyle(), nullptr, &renderer.view() },
         &renderer
     };

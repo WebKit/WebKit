@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "APIUserInitiatedAction.h"
 #include "NavigationActionData.h"
+#include "WebHitTestResultData.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/URL.h>
 
@@ -53,6 +54,9 @@ public:
     OptionSet<WebKit::WebEventModifier> modifiers() const { return m_navigationActionData.modifiers; }
     WebKit::WebMouseEventButton mouseButton() const { return m_navigationActionData.mouseButton; }
     WebKit::WebMouseEventSyntheticClickType syntheticClickType() const { return m_navigationActionData.syntheticClickType; }
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    const std::optional<WebKit::WebHitTestResultData>& webHitTestResultData() const { return m_navigationActionData.webHitTestResultData; }
+#endif
     WebCore::FloatPoint clickLocationInRootViewCoordinates() const { return m_navigationActionData.clickLocationInRootViewCoordinates; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
     bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks; }

@@ -53,6 +53,7 @@
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebFullScreenManager.h"
+#include "WebHitTestResultData.h"
 #include "WebLoaderStrategy.h"
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
@@ -68,6 +69,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -844,6 +846,21 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     }
 }
 
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+static void setWebHitTestResultDataInNavigationActionDataIfNecessary(const NavigationAction& navigationAction, NavigationActionData& navigationActionData, WebCore::Frame& coreFrame)
+{
+    auto mouseEventData = navigationAction.mouseEventData();
+    if (!mouseEventData)
+        return;
+
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
+    HitTestResult hitTestResult = coreFrame.eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
+
+    WebKit::WebHitTestResultData webHitTestResultData(hitTestResult, false);
+    navigationActionData.webHitTestResultData = WTFMove(webHitTestResultData);
+}
+#endif
+
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request,
     FormState* formState, const String& frameName, WebCore::PolicyCheckIdentifier identifier, FramePolicyFunction&& function)
 {
@@ -877,6 +894,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
     navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
     navigationActionData.privateClickMeasurement = navigationAction.privateClickMeasurement();
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (auto* coreFrame = m_frame->coreFrame())
+        setWebHitTestResultDataInNavigationActionDataIfNecessary(navigationAction, navigationActionData, *coreFrame);
+#endif
 
     webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), m_frame->info(), identifier, navigationActionData, request,
         frameName, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
@@ -988,6 +1010,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     auto* coreFrame = m_frame->coreFrame();
     if (!coreFrame)
         return function(PolicyAction::Ignore, requestIdentifier);
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    setWebHitTestResultDataInNavigationActionDataIfNecessary(navigationAction, navigationActionData, *coreFrame);
+#endif
+
     WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
     if (!documentLoader) {
         // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,

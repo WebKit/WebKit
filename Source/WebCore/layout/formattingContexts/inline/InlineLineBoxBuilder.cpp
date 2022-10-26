@@ -230,19 +230,85 @@ void LineBoxBuilder::setLayoutBounds(InlineLevelBox& inlineLevelBox, const TextM
     inlineLevelBox.setLayoutBounds({ floorf(textMetrics.ascentAndDescent.ascent + halfLeading), ceilf(textMetrics.ascentAndDescent.descent + halfLeading) });
 }
 
-void LineBoxBuilder::setAscentAndDescent(InlineLevelBox& inlineLevelBox, AscentAndDescent ascentAndDescent) const
+void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineBox, InlineLevelBox& inlineLevelBox) const
 {
-    inlineLevelBox.setAscent(ascentAndDescent.ascent);
-    inlineLevelBox.setDescent(ascentAndDescent.descent);
-    inlineLevelBox.setLogicalHeight(ascentAndDescent.ascent + ascentAndDescent.descent);
+    auto setAscentAndDescent = [&] (auto ascentAndDescent) {
+        inlineLevelBox.setAscent(ascentAndDescent.ascent);
+        inlineLevelBox.setDescent(ascentAndDescent.descent);
+        inlineLevelBox.setLogicalHeight(ascentAndDescent.ascent + ascentAndDescent.descent);
+    };
+
+    if (inlineLevelBox.isInlineBox()) {
+        auto textMetrics = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType());
+        setLayoutBounds(inlineLevelBox, textMetrics);
+        // We need floor/ceil to match legacy layout integral positioning.
+        setAscentAndDescent(AscentAndDescent { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
+        return;
+    }
+    if (inlineLevelBox.isLineBreakBox()) {
+        auto parentTextMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
+        setLayoutBounds(inlineLevelBox, parentTextMetrics);
+        // We need floor/ceil to match legacy layout integral positioning.
+        setAscentAndDescent(AscentAndDescent { floorf(parentTextMetrics.ascentAndDescent.ascent), ceilf(parentTextMetrics.ascentAndDescent.descent) });
+        return;
+    }
+    if (inlineLevelBox.isListMarker()) {
+        // Special list marker handling. Text driven list markers behave as text when it comes to layout bounds.
+        if (lineBox.baselineType() == IdeographicBaseline) {
+            // FIXME: We should rely on the integration baseline.
+            auto parentTextMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
+            setLayoutBounds(inlineLevelBox, parentTextMetrics);
+            // We need floor/ceil to match legacy layout integral positioning.
+            setAscentAndDescent(AscentAndDescent { floorf(parentTextMetrics.ascentAndDescent.ascent), ceilf(parentTextMetrics.ascentAndDescent.descent) });
+            return;
+        }
+        auto& layoutBox = inlineLevelBox.layoutBox();
+        auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
+        auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
+        if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration()) {
+            auto textMetrics = TextMetrics { { *ascent, marginBoxHeight - *ascent }, { }, { } };
+            setLayoutBounds(inlineLevelBox, textMetrics);
+            // We need floor/ceil to match legacy layout integral positioning.
+            setAscentAndDescent(AscentAndDescent { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
+            return;
+        }
+        setAscentAndDescent(AscentAndDescent { marginBoxHeight, { } });
+        inlineLevelBox.setLayoutBounds({ marginBoxHeight, { } });
+        return;
+    }
+    if (inlineLevelBox.isAtomicInlineLevelBox()) {
+        auto& layoutBox = inlineLevelBox.layoutBox();
+        auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
+        auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
+        auto ascent = [&]() -> InlineLayoutUnit {
+            if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
+                return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
+
+            if (layoutBox.isInlineBlockBox()) {
+                // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
+                // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
+                auto synthesizeBaseline = !layoutBox.establishesInlineFormattingContext() || !layoutBox.style().isOverflowVisible();
+                if (synthesizeBaseline)
+                    return marginBoxHeight;
+
+                auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ElementBox>(layoutBox));
+                auto& lastLine = formattingState.lines().last();
+                auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
+                return inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderBefore() + inlineLevelBoxGeometry.paddingBefore().value_or(0) + inlineBlockBaseline;
+            }
+            return marginBoxHeight;
+        }();
+        setAscentAndDescent(AscentAndDescent { ascent, marginBoxHeight - ascent });
+        inlineLevelBox.setLayoutBounds({ ascent, marginBoxHeight - ascent });
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
-    auto rootInlineBoxTextMetrics = primaryFontMetricsForInlineBox(rootInlineBox);
-    setLayoutBounds(rootInlineBox, rootInlineBoxTextMetrics);
-    setAscentAndDescent(rootInlineBox, { floorf(rootInlineBoxTextMetrics.ascentAndDescent.ascent), ceilf(rootInlineBoxTextMetrics.ascentAndDescent.descent) });
+    setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
 
     auto styleToUse = [&] (const auto& layoutBox) -> const RenderStyle& {
         return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
@@ -277,45 +343,17 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
         if (run.isBox()) {
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
-            auto ascent = [&]() -> InlineLayoutUnit {
-                if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
-                    return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
-
-                if (layoutBox.isInlineBlockBox()) {
-                    // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
-                    // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
-                    auto synthesizeBaseline = !layoutBox.establishesInlineFormattingContext() || !style.isOverflowVisible();
-                    if (synthesizeBaseline)
-                        return marginBoxHeight;
-
-                    auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ElementBox>(layoutBox));
-                    auto& lastLine = formattingState.lines().last();
-                    auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
-                    return inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderBefore() + inlineLevelBoxGeometry.paddingBefore().value_or(0) + inlineBlockBaseline;
-                }
-                return marginBoxHeight;
-            }();
             logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
-            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
-            setAscentAndDescent(atomicInlineLevelBox, { ascent, marginBoxHeight - ascent });
-            atomicInlineLevelBox.setLayoutBounds({ ascent, marginBoxHeight - ascent });
+            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), inlineLevelBoxGeometry.marginBoxHeight() });
+            setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
             continue;
         }
         if (run.isListMarker()) {
             auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
             logicalLeft += std::max(0_lu, listMarkerBoxGeometry.marginStart());
-            auto listMarkerInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { listMarkerBoxGeometry.borderBoxWidth(), marginBoxHeight });
-
-            if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration()) {
-                setLayoutBounds(listMarkerInlineLevelBox, { { *ascent, marginBoxHeight - *ascent }, { }, { } });
-                setAscentAndDescent(listMarkerInlineLevelBox, { floorf(*ascent), ceilf(marginBoxHeight - *ascent) });
-            } else {
-                setAscentAndDescent(listMarkerInlineLevelBox, { marginBoxHeight, { } });
-                listMarkerInlineLevelBox.setLayoutBounds({ marginBoxHeight, { } });
-            }
+            auto listMarkerInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { listMarkerBoxGeometry.borderBoxWidth(), listMarkerBoxGeometry.marginBoxHeight() });
+            setVerticalPropertiesForInlineLevelBox(lineBox, listMarkerInlineLevelBox);
             lineBox.addInlineLevelBox(WTFMove(listMarkerInlineLevelBox));
             continue;
         }
@@ -328,9 +366,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto adjustedLogicalStart = logicalLeft + std::max(0.0f, marginStart);
             auto logicalWidth = rootInlineBox.logicalWidth() - adjustedLogicalStart;
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, adjustedLogicalStart, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
-            auto textMetrics = primaryFontMetricsForInlineBox(inlineBox);
-            setLayoutBounds(inlineBox, textMetrics);
-            setAscentAndDescent(inlineBox, { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
+            setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -345,9 +381,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
-            auto textMetrics = primaryFontMetricsForInlineBox(inlineBox);
-            setLayoutBounds(inlineBox, textMetrics);
-            setAscentAndDescent(inlineBox, { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
+            setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -382,9 +416,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
-            auto textMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()));
-            setLayoutBounds(lineBreakBox, textMetrics);
-            setAscentAndDescent(lineBreakBox, { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
+            setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
         }
@@ -434,16 +466,9 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (!initiatesLayoutBoundsChange)
             return;
 
-        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage());
-        if (behavesAsText) {
-            auto textMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), IdeographicBaseline);
-            setLayoutBounds(inlineLevelBox, textMetrics);
-            setAscentAndDescent(inlineLevelBox, { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
-        } else if (inlineLevelBox.isInlineBox()) {
-            auto textMetrics = primaryFontMetricsForInlineBox(inlineLevelBox, IdeographicBaseline);
-            setLayoutBounds(inlineLevelBox, textMetrics);
-            setAscentAndDescent(inlineLevelBox, { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
-        } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
+        if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage()))
+            setVerticalPropertiesForInlineLevelBox(lineBox, inlineLevelBox);
+        else if (inlineLevelBox.isAtomicInlineLevelBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.layoutBounds().height();
             InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
             // Move the baseline position but keep the same logical height.

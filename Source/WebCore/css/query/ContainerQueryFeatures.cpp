@@ -25,6 +25,7 @@
 #include "config.h"
 #include "ContainerQueryFeatures.h"
 
+#include "ContainerQueryEvaluator.h"
 #include "RenderBox.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -33,8 +34,8 @@ namespace WebCore::CQ::Features {
 using namespace MQ;
 
 struct SizeFeatureSchema : public FeatureSchema {
-    SizeFeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID> valueIdentifiers = { })
-        : FeatureSchema(name, type, valueTypes, valueIdentifiers)
+    SizeFeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID>&& valueIdentifiers = { })
+        : FeatureSchema(name, type, valueTypes, WTFMove(valueIdentifiers))
     { }
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
@@ -167,7 +168,7 @@ const FeatureSchema& orientation()
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData&) const override
         {
             bool isPortrait = renderer.contentHeight() >= renderer.contentWidth();
-            return evaluateDiscreteFeature(feature, isPortrait ? CSSValuePortrait : CSSValueLandscape);
+            return evaluateIdentifierFeature(feature, isPortrait ? CSSValuePortrait : CSSValueLandscape);
         }
     };
 

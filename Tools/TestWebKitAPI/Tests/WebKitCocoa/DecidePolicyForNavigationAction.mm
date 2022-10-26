@@ -33,6 +33,7 @@
 #import "TestProtocol.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/_WKHitTestResult.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -306,6 +307,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     EXPECT_EQ(webView.get(), [[action sourceFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+    EXPECT_NULL([action _hitTestResult]);
 
     // Wait for newWebView to ask to load its initial document.
     decidedPolicy = false;
@@ -325,6 +327,12 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     EXPECT_EQ(newWebView.get(), [[action targetFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+
+    _WKHitTestResult *hitTestResult = [action _hitTestResult];
+    EXPECT_NOT_NULL(hitTestResult);
+
+    CGRect elementBoundingBox = hitTestResult.elementBoundingBox;
+    EXPECT_FALSE(CGSizeEqualToSize(elementBoundingBox.size, CGSizeZero));
 
     newWebView = nullptr;
     action = nullptr;
@@ -393,6 +401,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedWindowOpen)
     EXPECT_EQ(webView.get(), [[action sourceFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+    EXPECT_NULL([action _hitTestResult]);
 
     // Wait for newWebView to ask to load its initial document.
     decidedPolicy = false;
@@ -412,6 +421,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedWindowOpen)
     EXPECT_EQ(newWebView.get(), [[action targetFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+    EXPECT_NULL([action _hitTestResult]);
 
     newWebView = nullptr;
     action = nullptr;
@@ -442,6 +452,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedFormSubmission)
     EXPECT_EQ(webView.get(), [[action sourceFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+    EXPECT_NULL([action _hitTestResult]);
 
     // Wait for newWebView to ask to load its initial document.
     decidedPolicy = false;
@@ -460,6 +471,12 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedFormSubmission)
     EXPECT_EQ(newWebView.get(), [[action targetFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+
+    _WKHitTestResult *hitTestResult = [action _hitTestResult];
+    EXPECT_NOT_NULL(hitTestResult);
+
+    CGRect elementBoundingBox = hitTestResult.elementBoundingBox;
+    EXPECT_FALSE(CGSizeEqualToSize(elementBoundingBox.size, CGSizeZero));
 
     newWebView = nullptr;
     action = nullptr;
@@ -504,6 +521,12 @@ static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEn
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
     EXPECT_FALSE([action _isRedirect]);
+
+    _WKHitTestResult *hitTestResult = [action _hitTestResult];
+    EXPECT_NOT_NULL(hitTestResult);
+
+    CGRect elementBoundingBox = hitTestResult.elementBoundingBox;
+    EXPECT_FALSE(CGSizeEqualToSize(elementBoundingBox.size, CGSizeZero));
 
     // Wait to decide policy for redirect.
     decidedPolicy = false;

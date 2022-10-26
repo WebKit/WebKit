@@ -13,6 +13,7 @@ function temp(i) {
     a1.foo10 = 20;
     a1.foo11 = 20;
     delete a1[0];
+    $vm.ensureArrayStorage(a1);
     try {
         let args = [-15, 1, 'foo', 20, 'bar'];
         for (let j = 0; j < i; ++j)

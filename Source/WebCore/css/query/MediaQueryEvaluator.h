@@ -40,11 +40,10 @@ public:
     bool evaluate(const MediaQueryList&) const;
     bool evaluate(const MediaQuery&) const;
 
-    EvaluationResult evaluateFeature(const Feature&, const FeatureEvaluationContext&) const;
-
 private:
     const AtomString m_mediaType;
-    const FeatureEvaluationContext m_evaluationContext;
+    const Document& m_document;
+    const RenderStyle* m_rootElementStyle;
 };
 
 }
