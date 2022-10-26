@@ -23,4 +23,7 @@
 ] interface CSSStyleRule : CSSRule {
     attribute DOMString? selectorText;
     [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+
+    // https://drafts.css-houdini.org/css-typed-om/#declared-stylepropertymap-objects
+    [SameObject, EnabledBySetting=CSSTypedOMEnabled] readonly attribute StylePropertyMap styleMap;
 };

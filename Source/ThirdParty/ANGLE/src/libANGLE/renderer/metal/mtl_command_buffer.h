@@ -496,7 +496,7 @@ class RenderCommandEncoder final : public CommandEncoder
 
     const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
     bool hasDrawCalls() const { return mHasDrawCalls; }
-
+    bool hasPipelineState() const { return mPipelineStateSet; }
   private:
     // Override CommandEncoder
     id<MTLRenderCommandEncoder> get()

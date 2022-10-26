@@ -24,126 +24,20 @@
  */
 
 #include "config.h"
-#include "WTFStringUtilities.h"
 #include "Connection.h"
 
-#include "ArgumentCoders.h"
+#include "IPCTestUtilities.h"
 #include "Test.h"
-#include "Utilities.h"
-#include <optional>
 #include <wtf/threads/BinarySemaphore.h>
+
 
 namespace TestWebKitAPI {
 
 static constexpr Seconds kDefaultWaitForTimeout = 1_s;
 
 static constexpr Seconds kWaitForAbsenceTimeout = 300_ms;
+
 namespace {
-struct MessageInfo {
-    IPC::MessageName messageName;
-    uint64_t destinationID;
-};
-
-struct MockTestMessage1 {
-    static constexpr bool isSync = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
-    std::tuple<> arguments() { return { }; }
-};
-
-struct MockTestMessageWithAsyncReply1 {
-    static constexpr bool isSync = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
-    // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
-    // If WebPage_GetBytecodeProfileReply is removed, just use another one.
-    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
-    std::tuple<> arguments() { return { }; }
-    static void callReply(IPC::Decoder& decoder, CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        auto value = decoder.decode<uint64_t>();
-        completionHandler(*value);
-    }
-    static void cancelReply(CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        completionHandler(0);
-    }
-};
-
-class MockConnectionClient final : public IPC::Connection::Client {
-public:
-    ~MockConnectionClient()
-    {
-    }
-
-    Vector<MessageInfo> takeMessages()
-    {
-        Vector<MessageInfo> result;
-        result.appendRange(m_messages.begin(), m_messages.end());
-        m_messages.clear();
-        return result;
-    }
-
-    MessageInfo waitForMessage(Seconds timeout)
-    {
-        if (m_messages.isEmpty()) {
-            m_continueWaitForMessage = false;
-            Util::runFor(&m_continueWaitForMessage, timeout);
-        }
-        ASSERT(m_messages.size() >= 1);
-        return m_messages.takeFirst();
-    }
-
-    bool gotDidClose() const
-    {
-        return m_didClose;
-    }
-
-    bool waitForDidClose(Seconds timeout)
-    {
-        ASSERT(!m_didClose); // Caller checks this.
-        Util::runFor(&m_didClose, timeout);
-        return m_didClose;
-    }
-
-    // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
-    {
-        m_asyncMessageHandler = WTFMove(handler);
-    }
-
-    // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
-    {
-        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
-            return;
-        m_messages.append({ decoder.messageName(), decoder.destinationID() });
-        m_continueWaitForMessage = true;
-    }
-
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
-    {
-        return false;
-    }
-
-    void didClose(IPC::Connection&) override
-    {
-        m_didClose = true;
-    }
-
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName message) override
-    {
-        m_didReceiveInvalidMessage = message;
-    }
-
-private:
-    bool m_didClose { false };
-    std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
-    Deque<MessageInfo> m_messages;
-    bool m_continueWaitForMessage { false };
-    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
-};
-
-}
-
 class SimpleConnectionTest : public testing::Test {
 public:
     void SetUp() override
@@ -154,6 +48,7 @@ protected:
     MockConnectionClient m_mockServerClient;
     MockConnectionClient m_mockClientClient;
 };
+}
 
 TEST_F(SimpleConnectionTest, CreateServerConnection)
 {
@@ -182,131 +77,6 @@ TEST_F(SimpleConnectionTest, ConnectLocalConnection)
     serverConnection->invalidate();
     clientConnection->invalidate();
 }
-
-static void ensureConnectionWorkQueueEmpty(IPC::Connection& connection)
-{
-    // FIXME: currently we have no real way to ensure that a work queue completes.
-    // On Cocoa this is a problem when exit() occurs while work queue is still cancelling
-    // the dispatch queue sources.
-    // To workaround for now, we dispatch one sync message to ensure invalidate is run to
-    // cancel the dispatch sources and one sync message to ensure that the cancel handler
-    // has run.
-    for (int i = 0; i < 2; ++i) {
-        BinarySemaphore semaphore;
-        connection.dispatchOnReceiveQueueForTesting([&semaphore] {
-            semaphore.signal();
-        });
-        semaphore.wait();
-    }
-}
-
-class ConnectionTestBase {
-public:
-    void setupBase()
-    {
-        WTF::initializeMainThread();
-        auto identifiers = IPC::Connection::createConnectionIdentifierPair();
-        if (!identifiers) {
-            FAIL();
-            return;
-        }
-        m_connections[0].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-        m_connections[1].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
-    }
-
-    void teardownBase()
-    {
-        for (auto& c : m_connections) {
-            if (c.connection) {
-                c.connection->invalidate();
-                ensureConnectionWorkQueueEmpty(*c.connection);
-            }
-            c.connection = nullptr;
-        }
-        // Tests should handle all messages. Catch unexpected messages.
-        {
-            auto messages = aClient().takeMessages();
-            EXPECT_EQ(messages.size(), 0u);
-            for (uint64_t i = 0u; i < messages.size(); ++i) {
-                SCOPED_TRACE(makeString("A had unexpected message: ", i));
-                EXPECT_EQ(messages[i].messageName, static_cast<IPC::MessageName>(0xaaaa));
-                EXPECT_EQ(messages[i].destinationID, 0xddddddu);
-            }
-        }
-        {
-            auto messages = bClient().takeMessages();
-            EXPECT_EQ(messages.size(), 0u);
-            for (uint64_t i = 0u; i < messages.size(); ++i) {
-                SCOPED_TRACE(makeString("B had unexpected message message: ", i));
-                EXPECT_EQ(messages[i].messageName, static_cast<IPC::MessageName>(0xaaaa));
-                EXPECT_EQ(messages[i].destinationID, 0xddddddu);
-            }
-        }
-    }
-
-    ::testing::AssertionResult openA()
-    {
-        if (!a())
-            return ::testing::AssertionFailure() << "No A.";
-        if (!a()->open(aClient()))
-            return ::testing::AssertionFailure() << "Failed to open A";
-        return ::testing::AssertionSuccess();
-    }
-
-    ::testing::AssertionResult openB()
-    {
-        if (!b())
-            return ::testing::AssertionFailure() << "No b.";
-        if (!b()->open(bClient()))
-            return ::testing::AssertionFailure() << "Failed to open B";
-
-        return ::testing::AssertionSuccess();
-    }
-
-    ::testing::AssertionResult openBoth()
-    {
-        auto result = openA();
-        if (result)
-            result = openB();
-        return result;
-    }
-
-    IPC::Connection* a()
-    {
-        return m_connections[0].connection.get();
-    }
-
-    MockConnectionClient& aClient()
-    {
-        return m_connections[0].client;
-    }
-
-    IPC::Connection* b()
-    {
-        return m_connections[1].connection.get();
-    }
-
-    MockConnectionClient& bClient()
-    {
-        return m_connections[1].client;
-    }
-
-    void deleteA()
-    {
-        m_connections[0].connection = nullptr;
-    }
-
-    void deleteB()
-    {
-        m_connections[1].connection = nullptr;
-    }
-
-protected:
-    struct {
-        RefPtr<IPC::Connection> connection;
-        MockConnectionClient client;
-    } m_connections[2];
-};
 
 class ConnectionTest : public testing::Test, protected ConnectionTestBase {
 public:
@@ -357,44 +127,6 @@ TEST_F(ConnectionTest, ClientInvalidateBeforeServerHandlesInitializationDelivers
     EXPECT_FALSE(clientClient().gotDidClose());
     Util::run(&captureGuard);
 }
-
-enum class ConnectionTestDirection {
-    ServerIsA,
-    ClientIsA
-};
-
-void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
-{
-    if (value == ConnectionTestDirection::ServerIsA)
-        *o << "ServerIsA";
-    else if (value == ConnectionTestDirection::ClientIsA)
-        *o << "ClientIsA";
-    else
-        *o << "Unknown";
-}
-
-
-// Test fixture for tests that are run two times:
-//  - Server as a(), and client as b()
-//  - Server as b() and client as a()
-// The setup and teardown of the Connection is not symmetric, so this fixture is useful to test various scenarios
-// around these.
-class ConnectionTestABBA : public testing::TestWithParam<std::tuple<ConnectionTestDirection>>, protected ConnectionTestBase {
-public:
-    bool serverIsA() const { return std::get<0>(GetParam()) == ConnectionTestDirection::ServerIsA; }
-
-    void SetUp() override
-    {
-        setupBase();
-        if (!serverIsA())
-            std::swap(m_connections[0].connection, m_connections[1].connection);
-    }
-
-    void TearDown() override
-    {
-        teardownBase();
-    }
-};
 
 TEST_P(ConnectionTestABBA, SendLocalMessage)
 {

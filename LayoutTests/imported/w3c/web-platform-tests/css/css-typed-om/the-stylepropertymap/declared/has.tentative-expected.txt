@@ -1,11 +1,11 @@
 
 PASS Calling StylePropertyMap.has with an unsupported property throws a TypeError
-FAIL Calling StylePropertyMap.has with a property not in the property model returns false undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a custom property not in the property model returns false undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a valid property returns true undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a valid property in mixed case returns true undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a valid shorthand specified explicitly returns true undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a valid shorthand only partially specified returns false undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a valid custom property returns true undefined is not an object (evaluating 'styleMap.has')
-FAIL Calling StylePropertyMap.has with a valid list-valued property returns true undefined is not an object (evaluating 'styleMap.has')
+PASS Calling StylePropertyMap.has with a property not in the property model returns false
+PASS Calling StylePropertyMap.has with a custom property not in the property model returns false
+PASS Calling StylePropertyMap.has with a valid property returns true
+PASS Calling StylePropertyMap.has with a valid property in mixed case returns true
+PASS Calling StylePropertyMap.has with a valid shorthand specified explicitly returns true
+PASS Calling StylePropertyMap.has with a valid shorthand only partially specified returns false
+PASS Calling StylePropertyMap.has with a valid custom property returns true
+PASS Calling StylePropertyMap.has with a valid list-valued property returns true
 

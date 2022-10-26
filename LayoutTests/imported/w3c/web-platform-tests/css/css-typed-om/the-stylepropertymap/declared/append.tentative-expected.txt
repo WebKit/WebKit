@@ -1,14 +1,32 @@
 
-PASS Calling StylePropertyMap.append with an unsupported property name throws TypeError
-PASS Calling StylePropertyMap.append with an null property name throws TypeError
-PASS Calling StylePropertyMap.append with a property that is not list valued throws TypeError
-PASS Calling StylePropertyMap.append with a shorthand property throws TypeError
-PASS Calling StylePropertyMap.append with an invalid CSSStyleValue throws TypeError
-PASS Calling StylePropertyMap.append with an invalid String value throws TypeError
-PASS Calling StylePropertyMap.append with a mix of valid and invalid values throws TypeError
-PASS Calling StylePropertyMap.append with a CSSUnparsedValue throws TypeError
-PASS Calling StylePropertyMap.append with a var ref throws TypeError
-FAIL Appending a list-valued property with CSSStyleValue or String updates its values undefined is not an object (evaluating 'styleMap.append')
-FAIL Appending a list-valued property with list-valued string updates its values undefined is not an object (evaluating 'styleMap.append')
-FAIL StylePropertyMap.append is case-insensitive undefined is not an object (evaluating 'styleMap.append')
+FAIL Calling StylePropertyMap.append with an unsupported property name throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with an null property name throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with a property that is not list valued throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with a shorthand property throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with an invalid CSSStyleValue throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with an invalid String value throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with a mix of valid and invalid values throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with a CSSUnparsedValue throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Calling StylePropertyMap.append with a var ref throws TypeError assert_throws_js: function "() => styleMap.append(property, ...values)" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Appending a list-valued property with CSSStyleValue or String updates its values append() is not yet supported
+FAIL Appending a list-valued property with list-valued string updates its values append() is not yet supported
+FAIL StylePropertyMap.append is case-insensitive append() is not yet supported
 

@@ -794,6 +794,20 @@ bool isForbiddenHeaderName(const String& name)
     return startsWithLettersIgnoringASCIICase(name, "sec-"_s) || startsWithLettersIgnoringASCIICase(name, "proxy-"_s);
 }
 
+bool isForbiddenHeader(const String& name, StringView value)
+{
+    if (isForbiddenHeaderName(name))
+        return true;
+    if (equalLettersIgnoringASCIICase(name, "x-http-method-override"_s) || equalLettersIgnoringASCIICase(name, "x-http-method"_s) || equalLettersIgnoringASCIICase(name, "x-method-override"_s)) {
+        for (auto methodValue : StringView(value).split(',')) {
+            auto method = methodValue.stripWhiteSpace();
+            if (isForbiddenMethod(method))
+                return true;
+        }
+    }
+    return false;
+}
+
 // Implements <https://fetch.spec.whatwg.org/#no-cors-safelisted-request-header-name>.
 bool isNoCORSSafelistedRequestHeaderName(const String& name)
 {
@@ -825,7 +839,7 @@ bool isForbiddenResponseHeaderName(const String& name)
 }
 
 // Implements <https://fetch.spec.whatwg.org/#forbidden-method>.
-bool isForbiddenMethod(const String& name)
+bool isForbiddenMethod(StringView name)
 {
     return equalLettersIgnoringASCIICase(name, "connect"_s) || equalLettersIgnoringASCIICase(name, "trace"_s) || equalLettersIgnoringASCIICase(name, "track"_s);
 }

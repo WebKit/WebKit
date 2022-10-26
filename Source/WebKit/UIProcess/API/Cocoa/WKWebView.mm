@@ -393,7 +393,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     else
         [self _updateScrollViewBackground];
 
-    [self _frameOrBoundsChanged];
+    [self _frameOrBoundsMayHaveChanged];
     [self _registerForNotifications];
 
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);

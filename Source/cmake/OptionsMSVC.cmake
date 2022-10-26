@@ -94,6 +94,12 @@ add_compile_options(
     /wd4722 # 'function' : destructor never returns, potential memory leak
             # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4722
 
+    /wd4723 # The second operand in a divide operation evaluated to zero at compile time, giving undefined results.
+            # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4723
+
+    /wd4805 # 'operation' : unsafe mix of type 'type' and type 'type' in operation
+            # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4805
+            
     /wd4838 # conversion from 'type_1' to 'type_2' requires a narrowing conversion
             # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4838
 

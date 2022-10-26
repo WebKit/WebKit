@@ -98,7 +98,7 @@ enum class RequestType : uint8_t {
     Other,
 };
 
-enum class GetAllType : uint8_t {
+enum class GetAllType : bool {
     Keys,
     Values,
 };

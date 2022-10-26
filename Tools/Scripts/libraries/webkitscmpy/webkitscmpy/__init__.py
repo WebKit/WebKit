@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(5, 7, 0)
+version = Version(5, 7, 3)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
@@ -57,6 +57,9 @@ AutoInstall.register(Package('webkitbugspy', Version(0, 8, 0)), local=True)
 
 if sys.version_info < (3, 0):
     AutoInstall.register(Package('inspect2', Version(0, 1, 2)))
+
+if sys.version_info > (3, 6):
+    AutoInstall.register(Package('rapidfuzz', Version(2, 11, 1)))
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit

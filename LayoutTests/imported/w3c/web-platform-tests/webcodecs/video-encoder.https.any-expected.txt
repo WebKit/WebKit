@@ -2,7 +2,7 @@
 PASS Test VideoEncoder construction
 PASS Test VideoEncoder.configure()
 FAIL Test successful configure(), encode(), and flush() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'decoderConfig.colorSpace.primaries')"
-FAIL encodeQueueSize test assert_equals: expected 0 but got Infinity
+PASS encodeQueueSize test
 PASS Test successful reset() and re-confiugre()
 PASS Test successful encode() after re-configure().
 PASS Verify closed VideoEncoder operations

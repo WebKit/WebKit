@@ -780,6 +780,14 @@ double GridTrackSizingAlgorithm::findFrUnitSize(const GridSpan& tracksSpan, Layo
 
 void GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes()
 {
+    if (m_direction == ForColumns && m_strategy->isComputingSizeContainment()) {
+        if (auto size = m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction)) {
+            m_minContentSize = size.value();
+            m_maxContentSize = size.value();
+            return;
+        }
+    }
+
     m_minContentSize = m_maxContentSize = 0_lu;
 
     Vector<GridTrack>& allTracks = tracks(m_direction);
@@ -1614,7 +1622,7 @@ void GridTrackSizingAlgorithm::run()
 
     // Step 3.
     m_strategy->maximizeTracks(tracks(m_direction), m_direction == ForColumns ? m_freeSpaceColumns : m_freeSpaceRows);
-    if (m_strategy->isComputingSizeContainment())
+    if (m_strategy->isComputingSizeContainment() && !m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction))
         return;
 
     // Step 4.

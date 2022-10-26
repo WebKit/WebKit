@@ -1,4 +1,4 @@
 
-FAIL StylePropertyMap.getAll() with a shorthand property set explicitly in css rule returns a base CSSStyleValue undefined is not an object (evaluating 'styleMap.getAll')
-FAIL StylePropertyMap.getAll() with a shorthand property that is partially in css rule returns empty list undefined is not an object (evaluating 'styleMap.getAll')
+PASS StylePropertyMap.getAll() with a shorthand property set explicitly in css rule returns a base CSSStyleValue
+PASS StylePropertyMap.getAll() with a shorthand property that is partially in css rule returns empty list
 

@@ -1,7 +1,7 @@
 
-FAIL Iterating over an empty StylePropertyMap gives a zero-length array undefined is not an object (evaluating 'styleMap.entries')
-FAIL StylePropertyMap iterates properties in correct order undefined is not an object (evaluating 'styleMap.keys')
-FAIL StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue undefined is not an object (evaluating 'styleMap.keys')
-FAIL StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue undefined is not an object (evaluating 'styleMap.keys')
-FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue undefined is not an object (evaluating 'styleMap.keys')
+PASS Iterating over an empty StylePropertyMap gives a zero-length array
+PASS StylePropertyMap iterates properties in correct order
+PASS StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue
+PASS StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue
+FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue assert_equals: expected " A" but got "A"
 

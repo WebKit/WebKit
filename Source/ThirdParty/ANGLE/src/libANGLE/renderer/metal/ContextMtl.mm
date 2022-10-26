@@ -2269,7 +2269,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
 {
     ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
                             indexTypeOrNone, indices, xfbPass));
-    if (!mRenderEncoder.valid())
+    if (ANGLE_UNLIKELY(!mRenderEncoder.valid() || !mRenderEncoder.hasPipelineState()))
     {
         // Flush occurred during setup, due to running out of memory while setting up the render
         // pass state. This would happen for example when there is no more space in the uniform
@@ -2278,8 +2278,21 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
         ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
                                 indexTypeOrNone, indices, xfbPass));
         // Setup with flushed state should either produce a working encoder or fail with an error
-        // result.
-        ASSERT(mRenderEncoder.valid());
+        // result. if that's not the case, something's gone seriously wrong. Try to
+        // recover from the error by bailing out of the draw call, and finishing the command buffer. This will result in an unfinished / corrupted draw,
+        // but will avoid a browser/GPU process crash.
+        if(ANGLE_UNLIKELY(!mRenderEncoder.valid() || !mRenderEncoder.hasPipelineState()))
+        {
+            // Completely flush the command buffer, waiting synchronously.
+            flushCommandBuffer(mtl::WaitUntilFinished);
+            // Invalidate all state
+            invalidateState(context);
+            // Return fail, and drop the draw call. This is
+            // a worst case scenario. If in a debug roots situation,
+            // we should try to catch the call stack.
+            ERR() << "Draw call is unusable - please report a bug on bugs.webkit.org";
+            return angle::Result::Stop;
+        }
     }
     return angle::Result::Continue;
 }

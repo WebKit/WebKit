@@ -53,26 +53,26 @@ PASS StylePropertyMap interface object name
 PASS StylePropertyMap interface: existence and properties of interface prototype object
 PASS StylePropertyMap interface: existence and properties of interface prototype object's "constructor" property
 PASS StylePropertyMap interface: existence and properties of interface prototype object's @@unscopables property
-FAIL StylePropertyMap interface: operation set(USVString, (CSSStyleValue or USVString)...) assert_own_property: interface prototype object missing non-static operation expected property "set" missing
-FAIL StylePropertyMap interface: operation append(USVString, (CSSStyleValue or USVString)...) assert_own_property: interface prototype object missing non-static operation expected property "append" missing
-FAIL StylePropertyMap interface: operation delete(USVString) assert_own_property: interface prototype object missing non-static operation expected property "delete" missing
-FAIL StylePropertyMap interface: operation clear() assert_own_property: interface prototype object missing non-static operation expected property "clear" missing
-FAIL StylePropertyMap must be primary interface of styleMap assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of styleMap assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: styleMap must inherit property "set(USVString, (CSSStyleValue or USVString)...)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: calling set(USVString, (CSSStyleValue or USVString)...) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: styleMap must inherit property "append(USVString, (CSSStyleValue or USVString)...)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: calling append(USVString, (CSSStyleValue or USVString)...) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: styleMap must inherit property "delete(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: calling delete(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMap interface: styleMap must inherit property "clear()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "get(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: calling get(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "getAll(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: calling getAll(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "has(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: calling has(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "size" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS StylePropertyMap interface: operation set(USVString, (CSSStyleValue or USVString)...)
+PASS StylePropertyMap interface: operation append(USVString, (CSSStyleValue or USVString)...)
+PASS StylePropertyMap interface: operation delete(USVString)
+PASS StylePropertyMap interface: operation clear()
+PASS StylePropertyMap must be primary interface of styleMap
+PASS Stringification of styleMap
+PASS StylePropertyMap interface: styleMap must inherit property "set(USVString, (CSSStyleValue or USVString)...)" with the proper type
+PASS StylePropertyMap interface: calling set(USVString, (CSSStyleValue or USVString)...) on styleMap with too few arguments must throw TypeError
+PASS StylePropertyMap interface: styleMap must inherit property "append(USVString, (CSSStyleValue or USVString)...)" with the proper type
+PASS StylePropertyMap interface: calling append(USVString, (CSSStyleValue or USVString)...) on styleMap with too few arguments must throw TypeError
+PASS StylePropertyMap interface: styleMap must inherit property "delete(USVString)" with the proper type
+PASS StylePropertyMap interface: calling delete(USVString) on styleMap with too few arguments must throw TypeError
+PASS StylePropertyMap interface: styleMap must inherit property "clear()" with the proper type
+PASS StylePropertyMapReadOnly interface: styleMap must inherit property "get(USVString)" with the proper type
+PASS StylePropertyMapReadOnly interface: calling get(USVString) on styleMap with too few arguments must throw TypeError
+PASS StylePropertyMapReadOnly interface: styleMap must inherit property "getAll(USVString)" with the proper type
+PASS StylePropertyMapReadOnly interface: calling getAll(USVString) on styleMap with too few arguments must throw TypeError
+PASS StylePropertyMapReadOnly interface: styleMap must inherit property "has(USVString)" with the proper type
+PASS StylePropertyMapReadOnly interface: calling has(USVString) on styleMap with too few arguments must throw TypeError
+PASS StylePropertyMapReadOnly interface: styleMap must inherit property "size" with the proper type
 PASS CSSUnparsedValue interface: existence and properties of interface object
 PASS CSSUnparsedValue interface object length
 PASS CSSUnparsedValue interface object name
@@ -477,7 +477,7 @@ PASS CSSColor interface: existence and properties of interface prototype object'
 PASS CSSColor interface: attribute colorSpace
 FAIL CSSColor interface: attribute channels assert_true: The prototype object must have a property "channels" expected true got false
 PASS CSSColor interface: attribute alpha
-FAIL CSSStyleRule interface: attribute styleMap assert_true: The prototype object must have a property "styleMap" expected true got false
+PASS CSSStyleRule interface: attribute styleMap
 PASS CSS namespace: operation escape(CSSOMString)
 PASS CSS namespace: operation number(double)
 PASS CSS namespace: operation percent(double)

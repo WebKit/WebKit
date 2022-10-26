@@ -118,6 +118,7 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiver;
+uint64_t nextAsyncReplyHandlerID();
 
 class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop>, public CanMakeWeakPtr<Connection> {
 public:
@@ -313,6 +314,12 @@ public:
     }
 
     bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
+
+    struct AsyncReplyHandler {
+        CompletionHandler<void(Decoder*)> completionHandler;
+        uint64_t replyID;
+    };
+    bool sendMessageWithAsyncReply(UniqueRef<Encoder>&&, AsyncReplyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
     UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
     std::unique_ptr<Decoder> sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
     bool sendSyncReply(UniqueRef<Encoder>&&);
@@ -359,6 +366,22 @@ public:
     size_t pendingMessageCountForTesting() const;
     void dispatchOnReceiveQueueForTesting(Function<void()>&&);
 
+    template<typename T, typename C>
+    static AsyncReplyHandler makeAsyncReplyHandler(C&& completionHandler, ThreadLikeAssertion callThread = CompletionHandlerCallThread::AnyThread)
+    {
+        // FIXME: The above uses AnyThread because the API contract on invalid sends does not make sense.
+        return AsyncReplyHandler {
+            {
+                [completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
+                    if (decoder && decoder->isValid())
+                        T::callReply(*decoder, WTFMove(completionHandler));
+                    else
+                        T::cancelReply(WTFMove(completionHandler));
+                }, callThread
+            },
+            nextAsyncReplyHandlerID()
+        };
+    }
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
@@ -567,36 +590,19 @@ bool Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID
     return connection->send(WTFMove(message), destinationID, sendOptions, qos);
 }
 
-uint64_t nextAsyncReplyHandlerID();
-void addAsyncReplyHandler(Connection&, uint64_t, CompletionHandler<void(Decoder*)>&&);
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection&, uint64_t);
 
 template<typename T, typename C>
 uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
-
-    if (!isValid()) {
-        // FIXME: Current contract is that completionHandler is called on the connection run loop.
-        // This does not make sense. However, this needs a change that is done later.
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
-            T::cancelReply(WTFMove(completionHandler));
-        });
-        return 0;
-    }
-
+    auto handler = makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+    auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
-    uint64_t listenerID = nextAsyncReplyHandlerID();
-    addAsyncReplyHandler(*this, listenerID, CompletionHandler<void(Decoder*)>([completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
-        if (decoder && decoder->isValid())
-            T::callReply(*decoder, WTFMove(completionHandler));
-        else
-            T::cancelReply(WTFMove(completionHandler));
-    }, CompletionHandlerCallThread::AnyThread));
-    encoder.get() << listenerID;
     encoder.get() << message.arguments();
-    sendMessage(WTFMove(encoder), sendOptions);
-    return listenerID;
+    if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions))
+        return replyID;
+    return 0;
 }
 
 template<size_t i, typename A, typename B> struct TupleMover {

@@ -32,17 +32,21 @@
 namespace WebCore {
 
 class CSSKeywordValue;
+
 using CSSKeywordish = std::variant<String, RefPtr<CSSKeywordValue>>;
 using CSSColorPercent = std::variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
+using RectifiedCSSColorPercent = std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
 using CSSColorNumber = std::variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
 using CSSColorAngle = std::variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
 
 class CSSColorValue : public CSSStyleValue {
 public:
-    // FIXME: Implement these.
-    RefPtr<CSSKeywordValue> colorSpace() { return nullptr; }
-    RefPtr<CSSColorValue> to(CSSKeywordish) { return nullptr; }
-    static std::variant<RefPtr<CSSColorValue>, RefPtr<CSSStyleValue>> parse(String) { return RefPtr<CSSColorValue> { nullptr }; }
+    RefPtr<CSSKeywordValue> colorSpace();
+    RefPtr<CSSColorValue> to(CSSKeywordish);
+    static std::variant<RefPtr<CSSColorValue>, RefPtr<CSSStyleValue>> parse(const String&);
+
+    static ExceptionOr<RectifiedCSSColorPercent> rectifyCSSColorPercent(CSSColorPercent&&);
+    static CSSColorPercent toCSSColorPercent(const RectifiedCSSColorPercent&);
 };
     
 } // namespace WebCore

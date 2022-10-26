@@ -1,9 +1,9 @@
 
-FAIL Declared StylePropertyMap only contains properties in the style rule undefined is not an object (evaluating 'styleMap.keys')
-FAIL Declared StylePropertyMap contains CSS property declarations in style rules undefined is not an object (evaluating 'styleMap.get')
-FAIL Declared StylePropertyMap does not contain inline styles undefined is not an object (evaluating 'styleMap.get')
-FAIL Declared StylePropertyMap contains custom property declarations undefined is not an object (evaluating 'styleMap.get')
-FAIL Declared StylePropertyMap does not contain properties with invalid values undefined is not an object (evaluating 'styleMap.get')
-FAIL Declared StylePropertyMap contains properties with their last valid value undefined is not an object (evaluating 'styleMap.get')
-FAIL Declared StylePropertyMap is live undefined is not an object (evaluating 'styleMap.get')
+PASS Declared StylePropertyMap only contains properties in the style rule
+PASS Declared StylePropertyMap contains CSS property declarations in style rules
+PASS Declared StylePropertyMap does not contain inline styles
+FAIL Declared StylePropertyMap contains custom property declarations assert_equals: expected " auto" but got "auto"
+PASS Declared StylePropertyMap does not contain properties with invalid values
+PASS Declared StylePropertyMap contains properties with their last valid value
+FAIL Declared StylePropertyMap is live set() is not yet supported
 

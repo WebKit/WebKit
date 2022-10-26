@@ -99,6 +99,7 @@ private:
 
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_encodeQueueSize { 0 };
+    size_t m_beingEncodedQueueSize { 0 };
     Ref<WebCodecsEncodedVideoChunkOutputCallback> m_output;
     Ref<WebCodecsErrorCallback> m_error;
     std::unique_ptr<VideoEncoder> m_internalEncoder;

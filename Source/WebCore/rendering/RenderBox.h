@@ -673,6 +673,20 @@ override;
 
     bool shouldIgnoreMinMaxSizes() const;
 
+    // The explicit intrinsic inner size of contain-intrinsic-size
+    std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;
+    std::optional<LayoutUnit> explicitIntrinsicInnerHeight() const;
+
+    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalWidth() const
+    {
+        return style().isHorizontalWritingMode() ? explicitIntrinsicInnerWidth() : explicitIntrinsicInnerHeight();
+    }
+
+    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalHeight() const
+    {
+        return style().isHorizontalWritingMode() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth();
+    }
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);

@@ -27,6 +27,7 @@
 
 @class WKWebView;
 @class TabViewController;
+@class SettingsViewController;
 
 @interface WebViewController : UIViewController
 
@@ -34,7 +35,9 @@
 @property (strong, nonatomic) IBOutlet UITextField *urlField;
 @property (strong, nonatomic) IBOutlet UIProgressView *progressView;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *tabButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 @property (strong, nonatomic) IBOutlet TabViewController *tabViewController;
+@property (strong, nonatomic) IBOutlet SettingsViewController *settingsViewController;
 @property (strong, nonatomic) WKWebView *currentWebView;
 @property (strong, nonatomic) NSMutableArray<WKWebView *> *webViews;
 
@@ -45,10 +48,13 @@
 - (IBAction)urlFieldEditingBegan:(id)sender;
 - (IBAction)navigateTo:(id)sender;
 - (IBAction)showTabs:(id)sender;
+- (IBAction)showSettings:(id)sender;
 
 - (void)selectWebViewAtIndex:(NSUInteger)index;
 - (void)removeWebViewAtIndex:(NSUInteger)index;
 - (void)addWebView;
+
+- (NSURL *)currentURL;
 
 @end
 

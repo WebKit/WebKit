@@ -1,7 +1,7 @@
 
 PASS Iterating over an empty StylePropertyMap gives a zero-length array
-FAIL StylePropertyMap iterates properties in inline style order assert_array_equals: lengths differ, expected array ["--A", "width", "--C", "transition-duration", "color", "--B"] length 6, got [] length 0
-FAIL StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue assert_array_equals: lengths differ, expected array ["width", "height"] length 2, got [] length 0
-FAIL StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue assert_array_equals: lengths differ, expected array ["transition-duration"] length 1, got [] length 0
-FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue assert_array_equals: lengths differ, expected array ["--A", "--B", "--C"] length 3, got [] length 0
+PASS StylePropertyMap iterates properties in inline style order
+PASS StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue
+PASS StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue
+FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue assert_equals: expected " A" but got "A"
 

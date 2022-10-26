@@ -25,7 +25,7 @@
 #include "../../../../Configurations/Version.xcconfig"
 #include "../../../../Configurations/WebKitTargetConditionals.xcconfig"
 
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited) AVIF_CODEC_DAV1D;
 
 FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(FRAMEWORK_SEARCH_PATHS_ios_$(CONFIGURATION));
 FRAMEWORK_SEARCH_PATHS_ios_Debug = $(BUILT_PRODUCTS_DIR);

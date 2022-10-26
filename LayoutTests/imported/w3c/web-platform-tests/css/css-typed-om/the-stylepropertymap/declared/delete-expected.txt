@@ -1,7 +1,7 @@
 
-FAIL Deleting a property not in the css rule is a no-op undefined is not an object (evaluating 'styleMap.delete')
-FAIL Deleting a property in the css rule removes it from the css rule undefined is not an object (evaluating 'styleMap.delete')
-FAIL Deleting a custom property in the css rule removes it from the css rule undefined is not an object (evaluating 'styleMap.delete')
-FAIL Deleting a list-valued property in the css rule removes it from the css rule undefined is not an object (evaluating 'styleMap.delete')
-FAIL Declared StylePropertyMap.delete is not case-sensitive undefined is not an object (evaluating 'styleMap.delete')
+PASS Deleting a property not in the css rule is a no-op
+PASS Deleting a property in the css rule removes it from the css rule
+PASS Deleting a custom property in the css rule removes it from the css rule
+PASS Deleting a list-valued property in the css rule removes it from the css rule
+PASS Declared StylePropertyMap.delete is not case-sensitive
 

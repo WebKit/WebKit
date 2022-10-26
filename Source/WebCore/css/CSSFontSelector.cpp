@@ -31,6 +31,7 @@
 #include "CSSFontFace.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontFamily.h"
+#include "CSSFontFeatureValuesRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSSegmentedFontFace.h"
@@ -236,11 +237,26 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     ++m_version;
 }
 
-void CSSFontSelector::addFontPaletteValuesRule(StyleRuleFontPaletteValues& fontPaletteValuesRule)
+void CSSFontSelector::addFontPaletteValuesRule(const StyleRuleFontPaletteValues& fontPaletteValuesRule)
 {
     AtomString fontFamily = fontPaletteValuesRule.fontFamily().isNull() ? emptyAtom() : fontPaletteValuesRule.fontFamily();
     AtomString name = fontPaletteValuesRule.name().isNull() ? emptyAtom() : fontPaletteValuesRule.name();
     m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
+
+    ++m_version;
+}
+
+void CSSFontSelector::addFontFeatureValuesRule(const StyleRuleFontFeatureValues& fontFeatureValuesRule)
+{
+    Ref<FontFeatureValues> fontFeatureValues = fontFeatureValuesRule.value();
+
+    for (const auto& fontFamily : fontFeatureValuesRule.fontFamilies()) {
+        auto exist = m_featureValues.get(fontFamily);
+        if (exist)
+            exist->updateOrInsert(fontFeatureValues.get());
+        else
+            m_featureValues.set(fontFamily, fontFeatureValues);
+    }
 
     ++m_version;
 }
@@ -334,6 +350,15 @@ const FontPaletteValues& CSSFontSelector::lookupFontPaletteValues(const AtomStri
     return iterator->value;
 }
 
+RefPtr<FontFeatureValues> CSSFontSelector::lookupFontFeatureValues(const AtomString& familyName)
+{
+    auto iterator = m_featureValues.find(familyName);
+    if (iterator == m_featureValues.end())
+        return nullptr;
+
+    return iterator->value.ptr();
+}
+
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomString& familyName)
 {
     // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
@@ -351,6 +376,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     };
 
     const auto& fontPaletteValues = lookupFontPaletteValues(familyName, fontDescription);
+    auto fontFeatureValues = lookupFontFeatureValues(familyName);
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
@@ -359,12 +385,13 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     if (face) {
         if (document && DeprecatedGlobalSettings::webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), true);
-        return face->fontRanges(*fontDescriptionForLookup, fontPaletteValues);
+        return face->fontRanges(*fontDescriptionForLookup, fontPaletteValues, fontFeatureValues);
     }
 
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto font = FontCache::forCurrentThread().fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues });
+
+    auto font = FontCache::forCurrentThread().fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues, fontFeatureValues });
     if (document && DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };

@@ -449,7 +449,6 @@ dfg/DFGVariableAccessDataDump.cpp
 dfg/DFGVariableEvent.cpp
 dfg/DFGVariableEventStream.cpp
 dfg/DFGVirtualRegisterAllocationPhase.cpp
-dfg/DFGWatchpointCollectionPhase.cpp
 
 disassembler/ARM64Disassembler.cpp
 disassembler/CapstoneDisassembler.cpp

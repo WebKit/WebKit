@@ -104,6 +104,11 @@ Vector<SerializedEnumInfo> allSerializedEnums()
             0, 1
         } },
 #endif
+        { "EnumWithoutNamespace"_s, sizeof(EnumWithoutNamespace), false, {
+            static_cast<uint64_t>(EnumWithoutNamespace::Value1),
+            static_cast<uint64_t>(EnumWithoutNamespace::Value2),
+            static_cast<uint64_t>(EnumWithoutNamespace::Value3),
+        } },
 #if ENABLE(UINT16_ENUM)
         { "EnumNamespace::EnumType"_s, sizeof(EnumNamespace::EnumType), false, {
             static_cast<uint64_t>(EnumNamespace::EnumType::FirstValue),

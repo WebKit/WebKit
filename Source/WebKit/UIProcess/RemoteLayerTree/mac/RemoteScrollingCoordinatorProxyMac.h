@@ -37,7 +37,9 @@ public:
 
 private:
     void didReceiveWheelEvent(bool) override;
+    bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
 };
+
 
 } // namespace WebKit
 

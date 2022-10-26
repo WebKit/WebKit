@@ -2133,6 +2133,9 @@ webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html
 
 webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]
 
+# webkit.org/b/246973 This test renders incorrectly after enabling accelerated drawing
+compositing/geometry/css-clip-oversize.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html [ Pass Failure ]
 
 # webkit.org/b/245801 These tests are flakily crashing with a WorkerOrWorkletThread error

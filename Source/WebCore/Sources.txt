@@ -899,7 +899,11 @@ css/typedom/CSSStyleValueFactory.cpp
 css/typedom/CSSUnitValue.cpp
 css/typedom/CSSUnparsedValue.cpp
 css/typedom/CSSOMVariableReferenceValue.cpp
+css/typedom/DeclaredStylePropertyMap.cpp
+css/typedom/MainThreadStylePropertyMapReadOnly.cpp
+css/typedom/StylePropertyMap.cpp
 css/typedom/color/CSSColor.cpp
+css/typedom/color/CSSColorValue.cpp
 css/typedom/color/CSSHSL.cpp
 css/typedom/color/CSSHWB.cpp
 css/typedom/color/CSSLCH.cpp
@@ -2118,6 +2122,7 @@ platform/graphics/FontCascadeDescription.cpp
 platform/graphics/FontCascadeFonts.cpp
 platform/graphics/FontDescription.cpp
 platform/graphics/FontFamilySpecificationNull.cpp
+platform/graphics/FontFeatureValues.cpp
 platform/graphics/FontGenericFamilies.cpp
 platform/graphics/FontPlatformData.cpp
 platform/graphics/FontRanges.cpp

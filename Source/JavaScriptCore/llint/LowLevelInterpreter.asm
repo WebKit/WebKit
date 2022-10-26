@@ -1478,7 +1478,7 @@ end
 macro varReadOnlyCheck(slowPath, scratch)
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_globalObject[scratch], scratch
-    loadp JSGlobalObject::m_varReadOnlyWatchpoint[scratch], scratch
+    loadp JSGlobalObject::m_varReadOnlyWatchpointSet[scratch], scratch
     bbeq WatchpointSet::m_state[scratch], IsInvalidated, slowPath
 end
 

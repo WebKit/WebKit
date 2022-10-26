@@ -24,6 +24,7 @@
 #include "CSSSelectorList.h"
 #include "CompiledSelector.h"
 #include "ContainerQuery.h"
+#include "FontFeatureValues.h"
 #include "FontPaletteValues.h"
 #include "StyleRuleType.h"
 #include <map>
@@ -182,30 +183,9 @@ private:
     FontPaletteValues m_fontPaletteValues;
 };
 
-using Tag = std::pair<String, Vector<int>>;
-using Tags = HashMap<String, Vector<int>>;
-
-struct FontFeatureValuesValue {
-    Tags styleset;
-    Tags stylistic;
-    Tags characterVariant;
-    Tags swash;
-    Tags ornaments;
-    Tags annotation;
-};
-
-enum class FontFeatureValuesType {
-    Styleset,
-    Stylistic,
-    CharacterVariant,
-    Swash,
-    Ornaments,
-    Annotation
-};
-
 class StyleRuleFontFeatureValuesBlock final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontFeatureValuesBlock> create(FontFeatureValuesType type, const Vector<Tag>& tags)
+    static Ref<StyleRuleFontFeatureValuesBlock> create(FontFeatureValuesType type, const Vector<FontFeatureValuesTag>& tags)
     {
         return adoptRef(*new StyleRuleFontFeatureValuesBlock(type, tags));
     }
@@ -214,35 +194,35 @@ public:
 
     FontFeatureValuesType fontFeatureValuesType() const { return m_type; }
 
-    Vector<Tag> tags() const { return m_tags; }
+    const Vector<FontFeatureValuesTag>& tags() const { return m_tags; }
 
     Ref<StyleRuleFontFeatureValuesBlock> copy() const { return adoptRef(*new StyleRuleFontFeatureValuesBlock(*this)); }
 private:
-    StyleRuleFontFeatureValuesBlock(FontFeatureValuesType, const Vector<Tag>&);
+    StyleRuleFontFeatureValuesBlock(FontFeatureValuesType, const Vector<FontFeatureValuesTag>&);
     StyleRuleFontFeatureValuesBlock(const StyleRuleFontFeatureValuesBlock&) = default;
 
     FontFeatureValuesType m_type;
-    Vector<Tag> m_tags;
+    Vector<FontFeatureValuesTag> m_tags;
 };
 
 class StyleRuleFontFeatureValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, const FontFeatureValuesValue&);
+    static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&&);
     
     ~StyleRuleFontFeatureValues() = default;
 
     const Vector<AtomString>& fontFamilies() const { return m_fontFamilies; }
 
-    const FontFeatureValuesValue& value() const { return m_value; }
+    Ref<FontFeatureValues> value() const { return m_value; }
 
     Ref<StyleRuleFontFeatureValues> copy() const { return adoptRef(*new StyleRuleFontFeatureValues(*this)); }
 
 private:
-    StyleRuleFontFeatureValues(const Vector<AtomString>&, const FontFeatureValuesValue&);
+    StyleRuleFontFeatureValues(const Vector<AtomString>&, Ref<FontFeatureValues>&&);
     StyleRuleFontFeatureValues(const StyleRuleFontFeatureValues&) = default;
 
     Vector<AtomString> m_fontFamilies;
-    FontFeatureValuesValue m_value;
+    Ref<FontFeatureValues> m_value;
 };
 
 class StyleRulePage final : public StyleRuleBase {

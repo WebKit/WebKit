@@ -1,5 +1,5 @@
 
-FAIL Deleting a shorthand property not in the inline style is a no-op styleMap.delete is not a function. (In 'styleMap.delete('margin')', 'styleMap.delete' is undefined)
-FAIL Deleting a shorthand property in the inline style removes both it and its longhands styleMap.delete is not a function. (In 'styleMap.delete('margin')', 'styleMap.delete' is undefined)
-FAIL Deleting a longhand property in the inline style removes both it and its shorthand styleMap.delete is not a function. (In 'styleMap.delete('margin-top')', 'styleMap.delete' is undefined)
+PASS Deleting a shorthand property not in the inline style is a no-op
+PASS Deleting a shorthand property in the inline style removes both it and its longhands
+PASS Deleting a longhand property in the inline style removes both it and its shorthand
 

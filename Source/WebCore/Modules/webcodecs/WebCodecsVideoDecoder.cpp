@@ -177,12 +177,15 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
 
     ++m_decodeQueueSize;
     queueControlMessageAndProcess([this, chunk = WTFMove(chunk)]() mutable {
+        ++m_beingDecodedQueueSize;
         --m_decodeQueueSize;
         scheduleDequeueEvent();
+
         m_internalDecoder->decode({ { chunk->data(), chunk->byteLength() }, chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, weakedThis = WeakPtr { *this }](auto&& result) {
             if (!weakedThis)
                 return;
 
+            --m_beingDecodedQueueSize;
             if (!result.isNull()) {
                 closeDecoder(Exception { EncodingError, WTFMove(result) });
                 return;
@@ -338,7 +341,7 @@ const char* WebCodecsVideoDecoder::activeDOMObjectName() const
 
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && m_decodeQueueSize;
+    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize);
 }
 
 } // namespace WebCore

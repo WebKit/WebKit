@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: TypeError: element.attributeStyleMap.clear is not a function. (In 'element.attributeStyleMap.clear()', 'element.attributeStyleMap.clear' is undefined)
+CONSOLE MESSAGE: NotSupportedError: set() is not yet supported
 
-Harness Error (FAIL), message = TypeError: element.attributeStyleMap.clear is not a function. (In 'element.attributeStyleMap.clear()', 'element.attributeStyleMap.clear' is undefined)
+Harness Error (FAIL), message = NotSupportedError: set() is not yet supported
 
 

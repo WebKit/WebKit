@@ -182,6 +182,7 @@ endif ()
 #
 # Features that require additional implementation pieces
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PRIVATE OFF)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PRIVATE OFF)
 
 # Features that are temporarily turned off because an implementation is not
 # present at this time

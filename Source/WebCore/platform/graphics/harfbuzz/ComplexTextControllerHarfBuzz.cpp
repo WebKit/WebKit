@@ -28,6 +28,7 @@
 
 #include "CairoUtilities.h"
 #include "FontCascade.h"
+#include "FontFeatureValues.h"
 #include "FontTaggedSettings.h"
 #include "HbUniquePtr.h"
 #include "SurrogatePairAwareTextIterator.h"
@@ -195,9 +196,12 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
 
     // 3. Font features implied by the value of the ‘font-variant’ property, the related ‘font-variant’
     //    subproperties and any other CSS property that uses OpenType features.
-    for (auto& feature : computeFeatureSettingsFromVariants(font.fontDescription().variantSettings()))
+
+    // FIXME: pass a proper FontFeatureValues object.
+    // https://bugs.webkit.org/show_bug.cgi?id=246121
+    for (auto& feature : computeFeatureSettingsFromVariants(font.fontDescription().variantSettings(), { }))
         featuresToBeApplied.set(feature.key, feature.value);
-        
+
     featuresToBeApplied.set(fontFeatureTag("kern"), font.enableKerning() ? 1 : 0);
 
     // 4. Feature settings determined by properties other than ‘font-variant’ or ‘font-feature-settings’.

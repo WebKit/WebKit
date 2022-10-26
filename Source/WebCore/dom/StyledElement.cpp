@@ -87,36 +87,61 @@ public:
     }
 
 private:
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const final
+    CSSValue* propertyValue(CSSPropertyID propertyID) const final
     {
-        ASSERT(m_element); // Hitting this assertion would imply a GC bug. Element is collected while this property map is alive.
-        if (!m_element)
-            return nullptr;
-        return extractInlineProperty(property, *m_element);
+        if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
+            return inlineStyle->getPropertyCSSValue(propertyID).get();
+        return nullptr;
     }
 
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final
+    CSSValue* customPropertyValue(const AtomString& property) const final
     {
-        // FIXME: implement.
-        return Vector<RefPtr<CSSStyleValue>>();
+        if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
+            return inlineStyle->getCustomPropertyCSSValue(property.string()).get();
+        return nullptr;
     }
 
     unsigned size() const final
     {
-        // FIXME: implement.
-        return 0;
+        auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr;
+        return inlineStyle ? inlineStyle->propertyCount() : 0;
     }
 
-    Vector<StylePropertyMapEntry> entries() const final
+    Vector<StylePropertyMapEntry> entries(ScriptExecutionContext* context) const final
     {
-        // FIXME: implement.
-        return { };
+        if (!m_element || !context)
+            return { };
+
+        auto& document = downcast<Document>(*context);
+        Vector<StylePropertyMapEntry> result;
+        auto* inlineStyle = m_element->inlineStyle();
+        if (!inlineStyle)
+            return { };
+
+        result.reserveInitialCapacity(inlineStyle->propertyCount());
+        for (unsigned i = 0; i < inlineStyle->propertyCount(); ++i) {
+            auto propertyReference = inlineStyle->propertyAt(i);
+            result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(propertyReference.value(), document)));
+        }
+        return result;
     }
 
-    ExceptionOr<bool> has(const AtomString&) const final
+    void removeProperty(CSSPropertyID propertyID) final
     {
-        // FIXME: implement.
-        return false;
+        if (m_element)
+            m_element->removeInlineStyleProperty(propertyID);
+    }
+
+    void removeCustomProperty(const AtomString& property) final
+    {
+        if (m_element)
+            m_element->removeInlineStyleCustomProperty(property);
+    }
+
+    void clear() final
+    {
+        if (m_element)
+            m_element->removeAllInlineStyleProperties();
     }
 
     explicit StyledElementInlineStylePropertyMap(StyledElement& element)
@@ -125,31 +150,6 @@ private:
     }
 
     void clearElement() override { m_element = nullptr; }
-
-    static RefPtr<CSSStyleValue> extractInlineProperty(const AtomString& name, StyledElement& element)
-    {
-        if (!element.inlineStyle())
-            return nullptr;
-
-        if (isCustomPropertyName(name)) {
-            auto value = element.inlineStyle()->getCustomPropertyCSSValue(name);
-            return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
-        }
-
-        CSSPropertyID propertyID = cssPropertyID(name);
-
-        auto shorthand = shorthandForProperty(propertyID);
-        for (auto longhand : shorthand) {
-            if (auto cssValue = element.inlineStyle()->getPropertyCSSValue(longhand))
-                return StylePropertyMapReadOnly::reifyValue(cssValue.get(), element.document(), &element);
-        }
-        
-        if (!propertyID)
-            return nullptr;
-
-        auto value = element.inlineStyle()->getPropertyCSSValue(propertyID);
-        return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
-    }
 
     StyledElement* m_element { nullptr };
 };
@@ -299,6 +299,16 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
     if (!inlineStyle())
         return false;
     bool changes = ensureMutableInlineStyle().removeProperty(propertyID);
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+bool StyledElement::removeInlineStyleCustomProperty(const AtomString& property)
+{
+    if (!inlineStyle())
+        return false;
+    bool changes = ensureMutableInlineStyle().removeCustomProperty(property);
     if (changes)
         inlineStyleChanged();
     return changes;

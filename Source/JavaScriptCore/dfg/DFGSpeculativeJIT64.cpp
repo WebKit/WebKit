@@ -257,7 +257,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
     m_jit.move(TrustedImm32(0), resultGPR);
 
     JITCompiler::JumpList done;
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+    if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         if (!isKnownNotCell(operand.node()))
             done.append(m_jit.branchIfCell(JSValueRegs(argGPR)));
     } else {
@@ -309,7 +309,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
     GPRReg resultGPR = result.gpr();
 
     // First, handle the case where "operand" is a cell.
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+    if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         if (!isKnownNotCell(operand.node())) {
             JITCompiler::Jump isCell = m_jit.branchIfCell(JSValueRegs(argGPR));
             addBranch(isCell, notTaken);
@@ -1727,10 +1727,10 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
 
-    bool masqueradesAsUndefinedWatchpointValid =
-        masqueradesAsUndefinedWatchpointIsStillValid();
+    bool masqueradesAsUndefinedWatchpointSetValid =
+        masqueradesAsUndefinedWatchpointSetIsStillValid();
 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
     } else {
@@ -1748,7 +1748,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     MacroAssembler::Jump rightNotCell = m_jit.branchIfNotCell(JSValueRegs(op2GPR));
     
     // We know that within this branch, rightChild must be a cell. 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueRegs(op2GPR), rightChild, (~SpecCellCheck) | SpecObject, m_jit.branchIfNotObject(op2GPR));
     } else {
@@ -1801,10 +1801,10 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
     
-    bool masqueradesAsUndefinedWatchpointValid = 
-        masqueradesAsUndefinedWatchpointIsStillValid();
+    bool masqueradesAsUndefinedWatchpointSetValid = 
+        masqueradesAsUndefinedWatchpointSetIsStillValid();
 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
     } else {
@@ -1822,7 +1822,7 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     MacroAssembler::Jump rightNotCell = m_jit.branchIfNotCell(JSValueRegs(op2GPR));
     
     // We know that within this branch, rightChild must be a cell. 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueRegs(op2GPR), rightChild, (~SpecCellCheck) | SpecObject, m_jit.branchIfNotObject(op2GPR));
     } else {
@@ -1992,10 +1992,10 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
     GPRTemporary structure;
     GPRReg structureGPR = InvalidGPRReg;
 
-    bool masqueradesAsUndefinedWatchpointValid =
-        masqueradesAsUndefinedWatchpointIsStillValid();
+    bool masqueradesAsUndefinedWatchpointSetValid =
+        masqueradesAsUndefinedWatchpointSetIsStillValid();
 
-    if (!masqueradesAsUndefinedWatchpointValid) {
+    if (!masqueradesAsUndefinedWatchpointSetValid) {
         // The masquerades as undefined case will use the structure register, so allocate it here.
         // Do this at the top of the function to avoid branching around a register allocation.
         GPRTemporary realStructure(this);
@@ -2004,7 +2004,7 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
     }
 
     MacroAssembler::Jump notCell = m_jit.branchIfNotCell(JSValueRegs(valueGPR));
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueRegs(valueGPR), nodeUse, (~SpecCellCheck) | SpecObject, m_jit.branchIfNotObject(valueGPR));
     } else {
@@ -2116,7 +2116,7 @@ void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
         FPRTemporary valueFPR(this);
         FPRTemporary tempFPR(this);
 
-        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointSetIsStillValid();
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
         std::optional<GPRTemporary> scratch;
         GPRReg scratchGPR = InvalidGPRReg;
@@ -2152,7 +2152,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
     GPRReg scratchGPR = scratch.gpr();
     GPRReg structureGPR = InvalidGPRReg;
 
-    bool objectMayMasqueradeAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+    bool objectMayMasqueradeAsUndefined = !masqueradesAsUndefinedWatchpointSetIsStillValid();
     if (objectMayMasqueradeAsUndefined) {
         GPRTemporary realStructure(this);
         structure.adopt(realStructure);
@@ -2263,7 +2263,7 @@ void SpeculativeJIT::emitUntypedBranch(Edge nodeUse, BasicBlock* taken, BasicBlo
                 skipHeapBigIntCase.link(&m_jit);
         }
 
-        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointSetIsStillValid();
         if (shouldCheckMasqueradesAsUndefined) {
             branchTest8(MacroAssembler::Zero, MacroAssembler::Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), taken);
             m_jit.emitLoadStructure(vm(), valueGPR, temp1GPR);
@@ -4738,7 +4738,7 @@ void SpeculativeJIT::compile(Node* node)
         
         isCell.link(&m_jit);
         JITCompiler::Jump notMasqueradesAsUndefined;
-        if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+        if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
             m_jit.move(TrustedImm32(0), result.gpr());
             notMasqueradesAsUndefined = m_jit.jump();
         } else {

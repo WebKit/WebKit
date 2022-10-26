@@ -72,7 +72,7 @@ bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
     if (isScheduled())
         return true;
 
-    LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback - triggering update");
+    LOG_WITH_STREAM(DisplayLink, stream << "[Web] RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback - triggering update");
     static_cast<DrawingArea&>(*m_drawingArea.get()).triggerRenderingUpdate();
 
     setIsScheduled(true);

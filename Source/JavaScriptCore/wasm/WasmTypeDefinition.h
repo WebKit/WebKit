@@ -73,6 +73,7 @@ constexpr Type simdScalarType(SIMDLane lane)
     case SIMDLane::f32x4:
         return Types::F32;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 using FunctionArgCount = uint32_t;

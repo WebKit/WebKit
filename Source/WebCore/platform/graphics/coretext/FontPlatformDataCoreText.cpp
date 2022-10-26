@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cf/CoreTextSPI.h>

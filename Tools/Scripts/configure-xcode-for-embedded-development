@@ -227,7 +227,11 @@ def do_copy(source_path, dest_path):
         if dest_path.exists():
             shutil.rmtree(dest_path)
         ensure_parent_exists(dest_path)
-        shutil.copytree(source_path, dest_path)
+        try:
+            shutil.copytree(source_path, dest_path)
+        except:
+            print('Unable to copy needed files. When running this script, please temporarily allow Terminal to update other applications in System Settings > Privacy & Security > App Management.')
+            exit(1)
 
     if source_path.is_file():
         copy_file(source_path, dest_path)

@@ -1,9 +1,9 @@
 
 PASS Calling StylePropertyMap.getAll with an unsupported property throws a TypeError
-FAIL Calling StylePropertyMap.getAll with a property not in the property model returns an empty list undefined is not an object (evaluating 'styleMap.getAll')
-FAIL Calling StylePropertyMap.getAll with a custom property not in the property model returns an empty list undefined is not an object (evaluating 'styleMap.getAll')
-FAIL Calling StylePropertyMap.getAll with a valid property returns a single element list with the correct entry undefined is not an object (evaluating 'styleMap.getAll')
-FAIL StylePropertyMap.getAll is case-insensitive undefined is not an object (evaluating 'styleMap.getAll')
-FAIL Calling StylePropertyMap.getAll with a valid custom property returns a single element list with the correct entry undefined is not an object (evaluating 'styleMap.getAll')
-FAIL Calling StylePropertyMap.getAll with a list-valued property returns all the values undefined is not an object (evaluating 'styleMap.getAll')
+PASS Calling StylePropertyMap.getAll with a property not in the property model returns an empty list
+PASS Calling StylePropertyMap.getAll with a custom property not in the property model returns an empty list
+PASS Calling StylePropertyMap.getAll with a valid property returns a single element list with the correct entry
+PASS StylePropertyMap.getAll is case-insensitive
+FAIL Calling StylePropertyMap.getAll with a valid custom property returns a single element list with the correct entry assert_equals: expected " auto" but got "auto"
+PASS Calling StylePropertyMap.getAll with a list-valued property returns all the values
 

@@ -989,7 +989,7 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
 void RemoteLayerTreeTransaction::dump() const
 {
-    fprintf(stderr, "%s", description().utf8().data());
+    WTFLogAlways("%s", description().utf8().data());
 }
 
 String RemoteLayerTreeTransaction::description() const

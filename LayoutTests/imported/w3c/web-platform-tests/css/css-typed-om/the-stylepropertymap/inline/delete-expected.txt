@@ -1,7 +1,7 @@
 
-FAIL Deleting a property not in the inline style is a no-op styleMap.delete is not a function. (In 'styleMap.delete('width')', 'styleMap.delete' is undefined)
-FAIL Deleting a property in the inline style removes it from the inline style styleMap.delete is not a function. (In 'styleMap.delete('width')', 'styleMap.delete' is undefined)
-FAIL Deleting a custom property in the inline style removes it from the inline style styleMap.delete is not a function. (In 'styleMap.delete('--Foo')', 'styleMap.delete' is undefined)
-FAIL Deleting a list-valued property in the inline style removes it from the inline style styleMap.delete is not a function. (In 'styleMap.delete('transition-duration')', 'styleMap.delete' is undefined)
-FAIL Inline StylePropertyMap.delete is not case-sensitive styleMap.delete is not a function. (In 'styleMap.delete('wIdTh')', 'styleMap.delete' is undefined)
+PASS Deleting a property not in the inline style is a no-op
+PASS Deleting a property in the inline style removes it from the inline style
+PASS Deleting a custom property in the inline style removes it from the inline style
+PASS Deleting a list-valued property in the inline style removes it from the inline style
+PASS Inline StylePropertyMap.delete is not case-sensitive
 

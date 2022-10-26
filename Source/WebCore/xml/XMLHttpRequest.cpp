@@ -804,7 +804,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     // FIXME: The allowSettingAnyXHRHeaderFromFileURLs setting currently only applies to Documents, not workers.
     if (securityOrigin()->canLoadLocalResources() && scriptExecutionContext()->isDocument() && document()->settings().allowSettingAnyXHRHeaderFromFileURLs())
         allowUnsafeHeaderField = true;
-    if (!allowUnsafeHeaderField && isForbiddenHeaderName(name)) {
+    if (!allowUnsafeHeaderField && isForbiddenHeader(name, normalizedValue)) {
         logConsoleError(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return { };
     }

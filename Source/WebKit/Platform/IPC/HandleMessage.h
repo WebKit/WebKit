@@ -338,12 +338,11 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
 template<typename T, typename C, typename MF>
 void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    auto listenerID = decoder.decode<uint64_t>();
-    if (UNLIKELY(!listenerID))
-        return;
-
     auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
+        return;
+    auto replyID = decoder.decode<uint64_t>();
+    if (UNLIKELY(!replyID))
         return;
 
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<std::tuple_size_v<typename T::Arguments>>;
@@ -351,8 +350,8 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
 
     logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(WTFMove(*arguments),
-        CompletionHandlerFromMF { [listenerID = *listenerID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
+        CompletionHandlerFromMF { [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
+            auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), replyID);
             logReply(connection, T::name(), args...);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(encoder));
@@ -363,12 +362,11 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
 template<typename T, typename C, typename MF>
 void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    auto listenerID = decoder.decode<uint64_t>();
-    if (UNLIKELY(!listenerID))
-        return;
-
     auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
+        return;
+    auto replyID = decoder.decode<uint64_t>();
+    if (UNLIKELY(!replyID))
         return;
 
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<1 + std::tuple_size_v<typename T::Arguments>>;
@@ -376,8 +374,8 @@ void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder,
 
     logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(connection, WTFMove(*arguments),
-        CompletionHandlerFromMF { [listenerID = *listenerID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
+        CompletionHandlerFromMF { [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
+            auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), replyID);
             logReply(connection, T::name(), args...);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(encoder));

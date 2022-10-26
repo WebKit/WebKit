@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,16 +46,16 @@ public:
     String filenameExtension() const final { return "avif"_s; }
     size_t frameCount() const final { return m_frameCount; };
     RepetitionCount repetitionCount() const final;
-    ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final;
+    ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final WTF_REQUIRES_LOCK(m_lock);
     bool setFailed() final;
 
 private:
     AVIFImageDecoder(AlphaOption, GammaAndColorProfileOption);
 
     void tryDecodeSize(bool allDataReceived) final;
-    void decode(size_t frameIndex, bool allDataReceived);
-    bool isComplete();
-    size_t findFirstRequiredFrameToDecode(size_t frameIndex);
+    void decode(size_t frameIndex, bool allDataReceived) WTF_REQUIRES_LOCK(m_lock);
+    bool isComplete() WTF_REQUIRES_LOCK(m_lock);
+    size_t findFirstRequiredFrameToDecode(size_t frameIndex) WTF_REQUIRES_LOCK(m_lock);
 
     std::unique_ptr<AVIFImageReader> m_reader { nullptr };
 

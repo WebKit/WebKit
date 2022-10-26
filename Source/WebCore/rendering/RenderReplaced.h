@@ -40,8 +40,14 @@ public:
 
     LayoutSize intrinsicSize() const final
     {
-        if (shouldApplySizeContainment())
-            return LayoutSize();
+        if (shouldApplySizeContainment()) {
+            LayoutSize size;
+            if (auto width = explicitIntrinsicInnerWidth())
+                size.setWidth(width.value());
+            if (auto height = explicitIntrinsicInnerHeight())
+                size.setHeight(height.value());
+            return size;
+        }
         return m_intrinsicSize;
     }
     

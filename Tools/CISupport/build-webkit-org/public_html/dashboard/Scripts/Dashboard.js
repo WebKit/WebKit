@@ -25,8 +25,9 @@
 
 Dashboard = {
     Platform: {
-        macOSMonterey: { name: "macos-monterey", readableName: "macOS Monterey", order: 1 },
-        macOSBigSur: { name: "macos-bigsur", readableName: "macOS Big Sur", order: 2 },
+        macOSVentura: { name: "macos-ventura", readableName: "macOS Ventura", order: 1 },
+        macOSMonterey: { name: "macos-monterey", readableName: "macOS Monterey", order: 2 },
+        macOSBigSur: { name: "macos-bigsur", readableName: "macOS Big Sur", order: 3 },
         iOS16Simulator: { name: "ios-simulator-16", readableName: "iOS 16 Simulator", order: 13 },
         iOS16Device: { name: "ios-16", readableName: "iOS 16", order: 14 },
         iOS15Simulator: { name: "ios-simulator-15", readableName: "iOS 15 Simulator", order: 15 },
@@ -34,7 +35,7 @@ Dashboard = {
         iOS14Simulator: { name: "ios-simulator-14", readableName: "iOS 14 Simulator", order: 17 },
         iOS14Device: { name: "ios-14", readableName: "iOS 14", order: 18 },
         tvOS16Simulator: { name: "tvos-simulator-16", readableName: "TvOS Simulator 16", order: 24 },
-        tvOS165Device: { name: "tvos-16", readableName: "TvOS 16", order: 25 },
+        tvOS16Device: { name: "tvos-16", readableName: "TvOS 16", order: 25 },
         tvOS15Simulator: { name: "tvos-simulator-15", readableName: "TvOS Simulator 15", order: 24 },
         tvOS15Device: { name: "tvos-15", readableName: "TvOS 15", order: 25 },
         tvOS14Simulator: { name: "tvos-simulator-14", readableName: "TvOS Simulator 14", order: 26 },

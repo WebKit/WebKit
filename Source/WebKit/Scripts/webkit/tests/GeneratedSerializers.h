@@ -31,6 +31,7 @@
 #if ENABLE(BOOL_ENUM)
 namespace EnumNamespace { enum class BoolEnumType : bool; }
 #endif
+enum class EnumWithoutNamespace : uint8_t;
 #if ENABLE(UINT16_ENUM)
 namespace EnumNamespace { enum class EnumType : uint16_t; }
 #endif
@@ -112,6 +113,7 @@ template<> struct ArgumentCoder<WTF::CreateUsingClass> {
 
 namespace WTF {
 
+template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t);
 #if ENABLE(UINT16_ENUM)
 template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
 #endif

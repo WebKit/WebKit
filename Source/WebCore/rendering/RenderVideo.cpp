@@ -115,7 +115,7 @@ bool RenderVideo::updateIntrinsicSize()
 LayoutSize RenderVideo::calculateIntrinsicSize()
 {
     if (shouldApplySizeContainment())
-        return LayoutSize();
+        return intrinsicSize();
 
     // Spec text from 4.8.6
     //

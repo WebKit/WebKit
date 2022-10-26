@@ -32,9 +32,9 @@
 ] interface StylePropertyMapReadOnly {
     iterable<USVString, sequence<CSSStyleValue>>;
     // FIXME: should be (undefined or CSSStyleValue), not null
-    CSSStyleValue? get([AtomString] USVString property);
-    sequence<CSSStyleValue> getAll([AtomString] USVString property);
-    boolean has([AtomString] USVString property);
+    [CallWith=CurrentScriptExecutionContext] CSSStyleValue? get([AtomString] USVString property);
+    [CallWith=CurrentScriptExecutionContext] sequence<CSSStyleValue> getAll([AtomString] USVString property);
+    [CallWith=CurrentScriptExecutionContext] boolean has([AtomString] USVString property);
 
     readonly attribute unsigned long size;
 };

@@ -91,6 +91,9 @@ ExceptionOr<void> CSSStyleValueFactory::extractShorthandCSSValues(Vector<Ref<CSS
 
 ExceptionOr<void> CSSStyleValueFactory::extractCustomCSSValues(Vector<Ref<CSSValue>>& cssValues, const AtomString& customPropertyName, const String& cssText)
 {
+    if (cssText.isEmpty())
+        return Exception { TypeError, "Value cannot be parsed"_s };
+
     auto styleDeclaration = MutableStyleProperties::create();
     
     constexpr bool important = true;

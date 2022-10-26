@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11191" systemVersion="16B2314" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="NO" initialViewController="Ohh-6U-lsQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21208.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ohh-6U-lsQ">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment version="2304" identifier="iOS"/>
-        <development version="7000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11156"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21191"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Web View-->
@@ -15,7 +17,7 @@
                         <viewControllerLayoutGuide type="bottom" id="mUo-dB-Gut"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="1WJ-am-PnB">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SYm-x3-D12">
@@ -47,6 +49,11 @@
                                             <action selector="showTabs:" destination="Ohh-6U-lsQ" id="ZZT-Jw-TR7"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem image="gear" catalog="system" style="plain" id="yi7-p4-xpL" userLabel="Settings Button">
+                                        <connections>
+                                            <action selector="showSettings:" destination="Ohh-6U-lsQ" id="SPY-9P-WOw"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <view clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wkd-K8-BC1" userLabel="URL Field Container">
@@ -59,7 +66,6 @@
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="n4f-v4-gO4">
                                         <rect key="frame" x="8" y="7" width="305" height="30"/>
                                         <accessibility key="accessibilityConfiguration" identifier="idURLField" label="URL Field"/>
-                                        <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="go" enablesReturnKeyAutomatically="YES"/>
                                         <connections>
@@ -67,7 +73,7 @@
                                             <action selector="urlFieldEditingBegan:" destination="Ohh-6U-lsQ" eventType="editingDidBegin" id="VDr-b6-Z9E"/>
                                         </connections>
                                     </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qSw-Ym-IBE">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qSw-Ym-IBE">
                                         <rect key="frame" x="321" y="8" width="46" height="30"/>
                                         <accessibility key="accessibilityConfiguration" identifier="idGoToURL" label="Go To URL"/>
                                         <constraints>
@@ -100,11 +106,11 @@
                             </view>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="719-Zt-fvZ" userLabel="Web View Container">
                                 <rect key="frame" x="0.0" y="108" width="375" height="559"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <accessibility key="accessibilityConfiguration" label="Web View Container"/>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="0.99997437000274658" blue="0.99999129772186279" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="1" green="0.99997437000274658" blue="0.99999129772186279" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Wkd-K8-BC1" firstAttribute="leading" secondItem="1WJ-am-PnB" secondAttribute="leading" id="2cZ-lB-Wel"/>
                             <constraint firstItem="Wkd-K8-BC1" firstAttribute="trailing" secondItem="1WJ-am-PnB" secondAttribute="trailing" id="9PH-Z4-jms"/>
@@ -130,22 +136,22 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BYM-VV-HDr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="748" y="-336.88155922038982"/>
+            <point key="canvasLocation" x="458" y="174"/>
         </scene>
         <!--Tab View Controller-->
         <scene sceneID="aHE-jJ-oKr">
             <objects>
                 <tableViewController storyboardIdentifier="idTabViewController" id="KyF-2k-9Cc" customClass="TabViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Pid-8n-Ixq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="787"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="idTabViewCustomCell" selectionStyle="default" indentationWidth="10" id="Bxf-dM-uYf">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="50" width="390" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Bxf-dM-uYf" id="lpb-yc-EJ5">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -160,5 +166,40 @@
             </objects>
             <point key="canvasLocation" x="1480.8" y="-337.78110944527737"/>
         </scene>
+        <!--Settings View Controller-->
+        <scene sceneID="ewG-hX-URL">
+            <objects>
+                <viewController storyboardIdentifier="idSettingsViewController" id="aJ5-0L-JDf" customClass="SettingsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="OVt-56-WEs"/>
+                        <viewControllerLayoutGuide type="bottom" id="ZOV-sZ-cuB"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="EDp-dN-mqp">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rVm-uk-liS" userLabel="Default URL Button">
+                                <rect key="frame" x="62" y="154" width="267" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Set Current URL As Default URL"/>
+                                <connections>
+                                    <action selector="setDefaultURLToCurrentURL:" destination="aJ5-0L-JDf" eventType="touchUpInside" id="6ge-wG-0Vi"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jS8-Pw-4A3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1451" y="293"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="gear" catalog="system" width="128" height="122"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

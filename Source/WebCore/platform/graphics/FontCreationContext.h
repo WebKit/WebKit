@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontFeatureValues.h"
 #include "FontPaletteValues.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
@@ -34,9 +35,9 @@ namespace WebCore {
 
 class FontCreationContextRareData : public RefCounted<FontCreationContextRareData> {
 public:
-    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues)
+    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
     {
-        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues));
+        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues, fontFeatureValues));
     }
 
     const FontFeatureSettings& fontFaceFeatures() const
@@ -49,10 +50,16 @@ public:
         return m_fontPaletteValues;
     }
 
+    RefPtr<FontFeatureValues> fontFeatureValues() const
+    {
+        return m_fontFeatureValues;
+    }
+
     bool operator==(const FontCreationContextRareData& other) const
     {
         return m_fontFaceFeatures == other.m_fontFaceFeatures
-            && m_fontPaletteValues == other.m_fontPaletteValues;
+            && m_fontPaletteValues == other.m_fontPaletteValues
+            && m_fontFeatureValues.get() == other.m_fontFeatureValues.get();
     }
 
     bool operator!=(const FontCreationContextRareData& other) const
@@ -61,26 +68,27 @@ public:
     }
 
 private:
-    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues)
+    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
         : m_fontFaceFeatures(fontFaceFeatures)
         , m_fontPaletteValues(fontPaletteValues)
+        , m_fontFeatureValues(fontFeatureValues)
     {
     }
 
     FontFeatureSettings m_fontFaceFeatures;
     FontPaletteValues m_fontPaletteValues;
-    // FIXME: Add support for font-feature-values.
+    RefPtr<FontFeatureValues> m_fontFeatureValues;
 };
 
 class FontCreationContext {
 public:
     FontCreationContext() = default;
 
-    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues)
+    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
         : m_fontFaceCapabilities(fontFaceCapabilities)
     {
-        if (!fontFaceFeatures.isEmpty() || fontPaletteValues)
-            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues);
+        if (!fontFaceFeatures.isEmpty() || fontPaletteValues || (fontFeatureValues && !fontFeatureValues->isEmpty()))
+            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues, fontFeatureValues);
     }
 
     const FontFeatureSettings* fontFaceFeatures() const
@@ -96,6 +104,11 @@ public:
     const FontPaletteValues* fontPaletteValues() const
     {
         return m_rareData ? &m_rareData->fontPaletteValues() : nullptr;
+    }
+
+    RefPtr<FontFeatureValues> fontFeatureValues() const
+    {
+        return m_rareData ? m_rareData->fontFeatureValues() : nullptr;
     }
 
     bool operator==(const FontCreationContext& other) const
@@ -121,6 +134,8 @@ inline void add(Hasher& hasher, const FontCreationContext& fontCreationContext)
     add(hasher, fontCreationContext.fontFaceCapabilities().tied());
     if (fontCreationContext.fontPaletteValues())
         add(hasher, *fontCreationContext.fontPaletteValues());
+    if (fontCreationContext.fontFeatureValues())
+        add(hasher, *fontCreationContext.fontFeatureValues());
 }
 
 }

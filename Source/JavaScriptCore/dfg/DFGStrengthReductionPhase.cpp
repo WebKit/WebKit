@@ -487,14 +487,17 @@ private:
         case RegExpExecNonGlobalOrSticky: {
             JSGlobalObject* globalObject = m_node->child1()->dynamicCastConstant<JSGlobalObject*>();
             if (!globalObject) {
-                if (verbose)
-                    dataLog("Giving up because no global object.\n");
+                dataLogLnIf(verbose, "Giving up because no global object.");
                 break;
             }
 
             if (globalObject->isHavingABadTime()) {
-                if (verbose)
-                    dataLog("Giving up because bad time.\n");
+                dataLogLnIf(verbose, "Giving up because bad time.");
+                break;
+            }
+
+            if (m_graph.m_plan.isUnlinked() && globalObject != m_graph.globalObjectFor(m_node->origin.semantic)) {
+                dataLogLnIf(verbose, "Giving up because unlinked DFG requires globalObject is the same to the node's origin.");
                 break;
             }
 
@@ -510,7 +513,7 @@ private:
                             dataLog("Giving up because RegExp recompile happens.\n");
                         break;
                     }
-                    m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpoint());
+                    m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                     regExp = regExpObject->regExp();
                     regExpObjectNodeIsConstant = true;
                 } else if (regExpObjectNode->op() == NewRegexp) {
@@ -520,7 +523,7 @@ private:
                             dataLog("Giving up because RegExp recompile happens.\n");
                         break;
                     }
-                    m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpoint());
+                    m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                     regExp = regExpObjectNode->castOperand<RegExp*>();
                 } else {
                     if (verbose)
@@ -640,7 +643,7 @@ private:
                     }
                 }
 
-                m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpointSet());
 
                 Structure* structure = globalObject->regExpMatchesArrayStructure();
                 if (structure->indexingType() != ArrayWithContiguous) {
@@ -901,21 +904,27 @@ private:
             RegExp* regExp;
             if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
                 JSGlobalObject* globalObject = regExpObject->globalObject();
-                if (globalObject->isRegExpRecompiled()) {
-                    if (verbose)
-                        dataLog("Giving up because RegExp recompile happens.\n");
+                if (m_graph.m_plan.isUnlinked() && globalObject != m_graph.globalObjectFor(m_node->origin.semantic)) {
+                    dataLogLnIf(verbose, "Giving up because unlinked DFG requires globalObject is the same to the node's origin.");
                     break;
                 }
-                m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpoint());
+                if (globalObject->isRegExpRecompiled()) {
+                    dataLogLnIf(verbose, "Giving up because RegExp recompile happens.");
+                    break;
+                }
+                m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                 regExp = regExpObject->regExp();
             } else if (regExpObjectNode->op() == NewRegexp) {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(regExpObjectNode->origin.semantic);
-                if (globalObject->isRegExpRecompiled()) {
-                    if (verbose)
-                        dataLog("Giving up because RegExp recompile happens.\n");
+                if (m_graph.m_plan.isUnlinked() && globalObject != m_graph.globalObjectFor(m_node->origin.semantic)) {
+                    dataLogLnIf(verbose, "Giving up because unlinked DFG requires globalObject is the same to the node's origin.");
                     break;
                 }
-                m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpoint());
+                if (globalObject->isRegExpRecompiled()) {
+                    dataLogLnIf(verbose, "Giving up because RegExp recompile happens.");
+                    break;
+                }
+                m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                 regExp = regExpObjectNode->castOperand<RegExp*>();
             } else {
                 if (verbose)
