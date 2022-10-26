@@ -248,6 +248,17 @@ void CoordinatedGraphicsLayer::removeFromParent()
     GraphicsLayer::removeFromParent();
 }
 
+void CoordinatedGraphicsLayer::setEventRegion(EventRegion&& eventRegion)
+{
+    if (eventRegion == m_eventRegion)
+        return;
+
+    GraphicsLayer::setEventRegion(WTFMove(eventRegion));
+    m_nicosia.delta.eventRegionChanged = true;
+
+    notifyFlushRequired();
+}
+
 void CoordinatedGraphicsLayer::setScrollingNodeID(ScrollingNodeID nodeID)
 {
     if (scrollingNodeID() == nodeID)
@@ -1043,6 +1054,8 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.animatedBackingStoreClient = m_nicosia.animatedBackingStoreClient;
                 if (localDelta.scrollingNodeChanged)
                     state.scrollingNodeID = scrollingNodeID();
+                if (localDelta.eventRegionChanged)
+                    state.eventRegion = eventRegion();
             });
         m_nicosia.performLayerSync = !!m_nicosia.delta.value;
         m_nicosia.delta = { };

@@ -83,8 +83,7 @@ static bool collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& lay
     bool existsOnDescendent = false;
 
     parent->accessPending([&](const CompositionLayer::LayerState& state) {
-        if (FloatRect(FloatPoint(), state.size).contains(point))
-            existsOnLayer = !!state.scrollingNodeID;
+        existsOnLayer = !!state.scrollingNodeID && FloatRect({ }, state.size).contains(point) && state.eventRegion.contains(roundedIntPoint(point));
 
         for (auto child : state.children) {
             FloatPoint transformedPoint(point);
