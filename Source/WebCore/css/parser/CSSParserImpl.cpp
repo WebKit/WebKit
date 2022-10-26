@@ -59,6 +59,7 @@
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include "css/StyleRule.h"
 
 #include <bitset>
 #include <memory>
@@ -604,12 +605,12 @@ RefPtr<StyleRuleFontFace> CSSParserImpl::consumeFontFaceRule(CSSParserTokenRange
     return StyleRuleFontFace::create(createStyleProperties(m_parsedProperties, m_context.mode));
 }
 
-static std::pair<FontFeatureValuesType, unsigned> fontFeatureValuesTypeMappings(CSSAtRuleID id)
+// The associated number represents the maximum number of allowed values for this font-feature-values type.
+// No value means unlimited (for styleset).
+static std::pair<FontFeatureValuesType, std::optional<unsigned>> fontFeatureValuesTypeMappings(CSSAtRuleID id)
 {
     switch (id) {
-    // Note that values higher than 99 are valid for styleset, but don't map to any OpenType values and are ignored.
-    // cf https://developer.mozilla.org/en-US/docs/Web/CSS/@font-feature-values
-    case CSSAtRuleStyleset: return { FontFeatureValuesType::Styleset, 99 }; 
+    case CSSAtRuleStyleset: return { FontFeatureValuesType::Styleset, { } }; 
     case CSSAtRuleStylistic: return { FontFeatureValuesType::Stylistic, 1 };
     case CSSAtRuleCharacterVariant: return { FontFeatureValuesType::CharacterVariant, 2 };
     case CSSAtRuleSwash: return { FontFeatureValuesType::Swash, 1 };
@@ -642,8 +643,8 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
     }
 
     auto [type, maxValues] = fontFeatureValuesTypeMappings(id);
-
-    auto consumeTag = [](CSSParserTokenRange range, unsigned maxValues) -> std::optional<Tag> {
+    
+    auto consumeTag = [](CSSParserTokenRange range, std::optional<unsigned> maxValues) -> std::optional<FontFeatureValuesTag> {
         if (range.peek().type() != IdentToken)
             return { };
         auto name = range.consumeIncludingWhitespace().value();
@@ -651,24 +652,25 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
             return { };
         range.consumeWhitespace();
 
-        Vector<int> values;
+        Vector<unsigned> values;
         while (!range.atEnd()) {
             auto value = CSSPropertyParserHelpers::consumeIntegerZeroAndGreater(range);
             if (!value)
                 return { };
             ASSERT(value->isInteger());
             auto tagInteger = value->intValue();
-            values.append(tagInteger);
-            if (values.size() > maxValues)
+            ASSERT(tagInteger >= 0);
+            values.append(std::make_unsigned_t<int>(tagInteger));
+            if (maxValues && values.size() > *maxValues)
                 return { };
         }
         if (values.isEmpty())
             return { };
         
-        return { Tag { name.toString(), values } };
+        return { FontFeatureValuesTag { name.toString(), values } };
     };
 
-    Vector<Tag> tags;
+    Vector<FontFeatureValuesTag> tags;
     while (!range.atEnd()) {
         switch (range.peek().type()) {
         case WhitespaceToken:
@@ -718,42 +720,19 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
-    // Convert block rules to value (remove duplicates...etc)
-    FontFeatureValuesValue fontFeatureValuesValue;
-    auto upsertTag = [&fontFeatureValuesValue](FontFeatureValuesType type, Tag tag) {
-        switch (type) {
-        case FontFeatureValuesType::Styleset:
-            fontFeatureValuesValue.styleset.set(tag.first, tag.second);
-            break;
-        case FontFeatureValuesType::Stylistic:
-            fontFeatureValuesValue.stylistic.set(tag.first, tag.second);
-            break;
-        case FontFeatureValuesType::CharacterVariant:
-            fontFeatureValuesValue.characterVariant.set(tag.first, tag.second);
-            break;
-        case FontFeatureValuesType::Swash:
-            fontFeatureValuesValue.swash.set(tag.first, tag.second);
-            break;
-        case FontFeatureValuesType::Ornaments:
-            fontFeatureValuesValue.ornaments.set(tag.first, tag.second);
-            break;
-        case FontFeatureValuesType::Annotation:
-            fontFeatureValuesValue.annotation.set(tag.first, tag.second);
-            break;
-        }
-    };
-    
+    // Convert block rules to value (remove duplicate...etc)
+    auto fontFeatureValues = FontFeatureValues::create();
+
     for (auto block : rules) {
         if (!block)
             continue;
         if (!block->isFontFeatureValuesBlockRule())
             continue;
-        auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(*block);
-        for (auto tag : fontFeatureValuesBlockRule.tags())
-            upsertTag(fontFeatureValuesBlockRule.fontFeatureValuesType(), tag);
+        const auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(*block);
+        fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule.fontFeatureValuesType(), fontFeatureValuesBlockRule.tags());
     }
 
-    return StyleRuleFontFeatureValues::create(fontFamilies, fontFeatureValuesValue);
+    return StyleRuleFontFeatureValues::create(fontFamilies, WTFMove(fontFeatureValues));
 }
 
 RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

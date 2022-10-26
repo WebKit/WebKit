@@ -137,7 +137,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             popCascadeLayer(layerRule.name());
             continue;
         }
-        if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
+        if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleFontFeatureValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
             disallowDynamicMediaQueryEvaluationIfNeeded();
 
             if (m_resolver)
@@ -332,6 +332,11 @@ void RuleSetBuilder::addMutatingRulesToResolver()
         }
         if (is<StyleRuleFontPaletteValues>(rule)) {
             m_resolver->document().fontSelector().addFontPaletteValuesRule(downcast<StyleRuleFontPaletteValues>(rule.get()));
+            m_resolver->invalidateMatchedDeclarationsCache();
+            continue;
+        }
+        if (is<StyleRuleFontFeatureValues>(rule)) {
+            m_resolver->document().fontSelector().addFontFeatureValuesRule(downcast<StyleRuleFontFeatureValues>(rule.get()));
             m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }

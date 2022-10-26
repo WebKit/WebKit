@@ -51,9 +51,9 @@ String CSSFontFeatureValuesRule::cssText() const
     };
     joinFontFamiliesWithSeparator(m_fontFeatureValuesRule->fontFamilies(), ", "_s);
     builder.append(" { ");
-    auto& value = m_fontFeatureValuesRule->value();
+    const auto& value = m_fontFeatureValuesRule->value();
     
-    auto addVariant = [&builder] (String variantName, Tags tags) {
+    auto addVariant = [&builder] (const String& variantName, const auto& tags) {
         if (!tags.isEmpty()) {
             builder.append("@", variantName, " { ");
             for (auto tag : tags) {
@@ -69,12 +69,12 @@ String CSSFontFeatureValuesRule::cssText() const
     
     // WPT expects the order used in Servo.
     // https://searchfox.org/mozilla-central/source/servo/components/style/stylesheets/font_feature_values_rule.rs#430
-    addVariant("swash"_s, value.swash);
-    addVariant("stylistic"_s, value.stylistic);
-    addVariant("ornaments"_s, value.ornaments);
-    addVariant("annotation"_s, value.annotation);
-    addVariant("character-variant"_s, value.characterVariant);
-    addVariant("styleset"_s, value.styleset);
+    addVariant("swash"_s, value->swash());
+    addVariant("stylistic"_s, value->stylistic());
+    addVariant("ornaments"_s, value->ornaments());
+    addVariant("annotation"_s, value->annotation());
+    addVariant("character-variant"_s, value->characterVariant());
+    addVariant("styleset"_s, value->styleset());
     
     builder.append('}');
     return builder.toString();

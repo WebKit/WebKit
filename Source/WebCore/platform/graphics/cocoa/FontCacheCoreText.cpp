@@ -478,7 +478,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
 
     // Step 7: Consult with font-feature-settings inside @font-face
-    if (fontCreationContext.fontFaceFeatures() && !fontCreationContext.fontFaceFeatures()->isEmpty()) {
+    if (fontCreationContext.fontFaceFeatures()) {
         for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures())
             applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
     }
@@ -486,7 +486,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // FIXME: Move font-optical-sizing handling here. It should be step 9.
 
     // Step 10: Font-variant
-    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
+    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings, fontCreationContext.fontFeatureValues()))
         applyFeature(newFeature.key, newFeature.value);
 
     // Step 11: Other properties
