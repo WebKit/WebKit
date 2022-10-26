@@ -32,22 +32,51 @@ from datetime import datetime
 from webkitcorepy import arguments, run, string_utils
 from webkitscmpy import Commit, local
 
-
-def fuzzy_filter(string, ratio=None):
-    return re.compile(string)
-
+fuzz = None
 
 if sys.version_info > (3, 6):
     try:
         from rapidfuzz import fuzz
-
-        def fuzzy_filter(string, ratio=90):
-            return lambda content: fuzz.partial_ratio(string, content) >= ratio
     except ModuleNotFoundError:
         pass
 
 
 class Pickable(Command):
+    class Filters(object):
+        DEFAULT_FUZZ_RATIO = 90
+
+        @classmethod
+        def fuzzy(cls, string, ratio=None):
+            if not fuzz:
+                return re.compile(string)
+
+            ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio
+            return lambda commit, repository=None: fuzz.partial_ratio(string, commit.message.splitlines()[0]) >= ratio
+
+        @classmethod
+        def gardening(cls, string, ratio=None):
+            def result(commit, repository=None, string=string, ratio=ratio):
+                base = cls.fuzzy(string, ratio=ratio)
+                if not base(commit, repository=repository) if fuzz else base.search(commit.message.splitlines()[0]):
+                    return False
+                if not repository:
+                    return True
+
+                test_paths = [
+                    value for key, value in repository.config().items()
+                    if key.startswith('webkitscmpy.tests')
+                ]
+                if not test_paths:
+                    return False
+                for file in repository.files_changed(commit.hash):
+                    if any([file.startswith(path) for path in test_paths]):
+                        continue
+                    return False
+                return True
+
+            return result
+
+
     name = 'pickable'
     help = 'List commits in a range which can be cherry-picked'
 
@@ -64,10 +93,14 @@ class Pickable(Command):
             re.compile(r'^Revert "?[Vv]ersioning\.?"?$'),
         ],
         'Gardening': [
-            fuzzy_filter(r'GARDENING', ratio=85),
-            fuzzy_filter(r'gardening', ratio=85),
-            fuzzy_filter(r'REBASELINE'),
-            fuzzy_filter(r'rebaseline'),
+            Filters.gardening(r'GARDENING', ratio=85),
+            Filters.gardening(r'gardening', ratio=85),
+            Filters.gardening(r'REBASELINE'),
+            Filters.gardening(r'rebaseline'),
+            Filters.gardening(r'is a constant failure'),
+            Filters.gardening(r'is an almost constant failure'),
+            Filters.gardening('are constant failures'),
+            Filters.gardening('tests consistently failing'),
         ],
         'Build-Fix': [
             re.compile(r'^Apply build[ -]fix'),
@@ -147,9 +180,8 @@ class Pickable(Command):
 
         for commit in commits:
             commits_story.add(commit)
-            title = commit.message.splitlines()[0]
             all_commits[str(commit)] = commit
-            if any([ex(title) if callable(ex) else ex.search(title) for ex in excluded]):
+            if any([ex(commit, repository=repository) if callable(ex) else ex.search(commit.message.splitlines()[0]) for ex in excluded]):
                 continue
             filtered_in.add(str(commit))
 
