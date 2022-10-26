@@ -96,6 +96,8 @@ inline constexpr uint64_t mask(Width width)
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 constexpr Width pointerWidth()
