@@ -18,8 +18,8 @@ from util import text_content
 
 # There are some buggy commit messages:
 # Canonical link: https://commits.webkit.org/https://commits.webkit.org/232477@main
-REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@[\w\.\-]+)\n')
-REVISION_IN_MSG_RE = re.compile(r'git-svn-id: https://svn\.webkit\.org/repository/webkit/[\w\W]+@(?P<revision>\d+) [\w\d\-]+\n')
+REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@[\w\.\-]+)\n', flags=re.MULTILINE)
+REVISION_IN_MSG_RE = re.compile(r'^git-svn-id: https://svn\.webkit\.org/repository/webkit/[\w\W]+@(?P<revision>\d+) [\w\d\-]+\n', flags=re.MULTILINE)
 HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
 REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
 
