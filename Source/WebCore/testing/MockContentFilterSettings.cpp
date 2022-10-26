@@ -38,6 +38,7 @@ namespace WebCore {
 
 MockContentFilterSettings& MockContentFilterSettings::singleton()
 {
+    MockContentFilter::ensureInstalled();
     static NeverDestroyed<MockContentFilterSettings> settings;
     return settings;
 }
@@ -50,7 +51,6 @@ void MockContentFilterSettings::reset()
 
 void MockContentFilterSettings::setEnabled(bool enabled)
 {
-    MockContentFilter::ensureInstalled();
     m_enabled = enabled;
     MockContentFilterManager::singleton().notifySettingsChanged(singleton());
 }

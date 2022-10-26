@@ -59,6 +59,12 @@ class WebCore::InheritanceGrandchild : WebCore::InheritsFrom {
 enum class EnumNamespace::BoolEnumType : bool
 #endif
 
+enum class EnumWithoutNamespace : uint8_t {
+    Value1,
+    Value2,
+    Value3
+}
+
 #if ENABLE(UINT16_ENUM)
 enum class EnumNamespace::EnumType : uint16_t {
     FirstValue,

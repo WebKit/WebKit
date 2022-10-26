@@ -1012,3 +1012,111 @@ struct WebCore::NavigationPreloadState {
     String headerValue;
 };
 #endif // ENABLE(SERVICE_WORKER)
+
+enum class WebCore::RenderingMode : bool
+
+enum class WebCore::RenderingPurpose : uint8_t {
+    Unspecified,
+    Canvas,
+    DOM,
+    LayerBacking,
+    Snapshot,
+    ShareableSnapshot,
+    MediaPainting
+};
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+[LegacyPopulateFrom=EmptyConstructor] class WebCore::MockContentFilterSettings {
+    bool m_enabled;
+    WebCore::MockContentFilterSettings::DecisionPoint m_decisionPoint;
+    WebCore::MockContentFilterSettings::Decision m_decision;
+    WebCore::MockContentFilterSettings::Decision m_unblockRequestDecision;
+    String m_blockedString;
+    String m_modifiedRequestURL;
+}
+[Nested] enum class WebCore::MockContentFilterSettings::DecisionPoint : uint8_t {
+    AfterWillSendRequest,
+    AfterRedirect,
+    AfterResponse,
+    AfterAddData,
+    AfterFinishedAddingData,
+    Never
+};
+[Nested] enum class WebCore::MockContentFilterSettings::Decision : bool
+#endif
+
+enum class WebCore::AutoplayEvent : uint8_t {
+    DidPreventMediaFromPlaying,
+    DidPlayMediaWithUserGesture,
+    DidAutoplayMediaPastThresholdWithoutUserInterference,
+    UserDidInterfereWithPlayback
+};
+
+enum class WebCore::InputMode : uint8_t {
+    Unspecified,
+    None,
+    Text,
+    Telephone,
+    Url,
+    Email,
+    Numeric,
+    Decimal,
+    Search
+};
+
+enum class WebCore::NotificationDirection : uint8_t {
+    Auto,
+    Ltr,
+    Rtl
+};
+
+enum class WebCore::IndexedDB::GetAllType : bool
+
+enum class WebCore::WorkerType : bool
+
+enum class WebCore::StoredCredentialsPolicy : uint8_t {
+    DoNotUse,
+    Use,
+    EphemeralStateless
+};
+
+enum class WTFLogChannelState : uint8_t {
+    Off,
+    On,
+    OnWithAccumulation
+};
+
+enum class WebCore::ScrollSnapStrictness : uint8_t {
+    None,
+    Proximity,
+    Mandatory
+};
+
+enum class WebCore::LengthType : uint8_t {
+    Auto,
+    Relative,
+    Percent,
+    Fixed,
+    Intrinsic,
+    MinIntrinsic,
+    MinContent,
+    MaxContent,
+    FillAvailable,
+    FitContent,
+    Calculated,
+    Undefined
+};
+
+enum class WebCore::OverscrollBehavior : uint8_t {
+    Auto,
+    Contain,
+    None
+};
+
+struct WebCore::ExceptionDetails {
+    String message;
+    int lineNumber;
+    int columnNumber;
+    WebCore::ExceptionDetails::Type type;
+    String sourceURL;
+};

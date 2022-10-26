@@ -1879,35 +1879,6 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
 }
 #endif
 
-void ArgumentCoder<ExceptionDetails>::encode(IPC::Encoder& encoder, const ExceptionDetails& info)
-{
-    encoder << info.message;
-    encoder << info.lineNumber;
-    encoder << info.columnNumber;
-    encoder << info.type;
-    encoder << info.sourceURL;
-}
-
-bool ArgumentCoder<ExceptionDetails>::decode(IPC::Decoder& decoder, ExceptionDetails& result)
-{
-    if (!decoder.decode(result.message))
-        return false;
-
-    if (!decoder.decode(result.lineNumber))
-        return false;
-
-    if (!decoder.decode(result.columnNumber))
-        return false;
-
-    if (!decoder.decode(result.type))
-        return false;
-
-    if (!decoder.decode(result.sourceURL))
-        return false;
-
-    return true;
-}
-
 #if ENABLE(MEDIA_STREAM)
 void ArgumentCoder<MediaConstraints>::encode(Encoder& encoder, const WebCore::MediaConstraints& constraint)
 {
@@ -1927,35 +1898,6 @@ bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaCon
         && decoder.decode(constraints.isValid);
 }
 #endif
-
-void ArgumentCoder<IDBKeyPath>::encode(Encoder& encoder, const IDBKeyPath& keyPath)
-{
-    bool isString = std::holds_alternative<String>(keyPath);
-    encoder << isString;
-    if (isString)
-        encoder << std::get<String>(keyPath);
-    else
-        encoder << std::get<Vector<String>>(keyPath);
-}
-
-bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
-{
-    bool isString;
-    if (!decoder.decode(isString))
-        return false;
-    if (isString) {
-        String string;
-        if (!decoder.decode(string))
-            return false;
-        keyPath = string;
-    } else {
-        Vector<String> vector;
-        if (!decoder.decode(vector))
-            return false;
-        keyPath = vector;
-    }
-    return true;
-}
 
 #if ENABLE(SERVICE_WORKER)
 void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)

@@ -473,6 +473,18 @@ std::optional<WTF::CreateUsingClass> ArgumentCoder<WTF::CreateUsingClass>::decod
 
 namespace WTF {
 
+template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t value)
+{
+    switch (static_cast<EnumWithoutNamespace>(value)) {
+    case EnumWithoutNamespace::Value1:
+    case EnumWithoutNamespace::Value2:
+    case EnumWithoutNamespace::Value3:
+        return true;
+    default:
+        return false;
+    }
+}
+
 #if ENABLE(UINT16_ENUM)
 template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t value)
 {

@@ -173,8 +173,6 @@ struct VelocityData;
 struct ViewportAttributes;
 struct WindowFeatures;
 
-using IDBKeyPath = std::variant<String, Vector<String>>;
-
 #if PLATFORM(COCOA)
 struct KeypressCommand;
 #endif
@@ -504,11 +502,6 @@ template<> struct ArgumentCoder<WebCore::RecentSearch> {
     static std::optional<WebCore::RecentSearch> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::ExceptionDetails> {
-    static void encode(Encoder&, const WebCore::ExceptionDetails&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ExceptionDetails&);
-};
-
 #if ENABLE(APPLE_PAY)
 
 template<> struct ArgumentCoder<WebCore::Payment> {
@@ -563,11 +556,6 @@ template<> struct ArgumentCoder<WebCore::MediaConstraints> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::MediaConstraints&);
 };
 #endif
-
-template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
-    static void encode(Encoder&, const WebCore::IDBKeyPath&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::IDBKeyPath&);
-};
 
 #if ENABLE(SERVICE_WORKER)
 
@@ -723,91 +711,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::RenderingMode> {
-    using values = EnumValues<
-        WebCore::RenderingMode,
-        WebCore::RenderingMode::Unaccelerated,
-        WebCore::RenderingMode::Accelerated
-    >;
-};
-
-template<> struct EnumTraits<WebCore::RenderingPurpose> {
-    using values = EnumValues<
-        WebCore::RenderingPurpose,
-        WebCore::RenderingPurpose::Unspecified,
-        WebCore::RenderingPurpose::Canvas,
-        WebCore::RenderingPurpose::DOM,
-        WebCore::RenderingPurpose::LayerBacking,
-        WebCore::RenderingPurpose::Snapshot,
-        WebCore::RenderingPurpose::ShareableSnapshot,
-        WebCore::RenderingPurpose::MediaPainting
-    >;
-};
-
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-template<> struct EnumTraits<WebCore::MockContentFilterSettings::DecisionPoint> {
-    using values = EnumValues<
-        WebCore::MockContentFilterSettings::DecisionPoint,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterWillSendRequest,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterRedirect,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterResponse,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterAddData,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterFinishedAddingData,
-        WebCore::MockContentFilterSettings::DecisionPoint::Never
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MockContentFilterSettings::Decision> {
-    using values = EnumValues<
-        WebCore::MockContentFilterSettings::Decision,
-        WebCore::MockContentFilterSettings::Decision::Allow,
-        WebCore::MockContentFilterSettings::Decision::Block
-    >;
-};
-#endif
-
-template<> struct EnumTraits<WebCore::AutoplayEvent> {
-    using values = EnumValues<
-        WebCore::AutoplayEvent,
-        WebCore::AutoplayEvent::DidPreventMediaFromPlaying,
-        WebCore::AutoplayEvent::DidPlayMediaWithUserGesture,
-        WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference,
-        WebCore::AutoplayEvent::UserDidInterfereWithPlayback
-    >;
-};
-
-template<> struct EnumTraits<WebCore::InputMode> {
-    using values = EnumValues<
-        WebCore::InputMode,
-        WebCore::InputMode::Unspecified,
-        WebCore::InputMode::None,
-        WebCore::InputMode::Text,
-        WebCore::InputMode::Telephone,
-        WebCore::InputMode::Url,
-        WebCore::InputMode::Email,
-        WebCore::InputMode::Numeric,
-        WebCore::InputMode::Decimal,
-        WebCore::InputMode::Search
-    >;
-};
-
-template<> struct EnumTraits<WebCore::NotificationDirection> {
-    using values = EnumValues<
-        WebCore::NotificationDirection,
-        WebCore::NotificationDirection::Auto,
-        WebCore::NotificationDirection::Ltr,
-        WebCore::NotificationDirection::Rtl
-    >;
-};
-
-template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
-    using values = EnumValues<
-        WebCore::IndexedDB::GetAllType,
-        WebCore::IndexedDB::GetAllType::Keys,
-        WebCore::IndexedDB::GetAllType::Values
-    >;
-};
-
 #if ENABLE(MEDIA_STREAM)
 template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
     using values = EnumValues<
@@ -817,23 +720,6 @@ template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
     >;
 };
 #endif
-
-template <> struct EnumTraits<WebCore::WorkerType> {
-    using values = EnumValues<
-        WebCore::WorkerType,
-        WebCore::WorkerType::Classic,
-        WebCore::WorkerType::Module
-    >;
-};
-
-template<> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
-    using values = EnumValues<
-        WebCore::StoredCredentialsPolicy,
-        WebCore::StoredCredentialsPolicy::DoNotUse,
-        WebCore::StoredCredentialsPolicy::Use,
-        WebCore::StoredCredentialsPolicy::EphemeralStateless
-    >;
-};
 
 #if USE(CURL)
 template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
@@ -845,15 +731,6 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
     >;
 };
 #endif
-
-template<> struct EnumTraits<WTFLogChannelState> {
-    using values = EnumValues<
-    WTFLogChannelState,
-    WTFLogChannelState::Off,
-    WTFLogChannelState::On,
-    WTFLogChannelState::OnWithAccumulation
-    >;
-};
 
 #undef Always
 template<> struct EnumTraits<WTFLogLevel> {
@@ -888,11 +765,9 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
     WebCore::CDMInstance::HDCPStatus::OutputDownscaled
     >;
 };
-
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-
 template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesting> {
     using values = EnumValues<
     WebCore::GraphicsContextGL::SimulatedEventForTesting,
@@ -902,41 +777,5 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
     >;
 };
 #endif
-
-template<> struct EnumTraits<WebCore::ScrollSnapStrictness> {
-    using values = EnumValues<
-        WebCore::ScrollSnapStrictness,
-        WebCore::ScrollSnapStrictness::None,
-        WebCore::ScrollSnapStrictness::Proximity,
-        WebCore::ScrollSnapStrictness::Mandatory
-    >;
-};
-
-template<> struct EnumTraits<WebCore::LengthType> {
-    using values = EnumValues<
-        WebCore::LengthType,
-        WebCore::LengthType::Auto,
-        WebCore::LengthType::Relative,
-        WebCore::LengthType::Percent,
-        WebCore::LengthType::Fixed,
-        WebCore::LengthType::Intrinsic,
-        WebCore::LengthType::MinIntrinsic,
-        WebCore::LengthType::MinContent,
-        WebCore::LengthType::MaxContent,
-        WebCore::LengthType::FillAvailable,
-        WebCore::LengthType::FitContent,
-        WebCore::LengthType::Calculated,
-        WebCore::LengthType::Undefined
-    >;
-};
-
-template<> struct EnumTraits<WebCore::OverscrollBehavior> {
-    using values = EnumValues<
-        WebCore::OverscrollBehavior,
-        WebCore::OverscrollBehavior::Auto,
-        WebCore::OverscrollBehavior::Contain,
-        WebCore::OverscrollBehavior::None
-    >;
-};
 
 } // namespace WTF

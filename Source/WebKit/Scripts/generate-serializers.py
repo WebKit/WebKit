@@ -78,6 +78,8 @@ class SerializedEnum(object):
         self.attributes = attributes
 
     def namespace_and_name(self):
+        if self.namespace is None:
+            return self.name
         return self.namespace + '::' + self.name
 
     def function_name(self):
@@ -195,7 +197,10 @@ def generate_header(serialized_types, serialized_enums):
             continue
         if enum.condition is not None:
             result.append('#if ' + enum.condition)
-        result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
+        if enum.namespace is None:
+            result.append('enum class ' + enum.name + ' : ' + enum.underlying_type + ';')
+        else:
+            result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
         if enum.condition is not None:
             result.append('#endif')
     for type in serialized_types:
@@ -606,10 +611,14 @@ def parse_serialized_types(file, file_name):
             attributes, namespace, name, underlying_type = match.groups()
             assert underlying_type != 'bool'
             continue
-
         match = re.search(r'(.*)enum class (.*)::(.*) : bool', line)
         if match:
             serialized_enums.append(SerializedEnum(match.groups()[1], match.groups()[2], 'bool', [], type_condition, match.groups()[0]))
+            continue
+        match = re.search(r'(.*)enum class (.*) : (.*) {', line)
+        if match:
+            attributes, name, underlying_type = match.groups()
+            assert underlying_type != 'bool'
             continue
 
         match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) : (.*) {', line)
