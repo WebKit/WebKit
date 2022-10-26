@@ -327,11 +327,15 @@ void ContainerNode::removeDetachedChildren()
     removeDetachedChildrenInContainer(*this);
 }
 
+static inline bool mayHaveDisplayContents(Element *element)
+{
+    return element && (element->hasDisplayContents() || element->displayContentsChanged());
+}
+
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     auto childAsElement = dynamicDowncast<Element>(child);
-    auto hasDisplayContents = childAsElement && childAsElement->hasDisplayContents();
-    if (!child.renderer() && !hasDisplayContents)
+    if (!child.renderer() && !mayHaveDisplayContents(childAsElement))
         return;
     if (childAsElement)
         RenderTreeUpdater::tearDownRenderers(*childAsElement);
