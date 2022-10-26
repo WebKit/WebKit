@@ -956,6 +956,7 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
+webkit.org/b/246858 http/tests/security/cookies/cookie-theft-with-javascript-doc.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
