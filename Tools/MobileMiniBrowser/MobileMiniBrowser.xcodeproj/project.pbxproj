@@ -23,8 +23,8 @@
 /* Begin PBXBuildFile section */
 		3F0B439B1D908D0C00D186B5 /* looping2s.html in Resources */ = {isa = PBXBuildFile; fileRef = 3F0B439A1D908D0C00D186B5 /* looping2s.html */; };
 		3F0B439D1D908DE700D186B5 /* test2s.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3F0B439C1D908DE700D186B5 /* test2s.mp4 */; };
-		457D0F7929088D4000AE5914 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 457D0F7829088D4000AE5914 /* SettingsViewController.m */; };
 		457D0F7A29088D9000AE5914 /* SettingsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 457D0F7729088C9500AE5914 /* SettingsViewController.h */; };
+		45BE567C2908C74600FD7A95 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 457D0F7829088D4000AE5914 /* SettingsViewController.m */; };
 		CD1DAF971D709E3600017CF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF961D709E3600017CF0 /* main.m */; };
 		CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */; };
 		CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */; };
@@ -202,12 +202,12 @@
 				CD498B471D7634C700681FA7 /* Info.plist */,
 				CD1DAF9E1D709E3600017CF0 /* Main.storyboard */,
 				CD498B481D7634C700681FA7 /* MobileMiniBrowser.h */,
+				457D0F7729088C9500AE5914 /* SettingsViewController.h */,
+				457D0F7829088D4000AE5914 /* SettingsViewController.m */,
 				CD1DAFBA1D709EF200017CF0 /* TabViewController.h */,
 				CD1DAFBB1D709EF200017CF0 /* TabViewController.m */,
 				CD1DAFBC1D709EF200017CF0 /* WebViewController.h */,
 				CD1DAFBD1D709EF200017CF0 /* WebViewController.m */,
-				457D0F7729088C9500AE5914 /* SettingsViewController.h */,
-				457D0F7829088D4000AE5914 /* SettingsViewController.m */,
 			);
 			name = "MobileMiniBrowser Framework";
 			path = MobileMiniBrowserFramework;
@@ -392,7 +392,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD1DAF971D709E3600017CF0 /* main.m in Sources */,
-				457D0F7929088D4000AE5914 /* SettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +408,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD498B4D1D763D7100681FA7 /* AppDelegate.m in Sources */,
+				45BE567C2908C74600FD7A95 /* SettingsViewController.m in Sources */,
 				CD498B4B1D763D7100681FA7 /* TabViewController.m in Sources */,
 				CD498B4C1D763D7100681FA7 /* WebViewController.m in Sources */,
 			);

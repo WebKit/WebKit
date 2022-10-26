@@ -29,8 +29,10 @@
 
 @interface SettingsViewController : UIViewController
 
+@property (strong, nonatomic) IBOutlet UIButton *defaultURLButton;
 @property (weak, nonatomic) WebViewController *parent;
 
+- (IBAction)setDefaultURLToCurrentURL:(id)sender;
 - (NSString *)defaultURL;
 
 @end
