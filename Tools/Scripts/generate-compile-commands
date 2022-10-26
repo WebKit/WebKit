@@ -44,7 +44,7 @@ parser = argparse.ArgumentParser(description='Generate compile_commands.json',
                   https://trac.webkit.org/wiki/Clangd
                   """)
 
-parser.add_argument('built_products_dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
+parser.add_argument('built_products_dir', metavar='built-products-dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
 parser.add_argument('--delete-invalid', action='store_true', help='Delete any invalid json file')
 opts = parser.parse_args()
 
