@@ -72,7 +72,8 @@ struct Condition {
 enum class EvaluationResult : uint8_t { False, True, Unknown };
 
 struct FeatureEvaluationContext {
-    CSSToLengthConversionData conversionData;
+    const Document& document;
+    CSSToLengthConversionData conversionData { };
     const RenderElement* renderer { nullptr };
 };
 
@@ -95,11 +96,11 @@ struct FeatureSchema {
 
     virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
 
-    FeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID> valueIdentifiers)
+    FeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID>&& valueIdentifiers = { })
         : name(name)
         , type(type)
         , valueTypes(valueTypes)
-        , valueIdentifiers(valueIdentifiers)
+        , valueIdentifiers(WTFMove(valueIdentifiers))
     { }
     virtual ~FeatureSchema() = default;
 };

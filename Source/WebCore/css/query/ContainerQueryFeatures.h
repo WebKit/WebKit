@@ -24,8 +24,7 @@
 
 #pragma once
 
-#include "ContainerQueryEvaluator.h"
-#include <wtf/Function.h>
+#include "GenericMediaQueryTypes.h"
 
 namespace WebCore::CQ {
 

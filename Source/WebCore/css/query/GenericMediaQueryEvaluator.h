@@ -37,7 +37,10 @@ namespace MQ {
 
 EvaluationResult evaluateLengthFeature(const Feature&, LayoutUnit, const CSSToLengthConversionData&);
 EvaluationResult evaluateRatioFeature(const Feature&, double);
-EvaluationResult evaluateDiscreteFeature(const Feature&, CSSValueID);
+EvaluationResult evaluateBooleanFeature(const Feature&, bool);
+EvaluationResult evaluateIntegerFeature(const Feature&, int);
+EvaluationResult evaluateNumberFeature(const Feature&, double);
+EvaluationResult evaluateIdentifierFeature(const Feature&, CSSValueID);
 
 template<typename ConcreteEvaluator>
 class GenericMediaQueryEvaluator {

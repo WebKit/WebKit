@@ -232,7 +232,7 @@ bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature,
 
     auto isValid = [&] {
         if (schema.type == FeatureSchema::Type::Discrete) {
-            if (feature.leftComparison && feature.leftComparison->op != ComparisonOperator::Equal)
+            if (feature.syntax == Syntax::Range)
                 return false;
             if (feature.rightComparison && feature.rightComparison->op != ComparisonOperator::Equal)
                 return false;
