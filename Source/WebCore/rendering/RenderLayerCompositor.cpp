@@ -1727,6 +1727,17 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
                 }
             }
 
+            // This ensures that the viewport anchor layer will be updated when updating compositing layers upon style change
+            auto styleChangeAffectsAnchorLayer = [](const RenderStyle* oldStyle, const RenderStyle& newStyle) {
+                if (!oldStyle)
+                    return false;
+
+                return oldStyle->hasViewportConstrainedPosition() != newStyle.hasViewportConstrainedPosition();
+            };
+
+            if (styleChangeAffectsAnchorLayer(oldStyle, newStyle))
+                layer.setNeedsCompositingConfigurationUpdate();
+
             // These properties trigger compositing if some descendant is composited.
             if (oldStyle && styleChangeMayAffectIndirectCompositingReasons(*oldStyle, newStyle))
                 layer.setNeedsPostLayoutCompositingUpdate();
