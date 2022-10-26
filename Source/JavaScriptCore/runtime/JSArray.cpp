@@ -731,8 +731,16 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
     VM& vm = globalObject->vm();
 
     Structure* sourceStructure = source->structure();
-    if (sourceStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
+    if (sourceStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
+        // We do not need to have ClonedArgumentsType here since it does not have interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero.
+        switch (source->type()) {
+        case DirectArgumentsType:
+            return DirectArguments::fastSlice(globalObject, jsCast<DirectArguments*>(source), startIndex, count);
+        default:
+            return nullptr;
+        }
         return nullptr;
+    }
 
     auto arrayType = source->indexingType() | IsArray;
     switch (arrayType) {
