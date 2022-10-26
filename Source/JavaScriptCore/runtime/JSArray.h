@@ -145,27 +145,10 @@ public:
             return false;
         }
     }
-        
-    bool unshiftCountForShift(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
-    {
-        return unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(getVM(globalObject)));
-    }
-    bool unshiftCountForSplice(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
-    {
-        return unshiftCountWithAnyIndexingType(globalObject, startIndex, count);
-    }
-    template<ShiftCountMode shiftCountMode>
+
     bool unshiftCount(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
     {
-        switch (shiftCountMode) {
-        case ShiftCountForShift:
-            return unshiftCountForShift(globalObject, startIndex, count);
-        case ShiftCountForSplice:
-            return unshiftCountForSplice(globalObject, startIndex, count);
-        default:
-            CRASH();
-            return false;
-        }
+        return unshiftCountWithAnyIndexingType(globalObject, startIndex, count);
     }
 
     JS_EXPORT_PRIVATE void fillArgList(JSGlobalObject*, MarkedArgumentBuffer&);

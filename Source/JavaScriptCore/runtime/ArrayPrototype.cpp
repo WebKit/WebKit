@@ -235,7 +235,7 @@ static inline uint64_t argumentClampedIndexFromStartOrEnd(JSGlobalObject* global
 // must be introducing new values.
 
 template<JSArray::ShiftCountMode shiftCountMode>
-void shift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uint64_t currentCount, uint64_t resultCount, uint64_t length)
+static void shift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uint64_t currentCount, uint64_t resultCount, uint64_t length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -282,8 +282,7 @@ void shift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uin
     }
 }
 
-template<JSArray::ShiftCountMode shiftCountMode>
-void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uint64_t currentCount, uint64_t resultCount, uint64_t length)
+static void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uint64_t currentCount, uint64_t resultCount, uint64_t length)
 {
     ASSERT(header <= maxSafeInteger());
     ASSERT(currentCount <= maxSafeInteger());
@@ -308,7 +307,7 @@ void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, u
 
         JSArray* array = asArray(thisObj);
         if (array->length() == length) {
-            bool handled = array->unshiftCount<shiftCountMode>(globalObject, static_cast<uint32_t>(header), static_cast<uint32_t>(count));
+            bool handled = array->unshiftCount(globalObject, static_cast<uint32_t>(header), static_cast<uint32_t>(count));
             EXCEPTION_ASSERT(!scope.exception() || handled);
             if (handled)
                 return;
@@ -1190,7 +1189,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
         shift<JSArray::ShiftCountForSplice>(globalObject, thisObj, actualStart, actualDeleteCount, itemCount, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else if (itemCount > actualDeleteCount) {
-        unshift<JSArray::ShiftCountForSplice>(globalObject, thisObj, actualStart, actualDeleteCount, itemCount, length);
+        unshift(globalObject, thisObj, actualStart, actualDeleteCount, itemCount, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     for (unsigned k = 0; k < itemCount; ++k) {
@@ -1220,7 +1219,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncUnShift, (JSGlobalObject* globalObject, C
     if (nrArgs) {
         if (UNLIKELY(length + nrArgs > static_cast<uint64_t>(maxSafeInteger())))
             return throwVMTypeError(globalObject, scope, "unshift cannot produce an array of length larger than (2 ** 53) - 1"_s);
-        unshift<JSArray::ShiftCountForShift>(globalObject, thisObj, 0, 0, nrArgs, length);
+        unshift(globalObject, thisObj, 0, 0, nrArgs, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     for (unsigned k = 0; k < nrArgs; ++k) {
@@ -1602,7 +1601,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
         double* buffer = result->butterfly()->contiguousDouble().data();
         copyElements(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
         copyElements(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
-
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
         copyElements(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);

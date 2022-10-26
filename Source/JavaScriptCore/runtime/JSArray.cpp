@@ -919,24 +919,27 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
         if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
             return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
 
-        // Storing to a hole is fine since we're still having a good time. But reading from a hole 
+        // Storing to a hole is fine since we're still having a good time. But reading from a hole
         // is totally not fine, since we might have to read from the proto chain.
-        // We have to check for holes before we start moving things around so that we don't get halfway 
+        // We have to check for holes before we start moving things around so that we don't get halfway
         // through shifting and then realize we should have been in ArrayStorage mode.
         unsigned end = oldLength - count;
-        if (this->structure()->holesMustForwardToPrototype(this)) {
-            for (unsigned i = startIndex; i < end; ++i) {
-                JSValue v = butterfly->contiguous().at(this, i + count).get();
-                if (UNLIKELY(!v)) {
-                    startIndex = i;
-                    return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
+        unsigned moveCount = end - startIndex;
+        if (moveCount) {
+            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+                for (unsigned i = startIndex; i < end; ++i) {
+                    JSValue v = butterfly->contiguous().at(this, i + count).get();
+                    if (UNLIKELY(!v)) {
+                        startIndex = i;
+                        return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
+                    }
+                    butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
                 }
-                butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
+            } else {
+                gcSafeMemmove(butterfly->contiguous().data() + startIndex,
+                    butterfly->contiguous().data() + startIndex + count,
+                    sizeof(JSValue) * moveCount);
             }
-        } else {
-            gcSafeMemmove(butterfly->contiguous().data() + startIndex, 
-                butterfly->contiguous().data() + startIndex + count, 
-                sizeof(JSValue) * (end - startIndex));
         }
 
         for (unsigned i = end; i < oldLength; ++i)
@@ -966,19 +969,22 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
         unsigned end = oldLength - count;
-        if (this->structure()->holesMustForwardToPrototype(this)) {
-            for (unsigned i = startIndex; i < end; ++i) {
-                double v = butterfly->contiguousDouble().at(this, i + count);
-                if (UNLIKELY(v != v)) {
-                    startIndex = i;
-                    return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
+        unsigned moveCount = end - startIndex;
+        if (moveCount) {
+            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+                for (unsigned i = startIndex; i < end; ++i) {
+                    double v = butterfly->contiguousDouble().at(this, i + count);
+                    if (UNLIKELY(v != v)) {
+                        startIndex = i;
+                        return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
+                    }
+                    butterfly->contiguousDouble().at(this, i) = v;
                 }
-                butterfly->contiguousDouble().at(this, i) = v;
+            } else {
+                gcSafeMemmove(butterfly->contiguousDouble().data() + startIndex,
+                    butterfly->contiguousDouble().data() + startIndex + count,
+                    sizeof(JSValue) * moveCount);
             }
-        } else {
-            gcSafeMemmove(butterfly->contiguousDouble().data() + startIndex,
-                butterfly->contiguousDouble().data() + startIndex + count,
-                sizeof(JSValue) * (end - startIndex));
         }
         for (unsigned i = end; i < oldLength; ++i)
             butterfly->contiguousDouble().at(this, i) = PNaN;
@@ -1076,7 +1082,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         
         // We may have to walk the entire array to do the unshift. We're willing to do so
         // only if it's not horribly slow.
-        if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
+        unsigned moveCount = oldLength - startIndex;
+        if (moveCount >= MIN_SPARSE_ARRAY_INDEX)
             RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
 
         CheckedUint32 checkedLength(oldLength);
@@ -1088,6 +1095,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         unsigned newLength = checkedLength;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
+
+        // FIXME: If we create a new butterfly, we should move elements at the same time.
         if (!ensureLength(vm, newLength)) {
             throwOutOfMemoryError(globalObject, scope);
             return true;
@@ -1096,18 +1105,15 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
 
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
-        for (unsigned i = oldLength; i-- > startIndex;) {
-            JSValue v = butterfly->contiguous().at(this, i).get();
-            if (UNLIKELY(!v))
-                RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
+        if (moveCount) {
+            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+                if (UNLIKELY(WTF::find64(bitwise_cast<const uint64_t*>(butterfly->contiguous().data() + startIndex), JSValue::encode(JSValue()), moveCount)))
+                    RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
+            }
+
+            gcSafeMemmove(butterfly->contiguous().data() + startIndex + count, butterfly->contiguous().data() + startIndex, moveCount * sizeof(EncodedJSValue));
         }
 
-        for (unsigned i = oldLength; i-- > startIndex;) {
-            JSValue v = butterfly->contiguous().at(this, i).get();
-            ASSERT(v);
-            butterfly->contiguous().at(this, i + count).setWithoutWriteBarrier(v);
-        }
-        
         // Our memmoving of values around in the array could have concealed some of them from
         // the collector. Let's make sure that the collector scans this object again.
         vm.writeBarrier(this);
@@ -1125,7 +1131,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         
         // We may have to walk the entire array to do the unshift. We're willing to do so
         // only if it's not horribly slow.
-        if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
+        unsigned moveCount = oldLength - startIndex;
+        if (moveCount >= MIN_SPARSE_ARRAY_INDEX)
             RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
 
         CheckedUint32 checkedLength(oldLength);
@@ -1137,6 +1144,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         unsigned newLength = checkedLength;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
+
+        // FIXME: If we create a new butterfly, we should move elements at the same time.
         if (!ensureLength(vm, newLength)) {
             throwOutOfMemoryError(globalObject, scope);
             return true;
@@ -1145,18 +1154,18 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
-        for (unsigned i = oldLength; i-- > startIndex;) {
-            double v = butterfly->contiguousDouble().at(this, i);
-            if (UNLIKELY(v != v))
-                RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
+        if (moveCount) {
+            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+                for (unsigned i = oldLength; i-- > startIndex;) {
+                    double v = butterfly->contiguousDouble().at(this, i);
+                    if (UNLIKELY(v != v))
+                        RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
+                }
+            }
+
+            gcSafeMemmove(butterfly->contiguousDouble().data() + startIndex + count, butterfly->contiguousDouble().data() + startIndex, moveCount * sizeof(double));
         }
 
-        for (unsigned i = oldLength; i-- > startIndex;) {
-            double v = butterfly->contiguousDouble().at(this, i);
-            ASSERT(v == v);
-            butterfly->contiguousDouble().at(this, i + count) = v;
-        }
-        
         // NOTE: we're leaving being garbage in the part of the array that we shifted out
         // of. This is fine because the caller is required to store over that area, and
         // in contiguous mode storing into a hole is guaranteed to behave exactly the same
