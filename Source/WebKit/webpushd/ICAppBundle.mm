@@ -251,7 +251,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_appInstallObserver = adoptNS([[_WKAppInstallCoordinatorObserver alloc] initWithICAppBundle:*this]);
     m_appInstallCoordinator.get().observer = m_appInstallObserver.get();
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<IXPlaceholder> placeholder = adoptNS([[IXPlaceholder alloc] initAppPlaceholderWithBundleName:(NSString *)m_originString bundleID:bundleIdentifier.get() installType:LSInstallTypeIntentionalDowngrade client:IXClientIdentifierAppliedFor]);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr<IXPlaceholderAttributes> placeholderAttributes = adoptNS([IXPlaceholderAttributes new]);
     placeholderAttributes.get().launchProhibited = YES;
