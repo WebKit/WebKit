@@ -4175,7 +4175,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             }
         }
 
-        if (dragState().source && dragState().type == DragSourceAction::Image) {
+        if (dragState().source && dragState().type.containsAny({ DragSourceAction::DHTML, DragSourceAction::Image })) {
             if (auto* renderImage = dynamicDowncast<RenderImage>(dragState().source->renderer())) {
                 auto* image = renderImage->cachedImage();
                 if (image && !image->isCORSSameOrigin())
