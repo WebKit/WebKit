@@ -239,7 +239,6 @@ imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_av
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h264 [ Pass Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Pass Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h264_annexb [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.html [ Pass Failure ]
 
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
