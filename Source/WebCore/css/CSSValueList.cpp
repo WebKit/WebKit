@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSValueList.h"
 
+#include "DeprecatedCSSOMValue.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -64,7 +65,7 @@ bool CSSValueList::hasValue(CSSValue* val) const
 Ref<CSSValueList> CSSValueList::copy()
 {
     RefPtr<CSSValueList> newList;
-    switch (separator()) {
+    switch (m_valueSeparator) {
     case SpaceSeparator:
         newList = createSpaceSeparated();
         break;
@@ -82,19 +83,18 @@ Ref<CSSValueList> CSSValueList::copy()
     return newList.releaseNonNull();
 }
 
-String CSSValueList::customCSSText() const
+String CSSValueList::customCSSText(Document* document) const
 {
-    auto prefix = ""_s;
-    auto separator = separatorCSSText();
     StringBuilder result;
+    auto separator = separatorCSSText();
     for (auto& value : m_values)
-        result.append(std::exchange(prefix, separator), value.get().cssText());
+        result.append(result.isEmpty() ? ""_s : separator, value.get().cssText(document));
     return result.toString();
 }
 
 bool CSSValueList::equals(const CSSValueList& other) const
 {
-    if (separator() != other.separator())
+    if (m_valueSeparator != other.m_valueSeparator)
         return false;
 
     if (m_values.size() != other.m_values.size())
@@ -115,10 +115,10 @@ bool CSSValueList::equals(const CSSValue& other) const
     return m_values[0].get().equals(other);
 }
 
-bool CSSValueList::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSValueList::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    for (auto& value : m_values) {
-        if (value.get().traverseSubresources(handler))
+    for (unsigned i = 0; i < m_values.size(); ++i) {
+        if (m_values[i].get().traverseSubresources(handler))
             return true;
     }
     return false;

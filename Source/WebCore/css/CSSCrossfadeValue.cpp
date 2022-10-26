@@ -193,9 +193,13 @@ inline void CSSCrossfadeValue::crossfadeChanged()
         client.key->imageChanged(this);
 }
 
-bool CSSCrossfadeValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSCrossfadeValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    return (m_cachedFromImage && handler(*m_cachedFromImage)) || (m_cachedToImage && handler(*m_cachedToImage));
+    if (m_cachedFromImage && handler(*m_cachedFromImage))
+        return true;
+    if (m_cachedToImage && handler(*m_cachedToImage))
+        return true;
+    return false;
 }
 
 RefPtr<CSSCrossfadeValue> CSSCrossfadeValue::blend(const CSSCrossfadeValue& from, const BlendingContext& context) const

@@ -65,7 +65,7 @@ public:
 
     String customCSSText() const;
 
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext*, bool isSVG, bool isInitiatingElementInUserAgentShadowTree);
 

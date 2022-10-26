@@ -42,6 +42,7 @@
 #include "Length.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
+#include "Quirks.h"
 #include "Rect.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
@@ -51,8 +52,6 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
-
-bool CSSPrimitiveValue::s_useLegacyPrecision;
 
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
 {
@@ -1516,18 +1515,20 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     return String();
 }
 
-String CSSPrimitiveValue::customCSSText() const
+String CSSPrimitiveValue::customCSSText(Document* document) const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
     // name if it was specified) - check what spec says about this
 
     CSSTextCache& cssTextCache = WebCore::cssTextCache();
 
-    if (m_hasCachedCSSText && m_cachedCSSTextUsesLegacyPrecision == s_useLegacyPrecision) {
+    bool needsQuirk = document && document->quirks().needsFlightAwareSerializationQuirk();
+
+    if (m_hasCachedCSSText && m_cachedCSSTextUsesLegacyPrecision == needsQuirk) {
         ASSERT(cssTextCache.contains(this));
         return cssTextCache.get(this);
     }
-    m_cachedCSSTextUsesLegacyPrecision = s_useLegacyPrecision;
+    m_cachedCSSTextUsesLegacyPrecision = needsQuirk;
 
     String text = formatNumberForCustomCSSText();
 

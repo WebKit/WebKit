@@ -37,7 +37,7 @@ public:
         return adoptRef(*new CSSFunctionValue(name));
     }
     
-    String customCSSText() const;
+    String customCSSText(Document* = nullptr) const;
 
     CSSValueID name() const { return m_name; }
 

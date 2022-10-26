@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,16 +20,23 @@
 
 #pragma once
 
-#include <wtf/Noncopyable.h>
+#include "CSSPropertyNames.h"
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/URLHash.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
+class CSSCustomPropertyValue;
 class CSSStyleDeclaration;
 class CachedResource;
 class DeprecatedCSSOMValue;
+class Document;
+class StyleSheetContents;
 
 enum CSSPropertyID : uint16_t;
 
@@ -38,21 +45,48 @@ class CSSValue {
     WTF_MAKE_NONCOPYABLE(CSSValue);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue);
 public:
+    enum Type {
+        CSS_INHERIT = 0,
+        CSS_PRIMITIVE_VALUE = 1,
+        CSS_VALUE_LIST = 2,
+        CSS_CUSTOM = 3,
+        CSS_INITIAL = 4,
+        CSS_UNSET = 5,
+        CSS_REVERT = 6
+    };
+
     static constexpr unsigned refCountFlagIsStatic = 0x1;
     static constexpr unsigned refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static CSSValue flag.
-    void ref() const { m_refCount += refCountIncrement; }
-    void deref() const;
+    void ref() const
+    {
+        m_refCount += refCountIncrement;
+    }
     bool hasOneRef() const { return m_refCount == refCountIncrement; }
     unsigned refCount() const { return m_refCount / refCountIncrement; }
     bool hasAtLeastOneRef() const { return m_refCount; }
 
-    String cssText() const;
+    void deref()
+    {
+        // Customized deref() to ensure operator delete is called on
+        // the appropriate subclass type.
+        unsigned tempRefCount = m_refCount - refCountIncrement;
+        if (!tempRefCount) {
+            destroy();
+            return;
+        }
+        m_refCount = tempRefCount;
+    }
+
+    Type cssValueType() const;
+    String cssText(Document* = nullptr) const;
+    ASCIILiteral separatorCSSText() const;
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }
     bool isValuePair() const { return m_classType == ValuePairClass; }
-
+    
     bool isBaseValueList() const { return m_classType == ValueListClass; }
+        
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
@@ -115,7 +149,7 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-    bool traverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     // What properties does this value rely on (eg, font-size for em units)
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;
@@ -129,12 +163,8 @@ public:
     // Empty URLs and fragment-only URLs should not be resolved relative to the base URL.
     static bool isCSSLocalURL(StringView relativeURL);
 
-    enum StaticCSSValueTag { StaticCSSValue };
-
-    static constexpr size_t ValueSeparatorBits = 2;
-    enum ValueSeparator : uint8_t { SpaceSeparator, CommaSeparator, SlashSeparator };
-
 protected:
+
     static const size_t ClassTypeBits = 6;
     enum ClassType {
         PrimitiveClass,
@@ -202,10 +232,25 @@ protected:
         // Do not append non-list class types here.
     };
 
-    constexpr ClassType classType() const { return static_cast<ClassType>(m_classType); }
+public:
+    static const size_t ValueSeparatorBits = 2;
+    enum ValueSeparator {
+        SpaceSeparator,
+        CommaSeparator,
+        SlashSeparator
+    };
+    enum StaticCSSValueTag { StaticCSSValue };
+
+protected:
+    ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
     explicit CSSValue(ClassType classType)
-        : m_classType(classType)
+        : m_primitiveUnitType(0)
+        , m_hasCachedCSSText(false)
+        , m_valueSeparator(SpaceSeparator)
+        , m_isImplicit(false)
+        , m_cachedCSSTextUsesLegacyPrecision(false)
+        , m_classType(classType)
     {
     }
 
@@ -216,46 +261,29 @@ protected:
 
     // NOTE: This class is non-virtual for memory and performance reasons.
     // Don't go making it virtual again unless you know exactly what you're doing!
-    ~CSSValue() = default;
-    WEBCORE_EXPORT void operator delete(CSSValue*, std::destroying_delete_t);
 
-    ValueSeparator separator() const { return static_cast<ValueSeparator>(m_valueSeparator); }
-    static ASCIILiteral separatorCSSText(ValueSeparator);
-    ASCIILiteral separatorCSSText() const { return separatorCSSText(separator()); };
+    ~CSSValue() = default;
 
 private:
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
-
-    static inline bool customTraverseSubresources(const Function<bool(const CachedResource&)>&);
+    WEBCORE_EXPORT void destroy();
 
     mutable unsigned m_refCount { refCountIncrement };
-
 protected:
-    // These data members are used by derived classes but here to maximize struct packing.
+    // The bits in this section are only used by specific subclasses but kept here
+    // to maximize struct packing.
+    // CSSPrimitiveValue bits:
+    unsigned m_primitiveUnitType : 7; // CSSUnitType
+    mutable unsigned m_hasCachedCSSText : 1;
 
-    // CSSPrimitiveValue:
-    unsigned m_primitiveUnitType : 7 { 0 }; // CSSUnitType
-    mutable unsigned m_hasCachedCSSText : 1 { false };
-    mutable unsigned m_cachedCSSTextUsesLegacyPrecision : 1 { false };
-    unsigned m_isImplicit : 1 { false };
-
-    // CSSValueList and CSSValuePair:
-    unsigned m_valueSeparator : ValueSeparatorBits { 0 };
+    unsigned m_valueSeparator : ValueSeparatorBits;
+    unsigned m_isImplicit : 1;
+    mutable unsigned m_cachedCSSTextUsesLegacyPrecision : 1;
 
 private:
     unsigned m_classType : ClassTypeBits; // ClassType
+    
+friend class CSSValueList;
 };
-
-inline void CSSValue::deref() const
-{
-    unsigned tempRefCount = m_refCount - refCountIncrement;
-    if (!tempRefCount) {
-        delete this;
-        return;
-    }
-    m_refCount = tempRefCount;
-}
 
 template<typename CSSValueType>
 inline bool compareCSSValueVector(const Vector<Ref<CSSValueType>>& firstVector, const Vector<Ref<CSSValueType>>& secondVector)
@@ -285,6 +313,8 @@ inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueTy
 {
     return first.get().equals(second);
 }
+
+typedef HashMap<AtomString, RefPtr<CSSCustomPropertyValue>> CustomPropertyValueMap;
 
 } // namespace WebCore
 

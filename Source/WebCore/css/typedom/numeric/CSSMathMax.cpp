@@ -32,7 +32,6 @@
 
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
-#include <wtf/FixedVector.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 

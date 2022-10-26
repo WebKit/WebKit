@@ -87,16 +87,16 @@ public:
 
     String stringValue() const { return m_value->stringValue(); }
     bool isCSSWideKeyword() const { return m_value->isCSSWideKeyword(); }
-    static unsigned short cssValueType() { return CSS_PRIMITIVE_VALUE; }
+    unsigned cssValueType() const { return m_value->cssValueType(); }
 
 private:
     DeprecatedCSSOMPrimitiveValue(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(ClassType::Primitive, owner)
-        , m_value(value)
+        : DeprecatedCSSOMValue(DeprecatedPrimitiveValueClass, owner)
+        , m_value(const_cast<CSSPrimitiveValue&>(value))
     {
     }
 
-    Ref<const CSSPrimitiveValue> m_value;
+    Ref<CSSPrimitiveValue> m_value;
 };
     
 } // namespace WebCore

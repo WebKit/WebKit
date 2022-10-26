@@ -61,7 +61,7 @@ public:
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
 
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     RefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, const BlendingContext&) const;
 

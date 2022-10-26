@@ -33,7 +33,6 @@
 #include "JSDOMWindowBase.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
-#include "Quirks.h"
 #include "StyleProperties.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
@@ -303,16 +302,16 @@ RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSS
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
 {
-    if (auto* wrapper = this->wrapper()) {
-        if (auto* globalObject = wrapper->globalObject()) {
-            if (auto* document = activeDOMWindow(*globalObject).document())
-                CSSPrimitiveValue::setUseLegacyPrecision(document->quirks().needsFlightAwareSerializationQuirk());
+    Document* doc = nullptr;
+    JSDOMObject* wrap = wrapper();
+    if (wrap) {
+        JSDOMGlobalObject* global = wrap->globalObject();
+        if (global) {
+            DOMWindow& window = activeDOMWindow(*global);
+            doc = window.document();
         }
     }
-
-    auto value = m_propertySet->getPropertyValue(propertyID);
-
-    CSSPrimitiveValue::setUseLegacyPrecision(false);
+    String value = m_propertySet->getPropertyValue(propertyID, doc);
 
     if (!value.isEmpty())
         return value;

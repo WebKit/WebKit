@@ -152,9 +152,11 @@ void CSSFilterImageValue::FilterSubimageObserverProxy::imageChanged(CachedImage*
         m_ownerValue->filterImageChanged(*rect);
 }
 
-bool CSSFilterImageValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSFilterImageValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    return m_cachedImage && handler(*m_cachedImage);
+    if (!m_cachedImage)
+        return false;
+    return handler(*m_cachedImage);
 }
 
 bool CSSFilterImageValue::equals(const CSSFilterImageValue& other) const

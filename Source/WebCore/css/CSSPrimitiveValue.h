@@ -190,7 +190,7 @@ public:
 
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
-    String customCSSText() const;
+    String customCSSText(Document* = nullptr) const;
 
     bool equals(const CSSPrimitiveValue&) const;
 
@@ -206,8 +206,6 @@ public:
 
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;
     void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const;
-
-    static void setUseLegacyPrecision(bool useLegacyPrecision) { s_useLegacyPrecision = useLegacyPrecision; }
 
 private:
     friend class CSSValuePool;
@@ -262,8 +260,6 @@ private:
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isResolution(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
-
-    static bool s_useLegacyPrecision;
 
     union {
         CSSPropertyID propertyID;

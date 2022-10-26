@@ -137,9 +137,9 @@ String CSSImageSetValue::customCSSText() const
     return result.toString();
 }
 
-bool CSSImageSetValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSImageSetValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    return CSSValueList::customTraverseSubresources(handler) || (m_selectedImageValue && m_selectedImageValue->traverseSubresources(handler));
+    return m_selectedImageValue && m_selectedImageValue->traverseSubresources(handler);
 }
 
 } // namespace WebCore

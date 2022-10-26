@@ -64,7 +64,7 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     bool equals(const CSSImageValue&) const;
 

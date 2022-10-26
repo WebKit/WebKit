@@ -30,7 +30,7 @@
 #include "CSSNumericType.h"
 #include "CSSStyleValue.h"
 #include <variant>
-#include <wtf/HashMap.h>
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
 
