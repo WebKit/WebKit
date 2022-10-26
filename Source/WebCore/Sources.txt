@@ -903,6 +903,7 @@ css/typedom/DeclaredStylePropertyMap.cpp
 css/typedom/MainThreadStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMap.cpp
 css/typedom/color/CSSColor.cpp
+css/typedom/color/CSSColorValue.cpp
 css/typedom/color/CSSHSL.cpp
 css/typedom/color/CSSHWB.cpp
 css/typedom/color/CSSLCH.cpp

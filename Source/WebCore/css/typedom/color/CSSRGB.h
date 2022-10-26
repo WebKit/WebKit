@@ -26,32 +26,36 @@
 #pragma once
 
 #include "CSSColorValue.h"
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
 using CSSColorRGBComp = std::variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
+using RectifiedCSSColorRGBComp = std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
 
 class CSSRGB : public CSSColorValue {
     WTF_MAKE_ISO_ALLOCATED(CSSRGB);
 public:
-    template<typename... Args> static Ref<CSSRGB> create(Args&&... args) { return adoptRef(*new CSSRGB(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSRGB>> create(CSSColorRGBComp&&, CSSColorRGBComp&&, CSSColorRGBComp&&, CSSColorPercent&&);
 
-    const CSSColorRGBComp& r() const { return m_red; }
-    void setR(CSSColorRGBComp red) { m_red = WTFMove(red); }
-    const CSSColorRGBComp& g() const { return m_green; }
-    void setG(CSSColorRGBComp green) { m_green = WTFMove(green); }
-    const CSSColorRGBComp& b() const { return m_blue; }
-    void setB(CSSColorRGBComp blue) { m_blue = WTFMove(blue); }
-    const CSSColorPercent& alpha() const { return m_alpha; }
-    void setAlpha(CSSColorPercent alpha) { m_alpha = WTFMove(alpha); }
+    CSSColorRGBComp r() const;
+    ExceptionOr<void> setR(CSSColorRGBComp&&);
+    CSSColorRGBComp g() const;
+    ExceptionOr<void> setG(CSSColorRGBComp&&);
+    CSSColorRGBComp b() const;
+    ExceptionOr<void> setB(CSSColorRGBComp&&);
+    CSSColorPercent alpha() const;
+    ExceptionOr<void> setAlpha(CSSColorPercent&&);
+
+    static ExceptionOr<RectifiedCSSColorRGBComp> rectifyCSSColorRGBComp(CSSColorRGBComp&&);
 
 private:
-    CSSRGB(CSSColorRGBComp, CSSColorRGBComp, CSSColorRGBComp, CSSColorPercent);
+    CSSRGB(RectifiedCSSColorRGBComp&&, RectifiedCSSColorRGBComp&&, RectifiedCSSColorRGBComp&&, RectifiedCSSColorPercent&&);
 
-    CSSColorRGBComp m_red;
-    CSSColorRGBComp m_green;
-    CSSColorRGBComp m_blue;
-    CSSColorPercent m_alpha;
+    RectifiedCSSColorRGBComp m_red;
+    RectifiedCSSColorRGBComp m_green;
+    RectifiedCSSColorRGBComp m_blue;
+    RectifiedCSSColorPercent m_alpha;
 };
     
 } // namespace WebCore
