@@ -190,5 +190,32 @@ bool DirectArguments::isIteratorProtocolFastAndNonObservable()
     return true;
 }
 
+JSArray* DirectArguments::fastSlice(JSGlobalObject* globalObject, DirectArguments* arguments, uint64_t startIndex, uint64_t count)
+{
+    if (count >= MIN_SPARSE_ARRAY_INDEX)
+        return nullptr;
+
+    if (UNLIKELY(arguments->m_mappedArguments))
+        return nullptr;
+
+    if (startIndex + count > arguments->m_length)
+        return nullptr;
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+        return nullptr;
+
+    ObjectInitializationScope scope(globalObject->vm());
+    JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
+    if (UNLIKELY(!resultArray))
+        return nullptr;
+
+    auto& resultButterfly = *resultArray->butterfly();
+    gcSafeMemcpy(resultButterfly.contiguous().data(), arguments->storage() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+
+    ASSERT(resultButterfly.publicLength() == count);
+    return resultArray;
+}
+
 } // namespace JSC
 
