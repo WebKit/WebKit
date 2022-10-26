@@ -106,8 +106,10 @@ public:
 
     static JSArray* fastSlice(JSGlobalObject*, JSObject* source, uint64_t startIndex, uint64_t count);
 
-    bool canFastCopy(JSArray* otherArray);
-    bool canDoFastIndexedAccess();
+    bool holesMustForwardToPrototype() const;
+    bool canFastCopy(JSArray* otherArray) const;
+    bool canFastAppend(JSArray* otherArray) const;
+    bool canDoFastIndexedAccess() const;
     // This function returns NonArray if the indexing types are not compatable for copying.
     IndexingType mergeIndexingTypeForCopying(IndexingType other);
     bool appendMemcpy(JSGlobalObject*, VM&, unsigned startIndex, JSArray* otherArray);

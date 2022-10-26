@@ -483,7 +483,7 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!canFastCopy(otherArray))
+    if (!canFastAppend(otherArray))
         return false;
 
     IndexingType type = indexingType();
@@ -926,7 +926,7 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
         unsigned end = oldLength - count;
         unsigned moveCount = end - startIndex;
         if (moveCount) {
-            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+            if (UNLIKELY(holesMustForwardToPrototype())) {
                 for (unsigned i = startIndex; i < end; ++i) {
                     JSValue v = butterfly->contiguous().at(this, i + count).get();
                     if (UNLIKELY(!v)) {
@@ -971,7 +971,7 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
         unsigned end = oldLength - count;
         unsigned moveCount = end - startIndex;
         if (moveCount) {
-            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+            if (UNLIKELY(holesMustForwardToPrototype())) {
                 for (unsigned i = startIndex; i < end; ++i) {
                     double v = butterfly->contiguousDouble().at(this, i + count);
                     if (UNLIKELY(v != v)) {

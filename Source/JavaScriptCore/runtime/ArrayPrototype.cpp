@@ -1434,7 +1434,7 @@ static bool moveElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, 
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !holesMustForwardToPrototype(source))) {
+    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !source->holesMustForwardToPrototype())) {
         for (unsigned i = 0; i < sourceLength; ++i) {
             JSValue value = source->tryGetIndexQuickly(i);
             if (value) {
