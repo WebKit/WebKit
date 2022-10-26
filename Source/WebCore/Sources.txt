@@ -900,6 +900,7 @@ css/typedom/CSSUnitValue.cpp
 css/typedom/CSSUnparsedValue.cpp
 css/typedom/CSSOMVariableReferenceValue.cpp
 css/typedom/DeclaredStylePropertyMap.cpp
+css/typedom/MainThreadStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMap.cpp
 css/typedom/color/CSSColor.cpp
 css/typedom/color/CSSHSL.cpp

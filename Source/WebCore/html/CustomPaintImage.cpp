@@ -42,9 +42,9 @@
 #include "ImageBuffer.h"
 #include "JSCSSPaintCallback.h"
 #include "JSDOMExceptionHandling.h"
+#include "MainThreadStylePropertyMapReadOnly.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
-#include "StylePropertyMap.h"
 #include <JavaScriptCore/ConstructData.h>
 
 namespace WebCore {
@@ -74,11 +74,9 @@ static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element&
     return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
 }
 
-// FIXME: This should subclass StylePropertyMapReadonly (or similar), not StylePropertyMap
-// since this is readonly.
-class HashMapStylePropertyMap final : public StylePropertyMap {
+class HashMapStylePropertyMap final : public MainThreadStylePropertyMapReadOnly {
 public:
-    static Ref<StylePropertyMap> create(HashMap<AtomString, RefPtr<CSSValue>>&& map)
+    static Ref<HashMapStylePropertyMap> create(HashMap<AtomString, RefPtr<CSSValue>>&& map)
     {
         return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
     }
@@ -127,11 +125,6 @@ private:
             result.uncheckedAppend(makeKeyValuePair(propertyName,  Vector<RefPtr<CSSStyleValue>> { reifyValue(cssValue.get(), *document) }));
         return result;
     }
-
-    // FIXME: This type is readonly and we shouldn't need to override functions that modify the map.
-    void removeProperty(CSSPropertyID) final { }
-    void removeCustomProperty(const AtomString&) final { }
-    void clear() final { }
 
     HashMap<AtomString, RefPtr<CSSValue>> m_map;
 };

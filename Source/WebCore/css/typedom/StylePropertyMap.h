@@ -25,16 +25,12 @@
 
 #pragma once
 
-#include "StylePropertyMapReadOnly.h"
+#include "MainThreadStylePropertyMapReadOnly.h"
 
 namespace WebCore {
 
-class StylePropertyMap : public StylePropertyMapReadOnly {
+class StylePropertyMap : public MainThreadStylePropertyMapReadOnly {
 public:
-    ExceptionOr<RefPtr<CSSStyleValue>> get(ScriptExecutionContext&, const AtomString& property) const final;
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const final;
-    ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const final;
-
     ExceptionOr<void> set(Document&, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values);
     ExceptionOr<void> append(Document&, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values);
     ExceptionOr<void> remove(Document&, const AtomString& property);
@@ -43,15 +39,8 @@ public:
     virtual void clearElement() { }
 
 protected:
-    static Document* documentFromContext(ScriptExecutionContext&);
-
-    virtual CSSValue* propertyValue(CSSPropertyID) const = 0;
-    virtual CSSValue* customPropertyValue(const AtomString&) const = 0;
     virtual void removeProperty(CSSPropertyID) = 0;
     virtual void removeCustomProperty(const AtomString&) = 0;
-
-private:
-    RefPtr<CSSStyleValue> shorthandPropertyValue(Document&, CSSPropertyID) const;
 };
 
 } // namespace WebCore
