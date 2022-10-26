@@ -84,15 +84,15 @@ void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& con
 {
     auto encoder = makeUniqueRef<LibWebRTCVPXVideoEncoder>(type, WTFMove(outputCallback), WTFMove(postTaskCallback));
     auto error = encoder->initialize(type, config);
-    vpxQueue().dispatch([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error, type]() mutable {
+    vpxQueue().dispatch([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
-        internalEncoder->postTask([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error, type]() mutable {
+        internalEncoder->postTask([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error]() mutable {
             if (error) {
                 callback(makeUnexpected(makeString("VPx encoding initialization failed with error ", error)));
                 return;
             }
             callback(UniqueRef<VideoEncoder> { WTFMove(encoder) });
-            descriptionCallback(VideoEncoder::ActiveConfiguration { type == Type::VP8 ? "vp8"_s : "vp9.00"_s, { }, { }, { }, { }, { } });
+            descriptionCallback({ });
         });
     });
 }
