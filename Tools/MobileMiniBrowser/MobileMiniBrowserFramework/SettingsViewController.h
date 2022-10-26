@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,14 @@
 
 #import <UIKit/UIKit.h>
 
-@class WKWebView;
-@class TabViewController;
-@class SettingsViewController;
+@class WebViewController;
 
-@interface WebViewController : UIViewController
+@interface SettingsViewController : UIViewController
 
-@property (strong, nonatomic) IBOutlet UIView *webViewContainer;
-@property (strong, nonatomic) IBOutlet UITextField *urlField;
-@property (strong, nonatomic) IBOutlet UIProgressView *progressView;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *tabButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
-@property (strong, nonatomic) IBOutlet TabViewController *tabViewController;
-@property (strong, nonatomic) IBOutlet SettingsViewController *settingsViewController;
-@property (strong, nonatomic) WKWebView *currentWebView;
-@property (strong, nonatomic) NSMutableArray<WKWebView *> *webViews;
+@property (strong, nonatomic) IBOutlet UIButton *defaultURLButton;
+@property (weak, nonatomic) WebViewController *parent;
 
-
-- (IBAction)reload:(id)sender;
-- (IBAction)goBack:(id)sender;
-- (IBAction)goForward:(id)sender;
-- (IBAction)urlFieldEditingBegan:(id)sender;
-- (IBAction)navigateTo:(id)sender;
-- (IBAction)showTabs:(id)sender;
-- (IBAction)showSettings:(id)sender;
-
-- (void)selectWebViewAtIndex:(NSUInteger)index;
-- (void)removeWebViewAtIndex:(NSUInteger)index;
-- (void)addWebView;
-
-- (NSURL *)currentURL;
+- (IBAction)setDefaultURLToCurrentURL:(id)sender;
+- (NSString *)defaultURL;
 
 @end
-

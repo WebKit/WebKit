@@ -25,6 +25,7 @@
 
 #import "WebViewController.h"
 
+#import "SettingsViewController.h"
 #import "TabViewController.h"
 #import <WebKit/WKNavigation.h>
 #import <WebKit/WKNavigationDelegate.h>
@@ -75,9 +76,13 @@ void* URLContext = &URLContext;
     self.tabViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"idTabViewController"];
     self.tabViewController.parent = self;
     self.tabViewController.modalPresentationStyle = UIModalPresentationPopover;
+    
+    self.settingsViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"idSettingsViewController"];
+    self.settingsViewController.parent = self;
+    self.settingsViewController.modalPresentationStyle = UIModalPresentationPopover;
 
     WKWebView *webView = [self createWebView];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[self.settingsViewController defaultURL]]]];
     [self setCurrentWebView:webView];
 }
 
@@ -130,6 +135,12 @@ void* URLContext = &URLContext;
     self.tabViewController.popoverPresentationController.barButtonItem = self.tabButton;
 }
 
+- (IBAction)showSettings:(id)sender
+{
+    [self presentViewController:self.settingsViewController animated:YES completion:nil];
+    self.settingsViewController.popoverPresentationController.barButtonItem = self.settingsButton;
+}
+
 #pragma mark Public methods
 
 @dynamic currentWebView;
@@ -169,6 +180,11 @@ void* URLContext = &URLContext;
 - (void)addWebView
 {
     self.currentWebView = [self createWebView];
+}
+
+- (NSURL *)currentURL
+{
+    return self.currentWebView.URL;
 }
 
 #pragma mark Internal methods
