@@ -1,6 +1,6 @@
 
 PASS CSSKeywordValue constructed from IDL serializes correctly
-FAIL CSSKeywordValue constructed from IDL serializes to escaped strings assert_equals: expected "\\ Hello\\ World" but got " Hello World"
+PASS CSSKeywordValue constructed from IDL serializes to escaped strings
 PASS CSSKeywordValue from DOMString modified through "value" setter serializes correctly
 PASS CSSKeywordValue from CSSOM modified through "value" setter serializes correctly
 
