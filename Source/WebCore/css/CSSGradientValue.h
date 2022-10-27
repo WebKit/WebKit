@@ -112,7 +112,7 @@ protected:
     {
     }
 
-    Vector<StyleGradientImageStop> computeStops(Style::BuilderState&) const;
+    decltype(auto) computeStops(Style::BuilderState&) const;
 
     auto firstX() const { return m_firstX.get(); }
     auto firstY() const { return m_firstY.get(); }

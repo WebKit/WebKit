@@ -30,29 +30,32 @@ function testGradient(actual, expected)
 // FIXME Test double position syntax for color stops.
 
 test(function() {
-    testGradient("conic-gradient(red, gold)")
-    testGradient("conic-gradient(from 0deg, red, gold)", "conic-gradient(red, gold)")
-    testGradient("conic-gradient(at center, red, gold)", "conic-gradient(red, gold)")
-    testGradient("conic-gradient(at 25% 75%, red, gold)")
-    testGradient("conic-gradient(from 0deg at 50% 50%, red, gold)", "conic-gradient(red, gold)")
-    testGradient("conic-gradient(red 0%, gold 100%)")
-    testGradient("conic-gradient(red 0deg, gold 1turn)");
-    testGradient("conic-gradient(white -50%, black 150%)");
-    testGradient("conic-gradient(white -180deg, black 540deg)");
+    testGradient("conic-gradient(red, gold)", "conic-gradient(rgb(255, 0, 0), rgb(255, 215, 0))")
+    testGradient("conic-gradient(from 0deg, red, gold)", "conic-gradient(rgb(255, 0, 0), rgb(255, 215, 0))")
+    testGradient("conic-gradient(at center, red, gold)", "conic-gradient(rgb(255, 0, 0), rgb(255, 215, 0))")
+    testGradient("conic-gradient(at 25% 75%, red, gold)", "conic-gradient(at 25% 75%, rgb(255, 0, 0), rgb(255, 215, 0))")
+    testGradient("conic-gradient(from 0deg at 50% 50%, red, gold)", "conic-gradient(rgb(255, 0, 0), rgb(255, 215, 0))")
+    testGradient("conic-gradient(red 0%, gold 100%)", "conic-gradient(rgb(255, 0, 0) 0%, rgb(255, 215, 0) 100%)")
+    testGradient("conic-gradient(red 0deg, gold 1turn)", "conic-gradient(rgb(255, 0, 0) 0deg, rgb(255, 215, 0) 1turn)");
+    testGradient("conic-gradient(white -50%, black 150%)", "conic-gradient(rgb(255, 255, 255) -50%, rgb(0, 0, 0) 150%)");
+    testGradient("conic-gradient(white -180deg, black 540deg)", "conic-gradient(rgb(255, 255, 255) -180deg, rgb(0, 0, 0) 540deg)");
     testGradient("conic-gradient(hsl(0,0%,75%), hsl(0,0%,25%))", "conic-gradient(rgb(191, 191, 191), rgb(64, 64, 64))");
-    testGradient("conic-gradient(from 45deg, white, black, white)");
-    testGradient("conic-gradient(hsl(0,0%,87.5%), white 45deg, black 225deg, hsl(0,0%,87.5%))", "conic-gradient(rgb(223, 223, 223), white 45deg, black 225deg, rgb(223, 223, 223))");
+    testGradient("conic-gradient(from 45deg, white, black, white)", "conic-gradient(from 45deg, rgb(255, 255, 255), rgb(0, 0, 0), rgb(255, 255, 255))");
+    testGradient("conic-gradient(hsl(0,0%,87.5%), white 45deg, black 225deg, hsl(0,0%,87.5%))", "conic-gradient(rgb(223, 223, 223), rgb(255, 255, 255) 45deg, rgb(0, 0, 0) 225deg, rgb(223, 223, 223))");
 
     var s = "conic-gradient(";
     for (var x = 0; x < 500; x++)
          s += `white ${x/500}%, ${(2 * x + 1) / 1000}%, `;
     s += "black)";
-    testGradient(s);
+    
+    var computedStr = s.replaceAll("black", "rgb(0, 0, 0)").replaceAll("white", "rgb(255, 255, 255)")
+    
+    testGradient(s, computedStr);
 }, "Test conic-gradient parsing");
 
 test(function() {
-    testGradient("repeating-conic-gradient(red, gold)");
-    testGradient("repeating-conic-gradient(from 0deg at center, red, gold)", "repeating-conic-gradient(red, gold)");
+    testGradient("repeating-conic-gradient(red, gold)", "repeating-conic-gradient(rgb(255, 0, 0), rgb(255, 215, 0))");
+    testGradient("repeating-conic-gradient(from 0deg at center, red, gold)", "repeating-conic-gradient(rgb(255, 0, 0), rgb(255, 215, 0))");
 }, "Test repeating-conic-gradient parsing");
 
 </script>

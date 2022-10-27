@@ -140,14 +140,6 @@ Color StyleColor::resolveColor(const Color& currentColor) const
     return { };
 }
 
-Color StyleColor::resolveColorWithoutCurrentColor() const
-{
-    if (isAbsoluteColor())
-        return absoluteColor();
-    
-    return { };
-}
-
 bool StyleColor::isCurrentColor() const
 {
     return std::holds_alternative<CurrentColor>(m_color);

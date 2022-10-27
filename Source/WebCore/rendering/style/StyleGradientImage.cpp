@@ -43,7 +43,7 @@ namespace WebCore {
 
 static inline bool operator==(const StyleGradientImageStop& a, const StyleGradientImageStop& b)
 {
-    return compareCSSValuePtr(a.color, b.color)
+    return a.color == b.color
         && compareCSSValuePtr(a.position, b.position);
 }
 
@@ -79,13 +79,35 @@ static inline bool operator==(const StyleGradientImage::ConicData& a, const Styl
         && compareCSSValuePtr(a.angle, b.angle);
 }
 
-StyleGradientImage::StyleGradientImage(Data&& data, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImage::Stop>&& stops)
+static bool stopsAreCacheable(const Vector<StyleGradientImage::Stop>& stops)
+{
+    for (auto& stop : stops) {
+        if (stop.position && stop.position->isFontRelativeLength())
+            return false;
+        if (stop.color && stop.color->isCurrentColor())
+            return false;
+    }
+    return true;
+}
+
+static Color resolveColorStopColor(const std::optional<StyleColor>& styleColor, const RenderStyle& style, bool hasColorFilter)
+{
+    if (!styleColor)
+        return { };
+
+    if (hasColorFilter)
+        return style.colorWithColorFilter(*styleColor);
+    return style.colorResolvingCurrentColor(*styleColor);
+}
+
+StyleGradientImage::StyleGradientImage(Data&& data, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImageStop>&& stops)
     : StyleGeneratedImage { Type::GradientImage, StyleGradientImage::isFixedSize }
     , m_data { WTFMove(data) }
     , m_repeat { repeat }
     , m_gradientType { gradientType }
     , m_colorInterpolationMethod { colorInterpolationMethod }
     , m_stops { WTFMove(stops) }
+    , m_knownCacheableBarringFilter { stopsAreCacheable(stops) }
 {
 }
 
@@ -105,10 +127,17 @@ bool StyleGradientImage::equals(const StyleGradientImage& other) const
         && m_stops == other.m_stops;
 }
 
-Ref<CSSValue> StyleGradientImage::computedStyleValue(const RenderStyle&) const
+static inline RefPtr<CSSPrimitiveValue> computedStyleValueForColorStopColor(const std::optional<StyleColor>& color, const RenderStyle& style)
 {
-    auto cssStopList = m_stops.map<CSSGradientColorStopList>([](auto& stop) -> CSSGradientColorStop {
-        return { stop.color, stop.position };
+    if (!color)
+        return nullptr;
+    return ComputedStyleExtractor::currentColorOrValidColor(style, *color);
+}
+
+Ref<CSSValue> StyleGradientImage::computedStyleValue(const RenderStyle& style) const
+{
+    auto cssStopList = m_stops.map<CSSGradientColorStopList>([&](auto& stop) -> CSSGradientColorStop {
+        return { computedStyleValueForColorStopColor(stop.color, style), stop.position };
     });
 
     return WTF::switchOn(m_data,
@@ -164,7 +193,7 @@ RefPtr<Image> StyleGradientImage::image(const RenderElement* renderer, const Flo
     if (size.isEmpty())
         return nullptr;
 
-    bool cacheable = isCacheable() && !renderer->style().hasAppleColorFilter();
+    bool cacheable = m_knownCacheableBarringFilter && !renderer->style().hasAppleColorFilter();
     if (cacheable) {
         if (!clients().contains(const_cast<RenderElement*>(renderer)))
             return nullptr;
@@ -186,12 +215,10 @@ RefPtr<Image> StyleGradientImage::image(const RenderElement* renderer, const Flo
 
 bool StyleGradientImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    bool hasColorFilter = renderer.style().hasAppleColorFilter();
+    auto& style = renderer.style();
+    bool hasColorFilter = style.hasAppleColorFilter();
     for (auto& stop : m_stops) {
-        Color color = stop.resolvedColor;
-        if (hasColorFilter)
-            renderer.style().appleColorFilter().transformColor(color);
-        if (!color.isOpaque())
+        if (!resolveColorStopColor(stop.color, style, hasColorFilter).isOpaque())
             return false;
     }
     return true;
@@ -200,31 +227,6 @@ bool StyleGradientImage::knownToBeOpaque(const RenderElement& renderer) const
 FloatSize StyleGradientImage::fixedSize(const RenderElement&) const
 {
     return { };
-}
-
-bool StyleGradientImage::hasColorDerivedFromElement() const
-{
-    if (!m_hasColorDerivedFromElement) {
-        m_hasColorDerivedFromElement = false;
-        for (auto& stop : m_stops) {
-            if (stop.color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.color)) {
-                m_hasColorDerivedFromElement = true;
-                break;
-            }
-        }
-    }
-    return *m_hasColorDerivedFromElement;
-}
-
-bool StyleGradientImage::isCacheable() const
-{
-    if (hasColorDerivedFromElement())
-        return false;
-    for (auto& stop : m_stops) {
-        if (stop.position && stop.position->isFontRelativeLength())
-            return false;
-    }
-    return true;
 }
 
 // MARK: Gradient creation.
@@ -428,7 +430,7 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
             return {
                 // FIXME: Use doubleValueDividingBy100IfPercentage? Or float version?
                 stop.position->isPercentage() ? stop.position->floatValue(CSSUnitType::CSS_PERCENTAGE) / 100 : stop.position->floatValue(CSSUnitType::CSS_NUMBER),
-                hasColorFilter ? style.colorByApplyingColorFilter(stop.resolvedColor) : stop.resolvedColor
+                resolveColorStopColor(stop.color, style, hasColorFilter)
             };
         });
 
@@ -447,7 +449,7 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
     for (size_t i = 0; i < numberOfStops; ++i) {
         auto& stop = m_stops[i];
 
-        stops[i].color = hasColorFilter ? style.colorByApplyingColorFilter(stop.resolvedColor) : stop.resolvedColor;
+        stops[i].color = resolveColorStopColor(stop.color, style, hasColorFilter);
 
         if (stop.position) {
             auto& positionValue = *stop.position;

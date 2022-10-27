@@ -34,9 +34,8 @@
 namespace WebCore {
 
 struct StyleGradientImageStop {
-    RefPtr<CSSPrimitiveValue> color;
+    std::optional<StyleColor> color;
     RefPtr<CSSPrimitiveValue> position;
-    Color resolvedColor;
 };
 
 class StyleGradientImage final : public StyleGeneratedImage {
@@ -74,7 +73,7 @@ public:
 
     using Data = std::variant<LinearData, RadialData, ConicData>;
 
-    static Ref<StyleGradientImage> create(Data data, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<Stop> stops)
+    static Ref<StyleGradientImage> create(Data data, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImageStop> stops)
     {
         return adoptRef(*new StyleGradientImage(WTFMove(data), repeat, gradientType, colorInterpolationMethod, WTFMove(stops)));
     }
@@ -86,7 +85,7 @@ public:
     static constexpr bool isFixedSize = false;
 
 private:
-    explicit StyleGradientImage(Data&&, CSSGradientRepeat, CSSGradientType, CSSGradientColorInterpolationMethod, Vector<Stop>&&);
+    explicit StyleGradientImage(Data&&, CSSGradientRepeat, CSSGradientType, CSSGradientColorInterpolationMethod, Vector<StyleGradientImageStop>&&);
 
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
@@ -103,15 +102,12 @@ private:
 
     template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat) const;
 
-    bool hasColorDerivedFromElement() const;
-    bool isCacheable() const;
-
     Data m_data;
-    CSSGradientRepeat m_repeat;
-    CSSGradientType m_gradientType;
+    CSSGradientRepeat m_repeat { CSSGradientRepeat::NonRepeating };
+    CSSGradientType m_gradientType { CSSGradientType::CSSLinearGradient };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
-    Vector<Stop> m_stops;
-    mutable std::optional<bool> m_hasColorDerivedFromElement;
+    Vector<StyleGradientImageStop> m_stops;
+    bool m_knownCacheableBarringFilter { false };
 };
 
 } // namespace WebCore

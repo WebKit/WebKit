@@ -2148,8 +2148,8 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(unsigned start,
 static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
 {
     Vector<StyleGradientImage::Stop> stops {
-        { CSSValuePool::singleton().createColorValue(Color::black), CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE), Color::black },
-        { CSSValuePool::singleton().createColorValue(Color::transparentBlack), CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE), Color::transparentBlack }
+        { Color::black, CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE) },
+        { Color::transparentBlack, CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE) }
     };
 
     return StyleGradientImage::create(

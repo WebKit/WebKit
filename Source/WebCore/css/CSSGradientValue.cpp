@@ -36,20 +36,22 @@
 
 namespace WebCore {
 
-Vector<StyleGradientImageStop> CSSGradientValue::computeStops(Style::BuilderState& state) const
+static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
 {
-    Vector<StyleGradientImageStop> stops;
-    stops.reserveInitialCapacity(m_stops.size());
+    if (!color)
+        return std::nullopt;
 
-    for (auto& stop : m_stops) {
-        stops.uncheckedAppend({
-            stop.color,
-            stop.position,
-            stop.color ? state.colorFromPrimitiveValueWithResolvedCurrentColor(*stop.color) : Color()
-        });
-    }
+    // FIXME: This should call state.colorFromPrimitiveValue(*color) instead, but doing so is
+    // blocked on fixing an issue where we don't respect ::first-line in StyleImage correctly.
+    // See https://webkit.org/b/247127.
+    return StyleColor { state.colorFromPrimitiveValueWithResolvedCurrentColor(*color) };
+}
 
-    return stops;
+decltype(auto) CSSGradientValue::computeStops(Style::BuilderState& state) const
+{
+    return m_stops.map([&] (auto& stop) -> StyleGradientImageStop {
+        return { computeStyleColor(stop.color, state), stop.position };
+    });
 }
 
 RefPtr<StyleImage> CSSGradientValue::createStyleImage(Style::BuilderState& state) const
