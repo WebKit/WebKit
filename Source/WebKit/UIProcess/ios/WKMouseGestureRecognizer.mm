@@ -49,15 +49,6 @@ static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlag
     return modifiers;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKMouseGestureRecognizerAdditions.mm>
-#else
-static String pointerTypeForUITouchType(UITouchType)
-{
-    return WebCore::mousePointerEventType();
-}
-#endif
-
 @implementation WKMouseGestureRecognizer {
     RetainPtr<UIEvent> _currentHoverEvent;
     RetainPtr<UITouch> _currentTouch;
@@ -113,6 +104,18 @@ static String pointerTypeForUITouchType(UITouchType)
     _currentHoverEvent = nil;
     _currentTouch = nil;
 }
+
+static String pointerTypeForUITouchType(UITouchType type)
+{
+#if !ENABLE(PENCIL_HOVER)
+    UNUSED_PARAM(type);
+#else
+    if (type == UITouchTypePencil)
+        return WebCore::penPointerEventType();
+#endif
+    return WebCore::mousePointerEventType();
+}
+
 
 - (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type wasCancelled:(BOOL)cancelled
 {

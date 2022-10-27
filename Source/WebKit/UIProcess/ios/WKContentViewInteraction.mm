@@ -239,24 +239,6 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
-#else
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-
-static bool shouldEnableAlternativeMouseGestureRecognizers(WKMouseGestureRecognizer *mouseRecognizer, WKMouseGestureRecognizer *alternativeMouseRecognizer)
-{
-    UNUSED_PARAM(mouseRecognizer);
-    UNUSED_PARAM(alternativeMouseRecognizer);
-    
-    return false;
-}
-
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-
-#endif
-
 #if ENABLE(IMAGE_ANALYSIS)
 
 static bool canAttemptTextRecognitionForNonImageElements(const WebKit::InteractionInformationAtPosition& information, const WebKit::WebPreferences& preferences)
@@ -1200,9 +1182,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [_mouseGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
-    [_alternateMouseGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_alternateMouseGestureRecognizer.get()];
-    
+#if ENABLE(PENCIL_HOVER)
+    [_pencilHoverGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_pencilHoverGestureRecognizer.get()];
+#endif
 #endif
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
@@ -1352,7 +1335,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
-    [self removeGestureRecognizer:_alternateMouseGestureRecognizer.get()];
+#if ENABLE(PENCIL_HOVER)
+    [self removeGestureRecognizer:_pencilHoverGestureRecognizer.get()];
+#endif
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1378,7 +1363,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
-    [self addGestureRecognizer:_alternateMouseGestureRecognizer.get()];
+#if ENABLE(PENCIL_HOVER)
+    [self addGestureRecognizer:_pencilHoverGestureRecognizer.get()];
+#endif
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -8547,9 +8534,10 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer == _mouseGestureRecognizer)
         return NO;
-    
-    if (gestureRecognizer == _alternateMouseGestureRecognizer)
+#if ENABLE(PENCIL_HOVER)
+    if (gestureRecognizer == _pencilHoverGestureRecognizer)
         return NO;
+#endif
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -10086,14 +10074,16 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 {
     _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
     [_mouseGestureRecognizer setDelegate:self];
-    
-    _alternateMouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
-    [_alternateMouseGestureRecognizer setDelegate:self];
-    
+#if ENABLE(PENCIL_HOVER)
+    _pencilHoverGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
+    [_pencilHoverGestureRecognizer setDelegate:self];
+#endif
     [self _configureMouseGestureRecognizer];
     
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
-    [self addGestureRecognizer:_alternateMouseGestureRecognizer.get()];
+#if ENABLE(PENCIL_HOVER)
+    [self addGestureRecognizer:_pencilHoverGestureRecognizer.get()];
+#endif
 }
 
 - (void)mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer
@@ -10121,10 +10111,11 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 - (void)_configureMouseGestureRecognizer
 {
     [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
-    if (shouldEnableAlternativeMouseGestureRecognizers(_mouseGestureRecognizer.get(), _alternateMouseGestureRecognizer.get()))
-        [_alternateMouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
-    else
-        [_alternateMouseGestureRecognizer setEnabled:false];
+#if ENABLE(PENCIL_HOVER)
+    [_pencilHoverGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil)] ];
+    [_mouseGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypeDirect), @(UITouchTypeIndirectPointer)] ];
+    [_pencilHoverGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
+#endif
 }
 
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy

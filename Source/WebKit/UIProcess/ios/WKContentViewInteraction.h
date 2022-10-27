@@ -321,8 +321,10 @@ struct ImageAnalysisContextMenuActionData {
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
-    RetainPtr<WKMouseGestureRecognizer> _alternateMouseGestureRecognizer;
     WebCore::MouseEventPolicy _mouseEventPolicy;
+#if ENABLE(PENCIL_HOVER)
+    RetainPtr<WKMouseGestureRecognizer> _pencilHoverGestureRecognizer;
+#endif
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
