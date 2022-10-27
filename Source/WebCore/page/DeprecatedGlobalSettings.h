@@ -98,9 +98,6 @@ public:
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
-    static void setImageBitmapEnabled(bool isEnabled) { shared().m_isImageBitmapEnabled = isEnabled; }
-    static bool imageBitmapEnabled() { return shared().m_isImageBitmapEnabled; }
-
 #if ENABLE(OFFSCREEN_CANVAS)
     static void setOffscreenCanvasEnabled(bool isEnabled) { shared().m_isOffscreenCanvasEnabled = isEnabled; }
     static bool offscreenCanvasEnabled() { return shared().m_isOffscreenCanvasEnabled; }
@@ -320,7 +317,6 @@ private:
     bool m_isMenuItemElementEnabled { false };
     bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
-    bool m_isImageBitmapEnabled { true };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };
 #endif

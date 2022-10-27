@@ -30,7 +30,6 @@ typedef (HTMLCanvasElement) ImageBitmapCanvas;
 #endif
 
 [
-    EnabledByDeprecatedGlobalSetting=ImageBitmapEnabled,
     Exposed=(Window,Worker),
     CallTracer=InspectorCanvasCallTracer,
 ] interface ImageBitmapRenderingContext {
