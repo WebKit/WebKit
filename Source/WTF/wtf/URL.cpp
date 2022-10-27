@@ -1311,14 +1311,31 @@ void removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
 {
     if (keysToRemove.isEmpty())
         return;
-    
+
+    if (!url.hasQuery())
+        return;
+
+    bool removedAnyKey = false;
     StringBuilder queryWithoutRemovalKeys;
-    for (auto& parameter : URLParser::parseURLEncodedForm(url.query())) {
-        if (!keysToRemove.contains(parameter.key))
-            queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? "" : "&", parameter.key, '=', parameter.value);
+    for (auto bytes : url.query().split('&')) {
+        auto nameAndValue = URLParser::parseQueryNameAndValue(bytes);
+        if (!nameAndValue)
+            continue;
+
+        auto& key = nameAndValue->key;
+        if (key.isEmpty())
+            continue;
+
+        if (keysToRemove.contains(key)) {
+            removedAnyKey = true;
+            continue;
+        }
+
+        queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? "" : "&", bytes);
     }
-    
-    url.setQuery(queryWithoutRemovalKeys);
+
+    if (removedAnyKey)
+        url.setQuery(queryWithoutRemovalKeys);
 }
 
 } // namespace WTF
