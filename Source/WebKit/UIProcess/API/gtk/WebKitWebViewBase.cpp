@@ -1381,15 +1381,22 @@ static void webkitWebViewBaseScrollEnd(WebKitWebViewBase* webViewBase, GtkEventC
 #endif
 
 #if !USE(GTK4)
+static GUniquePtr<GdkEvent> dummyContextMenuEvent()
+{
+    GUniquePtr<GdkEvent> event(gtk_get_current_event());
+    if (event)
+        return event;
+
+    event.reset(gdk_event_new(GDK_NOTHING));
+    return event;
+}
+
 static gboolean webkitWebViewBasePopupMenu(GtkWidget* widget)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
-    GdkEvent* currentEvent = gtk_get_current_event();
-    if (!currentEvent)
-        currentEvent = gdk_event_new(GDK_NOTHING);
-    priv->contextMenuEvent.reset(currentEvent);
+    priv->contextMenuEvent = dummyContextMenuEvent();
     priv->pageProxy->handleContextMenuKeyEvent();
 
     return TRUE;
@@ -2456,7 +2463,9 @@ GRefPtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webki
 #else
 GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
 {
-    return WTFMove(webkitWebViewBase->priv->contextMenuEvent);
+    if (webkitWebViewBase->priv->contextMenuEvent)
+        return WTFMove(webkitWebViewBase->priv->contextMenuEvent);
+    return dummyContextMenuEvent();
 }
 #endif
 
