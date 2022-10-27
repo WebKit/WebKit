@@ -189,14 +189,44 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
     auto& previous = searchResult.previous;
     auto& next = searchResult.next;
 
+    auto discardOffsetsForDirectionalSnapping = [&]() {
+        if (originalOffsetForDirectionalSnapping) {
+            // From https://www.w3.org/TR/css-scroll-snap-1/#choosing
+            // "User agents must ensure that a user can “escape” a snap position, regardless of the scroll
+            // method. For example, if the snap type is mandatory and the next snap position is more than
+            // two screen-widths away, a naïve “always snap to nearest” selection algorithm might “trap” the
+            //
+            // For a directional scroll, we never snap back to the original scroll position or before it,
+            // always preferring the snap offset in the scroll direction.
+            auto& originalOffset = *originalOffsetForDirectionalSnapping;
+            if (originalOffset < scrollDestinationOffset && previous && (*previous).first <= originalOffset)
+                previous.reset();
+            if (originalOffset > scrollDestinationOffset && next && (*next).first >= originalOffset)
+                next.reset();
+        }
+    };
+
     // From https://www.w3.org/TR/css-scroll-snap-1/#snap-overflow
     // "If the snap area is larger than the snapport in a particular axis, then any scroll position
     // in which the snap area covers the snapport, and the distance between the geometrically
     // previous and subsequent snap positions in that axis is larger than size of the snapport in
     // that axis, is a valid snap position in that axis. The UA may use the specified alignment as a
     // more precise target for certain scroll operations (e.g. explicit paging)."
-    if (searchResult.landedInsideSnapAreaThatConsumesViewport && (!previous || !next || ((*next).first - (*previous).first) >= viewportLength))
-        return pairForNoSnapping;
+    if (searchResult.landedInsideSnapAreaThatConsumesViewport && (!previous || !next || ((*next).first - (*previous).first) >= viewportLength)) {
+        if (!originalOffsetForDirectionalSnapping)
+            return pairForNoSnapping;
+
+        // We only return a position in this large snap area if there isn't a closer snap point in the direction of the scroll.
+        discardOffsetsForDirectionalSnapping();
+        auto distanceFromOriginalOffset = [&](const LayoutType& newOffset) {
+            return std::abs(float { newOffset - scrollDestinationOffset });
+        };
+        auto scrollDestinationDistanceFromOriginalOffset = distanceFromOriginalOffset(*originalOffsetForDirectionalSnapping);
+        if ((!previous || distanceFromOriginalOffset((*previous).first) > scrollDestinationDistanceFromOriginalOffset)
+            && (!next || distanceFromOriginalOffset((*next).first) > scrollDestinationDistanceFromOriginalOffset)) {
+            return pairForNoSnapping;
+        }
+    }
 
     auto isNearEnoughToOffsetForProximity = [&](LayoutType candidateSnapOffset) {
         if (info.strictness != ScrollSnapStrictness::Proximity)
@@ -208,33 +238,28 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
         return std::abs(float {candidateSnapOffset - scrollDestinationOffset}) <= (viewportLength * ratioOfScrollPortAxisLengthToBeConsideredForProximity);
     };
 
-    if (scrollDestinationOffset <= snapOffsets.first().offset)
-        return isNearEnoughToOffsetForProximity(snapOffsets.first().offset) ? std::make_pair(snapOffsets.first().offset, std::make_optional(0u)) : pairForNoSnapping;
-
-    if (scrollDestinationOffset >= snapOffsets.last().offset) {
-        unsigned lastIndex = static_cast<unsigned>(snapOffsets.size() - 1);
-        return isNearEnoughToOffsetForProximity(snapOffsets.last().offset) ? std::make_pair(snapOffsets.last().offset, std::make_optional(lastIndex)) : pairForNoSnapping;
-    }
-
     if (previous && !isNearEnoughToOffsetForProximity((*previous).first))
         previous.reset();
     if (next && !isNearEnoughToOffsetForProximity((*next).first))
         next.reset();
 
-    if (originalOffsetForDirectionalSnapping) {
-        // From https://www.w3.org/TR/css-scroll-snap-1/#choosing
-        // "User agents must ensure that a user can “escape” a snap position, regardless of the scroll
-        // method. For example, if the snap type is mandatory and the next snap position is more than
-        // two screen-widths away, a naïve “always snap to nearest” selection algorithm might “trap” the
-        //
-        // For a directional scroll, we never snap back to the original scroll position or before it,
-        // always preferring the snap offset in the scroll direction.
-        auto& originalOffset = *originalOffsetForDirectionalSnapping;
-        if (originalOffset < scrollDestinationOffset && previous && (*previous).first <= originalOffset)
-            previous.reset();
-        if (originalOffset > scrollDestinationOffset && next && (*next).first >= originalOffset)
-            next.reset();
+    if (info.strictness == ScrollSnapStrictness::Proximity && originalOffsetForDirectionalSnapping.has_value()) {
+        // If we are doing directional scrolling with proximity strictness, allow escaping in directions that don't have a valid
+        // snap point. This allows escaping into areas that might otherwise only be reachable with a non-directional scroll.
+        auto snapPositionInTheOtherDirection = velocity < 0 ? next : previous;
+        auto snapPositionInTheScrollDirection = velocity < 0 ? previous : next;
+        if (snapPositionInTheOtherDirection.has_value() && (*snapPositionInTheOtherDirection).first == *originalOffsetForDirectionalSnapping && !snapPositionInTheScrollDirection.has_value())
+            return pairForNoSnapping;
+    } else {
+        if (scrollDestinationOffset <= snapOffsets.first().offset)
+            return isNearEnoughToOffsetForProximity(snapOffsets.first().offset) ? std::make_pair(snapOffsets.first().offset, std::make_optional(0u)) : pairForNoSnapping;
+        if (scrollDestinationOffset >= snapOffsets.last().offset) {
+            unsigned lastIndex = static_cast<unsigned>(snapOffsets.size() - 1);
+            return isNearEnoughToOffsetForProximity(snapOffsets.last().offset) ? std::make_pair(snapOffsets.last().offset, std::make_optional(lastIndex)) : pairForNoSnapping;
+        }
     }
+
+    discardOffsetsForDirectionalSnapping();
 
     if (!previous && !next)
         return pairForNoSnapping;
