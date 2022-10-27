@@ -1,0 +1,22 @@
+This tests that visibleCharacterRange returns expected visible ranges with various view height values.
+
+
+Testing view height values 100 to 1300.
+Range with view 500x100, scrollTop 500: {2250, 360}
+Range with view 500x200, scrollTop 500: {2250, 810}
+Range with view 500x300, scrollTop 500: {2250, 1260}
+Range with view 500x400, scrollTop 500: {2250, 1710}
+Range with view 500x500, scrollTop 500: {2250, 2160}
+Range with view 500x600, scrollTop 500: {2250, 2610}
+Range with view 500x700, scrollTop 500: {2250, 3060}
+Range with view 500x800, scrollTop 500: {2250, 3489}
+Range with view 500x900, scrollTop 500: {1800, 3939}
+Range with view 500x1000, scrollTop 500: {1350, 4389}
+Range with view 500x1100, scrollTop 500: {900, 4839}
+Range with view 500x1200, scrollTop 500: {450, 5289}
+Range with view 500x1300, scrollTop 500: {0, 5739}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
