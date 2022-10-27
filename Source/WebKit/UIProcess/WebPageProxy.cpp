@@ -5596,10 +5596,6 @@ void WebPageProxy::didRunInsecureContentForFrame(FrameIdentifier frameID, const 
     m_navigationClient->didRunInsecureContent(*this, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-void WebPageProxy::didDetectXSSForFrame(FrameIdentifier, const UserData&)
-{
-}
-
 void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
 {
     m_mainFramePluginHandlesPageScaleGesture = mainFramePluginHandlesPageScaleGesture;

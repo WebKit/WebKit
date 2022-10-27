@@ -70,7 +70,6 @@ private:
     static void didHandleOnloadEventsForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void didDisplayInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didRunInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
-    static void didDetectXSSForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool pageLoadIsProvisional, const void*);
     static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef, const void*);
     static void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef, const void*);
@@ -96,7 +95,6 @@ private:
     void didHandleOnloadEventsForFrame(WKBundleFrameRef);
     void didDisplayInsecureContentForFrame(WKBundleFrameRef);
     void didRunInsecureContentForFrame(WKBundleFrameRef);
-    void didDetectXSSForFrame(WKBundleFrameRef);
     void willInjectUserScriptForFrame();
 
     // Resource Load Client

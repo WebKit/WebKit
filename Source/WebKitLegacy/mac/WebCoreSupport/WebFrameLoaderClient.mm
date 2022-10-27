@@ -1096,17 +1096,6 @@ void WebFrameLoaderClient::didRunInsecureContent(WebCore::SecurityOrigin& origin
     }
 }
 
-void WebFrameLoaderClient::didDetectXSS(const URL& insecureURL, bool didBlockEntirePage)
-{
-    WebView *webView = getWebView(m_webFrame.get());   
-    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didDetectXSSFunc) {
-        // FIXME: must pass didBlockEntirePage if we want to do more on mac than just pass tests.
-        NSURL* insecureNSURL = insecureURL;
-        CallFrameLoadDelegate(implementations->didDetectXSSFunc, webView, @selector(webView:didDetectXSS:), insecureNSURL);
-    }
-}
-
 WebCore::ResourceError WebFrameLoaderClient::cancelledError(const WebCore::ResourceRequest& request) const
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:request.url()];

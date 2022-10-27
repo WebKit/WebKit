@@ -1045,9 +1045,6 @@ void EmptyFrameLoaderClient::didRunInsecureContent(SecurityOrigin&, const URL&)
 {
 }
 
-void EmptyFrameLoaderClient::didDetectXSS(const URL&, bool)
-{
-}
 
 ObjectContentType EmptyFrameLoaderClient::objectContentType(const URL&, const String&)
 {

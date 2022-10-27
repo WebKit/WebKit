@@ -136,7 +136,6 @@ messages -> WebPageProxy {
     DidReceiveTitleForFrame(WebCore::FrameIdentifier frameID, String title, WebKit::UserData userData)
     DidDisplayInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
-    DidDetectXSSForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, uint32_t type, URL url, WebKit::UserData userData)
     DidSameDocumentNavigationForFrameViaJSHistoryAPI(WebCore::FrameIdentifier frameID, uint32_t type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
     DidChangeMainDocument(WebCore::FrameIdentifier frameID)

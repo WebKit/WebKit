@@ -1315,19 +1315,6 @@ void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin&, const URL&)
     webPage->send(Messages::WebPageProxy::DidRunInsecureContentForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::didDetectXSS(const URL&, bool)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<API::Object> userData;
-
-    webPage->injectedBundleLoaderClient().didDetectXSSForFrame(*webPage, m_frame, userData);
-
-    webPage->send(Messages::WebPageProxy::DidDetectXSSForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-}
-
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request) const
 {
     return WebKit::cancelledError(request);

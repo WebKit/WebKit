@@ -269,7 +269,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didHandleOnloadEventsForFrame,
         0, // didLayoutForFrame
         0, // didNewFirstVisuallyNonEmptyLayout_unavailable
-        didDetectXSSForFrame,
+        0, // didDetectXSSForFrame
         0, // shouldGoToBackForwardListItem
         0, // didCreateGlobalObjectForFrame
         0, // willDisconnectDOMWindowExtensionFromGlobalObject
@@ -563,11 +563,6 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundlePageRef page, WKB
 void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDisplayInsecureContentForFrame(frame);
-}
-
-void InjectedBundlePage::didDetectXSSForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDetectXSSForFrame(frame);
 }
 
 void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
@@ -1001,13 +996,6 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef)
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
         injectedBundle.outputText("didRunInsecureContent\n"_s);
-}
-
-void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didDetectXSS\n"_s);
 }
 
 void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)

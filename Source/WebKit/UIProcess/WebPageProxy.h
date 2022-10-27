@@ -2232,7 +2232,6 @@ private:
     void didFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
     void didDisplayInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
     void didRunInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
-    void didDetectXSSForFrame(WebCore::FrameIdentifier, const UserData&);
     void mainFramePluginHandlesPageScaleGestureDidChange(bool);
     void didStartProgress();
     void didChangeProgress(double);

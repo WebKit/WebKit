@@ -126,7 +126,6 @@ public:
 
     void didDisplayInsecureContent() override;
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) override;
-    void didDetectXSS(const URL&, bool didBlockEntirePage) override;
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const override;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;

@@ -164,7 +164,6 @@ private:
 
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
-    void didDetectXSS(const URL&, bool didBlockEntirePage) final;
 
 #if ENABLE(SERVICE_WORKER)
     void didFinishServiceWorkerPageRegistration(bool success) final;
