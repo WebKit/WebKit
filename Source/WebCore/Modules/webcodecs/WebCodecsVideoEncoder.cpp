@@ -177,7 +177,7 @@ WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMeta
         m_activeConfiguration.visibleHeight ? m_activeConfiguration.visibleHeight : m_baseConfiguration.height,
         m_activeConfiguration.displayWidth ? m_activeConfiguration.displayWidth : m_baseConfiguration.displayWidth,
         m_activeConfiguration.displayHeight ? m_activeConfiguration.displayHeight : m_baseConfiguration.displayHeight,
-        { },
+        m_activeConfiguration.colorSpace,
         HardwareAcceleration::NoPreference,
         { }
     };
