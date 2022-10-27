@@ -149,8 +149,9 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
 
     auto scale = player->playerContentsScale();
     auto preferredDynamicRangeMode = m_player->preferredDynamicRangeMode();
+    auto presentationSize = player->presentationSize();
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale, preferredDynamicRangeMode), [weakThis = WeakPtr { *this }, this](auto inlineLayerHostingContextId) mutable {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, presentationSize, scale, preferredDynamicRangeMode), [weakThis = WeakPtr { *this }, this](auto inlineLayerHostingContextId) mutable {
         if (!weakThis)
             return;
 

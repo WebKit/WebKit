@@ -1485,6 +1485,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()
     m_videoFrameMetadataGatheringObserver = nil;
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
+{
+    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+        updateDisplayLayerAndDecompressionSession();
+}
+
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const
 {
     return LogMediaSource;

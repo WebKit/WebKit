@@ -115,7 +115,6 @@ public:
     void firstVideoFrameAvailable();
     void renderingModeChanged();
 #if PLATFORM(COCOA)
-    void videoInlineSizeChanged(const WebCore::FloatSize&);
     void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&);
 #endif
 
@@ -177,6 +176,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void getRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const;
 #endif
+
+    WebCore::FloatSize naturalSize() const final;
 
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
@@ -246,8 +247,6 @@ private:
     bool supportsScanning() const final;
 
     bool canSaveMediaData() const final;
-
-    WebCore::FloatSize naturalSize() const final;
 
     bool hasVideo() const final;
     bool hasAudio() const final;

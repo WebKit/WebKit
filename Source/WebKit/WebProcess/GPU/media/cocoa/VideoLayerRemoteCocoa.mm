@@ -32,6 +32,7 @@
 #import "MediaPlayerPrivateRemote.h"
 #import "VideoLayerRemote.h"
 #import <WebCore/FloatRect.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/Timer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
@@ -125,6 +126,19 @@ static const Seconds PostAnimationDelay { 100_ms };
 
     CGAffineTransform transform = CGAffineTransformIdentity;
     if ([self resizePreservingGravity]) {
+        WebCore::FloatSize naturalSize { };
+        if (auto *mediaPlayer = _mediaPlayerPrivateRemote.get())
+            naturalSize = mediaPlayer->naturalSize();
+
+        if (!naturalSize.isEmpty()) {
+            // The video content will be sized within the remote layer, preserving aspect
+            // ratio according to its naturalSize(), so use that natural size to determine
+            // the scaling factor.
+            auto naturalAspectRatio = naturalSize.aspectRatio();
+
+            sourceVideoFrame = largestRectWithAspectRatioInsideRect(naturalAspectRatio, sourceVideoFrame);
+            targetVideoFrame = largestRectWithAspectRatioInsideRect(naturalAspectRatio, targetVideoFrame);
+        }
         auto scale = std::fmax(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
         transform = CGAffineTransformMakeScale(scale, scale);
     } else
@@ -197,7 +211,9 @@ PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPla
     [videoLayerRemote setVideoGravity:videoGravity];
     [videoLayerRemote setMediaPlayerPrivateRemote:mediaPlayerPrivateRemote];
     auto layerForHostContext = LayerHostingContext::createPlatformLayerForHostingContext(contextId).get();
-    [layerForHostContext setFrame:CGRectMake(0, 0, contentSize.width(), contentSize.height())];
+    auto frame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
+    [videoLayerRemote setVideoLayerFrame:frame];
+    [layerForHostContext setFrame:frame];
     [videoLayerRemote addSublayer:WTFMove(layerForHostContext)];
 
     return videoLayerRemote;
