@@ -32,10 +32,8 @@
 
 namespace TestWebKitAPI {
 
-static WKBundlePagePolicyAction decidePolicyForNavigationAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef request, WKTypeRef*, const void*)
+static WKBundlePagePolicyAction decidePolicyForNavigationAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKTypeRef*, const void*)
 {
-    if (WKBundlePageCanHandleRequest(request))
-        return WKBundlePagePolicyActionUse;
     return WKBundlePagePolicyActionPassThrough;
 }
 

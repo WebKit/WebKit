@@ -1199,7 +1199,7 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
-        return WKBundlePagePolicyActionUse;
+        return WKBundlePagePolicyActionPassThrough;
 
     if (injectedBundle.testRunner()->shouldDumpPolicyCallbacks()) {
         injectedBundle.outputText(makeString(" - decidePolicyForNavigationAction\n", string(request),

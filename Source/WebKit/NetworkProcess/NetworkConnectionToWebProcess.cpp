@@ -549,12 +549,6 @@ std::unique_ptr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFet
 
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
 {
-    // As long as InjectedBundlePagePolicyClient.decidePolicyForNavigationAction exists, we are going to need this, which defeats the whole purpose of this check.
-    // It is hit sometimes by the test http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html on iOS.
-    // FIXME: Remove InjectedBundlePagePolicyClient.decidePolicyForNavigationAction and all its users.
-    if (loadParameters.isMainFrameNavigation)
-        m_networkProcess->addAllowedFirstPartyForCookies(m_webProcessIdentifier, RegistrableDomain(loadParameters.request.firstPartyForCookies()));
-
     // FIXME: This shouldn't be different on different platforms.
     // It may be related to the difference in networkProcessForSession.
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
