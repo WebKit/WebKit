@@ -165,7 +165,7 @@ void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineB
     }
 
     // We need floor/ceil to match legacy layout integral positioning.
-    auto layoutBounds = inlineBox.layoutBounds();
+    auto layoutBounds = *inlineBox.layoutBounds();
     inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) });
 }
 
@@ -467,7 +467,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage()))
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineLevelBox);
         else if (inlineLevelBox.isAtomicInlineLevelBox()) {
-            auto inlineLevelBoxHeight = inlineLevelBox.layoutBounds().height();
+            auto inlineLevelBoxHeight = inlineLevelBox.logicalHeight();
             InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
             // Move the baseline position but keep the same logical height.
             inlineLevelBox.setAscent(ideographicBaseline);
