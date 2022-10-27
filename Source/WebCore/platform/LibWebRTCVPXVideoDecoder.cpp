@@ -163,11 +163,11 @@ LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXV
 
 int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
 {
-    m_postTaskCallback([protectedThis = Ref { *this }, buffer = frame.video_frame_buffer(), timestamp = m_timestamp, duration = m_duration]() mutable {
+    m_postTaskCallback([protectedThis = Ref { *this }, colorSpace = VideoFrameLibWebRTC::colorSpaceFromFrame(frame), buffer = frame.video_frame_buffer(), timestamp = m_timestamp, duration = m_duration]() mutable {
         if (protectedThis->m_isClosed)
             return;
 
-        auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, WTFMove(buffer), [](auto& buffer) {
+        auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, WTFMove(colorSpace), WTFMove(buffer), [](auto& buffer) {
             return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
                 OSType pixelBufferType;
                 switch (bufferType) {

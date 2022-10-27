@@ -50,7 +50,8 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::Remo
         videoFrame.isMirrored(),
         videoFrame.rotation(),
         expandedIntSize(videoFrame.presentationSize()),
-        videoFrame.pixelFormat()
+        videoFrame.pixelFormat(),
+        videoFrame.colorSpace()
     };
 }
 
@@ -70,7 +71,7 @@ void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Propertie
 }
 
 RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
-    : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation)
+    : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTFMove(properties.colorSpace))
     , m_connection(connection)
     , m_referenceTracker(properties.reference)
     , m_size(properties.size)

@@ -156,6 +156,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&&
             init.codedHeight = decodedResult.frame->presentationSize().height();
             init.timestamp = decodedResult.timestamp;
             init.duration = decodedResult.duration;
+            init.colorSpace = decodedResult.frame->colorSpace();
 
             auto videoFrame = WebCodecsVideoFrame::create(WTFMove(decodedResult.frame), WTFMove(init));
             m_output->handleEvent(WTFMove(videoFrame));

@@ -39,7 +39,7 @@ class PixelBuffer;
 
 class VideoFrameCV : public VideoFrame {
 public:
-    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
+    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, std::optional<PlatformVideoColorSpace>&& = { });
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(CMSampleBufferRef, bool isMirrored, Rotation);
     static RefPtr<VideoFrameCV> createFromPixelBuffer(Ref<PixelBuffer>&&);
     WEBCORE_EXPORT ~VideoFrameCV();
@@ -57,14 +57,14 @@ public:
     bool isCV() const final { return true; }
 
 private:
-    WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
+    WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, std::optional<PlatformVideoColorSpace>&&);
 
     const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
 };
 
 template<typename Encoder> void VideoFrameCV::encode(Encoder& encoder) const
 {
-    encoder << presentationTime() << isMirrored() << rotation() << m_pixelBuffer;
+    encoder << presentationTime() << isMirrored() << rotation() << colorSpace() << m_pixelBuffer;
 }
 
 template<typename Decoder> std::optional<RefPtr<VideoFrameCV>> VideoFrameCV::decode(Decoder& decoder)
@@ -72,10 +72,11 @@ template<typename Decoder> std::optional<RefPtr<VideoFrameCV>> VideoFrameCV::dec
     auto presentationTime = decoder.template decode<MediaTime>();
     auto isMirrored = decoder.template decode<bool>();
     auto rotation = decoder.template decode<Rotation>();
+    auto colorSpace = decoder.template decode<PlatformVideoColorSpace>();
     auto pixelBuffer = decoder.template decode<RetainPtr<CVPixelBufferRef>>();
     if (!decoder.isValid() || !*pixelBuffer)
         return std::nullopt;
-    return VideoFrameCV::create(*presentationTime, *isMirrored, *rotation, pixelBuffer.releaseNonNull());
+    return VideoFrameCV::create(*presentationTime, *isMirrored, *rotation, *colorSpace, pixelBuffer.releaseNonNull());
 }
 
 }

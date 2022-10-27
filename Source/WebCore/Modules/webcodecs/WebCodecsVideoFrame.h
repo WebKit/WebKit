@@ -30,6 +30,7 @@
 #include "DOMRectReadOnly.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PlaneLayout.h"
+#include "VideoColorSpaceInit.h"
 #include "WebCodecsAlphaOption.h"
 #include "WebCodecsVideoFrameData.h"
 
