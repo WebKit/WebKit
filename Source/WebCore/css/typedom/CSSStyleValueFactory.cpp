@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-ExceptionOr<void> CSSStyleValueFactory::extractCSSValues(Vector<Ref<CSSValue>>& cssValues, const CSSPropertyID& propertyID, const String& cssText)
+ExceptionOr<RefPtr<CSSValue>> CSSStyleValueFactory::extractCSSValue(const CSSPropertyID& propertyID, const String& cssText)
 {
     auto styleDeclaration = MutableStyleProperties::create();
     
@@ -65,10 +65,7 @@ ExceptionOr<void> CSSStyleValueFactory::extractCSSValues(Vector<Ref<CSSValue>>& 
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { TypeError, makeString(cssText, " cannot be parsed.")};
 
-    if (auto cssValue = styleDeclaration->getPropertyCSSValue(propertyID))
-        cssValues.append(cssValue.releaseNonNull());
-    
-    return { };
+    return styleDeclaration->getPropertyCSSValue(propertyID);
 }
 
 ExceptionOr<void> CSSStyleValueFactory::extractShorthandCSSValues(Vector<Ref<CSSValue>>& cssValues, const CSSPropertyID& propertyID, const String& cssText)
@@ -133,9 +130,20 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
             if (result.hasException())
                 return result.releaseException();
         } else {
-            auto result = extractCSSValues(cssValues, propertyID, cssText);
+            auto result = extractCSSValue(propertyID, cssText);
             if (result.hasException())
                 return result.releaseException();
+            if (auto cssValue = result.releaseReturnValue()) {
+                // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
+                if (CSSProperty::isListValuedProperty(propertyID)) {
+                    if (auto* valueList = dynamicDowncast<CSSValueList>(*cssValue)) {
+                        for (size_t i = 0, length = valueList->length(); i < length; ++i)
+                            cssValues.append(*valueList->item(i));
+                    }
+                }
+                if (cssValues.isEmpty())
+                    cssValues.append(cssValue.releaseNonNull());
+            }
         }
     }
 

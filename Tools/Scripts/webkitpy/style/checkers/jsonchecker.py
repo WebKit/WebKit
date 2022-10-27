@@ -305,6 +305,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'no-default-color': self.validate_boolean,
             'related-property': self.validate_string,
             'runtime-flag': self.validate_string,
+            'separator': self.validate_string,
             'setter': self.validate_string,
             'settings-flag': self.validate_string,
             'sink-priority': self.validate_boolean,
