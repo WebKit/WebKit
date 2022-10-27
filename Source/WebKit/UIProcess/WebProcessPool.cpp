@@ -510,7 +510,7 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
-void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&& completionHandler)
 {
     auto* websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(sessionID);
     if (!websiteDataStore)
@@ -575,7 +575,9 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     remoteWorkerProcesses().add(*remoteWorkerProcessProxy);
 
     auto& preferencesStore = processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store();
-    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore, registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
+    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore, registrableDomain, serviceWorkerPageIdentifier, [completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()] () mutable {
+        completionHandler(remoteProcessIdentifier);
+    });
 
     if (!processPool->m_remoteWorkerUserAgent.isNull())
         remoteWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);

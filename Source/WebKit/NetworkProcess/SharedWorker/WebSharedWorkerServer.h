@@ -75,7 +75,7 @@ public:
     void removeConnection(WebCore::ProcessIdentifier);
 
 private:
-    void createContextConnection(const WebCore::RegistrableDomain&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier);
+    void createContextConnection(const WebCore::RegistrableDomain&, const WebCore::RegistrableDomain& firstPartyForCookies, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier);
     bool needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
     void contextConnectionCreated(WebSharedWorkerServerToContextConnection&);
     void didFinishFetchingSharedWorkerScript(WebSharedWorker&, WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&);
