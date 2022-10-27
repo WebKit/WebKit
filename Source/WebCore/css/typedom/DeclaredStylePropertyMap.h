@@ -47,8 +47,8 @@ private:
     StyleRule* styleRule() const;
 
     void clear() final;
-    CSSValue* propertyValue(CSSPropertyID) const final;
-    CSSValue* customPropertyValue(const AtomString&) const final;
+    RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
+    RefPtr<CSSValue> customPropertyValue(const AtomString&) const final;
     void removeProperty(CSSPropertyID) final;
     void removeCustomProperty(const AtomString&) final;
 

@@ -43,43 +43,27 @@
 
 namespace WebCore {
 
-RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Document& document)
+RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(RefPtr<CSSValue>&& value, Document& document)
 {
     if (!value)
         return nullptr;
-    auto result = CSSStyleValueFactory::reifyValue(*value, &document);
+    auto result = CSSStyleValueFactory::reifyValue(value.releaseNonNull(), &document);
     return (result.hasException() ? nullptr : RefPtr<CSSStyleValue> { result.releaseReturnValue() });
 }
 
-RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(const String& name, Document& document, CSSValue* inputValue)
-{
-    if (!inputValue) {
-        auto* registered = document.getCSSRegisteredCustomPropertySet().get(name);
-
-        if (registered && registered->initialValue()) {
-            auto value = registered->initialValueCopy();
-            return StylePropertyMapReadOnly::reifyValue(value.get(), document);
-        }
-
-        return nullptr;
-    }
-
-    return StylePropertyMapReadOnly::reifyValue(inputValue, document);
-}
-
-Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(CSSValue* value, Document& document)
+Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPtr<CSSValue>&& value, Document& document)
 {
     if (!value)
         return { };
 
     if (!is<CSSValueList>(*value))
-        return { StylePropertyMapReadOnly::reifyValue(value, document) };
+        return { StylePropertyMapReadOnly::reifyValue(WTFMove(value), document) };
 
-    auto valueList = downcast<CSSValueList>(value);
+    auto& valueList = downcast<CSSValueList>(*value);
     Vector<RefPtr<CSSStyleValue>> result;
-    result.reserveInitialCapacity(valueList->length());
-    for (const auto& cssValue : *valueList)
-        result.uncheckedAppend(StylePropertyMapReadOnly::reifyValue(cssValue.ptr(), document));
+    result.reserveInitialCapacity(valueList.length());
+    for (const auto& cssValue : valueList)
+        result.uncheckedAppend(StylePropertyMapReadOnly::reifyValue(cssValue.copyRef(), document));
     return result;
 }
 

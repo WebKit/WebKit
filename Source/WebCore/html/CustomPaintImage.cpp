@@ -101,12 +101,12 @@ private:
     {
     }
 
-    CSSValue* propertyValue(CSSPropertyID propertyID) const final
+    RefPtr<CSSValue> propertyValue(CSSPropertyID propertyID) const final
     {
         return m_map.get(getPropertyNameAtomString(propertyID));
     }
 
-    CSSValue* customPropertyValue(const AtomString& property) const final
+    RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final
     {
         return m_map.get(property);
     }
