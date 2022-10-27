@@ -1503,6 +1503,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldDisableHDR(bool shouldDisabl
     [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:shouldDisable];
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
+{
+    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+        updateDisplayLayerAndDecompressionSession();
+}
+
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const
 {
     return LogMediaSource;

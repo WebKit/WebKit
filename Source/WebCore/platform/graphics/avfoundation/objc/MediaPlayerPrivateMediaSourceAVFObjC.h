@@ -298,6 +298,7 @@ private:
     bool shouldEnsureLayer() const;
 
     void setShouldDisableHDR(bool) final;
+    void playerContentBoxRectChanged(const LayoutRect&) final;
 
     friend class MediaSourcePrivateAVFObjC;
 

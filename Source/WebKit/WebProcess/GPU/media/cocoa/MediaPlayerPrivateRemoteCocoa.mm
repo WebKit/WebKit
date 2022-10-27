@@ -30,7 +30,6 @@
 
 #import "RemoteAudioSourceProvider.h"
 #import "RemoteMediaPlayerProxyMessages.h"
-#import "VideoLayerRemoteCocoa.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/ColorSpaceCG.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -77,12 +76,6 @@ WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
     auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
     auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());
     return colorSpace;
-}
-
-void MediaPlayerPrivateRemote::videoInlineSizeChanged(const FloatSize& videoSize)
-{
-    if ([m_videoLayer isKindOfClass:[WKVideoLayerRemote class]])
-        [(WKVideoLayerRemote*)m_videoLayer.get() setVideoLayerFrame:CGRectMake(0, 0, videoSize.width(), videoSize.height())];
 }
 
 } // namespace WebKit
