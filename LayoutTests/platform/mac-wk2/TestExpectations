@@ -591,6 +591,9 @@ editing/spelling/spellcheck-async.html [ Skip ]
 editing/spelling/spellcheck-queue.html [ Skip ]
 editing/spelling/spelling-insert-html.html [ Skip ]
 
+[ arm64 ] imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_annexb [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Failure ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 
