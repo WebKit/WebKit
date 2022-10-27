@@ -49,7 +49,7 @@ WI.StyleOriginView = class StyleOriginView
                     ignoreSearchTab: true,
                 };
 
-                if (style.ownerStyleSheet.isInspectorStyleSheet()) {
+                if (style.ownerStyleSheet?.isInspectorStyleSheet()) {
                     options.nameStyle = WI.SourceCodeLocation.NameStyle.None;
                     options.prefix = WI.UIString("Inspector Style Sheet") + ":";
                 }

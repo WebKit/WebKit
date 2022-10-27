@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
+WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Object
 {
     constructor(delegate, element)
     {
@@ -31,7 +31,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
 
         this._delegate = delegate;
         this._element = element;
-        this._element.classList.add("spreadsheet-selector-field");
+        this._element.classList.add("spreadsheet-rule-header-field");
 
         this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
         this._element.addEventListener("mouseup", this._handleMouseUp.bind(this));
@@ -45,6 +45,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
 
     // Public
 
+    get element() { return this._element; }
     get editing() { return this._editing; }
 
     startEditing()
@@ -66,7 +67,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
 
         this._selectText();
 
-        this.dispatchEventToListeners(WI.SpreadsheetSelectorField.Event.StartedEditing);
+        this.dispatchEventToListeners(WI.SpreadsheetRuleHeaderField.Event.StartedEditing);
     }
 
     stopEditing()
@@ -79,7 +80,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
 
-        this.dispatchEventToListeners(WI.SpreadsheetSelectorField.Event.StoppedEditing);
+        this.dispatchEventToListeners(WI.SpreadsheetRuleHeaderField.Event.StoppedEditing);
     }
 
     // Private
@@ -110,9 +111,9 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         if (document.activeElement === this._element)
             return;
 
-        if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidCommit === "function") {
+        if (this._delegate?.spreadsheetRuleHeaderFieldDidCommit) {
             let changed = this._element.textContent !== this._valueBeforeEditing;
-            this._delegate.spreadsheetSelectorFieldDidCommit(changed);
+            this._delegate.spreadsheetRuleHeaderFieldDidCommit(this, changed);
         }
 
         this.stopEditing();
@@ -133,9 +134,9 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         if (event.key === "Enter" || event.key === "Tab") {
             event.stop();
 
-            if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldWillNavigate === "function") {
+            if (this._delegate?.spreadsheetRuleHeaderFieldWillNavigate) {
                 let direction = (event.shiftKey && event.key === "Tab") ? "backward" : "forward";
-                this._delegate.spreadsheetSelectorFieldWillNavigate(direction);
+                this._delegate.spreadsheetRuleHeaderFieldWillNavigate(this, direction);
             }
             this.stopEditing();
             return;
@@ -146,13 +147,12 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
 
             this.stopEditing();
 
-            if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidDiscard === "function")
-                this._delegate.spreadsheetSelectorFieldDidDiscard();
+            this._delegate?.spreadsheetRuleHeaderFieldDidDiscard?.(this);
         }
     }
 };
 
-WI.SpreadsheetSelectorField.Event = {
-    StartedEditing: "spreadsheet-selector-field-started-editing",
-    StoppedEditing: "spreadsheet-selector-field-stopped-editing",
+WI.SpreadsheetRuleHeaderField.Event = {
+    StartedEditing: "spreadsheet-rule-header-field-started-editing",
+    StoppedEditing: "spreadsheet-rule-header-field-stopped-editing",
 };

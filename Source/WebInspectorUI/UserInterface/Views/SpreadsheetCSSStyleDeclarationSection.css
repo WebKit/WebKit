@@ -141,11 +141,11 @@
     content: url(../Images/Locked.svg);
 }
 
-.spreadsheet-css-declaration .selector.spreadsheet-selector-field {
+.spreadsheet-css-declaration :is(.selector, .grouping).spreadsheet-rule-header-field {
     outline: none;
 }
 
-.spreadsheet-css-declaration .selector.spreadsheet-selector-field.editing {
+.spreadsheet-css-declaration :is(.selector, .grouping).spreadsheet-rule-header-field.editing {
     display: inline-block;
     box-shadow: hsla(0, 0%, 0%, 0.5) 0 1px 3px;
     outline: none !important;

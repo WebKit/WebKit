@@ -34,6 +34,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._rulesMap = new Map;
         this._stylesMap = new Multimap;
+        this._groupingsMap = new Map;
 
         this._matchedRules = [];
         this._inheritedRules = [];
@@ -134,6 +135,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get usedCSSVariables() { return this._usedCSSVariables; }
     get allCSSVariables() { return this._allCSSVariables; }
 
+    set ignoreNextContentDidChangeForStyleSheet(ignoreNextContentDidChangeForStyleSheet) { this._ignoreNextContentDidChangeForStyleSheet = ignoreNextContentDidChangeForStyleSheet; }
+
     get needsRefresh()
     {
         return this._pendingRefreshTask || this._needsRefresh;
@@ -200,6 +203,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
             this._previousStylesMap = this._stylesMap;
             this._stylesMap = new Multimap;
+            this._groupingsMap = new Map;
 
             this._matchedRules = parseRuleMatchArrayPayload(matchedRulesPayload, this._node);
 
@@ -711,11 +715,49 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         // COMPATIBILITY (iOS 13): CSS.CSSRule.groupings did not exist yet.
         let groupings = (payload.groupings || payload.media || []).map((grouping) => {
+            // COMPATIBILITY (macOS 13, iOS 16) CSS.CSSRule.ruleId did not exist yet.
+            let ruleId = grouping.ruleId;
+
+            let ruleIdForMap = null;
+            if (ruleId) {
+                ruleIdForMap = `${ruleId.styleSheetId}-${ruleId.ordinal}`;
+
+                let existingGroupingForRuleId = this._groupingsMap.get(ruleIdForMap);
+                if (existingGroupingForRuleId) {
+                    console.assert(existingGroupingForRuleId.text === grouping.text);
+                    console.assert(existingGroupingForRuleId.type === grouping.type);
+                    return existingGroupingForRuleId;
+                }
+            }
+
             let groupingType = WI.CSSManager.protocolGroupingTypeToEnum(grouping.type || grouping.source);
-            let groupingSourceCodeLocation = DOMNodeStyles.createSourceCodeLocation(grouping.sourceURL);
-            if (styleSheet)
-                groupingSourceCodeLocation = styleSheet.offsetSourceCodeLocation(groupingSourceCodeLocation);
-            return new WI.CSSGrouping(groupingType, grouping.text, groupingSourceCodeLocation);
+
+            let location = {};
+            if (payload.range) {
+                location.line = payload.range.startLine;
+                location.column = payload.range.startColumn;
+                location.documentNode = this._node.ownerDocument;
+            }
+
+            // The style sheet may be different from the style rule's style sheet, since groupings are computed beyond
+            // `@import` boundaries, and an `@import` statement from another style sheet may have been wrapped in
+            // another `@` rule.
+            let groupingStyleSheet = ruleId ? WI.cssManager.styleSheetForIdentifier(ruleId.styleSheetId) : null;
+
+            let groupingSourceCodeLocation = WI.DOMNodeStyles.createSourceCodeLocation(grouping.sourceURL, location);
+            let offsetGroupingSourceCodeLocation = styleSheet?.offsetSourceCodeLocation(groupingSourceCodeLocation) ?? groupingSourceCodeLocation;
+
+            let cssGrouping = new WI.CSSGrouping(this, groupingType, {
+                ownerStyleSheet: groupingStyleSheet,
+                id: grouping.ruleId,
+                text: grouping.text,
+                sourceCodeLocation: offsetGroupingSourceCodeLocation,
+            });
+
+            if (ruleIdForMap)
+                this._groupingsMap.set(ruleIdForMap, cssGrouping);
+
+            return cssGrouping;
         });
 
         if (rule) {

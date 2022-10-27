@@ -927,6 +927,8 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (prelude.atEnd())
         return nullptr;
 
+    auto originalPreludeRange = prelude;
+
     auto query = ContainerQueryParser::consumeContainerQuery(prelude, m_context);
     if (!query)
         return nullptr;
@@ -938,8 +940,8 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     Vector<RefPtr<StyleRuleBase>> rules;
 
     if (m_observerWrapper) {
-        m_observerWrapper->observer().startRuleHeader(StyleRuleType::Container, m_observerWrapper->startOffset(prelude));
-        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::Container, m_observerWrapper->startOffset(originalPreludeRange));
+        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(originalPreludeRange));
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 

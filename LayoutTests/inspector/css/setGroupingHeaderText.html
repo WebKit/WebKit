@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.setGroupingHeaderText");
+
+    function addTestCase({name, description, groupingType, subtestCases})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector("#test");
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '#test'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refreshIfNeeded();
+
+                let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, 2, `Should have 2 authored rule.`);
+
+                let grouping = authoredRules[0].groupings.find((grouping) => grouping.type === groupingType);
+                let sameGroupingAttachedToADifferentRule = authoredRules[1].groupings.find((grouping) => grouping.type === groupingType);
+
+                InspectorTest.expectNotNull(grouping, `Should find grouping of type '${groupingType}'.`);
+
+                // Restore the current text so that the next grouping type is able to resolve the style again.
+                subtestCases.push({text: grouping.text});
+
+                for (let test of subtestCases) {
+                    let initialText = grouping.text;
+                    let didFail = false;
+
+                    InspectorTest.log(`Setting text to '${test.text}'.`);
+                    await grouping.setText(test.text).catch(() => {
+                        didFail = true;
+                    });
+
+                    if (test.expectsFailure) {
+                        InspectorTest.expectTrue(didFail, "Setting text should fail.");
+                        InspectorTest.expectEqual(grouping.text, initialText, "Text should not change.");
+                        InspectorTest.expectEqual(sameGroupingAttachedToADifferentRule.text, initialText, "Text should not change on the same grouping attached to a different rule.");
+                        continue;
+                    }
+
+                    InspectorTest.expectFalse(didFail, "Setting text should succeed.");
+                    InspectorTest.expectEqual(grouping.text, test.text, "Text should change.");
+                    InspectorTest.expectEqual(sameGroupingAttachedToADifferentRule.text, test.text, "Text should change on the same grouping attached to a different rule.");
+                }
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.setGroupingHeaderText.MediaRule",
+        description: "@media rules should be mutable and should only accept syntactically correct text.",
+        groupingType: WI.CSSGrouping.Type.MediaRule,
+        subtestCases: [
+            { text: "not print" },
+            { text: "(max-width: 9999px)" },
+            { text: "screen and (max-width: 9999px)" },
+            { text: "screen, (max-width: 9999px)" },
+            { text: "not all" },
+            { text: "(totally-not-supported-but-valid-syntactivally: 42em)" },
+            { text: "invalidkeyword, (max-width: 9999px)"},
+            { text: "(max-width: 9999px), invalidkeyword"},
+            { text: "screen {} @media screen", expectsFailure: true },
+            { text: "", expectsFailure: true },
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.setGroupingHeaderText.SupportsRule",
+        description: "@supports rules should be mutable and should only accept syntactically correct text.",
+        groupingType: WI.CSSGrouping.Type.SupportsRule,
+        subtestCases: [
+            { text: "(color: purple)" },
+            { text: "(color: purple) and (color: green)" },
+            { text: "selector(h2 > p)" },
+            { text: "not (display: grid)" },
+            { text: "not (not (display: grid))" },
+            { text: "not (not (not (display: grid)))" },
+            { text: "(totally-not-supported-but-valid-syntactivally: 42em)" },
+            { text: "not all", expectsFailure: true },
+            { text: "|| and (max-width: 9999px)", expectsFailure: true },
+            { text: "(max-width: 9999px) and ||", expectsFailure: true },
+            { text: "(color: red) {} @supports(color: red)", expectsFailure: true },
+            { text: "", expectsFailure: true },
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.setGroupingHeaderText.LayerRule",
+        description: "@layer rules should be mutable and should only accept syntactically correct text.",
+        groupingType: WI.CSSGrouping.Type.LayerRule,
+        subtestCases: [
+            { text: "howdy" },
+            { text: "hello.howdy" },
+            { text: "hello, howdy", expectsFailure: true },
+            { text: "hello howdy", expectsFailure: true },
+            { text: "hello {} @layer hello", expectsFailure: true },
+            { text: "", expectsFailure: true },
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.setGroupingHeaderText.ContainerRule",
+        description: "@container rules should be mutable and should only accept syntactically correct text.",
+        groupingType: WI.CSSGrouping.Type.ContainerRule,
+        subtestCases: [
+            { text: "name (min-width: 42px)" },
+            { text: "(max-width: 9999px)" },
+            { text: "(totally-not-supported-but-valid-syntactivally: 42em)" },
+            { text: "screen and (max-width: 9999px)", expectsFailure: true },
+            { text: "screen, (max-width: 9999px)", expectsFailure: true },
+            { text: "not all", expectsFailure: true },
+            { text: "invalidkeyword, (max-width: 9999px)", expectsFailure: true },
+            { text: "(max-width: 9999px), invalidkeyword", expectsFailure: true },
+            { text: "(min-width:1px) {} @container(min-width:1px)", expectsFailure: true },
+            { text: "", expectsFailure: true },
+        ],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    body {
+        container-type: size;
+    }
+
+    @supports(color: red) {
+        @layer hello {
+            @media screen {
+                @container (min-width: 1px) {
+                    #test {
+                        color: lawngreen;
+                    }
+
+                    .test {
+                        color: papayawhip;
+                    }
+                }
+            }
+        }
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.setGroupingHeaderText command.</p>
+    <div id="test" class="test"></div>
+</body>
+</html>

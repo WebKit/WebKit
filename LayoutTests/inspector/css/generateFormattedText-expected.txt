@@ -50,8 +50,8 @@ a: 1; b: 2; c: 3;
 a: 1; b: 2; c: 3;
 
 -- Running test case: CSS.generateFormattedText.MatchedRules.includeGroupingsAndSelectors
-@media only screen and (min-width: 0px) {@media only screen and (min-height: 0px) {body > div#test-node {a: 1; b: 2; c: 3;}}}
-@media only screen and (min-width: 0px) {body > #test-node {a: 1; b: 2; c: 3;}}
+@media only screen and (min-width:0px) {@media only screen and (min-height:0px) {body > div#test-node {a: 1; b: 2; c: 3;}}}
+@media only screen and (min-width:0px) {body > #test-node {a: 1; b: 2; c: 3;}}
 body > div {a: 1; b: 2; c: 3;}
 body > * {a: 1; b: 2; c: 3;}
 * {a: 1; b: 2; c: 3;}
@@ -84,8 +84,8 @@ body > * {a: 1; b: 2; c: 3;}
 
 
 -- Running test case: CSS.generateFormattedText.MatchedRules.includeGroupingsAndSelectors.Multiline
-@media only screen and (min-width: 0px) {
-    @media only screen and (min-height: 0px) {
+@media only screen and (min-width:0px) {
+    @media only screen and (min-height:0px) {
         body > div#test-node {
             a: 1;
             b: 2;
@@ -93,7 +93,7 @@ body > * {a: 1; b: 2; c: 3;}
         }
     }
 }
-@media only screen and (min-width: 0px) {
+@media only screen and (min-width:0px) {
     body > #test-node {
         a: 1;
         b: 2;
@@ -124,8 +124,8 @@ a: 1; /* b: 2; */ c: 3;
 a: 1; /* b: 2; */ c: 3;
 
 -- Running test case: CSS.generateFormattedText.MatchedRules.WithCommentedProperties.includeGroupingsAndSelectors
-@media only screen and (min-width: 0px) {@media only screen and (min-height: 0px) {body > div#test-node {a: 1; /* b: 2; */ c: 3;}}}
-@media only screen and (min-width: 0px) {body > #test-node {a: 1; /* b: 2; */ c: 3;}}
+@media only screen and (min-width:0px) {@media only screen and (min-height:0px) {body > div#test-node {a: 1; /* b: 2; */ c: 3;}}}
+@media only screen and (min-width:0px) {body > #test-node {a: 1; /* b: 2; */ c: 3;}}
 body > div {a: 1; /* b: 2; */ c: 3;}
 body > * {a: 1; /* b: 2; */ c: 3;}
 * {a: 1; /* b: 2; */ c: 3;}
@@ -158,8 +158,8 @@ body > * {a: 1; /* b: 2; */ c: 3;}
 
 
 -- Running test case: CSS.generateFormattedText.MatchedRules.WithCommentedProperties.includeGroupingsAndSelectors.Multiline
-@media only screen and (min-width: 0px) {
-    @media only screen and (min-height: 0px) {
+@media only screen and (min-width:0px) {
+    @media only screen and (min-height:0px) {
         body > div#test-node {
             a: 1;
             /* b: 2; */
@@ -167,7 +167,7 @@ body > * {a: 1; /* b: 2; */ c: 3;}
         }
     }
 }
-@media only screen and (min-width: 0px) {
+@media only screen and (min-width:0px) {
     body > #test-node {
         a: 1;
         /* b: 2; */
