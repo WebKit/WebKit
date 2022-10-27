@@ -2134,3 +2134,7 @@ fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/punctuation-break-all-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/resource-timing/cross-origin-redirects.html [ Pass ]
+imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html [ Pass ]
+imported/w3c/web-platform-tests/resource-timing/resource_reuse.sub.html [ Pass ]
