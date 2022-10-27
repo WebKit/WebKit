@@ -237,7 +237,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         return Exception { SyntaxError };
     }
 
-    if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s)) {
+    if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s) && !m_url.protocolIs("http"_s) && !m_url.protocolIs("https"_s)) {
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong url scheme for WebSocket " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
         return Exception { SyntaxError };
