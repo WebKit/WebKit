@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: TypeError: Import assertion type "notARealType" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "js" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "javascript" is not valid
 
-FAIL Test that invalid module type assertion leads to TypeError on window. assert_equals: expected 4 but got 8
+PASS Test that invalid module type assertion leads to TypeError on window.
 

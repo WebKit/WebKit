@@ -61,8 +61,6 @@ public:
     {
         if (string == "json"_s)
             return Type::JSON;
-        if (string == "javascript"_s)
-            return Type::JavaScript;
         if (string == "webassembly"_s)
             return Type::WebAssembly;
         return std::nullopt;

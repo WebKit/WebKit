@@ -97,14 +97,15 @@ void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const 
 
 
 
-JSModuleRecord* ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
+Expected<JSModuleRecord*, String> ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
 {
     // Traverse the module AST and collect
     // * Import entries
     // * Export entries that have FromClause (e.g. export { a } from "mod")
     // * Export entries that have star (e.g. export * from "mod")
     // * Aliased export names (e.g. export { a as b })
-    moduleProgramNode.analyzeModule(*this);
+    if (!moduleProgramNode.analyzeModule(*this))
+        return makeUnexpected(m_errorMessage);
 
     // Based on the collected information, categorize export entries into 3 types.
     // 1. Local export entries
