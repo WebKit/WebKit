@@ -109,6 +109,7 @@
 #include "WebEventConversion.h"
 #include "WebFoundTextRange.h"
 #include "WebFrame.h"
+#include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
@@ -4755,25 +4756,6 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 #endif
 }
 
-void WebPageProxy::didCreateSubframe(FrameIdentifier frameID, WebCore::FrameIdentifier parentFrameID)
-{
-    PageClientProtector protector(pageClient());
-
-    MESSAGE_CHECK(m_process, m_mainFrame);
-
-    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
-    // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
-    // IPC when it later gets processed.
-    if (WebFrameProxy::webFrame(frameID))
-        return;
-
-    auto* parentFrame = WebFrameProxy::webFrame(parentFrameID);
-    MESSAGE_CHECK(m_process, parentFrame);
-    MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
-    
-    parentFrame->addChildFrame(WebFrameProxy::create(*this, m_process, frameID));
-}
-
 void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
 {
     // If the page is closed before it has had the chance to send the DidCreateMainFrame message
@@ -5920,7 +5902,9 @@ void WebPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, 
             didCreateMainFrame(frameID);
         else {
             MESSAGE_CHECK(m_process, frameInfo.parentFrameID);
-            didCreateSubframe(frameID, *frameInfo.parentFrameID);
+            RefPtr parentFrame = WebFrameProxy::webFrame(*frameInfo.parentFrameID);
+            MESSAGE_CHECK(m_process, parentFrame);
+            parentFrame->didCreateSubframe(frameID);
         }
     }
 
@@ -6077,8 +6061,8 @@ void WebPageProxy::willSubmitForm(FrameIdentifier frameID, FrameIdentifier sourc
     for (auto& pair : textFieldValues)
         MESSAGE_CHECK(m_process, API::Dictionary::MapType::isValidKey(pair.first));
 
-    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [this, protectedThis = Ref { *this }, frameID, listenerID]() {
-        send(Messages::WebPage::ContinueWillSubmitForm(frameID, listenerID));
+    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [protectedThis = Ref { *this }, frame, listenerID]() {
+        frame->send(Messages::WebFrame::ContinueWillSubmitForm(listenerID));
     });
 }
 
@@ -7187,7 +7171,7 @@ bool WebPageProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, 
 
 IPC::Connection* WebPageProxy::messageSenderConnection() const
 {
-    return m_process->hasConnection() ? m_process->connection() : nullptr;
+    return m_process->connection();
 }
 
 uint64_t WebPageProxy::messageSenderDestinationID() const

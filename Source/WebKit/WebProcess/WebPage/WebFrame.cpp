@@ -42,6 +42,8 @@
 #include "WebChromeClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
+#include "WebFrameMessages.h"
+#include "WebFrameProxyMessages.h"
 #include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -110,6 +112,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
     ASSERT(!m_frameID);
     m_frameID = coreFrame.frameID();
+    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object(), *this);
     WebProcess::singleton().addWebFrame(frameID(), this);
 
     page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
@@ -127,8 +130,9 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 
     ASSERT(!frame->m_frameID);
     frame->m_frameID = coreFrame->frameID();
+    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frame->m_frameID.object(), frame.get());
     WebProcess::singleton().addWebFrame(coreFrame->frameID(), frame.ptr());
-    page.send(Messages::WebPageProxy::DidCreateSubframe(coreFrame->frameID(), parent.frameID()));
+    parent.send(Messages::WebFrameProxy::DidCreateSubframe(coreFrame->frameID()));
 
     coreFrame->tree().setName(frameName);
     ASSERT(ownerElement.document().frame());
@@ -158,6 +162,8 @@ WebFrame::~WebFrame()
     auto willSubmitFormCompletionHandlers = std::exchange(m_willSubmitFormCompletionHandlers, { });
     for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
         completionHandler();
+
+    WebProcess::singleton().removeMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object());
 
 #ifndef NDEBUG
     webFrameCounter.decrement();
@@ -936,5 +942,15 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
     return fromCoreFrame(localFrame->mainFrame())->isNavigatingToAppBoundDomain();
 }
 #endif
-    
+
+IPC::Connection* WebFrame::messageSenderConnection() const
+{
+    return WebProcess::singleton().parentProcessConnection();
+}
+
+uint64_t WebFrame::messageSenderDestinationID() const
+{
+    return m_frameID.object().toUInt64();
+}
+
 } // namespace WebKit

@@ -163,6 +163,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/DrawingAreaProxy \
 	UIProcess/Network/NetworkProcessProxy \
 	UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy \
+	UIProcess/WebFrameProxy \
 	UIProcess/WebPageProxy \
 	UIProcess/VisitedLinkStore \
 	UIProcess/ios/WebDeviceOrientationUpdateProviderProxy \
@@ -178,7 +179,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebProcessProxy \
 	UIProcess/Automation/WebAutomationSession \
 	UIProcess/WebProcessPool \
-        UIProcess/WebScreenOrientationManagerProxy \
+	UIProcess/WebScreenOrientationManagerProxy \
 	UIProcess/Downloads/DownloadProxy \
 	UIProcess/Extensions/WebExtensionContext \
 	UIProcess/Extensions/WebExtensionController \
@@ -231,7 +232,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider \
 	WebProcess/WebCoreSupport/WebFileSystemStorageConnection \
 	WebProcess/WebCoreSupport/WebPermissionController \
-        WebProcess/WebCoreSupport/WebScreenOrientationManager \
+	WebProcess/WebCoreSupport/WebScreenOrientationManager \
 	WebProcess/WebCoreSupport/WebSpeechRecognitionConnection \
 	WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager \
 	WebProcess/Storage/WebSharedWorkerContextManagerConnection \
@@ -252,6 +253,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator \
 	WebProcess/WebPage/ViewGestureGeometryCollector \
 	WebProcess/WebPage/DrawingArea \
+	WebProcess/WebPage/WebFrame \
 	WebProcess/WebPage/WebPage \
 	WebProcess/WebPage/VisitedLinkTableController \
 	WebProcess/WebPage/Cocoa/TextCheckingControllerProxy \

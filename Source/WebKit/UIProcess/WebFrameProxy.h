@@ -28,6 +28,8 @@
 #include "APIObject.h"
 #include "FrameLoadState.h"
 #include "GenericCallback.h"
+#include "MessageReceiver.h"
+#include "MessageSender.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -57,7 +59,7 @@ enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
 struct WebsitePoliciesData;
 
-class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy> {
+class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static Ref<WebFrameProxy> create(WebPageProxy& page, WebProcessProxy& process, WebCore::FrameIdentifier frameID)
     {
@@ -135,14 +137,19 @@ public:
     void setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
 
     void disconnect();
-    void addChildFrame(Ref<WebFrameProxy>&&);
+    void didCreateSubframe(WebCore::FrameIdentifier);
     ProcessID processIdentifier() const;
     void swapToProcess(WebProcessProxy&);
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
+
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;

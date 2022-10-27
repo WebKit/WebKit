@@ -28,6 +28,8 @@
 #include "APIObject.h"
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
+#include "MessageReceiver.h"
+#include "MessageSender.h"
 #include "PolicyDecision.h"
 #include "ShareableBitmap.h"
 #include "TransactionID.h"
@@ -69,7 +71,7 @@ class WebPage;
 struct FrameInfoData;
 struct WebsitePoliciesData;
 
-class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
+class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static Ref<WebFrame> create(WebPage& page) { return adoptRef(*new WebFrame(page)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
@@ -200,8 +202,13 @@ public:
     std::optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
 #endif
 
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
 private:
     WebFrame(WebPage&);
+
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     WeakPtr<WebCore::AbstractFrame> m_coreFrame;
     WeakPtr<WebPage> m_page;

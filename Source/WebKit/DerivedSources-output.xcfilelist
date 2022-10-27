@@ -527,6 +527,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessagesR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFullScreenManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFullScreenManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFullScreenManagerMessagesReplies.h

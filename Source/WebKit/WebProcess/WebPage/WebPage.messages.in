@@ -212,8 +212,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, Vector<WebKit::SandboxExtension::Handle> networkExtensionsSandboxExtensions)
 #endif
 
-    ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier listenerID)
-
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
 
