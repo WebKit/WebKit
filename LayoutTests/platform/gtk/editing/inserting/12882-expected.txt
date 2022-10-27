@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 198: "Four score and seven years ago"
         RenderImage {IMG} at (708,0) size 76x103
         RenderText {#text} at (198,0) size 685x35
-          text run at (198,0) width 483: " our fathers brought forth on this continent a new nation, conceived in liberty"
-          text run at (681,0) width 4: " "
+          text run at (198,0) width 4: " "
+          text run at (202,0) width 483: "our fathers brought forth on this continent a new nation, conceived in liberty "
           text run at (0,18) width 392: "and dedicated to the proposition that all men are created equal."
 caret: position 1 of child 1 {IMG} of child 2 {DIV} of body

@@ -30,5 +30,7 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
                 RenderText {#text} at (0,0) size 71x17
-                  text run at (0,0) width 71: "foo bar baz"
+                  text run at (0,0) width 45: "foo bar"
+                  text run at (45,0) width 4: " "
+                  text run at (49,0) width 22: "baz"
         RenderText {#text} at (0,0) size 0x0

@@ -18,8 +18,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 753x53
-          text run at (14,14) width 747: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested"
-          text run at (760,14) width 7: " "
+          text run at (14,14) width 753: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested "
           text run at (14,41) width 144: "in a green box."
       RenderBlock {DIV} at (0,106) size 784x138
         RenderBlock {DIV} at (0,0) size 784x138 [border: (2px solid #FF0000)]

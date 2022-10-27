@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (202,0) width 8: "e"
         RenderText {#text} at (209,0) size 5x17
           text run at (209,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 1x17
+        RenderInline {SPAN} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 181x17
           text run at (0,18) width 181: "thisshouldbeonthesecondline"
       RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]

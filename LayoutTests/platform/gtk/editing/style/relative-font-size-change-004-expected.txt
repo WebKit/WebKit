@@ -38,10 +38,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 721x80
-          text run at (14,14) width 715: "Size check should say: 30px. All text in the red boxes should appear to be"
-          text run at (728,14) width 7: " "
-          text run at (14,41) width 689: "24px. This test checks removing font size tags when they are no longer"
-          text run at (702,41) width 7: " "
+          text run at (14,14) width 721: "Size check should say: 30px. All text in the red boxes should appear to be "
+          text run at (14,41) width 694: "24px. This test checks removing font size tags when they are no longer "
           text run at (14,68) width 99: "necessary."
       RenderBlock {DIV} at (0,133) size 784x27
         RenderText {#text} at (0,0) size 118x26

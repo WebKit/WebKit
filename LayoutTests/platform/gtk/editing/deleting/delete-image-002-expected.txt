@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
             text run at (14,14) width 11: "a"
           RenderText {#text} at (25,14) size 46x26
             text run at (25,14) width 46: "new "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (71,14) size 0x26
           RenderText {#text} at (14,123) size 67x26
             text run at (14,123) width 67: "nation "
-          RenderInline {I} at (0,0) size 0x0
+          RenderInline {I} at (0,0) size 0x26
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderImage {IMG} at (80,41) size 77x103
