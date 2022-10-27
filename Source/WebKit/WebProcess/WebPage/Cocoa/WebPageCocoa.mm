@@ -35,7 +35,7 @@
 #import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
 #import "WebRemoteObjectRegistry.h"
-#import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/Editing.h>
@@ -60,10 +60,13 @@
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
+
+#define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
 #if PLATFORM(COCOA)
 

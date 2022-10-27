@@ -4344,6 +4344,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    m_sanitizeLookalikeCharactersInLinksEnabled = store.getBoolValueForKey(WebPreferencesKey::sanitizeLookalikeCharactersInLinksEnabledKey());
+#endif
+
     if (settings.showMediaStatsContextMenuItemEnabled())
         settings.setTrackConfigurationEnabled(true);
 

@@ -2536,6 +2536,10 @@ private:
     WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    bool m_sanitizeLookalikeCharactersInLinksEnabled { false };
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     WeakHashSet<WebCore::HTMLImageElement, WebCore::WeakPtrImplWithEventTargetData> m_elementsToExcludeFromRemoveBackground;
 #endif

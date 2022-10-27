@@ -874,6 +874,16 @@ SampleBufferContentKeySessionSupportEnabled:
     WebCore:
       default: false
 
+SanitizeLookalikeCharactersInLinksEnabled:
+  type: bool
+  humanReadableName: "Sanitize Lookalike Characters in Links"
+  humanReadableDescription: "Enable Sanitization for Lookalike Characters in Links"
+  webcoreBinding: none
+  condition: ENABLE(NETWORK_CONNECTION_INTEGRITY)
+  defaultValue:
+    WebKit:
+      default: true
+
 ScrollingPerformanceTestingEnabled:
   type: bool
   humanReadableName: "Scroll Performance Testing Enabled"
