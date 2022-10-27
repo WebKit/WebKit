@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true UseGPUProcessForDOMRenderingEnabled=true BlockIOKitInWebContentSandbox=true UseGPUProcessForCanvasRenderingEnabled=true UseGPUProcessForMediaEnabled=true runSingly=true ] -->
+<html>
+<body>
+<script>
+"use strict";
+function runTest() {
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    const gl = canvas.getContext("webgl");
+    if (!gl)
+        return;
+    gl.clearColor(1, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+runTest();
+</script>
+</body>
+</html>
