@@ -703,4 +703,15 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
+bool NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(const ResourceRequest& request)
+{
+    if (request.isThirdParty())
+        return false;
+
+    if (request.url().host() == request.firstPartyForCookies().host())
+        return false;
+
+    return true;
+}
+
 } // namespace WebKit
