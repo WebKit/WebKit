@@ -597,8 +597,6 @@ bool Font::supportsCodePoint(UChar32 character) const
 
 bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
-    ASSERT(isMainThread());
-
     auto codePoints = StringView(characters, length).codePoints();
     auto it = codePoints.begin();
     auto end = codePoints.end();
