@@ -35,7 +35,6 @@ namespace Layout {
 class Box;
 class ElementBox;
 class LayoutState;
-struct TextMetrics;
 
 class LineBoxBuilder {
 public:
@@ -45,7 +44,6 @@ public:
 
 private:
     void setVerticalPropertiesForInlineLevelBox(const LineBox&, InlineLevelBox&) const;
-    void setLayoutBounds(InlineLevelBox&, const TextMetrics&) const;
     void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
 
