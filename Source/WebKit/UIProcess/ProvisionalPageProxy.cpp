@@ -69,7 +69,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_processSwapRequestedByClient(processSwapRequestedByClient)
     , m_isProcessSwappingOnNavigationResponse(isProcessSwappingOnNavigationResponse)
     , m_provisionalLoadURL(isProcessSwappingOnNavigationResponse ? request.url() : URL())
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     , m_provisionalLoadActivity(m_process->throttler().foregroundActivity("Provisional Load"_s))
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

@@ -292,7 +292,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
         return;
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
+    m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s).moveToUniquePtr();
 #endif
 
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
@@ -473,6 +473,13 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 {
 }
 
+#endif
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+void AuxiliaryProcessProxy::setRunningBoardThrottlingEnabled()
+{
+    m_lifetimeActivity = nullptr;
+}
 #endif
 
 } // namespace WebKit

@@ -626,6 +626,13 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         m_processPool->pageBeginUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
     }
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
+        setRunningBoardThrottlingEnabled();
+#endif
+    if (!webPage.preferences().shouldTakeSuspendedAssertions())
+        m_throttler.setShouldTakeSuspendedAssertion(false);
+
     markProcessAsRecentlyUsed();
     m_pageMap.set(webPage.identifier(), &webPage);
     globalPageMap().set(webPage.identifier(), &webPage);
@@ -1090,10 +1097,19 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         connection()->setIgnoreInvalidMessageForTesting();
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (connection()) {
         if (xpc_connection_t xpcConnection = connection()->xpcConnection())
             m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
+    }
+
+    for (const auto& page : m_pageMap.values()) {
+#if PLATFORM(MAC)
+        if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
+            setRunningBoardThrottlingEnabled();
+#endif
+        if (!page->preferences().shouldTakeSuspendedAssertions())
+            m_throttler.setShouldTakeSuspendedAssertion(false);
     }
 #endif
 

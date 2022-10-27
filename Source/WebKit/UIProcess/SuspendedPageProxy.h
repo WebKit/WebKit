@@ -114,7 +114,7 @@ private:
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
     RunLoop::Timer<SuspendedPageProxy> m_suspensionTimeoutTimer;
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_suspensionActivity;
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

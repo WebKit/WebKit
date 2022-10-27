@@ -50,7 +50,6 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedStringHash.h>
 #include <WebCore/SleepDisabler.h>
-#include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

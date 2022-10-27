@@ -482,7 +482,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         return;
     }
     
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (xpc_connection_t connection = this->connection()->xpcConnection())
         m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
 #endif
