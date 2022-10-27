@@ -533,44 +533,47 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
     auto& rootStyle = this->rootStyle();
-    auto numberOfCommittedItems = committedContent.itemCount;
-    auto trailingInlineItemIndex = needsLayoutRange.start + numberOfCommittedItems - 1;
+    auto trailingInlineItemIndex = needsLayoutRange.start + committedContent.itemCount - 1;
     auto lineRange = InlineItemRange { needsLayoutRange.start, trailingInlineItemIndex + 1 };
     ASSERT(lineRange.end <= needsLayoutRange.end);
     if (!committedContent.itemCount || committedContent.itemCount == m_placedFloats.size()) {
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    auto& quirks = m_inlineFormattingContext.formattingQuirks();
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
-    auto lineHasOverflow = horizontalAvailableSpace < m_line.contentLogicalWidth();
-    auto isInIntrinsicWidthMode = this->isInIntrinsicWidthMode();
-    auto lineEndsWithLineBreak = !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
-    auto isLineBreakAfterWhitespace = (!isLastLine || lineHasOverflow) && rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
-    auto shouldApplyPreserveTrailingWhitespaceQuirk = quirks.shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode, m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak);
 
-    m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk || isLineBreakAfterWhitespace ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
-    if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode, lineHasOverflow))
-        m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
+    auto trimTrailingContent = [&] {
+        auto& quirks = m_inlineFormattingContext.formattingQuirks();
+        auto lineHasOverflow = horizontalAvailableSpace < m_line.contentLogicalWidth();
+        auto lineEndsWithLineBreak = !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
+        auto isLineBreakAfterWhitespace = (!isLastLine || lineHasOverflow) && rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
+        auto shouldApplyPreserveTrailingWhitespaceQuirk = quirks.shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode(), m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak);
 
-    if (isInIntrinsicWidthMode) {
-        // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
-        // https://drafts.csswg.org/css-text/#hanging
-        if (*intrinsicWidthMode() == IntrinsicWidthMode::Minimum)
-            m_line.removeHangingGlyphs();
-        else {
-            // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
-            auto isConditionalHanging = isLastLine || lineEndsWithLineBreak;
-            if (!isConditionalHanging)
+        m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk || isLineBreakAfterWhitespace ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
+        if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), lineHasOverflow))
+            m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
+
+        if (isInIntrinsicWidthMode()) {
+            // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
+            // https://drafts.csswg.org/css-text/#hanging
+            if (*intrinsicWidthMode() == IntrinsicWidthMode::Minimum)
                 m_line.removeHangingGlyphs();
+            else {
+                // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
+                auto isConditionalHanging = isLastLine || lineEndsWithLineBreak;
+                if (!isConditionalHanging)
+                    m_line.removeHangingGlyphs();
+            }
         }
-    }
+    };
+    trimTrailingContent();
 
     // On each line, reset the embedding level of any sequence of whitespace characters at the end of the line
     // to the paragraph embedding level
     m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
-    auto runsExpandHorizontally = !isInIntrinsicWidthMode && (isLastLine ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify);
+
+    auto runsExpandHorizontally = !isInIntrinsicWidthMode() && (isLastLine ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify);
     if (runsExpandHorizontally)
         m_line.applyRunExpansion(horizontalAvailableSpace);
     auto lineEndsWithHyphen = false;
@@ -581,7 +584,8 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
 
     auto needsTextOverflowAdjustment = [&] {
-        if (!lineHasOverflow || isInIntrinsicWidthMode)
+        auto lineHasOverflow = horizontalAvailableSpace < m_line.contentLogicalWidth();
+        if (!lineHasOverflow || isInIntrinsicWidthMode())
             return false;
         // text-overflow is in effect when the block container has overflow other than visible.
         return !rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis;
