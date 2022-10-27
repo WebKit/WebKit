@@ -58,6 +58,10 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeBooleanOrPlainFeature
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("max-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::LessThanOrEqual };
+        if (name.startsWith("-webkit-min-"_s))
+            return { "-webkit-"_s + StringView(name).substring(12), ComparisonOperator::GreaterThanOrEqual };
+        if (name.startsWith("-webkit-max-"_s))
+            return { "-webkit-"_s + StringView(name).substring(12), ComparisonOperator::LessThanOrEqual };
 
         return { name, ComparisonOperator::Equal };
     };
@@ -194,6 +198,9 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
         return value;
     if (auto value = CSSPropertyParserHelpers::consumeAspectRatioValue(range))
         return value;
+    if (auto value = CSSPropertyParserHelpers::consumeResolution(range))
+        return value;
+
     return nullptr;
 }
 

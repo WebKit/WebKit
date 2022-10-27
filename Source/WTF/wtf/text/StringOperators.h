@@ -43,7 +43,7 @@ public:
 
     operator AtomString() const
     {
-        return operator String();
+        return AtomString(operator String());
     }
 
     bool is8Bit()
