@@ -1773,6 +1773,9 @@ webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/245140 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Pass Failure ]
 
+# Will pass once accelerated drawing is enabled on macOS tests.
+webkit.org/b/246285 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
+
 # Mac does not support screen orientation locking, making this test flaky.
 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure Pass ]
 
