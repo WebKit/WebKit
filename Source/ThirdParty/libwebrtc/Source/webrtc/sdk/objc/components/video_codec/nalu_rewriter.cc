@@ -163,8 +163,8 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
   CMBlockBufferRef block_buffer = nullptr;
   CFAllocatorRef block_allocator = CMMemoryPoolGetAllocator(memory_pool);
   OSStatus status = CMBlockBufferCreateWithMemoryBlock(
-      kCFAllocatorDefault, nullptr, reader.BytesRemaining(), block_allocator,
-      nullptr, 0, reader.BytesRemaining(), kCMBlockBufferAssureMemoryNowFlag,
+      kCFAllocatorDefault, nullptr, reader.BytesRemainingForAVC(), block_allocator,
+      nullptr, 0, reader.BytesRemainingForAVC(), kCMBlockBufferAssureMemoryNowFlag,
       &block_buffer);
   if (status != kCMBlockBufferNoErr) {
     RTC_LOG(LS_ERROR) << "Failed to create block buffer.";
@@ -198,7 +198,7 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
     CFRelease(contiguous_buffer);
     return false;
   }
-  RTC_DCHECK(block_buffer_size == reader.BytesRemaining());
+  RTC_DCHECK(block_buffer_size == reader.BytesRemainingForAVC());
 
   // Write Avcc NALUs into block buffer memory.
   AvccBufferWriter writer(reinterpret_cast<uint8_t*>(data_ptr),
@@ -536,6 +536,19 @@ size_t AnnexBBufferReader::BytesRemaining() const {
     return 0;
   }
   return length_ - offset_->start_offset;
+}
+
+size_t AnnexBBufferReader::BytesRemainingForAVC() const {
+  if (offset_ == offsets_.end()) {
+    return 0;
+  }
+  auto iterator = offset_;
+  size_t size = 0;
+  while (iterator != offsets_.end()) {
+    size += kAvccHeaderByteSize + iterator->payload_size;
+    iterator++;
+  }
+  return size;
 }
 
 void AnnexBBufferReader::SeekToStart() {

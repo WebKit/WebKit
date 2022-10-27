@@ -91,6 +91,7 @@ class AnnexBBufferReader final {
   // Returns the number of unread NALU bytes, including the size of the header.
   // If the buffer has no remaining NALUs this will return zero.
   size_t BytesRemaining() const;
+  size_t BytesRemainingForAVC() const;
 
   // Reset the reader to start reading from the first NALU
   void SeekToStart();
