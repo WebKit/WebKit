@@ -889,6 +889,9 @@ public:
     uintptr_t* getLoopHintExecutionCounter(const JSInstruction*);
     void removeLoopHintExecutionCounter(const JSInstruction*);
 
+    void addElementPtr(void*);
+    HashSet<void*>& registeredElementPtrs() { return m_registeredElementPtrs; }
+
     ALWAYS_INLINE void writeBarrier(const JSCell* from) { heap.writeBarrier(from); }
     ALWAYS_INLINE void writeBarrier(const JSCell* from, JSValue to) { heap.writeBarrier(from, to); }
     ALWAYS_INLINE void writeBarrier(const JSCell* from, JSCell* to) { heap.writeBarrier(from, to); }
@@ -1034,6 +1037,9 @@ private:
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
+
+    Lock m_registeredElementPtrsLock;
+    HashSet<void*> m_registeredElementPtrs;
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

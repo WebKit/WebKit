@@ -110,6 +110,7 @@
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
+#include "WaiterListManager.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -392,7 +393,10 @@ void waitForVMDestruction()
 VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
-    
+
+    if (Options::useWaitAsync() && vmType == Default)
+        WaiterListManager::singleton().unregisterVM(this);
+
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
@@ -1431,6 +1435,12 @@ void VM::addLoopHintExecutionCounter(const JSInstruction* instruction)
         addResult.iterator->value.second = WTFMove(ptr);
     }
     ++addResult.iterator->value.first;
+}
+
+void VM::addElementPtr(void* elementPtr)
+{
+    Locker locker { m_registeredElementPtrsLock };
+    m_registeredElementPtrs.add(elementPtr);
 }
 
 uintptr_t* VM::getLoopHintExecutionCounter(const JSInstruction* instruction)

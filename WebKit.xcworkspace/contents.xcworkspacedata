@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Source/JavaScriptCore/runtime/WaiterListManager.h">
+   </FileRef>
+   <FileRef
       location = "group:Configurations">
    </FileRef>
    <FileRef

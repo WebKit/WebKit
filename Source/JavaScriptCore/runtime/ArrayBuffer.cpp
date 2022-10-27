@@ -28,6 +28,7 @@
 
 #include "JSArrayBufferView.h"
 #include "JSCellInlines.h"
+#include "WaiterListManager.h"
 #include <wtf/Gigacage.h>
 
 namespace JSC {
@@ -74,6 +75,15 @@ void ArrayBufferContents::makeShared()
 {
     m_shared = adoptRef(new SharedArrayBufferContents(data(), sizeInBytes(), WTFMove(m_destructor)));
     m_destructor = nullptr;
+}
+
+JS_EXPORT_PRIVATE SharedArrayBufferContents::~SharedArrayBufferContents()
+{
+    WaiterListManager::singleton().unregisterSharedArrayBuffer(bitwise_cast<uint8_t*>(data()), m_sizeInBytes);
+    if (m_destructor) {
+        // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
+        m_destructor->run(m_data.getUnsafe());
+    }
 }
 
 void ArrayBufferContents::copyTo(ArrayBufferContents& other)
