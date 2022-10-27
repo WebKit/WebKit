@@ -167,6 +167,26 @@ gboolean webkit_response_policy_decision_is_mime_type_supported(WebKitResponsePo
     return decision->priv->navigationResponse->canShowMIMEType();
 }
 
+/**
+ * webkit_response_policy_decision_is_main_frame_main_resource:
+ * @decision: a #WebKitResponsePolicyDecision
+ *
+ * Gets whether the request is the main frame main resource
+ *
+ * Returns: %TRUE if the request is the main frame main resouce or %FALSE otherwise
+ *
+ * Since: 2.40
+ */
+gboolean webkit_response_policy_decision_is_main_frame_main_resource(WebKitResponsePolicyDecision* decision)
+{
+    g_return_val_if_fail(WEBKIT_IS_RESPONSE_POLICY_DECISION(decision), FALSE);
+
+    if (!decision->priv->navigationResponse->frame().isMainFrame())
+        return FALSE;
+
+    return decision->priv->navigationResponse->request().requester() == ResourceRequest::Requester::Main;
+}
+
 WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(Ref<API::NavigationResponse>&& response, Ref<WebKit::WebFramePolicyListenerProxy>&& listener)
 {
     WebKitResponsePolicyDecision* responseDecision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, nullptr));

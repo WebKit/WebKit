@@ -222,6 +222,7 @@ static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
     ASSERT_CMP_CSTRING(webkit_uri_response_get_uri(response), ==, kServer->getURIForPath("/"));
     g_assert_cmpint(webkit_web_view_can_show_mime_type(test->m_webView, webkit_uri_response_get_mime_type(response)), ==,
         webkit_response_policy_decision_is_mime_type_supported(decision));
+    g_assert_true(webkit_response_policy_decision_is_main_frame_main_resource(decision));
 
     test->m_respondToPolicyDecisionAsynchronously = true;
     test->loadURI(kServer->getURIForPath("/").data());

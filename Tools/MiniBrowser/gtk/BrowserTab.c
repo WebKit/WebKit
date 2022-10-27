@@ -125,10 +125,7 @@ static gboolean decidePolicy(WebKitWebView *webView, WebKitPolicyDecision *decis
     if (webkit_response_policy_decision_is_mime_type_supported(responseDecision))
         return FALSE;
 
-    WebKitWebResource *mainResource = webkit_web_view_get_main_resource(webView);
-    WebKitURIRequest *request = webkit_response_policy_decision_get_request(responseDecision);
-    const char *requestURI = webkit_uri_request_get_uri(request);
-    if (g_strcmp0(webkit_web_resource_get_uri(mainResource), requestURI))
+    if (!webkit_response_policy_decision_is_main_frame_main_resource(responseDecision))
         return FALSE;
 
     webkit_policy_decision_download(decision);
