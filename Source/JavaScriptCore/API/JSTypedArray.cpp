@@ -135,7 +135,6 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
 {
 
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
 
 
     JSValue value = toJS(globalObject, valueRef);
@@ -243,7 +242,6 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
 void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
 
     JSObject* object = toJS(objectRef);
 
@@ -291,8 +289,8 @@ size_t JSObjectGetTypedArrayByteOffset(JSContextRef, JSObjectRef objectRef, JSVa
 JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-
+    auto &vm = globalObject->vm();
+    
     JSObject* object = toJS(objectRef);
 
 
@@ -328,8 +326,6 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
 void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(object)) {

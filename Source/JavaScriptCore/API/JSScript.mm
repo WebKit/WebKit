@@ -265,9 +265,6 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::SourceCode)sourceCode
 {
-    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
-
-
     TextPosition startPosition { };
     String filename = String { [[self sourceURL] absoluteString] };
     URL url = URL({ }, filename);

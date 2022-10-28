@@ -442,26 +442,26 @@ bool JSValueIsEqualString(JSContextRef ctx, JSValueRef value, const char* ptr, s
     return static_cast<JSString*>(jsValue.asCell())->equal(globalObject, ptr, length);
 }
 
-void* JSValueGetCell(JSContextRef ctx, JSValueRef value) {
-    UNUSED_PARAM(ctx);
-    JSC::JSValue result = bitwise_cast<JSC::JSValue>(value);
-    if (!result.isCell()) {
-        return nullptr;
-    }
-    JSCell* cell = result.asCell();
-    gcProtect(cell);
+// void* JSValueGetCell(JSContextRef ctx, JSValueRef value) {
+//     UNUSED_PARAM(ctx);
+//     JSC::JSValue result = bitwise_cast<JSC::JSValue>(value);
+//     if (!result.isCell()) {
+//         return nullptr;
+//     }
+//     JSCell* cell = result.asCell();
+//     gcProtect(cell);
 
-    return cell;
-}
+//     return cell;
+// }
 
-void JSValueReleaseCell(JSC::JSCell *cell) {
-    gcUnprotect(cell);
-}
+// void JSValueReleaseCell(JSC::JSCell *cell) {
+//     gcUnprotect(cell);
+// }
 
-size_t JSStringLength(JSC::JSString *string) {
-    return string->length();
-}
+// size_t JSStringLength(JSC::JSString *string) {
+//     return string->length();
+// }
 
-void JSStringIterate(JSC::JSString *string, jsstring_iterator *iter) {
-    string->value(iter);
-}
+// void JSStringIterate(JSC::JSString *string, jsstring_iterator *iter) {
+//     string->value(iter);
+// }

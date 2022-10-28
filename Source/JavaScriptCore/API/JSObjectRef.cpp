@@ -691,11 +691,9 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
 
 bool JSObjectIsFunction(JSContextRef ctx, JSObjectRef object)
 {
+    UNUSED_PARAM(ctx);
     if (!object)
         return false;
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-
     JSCell* cell = toJS(object);
     return cell->isCallable();
 }
@@ -738,9 +736,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
 
 bool JSObjectIsConstructor(JSContextRef ctx, JSObjectRef object)
 {
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-
+    UNUSED_PARAM(ctx);
     if (!object)
         return false;
     return toJS(object)->isConstructor();
@@ -854,7 +850,6 @@ JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
     JSObject* object = toJS(objectRef);
     if (!object)
         return nullptr;
-    VM& vm = object->vm();
 
     JSObject* result = nullptr;
     if (JSProxy* proxy = jsDynamicCast<JSProxy*>(object))

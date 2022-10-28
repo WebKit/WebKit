@@ -504,10 +504,6 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)callWithArguments:(NSArray *)argumentArray
 {
-    JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
-    JSC::VM& vm = globalObject->vm();
-
-
     NSUInteger argumentCount = [argumentArray count];
     JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i)
@@ -527,10 +523,6 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)constructWithArguments:(NSArray *)argumentArray
 {
-    JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
-    JSC::VM& vm = globalObject->vm();
-
-
     NSUInteger argumentCount = [argumentArray count];
     JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i)
@@ -550,10 +542,6 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments
 {
-    JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
-    JSC::VM& vm = globalObject->vm();
-
-
     NSUInteger argumentCount = [arguments count];
     JSC::MarkedJSValueRefArray argumentArray([_context JSGlobalContextRef], argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i)
@@ -678,11 +666,13 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 inline bool isDate(JSObjectRef object, JSGlobalContextRef context)
 {
+    UNUSED_PARAM(context);
     return toJS(object)->inherits<JSC::DateInstance>();
 }
 
 inline bool isArray(JSObjectRef object, JSGlobalContextRef context)
 {
+    UNUSED_PARAM(context);
     return toJS(object)->inherits<JSC::JSArray>();
 }
 
