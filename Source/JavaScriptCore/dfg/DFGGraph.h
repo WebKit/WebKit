@@ -793,10 +793,24 @@ public:
     }
 
     template<typename WatchpointSet>
-    bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, WatchpointSet& set)
+    bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, WatchpointSet& set, LinkerIR::Type type)
     {
-        if (m_plan.isUnlinked())
-            return false;
+        if (m_plan.isUnlinked()) {
+            if (m_codeBlock->globalObject() != globalObject)
+                return false;
+
+            LinkerIR::Value value { nullptr, type };
+            if (m_constantPoolMap.contains(value))
+                return true;
+
+            if (!set.isStillValid()) {
+                auto result = m_constantPoolMap.add(value, m_constantPoolMap.size());
+                ASSERT_UNUSED(result, result.isNewEntry);
+                m_constantPool.append(value);
+            }
+
+            return true;
+        }
 
         if (watchpoints().isWatched(set))
             return true;
@@ -816,112 +830,79 @@ public:
 
     bool isWatchingHavingABadTimeWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         WatchpointSet& set = globalObject->havingABadTimeWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::HavingABadTimeWatchpointSet);
     }
 
     bool isWatchingMasqueradesAsUndefinedWatchpointSet(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         WatchpointSet& set = globalObject->masqueradesAsUndefinedWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::MasqueradesAsUndefinedWatchpointSet);
     }
 
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArrayIteratorProtocolWatchpointSet);
     }
 
     bool isWatchingNumberToStringWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->numberToStringWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::NumberToStringWatchpointSet);
     }
 
     bool isWatchingStructureCacheClearedWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->structureCacheClearedWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::StructureCacheClearedWatchpointSet);
     }
 
     bool isWatchingStringSymbolReplaceWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->stringSymbolReplaceWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::StringSymbolReplaceWatchpointSet);
     }
 
     bool isWatchingRegExpPrimordialPropertiesWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->regExpPrimordialPropertiesWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::RegExpPrimordialPropertiesWatchpointSet);
     }
 
     bool isWatchingArraySpeciesWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->arraySpeciesWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArraySpeciesWatchpointSet);
     }
 
-    bool isWatchingArrayPrototypeIsSaneChainWatchpoint(Node* node)
+    bool isWatchingArrayPrototypeChainIsSaneWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->arrayPrototypeChainIsSaneWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArrayPrototypeChainIsSaneWatchpointSet);
     }
 
-    bool isWatchingStringPrototypeIsSaneChainWatchpoint(Node* node)
+    bool isWatchingStringPrototypeChainIsSaneWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->stringPrototypeChainIsSaneWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::StringPrototypeChainIsSaneWatchpointSet);
     }
 
-    bool isWatchingObjectPrototypeIsSaneChainWatchpoint(Node* node)
+    bool isWatchingObjectPrototypeChainIsSaneWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->objectPrototypeChainIsSaneWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ObjectPrototypeChainIsSaneWatchpointSet);
     }
 
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
@@ -1287,6 +1268,9 @@ public:
     HashMap<GenericHashKey<int64_t>, double*> m_doubleConstantsMap;
     Bag<double> m_doubleConstants;
 #endif
+
+    Vector<LinkerIR::Value> m_constantPool;
+    HashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;
     
     OptimizationFixpointState m_fixpointState;
     StructureRegistrationState m_structureRegistrationState;

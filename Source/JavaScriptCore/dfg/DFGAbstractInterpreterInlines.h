@@ -2298,7 +2298,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
 
                     if (node->arrayMode().isOutOfBounds()) {
-                        if (m_graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(node)) {
+                        if (m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node)) {
                             if (node->arrayMode().type() == Array::Double && node->arrayMode().isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther))
                                 setConstant(node, jsNumber(PNaN));
                             else

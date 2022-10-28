@@ -255,7 +255,7 @@ ArrayMode ArrayMode::refine(
         if (node->op() == GetByVal
             && isJSArrayWithOriginalStructure()
             && !graph.hasExitSite(node->origin.semantic, OutOfBounds)
-            && graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(node))
+            && graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node))
             return withSpeculation(Array::InBoundsSaneChain);
         return ArrayMode(Array::Generic, action());
     }

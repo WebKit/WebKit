@@ -1602,6 +1602,10 @@ void CodeBlock::finalizeJITInlineCaches()
     if (JITCode::isOptimizingJIT(jitType())) {
         for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_callLinkInfos)
             callLinkInfo->visitWeak(vm());
+        if (auto* jitData = dfgJITData()) {
+            for (auto& callLinkInfo : jitData->callLinkInfos())
+                callLinkInfo.visitWeak(vm());
+        }
     }
 #endif
 
@@ -1708,6 +1712,10 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
             for (auto* callLinkInfo : dfgCommon->m_callLinkInfos)
                 result.add(callLinkInfo->codeOrigin(), ICStatus()).iterator->value.callLinkInfo = callLinkInfo;
+            if (auto* jitData = dfgJITData()) {
+                for (auto& callLinkInfo : jitData->callLinkInfos())
+                    result.add(callLinkInfo.codeOrigin(), ICStatus()).iterator->value.callLinkInfo = &callLinkInfo;
+            }
             for (auto& pair : dfgCommon->recordedStatuses.calls)
                 result.add(pair.first, ICStatus()).iterator->value.callStatus = pair.second.get();
             for (auto& pair : dfgCommon->recordedStatuses.gets)
@@ -1771,6 +1779,12 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(const ConcurrentJSLocke
         for (auto* callLinkInfo : dfgCommon->m_callLinkInfos) {
             if (callLinkInfo->codeOrigin() == CodeOrigin(index))
                 return callLinkInfo;
+        }
+        if (auto* jitData = dfgJITData()) {
+            for (auto& callLinkInfo : jitData->callLinkInfos()) {
+                if (callLinkInfo.codeOrigin() == CodeOrigin(index))
+                    return &callLinkInfo;
+            }
         }
     }
 #endif
