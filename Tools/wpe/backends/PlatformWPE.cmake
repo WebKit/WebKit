@@ -4,11 +4,13 @@ find_package(WaylandProtocols 1.12 REQUIRED)
 find_package(WPEBackend_fdo 1.3.0 REQUIRED)
 
 list(APPEND WPEToolingBackends_PUBLIC_HEADERS
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-client-protocol.h
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-client-protocol.h
     fdo/WindowViewBackend.h
 )
 
 list(APPEND WPEToolingBackends_SOURCES
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c
 
     atk/ViewBackendAtk.cpp
@@ -42,6 +44,19 @@ list(APPEND WPEToolingBackends_LIBRARIES
 
 list(APPEND WPEToolingBackends_DEFINITIONS USE_GLIB=1)
 list(APPEND WPEToolingBackends_PRIVATE_DEFINITIONS ${LIBEPOXY_DEFINITIONS})
+
+add_custom_command(
+    OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml
+    DEPENDS ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} code ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-client-protocol.h
+    VERBATIM)
 
 add_custom_command(
     OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c

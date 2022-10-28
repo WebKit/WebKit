@@ -114,7 +114,6 @@ public:
     const Color& absoluteColor() const;
 
     WEBCORE_EXPORT Color resolveColor(const Color& colorPropertyValue) const;
-    WEBCORE_EXPORT Color resolveColorWithoutCurrentColor() const;
 
     friend WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
     String debugDescription() const;

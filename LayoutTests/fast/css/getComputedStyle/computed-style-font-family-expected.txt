@@ -7,7 +7,7 @@ font-optical-sizing: auto;
 font-palette: normal;
 font-size: 16px;
 font-size-adjust: none;
-font-stretch: normal;
+font-stretch: 100%;
 font-style: normal;
 font-synthesis-small-caps: auto;
 font-synthesis-style: auto;

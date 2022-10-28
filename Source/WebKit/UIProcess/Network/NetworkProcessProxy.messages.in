@@ -54,7 +54,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     StartServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     EndServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 #endif
-    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:bool WebKit::RemoteWorkerType workerType, WebCore::RegistrableDomain registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID) -> ()
+    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:bool WebKit::RemoteWorkerType workerType, WebCore::RegistrableDomain registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID) -> (WebCore::ProcessIdentifier remoteProcessIdentifier)
     RemoteWorkerContextConnectionNoLongerNeeded(enum:bool WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier identifier)
     RegisterRemoteWorkerClientProcess(enum:bool WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     UnregisterRemoteWorkerClientProcess(enum:bool WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);

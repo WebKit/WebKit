@@ -58,9 +58,8 @@ public:
     virtual ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const = 0;
     virtual unsigned size() const = 0;
 
-    static RefPtr<CSSStyleValue> reifyValue(CSSValue*, Document&);
-    static RefPtr<CSSStyleValue> customPropertyValueOrDefault(const String& name, Document&, CSSValue*);
-    static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(CSSValue*, Document&);
+    static RefPtr<CSSStyleValue> reifyValue(RefPtr<CSSValue>&&, Document&);
+    static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(RefPtr<CSSValue>&&, Document&);
 
 protected:
     virtual Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const = 0;

@@ -27,8 +27,10 @@
 #include "WebFrameProxy.h"
 
 #include "APINavigation.h"
+#include "Connection.h"
 #include "ProvisionalPageProxy.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessPool.h"
@@ -39,6 +41,8 @@
 #include <stdio.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
+
+#define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -72,7 +76,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, Frame
 {
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, this);
-
+    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object(), *this);
     WebProcessPool::statistics().wkFrameCount++;
 }
 
@@ -85,6 +89,8 @@ WebFrameProxy::~WebFrameProxy()
 
     if (m_navigateCallback)
         m_navigateCallback({ }, { });
+
+    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object());
 
     ASSERT(allFrames().get(m_frameID) == this);
     allFrames().remove(m_frameID);
@@ -340,8 +346,19 @@ void WebFrameProxy::disconnect()
         m_parentFrame->m_childFrames.remove(*this);
 }
 
-void WebFrameProxy::addChildFrame(Ref<WebFrameProxy>&& child)
+void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
 {
+    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
+    // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
+    // IPC when it later gets processed.
+    if (WebFrameProxy::webFrame(frameID))
+        return;
+
+    MESSAGE_CHECK(m_process, m_page);
+    MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
+    MESSAGE_CHECK(m_process, frameID.processIdentifier() == m_process->coreProcessIdentifier());
+
+    auto child = WebFrameProxy::create(*m_page, m_process, frameID);
     child->m_parentFrame = *this;
     m_childFrames.add(WTFMove(child));
 }
@@ -351,6 +368,16 @@ void WebFrameProxy::swapToProcess(WebProcessProxy& process)
     ASSERT(!isMainFrame());
     m_process = process;
     // FIXME: Do more here.
+}
+
+IPC::Connection* WebFrameProxy::messageSenderConnection() const
+{
+    return m_process->connection();
+}
+
+uint64_t WebFrameProxy::messageSenderDestinationID() const
+{
+    return m_frameID.object().toUInt64();
 }
 
 } // namespace WebKit

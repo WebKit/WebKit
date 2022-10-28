@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteVideoFrameObjectHeap.h"
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>

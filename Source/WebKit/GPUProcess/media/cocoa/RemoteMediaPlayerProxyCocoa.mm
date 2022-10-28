@@ -53,12 +53,13 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeIfPossible(const WebCore::FloatSi
     [CATransaction commit];
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode, CompletionHandler<void(std::optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode, CompletionHandler<void(std::optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
     m_player->setPreload(preload);
     m_player->setPreservesPitch(preservesPitch);
     m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode);
+    m_player->setPresentationSize(presentationSize);
     if (prepareForRendering)
         m_player->prepareForRendering();
     m_videoContentScale = videoContentScale;
@@ -78,9 +79,6 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
-    m_videoInlineSize = m_player->presentationSize();
-    setVideoInlineSizeIfPossible(m_videoInlineSize);
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::VideoInlineSizeChanged(m_videoInlineSize), m_id);
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 

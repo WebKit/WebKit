@@ -516,55 +516,61 @@ TEST_F(WTF_URL, URLIsEqualIgnoringQueryAndFragments)
 
 TEST_F(WTF_URL, URLRemoveQueryParameters)
 {
-    URL url = createURL("http://www.webkit.org/?key=val"_s);
-    URL url1 = createURL("http://www.webkit.org/?key=val&key1=val1"_s);
-    URL url2 = createURL("http://www.webkit.org/?"_s);
-    URL url3 = createURL("http://www.webkit.org/?key=val#fragment"_s);
-    URL url4 = createURL("http://www.webkit.org/?key=val&key=val#fragment"_s);
-    URL url5 = createURL("http://www.webkit.org/?key&key=#fragment"_s);
-    URL url6 = createURL("http://www.webkit.org/#fragment"_s);
-    URL url7 = createURL("http://www.webkit.org/?key=val#fragment"_s);
-    URL url8 = createURL("http://www.webkit.org/"_s);
-    URL url9 = createURL("http://www.webkit.org/#fragment"_s);
-    URL url10 = createURL("http://www.webkit.org/?key=val#fragment"_s);
-    URL url11 = createURL("http://www.webkit.org/?key=val&key1=val1#fragment"_s);
-    URL url12 = createURL("http://www.webkit.org/?key=val&key1=val1#fragment"_s);
-    URL url13 = createURL("http://www.webkit.org"_s);
-    
+    const auto url = createURL("http://www.webkit.org/?key=val"_s);
+    auto url1 = createURL("http://www.webkit.org/?key=val&key1=val1"_s);
+    auto url2 = createURL("http://www.webkit.org/?"_s);
+    auto url3 = createURL("http://www.webkit.org/?key=val#fragment"_s);
+    auto url4 = createURL("http://www.webkit.org/?key=val&key=val#fragment"_s);
+    auto url5 = createURL("http://www.webkit.org/?key&key=#fragment"_s);
+    auto url6 = createURL("http://www.webkit.org/#fragment"_s);
+    auto url7 = createURL("http://www.webkit.org/?key=val#fragment"_s);
+    const auto url8 = createURL("http://www.webkit.org/"_s);
+    const auto url9 = createURL("http://www.webkit.org/#fragment"_s);
+    const auto url10 = createURL("http://www.webkit.org/?key=val#fragment"_s);
+    auto url11 = createURL("http://www.webkit.org/?key=val&key1=val1#fragment"_s);
+    auto url12 = createURL("http://www.webkit.org/?key=val&key1=val1#fragment"_s);
+    auto url13 = createURL("http://www.webkit.org"_s);
+    auto url14 = createURL("http://www.webkit.org/?u+v=x+%20y&key1=foo"_s);
+    auto url15 = createURL("http://www.webkit.org/?u+v=x+%20y"_s);
+
     HashSet<String> keyRemovalSet1 { "key"_s };
     HashSet<String> keyRemovalSet2 { "key1"_s };
     HashSet<String> keyRemovalSet3 { "key2"_s };
     HashSet<String> keyRemovalSet4 { "key"_s, "key1"_s };
-    
+
     removeQueryParameters(url1, keyRemovalSet2);
     EXPECT_EQ(url1.string(), url.string());
-    
+
+    const auto originalURL2 = url2;
     removeQueryParameters(url2, keyRemovalSet1);
-    EXPECT_EQ(url2.string(), url8.string());
-    
+    EXPECT_EQ(url2.string(), originalURL2.string());
+
     removeQueryParameters(url3, keyRemovalSet1);
     EXPECT_EQ(url3.string(), url6.string());
-    
+
     removeQueryParameters(url4, keyRemovalSet1);
     EXPECT_EQ(url4.string(), url6.string());
-    
+
     removeQueryParameters(url5, keyRemovalSet1);
     EXPECT_EQ(url5.string(), url6.string());
-    
+
     removeQueryParameters(url6, keyRemovalSet1);
     EXPECT_EQ(url6.string(), url9.string());
-    
+
     removeQueryParameters(url7, keyRemovalSet2);
     EXPECT_EQ(url7.string(), url10.string());
-    
+
     removeQueryParameters(url11, keyRemovalSet3);
     EXPECT_EQ(url11.string(), url12.string());
-    
+
     removeQueryParameters(url12, keyRemovalSet4);
     EXPECT_EQ(url12.string(), url9.string());
-    
+
     removeQueryParameters(url13, keyRemovalSet1);
     EXPECT_EQ(url13.string(), url8.string());
+
+    removeQueryParameters(url14, keyRemovalSet4);
+    EXPECT_EQ(url14.string(), url15.string());
 }
 
 TEST_F(WTF_URL, IsolatedCopy)

@@ -102,7 +102,7 @@ messages -> WebPageProxy {
 #endif
 
     # Policy messages
-    DecidePolicyForResponse(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute, bool wasAllowedByInjectedBundle, uint64_t listenerID, WebKit::UserData userData)
+    DecidePolicyForResponse(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute, uint64_t listenerID, WebKit::UserData userData)
     DecidePolicyForNavigationActionAsync(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse, WebKit::UserData userData, uint64_t listenerID)
     DecidePolicyForNavigationActionSync(WebCore::FrameIdentifier frameID, bool isMainFrame, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse, WebKit::UserData userData) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
     DecidePolicyForNewWindowAction(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::UserData userData)
@@ -117,7 +117,6 @@ messages -> WebPageProxy {
 
     # Frame lifetime messages
     DidCreateMainFrame(WebCore::FrameIdentifier frameID)
-    DidCreateSubframe(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier parentFrameID)
 
     # Frame load messages
     DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
@@ -136,7 +135,6 @@ messages -> WebPageProxy {
     DidReceiveTitleForFrame(WebCore::FrameIdentifier frameID, String title, WebKit::UserData userData)
     DidDisplayInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
-    DidDetectXSSForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, uint32_t type, URL url, WebKit::UserData userData)
     DidSameDocumentNavigationForFrameViaJSHistoryAPI(WebCore::FrameIdentifier frameID, uint32_t type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
     DidChangeMainDocument(WebCore::FrameIdentifier frameID)

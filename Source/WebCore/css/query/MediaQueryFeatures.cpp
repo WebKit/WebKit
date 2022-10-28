@@ -75,6 +75,23 @@ private:
     ValueFunction valueFunction;
 };
 
+struct NumberSchema : public FeatureSchema {
+    using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
+
+    NumberSchema(const AtomString& name, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Integer, FeatureSchema::ValueType::Number })
+        , valueFunction(WTFMove(valueFunction))
+    { }
+
+    EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        return evaluateNumberFeature(feature, valueFunction(context));
+    }
+
+private:
+    ValueFunction valueFunction;
+};
+
 struct LengthSchema : public FeatureSchema {
     using ValueFunction = Function<LayoutUnit(const FeatureEvaluationContext&)>;
 
@@ -109,6 +126,23 @@ private:
     ValueFunction valueFunction;
 };
 
+struct ResolutionSchema : public FeatureSchema {
+    using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
+
+    ResolutionSchema(const AtomString& name, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Resolution })
+        , valueFunction(WTFMove(valueFunction))
+    { }
+
+    EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        return evaluateResolutionFeature(feature, valueFunction(context));
+    }
+
+private:
+    ValueFunction valueFunction;
+};
+
 using MatchingIdentifiers = Vector<CSSValueID, 1>;
 
 struct IdentifierSchema : public FeatureSchema {
@@ -133,6 +167,23 @@ struct IdentifierSchema : public FeatureSchema {
 private:
     ValueFunction valueFunction;
 };
+
+static double deviceScaleFactor(const FeatureEvaluationContext& context)
+{
+    auto& frame = *context.document.frame();
+    auto mediaType = frame.view()->mediaType();
+    
+    if (equalLettersIgnoringASCIICase(mediaType, "screen"_s))
+        return frame.page() ? frame.page()->deviceScaleFactor() : 1;
+
+    if (equalLettersIgnoringASCIICase(mediaType, "print"_s)) {
+        // The resolution of images while printing should not depend on the dpi
+        // of the screen. Until we support proper ways of querying this info
+        // we use 300px which is considered minimum for current printers.
+        return 3.125; // 300dpi / 96dpi;
+    }
+    return 0;
+}
 
 const FeatureSchema& animation()
 {
@@ -253,7 +304,16 @@ const FeatureSchema& deviceHeight()
     return schema;
 }
 
-const FeatureSchema& devicePixelRatio();
+const FeatureSchema& devicePixelRatio()
+{
+    static MainThreadNeverDestroyed<NumberSchema> schema {
+        "-webkit-device-pixel-ratio"_s,
+        [](auto& context) {
+            return deviceScaleFactor(context);
+        }
+    };
+    return schema;
+}
 
 const FeatureSchema& deviceWidth()
 {
@@ -495,7 +555,16 @@ const FeatureSchema& prefersReducedMotion()
     return schema;
 }
 
-const FeatureSchema& resolution();
+const FeatureSchema& resolution()
+{
+    static MainThreadNeverDestroyed<ResolutionSchema> schema {
+        "resolution"_s,
+        [](auto& context) {
+            return deviceScaleFactor(context);
+        }
+    };
+    return schema;
+}
 
 const FeatureSchema& scan()
 {
@@ -635,7 +704,7 @@ Vector<const FeatureSchema*> allSchemas()
         &colorIndex(),
         &deviceAspectRatio(),
         &deviceHeight(),
-// FIXME: &devicePixelRatio(),
+        &devicePixelRatio(),
         &deviceWidth(),
         &dynamicRange(),
         &forcedColors(),
@@ -649,7 +718,7 @@ Vector<const FeatureSchema*> allSchemas()
         &prefersContrast(),
         &prefersDarkInterface(),
         &prefersReducedMotion(),
-// FIXME: &resolution(),
+        &resolution(),
         &scan(),
         &transform2d(),
         &transform3d(),

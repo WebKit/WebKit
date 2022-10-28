@@ -27,7 +27,6 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "VideoColorSpaceInit.h"
 #include "VideoFrame.h"
 #include "VideoPixelFormat.h"
 
@@ -46,7 +45,6 @@ struct WebCodecsVideoFrameData {
     size_t visibleTop { 0 };
     std::optional<uint64_t> duration { 0 };
     int64_t timestamp { 0 };
-    VideoColorSpaceInit colorSpace;
 };
 
 }

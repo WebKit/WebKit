@@ -107,6 +107,8 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
 
     m_response = ResourceResponse(receivedResponse);
     m_response.setCertificateInfo(WTFMove(receivedResponse.certificateInfo));
+
+    updateNetworkLoadMetrics(receivedResponse.networkLoadMetrics);
     m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTFMove(receivedResponse.networkLoadMetrics)));
 
     handleCookieHeaders(d(), request.resourceRequest(), receivedResponse);
@@ -160,6 +162,8 @@ void CurlResourceHandleDelegate::curlDidComplete(CurlRequest&, NetworkLoadMetric
     if (cancelledOrClientless())
         return;
 
+    updateNetworkLoadMetrics(metrics);
+
     CurlCacheManager::singleton().didFinishLoading(m_handle);
     client()->didFinishLoading(&m_handle, WTFMove(metrics));
 }
@@ -175,6 +179,12 @@ void CurlResourceHandleDelegate::curlDidFailWithError(CurlRequest&, ResourceErro
     client()->didFail(&m_handle, resourceError);
 }
 
+void CurlResourceHandleDelegate::updateNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetrics)
+{
+    m_handle.checkTAO(m_response);
+
+    networkLoadMetrics.failsTAOCheck = m_handle.failsTAOCheck();
+}
 
 } // namespace WebCore
 

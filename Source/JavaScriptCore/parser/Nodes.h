@@ -1636,7 +1636,7 @@ namespace JSC {
         bool hasEarlyBreakOrContinue() const;
 
         void emitBytecode(BytecodeGenerator&, RegisterID* destination);
-        void analyzeModule(ModuleAnalyzer&);
+        bool analyzeModule(ModuleAnalyzer&);
 
     private:
         StatementNode* m_head { nullptr };
@@ -1976,7 +1976,7 @@ namespace JSC {
 
         void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
         
-        void analyzeModule(ModuleAnalyzer&);
+        bool analyzeModule(ModuleAnalyzer&);
 
     protected:
         int m_startLineNumber;
@@ -2101,7 +2101,7 @@ namespace JSC {
 
     class ModuleDeclarationNode : public StatementNode {
     public:
-        virtual void analyzeModule(ModuleAnalyzer&) = 0;
+        virtual bool analyzeModule(ModuleAnalyzer&) = 0;
         bool hasCompletionValue() const override { return false; }
         bool isModuleDeclarationNode() const override { return true; }
 
@@ -2119,7 +2119,7 @@ namespace JSC {
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
-        void analyzeModule(ModuleAnalyzer&) final;
+        bool analyzeModule(ModuleAnalyzer&) final;
 
         ImportSpecifierListNode* m_specifierList;
         ModuleNameNode* m_moduleName;
@@ -2135,7 +2135,7 @@ namespace JSC {
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
-        void analyzeModule(ModuleAnalyzer&) final;
+        bool analyzeModule(ModuleAnalyzer&) final;
 
         ModuleNameNode* m_moduleName;
         ImportAssertionListNode* m_assertionList;
@@ -2150,7 +2150,7 @@ namespace JSC {
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
-        void analyzeModule(ModuleAnalyzer&) final;
+        bool analyzeModule(ModuleAnalyzer&) final;
         StatementNode* m_declaration;
         const Identifier& m_localName;
     };
@@ -2163,7 +2163,7 @@ namespace JSC {
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
-        void analyzeModule(ModuleAnalyzer&) final;
+        bool analyzeModule(ModuleAnalyzer&) final;
         StatementNode* m_declaration;
     };
 
@@ -2204,7 +2204,7 @@ namespace JSC {
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
-        void analyzeModule(ModuleAnalyzer&) final;
+        bool analyzeModule(ModuleAnalyzer&) final;
         ExportSpecifierListNode* m_specifierList;
         ModuleNameNode* m_moduleName { nullptr };
         ImportAssertionListNode* m_assertionList { nullptr };

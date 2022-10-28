@@ -369,8 +369,12 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
     ModuleAnalyzer moduleAnalyzer(globalObject, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables(), moduleProgramNode->features());
     RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
+    auto result = moduleAnalyzer.analyze(*moduleProgramNode);
+    if (!result)
+        RELEASE_AND_RETURN(scope, JSValue::encode(rejectWithError(createTypeError(globalObject, result.error()))));
+
     scope.release();
-    promise->resolve(globalObject, moduleAnalyzer.analyze(*moduleProgramNode));
+    promise->resolve(globalObject, result.value());
     return JSValue::encode(promise);
 }
 

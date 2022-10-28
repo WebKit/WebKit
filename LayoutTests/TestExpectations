@@ -234,12 +234,6 @@ imported/w3c/web-platform-tests/video-rvfc [ Skip ]
 fast/mediastream/getUserMedia-rvfc.html [ Skip ]
 webrtc/peerConnection-rvfc.html [ Skip ]
 
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_annexb [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h264 [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Pass Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h264_annexb [ Pass Failure ]
-
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
 

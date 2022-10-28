@@ -108,6 +108,20 @@ AutomaticLiveResizeEnabled:
       "HAVE(UIKIT_WEBKIT_INTERNALS)": true
       default: false
 
+BackgroundWebContentRunningBoardThrottlingEnabled:
+  type: bool
+  humanReadableName: "Enable background web content throttling via RunningBoard"
+  humanReadableDescription: "Enable background web content throttling via RunningBoard"
+  exposed: [ WebKit ]
+  condition: PLATFORM(MAC) && USE(RUNNINGBOARD)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 BlockIOKitInWebContentSandbox:
   type: bool
   humanReadableName: "IOKit blocking in the WebContent sandbox"
@@ -873,6 +887,16 @@ SampleBufferContentKeySessionSupportEnabled:
       default: false
     WebCore:
       default: false
+
+SanitizeLookalikeCharactersInLinksEnabled:
+  type: bool
+  humanReadableName: "Sanitize Lookalike Characters in Links"
+  humanReadableDescription: "Enable Sanitization for Lookalike Characters in Links"
+  webcoreBinding: none
+  condition: ENABLE(NETWORK_CONNECTION_INTEGRITY)
+  defaultValue:
+    WebKit:
+      default: true
 
 ScrollingPerformanceTestingEnabled:
   type: bool

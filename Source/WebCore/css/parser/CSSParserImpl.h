@@ -100,6 +100,9 @@ public:
     bool supportsDeclaration(CSSParserTokenRange&);
     const CSSParserContext& context() const { return m_context; }
 
+    // This function updates the range it's given.
+    RefPtr<StyleRuleBase> consumeAtRule(CSSParserTokenRange&, AllowedRulesType);
+
     static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
     static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents*, CSSParserObserver&);
 
@@ -119,8 +122,7 @@ private:
     template<typename T>
     bool consumeRuleList(CSSParserTokenRange, RuleListType, T callback);
 
-    // These two functions update the range they're given
-    RefPtr<StyleRuleBase> consumeAtRule(CSSParserTokenRange&, AllowedRulesType);
+    // This function updates the range it's given.
     RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);

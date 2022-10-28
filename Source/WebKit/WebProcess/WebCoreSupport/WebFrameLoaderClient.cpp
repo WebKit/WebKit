@@ -823,13 +823,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForResponse(webPage, m_frame.ptr(), response, request, userData);
-    // If a browsing context switch is requested, we still need to send the IPC to the UIProcess in order to process-swap if necessary, even though the
-    // injected bundle has already handled the policy decision.
-    if (policy == WKBundlePagePolicyActionUse) {
-        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: continuing because injected bundle says so");
-        function(PolicyAction::Use, identifier);
-        return;
-    }
+    RELEASE_ASSERT(policy == WKBundlePagePolicyActionPassThrough);
 
     bool canShowResponse = webPage->canShowResponse(response);
 
@@ -837,10 +831,9 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     auto* policyDocumentLoader = coreFrame ? coreFrame->loader().provisionalDocumentLoader() : nullptr;
     auto navigationID = policyDocumentLoader ? static_cast<WebDocumentLoader&>(*policyDocumentLoader).navigationID() : 0;
 
-    bool wasAllowedByInjectedBundle = policy == WKBundlePagePolicyActionUse;
     auto protector = m_frame.copyRef();
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
-    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForResponse(m_frame->frameID(), m_frame->info(), identifier, navigationID, response, request, canShowResponse, downloadAttribute, wasAllowedByInjectedBundle, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())))) {
+    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForResponse(m_frame->frameID(), m_frame->info(), identifier, navigationID, response, request, canShowResponse, downloadAttribute, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())))) {
         WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: ignoring because WebPageProxy::DecidePolicyForResponse failed");
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { identifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
     }
@@ -876,10 +869,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
 
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame.ptr(), action.ptr(), request, frameName, userData);
-    if (policy == WKBundlePagePolicyActionUse) {
-        function(PolicyAction::Use, identifier);
-        return;
-    }
+    RELEASE_ASSERT(policy == WKBundlePagePolicyActionPassThrough);
 
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
 
@@ -951,11 +941,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame.ptr(), action.ptr(), request, userData);
-    if (policy == WKBundlePagePolicyActionUse) {
-        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForNavigationAction: Injected Bundle responded with PolicyAction::Use");
-        function(PolicyAction::Use, requestIdentifier);
-        return;
-    }
+    RELEASE_ASSERT(policy == WKBundlePagePolicyActionPassThrough);
 
     uint64_t listenerID = m_frame->setUpPolicyListener(requestIdentifier, WTFMove(function), WebFrame::ForNavigationAction::Yes);
 
@@ -1313,19 +1299,6 @@ void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin&, const URL&)
     webPage->injectedBundleLoaderClient().didRunInsecureContentForFrame(*webPage, m_frame, userData);
 
     webPage->send(Messages::WebPageProxy::DidRunInsecureContentForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-}
-
-void WebFrameLoaderClient::didDetectXSS(const URL&, bool)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<API::Object> userData;
-
-    webPage->injectedBundleLoaderClient().didDetectXSSForFrame(*webPage, m_frame, userData);
-
-    webPage->send(Messages::WebPageProxy::DidDetectXSSForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request) const

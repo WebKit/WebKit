@@ -584,9 +584,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     ASSERT(m_identifier);
     WEBPAGE_RELEASE_LOG(Loading, "constructor:");
 
+#if PLATFORM(COCOA)
     auto shouldBlockIOKit = parameters.store.getBoolValueForKey(WebPreferencesKey::blockIOKitInWebContentSandboxKey())
 #if ENABLE(WEBGL)
         && m_shouldRenderWebGLInGPUProcess
+        && m_drawingAreaType == DrawingAreaType::RemoteLayerTree
 #endif
         && m_shouldRenderCanvasInGPUProcess
         && m_shouldRenderDOMInGPUProcess
@@ -599,6 +601,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
     }
+#endif
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
@@ -3714,14 +3717,6 @@ void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listene
     frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
 }
 
-void WebPage::continueWillSubmitForm(FrameIdentifier frameID, FormSubmitListenerIdentifier listenerID)
-{
-    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
-        return;
-    frame->continueWillSubmitForm(listenerID);
-}
-
 void WebPage::didStartPageTransition()
 {
     freezeLayerTree(LayerTreeFreezeReason::PageTransition);
@@ -4342,6 +4337,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 #if HAVE(SCENEKIT)
     m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
+#endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    m_sanitizeLookalikeCharactersInLinksEnabled = store.getBoolValueForKey(WebPreferencesKey::sanitizeLookalikeCharactersInLinksEnabledKey());
 #endif
 
     if (settings.showMediaStatsContextMenuItemEnabled())

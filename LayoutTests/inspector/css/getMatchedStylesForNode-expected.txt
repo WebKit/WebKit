@@ -998,7 +998,9 @@ Inherited:
           "groupings": [
             {
               "type": "media-rule",
+              "ruleId": "<filtered>",
               "text": "(min-width: 1px)",
+              "range": "<filtered>",
               "sourceURL": "<filtered>"
             }
           ]
@@ -1048,12 +1050,16 @@ Inherited:
           "groupings": [
             {
               "type": "supports-rule",
+              "ruleId": "<filtered>",
               "text": "(display: block)",
+              "range": "<filtered>",
               "sourceURL": "<filtered>"
             },
             {
               "type": "media-rule",
+              "ruleId": "<filtered>",
               "text": "(min-width: 2px)",
+              "range": "<filtered>",
               "sourceURL": "<filtered>"
             }
           ]

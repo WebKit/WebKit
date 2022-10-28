@@ -243,8 +243,10 @@
             "description": "CSS @media (as well as other users of media queries, like @import, <style>, <link>, etc.), @supports, and @layer descriptor.",
             "properties": [
                 { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule", "layer-rule", "layer-import-rule", "container-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, \"layer-rule\" if specified by an @layer rule, \"container-rule\" if specified by an @container rule." },
+                { "name": "ruleId", "$ref": "CSSRuleId", "optional": true, "description": "The CSS rule identifier for the `@rule` (absent for non-editable grouping rules). In CSSOM terms, this is the parent rule of either the previous Grouping for a CSSRule, or of a CSSRule itself."},
                 { "name": "text", "type": "string", "optional": true, "description": "Query text if specified by a @media, @supports, or @container rule. Layer name (or not present for anonymous layers) for @layer rules." },
-                { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." }
+                { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." },
+                { "name": "range", "$ref": "SourceRange", "optional": true, "description": "@-rule's header text range in the enclosing stylesheet (if available). This is from the first non-whitespace character after the @ declarartion to the last non-whitespace character before an opening curly bracket or semicolon." }
             ]
         },
         {
@@ -400,6 +402,18 @@
             ],
             "returns": [
                 { "name": "rule", "$ref": "CSSRule", "description": "The resulting rule after the selector modification." }
+            ]
+        },
+        {
+            "name": "setGroupingHeaderText",
+            "description": "Modifies an @rule grouping's header text.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "ruleId", "$ref": "CSSRuleId" },
+                { "name": "headerText", "type": "string" }
+            ],
+            "returns": [
+                { "name": "grouping", "$ref": "Grouping", "description": "The resulting grouping after the header text modification." }
             ]
         },
         {

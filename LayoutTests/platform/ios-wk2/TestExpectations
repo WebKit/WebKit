@@ -2029,7 +2029,6 @@ webkit.org/b/228604 [ Release ] http/wpt/mediarecorder/set-srcObject-MediaStream
 
 # These tests currently fail or are flaky in EWS on iOS 14.
 editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.html [ Pass Timeout ]
-webkit.org/b/245984 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Timeout ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
 webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ Failure ]

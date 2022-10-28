@@ -69,7 +69,7 @@ public:
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
     static Vector<double> parseKeyframeKeyList(const String&);
-    
+
     bool parseSupportsCondition(const String&);
 
     static void parseSheetForInspector(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserObserver&);

@@ -233,6 +233,7 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager
     UIProcess/SpeechRecognitionServer
     UIProcess/VisitedLinkStore
+    UIProcess/WebFrameProxy
     UIProcess/WebFullScreenManagerProxy
     UIProcess/WebGeolocationManagerProxy
     UIProcess/WebLockRegistryProxy
@@ -329,6 +330,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebPage/DrawingArea
     WebProcess/WebPage/EventDispatcher
     WebProcess/WebPage/VisitedLinkTableController
+    WebProcess/WebPage/WebFrame
     WebProcess/WebPage/WebPage
 
     WebProcess/WebStorage/StorageAreaMap
@@ -514,6 +516,14 @@ endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
 set(WebKit_SERIALIZATION_IN_FILES
+    GPUProcess/GPUProcessSessionParameters.serialization.in
+
+    GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
+
+    GPUProcess/media/InitializationSegmentInfo.serialization.in
+    GPUProcess/media/MediaDescriptionInfo.serialization.in
+    GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
+
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
 
     Shared/EditorState.serialization.in

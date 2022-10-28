@@ -109,6 +109,7 @@
 #include "WebEventConversion.h"
 #include "WebFoundTextRange.h"
 #include "WebFrame.h"
+#include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
@@ -502,7 +503,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
     , m_geolocationPermissionRequestManager(*this)
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     , m_audibleActivityTimer(RunLoop::main(), this, &WebPageProxy::clearAudibleActivity)
 #endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
@@ -2387,7 +2388,7 @@ void WebPageProxy::updateThrottleState()
     else if (!m_pageIsUserObservableCount)
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (isViewVisible()) {
         if (!m_isVisibleActivity || !m_isVisibleActivity->isValid()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because the view is visible");
@@ -2424,7 +2425,7 @@ void WebPageProxy::updateThrottleState()
 #endif
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
 void WebPageProxy::clearAudibleActivity()
 {
     WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
@@ -2464,7 +2465,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
     if (m_waitingForDidUpdateActivityState)
         return;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     // Hail Mary check. Should not be possible (dispatchActivityStateChange should force async if not visible,
     // and if visible we should be holding an assertion) - but we should never block on a suspended process.
     if (!m_isVisibleActivity) {
@@ -3561,6 +3562,9 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         navigation->websitePolicies()->setContentBlockersEnabled(false);
     }
 
+    if (policyAction == PolicyAction::Use && navigation && frame.isMainFrame())
+        websiteDataStore->networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process().coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
+
 #if ENABLE(DEVICE_ORIENTATION)
     if (navigation && (!navigation->websitePolicies() || navigation->websitePolicies()->deviceOrientationAndMotionAccessState() == WebCore::DeviceOrientationOrMotionPermissionState::Prompt)) {
         auto deviceOrientationPermission = websiteDataStore->deviceOrientationAndMotionAccessController().cachedDeviceOrientationPermission(SecurityOriginData::fromURL(navigation->currentRequest().url()));
@@ -4573,7 +4577,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
         return callbackFunction({ nullptr });
 
     ProcessThrottler::ActivityVariant activity;
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (pageClient().canTakeForegroundAssertions())
         activity = m_process->throttler().foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
 #endif
@@ -4750,25 +4754,6 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
         });
     }
 #endif
-}
-
-void WebPageProxy::didCreateSubframe(FrameIdentifier frameID, WebCore::FrameIdentifier parentFrameID)
-{
-    PageClientProtector protector(pageClient());
-
-    MESSAGE_CHECK(m_process, m_mainFrame);
-
-    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
-    // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
-    // IPC when it later gets processed.
-    if (WebFrameProxy::webFrame(frameID))
-        return;
-
-    auto* parentFrame = WebFrameProxy::webFrame(parentFrameID);
-    MESSAGE_CHECK(m_process, parentFrame);
-    MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
-    
-    parentFrame->addChildFrame(WebFrameProxy::create(*this, m_process, frameID));
 }
 
 void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
@@ -5593,10 +5578,6 @@ void WebPageProxy::didRunInsecureContentForFrame(FrameIdentifier frameID, const 
     m_navigationClient->didRunInsecureContent(*this, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-void WebPageProxy::didDetectXSSForFrame(FrameIdentifier, const UserData&)
-{
-}
-
 void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
 {
     m_mainFramePluginHandlesPageScaleGesture = mainFramePluginHandlesPageScaleGesture;
@@ -5921,7 +5902,9 @@ void WebPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, 
             didCreateMainFrame(frameID);
         else {
             MESSAGE_CHECK(m_process, frameInfo.parentFrameID);
-            didCreateSubframe(frameID, *frameInfo.parentFrameID);
+            RefPtr parentFrame = WebFrameProxy::webFrame(*frameInfo.parentFrameID);
+            MESSAGE_CHECK(m_process, parentFrame);
+            parentFrame->didCreateSubframe(frameID);
         }
     }
 
@@ -5980,13 +5963,12 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
 }
 
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
-    uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute,
-    bool wasAllowedByInjectedBundle, uint64_t listenerID, const UserData& userData)
+    uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
 {
-    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, listenerID, userData);
+    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID, userData);
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, uint64_t listenerID, const UserData& userData)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
 
@@ -6018,11 +6000,6 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
 #endif
         receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No);
-
-    if (wasAllowedByInjectedBundle) {
-        listener->use();
-        return;
-    }
 
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
@@ -6078,8 +6055,8 @@ void WebPageProxy::willSubmitForm(FrameIdentifier frameID, FrameIdentifier sourc
     for (auto& pair : textFieldValues)
         MESSAGE_CHECK(m_process, API::Dictionary::MapType::isValidKey(pair.first));
 
-    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [this, protectedThis = Ref { *this }, frameID, listenerID]() {
-        send(Messages::WebPage::ContinueWillSubmitForm(frameID, listenerID));
+    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [protectedThis = Ref { *this }, frame, listenerID]() {
+        frame->send(Messages::WebFrame::ContinueWillSubmitForm(listenerID));
     });
 }
 
@@ -7188,7 +7165,7 @@ bool WebPageProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, 
 
 IPC::Connection* WebPageProxy::messageSenderConnection() const
 {
-    return m_process->hasConnection() ? m_process->connection() : nullptr;
+    return m_process->connection();
 }
 
 uint64_t WebPageProxy::messageSenderDestinationID() const

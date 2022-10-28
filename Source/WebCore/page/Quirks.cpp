@@ -1572,7 +1572,7 @@ bool Quirks::shouldExposeShowModalDialog() const
         return false;
     if (!m_shouldExposeShowModalDialog) {
         auto domain = RegistrableDomain(m_document->url()).string();
-        m_shouldExposeShowModalDialog = domain == "pandora.com"_s;
+        m_shouldExposeShowModalDialog = domain == "pandora.com"_s || domain == "marcus.com"_s;
     }
     return *m_shouldExposeShowModalDialog;
 }

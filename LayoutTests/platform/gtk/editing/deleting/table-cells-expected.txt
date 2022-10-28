@@ -25,5 +25,6 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (161,2) size 178x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderBlock {DIV} at (2,2) size 174x18
                   RenderText {#text} at (0,0) size 174x17
-                    text run at (0,0) width 174: " should be in different cells."
+                    text run at (0,0) width 4: " "
+                    text run at (4,0) width 170: "should be in different cells."
 caret: position 24 of child 0 {#text} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

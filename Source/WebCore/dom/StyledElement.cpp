@@ -87,17 +87,17 @@ public:
     }
 
 private:
-    CSSValue* propertyValue(CSSPropertyID propertyID) const final
+    RefPtr<CSSValue> propertyValue(CSSPropertyID propertyID) const final
     {
         if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
-            return inlineStyle->getPropertyCSSValue(propertyID).get();
+            return inlineStyle->getPropertyCSSValue(propertyID);
         return nullptr;
     }
 
-    CSSValue* customPropertyValue(const AtomString& property) const final
+    RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final
     {
         if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
-            return inlineStyle->getCustomPropertyCSSValue(property.string()).get();
+            return inlineStyle->getCustomPropertyCSSValue(property.string());
         return nullptr;
     }
 
@@ -121,7 +121,7 @@ private:
         result.reserveInitialCapacity(inlineStyle->propertyCount());
         for (unsigned i = 0; i < inlineStyle->propertyCount(); ++i) {
             auto propertyReference = inlineStyle->propertyAt(i);
-            result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(propertyReference.value(), document)));
+            result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, document)));
         }
         return result;
     }

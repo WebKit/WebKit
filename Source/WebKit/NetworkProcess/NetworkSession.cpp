@@ -658,8 +658,12 @@ SWServer& NetworkSession::ensureSWServer()
             ServiceWorkerSoftUpdateLoader::start(this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
         }, [this](auto& registrableDomain, std::optional<ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, auto&& completionHandler) {
             ASSERT(!registrableDomain.isEmpty());
-            m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, WTFMove(completionHandler), 0);
-        }, WTFMove(appBoundDomainsCallback));
+            m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
+                completionHandler();
+            }, 0);
+        }, WTFMove(appBoundDomainsCallback), [this](auto webProcessIdentifier, auto&& firstPartyForCookies) {
+            m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies));
+        });
     }
     return *m_swServer;
 }
@@ -702,5 +706,16 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+bool NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(const ResourceRequest& request)
+{
+    if (request.isThirdParty())
+        return false;
+
+    if (request.url().host() == request.firstPartyForCookies().host())
+        return false;
+
+    return true;
+}
 
 } // namespace WebKit

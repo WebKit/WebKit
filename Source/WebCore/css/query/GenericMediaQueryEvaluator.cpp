@@ -109,6 +109,19 @@ static EvaluationResult evaluateIntegerComparison(int number, const std::optiona
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
+static EvaluationResult evaluateResolutionComparison(double resolution, const std::optional<Comparison>& comparison, Side side)
+{
+    if (!comparison)
+        return EvaluationResult::True;
+
+    auto expressionResolution = dynamicDowncast<CSSPrimitiveValue>(comparison->value.get())->doubleValue(CSSUnitType::CSS_DPPX);
+
+    auto left = side == Side::Left ? expressionResolution : resolution;
+    auto right = side == Side::Left ? resolution : expressionResolution;
+
+    return toEvaluationResult(compare(comparison->op, left, right));
+};
+
 EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit length, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
@@ -189,6 +202,17 @@ EvaluationResult evaluateNumberFeature(const Feature& feature, double currentVal
 
     auto leftResult = evaluateNumberComparison(currentValue, feature.leftComparison, Side::Left);
     auto rightResult = evaluateNumberComparison(currentValue, feature.rightComparison, Side::Right);
+
+    return leftResult & rightResult;
+}
+
+EvaluationResult evaluateResolutionFeature(const Feature& feature, double currentValue)
+{
+    if (!feature.leftComparison && !feature.rightComparison)
+        return toEvaluationResult(!!currentValue);
+
+    auto leftResult = evaluateResolutionComparison(currentValue, feature.leftComparison, Side::Left);
+    auto rightResult = evaluateResolutionComparison(currentValue, feature.rightComparison, Side::Right);
 
     return leftResult & rightResult;
 }

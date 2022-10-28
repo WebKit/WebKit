@@ -1586,9 +1586,15 @@ inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& b
     if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
         return RenderStyle::initialLineHeight();
 
-    if (primitiveValue.isLength()) {
+    if (primitiveValue.isLength() || primitiveValue.isCalculatedPercentageWithLength()) {
         auto conversionData = builderState.cssToLengthConversionData().copyForLineHeight(zoomWithTextZoomFactor(builderState));
-        Length length = primitiveValue.computeLength<Length>(conversionData);
+        Length length;
+        if (primitiveValue.isLength())
+            length = primitiveValue.computeLength<Length>(conversionData);
+        else {
+            auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(builderState.style().computedFontSize());
+            length = { clampTo<float>(value, minValueForCssLength, maxValueForCssLength), LengthType::Fixed };
+        }
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, LengthType::Fixed);
         return length;

@@ -25,8 +25,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (438,0) size 4x17
                   text run at (438,0) width 4: " "
               RenderText {#text} at (442,0) size 703x35
-                text run at (442,0) width 257: "WebElementImageKey is a key added to"
-                text run at (698,0) width 5: " "
+                text run at (442,0) width 261: "WebElementImageKey is a key added to "
                 text run at (0,18) width 413: "the elementAtPoint dictionary and the key's value is an NSImage."
               RenderInline {SPAN} at (0,0) size 4x17
                 RenderText {#text} at (413,18) size 4x17
@@ -37,10 +36,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (676,18) size 5x17
                   text run at (676,18) width 5: " "
               RenderText {#text} at (0,36) size 700x53
-                text run at (0,36) width 685: "What this means is that as you move the mouse around a web page we are aggressively mallocing NSImages"
-                text run at (685,36) width 4: " "
-                text run at (0,54) width 696: "that then move into our image cache and stay around until the CGImageRef goes away (which could be a long"
-                text run at (696,54) width 4: " "
+                text run at (0,36) width 689: "What this means is that as you move the mouse around a web page we are aggressively mallocing NSImages "
+                text run at (0,54) width 700: "that then move into our image cache and stay around until the CGImageRef goes away (which could be a long "
                 text run at (0,72) width 36: "time)."
             RenderBlock {DIV} at (0,90) size 704x18
               RenderBR {BR} at (0,0) size 0x17
@@ -56,15 +53,13 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (518,0) size 4x17
                   text run at (518,0) width 4: " "
               RenderText {#text} at (522,0) size 696x35
-                text run at (522,0) width 170: "Could we change the key's"
-                text run at (692,0) width 4: " "
+                text run at (522,0) width 174: "Could we change the key's "
                 text run at (0,18) width 224: "value to be a CGImageRef instead?"
               RenderInline {SPAN} at (0,0) size 4x17
                 RenderText {#text} at (224,18) size 4x17
                   text run at (224,18) width 4: " "
               RenderText {#text} at (228,18) size 691x35
-                text run at (228,18) width 459: "Could we just eliminate the key in favor of a DOM extension method for"
-                text run at (687,18) width 4: " "
+                text run at (228,18) width 463: "Could we just eliminate the key in favor of a DOM extension method for "
                 text run at (0,36) width 150: "accessing an NSImage?"
             RenderBlock {DIV} at (0,162) size 704x18
               RenderBR {BR} at (0,0) size 0x17

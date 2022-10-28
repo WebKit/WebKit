@@ -2883,19 +2883,26 @@ auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
 {
     URLEncodedForm output;
     for (StringView bytes : input.split('&')) {
-        auto equalIndex = bytes.find('=');
-        if (equalIndex == notFound) {
-            auto name = formURLDecode(makeStringByReplacingAll(bytes, '+', 0x20));
-            if (name)
-                output.append({ name.value(), emptyString() });
-        } else {
-            auto name = formURLDecode(makeStringByReplacingAll(bytes.left(equalIndex), '+', 0x20));
-            auto value = formURLDecode(makeStringByReplacingAll(bytes.substring(equalIndex + 1), '+', 0x20));
-            if (name && value)
-                output.append({ name.value(), value.value() });
-        }
+        if (auto nameAndValue = parseQueryNameAndValue(bytes))
+            output.append(WTFMove(*nameAndValue));
     }
     return output;
+}
+
+std::optional<KeyValuePair<String, String>> URLParser::parseQueryNameAndValue(StringView bytes)
+{
+    auto equalIndex = bytes.find('=');
+    if (equalIndex == notFound) {
+        auto name = formURLDecode(makeStringByReplacingAll(bytes, '+', ' '));
+        if (name)
+            return { { WTFMove(*name), emptyString() } };
+    } else {
+        auto name = formURLDecode(makeStringByReplacingAll(bytes.left(equalIndex), '+', ' '));
+        auto value = formURLDecode(makeStringByReplacingAll(bytes.substring(equalIndex + 1), '+', ' '));
+        if (name && value)
+            return { { WTFMove(*name), WTFMove(*value) } };
+    }
+    return std::nullopt;
 }
 
 static void serializeURLEncodedForm(const String& input, Vector<LChar>& output)

@@ -118,34 +118,24 @@ public:
         // This form of shift hints that we're doing queueing. With this assumption in hand,
         // we convert to ArrayStorage, which has queue optimizations.
         ShiftCountForShift,
-            
+
         // This form of shift hints that we're just doing care and feeding on an array that
         // is probably typically used for ordinary accesses. With this assumption in hand,
         // we try to preserve whatever indexing type it has already.
         ShiftCountForSplice
     };
 
-    bool shiftCountForShift(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
-    {
-        VM& vm = getVM(globalObject);
-        return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
-    }
-    bool shiftCountForSplice(JSGlobalObject* globalObject, unsigned& startIndex, unsigned count)
-    {
-        return shiftCountWithAnyIndexingType(globalObject, startIndex, count);
-    }
     template<ShiftCountMode shiftCountMode>
     bool shiftCount(JSGlobalObject* globalObject, unsigned& startIndex, unsigned count)
     {
-        switch (shiftCountMode) {
-        case ShiftCountForShift:
-            return shiftCountForShift(globalObject, startIndex, count);
-        case ShiftCountForSplice:
-            return shiftCountForSplice(globalObject, startIndex, count);
-        default:
-            CRASH();
-            return false;
-        }
+        constexpr unsigned shiftThreashold = 128;
+        UNUSED_VARIABLE(shiftThreashold);
+        if constexpr (shiftCountMode == ShiftCountForShift)
+            return shiftCountWithAnyIndexingType(globalObject, startIndex, count, shiftThreashold);
+        else if constexpr (shiftCountMode == ShiftCountForSplice)
+            return shiftCountWithAnyIndexingType(globalObject, startIndex, count, UINT32_MAX);
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
     }
 
     bool unshiftCount(JSGlobalObject* globalObject, unsigned startIndex, unsigned count)
@@ -186,7 +176,7 @@ private:
         return !map || !map->lengthIsReadOnly();
     }
         
-    bool shiftCountWithAnyIndexingType(JSGlobalObject*, unsigned& startIndex, unsigned count);
+    bool shiftCountWithAnyIndexingType(JSGlobalObject*, unsigned& startIndex, unsigned count, unsigned shiftArrayStorageThreshold);
     JS_EXPORT_PRIVATE bool shiftCountWithArrayStorage(VM&, unsigned startIndex, unsigned count, ArrayStorage*);
 
     bool unshiftCountWithAnyIndexingType(JSGlobalObject*, unsigned startIndex, unsigned count);

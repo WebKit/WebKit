@@ -231,24 +231,25 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&&
     auto layout = layoutOrException.releaseReturnValue();
     if (data.length() < layout.allocationSize)
         return Exception { TypeError, makeString("Data is too small ", data.length(), " / ", layout.allocationSize) };
-    
+
+    auto colorSpace = videoFramePickColorSpace(init.colorSpace, init.format);
     RefPtr<VideoFrame> videoFrame;
     if (init.format == VideoPixelFormat::NV12) {
         if (init.codedWidth % 2 || init.codedHeight % 2)
             return Exception { TypeError, "coded width or height is odd"_s };
         if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
             return Exception { TypeError, "visible x or y is odd"_s };
-        videoFrame = VideoFrame::createNV12({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1]);
+        videoFrame = VideoFrame::createNV12({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], WTFMove(colorSpace));
     } else if (init.format == VideoPixelFormat::RGBA || init.format == VideoPixelFormat::RGBX)
-        videoFrame = VideoFrame::createRGBA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
+        videoFrame = VideoFrame::createRGBA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTFMove(colorSpace));
     else if (init.format == VideoPixelFormat::BGRA || init.format == VideoPixelFormat::BGRX)
-        videoFrame = VideoFrame::createBGRA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0]);
+        videoFrame = VideoFrame::createBGRA({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTFMove(colorSpace));
     else if (init.format == VideoPixelFormat::I420) {
         if (init.codedWidth % 2 || init.codedHeight % 2)
             return Exception { TypeError, "coded width or height is odd"_s };
         if (init.visibleRect && (static_cast<size_t>(init.visibleRect->x) % 2 || static_cast<size_t>(init.visibleRect->x) % 2))
             return Exception { TypeError, "visible x or y is odd"_s };
-        videoFrame = VideoFrame::createI420({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2]);
+        videoFrame = VideoFrame::createI420({ data.data(), data.length() }, parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], WTFMove(colorSpace));
     } else
         return Exception { NotSupportedError, "VideoPixelFormat is not supported"_s };
 
@@ -285,7 +286,6 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&& videoFram
 
     result->m_data.duration = init.duration;
     result->m_data.timestamp = init.timestamp;
-    result->m_data.colorSpace = videoFramePickColorSpace(init.colorSpace, *result->m_data.format);
 
     return result;
 }
@@ -327,7 +327,6 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 
     result->m_data.codedWidth = videoFrame->m_data.codedWidth;
     result->m_data.codedHeight = videoFrame->m_data.codedHeight;
-    result->m_data.colorSpace = videoFrame->m_data.colorSpace;
 
     initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_data.visibleLeft), static_cast<double>(videoFrame->m_data.visibleTop), static_cast<double>(videoFrame->m_data.visibleWidth), static_cast<double>(videoFrame->m_data.visibleHeight) }, videoFrame->m_data.displayWidth, videoFrame->m_data.displayHeight);
 
@@ -383,7 +382,6 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
 
     result->m_data.duration = init.duration;
     result->m_data.timestamp = init.timestamp.value_or(0);
-    // FIXME: Set m_data.colorSpace
 
     return result;
 }
@@ -499,8 +497,9 @@ void WebCodecsVideoFrame::setVisibleRect(const DOMRectInit& rect)
 
 VideoColorSpace* WebCodecsVideoFrame::colorSpace() const
 {
-    if (!m_colorSpace)
-        m_colorSpace = VideoColorSpace::create(m_data.colorSpace);
+    if (!m_colorSpace && m_data.internalFrame)
+        m_colorSpace = VideoColorSpace::create(m_data.internalFrame->colorSpace());
+
     return m_colorSpace.get();
 }
 

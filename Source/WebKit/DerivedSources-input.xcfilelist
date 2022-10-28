@@ -47,6 +47,11 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSampler.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteShaderModule.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
+$(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/InitializationSegmentInfo.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/MediaDescriptionInfo.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioDestinationManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxy.messages.in
@@ -249,6 +254,7 @@ $(PROJECT_DIR)/UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/ViewGestureController.messages.in
 $(PROJECT_DIR)/UIProcess/VisitedLinkStore.messages.in
 $(PROJECT_DIR)/UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/WebFrameProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebFullScreenManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebGeolocationManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebLockRegistryProxy.messages.in
@@ -338,6 +344,7 @@ $(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mes
 $(PROJECT_DIR)/WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewUpdateDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/VisitedLinkTableController.messages.in
+$(PROJECT_DIR)/WebProcess/WebPage/WebFrame.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/WebPage.messages.in
 $(PROJECT_DIR)/WebProcess/WebProcess.messages.in
 $(PROJECT_DIR)/WebProcess/WebStorage/StorageAreaMap.messages.in

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-75" />
+    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-150" />
     <defs>
         <rect id="red-rectangle" x="-100" y="-100" width="200" height="200" fill="red"/>
         <path id="green-triangle" d="M 0 0 L 150 0 L 150 150 z" fill="green"/>

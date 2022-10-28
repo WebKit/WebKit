@@ -152,16 +152,6 @@
 #include "PointerLockController.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/EventHandlerAdditions.cpp>
-#else
-
-static void addPointerTypeToHitTestRequest(OptionSet<WebCore::HitTestRequest::Type> &, String )
-{
-}
-
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2005,7 +1995,10 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     }
 #endif
     
-    addPointerTypeToHitTestRequest(hitType, platformMouseEvent.pointerType());
+#if ENABLE(PENCIL_HOVER)
+    if (platformMouseEvent.pointerType() == WebCore::penPointerEventType())
+        hitType.add(WebCore::HitTestRequest::Type::PenEvent);
+#endif
     
     HitTestRequest request(hitType);
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(request, platformMouseEvent);

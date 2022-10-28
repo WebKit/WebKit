@@ -1805,7 +1805,6 @@ private:
 #else
     void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&, const Vector<SandboxExtension::Handle>&);
 #endif
-    void continueWillSubmitForm(WebCore::FrameIdentifier, FormSubmitListenerIdentifier);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
@@ -2534,6 +2533,10 @@ private:
     
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
+#endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    bool m_sanitizeLookalikeCharactersInLinksEnabled { false };
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

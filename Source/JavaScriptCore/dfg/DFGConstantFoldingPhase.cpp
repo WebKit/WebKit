@@ -957,7 +957,7 @@ private:
                 if (radixValue && radixValue.isInt32()) {
                     int32_t radix = radixValue.asInt32();
                     if (2 <= radix && radix <= 36) {
-                        if (radix == 10) {
+                        if (radix == 10 && node->child1()->shouldSpeculateNumber()) {
                             node->setOpAndDefaultFlags(ToString);
                             node->clearFlags(NodeMustGenerate);
                             node->child2() = Edge();

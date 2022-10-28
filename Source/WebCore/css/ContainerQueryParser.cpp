@@ -45,9 +45,9 @@ Vector<const FeatureSchema*> ContainerQueryParser::featureSchemas()
     };
 }
 
-std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
+std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
-    ContainerQueryParser parser(context);
+    ContainerQueryParser parser({ context });
     return parser.consumeContainerQuery(range);
 }
 

@@ -61,7 +61,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (214,96) size 36x26
             text run at (214,96) width 36: "xxx"
           RenderText {#text} at (250,96) size 42x26
-            text run at (250,96) width 42: " xxx"
+            text run at (250,96) width 6: " "
+            text run at (256,96) width 36: "xxx"
           RenderImage {IMG} at (292,14) size 76x103
           RenderText {#text} at (368,96) size 36x26
             text run at (368,96) width 36: "xxx"

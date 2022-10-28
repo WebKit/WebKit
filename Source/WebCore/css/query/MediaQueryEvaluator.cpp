@@ -44,6 +44,9 @@ MediaQueryEvaluator::MediaQueryEvaluator(const AtomString& mediaType, const Docu
 
 bool MediaQueryEvaluator::evaluate(const MediaQueryList& list) const
 {
+    if (list.isEmpty())
+        return true;
+
     for (auto& query : list) {
         if (evaluate(query))
             return true;
@@ -58,9 +61,9 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
     auto mediaTypeMatches = [&] {
         if (query.mediaType.isEmpty())
             return true;
-        if (query.mediaType == "all"_s)
+        if (equalLettersIgnoringASCIICase(query.mediaType, "all"_s))
             return true;
-        return query.mediaType == m_mediaType;
+        return equalIgnoringASCIICase(query.mediaType, m_mediaType);
     }();
 
     if (!mediaTypeMatches)
@@ -68,7 +71,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
 
     auto conditionMatches = [&] {
         if (!query.condition)
-            return false;
+            return true;
 
         if (!m_document.view())
             return false;

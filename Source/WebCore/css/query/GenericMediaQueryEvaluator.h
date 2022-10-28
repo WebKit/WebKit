@@ -40,6 +40,7 @@ EvaluationResult evaluateRatioFeature(const Feature&, double);
 EvaluationResult evaluateBooleanFeature(const Feature&, bool);
 EvaluationResult evaluateIntegerFeature(const Feature&, int);
 EvaluationResult evaluateNumberFeature(const Feature&, double);
+EvaluationResult evaluateResolutionFeature(const Feature&, double);
 EvaluationResult evaluateIdentifierFeature(const Feature&, CSSValueID);
 
 template<typename ConcreteEvaluator>

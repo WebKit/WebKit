@@ -143,8 +143,11 @@ const struct wl_registry_listener WindowViewBackend::s_registryListener = {
         if (!std::strcmp(interface, "wl_compositor"))
             window->m_compositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, 1));
 
+        if (!std::strcmp(interface, "xdg_wm_base"))
+            window->m_xdg.wm = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
+
         if (!std::strcmp(interface, "zxdg_shell_v6"))
-            window->m_xdg = static_cast<struct zxdg_shell_v6*>(wl_registry_bind(registry, name, &zxdg_shell_v6_interface, 1));
+            window->m_zxdg.shell = static_cast<struct zxdg_shell_v6*>(wl_registry_bind(registry, name, &zxdg_shell_v6_interface, 1));
 
         if (!std::strcmp(interface, "wl_seat"))
             window->m_seat = static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, 5));
@@ -153,7 +156,15 @@ const struct wl_registry_listener WindowViewBackend::s_registryListener = {
     [](void*, struct wl_registry*, uint32_t) { },
 };
 
-const struct zxdg_shell_v6_listener WindowViewBackend::s_xdgWmBaseListener = {
+const struct xdg_wm_base_listener WindowViewBackend::XDGStable::s_wmListener = {
+    // ping
+    [](void*, struct xdg_wm_base* xdgWM, uint32_t serial)
+    {
+        xdg_wm_base_pong(xdgWM, serial);
+    },
+};
+
+const struct zxdg_shell_v6_listener WindowViewBackend::XDGUnstable::s_shellListener = {
     // ping
     [](void*, struct zxdg_shell_v6* shell, uint32_t serial)
     {
@@ -516,7 +527,68 @@ const struct wl_seat_listener WindowViewBackend::s_seatListener = {
     [](void*, struct wl_seat*, const char*) { }
 };
 
-const struct zxdg_surface_v6_listener WindowViewBackend::s_xdgSurfaceListener = {
+const struct xdg_surface_listener WindowViewBackend::XDGStable::s_surfaceListener = {
+    // configure
+    [](void*, struct xdg_surface* surface, uint32_t serial)
+    {
+        xdg_surface_ack_configure(surface, serial);
+    },
+};
+
+const struct xdg_toplevel_listener WindowViewBackend::XDGStable::s_toplevelListener = {
+    // configure
+    [](void* data, struct xdg_toplevel*, int32_t width, int32_t height, struct wl_array* states)
+    {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        window.resize(std::max(0, width), std::max(0, height));
+
+        bool isFocused = false;
+        bool isFullscreen = false;
+        // FIXME: It would be nice if the following loop could use
+        // wl_array_for_each, but at the time of writing it relies on
+        // GCC specific extension to work properly:
+        // https://gitlab.freedesktop.org/wayland/wayland/issues/34
+        uint32_t* pos = static_cast<uint32_t*>(states->data);
+        uint32_t* end = static_cast<uint32_t*>(states->data) + states->size;
+
+        for (; pos < end; pos++) {
+            uint32_t state = *pos;
+
+            switch (state) {
+            case XDG_TOPLEVEL_STATE_ACTIVATED:
+                isFocused = true;
+                break;
+            case XDG_TOPLEVEL_STATE_FULLSCREEN:
+                isFullscreen = true;
+                break;
+            case XDG_TOPLEVEL_STATE_MAXIMIZED:
+            case XDG_TOPLEVEL_STATE_RESIZING:
+            default:
+                break;
+            }
+        }
+
+        if (isFocused)
+            window.addActivityState(wpe_view_activity_state_focused);
+        else
+            window.removeActivityState(wpe_view_activity_state_focused);
+
+        if (window.m_is_fullscreen != isFullscreen)
+            window.onFullscreenChanged(isFullscreen);
+    },
+    // close
+    [](void* data, struct xdg_toplevel*)
+    {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        window.removeActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
+    },
+    // configure_bounds
+    [](void*, struct xdg_toplevel*, int32_t, int32_t) { },
+    // wm_capabilities
+    [](void*, struct xdg_toplevel*, struct wl_array*) { },
+};
+
+const struct zxdg_surface_v6_listener WindowViewBackend::XDGUnstable::s_surfaceListener = {
     // configure
     [](void*, struct zxdg_surface_v6* surface, uint32_t serial)
     {
@@ -524,7 +596,7 @@ const struct zxdg_surface_v6_listener WindowViewBackend::s_xdgSurfaceListener = 
     },
 };
 
-const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener = {
+const struct zxdg_toplevel_v6_listener WindowViewBackend::XDGUnstable::s_toplevelListener = {
     // configure
     [](void* data, struct zxdg_toplevel_v6*, int32_t width, int32_t height, struct wl_array* states)
     {
@@ -588,10 +660,17 @@ bool WindowViewBackend::onDOMFullscreenRequest(void* data, bool fullscreen)
     }
 
     window.m_waiting_fullscreen_notify = true;
-    if (fullscreen)
-        zxdg_toplevel_v6_set_fullscreen(window.m_xdgToplevel, nullptr);
-    else
-        zxdg_toplevel_v6_unset_fullscreen(window.m_xdgToplevel);
+    if (window.m_xdg.toplevel) {
+        if (fullscreen)
+            xdg_toplevel_set_fullscreen(window.m_xdg.toplevel, nullptr);
+        else
+            xdg_toplevel_unset_fullscreen(window.m_xdg.toplevel);
+    } else if (window.m_zxdg.toplevel) {
+        if (fullscreen)
+            zxdg_toplevel_v6_set_fullscreen(window.m_zxdg.toplevel, nullptr);
+        else
+            zxdg_toplevel_v6_unset_fullscreen(window.m_zxdg.toplevel);
+    }
 
     return true;
 }
@@ -647,8 +726,10 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
         wl_registry_add_listener(registry, &s_registryListener, this);
         wl_display_roundtrip(connection.display);
 
-        if (m_xdg)
-            zxdg_shell_v6_add_listener(m_xdg, &s_xdgWmBaseListener, nullptr);
+        if (m_xdg.wm)
+            xdg_wm_base_add_listener(m_xdg.wm, &XDGStable::s_wmListener, nullptr);
+        else if (m_zxdg.shell)
+            zxdg_shell_v6_add_listener(m_zxdg.shell, &XDGUnstable::s_shellListener, nullptr);
 
         if (m_seat)
             wl_seat_add_listener(m_seat, &s_seatListener, this);
@@ -670,13 +751,23 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     }
 
     m_surface = wl_compositor_create_surface(m_compositor);
-    if (m_xdg) {
-        m_xdgSurface = zxdg_shell_v6_get_xdg_surface(m_xdg, m_surface);
-        zxdg_surface_v6_add_listener(m_xdgSurface, &s_xdgSurfaceListener, nullptr);
-        m_xdgToplevel = zxdg_surface_v6_get_toplevel(m_xdgSurface);
-        if (m_xdgToplevel) {
-            zxdg_toplevel_v6_add_listener(m_xdgToplevel, &s_xdgToplevelListener, this);
-            zxdg_toplevel_v6_set_title(m_xdgToplevel, "WPE");
+    if (m_xdg.wm) {
+        m_xdg.surface = xdg_wm_base_get_xdg_surface(m_xdg.wm, m_surface);
+        xdg_surface_add_listener(m_xdg.surface, &XDGStable::s_surfaceListener, nullptr);
+        m_xdg.toplevel = xdg_surface_get_toplevel(m_xdg.surface);
+        if (m_xdg.toplevel) {
+            xdg_toplevel_add_listener(m_xdg.toplevel, &XDGStable::s_toplevelListener, this);
+            xdg_toplevel_set_title(m_xdg.toplevel, "WPE");
+            wl_surface_commit(m_surface);
+            addActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_in_window);
+        }
+    } else if (m_zxdg.shell) {
+        m_zxdg.surface = zxdg_shell_v6_get_xdg_surface(m_zxdg.shell, m_surface);
+        zxdg_surface_v6_add_listener(m_zxdg.surface, &XDGUnstable::s_surfaceListener, nullptr);
+        m_zxdg.toplevel = zxdg_surface_v6_get_toplevel(m_zxdg.surface);
+        if (m_zxdg.toplevel) {
+            zxdg_toplevel_v6_add_listener(m_zxdg.toplevel, &XDGUnstable::s_toplevelListener, this);
+            zxdg_toplevel_v6_set_title(m_zxdg.toplevel, "WPE");
             wl_surface_commit(m_surface);
             addActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_in_window);
         }
@@ -746,11 +837,15 @@ WindowViewBackend::~WindowViewBackend()
         g_source_unref(m_eventSource);
     }
 
-    if (m_xdgToplevel)
-        zxdg_toplevel_v6_destroy(m_xdgToplevel);
+    if (m_xdg.toplevel)
+        xdg_toplevel_destroy(m_xdg.toplevel);
+    if (m_xdg.surface)
+        xdg_surface_destroy(m_xdg.surface);
 
-    if (m_xdgSurface)
-        zxdg_surface_v6_destroy(m_xdgSurface);
+    if (m_zxdg.toplevel)
+        zxdg_toplevel_v6_destroy(m_zxdg.toplevel);
+    if (m_zxdg.surface)
+        zxdg_surface_v6_destroy(m_zxdg.surface);
 
     if (m_surface)
         wl_surface_destroy(m_surface);
@@ -758,8 +853,11 @@ WindowViewBackend::~WindowViewBackend()
     if (m_eglWindow)
         wl_egl_window_destroy(m_eglWindow);
 
-    if (m_xdg)
-        zxdg_shell_v6_destroy(m_xdg);
+    if (m_xdg.wm)
+        xdg_wm_base_destroy(m_xdg.wm);
+
+    if (m_zxdg.shell)
+        zxdg_shell_v6_destroy(m_zxdg.shell);
 
     if (m_seat)
         wl_seat_destroy(m_seat);

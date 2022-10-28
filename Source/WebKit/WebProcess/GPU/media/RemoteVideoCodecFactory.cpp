@@ -297,7 +297,7 @@ void RemoteVideoEncoderCallbacks::notifyEncoderDescription(Vector<uint8_t>&& des
         if (protectedThis->m_isClosed)
             return;
 
-        protectedThis->m_descriptionCallback(VideoEncoder::ActiveConfiguration { { }, { }, { }, { }, { }, WTFMove(description) });
+        protectedThis->m_descriptionCallback(VideoEncoder::ActiveConfiguration { { }, { }, { }, { }, { }, WTFMove(description), { } });
     });
 }
 

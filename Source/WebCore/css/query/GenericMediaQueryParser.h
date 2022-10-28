@@ -32,11 +32,14 @@
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
+
+struct MediaQueryParserContext;
+
 namespace MQ {
 
 class GenericMediaQueryParserBase {
 public:
-    GenericMediaQueryParserBase(const CSSParserContext& context)
+    GenericMediaQueryParserBase(const MediaQueryParserContext& context)
         : m_context(context)
     { }
 
@@ -48,13 +51,13 @@ protected:
 
     bool validateFeatureAgainstSchema(Feature&, const FeatureSchema&);
 
-    const CSSParserContext& m_context;
+    const MediaQueryParserContext& m_context;
 };
 
 template<typename ConcreteParser>
 class GenericMediaQueryParser : public GenericMediaQueryParserBase {
 public:
-    GenericMediaQueryParser(const CSSParserContext& context)
+    GenericMediaQueryParser(const MediaQueryParserContext& context)
         : GenericMediaQueryParserBase(context)
     { }
 

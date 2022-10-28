@@ -857,17 +857,6 @@ ImageAnimationControlEnabled:
     WebCore:
       default: false
 
-ImageBitmapEnabled:
-  type: bool
-  humanReadableName: "ImageBitmap"
-  humanReadableDescription: "Support for the ImageBitmap APIs"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 ImperativeSlotAPIEnabled:
   type: bool
   humanReadableName: "Imperative Slot API"
@@ -1918,8 +1907,10 @@ WebCodecsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 WebGL2Enabled:

@@ -3018,9 +3018,9 @@ static RefPtr<CSSPrimitiveValue> consumeOverflowPositionKeyword(CSSParserTokenRa
     return isOverflowKeyword(range.peek().id()) ? consumeIdent(range) : nullptr;
 }
 
-static CSSValueID getBaselineKeyword(RefPtr<CSSValue> value)
+static CSSValueID getBaselineKeyword(const CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.pairValue()) {
         ASSERT(primitiveValue.pairValue()->first()->valueID() == CSSValueLast);
         ASSERT(primitiveValue.pairValue()->second()->valueID() == CSSValueBaseline);
@@ -3054,7 +3054,7 @@ static RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserToke
         RefPtr<CSSValue> baseline = consumeBaselineKeyword(range);
         if (!baseline)
             return nullptr;
-        return CSSContentDistributionValue::create(CSSValueInvalid, getBaselineKeyword(baseline), CSSValueInvalid);
+        return CSSContentDistributionValue::create(CSSValueInvalid, getBaselineKeyword(*baseline), CSSValueInvalid);
     }
 
     if (isContentDistributionKeyword(id))

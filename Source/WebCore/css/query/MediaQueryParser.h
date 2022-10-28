@@ -32,7 +32,9 @@ namespace MQ {
 
 class MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
 public:
-    MediaQueryParser(const CSSParserContext&);
+    MediaQueryParser(const MediaQueryParserContext&);
+
+    static MediaQueryList parse(const String&, const MediaQueryParserContext&);
 
     MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
     std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);

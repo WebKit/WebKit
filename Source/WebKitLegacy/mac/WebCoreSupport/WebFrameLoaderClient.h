@@ -161,7 +161,6 @@ private:
 
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
-    void didDetectXSS(const URL&, bool didBlockEntirePage) final;
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;

@@ -65,25 +65,25 @@ auto DeclaredStylePropertyMap::entries(ScriptExecutionContext* context) const ->
     result.reserveInitialCapacity(declaredStyleSet.propertyCount());
     for (unsigned i = 0; i < declaredStyleSet.propertyCount(); ++i) {
         auto propertyReference = declaredStyleSet.propertyAt(i);
-        result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(propertyReference.value(), document)));
+        result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, document)));
     }
     return result;
 }
 
-CSSValue* DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyID) const
+RefPtr<CSSValue> DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyID) const
 {
     auto* styleRule = this->styleRule();
     if (!styleRule)
         return nullptr;
-    return styleRule->properties().getPropertyCSSValue(propertyID).get();
+    return styleRule->properties().getPropertyCSSValue(propertyID);
 }
 
-CSSValue* DeclaredStylePropertyMap::customPropertyValue(const AtomString& propertyName) const
+RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString& propertyName) const
 {
     auto* styleRule = this->styleRule();
     if (!styleRule)
         return nullptr;
-    return styleRule->properties().getCustomPropertyCSSValue(propertyName.string()).get();
+    return styleRule->properties().getCustomPropertyCSSValue(propertyName.string());
 }
 
 void DeclaredStylePropertyMap::removeProperty(CSSPropertyID propertyID)

@@ -68,23 +68,6 @@ using namespace HTMLNames;
 
 static Position positionForIndex(TextControlInnerTextElement*, unsigned);
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/HTMLTextFormControlElementAdditions.mm>
-#else
-
-static String pointerTypeFromHitTestRequest(HitTestRequest)
-{
-    return WebCore::mousePointerEventType();
-}
-
-static bool showPlaceholderForPointer(bool, String)
-{
-    return true;
-}
-
-#endif
-
-
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
     , m_cachedSelectionDirection(document.frame() && document.frame()->editor().behavior().shouldConsiderSelectionAsDirectional() ? SelectionHasForwardDirection : SelectionHasNoDirection)
@@ -115,6 +98,19 @@ Node::InsertedIntoAncestorResult HTMLTextFormControlElement::insertedIntoAncesto
         setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
     }
     return InsertedIntoAncestorResult;
+}
+
+static String pointerTypeFromHitTestRequest(HitTestRequest request)
+{
+#if ENABLE(PENCIL_HOVER)
+    if (request.penEvent())
+        return WebCore::penPointerEventType();
+    if (request.touchEvent())
+        return WebCore::touchPointerEventType();
+#else
+    UNUSED_PARAM(request);
+#endif
+    return WebCore::mousePointerEventType();
 }
 
 void HTMLTextFormControlElement::setHovered(bool over, Style::InvalidationScope invalidationScope, HitTestRequest request)
@@ -179,7 +175,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
     // This function is used by the style resolver to match the :placeholder-shown pseudo class.
     // Since it is used for styling, it must not use any value depending on the style.
-    return supportsPlaceholder() && isEmptyValue() && !isPlaceholderEmpty() && m_canShowPlaceholder && showPlaceholderForPointer(hovered(), m_pointerType);
+    return supportsPlaceholder() && isEmptyValue() && !isPlaceholderEmpty() && m_canShowPlaceholder && !(hovered() && m_pointerType == penPointerEventType());
 }
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility()

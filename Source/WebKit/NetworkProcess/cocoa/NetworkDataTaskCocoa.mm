@@ -59,7 +59,7 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
 namespace WebKit {
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool /* isThirdParty */) { }
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool) { }
 }
 #endif
 
@@ -397,11 +397,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         [mutableRequest _setProhibitPrivacyProxy:YES];
 #endif
 
-    if (parameters.networkConnectionIntegrityEnabled) {
-        // FIXME: This should eventually just check whether or not the request is for a main resource,
-        // once platform support for network connection integrity handles all other cases.
-        enableNetworkConnectionIntegrity(mutableRequest.get(), request.url().host() != request.firstPartyForCookies().host());
-    }
+    if (parameters.networkConnectionIntegrityEnabled)
+        enableNetworkConnectionIntegrity(mutableRequest.get(), NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(request));
 
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;

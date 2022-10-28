@@ -125,6 +125,10 @@
         "Indicates that this CSS property is a FillLayer property. It must have",
         "corresponding methods on the FillLayer class.",
         "",
+        "* separator:",
+        "Indicates separator for list-valued CSS property (populates",
+        "CSSProperty::listPropertySeparator().",
+        "",
         "* skip-builder:",
         "Ignore this property in the StyleBuilder.",
         "",
@@ -1013,7 +1017,8 @@
                 "aliases": [
                     "-webkit-animation-delay"
                 ],
-                "name-for-methods": "Delay"
+                "name-for-methods": "Delay",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1032,7 +1037,8 @@
                 "aliases": [
                     "-webkit-animation-direction"
                 ],
-                "name-for-methods": "Direction"
+                "name-for-methods": "Direction",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1045,7 +1051,8 @@
                 "aliases": [
                     "-webkit-animation-duration"
                 ],
-                "name-for-methods": "Duration"
+                "name-for-methods": "Duration",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1064,7 +1071,8 @@
                 "aliases": [
                     "-webkit-animation-fill-mode"
                 ],
-                "name-for-methods": "FillMode"
+                "name-for-methods": "FillMode",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1077,7 +1085,8 @@
                 "aliases": [
                     "-webkit-animation-iteration-count"
                 ],
-                "name-for-methods": "IterationCount"
+                "name-for-methods": "IterationCount",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1090,7 +1099,8 @@
                 "aliases": [
                     "-webkit-animation-name"
                 ],
-                "name-for-methods": "Name"
+                "name-for-methods": "Name",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1107,7 +1117,8 @@
                 "aliases": [
                     "-webkit-animation-play-state"
                 ],
-                "name-for-methods": "PlayState"
+                "name-for-methods": "PlayState",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1120,7 +1131,8 @@
                 "aliases": [
                     "-webkit-animation-timing-function"
                 ],
-                "name-for-methods": "TimingFunction"
+                "name-for-methods": "TimingFunction",
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1154,7 +1166,8 @@
             ],
             "codegen-properties": {
                 "name-for-methods": "Attachment",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "separator": ","
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1182,7 +1195,8 @@
             ],
             "codegen-properties": {
                 "name-for-methods": "BlendMode",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "separator": ","
             },
             "specification": {
                 "category": "css-compositing",
@@ -1203,7 +1217,8 @@
             "codegen-properties": {
                 "related-property": "-webkit-background-clip",
                 "name-for-methods": "Clip",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1223,7 +1238,8 @@
         "background-image": {
             "codegen-properties": {
                 "name-for-methods": "Image",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1234,7 +1250,8 @@
             "codegen-properties": {
                 "related-property": "-webkit-background-origin",
                 "name-for-methods": "Origin",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1286,7 +1303,8 @@
         "background-size": {
             "codegen-properties": {
                 "name-for-methods": "Size",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2483,7 +2501,8 @@
         },
         "content": {
             "codegen-properties": {
-                "custom": "All"
+                "custom": "All",
+                "separator": ","
             },
             "specification": {
                 "category": "css-content",
@@ -4945,7 +4964,8 @@
                 "aliases": [
                     "-webkit-transition-delay"
                 ],
-                "name-for-methods": "Delay"
+                "name-for-methods": "Delay",
+                "separator": ","
             },
             "specification": {
                 "category": "css-transitions",
@@ -4958,7 +4978,8 @@
                 "aliases": [
                     "-webkit-transition-duration"
                 ],
-                "name-for-methods": "Duration"
+                "name-for-methods": "Duration",
+                "separator": ","
             },
             "specification": {
                 "category": "css-transitions",
@@ -6196,7 +6217,8 @@
         },
         "grid-auto-columns": {
             "codegen-properties": {
-                "converter": "GridTrackSizeList"
+                "converter": "GridTrackSizeList",
+                "separator": " "
             },
             "specification": {
                 "category": "css-grid",
@@ -6205,7 +6227,8 @@
         },
         "grid-auto-rows": {
             "codegen-properties": {
-                "converter": "GridTrackSizeList"
+                "converter": "GridTrackSizeList",
+                "separator": " "
             },
             "specification": {
                 "category": "css-grid",

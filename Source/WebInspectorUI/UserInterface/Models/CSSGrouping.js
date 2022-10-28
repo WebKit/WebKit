@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,79 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CSSGrouping = class CSSGrouping
+WI.CSSGrouping = class CSSGrouping extends WI.Object
 {
-    constructor(type, text, sourceCodeLocation)
+    constructor(nodeStyles, type, {ownerStyleSheet, id, text, sourceCodeLocation} = {})
     {
+        super();
+        
+        console.assert(nodeStyles);
         console.assert(Object.values(CSSGrouping.Type).includes(type));
         console.assert(!text || (typeof text === "string" && text.length));
         console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WI.SourceCodeLocation);
 
+        this._nodeStyles = nodeStyles;
         this._type = type;
+
+        this._ownerStyleSheet = ownerStyleSheet || null;
+        this._id = id || null;
         this._text = text || null;
         this._sourceCodeLocation = sourceCodeLocation || null;
     }
 
     // Public
 
+    get ownerStyleSheet() { return this._ownerStyleSheet; }
+    get id() { return this._id; }
     get type() { return this._type; }
-    get text() { return this._text; }
     get sourceCodeLocation() { return this._sourceCodeLocation; }
+
+    get editable()
+    {
+        return !!this._id && !!this.ownerStyleSheet;
+    }
+
+    get text()
+    {
+        return this._text;
+    }
+
+    async setText(newText)
+    {
+        console.assert(this.editable);
+        if (!this.editable)
+            throw "Cannot set text on non-editable CSSGrouping.";
+
+        newText ||= "";
+
+        this._nodeStyles.ignoreNextContentDidChangeForStyleSheet = this._ownerStyleSheet;
+
+        let target = WI.assumingMainTarget();
+        let {grouping: groupingPayload} = await target.CSSAgent.setGroupingHeaderText(this._id, newText);
+
+        target.DOMAgent.markUndoableState();
+        await this._nodeStyles.refresh();
+
+        console.assert(groupingPayload.type == this._type);
+
+        console.assert(groupingPayload.ruleId);
+        console.assert(groupingPayload.text);
+
+        this._id = groupingPayload.ruleId;
+        this._text = groupingPayload.text;
+
+        let location = {};
+        if (groupingPayload.sourceRange) {
+            location.line = groupingPayload.sourceRange.startLine;
+            location.column = groupingPayload.sourceRange.startColumn;
+            location.documentNode = this._nodeStyles.node.ownerDocument;
+        }
+
+        let groupingSourceCodeLocation = WI.DOMNodeStyles.createSourceCodeLocation(groupingPayload.sourceURL, location);
+        this._sourceCodeLocation = WI.cssManager.styleSheetForIdentifier(this._id.styleSheetId).offsetSourceCodeLocation(groupingSourceCodeLocation);
+
+        this.dispatchEventToListeners(WI.CSSGrouping.Event.TextChanged);
+    }
 
     get isMedia()
     {
@@ -91,4 +146,8 @@ WI.CSSGrouping.Type = {
     LayerRule: "layer-rule",
     LayerImportRule: "layer-import-rule",
     ContainerRule: "container-rule",
+};
+
+WI.CSSGrouping.Event = {
+    TextChanged: "css-grouping-event-grouping-text-changed",
 };

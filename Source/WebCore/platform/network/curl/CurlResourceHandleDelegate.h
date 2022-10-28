@@ -59,6 +59,8 @@ public:
     void curlDidFailWithError(CurlRequest&, ResourceError&&, CertificateInfo&&) final;
 
 private:
+    void updateNetworkLoadMetrics(NetworkLoadMetrics&);
+
     ResourceHandle& m_handle;
     ResourceResponse m_response;
 

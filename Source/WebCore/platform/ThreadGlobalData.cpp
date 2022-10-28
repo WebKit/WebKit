@@ -29,7 +29,6 @@
 
 #include "CachedResourceRequestInitiators.h"
 #include "EventNames.h"
-#include "FontCache.h"
 #include "MIMETypeRegistry.h"
 #include "QualifiedNameCache.h"
 #include "ThreadTimers.h"
@@ -125,12 +124,6 @@ void ThreadGlobalData::initializeMimeTypeRegistryThreadGlobalData()
 {
     ASSERT(!m_MIMETypeRegistryThreadGlobalData);
     m_MIMETypeRegistryThreadGlobalData = MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData();
-}
-
-void ThreadGlobalData::initializeFontCache()
-{
-    ASSERT(!m_fontCache);
-    m_fontCache = makeUnique<FontCache>();
 }
 
 } // namespace WebCore

@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg">
     <desc>This test checks that we correctly handle animated values for the "points" attribute of a polyline element. You should see only a thick green stroke and no red.</desc>
+    <meta name="fuzzy" content="maxDifference=64; totalPixels=0-40" />
     <polyline points="10,10 210,10 210,210 10,210" fill="none" stroke="red" stroke-width="20" />
     <polyline points="10,10 110,10 110,110 10,110" fill="none" stroke="green" stroke-width="20">
         <set attributeName="points" to="10,10 210,10 210,210 10,210" />

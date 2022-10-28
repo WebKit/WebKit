@@ -103,11 +103,6 @@ webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
 
 webkit.org/b/203112 scrollingcoordinator/ios/ui-scroll-fixed.html [ Pass Failure ]
 
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-basic.html [ Crash ]
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-height-changes.html [ Crash ]
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-scrolling.html [ Crash ]
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-width-changes.html [ Crash ]
-
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
 webkit.org/b/215216 imported/w3c/web-platform-tests/svg/import/interact-zoom-01-t-manual.svg [ Pass Failure ]

@@ -48,9 +48,10 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "MouseEvent.h"
 #include "ParsedContentType.h"
@@ -517,9 +518,11 @@ bool HTMLLinkElement::mediaAttributeMatches() const
     std::optional<RenderStyle> documentStyle;
     if (document().hasLivingRenderTree())
         documentStyle = Style::resolveForDocument(document());
-    auto media = MediaQuerySet::create(m_media, MediaQueryParserContext(document()));
+    auto mediaQueryList = MQ::MediaQueryParser::parse(m_media, { document() });
     LOG(MediaQueries, "HTMLLinkElement::mediaAttributeMatches");
-    return LegacyMediaQueryEvaluator(document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr).evaluate(media.get());
+
+    MQ::MediaQueryEvaluator evaluator(AtomString(document().frame()->view()->mediaType()), document(), documentStyle ? &*documentStyle : nullptr);
+    return evaluator.evaluate(mediaQueryList);
 }
 
 void HTMLLinkElement::linkLoaded()

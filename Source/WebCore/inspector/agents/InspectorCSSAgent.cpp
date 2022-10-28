@@ -193,39 +193,39 @@ private:
     String m_oldText;
 };
 
-class InspectorCSSAgent::SetRuleSelectorAction final : public InspectorCSSAgent::StyleSheetAction {
-    WTF_MAKE_NONCOPYABLE(SetRuleSelectorAction);
+class InspectorCSSAgent::SetRuleHeaderTextAction final : public InspectorCSSAgent::StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetRuleHeaderTextAction);
 public:
-    SetRuleSelectorAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& selector)
+    SetRuleHeaderTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& newHeaderText)
         : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_cssId(cssId)
-        , m_selector(selector)
+        , m_newHeaderText(newHeaderText)
     {
     }
 
 private:
     ExceptionOr<void> perform() final
     {
-        auto result = m_styleSheet->ruleSelector(m_cssId);
+        auto result = m_styleSheet->ruleHeaderText(m_cssId);
         if (result.hasException())
             return result.releaseException();
-        m_oldSelector = result.releaseReturnValue();
+        m_oldHeaderText = result.releaseReturnValue();
         return redo();
     }
 
     ExceptionOr<void> undo() final
     {
-        return m_styleSheet->setRuleSelector(m_cssId, m_oldSelector);
+        return m_styleSheet->setRuleHeaderText(m_cssId, m_oldHeaderText);
     }
 
     ExceptionOr<void> redo() final
     {
-        return m_styleSheet->setRuleSelector(m_cssId, m_selector);
+        return m_styleSheet->setRuleHeaderText(m_cssId, m_newHeaderText);
     }
 
     InspectorCSSId m_cssId;
-    String m_selector;
-    String m_oldSelector;
+    String m_newHeaderText;
+    String m_oldHeaderText;
 };
 
 class InspectorCSSAgent::AddRuleAction final : public InspectorCSSAgent::StyleSheetAction {
@@ -255,7 +255,7 @@ private:
         auto result = m_styleSheet->addRule(m_selector);
         if (result.hasException())
             return result.releaseException();
-        m_newId = m_styleSheet->ruleId(result.releaseReturnValue());
+        m_newId = m_styleSheet->ruleOrStyleId(result.releaseReturnValue());
         return { };
     }
 
@@ -263,13 +263,6 @@ private:
     String m_selector;
     String m_oldSelector;
 };
-
-CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule& rule)
-{
-    if (!is<CSSStyleRule>(rule))
-        return nullptr;
-    return downcast<CSSStyleRule>(&rule);
-}
 
 InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
@@ -715,16 +708,43 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleS
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
-    auto performResult = domAgent->history()->perform(makeUnique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector));
+    auto performResult = domAgent->history()->perform(makeUnique<SetRuleHeaderTextAction>(inspectorStyleSheet, compoundId, selector));
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
+    auto rule = inspectorStyleSheet->buildObjectForRule(dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(compoundId)));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
     return rule.releaseNonNull();
 }
+
+Protocol::ErrorStringOr<Ref<Protocol::CSS::Grouping>> InspectorCSSAgent::setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText)
+{
+    Protocol::ErrorString errorString;
+
+    InspectorCSSId compoundId(WTFMove(ruleId));
+    ASSERT(!compoundId.isEmpty());
+
+    auto* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
+    if (!inspectorStyleSheet)
+        return makeUnexpected(errorString);
+
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
+    if (!domAgent)
+        return makeUnexpected("DOM domain must be enabled"_s);
+
+    auto performResult = domAgent->history()->perform(makeUnique<SetRuleHeaderTextAction>(inspectorStyleSheet, compoundId, headerText));
+    if (performResult.hasException())
+        return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
+
+    if (auto rule = inspectorStyleSheet->buildObjectForGrouping(inspectorStyleSheet->ruleForId(compoundId)))
+        return rule.releaseNonNull();
+
+    ASSERT_NOT_REACHED();
+    return makeUnexpected("Internal error: missing grouping payload"_s);
+}
+
 
 Protocol::ErrorStringOr<Protocol::CSS::StyleSheetId> InspectorCSSAgent::createStyleSheet(const Protocol::Network::FrameId& frameId)
 {
@@ -808,7 +828,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(rawAction.newRuleId()));
+    auto rule = inspectorStyleSheet->buildObjectForRule(dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(rawAction.newRuleId())));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 

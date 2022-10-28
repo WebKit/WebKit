@@ -736,11 +736,6 @@ void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin& origin, const U
     frameLoadDelegatePriv2->didRunInsecureContent(webView, webSecurityOrigin.get());
 }
 
-void WebFrameLoaderClient::didDetectXSS(const URL&, bool)
-{
-    // FIXME: propogate call into the private delegate.
-}
-
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request) const
 {
     // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values

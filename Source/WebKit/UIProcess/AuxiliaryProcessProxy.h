@@ -29,9 +29,11 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
+#include "ProcessThrottler.h"
 #include "ResponsivenessTimer.h"
 #include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <memory>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -135,6 +137,10 @@ public:
     void setProcessSuppressionEnabled(bool);
     bool platformIsBeingDebugged() const;
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    void setRunningBoardThrottlingEnabled();
+#endif
+
     enum class UseLazyStop : bool { No, Yes };
     void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
     void stopResponsivenessTimer();
@@ -202,7 +208,7 @@ private:
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    RefPtr<ProcessAssertion> m_lifetimeAssertion;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
 #endif
 };
 

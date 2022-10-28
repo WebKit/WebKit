@@ -1849,7 +1849,7 @@ public:
     void didNavigateWithNavigationDataShared(Ref<WebProcessProxy>&&, const WebNavigationDataStore&, WebCore::FrameIdentifier);
     void didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, uint64_t navigationID, URL&&);
     void decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
-    void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, uint64_t listenerID, const UserData&);
+    void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SubstituteData::SessionHistoryVisibility);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
@@ -2213,7 +2213,6 @@ private:
 #endif
 
     void didCreateMainFrame(WebCore::FrameIdentifier);
-    void didCreateSubframe(WebCore::FrameIdentifier, WebCore::FrameIdentifier parentFrameID);
 
     void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, URL&&, URL&& unreachableURL, const UserData&);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
@@ -2235,7 +2234,6 @@ private:
     void didFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
     void didDisplayInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
     void didRunInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
-    void didDetectXSSForFrame(WebCore::FrameIdentifier, const UserData&);
     void mainFramePluginHandlesPageScaleGestureDidChange(bool);
     void didStartProgress();
     void didChangeProgress(double);
@@ -2256,7 +2254,7 @@ private:
     void decidePolicyForNewWindowAction(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, NavigationActionData&&,
         WebCore::ResourceRequest&&, const String& frameName, uint64_t listenerID, const UserData&);
     void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID,
-        const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, uint64_t listenerID, const UserData&);
+        const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
     void unableToImplementPolicy(WebCore::FrameIdentifier, const WebCore::ResourceError&, const UserData&);
     void beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy&);
 
@@ -2705,6 +2703,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     static bool isInHardwareKeyboardMode();
+#endif
+
+#if USE(RUNNINGBOARD)
     void clearAudibleActivity();
 #endif
 
@@ -2890,7 +2891,7 @@ private:
 #if PLATFORM(MACCATALYST)
     bool m_isListeningForUserFacingStateChangeNotification { false };
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     bool m_allowsMediaDocumentInlinePlayback { false };
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;

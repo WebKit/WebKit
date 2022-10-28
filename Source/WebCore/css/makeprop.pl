@@ -72,6 +72,7 @@ my %nameIsHighPriority;
 my %nameIsDeferred;
 my %nameIsInherited;
 my %namePriorityShouldSink;
+my %nameListPropertySeparator;
 my %logicalPropertyGroups;
 my %logicalPropertyGroupResolvers = (
     "logical" => {
@@ -325,6 +326,8 @@ sub addProperty($$)
                     $settingsFlags{$name} = $codegenProperties->{"settings-flag"};
                 } elsif ($codegenOptionName eq "color-property") {
                     $nameIsColorProperty{$name} = 1;
+                } elsif ($codegenOptionName eq "separator") {
+                    $nameListPropertySeparator{$name} = $codegenProperties->{"separator"};;
                 } elsif ($codegenOptionName eq "logical-property-group") {
                     die "Shorthand property $name can't belong to a logical property group\n" if exists $codegenProperties->{"longhands"};
                     $nameIsDeferred{$name} = 1;
@@ -733,6 +736,21 @@ print GPERF << "EOF";
     default:
         return false;
     }
+}
+
+UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+for my $name (sort keys %nameListPropertySeparator) {
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+    print GPERF "        return '" . substr($nameListPropertySeparator{$name}, 0, 1) . "';\n";
+}
+print GPERF << "EOF";
+    default:
+        break;
+    }
+    return '\\0';
 }
 
 bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)

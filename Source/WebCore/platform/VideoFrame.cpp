@@ -34,10 +34,11 @@
 
 namespace WebCore {
 
-VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rotation)
+VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
     : m_presentationTime(presentationTime)
     , m_isMirrored(isMirrored)
     , m_rotation(rotation)
+    , m_colorSpace(WTFMove(colorSpace))
 {
 }
 
@@ -55,25 +56,25 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createNV12(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&)
+RefPtr<VideoFrame> VideoFrame::createNV12(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBA(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&)
+RefPtr<VideoFrame> VideoFrame::createRGBA(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRA(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&)
+RefPtr<VideoFrame> VideoFrame::createBGRA(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&)
+RefPtr<VideoFrame> VideoFrame::createI420(Span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;

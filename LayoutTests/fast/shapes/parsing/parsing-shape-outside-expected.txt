@@ -164,9 +164,9 @@ PASS getComputedStyleValue("-webkit-shape-outside", "border-box polygon(nonzero,
 PASS getCSSText("-webkit-shape-outside", "margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)") is "margin-box polygon(0px 0px, 10px 10px, 10px 0px)"
 PASS getComputedStyleValue("-webkit-shape-outside", "margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)") is "polygon(0px 0px, 10px 10px, 10px 0px) margin-box"
 PASS getCSSText("-webkit-shape-outside", "linear-gradient(to right, red, blue)") is "linear-gradient(to right, red, blue)"
-PASS getComputedStyleValue("-webkit-shape-outside", "linear-gradient(to right, red, blue)") is "linear-gradient(to right, red, blue)"
+FAIL getComputedStyleValue("-webkit-shape-outside", "linear-gradient(to right, red, blue)") should be linear-gradient(to right, red, blue). Was linear-gradient(to right, rgb(255, 0, 0), rgb(0, 0, 255)).
 PASS getCSSText("-webkit-shape-outside", "radial-gradient(at 10px 20px, red 0%, blue 50%, green 95%)") is "radial-gradient(at 10px 20px, red 0%, blue 50%, green 95%)"
-PASS getComputedStyleValue("-webkit-shape-outside", "radial-gradient(at 10px 20px, red 0%, blue 50%, green 95%)") is "radial-gradient(at 10px 20px, red 0%, blue 50%, green 95%)"
+FAIL getComputedStyleValue("-webkit-shape-outside", "radial-gradient(at 10px 20px, red 0%, blue 50%, green 95%)") should be radial-gradient(at 10px 20px, red 0%, blue 50%, green 95%). Was radial-gradient(at 10px 20px, rgb(255, 0, 0) 0%, rgb(0, 0, 255) 50%, rgb(0, 128, 0) 95%).
 PASS removeBaseURL(getCSSText("-webkit-shape-outside", "url('image')")) is "url(\"image\")"
 PASS removeBaseURL(getComputedStyleValue("-webkit-shape-outside", "url('image')")) is "url(\"image\")"
 PASS getCSSText("-webkit-shape-outside", "calc()") is ""
