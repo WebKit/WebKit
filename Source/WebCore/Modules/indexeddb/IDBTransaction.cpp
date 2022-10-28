@@ -632,6 +632,11 @@ void IDBTransaction::dispatchEvent(Event& event)
     m_didDispatchAbortOrCommit = true;
 
     if (isVersionChange()) {
+        if (!m_openDBRequest) {
+            ASSERT(m_isStopped);
+            return;
+        }
+
         m_openDBRequest->versionChangeTransactionDidFinish();
 
         if (event.type() == eventNames().completeEvent) {
