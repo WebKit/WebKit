@@ -26,6 +26,7 @@
 #include "MediaQueryParser.h"
 
 #include "CSSMarkup.h"
+#include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
 #include "GenericMediaQuerySerialization.h"
 #include "MediaQueryFeatures.h"
@@ -33,7 +34,7 @@
 namespace WebCore {
 namespace MQ {
 
-MediaQueryParser::MediaQueryParser(const CSSParserContext& context)
+MediaQueryParser::MediaQueryParser(const MediaQueryParserContext& context)
     : GenericMediaQueryParser(context)
 {
 }
@@ -41,6 +42,18 @@ MediaQueryParser::MediaQueryParser(const CSSParserContext& context)
 Vector<const FeatureSchema*> MediaQueryParser::featureSchemas()
 {
     return Features::allSchemas();
+}
+
+MediaQueryList MediaQueryParser::parse(const String& string, const MediaQueryParserContext& context)
+{
+    auto tokenizer = CSSTokenizer::tryCreate(string);
+    if (!tokenizer)
+        return { };
+
+    auto range = tokenizer->tokenRange();
+
+    MediaQueryParser parser { context };
+    return parser.consumeMediaQueryList(range);
 }
 
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)

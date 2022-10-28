@@ -23,11 +23,11 @@
 #pragma once
 
 #include "HTMLElement.h"
+#include "MediaQuery.h"
 
 namespace WebCore {
 
 class Color;
-class MediaQuerySet;
 
 class HTMLMetaElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLMetaElement);
@@ -54,7 +54,7 @@ private:
 
     void process();
 
-    RefPtr<MediaQuerySet> m_media;
+    std::optional<MQ::MediaQueryList> m_mediaQueryList;
 
     std::optional<Color> m_contentColor;
 };

@@ -35,7 +35,7 @@ class ContainerQueryParser;
 
 class ContainerQueryParser : public MQ::GenericMediaQueryParser<ContainerQueryParser>  {
 public:
-    static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const CSSParserContext&);
+    static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
 
     static Vector<const MQ::FeatureSchema*> featureSchemas();
     static bool rejectInvalidFeatures() { return false; }
@@ -43,9 +43,8 @@ public:
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
     std::optional<MQ::Feature> consumeFeature(CSSParserTokenRange&);
 
-
 private:
-    ContainerQueryParser(const CSSParserContext& context)
+    ContainerQueryParser(const MediaQueryParserContext& context)
         : GenericMediaQueryParser(context) { }
 
     OptionSet<CQ::Axis> m_requiredAxes;

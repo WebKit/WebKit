@@ -27,6 +27,7 @@
 
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
+#include "MediaQueryParserContext.h"
 
 namespace WebCore {
 namespace MQ {
