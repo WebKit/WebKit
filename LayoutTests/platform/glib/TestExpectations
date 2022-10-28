@@ -2016,7 +2016,6 @@ fast/css/watchos [ Skip ]
 fast/dom/Window/watchos [ Skip ]
 fast/events/ios [ Skip ]
 fast/events/pointer/ios [ Skip ]
-fast/events/touch/ios [ Skip ]
 fast/events/watchos [ Skip ]
 fast/forms/ios [ Skip ]
 fast/forms/textarea/ios [ Skip ]
@@ -2122,6 +2121,10 @@ webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers
 media/media-allowed-codecs.html [ Skip ]
 media/media-allowed-containers.html [ Skip ]
 media/media-source/media-source-allowed-codecs.html [ Skip ]
+
+# These tests require touch support
+fast/events/touch [ Skip ]
+imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 

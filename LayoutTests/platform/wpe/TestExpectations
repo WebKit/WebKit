@@ -314,13 +314,6 @@ webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
 
-# ENABLE_TOUCH_SLIDER is disabled in WPE.
-fast/events/touch/touch-slider.html [ Skip ]
-
-# WPE does not support touch event canceling
-webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Skip ]
-fast/events/touch/touch-input-element-change-documents.html [ Skip ]
-
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
 model-element/model-element-graphics-layers-opacity.html [ Skip ]
@@ -368,9 +361,6 @@ fast/events/resources/drag-in-frames-left.html [ Skip ]
 fast/events/resources/drag-in-frames-right.html [ Skip ]
 fast/events/shift-drag-selection-on-image-triggers-drag-n-drop.html [ Skip ]
 fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html [ Skip ]
-fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html [ Skip ]
-fast/events/touch/gesture/resources/drag-inside-iframe2.html [ Skip ]
-fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
 fast/text/selection-is-prevent-defaulted.html [ Skip ]
 
 css-dark-mode [ Pass ]
@@ -521,8 +511,6 @@ webkit.org/b/208979 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/208982 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html [ Failure ]
 
 webkit.org/b/208983 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles.html [ Failure ]
-
-webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
 
 webkit.org/b/208985 fast/viewport/ios/shrink-to-fit-large-content-width.html [ Failure ]
 
@@ -744,7 +732,6 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-wh
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-document.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-root.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-window.html [ Crash ]
-webkit.org/b/244186 fast/events/touch/force-press-event.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
@@ -824,8 +811,6 @@ webkit.org/b/216650 fast/events/mouse-drag-from-frame-to-other-frame.html [ Fail
 webkit.org/b/216650 fast/events/mouse-drag-from-frame.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-focus-imagemap.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout Pass ]
-
-webkit.org/b/219425 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
 
 webkit.org/b/219465 fast/loader/font-load-timer.html [ ImageOnlyFailure Pass ]
 
@@ -1006,25 +991,6 @@ Bug(WPE) fast/viewport/viewport-legacy-ordering-6.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
 
-# These tests were moved on r187990 from platform/ios-simulator/ios/fast/events/touch
-webkit.org/b/148940 fast/events/touch/document-create-touch-list-ios.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/gesture-event-basic.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/input-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/inserted-fragment-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/moved-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/multi-touch-some-without-handlers.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/ontouchstart-active-selector.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/removed-fragment-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/removed-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/text-node-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/textarea-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/touch-event-frames.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/touch-event-pageXY.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
-
-# Need support for internals.settings.setDeviceSupportsMouse
-fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Skip ]
-
 webkit.org/b/174673 fast/events/keyboardevent-code.html [ Failure ]
 
 # clickCount related failures
@@ -1076,14 +1042,6 @@ webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
 webkit.org/b/173419 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
-webkit.org/b/173419 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/173419 fast/events/touch/document-create-touch-list.html [ Failure ]
-webkit.org/b/173419 fast/events/touch/multi-touch-grouped-targets.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/multi-touch-inside-nested-iframes.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/touch-target-limited.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/touch-target.html [ Timeout ]
 webkit.org/b/173419 fast/events/webkit-media-key-events-constructor.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
@@ -1101,9 +1059,6 @@ webkit.org/b/173419 fast/events/wheel/wheelevent-basic.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
-
-webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
-webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
 
 webkit.org/b/186879 fast/events/open-window-from-another-frame.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-allowed-from-gesture-initiated-event.html [ Timeout ]
