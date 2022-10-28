@@ -122,8 +122,6 @@
 
 (allow iokit-open-service (iokit-registry-entry-class "IOPMrootDomain"))
 
-(allow file-link (with report))
-
 (allow file-link
     (extension-class "com.apple.app-sandbox.read-write")
     (extension "com.apple.app-sandbox.read-write"))

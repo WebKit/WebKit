@@ -33,6 +33,12 @@
 (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
 
 #if USE(SANDBOX_VERSION_2)
+(allow file-link (with telemetry))
+(allow system-fcntl (with telemetry))
+(allow file-map-executable (with telemetry))
+(allow iokit-open-service (with telemetry))
+(allow system-mac-syscall (with telemetry))
+
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 2 4 6 7)))
 

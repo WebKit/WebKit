@@ -69,8 +69,6 @@
 
 (deny darwin-notification-post (with no-report))
 (deny nvram-get (with no-report))
-
-(allow file-map-executable (with report))
 #endif // USE(SANDBOX_VERSION_2)
 
 ;;;
