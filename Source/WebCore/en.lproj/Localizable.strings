@@ -1273,6 +1273,9 @@
 /* Full Screen Deceptive Website Warning Sheet Content Text */
 "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
 
+/* Full Screen Warning Banner Content Text */
+"”%@” is in full screen.\nSwipe down to exit." = "”%@” is in full screen.\nSwipe down to exit.";
+
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
 
