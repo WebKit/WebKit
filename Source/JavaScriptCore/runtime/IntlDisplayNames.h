@@ -29,6 +29,13 @@
 #include <unicode/uldnames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+#if !defined(HAVE_ICU_U_LOCALE_DISPLAY_NAMES)
+// We need 61 or later since part of implementation uses UCURR_NARROW_SYMBOL_NAME.
+#if U_ICU_VERSION_MAJOR_NUM >= 61
+#define HAVE_ICU_U_LOCALE_DISPLAY_NAMES 1
+#endif
+#endif
+
 namespace JSC {
 
 enum class RelevantExtensionKey : uint8_t;
