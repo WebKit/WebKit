@@ -530,7 +530,7 @@ private:
     JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*, bool returnEmptyStringOnError) const;
     JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE JSValue toThisSlowCase(JSGlobalObject*, ECMAMode) const;
+    JS_EXPORT_PRIVATE JSValue toThisSloppySlowCase(JSGlobalObject*) const;
 
     EncodedValueDescriptor u;
 };

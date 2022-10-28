@@ -5509,7 +5509,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 cachedStructure = cachedStructureID.decode();
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
-                || cachedStructure->classInfoForCells()->methodTable.toThis != JSObject::info()->methodTable.toThis
+                || !cachedStructure->classInfoForCells()->isSubClassOf(JSObject::info())
+                || cachedStructure->classInfoForCells()->isSubClassOf(JSScope::info())
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                 setThis(addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));

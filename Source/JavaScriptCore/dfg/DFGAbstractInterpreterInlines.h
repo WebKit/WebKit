@@ -199,13 +199,13 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
 
     if (JSValue value = valueForNode.value()) {
         if (value.isCell()) {
-            auto* toThisMethod = value.asCell()->classInfo()->methodTable.toThis;
-            if (toThisMethod == &JSObject::toThis)
+            if (value.asCell()->isObject()) {
+                if (value.asCell()->inherits<JSScope>()) {
+                    if (ecmaMode.isStrict())
+                        return ToThisResult::Undefined;
+                    return ToThisResult::GlobalThis;
+                }
                 return ToThisResult::Identity;
-            if (toThisMethod == &JSScope::toThis) {
-                if (ecmaMode.isStrict())
-                    return ToThisResult::Undefined;
-                return ToThisResult::GlobalThis;
             }
         }
     }
@@ -225,7 +225,7 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
                 overridesToThis = true;
 
             // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
-            allStructuresAreJSScope &= structure->classInfoForCells()->methodTable.toThis == JSScope::info()->methodTable.toThis;
+            allStructuresAreJSScope &= structure->classInfoForCells()->isSubClassOf(JSScope::info());
         });
         if (!overridesToThis)
             return ToThisResult::Identity;

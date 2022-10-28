@@ -416,11 +416,4 @@ SymbolTable* JSScope::symbolTable()
     return nullptr;
 }
 
-JSValue JSScope::toThis(JSCell*, JSGlobalObject* globalObject, ECMAMode ecmaMode)
-{
-    if (ecmaMode.isStrict())
-        return jsUndefined();
-    return globalObject->globalThis();
-}
-
 } // namespace JSC

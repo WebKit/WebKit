@@ -1013,7 +1013,20 @@ inline const ClassInfo* JSValue::classInfoOrNull() const
 
 inline JSValue JSValue::toThis(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
-    return isCell() ? asCell()->methodTable()->toThis(asCell(), globalObject, ecmaMode) : toThisSlowCase(globalObject, ecmaMode);
+    if (isObject()) {
+        if (asObject(*this)->inherits<JSScope>())
+            return ecmaMode.isStrict() ? jsUndefined() : globalObject->globalThis();
+        return *this;
+    }
+
+    if (ecmaMode.isStrict())
+        return *this;
+
+    ASSERT(!ecmaMode.isStrict());
+    if (isUndefinedOrNull())
+        return globalObject->globalThis();
+
+    return toThisSloppySlowCase(globalObject);
 }
 
 ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName propertyName) const

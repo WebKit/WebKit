@@ -1918,7 +1918,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
 
     // Default realm global objects should have mutable prototypes despite having
     // a Proxy globalThis.
-    ASSERT(this->isGlobalObject() || methodTable()->toThis(this, globalObject, ECMAMode::sloppy()) == this);
+    ASSERT(this->isGlobalObject() || JSValue(this).toThis(globalObject, ECMAMode::sloppy()) == this);
 
     if (this->getPrototypeDirect() == prototype)
         return true;
@@ -2603,11 +2603,6 @@ JSString* JSObject::toString(JSGlobalObject* globalObject) const
     JSValue primitive = toPrimitive(globalObject, PreferString);
     RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
     RELEASE_AND_RETURN(scope, primitive.toString(globalObject));
-}
-
-JSValue JSObject::toThis(JSCell* cell, JSGlobalObject*, ECMAMode)
-{
-    return jsCast<JSObject*>(cell);
 }
 
 void JSObject::seal(VM& vm)
