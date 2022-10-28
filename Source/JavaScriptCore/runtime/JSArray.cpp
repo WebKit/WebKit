@@ -891,7 +891,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
     return true;
 }
 
-bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsigned& startIndex, unsigned count)
+bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsigned& startIndex, unsigned count, unsigned shiftThreshold)
 {
     VM& vm = globalObject->vm();
     RELEASE_ASSERT(count > 0);
@@ -916,7 +916,7 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
         
         // We may have to walk the entire array to do the shift. We're willing to do
         // so only if it's not horribly slow.
-        if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
+        if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX || oldLength > shiftThreshold)
             return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
 
         // Storing to a hole is fine since we're still having a good time. But reading from a hole
@@ -961,7 +961,7 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
         
         // We may have to walk the entire array to do the shift. We're willing to do
         // so only if it's not horribly slow.
-        if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
+        if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX || oldLength > shiftThreshold)
             return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
 
         // Storing to a hole is fine since we're still having a good time. But reading from a hole 
@@ -1106,7 +1106,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
         if (moveCount) {
-            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+            if (UNLIKELY(holesMustForwardToPrototype())) {
                 if (UNLIKELY(WTF::find64(bitwise_cast<const uint64_t*>(butterfly->contiguous().data() + startIndex), JSValue::encode(JSValue()), moveCount)))
                     RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
             }
@@ -1155,7 +1155,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
         if (moveCount) {
-            if (UNLIKELY(this->structure()->holesMustForwardToPrototype(this))) {
+            if (UNLIKELY(holesMustForwardToPrototype())) {
                 for (unsigned i = oldLength; i-- > startIndex;) {
                     double v = butterfly->contiguousDouble().at(this, i);
                     if (UNLIKELY(v != v))
