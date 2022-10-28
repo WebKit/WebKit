@@ -2134,6 +2134,351 @@ public:
 
     DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);
 
+    void compareFloatingPointVector(DoubleCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) left; (void) right; (void) dest;
+
+        switch (cond) {
+        case DoubleEqualAndOrdered:
+            break;
+        case DoubleNotEqualOrUnordered:
+            break;
+        case DoubleGreaterThanAndOrdered:
+            break;
+        case DoubleGreaterThanOrEqualAndOrdered:
+            break;
+        case DoubleLessThanAndOrdered:
+            // a < b   =>   b > a
+            break;
+        case DoubleLessThanOrEqualAndOrdered:
+            // a <= b   =>   b >= a
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        (void) left; (void) right; (void) dest;
+
+        switch (cond) {
+        case Equal:
+            break;
+        case NotEqual:
+            break;
+        case Above:
+            break;
+        case AboveOrEqual:
+            break;
+        case Below:
+            // a < b  =>  b > a
+            break;
+        case BelowOrEqual:
+            // a <= b  =>  b >= a
+            break;
+        case GreaterThan:
+            break;
+        case GreaterThanOrEqual:
+            break;
+        case LessThan:
+            // a < b  =>  b > a
+            break;
+        case LessThanOrEqual:
+            // a <= b  =>  b >= a
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void compareIntegerVectorWithZero(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID vector, FPRegisterID dest) 
+    {
+        RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        (void) cond; (void) vector; (void) dest;
+    }
+
+    void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) left;
+        else
+            (void) left;
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorSub(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) left;
+        else
+            (void) left;
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorMul(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) left;
+        else
+            (void) left;
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) left; (void) right; (void) dest; (void) simdInfo;
+    }
+
+    void vectorMax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        (void) right; (void) dest;
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) left;
+        else {
+            ASSERT(simdInfo.signMode != SIMDSignMode::None);
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                (void) left;
+            else
+                (void) left;
+        }
+    }
+
+    void vectorMin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        (void) right; (void) dest;
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) left;
+        else {
+            ASSERT(simdInfo.signMode != SIMDSignMode::None);
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                (void) left;
+            else
+                (void) left;
+        }
+    }
+
+    void vectorPmin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        // right > left, dest = left
+        (void) left; (void) right; (void) dest; (void) simdInfo;
+    }
+
+    void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        // left > right, dest = left
+        (void) left; (void) right; (void) dest; (void) simdInfo;
+    }
+
+    void vectorBitwiseSelect(FPRegisterID left, FPRegisterID right, FPRegisterID inputBitsAndDest)
+    {
+        (void) left; (void) right; (void) inputBitsAndDest;
+    }
+
+    void vectorNot(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
+        (void) input; (void) dest;
+    }
+
+    void vectorAnd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorAndnot(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorOr(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorXor(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
+        (void) left; (void) right; (void) dest;
+    }
+
+    void vectorAbs(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) dest;
+        else
+            (void) dest;
+        (void) input;
+    }
+
+    void vectorNeg(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        if (scalarTypeIsFloatingPoint(simdInfo.lane))
+            (void) dest;
+        else
+            (void) dest;
+        (void) input;
+    }
+
+    void vectorPopcnt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(simdInfo.lane == SIMDLane::i8x16);
+        (void) input; (void) dest; (void) simdInfo;
+    }
+
+    void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) input; (void) dest; (void) simdInfo;
+    }
+
+    void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) input; (void) dest; (void) simdInfo;
+    }
+
+    void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) input; (void) dest; (void) simdInfo;
+    }
+
+    void vectorTruncSat(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(input);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) input; (void) dest; (void) simdInfo;
+    }
+
+    void vectorSqrt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        (void) input; (void) dest; (void) simdInfo;
+    }
+
+    void vectorExtendLow(SIMDInfo, FPRegisterID, FPRegisterID)
+    {
+    }
+
+    void vectorExtendHigh(SIMDInfo, FPRegisterID, FPRegisterID)
+    {
+    }
+
+    void vectorPromote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(input);
+        UNUSED_PARAM(dest);
+        ASSERT(simdInfo.lane == SIMDLane::f32x4);
+    }
+
+    void vectorDemote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(input);
+        UNUSED_PARAM(dest);
+        ASSERT(simdInfo.lane == SIMDLane::f64x2);
+    }
+
+    void vectorNarrow(SIMDInfo simdInfo, FPRegisterID lower, FPRegisterID upper, FPRegisterID dest)
+    {
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(lower);
+        UNUSED_PARAM(upper);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorConvert(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(elementByteSize(simdInfo.lane) == 4);
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(input);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorConvertLow(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(elementByteSize(simdInfo.lane) == 4);
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(input);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorSplat(SIMDLane lane, RegisterID src, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(lane));
+        UNUSED_PARAM(lane);
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorSplat8(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i8x16, src, dest); }
+    void vectorSplat16(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i16x8, src, dest); }
+    void vectorSplat32(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i32x4, src, dest); }
+    void vectorSplat64(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i64x2, src, dest); }
+
+    void vectorAddSat(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(right);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorSubSat(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        UNUSED_PARAM(simdInfo);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(right);
+        UNUSED_PARAM(dest);
+    }
+
+    void vectorLoad8Splat(Address address, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(dest); }
+    void vectorLoad16Splat(Address address, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(dest); }
+    void vectorLoad32Splat(Address address, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(dest); }
+    void vectorLoad64Splat(Address address, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(dest); }
+
+    void vectorLoad8Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
+    void vectorLoad16Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
+    void vectorLoad32Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
+    void vectorLoad64Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
+
+    void vectorAnyTrue(FPRegisterID vec, RegisterID dest) { (void) vec; (void) dest; }
+    void vectorAllTrue(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { (void) simdInfo, (void) vec; (void) dest; }
+    void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { (void) simdInfo, (void) vec; (void) dest; }
+    void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest) { (void) simdInfo, (void) vec; (void) dest; }
+    void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) simdInfo, (void) a; (void) b; (void) dest; }
+    void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) a; (void) b; (void) dest; }
+    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID) { (void) a; (void) b; (void) dest; }
+    void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) a; (void) b; (void) dest; }
+    void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) immLow; (void) immHigh; (void) a; (void) b; (void) dest; }
+
     // Misc helper functions.
 
     static bool supportsFloatingPoint() { return true; }

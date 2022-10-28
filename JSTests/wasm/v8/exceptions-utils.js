@@ -7,7 +7,7 @@
 // This file is intended to be loaded by other tests to provide utility methods
 // requiring natives syntax (and hence not suited for the mjsunit.js file).
 
-function assertWasmThrows(instance, tag, values, code) {
+function assertWasmThrows(instance, runtime_id, values, code) {
   try {
     if (typeof code === 'function') {
       code();
@@ -16,12 +16,13 @@ function assertWasmThrows(instance, tag, values, code) {
     }
   } catch (e) {
     assertInstanceof(e, WebAssembly.Exception);
-    assertTrue(e.is(tag));
-    assertEquals(values.length, tag.type().parameters.length);
-    for (let i = 0; i < values.length; ++i)
-      assertEquals(values[i], e.getArg(tag, i));
+    // var e_runtime_id = %GetWasmExceptionTagId(e, instance);
+    // assertTrue(Number.isInteger(e_runtime_id));
+    // assertEquals(e_runtime_id, runtime_id);
+    // var e_values = %GetWasmExceptionValues(e);
+    // assertArrayEquals(values, e_values);
     return;  // Success.
   }
-  throw new MjsUnitAssertionError('Did not throw expected <' + tag +
+  throw new MjsUnitAssertionError('Did not throw expected <' + runtime_id +
                                   '> with values: ' + values);
 }

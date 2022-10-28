@@ -52,7 +52,8 @@ namespace Wasm {
     macro(OutOfBoundsArraySet, "Out of bounds array.set"_s) \
     macro(NullArrayGet, "array.get to a null reference"_s) \
     macro(NullArraySet, "array.set to a null reference"_s) \
-    macro(NullArrayLen, "array.len to a null reference"_s)
+    macro(NullArrayLen, "array.len to a null reference"_s) \
+    macro(TypeErrorInvalidV128Use, "an exported wasm function cannot contain a v128 parameter or return value"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,
@@ -71,6 +72,11 @@ ALWAYS_INLINE ASCIILiteral errorMessageForExceptionType(ExceptionType type)
     }
     ASSERT_NOT_REACHED();
     return ""_s;
+}
+
+ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
+{
+    return type == ExceptionType::TypeErrorInvalidV128Use;
 }
 
 } } // namespace JSC::Wasm

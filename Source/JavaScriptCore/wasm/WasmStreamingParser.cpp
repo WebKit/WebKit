@@ -33,6 +33,7 @@
 #include "WasmParser.h"
 #include "WasmSectionParser.h"
 #include "WasmTypeDefinitionInlines.h"
+#include <wtf/FileSystem.h>
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC { namespace Wasm {
@@ -69,11 +70,38 @@ NEVER_INLINE auto WARN_UNUSED_RETURN StreamingParser::fail(Args... args) -> Stat
     return State::FatalError;
 }
 
+#if ENABLE(WEBASSEMBLY)
+static void dumpWasmSource(const Vector<uint8_t>& source)
+{
+    static int count = 0;
+    const char* file = Options::dumpWasmSourceFileName();
+    if (!file)
+        return;
+    auto fileHandle = FileSystem::openFile(WTF::makeString(file, (count++), ".wasm"_s), 
+        FileSystem::FileOpenMode::Write,
+        FileSystem::FileAccessPermission::All,
+        /* failIfFileExists = */ true);
+    if (fileHandle == FileSystem::invalidPlatformFileHandle) {
+        dataLogLn("Error dumping wasm");
+        return;
+    }
+    dataLogLn("Dumping ", source.size(), " wasm source bytes to ", WTF::makeString(file, (count - 1), ".wasm"_s));
+    FileSystem::writeToFile(fileHandle, source.data(), source.size());
+    FileSystem::closeFile(fileHandle);
+}
+#endif
+
 StreamingParser::StreamingParser(ModuleInformation& info, StreamingParserClient& client)
     : m_info(info)
     , m_client(client)
 {
     dataLogLnIf(WasmStreamingParserInternal::verbose, "starting validation");
+
+#if ASSERT_ENABLED
+    dataLogLnIf(Options::dumpWasmSourceFileName(), "Wasm streaming parser created, capturing source.");
+#else
+    dataLogLnIf(Options::dumpWasmSourceFileName(), "Wasm streaming parser created, but we can only dump source in debug builds.");
+#endif
 }
 
 auto StreamingParser::parseModuleHeader(Vector<uint8_t>&& data) -> State
@@ -251,6 +279,19 @@ auto StreamingParser::consumeVarUInt32(const uint8_t* bytes, size_t bytesSize, s
 
 auto StreamingParser::addBytes(const uint8_t* bytes, size_t bytesSize, IsEndOfStream isEndOfStream) -> State
 {
+#if ASSERT_ENABLED
+    if (Options::dumpWasmSourceFileName()) {
+        for (unsigned i = 0; i < bytesSize; ++i)
+            m_buffer.append(bytes[i]);
+
+        if (isEndOfStream == IsEndOfStream::Yes) {
+            dataLogLn("Streaming parser reached end of stream.");
+            dumpWasmSource(m_buffer);
+        }
+    }
+#else
+    (void) dumpWasmSource;
+#endif
     if (m_state == State::FatalError)
         return m_state;
 

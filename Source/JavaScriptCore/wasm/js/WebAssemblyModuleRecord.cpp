@@ -310,6 +310,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     case Wasm::TypeKind::F64:
                         m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint64_t>(value.asNumber()));
                         break;
+                    case Wasm::TypeKind::V128:
+                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be v128")));
+                        break;
                     default:
                         if (Wasm::isExternref(globalType)) {
                             if (!globalType.isNullable() && value.isNull())
@@ -532,16 +535,45 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         for (size_t globalIndex = moduleInformation.firstInternalGlobal; globalIndex < moduleInformation.globals.size(); ++globalIndex) {
             const auto& global = moduleInformation.globals[globalIndex];
             ASSERT(global.initializationType != Wasm::GlobalInformation::IsImport);
+
+            if (global.type == Wasm::Types::V128) {
+                v128_t initialVector;
+
+                if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
+                    ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                    initialVector = m_instance->instance().loadV128Global(global.initialBits.initialBitsOrImportNumber);
+                } else if (global.initializationType == Wasm::GlobalInformation::FromExpression)
+                    initialVector = global.initialBits.initialVector;
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+                switch (global.bindingMode) {
+                case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {
+                    m_instance->instance().setGlobal(globalIndex, initialVector);
+                    break;
+                }
+                case Wasm::GlobalInformation::BindingMode::Portable: {
+                    ASSERT(global.mutability == Wasm::Mutable);
+                    Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, initialVector);
+                    JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                    scope.assertNoException();
+                    m_instance->linkGlobal(vm, globalIndex, globalValue);
+                    break;
+                }
+                }
+                continue;
+            }
+            ASSERT(global.initializationType != Wasm::GlobalInformation::FromVector);
+
             uint64_t initialBits = 0;
             if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
-                ASSERT(global.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
-                initialBits = m_instance->instance().loadI64Global(global.initialBitsOrImportNumber);
+                ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                initialBits = m_instance->instance().loadI64Global(global.initialBits.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
-                ASSERT(global.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
-                ASSERT(makeFunctionWrapper(global.initialBitsOrImportNumber).isCallable());
-                initialBits = JSValue::encode(makeFunctionWrapper(global.initialBitsOrImportNumber));
+                ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
+                ASSERT(makeFunctionWrapper(global.initialBits.initialBitsOrImportNumber).isCallable());
+                initialBits = JSValue::encode(makeFunctionWrapper(global.initialBits.initialBitsOrImportNumber));
             } else
-                initialBits = global.initialBitsOrImportNumber;
+                initialBits = global.initialBits.initialBitsOrImportNumber;
 
             switch (global.bindingMode) {
             case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {

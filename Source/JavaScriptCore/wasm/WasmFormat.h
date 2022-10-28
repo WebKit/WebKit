@@ -283,7 +283,8 @@ struct GlobalInformation {
         IsImport,
         FromGlobalImport,
         FromRefFunc,
-        FromExpression
+        FromExpression,
+        FromVector,
     };
 
     enum class BindingMode : uint8_t {
@@ -295,7 +296,10 @@ struct GlobalInformation {
     Type type;
     InitializationType initializationType { IsImport };
     BindingMode bindingMode { BindingMode::EmbeddedInInstance };
-    uint64_t initialBitsOrImportNumber { 0 };
+    union {
+        uint64_t initialBitsOrImportNumber;
+        v128_t initialVector { };
+    } initialBits;
 };
 
 struct FunctionData {

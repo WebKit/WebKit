@@ -78,6 +78,8 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     Wasm::Instance* wasmInstance = &instance->instance();
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
+        if (signature.argumentType(argIndex).isV128())
+            return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, Wasm::errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use))));
         uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->argument(argIndex));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(JSValue::decode(value));
@@ -184,6 +186,8 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     VM& vm = this->vm();
     CCallHelpers jit;
 
+    JIT_COMMENT(jit, "jsCallEntrypointSlow");
+
     const auto& typeDefinition = Wasm::TypeInformation::get(typeIndex());
     const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
     const auto& pinnedRegs = Wasm::PinnedRegisterInfo::get();
@@ -191,6 +195,8 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
     Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+    if (wasmCallInfo.argumentsOrResultsIncludeV128)
+        return nullptr;
     Wasm::CallInformation jsCallInfo = Wasm::jsCallingConvention().callInformationFor(typeDefinition, Wasm::CallRole::Callee);
     RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
 

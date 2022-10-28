@@ -107,6 +107,8 @@
 
 Nop
 
+Breakpoint
+
 Add32 U:G:32, U:G:32, ZD:G:32
     Imm, Tmp, Tmp
     Tmp, Tmp, Tmp
@@ -740,7 +742,7 @@ MoveDouble U:F:64, D:F:64
 
 MoveDouble U:F:64, D:F:64, S:F:64
     Addr, Addr, Tmp
-    
+
 MoveVector U:F:128, D:F:128
     Tmp, Tmp
     Addr, Tmp as loadVector
@@ -874,6 +876,12 @@ arm64: ClearBitsWithMask32 U:G:32, U:G:32, ZD:G:32
 
 arm64: ClearBitsWithMask64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
+
+arm64: ReverseBits64 U:G:64, D:G:64
+    Tmp, Tmp
+
+arm64: ReverseBits32 U:G:32, ZD:G:32
+    Tmp, Tmp
 
 arm64: OrNot32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
@@ -1652,6 +1660,207 @@ VectorExtractLaneFloat64 U:G:8, U:F:128, D:F:64
     Imm, Tmp, Tmp
 VectorExtractLaneFloat32 U:G:8, U:F:128, D:F:32
     Imm, Tmp, Tmp
+
+VectorSplat8 U:G:8, D:F:128
+    Tmp, Tmp
+VectorSplat16 U:G:16, D:F:128
+    Tmp, Tmp
+VectorSplat32 U:G:32, D:F:128
+    Tmp, Tmp
+VectorSplat64 U:G:64, D:F:128
+    Tmp, Tmp
+
+CompareFloatingPointVector U:G:32, U:G:Ptr, U:F:128, U:F:128, D:F:128
+    DoubleCond, SIMDInfo, Tmp, Tmp, Tmp
+
+CompareIntegerVector U:G:32, U:G:Ptr, U:F:128, U:F:128, D:F:128
+    RelCond, SIMDInfo, Tmp, Tmp, Tmp
+
+CompareIntegerVectorWithZero U:G:32, U:G:Ptr, U:F:128, D:F:128
+    RelCond, SIMDInfo, Tmp, Tmp
+
+arm64: VectorUnsignedMax U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+arm64: VectorUnsignedMin U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorAdd U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorSub U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorAddSat U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorSubSat U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorMul U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorDiv U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorMin U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorMax U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorPmin U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorPmax U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorNarrow U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorBitwiseSelect U:F:128, U:F:128, UD:F:128
+    Tmp, Tmp, Tmp
+
+VectorNot U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorAnd U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorAndnot U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorOr U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorXor U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+arm64: VectorUshl U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+arm64: VectorSshl U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+arm64: VectorSshr U:G:Ptr, U:F:128, U:G:8, D:F:128
+    SIMDInfo, Tmp, Imm, Tmp
+
+arm64: VectorHorizontalAdd U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+arm64: VectorZipUpper U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+arm64: VectorUnzipEven U:G:Ptr, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+arm64: VectorExtractPair U:G:Ptr, U:G:8, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Imm, Tmp, Tmp, Tmp
+
+VectorAbs U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorNeg U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorPopcnt U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorCeil U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorFloor U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorTrunc U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorTruncSat U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorConvert U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorConvertLow U:G:Ptr, U:F:64, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorNearest U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorSqrt U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorExtendLow U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorExtendHigh U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorPromote U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorDemote U:G:Ptr, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+VectorLoad8Splat U:G:8, D:F:128
+    arm64: SimpleAddr, Tmp
+VectorLoad16Splat U:G:16, D:F:128
+    arm64: SimpleAddr, Tmp
+VectorLoad32Splat U:G:32, D:F:128
+    arm64: SimpleAddr, Tmp
+VectorLoad64Splat U:G:64, D:F:128
+    arm64: SimpleAddr, Tmp
+
+VectorLoad8Lane U:G:8, U:G:8, UD:F:128
+    arm64: SimpleAddr, Imm, Tmp
+VectorLoad16Lane U:G:16, U:G:8, UD:F:128
+    arm64: SimpleAddr, Imm, Tmp
+VectorLoad32Lane U:G:32, U:G:8, UD:F:128
+    arm64: SimpleAddr, Imm, Tmp
+VectorLoad64Lane U:G:64, U:G:8, UD:F:128
+    arm64: SimpleAddr, Imm, Tmp
+
+VectorStore8Lane U:F:128, U:G:8, U:G:8
+    arm64: Tmp, SimpleAddr, Imm
+VectorStore16Lane U:F:128, U:G:16, U:G:8
+    arm64: Tmp, SimpleAddr, Imm
+VectorStore32Lane U:F:128, U:G:32, U:G:8
+    arm64: Tmp, SimpleAddr, Imm
+VectorStore64Lane U:F:128, U:G:64, U:G:8
+    arm64: Tmp, SimpleAddr, Imm
+
+VectorAnyTrue U:F:128, ZD:G:32
+    Tmp, Tmp
+
+VectorAllTrue U:G:8, U:F:128, ZD:G:32
+    SIMDInfo, Tmp, Tmp
+
+VectorBitmask U:G:8, U:F:128, ZD:G:32
+    SIMDInfo, Tmp, Tmp
+
+VectorExtaddPairwise U:G:8, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp
+
+arm64: VectorAddPairwise U:G:8, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorAvgRound U:G:8, U:F:128, U:F:128, D:F:128
+    SIMDInfo, Tmp, Tmp, Tmp
+
+VectorMulSat U:F:128, U:F:128, D:F:128
+    Tmp, Tmp, Tmp
+
+VectorDotProductInt32 U:F:128, U:F:128, D:F:128, S:F:128
+    Tmp, Tmp, Tmp, Tmp
+
+VectorSwizzle U:F:128, U:F:128, D:F:128
+    Tmp, Tmp, Tmp
+
+arm64: VectorSwizzle2 U:F:128, U:F:128, U:F:128, D:F:128
+    Tmp, Tmp*, Tmp, Tmp
+
+VectorShuffle U:G:64, U:G:64, U:F:128, U:F:128, D:F:128
+    BigImm, BigImm, Tmp, Tmp, Tmp
 
 Oops /terminal
 

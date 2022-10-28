@@ -31,8 +31,8 @@
 
 #include "SIMDInfo.h"
 #include "WasmOps.h"
-#include "Width.h"
 #include "WasmSIMDOpcodes.h"
+#include "Width.h"
 #include "WriteBarrier.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashSet.h>
@@ -50,6 +50,7 @@ namespace JSC {
 
 namespace Wasm {
 
+#if ENABLE(B3_JIT)
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum class ExtSIMDOpType : uint8_t {
     FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
@@ -75,6 +76,7 @@ constexpr Type simdScalarType(SIMDLane lane)
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif
 
 using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
@@ -155,6 +157,16 @@ public:
     Type returnType(FunctionArgCount i) const { ASSERT(i < returnCount()); return const_cast<FunctionSignature*>(this)->getReturnType(i); }
     bool returnsVoid() const { return !returnCount(); }
     Type argumentType(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->getArgumentType(i); }
+
+    size_t numVectors() const
+    {
+        size_t n = 0;
+        for (size_t i = 0; i < argumentCount(); ++i) {
+            if (argumentType(i).isV128())
+                ++n;
+        }
+        return n;
+    }
 
     bool operator==(const FunctionSignature& other) const
     {
