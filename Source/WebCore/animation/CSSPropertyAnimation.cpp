@@ -852,7 +852,7 @@ class GridTemplatePropertyWrapper final : public PropertyWrapper<const GridTrack
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GridTemplatePropertyWrapper(CSSPropertyID property, const GridTrackList& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const GridTrackList&))
-        : PropertyWrapper<const GridTrackList&>(property, getter, setter)
+        : PropertyWrapper(property, getter, setter)
     {
     }
 
@@ -954,7 +954,7 @@ public:
         NegativeLengthsAreInvalid   = 1 << 1,
     };
     LengthPropertyWrapper(CSSPropertyID property, const Length& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(Length&&), OptionSet<Flags> flags = { })
-        : PropertyWrapperGetter<const Length&>(property, getter)
+        : PropertyWrapperGetter(property, getter)
         , m_setter(setter)
         , m_flags(flags)
     {
@@ -996,7 +996,7 @@ class LengthPointPropertyWrapper : public PropertyWrapperGetter<LengthPoint> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LengthPointPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
-        : PropertyWrapperGetter<LengthPoint>(property, getter)
+        : PropertyWrapperGetter(property, getter)
         , m_setter(setter)
     {
     }
@@ -1140,7 +1140,7 @@ public:
         MayOverrideBorderWidths = 1 << 3,
     };
     LengthBoxPropertyWrapper(CSSPropertyID property, const LengthBox& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthBox&&), OptionSet<Flags> flags = { })
-        : PropertyWrapperGetter<const LengthBox&>(property, getter)
+        : PropertyWrapperGetter(property, getter)
         , m_setter(setter)
         , m_flags(flags)
     {
@@ -1216,7 +1216,7 @@ class PathOperationPropertyWrapper final : public RefCountedPropertyWrapper<Path
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PathOperationPropertyWrapper(CSSPropertyID property, PathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<PathOperation>&&))
-        : RefCountedPropertyWrapper<PathOperation>(property, getter, setter)
+        : RefCountedPropertyWrapper(property, getter, setter)
     {
     }
 
@@ -1264,7 +1264,7 @@ class PropertyWrapperFontVariationSettings final : public PropertyWrapper<FontVa
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontVariationSettings(CSSPropertyID property, FontVariationSettings (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FontVariationSettings))
-        : PropertyWrapper<FontVariationSettings>(property, getter, setter)
+        : PropertyWrapper(property, getter, setter)
     {
     }
 
@@ -1300,7 +1300,7 @@ class PropertyWrapperShape final : public RefCountedPropertyWrapper<ShapeValue> 
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperShape(CSSPropertyID property, ShapeValue* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<ShapeValue>&&))
-        : RefCountedPropertyWrapper<ShapeValue>(property, getter, setter)
+        : RefCountedPropertyWrapper(property, getter, setter)
     {
     }
 
@@ -1342,7 +1342,7 @@ class StyleImagePropertyWrapper final : public RefCountedPropertyWrapper<StyleIm
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StyleImagePropertyWrapper(CSSPropertyID property, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<StyleImage>&&))
-        : RefCountedPropertyWrapper<StyleImage>(property, getter, setter)
+        : RefCountedPropertyWrapper(property, getter, setter)
     {
     }
 
@@ -1398,7 +1398,7 @@ class PropertyWrapperFilter final : public PropertyWrapper<const FilterOperation
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFilter(CSSPropertyID propertyID, const FilterOperations& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const FilterOperations&))
-        : PropertyWrapper<const FilterOperations&>(propertyID, getter, setter)
+        : PropertyWrapper(propertyID, getter, setter)
     {
     }
 
@@ -1912,7 +1912,7 @@ class FillLayerPositionPropertyWrapper final : public FillLayerPropertyWrapperGe
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayerPositionPropertyWrapper(CSSPropertyID property, const Length& (FillLayer::*lengthGetter)() const, void (FillLayer::*lengthSetter)(Length), Edge (FillLayer::*originGetter)() const, void (FillLayer::*originSetter)(Edge), Edge farEdge)
-        : FillLayerPropertyWrapperGetter<const Length&>(property, lengthGetter)
+        : FillLayerPropertyWrapperGetter(property, lengthGetter)
         , m_lengthSetter(lengthSetter)
         , m_originGetter(originGetter)
         , m_originSetter(originSetter)
@@ -2006,7 +2006,7 @@ class FillLayerStyleImagePropertyWrapper final : public FillLayerRefCountedPrope
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayerStyleImagePropertyWrapper(CSSPropertyID property, StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<StyleImage>&&))
-        : FillLayerRefCountedPropertyWrapper<StyleImage>(property, getter, setter)
+        : FillLayerRefCountedPropertyWrapper(property, getter, setter)
     {
     }
 
@@ -2346,7 +2346,7 @@ class PropertyWrapperFontStyle final : public PropertyWrapper<std::optional<Font
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontStyle()
-        : PropertyWrapper<std::optional<FontSelectionValue>>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
+        : PropertyWrapper(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
     {
     }
 
@@ -2458,7 +2458,7 @@ public:
         Positive
     };
     FloatPropertyWrapper(CSSPropertyID property, float (RenderStyle::*getter)() const, void (RenderStyle::*setter)(float), ValueRange valueRange = ValueRange::All)
-        : PropertyWrapper<float>(property, getter, setter)
+        : PropertyWrapper(property, getter, setter)
         , m_valueRange(valueRange)
     {
     }
@@ -2556,7 +2556,7 @@ class TabSizePropertyWrapper final : public PropertyWrapper<const TabSize&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TabSizePropertyWrapper()
-        : PropertyWrapper<const TabSize&>(CSSPropertyTabSize, &RenderStyle::tabSize, &RenderStyle::setTabSize)
+        : PropertyWrapper(CSSPropertyTabSize, &RenderStyle::tabSize, &RenderStyle::setTabSize)
     {
     }
 
@@ -2623,7 +2623,7 @@ class StrokeDasharrayPropertyWrapper final : public PropertyWrapper<Vector<SVGLe
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StrokeDasharrayPropertyWrapper()
-        : PropertyWrapper<Vector<SVGLengthValue>>(CSSPropertyStrokeDasharray, &RenderStyle::strokeDashArray, &RenderStyle::setStrokeDashArray)
+        : PropertyWrapper(CSSPropertyStrokeDasharray, &RenderStyle::strokeDashArray, &RenderStyle::setStrokeDashArray)
     {
     }
 
@@ -2677,7 +2677,7 @@ class TextEmphasisStyleWrapper final : public DiscretePropertyWrapper<TextEmphas
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TextEmphasisStyleWrapper()
-        : DiscretePropertyWrapper<TextEmphasisMark>(CSSPropertyTextEmphasisStyle, &RenderStyle::textEmphasisMark, &RenderStyle::setTextEmphasisMark)
+        : DiscretePropertyWrapper(CSSPropertyTextEmphasisStyle, &RenderStyle::textEmphasisMark, &RenderStyle::setTextEmphasisMark)
     {
     }
 
@@ -3130,7 +3130,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new LengthPropertyWrapper(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
 
-        new PropertyWrapperFlex(),
+        new PropertyWrapperFlex,
 
         new FloatPropertyWrapper(CSSPropertyBorderLeftWidth, &RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, FloatPropertyWrapper::ValueRange::NonNegative),
         new FloatPropertyWrapper(CSSPropertyBorderRightWidth, &RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, FloatPropertyWrapper::ValueRange::NonNegative),
@@ -3282,7 +3282,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperFontSizeAdjust,
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontWeight, &RenderStyle::fontWeight, &RenderStyle::setFontWeight),
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
-        new PropertyWrapperFontStyle(),
+        new PropertyWrapperFontStyle,
         new PropertyWrapper<TextDecorationThickness>(CSSPropertyTextDecorationThickness, &RenderStyle::textDecorationThickness, &RenderStyle::setTextDecorationThickness),
         new PropertyWrapper<TextUnderlineOffset>(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset, &RenderStyle::setTextUnderlineOffset),
         new PropertyWrapperVisitedAffectedColor(CSSPropertyTextDecorationColor, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::visitedLinkTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor),
