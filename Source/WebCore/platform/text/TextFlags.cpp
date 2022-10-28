@@ -129,7 +129,7 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantCaps caps)
     return ts;
 }
 
-FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings, const RefPtr<FontFeatureValues> fontFeatureValues)
+FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings, RefPtr<FontFeatureValues> fontFeatureValues)
 {
     FeaturesMap features;
     
@@ -272,7 +272,12 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
                 if (!name)
                     return { };
 
-                return tags.get(*name);
+                auto found = tags.find(*name);
+                if (found == tags.end())
+                    return { };
+
+                return Span { found->value };
+                
             };
 
             auto addFeatureTagWithValue = [&features, &lookupTags] (const auto& name, const auto& tags, const FontTag& codename) {
