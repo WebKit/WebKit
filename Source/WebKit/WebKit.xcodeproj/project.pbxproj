@@ -5393,6 +5393,12 @@
 		5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessPreferences.cpp; sourceTree = "<group>"; };
 		5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessPreferences.h; sourceTree = "<group>"; };
 		5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsParameters.h; sourceTree = "<group>"; };
+		5C046A17290B268500FF7820 /* GPUProcessSessionParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessSessionParameters.serialization.in; sourceTree = "<group>"; };
+		5C046A18290B26A900FF7820 /* RemoteRenderingBackendCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRenderingBackendCreationParameters.serialization.in; sourceTree = "<group>"; };
+		5C046A19290B26CE00FF7820 /* MediaDescriptionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaDescriptionInfo.h; sourceTree = "<group>"; };
+		5C046A1A290B26CF00FF7820 /* MediaDescriptionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaDescriptionInfo.serialization.in; sourceTree = "<group>"; };
+		5C046A1B290B26CF00FF7820 /* InitializationSegmentInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = InitializationSegmentInfo.serialization.in; sourceTree = "<group>"; };
+		5C046A1C290B26CF00FF7820 /* TextTrackPrivateRemoteConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextTrackPrivateRemoteConfiguration.serialization.in; sourceTree = "<group>"; };
 		5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateRelayed.h; sourceTree = "<group>"; };
 		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
 		5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSocketStreamMessageReceiver.cpp; path = DerivedSources/WebKit/NetworkSocketStreamMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5449,8 +5455,8 @@
 		5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersPrivate.h; sourceTree = "<group>"; };
 		5C29126F290A11FF00452A3E /* WebFrameProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrameProxy.messages.in; sourceTree = "<group>"; };
 		5C291270290A149300452A3E /* WebFrame.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrame.messages.in; sourceTree = "<group>"; };
-		5C291272290A669900452A3E /* WebFrameProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebFrameProxyMessageReceiver.cpp; path = WebFrameProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		5C291273290A669A00452A3E /* WebFrameMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebFrameMessageReceiver.cpp; path = WebFrameMessageReceiver.cpp; sourceTree = "<group>"; };
+		5C291272290A669900452A3E /* WebFrameProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		5C291273290A669A00452A3E /* WebFrameMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameMessageReceiver.cpp; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingDownload.h; sourceTree = "<group>"; };
 		5C2B1AF3223AB72800B91CF7 /* DownloadMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadMonitor.cpp; sourceTree = "<group>"; };
 		5C2B1AF4223AB72800B91CF7 /* DownloadMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadMonitor.h; sourceTree = "<group>"; };
@@ -7833,6 +7839,9 @@
 				CDA959442412C4DA00910EEF /* ios */,
 				CDD08AC3277EBCE500EA3755 /* AudioTrackPrivateRemoteConfiguration.h */,
 				1D4FB40B2565C89A001AC2AD /* InitializationSegmentInfo.h */,
+				5C046A1B290B26CF00FF7820 /* InitializationSegmentInfo.serialization.in */,
+				5C046A19290B26CE00FF7820 /* MediaDescriptionInfo.h */,
+				5C046A1A290B26CF00FF7820 /* MediaDescriptionInfo.serialization.in */,
 				9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */,
 				9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */,
 				9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */,
@@ -7909,6 +7918,7 @@
 				071BC58423CC2C0900680D7C /* RemoteVideoTrackProxy.cpp */,
 				071BC58523CC2C0900680D7C /* RemoteVideoTrackProxy.h */,
 				07E19F0523D4DC880094FFB4 /* TextTrackPrivateRemoteConfiguration.h */,
+				5C046A1C290B26CF00FF7820 /* TextTrackPrivateRemoteConfiguration.serialization.in */,
 				071BC57B23CA532400680D7C /* TrackPrivateRemoteConfiguration.h */,
 				071BC57D23CA56D200680D7C /* TrackPrivateRemoteIdentifier.h */,
 				CDD08AC4277ED7E000EA3755 /* VideoTrackPrivateRemoteConfiguration.h */,
@@ -9600,6 +9610,7 @@
 				5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */,
 				5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */,
 				4150A5A023E06C910051264A /* GPUProcessSessionParameters.h */,
+				5C046A17290B268500FF7820 /* GPUProcessSessionParameters.serialization.in */,
 			);
 			path = GPUProcess;
 			sourceTree = "<group>";
@@ -11030,6 +11041,7 @@
 				550640A324071A6100AAE045 /* RemoteRenderingBackend.h */,
 				550640A424071C2100AAE045 /* RemoteRenderingBackend.messages.in */,
 				460889FF261FA8A900E2500D /* RemoteRenderingBackendCreationParameters.h */,
+				5C046A18290B26A900FF7820 /* RemoteRenderingBackendCreationParameters.serialization.in */,
 				726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */,
 				726D56DE253A64810002EF90 /* RemoteResourceCache.h */,
 				7BCF70CA2614935E00E4FB70 /* ScopedRenderingResourcesRequest.cpp */,

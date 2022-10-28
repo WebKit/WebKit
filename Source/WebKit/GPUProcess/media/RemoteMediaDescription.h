@@ -27,76 +27,9 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-#include "Decoder.h"
-#include "Encoder.h"
-#include <WebCore/MediaDescription.h>
-#include <wtf/text/AtomString.h>
-#include <wtf/text/WTFString.h>
+#include "MediaDescriptionInfo.h"
 
 namespace WebKit {
-
-struct MediaDescriptionInfo {
-    MediaDescriptionInfo(const AtomString& codec, bool isVideo, bool isAudio, bool isText)
-        : m_codec(codec)
-        , m_isVideo(isVideo)
-        , m_isAudio(isAudio)
-        , m_isText(isText)
-    {
-    }
-
-    MediaDescriptionInfo(const WebCore::MediaDescription& description)
-        : m_codec(description.codec())
-        , m_isVideo(description.isVideo())
-        , m_isAudio(description.isAudio())
-        , m_isText(description.isText())
-    {
-    }
-
-    AtomString m_codec;
-    bool m_isVideo { false };
-    bool m_isAudio { false };
-    bool m_isText { false };
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_codec;
-        encoder << m_isVideo;
-        encoder << m_isAudio;
-        encoder << m_isText;
-    }
-
-    template <class Decoder>
-    static std::optional<MediaDescriptionInfo> decode(Decoder& decoder)
-    {
-        std::optional<AtomString> codec;
-        decoder >> codec;
-        if (!codec)
-            return std::nullopt;
-
-        std::optional<bool> isVideo;
-        decoder >> isVideo;
-        if (!isVideo)
-            return std::nullopt;
-
-        std::optional<bool> isAudio;
-        decoder >> isAudio;
-        if (!isAudio)
-            return std::nullopt;
-
-        std::optional<bool> isText;
-        decoder >> isText;
-        if (!isText)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*codec),
-            *isVideo,
-            *isAudio,
-            *isText
-        }};
-    }
-};
 
 class RemoteMediaDescription : public WebCore::MediaDescription {
 public:

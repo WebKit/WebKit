@@ -456,6 +456,11 @@ $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(
 	$(RUBY) $< --frontend WebKit --base $(WEB_PREFERENCES_COMBINED_INPUT_FILE) --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml	--internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES))
 
 SERIALIZATION_DESCRIPTION_FILES = \
+	GPUProcess/GPUProcessSessionParameters.serialization.in \
+	GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in \
+	GPUProcess/media/InitializationSegmentInfo.serialization.in \
+	GPUProcess/media/MediaDescriptionInfo.serialization.in \
+	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \

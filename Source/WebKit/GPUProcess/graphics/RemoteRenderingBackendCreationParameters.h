@@ -38,31 +38,6 @@ struct RemoteRenderingBackendCreationParameters {
     RenderingBackendIdentifier identifier;
     WebPageProxyIdentifier pageProxyID;
     WebCore::PageIdentifier pageID;
-
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << identifier << pageProxyID << pageID;
-    }
-
-    static std::optional<RemoteRenderingBackendCreationParameters> decode(IPC::Decoder& decoder)
-    {
-        std::optional<RenderingBackendIdentifier> identifier;
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-
-        std::optional<WebPageProxyIdentifier> pageProxyID;
-        decoder >> pageProxyID;
-        if (!pageProxyID)
-            return std::nullopt;
-
-        std::optional<WebCore::PageIdentifier> pageID;
-        decoder >> pageID;
-        if (!pageID)
-            return std::nullopt;
-
-        return { { *identifier, *pageProxyID, *pageID } };
-    }
 };
 
 } // namespace WebKit

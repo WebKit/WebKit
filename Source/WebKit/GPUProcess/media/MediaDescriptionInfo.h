@@ -27,24 +27,32 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-#include "RemoteMediaDescription.h"
-#include "TrackPrivateRemoteIdentifier.h"
-#include <wtf/MediaTime.h>
-#include <wtf/Vector.h>
+#include <WebCore/MediaDescription.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebKit {
 
-struct InitializationSegmentInfo {
-    MediaTime duration;
+struct MediaDescriptionInfo {
+    MediaDescriptionInfo(const AtomString& codec, bool isVideo, bool isAudio, bool isText)
+        : m_codec(codec)
+        , m_isVideo(isVideo)
+        , m_isAudio(isAudio)
+        , m_isText(isText)
+    {
+    }
 
-    struct TrackInformation {
-        MediaDescriptionInfo description;
-        TrackPrivateRemoteIdentifier identifier;
-    };
+    MediaDescriptionInfo(const WebCore::MediaDescription& description)
+        : m_codec(description.codec())
+        , m_isVideo(description.isVideo())
+        , m_isAudio(description.isAudio())
+        , m_isText(description.isText())
+    {
+    }
 
-    Vector<TrackInformation> audioTracks;
-    Vector<TrackInformation> videoTracks;
-    Vector<TrackInformation> textTracks;
+    AtomString m_codec;
+    bool m_isVideo { false };
+    bool m_isAudio { false };
+    bool m_isText { false };
 };
 
 } // namespace WebKit

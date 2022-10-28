@@ -47,6 +47,11 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSampler.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteShaderModule.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
+$(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/InitializationSegmentInfo.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/MediaDescriptionInfo.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioDestinationManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxy.messages.in
