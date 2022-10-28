@@ -28,6 +28,7 @@
 #include <type_traits>
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
+#include <wtf/Span.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -52,6 +53,7 @@ public:
     constexpr const char* characters() const { return m_characters; }
     const LChar* characters8() const { return bitwise_cast<const LChar*>(m_characters); }
     constexpr size_t length() const;
+    Span<const LChar> span8() const { return { characters8(), length() }; }
     size_t isEmpty() const { return !m_characters || !*m_characters; }
 
     constexpr char characterAt(unsigned index) const { return m_characters[index]; }

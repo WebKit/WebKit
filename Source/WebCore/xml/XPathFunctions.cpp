@@ -307,14 +307,6 @@ Value FunPosition::evaluate() const
     return Expression::evaluationContext().position;
 }
 
-// FIXME: Should StringBuilder offer this as a member function?
-static StringView toStringView(StringBuilder& builder)
-{
-    if (builder.is8Bit())
-        return { builder.characters8(), builder.length() };
-    return { builder.characters16(), builder.length() };
-}
-
 Value FunId::evaluate() const
 {
     Value a = argument(0).evaluate();
@@ -348,7 +340,7 @@ Value FunId::evaluate() const
 
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
-        Node* node = contextScope.getElementById(toStringView(idList).substring(startPos, endPos - startPos));
+        Node* node = contextScope.getElementById(StringView(idList).substring(startPos, endPos - startPos));
         if (node && resultSet.add(*node).isNewEntry)
             result.append(node);
         
