@@ -181,6 +181,8 @@ private:
     void didChangeHasOnlySecureContent() override;
     void willChangeNegotiatedLegacyTLS() override;
     void didChangeNegotiatedLegacyTLS() override;
+    void willChangeWasPrivateRelayed() override;
+    void didChangeWasPrivateRelayed() override;
     void willChangeEstimatedProgress() override;
     void didChangeEstimatedProgress() override;
     void willChangeCanGoBack() override;

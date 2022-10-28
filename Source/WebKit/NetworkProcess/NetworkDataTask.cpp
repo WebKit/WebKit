@@ -139,6 +139,8 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
     response.setSource(ResourceResponse::Source::Network);
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes)
         response.setUsedLegacyTLS(UsedLegacyTLS::Yes);
+    if (privateRelayed == PrivateRelayed::Yes)
+        response.setWasPrivateRelayed(WasPrivateRelayed::Yes);
 
     if (m_client)
         m_client->didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));

@@ -41,6 +41,7 @@ class FrameView;
 class Node;
 enum class HasInsecureContent : bool;
 enum class UsedLegacyTLS : bool;
+enum class WasPrivateRelayed : bool;
 
 class CachedFrameBase {
 public:
@@ -82,6 +83,7 @@ public:
 
     HasInsecureContent hasInsecureContent() const;
     UsedLegacyTLS usedLegacyTLS() const;
+    WasPrivateRelayed wasPrivateRelayed() const;
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;
