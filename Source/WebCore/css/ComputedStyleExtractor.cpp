@@ -2250,8 +2250,6 @@ static Ref<CSSPrimitiveValue> fontWeight(const RenderStyle& style)
 
 static Ref<CSSPrimitiveValue> fontStretch(FontSelectionValue stretch)
 {
-    if (auto keyword = fontStretchKeyword(stretch))
-        return CSSValuePool::singleton().createIdentifierValue(keyword.value());
     return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSUnitType::CSS_PERCENTAGE);
 }
 

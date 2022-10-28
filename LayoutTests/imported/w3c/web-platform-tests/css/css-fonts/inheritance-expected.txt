@@ -12,8 +12,8 @@ PASS Property font-size has initial value 16px
 PASS Property font-size inherits
 PASS Property font-size-adjust has initial value none
 PASS Property font-size-adjust inherits
-FAIL Property font-stretch has initial value 100% assert_equals: expected "100%" but got "normal"
-FAIL Property font-stretch inherits assert_equals: expected "75%" but got "condensed"
+PASS Property font-stretch has initial value 100%
+PASS Property font-stretch inherits
 PASS Property font-style has initial value normal
 PASS Property font-style inherits
 PASS Property font-synthesis has initial value weight style small-caps
