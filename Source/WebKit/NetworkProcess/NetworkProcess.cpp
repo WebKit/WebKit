@@ -1167,10 +1167,10 @@ void NetworkProcess::setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::Ses
     }
 }
 
-void NetworkProcess::setResourceLoadStatisticsEnabled(PAL::SessionID sessionID, bool enabled)
+void NetworkProcess::setTrackingPreventionEnabled(PAL::SessionID sessionID, bool enabled)
 {
     if (auto* session = networkSession(sessionID))
-        session->setResourceLoadStatisticsEnabled(enabled);
+        session->setTrackingPreventionEnabled(enabled);
 }
 
 void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)

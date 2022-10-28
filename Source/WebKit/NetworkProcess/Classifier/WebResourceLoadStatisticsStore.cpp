@@ -262,7 +262,7 @@ void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool val
 
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession())
-            storageSession->setResourceLoadStatisticsDebugLoggingEnabled(value);
+            storageSession->setTrackingPreventionDebugLoggingEnabled(value);
     }
 
     postTask([this, value, completionHandler = WTFMove(completionHandler)]() mutable {

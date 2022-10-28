@@ -245,7 +245,7 @@ public:
     void setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(PAL::SessionID, bool value, CompletionHandler<void()>&&);
-    void setResourceLoadStatisticsEnabled(PAL::SessionID, bool);
+    void setTrackingPreventionEnabled(PAL::SessionID, bool);
     void setResourceLoadStatisticsLogTestingEvent(bool);
     void setResourceLoadStatisticsDebugMode(PAL::SessionID, bool debugMode, CompletionHandler<void()>&&d);
     void isResourceLoadStatisticsEphemeral(PAL::SessionID, CompletionHandler<void(bool)>&&) const;

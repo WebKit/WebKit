@@ -149,8 +149,8 @@ public:
     static void makeNextNetworkProcessLaunchFailForTesting();
     static bool shouldMakeNextNetworkProcessLaunchFailForTesting();
 
-    bool resourceLoadStatisticsEnabled() const;
-    void setResourceLoadStatisticsEnabled(bool);
+    bool trackingPreventionEnabled() const;
+    void setTrackingPreventionEnabled(bool);
     bool resourceLoadStatisticsDebugMode() const;
     void setResourceLoadStatisticsDebugMode(bool);
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
@@ -246,9 +246,9 @@ public:
     void setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting(const URL& firstPartyURL, const URL& cnameURL, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(const URL&, CompletionHandler<void()>&&);
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const;
-    bool isItpStateExplicitlySet() const { return m_isItpStateExplicitlySet; }
-    void useExplicitITPState() { m_isItpStateExplicitlySet = true; }
-#endif
+    bool isTrackingPreventionStateExplicitlySet() const { return m_isTrackingPreventionStateExplicitlySet; }
+    void useExplicitTrackingPreventionState() { m_isTrackingPreventionStateExplicitlySet = true; }
+#endif // ENABLE(TRACKING_PREVENTION)
     void closeDatabases(CompletionHandler<void()>&&);
     void syncLocalStorage(CompletionHandler<void()>&&);
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
@@ -467,8 +467,8 @@ private:
 #endif
 
 #if ENABLE(TRACKING_PREVENTION)
-    bool m_resourceLoadStatisticsDebugMode { false };
-    bool m_resourceLoadStatisticsEnabled { false };
+    bool m_trackingPreventionDebugMode { false };
+    bool m_trackingPreventionEnabled { false };
     Function<void(const String&)> m_statisticsTestingCallback;
 #endif
 
@@ -494,7 +494,7 @@ private:
 
     WeakHashSet<WebProcessProxy> m_processes;
 
-    bool m_isItpStateExplicitlySet { false };
+    bool m_isTrackingPreventionStateExplicitlySet { false };
 
 #if HAVE(SEC_KEY_PROXY)
     Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;

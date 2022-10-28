@@ -38,7 +38,7 @@ struct ResourceLoadStatisticsParameters {
     String directory;
     SandboxExtension::Handle directoryExtensionHandle;
     bool enabled { false };
-    bool isItpStateExplicitlySet { false };
+    bool isTrackingPreventionStateExplicitlySet { false };
     bool enableLogTestingEvent { false };
     bool shouldIncludeLocalhost { true };
     bool enableDebugMode { false };
@@ -56,7 +56,7 @@ struct ResourceLoadStatisticsParameters {
         encoder << directory;
         encoder << directoryExtensionHandle;
         encoder << enabled;
-        encoder << isItpStateExplicitlySet;
+        encoder << isTrackingPreventionStateExplicitlySet;
         encoder << enableLogTestingEvent;
         encoder << shouldIncludeLocalhost;
         encoder << enableDebugMode;
@@ -87,9 +87,9 @@ struct ResourceLoadStatisticsParameters {
         if (!enabled)
             return std::nullopt;
 
-        std::optional<bool> isItpStateExplicitlySet;
-        decoder >> isItpStateExplicitlySet;
-        if (!isItpStateExplicitlySet)
+        std::optional<bool> isTrackingPreventionStateExplicitlySet;
+        decoder >> isTrackingPreventionStateExplicitlySet;
+        if (!isTrackingPreventionStateExplicitlySet)
             return std::nullopt;
 
         std::optional<bool> enableLogTestingEvent;
@@ -143,7 +143,7 @@ struct ResourceLoadStatisticsParameters {
             WTFMove(*directory),
             WTFMove(*directoryExtensionHandle),
             WTFMove(*enabled),
-            WTFMove(*isItpStateExplicitlySet),
+            WTFMove(*isTrackingPreventionStateExplicitlySet),
             WTFMove(*enableLogTestingEvent),
             WTFMove(*shouldIncludeLocalhost),
             WTFMove(*enableDebugMode),

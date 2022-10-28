@@ -131,7 +131,7 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_configuration(m_resolvedConfiguration->copy())
     , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
 #if ENABLE(TRACKING_PREVENTION)
-    , m_resourceLoadStatisticsDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
+    , m_trackingPreventionDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
 #endif
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 #if ENABLE(WEB_AUTHN)
@@ -1200,7 +1200,7 @@ void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds ti
 
 void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    useExplicitITPState();
+    useExplicitTrackingPreventionState();
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     networkProcess().setIsRunningResourceLoadStatisticsTest(m_sessionID, value, [callbackAggregator] { });
@@ -1598,10 +1598,10 @@ void WebsiteDataStore::sendNetworkProcessDidResume()
     networkProcess().sendProcessDidResume(ProcessThrottlerClient::ResumeReason::ForegroundActivity);
 }
 
-bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
+bool WebsiteDataStore::trackingPreventionEnabled() const
 {
 #if ENABLE(TRACKING_PREVENTION)
-    return m_resourceLoadStatisticsEnabled;
+    return m_trackingPreventionEnabled;
 #else
     return false;
 #endif
@@ -1610,36 +1610,36 @@ bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
 bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
 {
 #if ENABLE(TRACKING_PREVENTION)
-    return m_resourceLoadStatisticsDebugMode;
+    return m_trackingPreventionDebugMode;
 #else
     return false;
 #endif
 }
 
-void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
+void WebsiteDataStore::setTrackingPreventionEnabled(bool enabled)
 {
 #if ENABLE(TRACKING_PREVENTION)
-    if (enabled == resourceLoadStatisticsEnabled())
+    if (enabled == trackingPreventionEnabled())
         return;
 
     if (enabled) {
-        m_resourceLoadStatisticsEnabled = true;
+        m_trackingPreventionEnabled = true;
         
         resolveDirectoriesIfNecessary();
         
         if (m_networkProcess)
-            m_networkProcess->send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, true), 0);
+            m_networkProcess->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, true), 0);
         for (auto& processPool : processPools())
-            processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(true), m_sessionID);
+            processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(true), m_sessionID);
         return;
     }
 
     if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, false), 0);
+        m_networkProcess->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, false), 0);
     for (auto& processPool : processPools())
-        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(false), m_sessionID);
+        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(false), m_sessionID);
 
-    m_resourceLoadStatisticsEnabled = false;
+    m_trackingPreventionEnabled = false;
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -1664,7 +1664,7 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
 void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(TRACKING_PREVENTION)
-    m_resourceLoadStatisticsDebugMode = enabled;
+    m_trackingPreventionDebugMode = enabled;
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
@@ -1678,7 +1678,7 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&& completionHandler) const
 {
 #if ENABLE(TRACKING_PREVENTION)
-    if (!resourceLoadStatisticsEnabled() || !m_sessionID.isEphemeral()) {
+    if (!trackingPreventionEnabled() || !m_sessionID.isEphemeral()) {
         completionHandler(false);
         return;
     }
@@ -1721,7 +1721,7 @@ void WebsiteDataStore::logTestingEvent(const String& event)
 
 void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&& callback)
 {
-    if (resourceLoadStatisticsEnabled()) {
+    if (trackingPreventionEnabled()) {
         for (auto& processPool : processPools())
             processPool->sendToAllProcessesForSession(Messages::WebProcess::ClearResourceLoadStatistics(), m_sessionID);
     }
@@ -1801,9 +1801,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
-        resourceLoadStatisticsEnabled(),
+        trackingPreventionEnabled(),
 #if ENABLE(TRACKING_PREVENTION)
-        isItpStateExplicitlySet(),
+        isTrackingPreventionStateExplicitlySet(),
         hasStatisticsTestingCallback(),
 #else
         false,
@@ -1870,7 +1870,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #endif
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 #if ENABLE(TRACKING_PREVENTION)
-    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_resourceLoadStatisticsEnabled;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_trackingPreventionEnabled;
 #endif
     platformSetNetworkParameters(parameters);
 #if PLATFORM(COCOA)

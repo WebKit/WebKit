@@ -78,13 +78,13 @@ static bool isInWebKitChildProcess()
 }
 #endif
 
-enum class ITPState : uint8_t {
+enum class TrackingPreventionState : uint8_t {
     Uninitialized,
     Enabled,
     Disabled
 };
 
-static std::atomic<ITPState> currentITPState = ITPState::Uninitialized;
+static std::atomic<TrackingPreventionState> currentTrackingPreventionState = TrackingPreventionState::Uninitialized;
 
 bool hasRequestedCrossWebsiteTrackingPermission()
 {
@@ -94,7 +94,7 @@ bool hasRequestedCrossWebsiteTrackingPermission()
     return hasRequestedCrossWebsiteTrackingPermission;
 }
 
-static bool determineITPStateInternal(bool appWasLinkedOnOrAfter, const String& bundleIdentifier)
+static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter, const String& bundleIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(!isInWebKitChildProcess());
@@ -118,35 +118,35 @@ static RefPtr<WorkQueue>& itpQueue()
     return itpQueue;
 }
 
-void determineITPState()
+void determineTrackingPreventionState()
 {
     ASSERT(RunLoop::isMain());
-    if (currentITPState != ITPState::Uninitialized)
+    if (currentTrackingPreventionState != TrackingPreventionState::Uninitialized)
         return;
 
     bool appWasLinkedOnOrAfter = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
 
     itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue");
     itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
-        currentITPState = determineITPStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? ITPState::Enabled : ITPState::Disabled;
+        currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
         RunLoop::main().dispatch([] {
             itpQueue() = nullptr;
         });
     });
 }
 
-bool doesAppHaveITPEnabled()
+bool doesAppHaveTrackingPreventionEnabled()
 {
     ASSERT(!isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
     // If we're still computing the ITP state on the background thread, then synchronize with it.
     if (itpQueue())
         itpQueue()->dispatchSync([] { });
-    ASSERT(currentITPState != ITPState::Uninitialized);
-    return currentITPState == ITPState::Enabled;
+    ASSERT(currentTrackingPreventionState != TrackingPreventionState::Uninitialized);
+    return currentTrackingPreventionState == TrackingPreventionState::Enabled;
 }
 
-bool doesParentProcessHaveITPEnabled(AuxiliaryProcess& auxiliaryProcess, bool hasRequestedCrossWebsiteTrackingPermission)
+bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess& auxiliaryProcess, bool hasRequestedCrossWebsiteTrackingPermission)
 {
     ASSERT(isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
@@ -154,7 +154,7 @@ bool doesParentProcessHaveITPEnabled(AuxiliaryProcess& auxiliaryProcess, bool ha
     if (!isParentProcessAFullWebBrowser(auxiliaryProcess) && !hasRequestedCrossWebsiteTrackingPermission)
         return true;
 
-    static bool itpEnabled { true };
+    static bool trackingPreventionEnabled { true };
     static dispatch_once_t once;
     dispatch_once(&once, ^{
 
@@ -175,9 +175,9 @@ bool doesParentProcessHaveITPEnabled(AuxiliaryProcess& auxiliaryProcess, bool ha
         }
         result = TCCAccessPreflightWithAuditToken(get_TCC_kTCCServiceWebKitIntelligentTrackingPrevention(), auditToken.value(), nullptr);
 #endif
-        itpEnabled = result != kTCCAccessPreflightDenied;
+        trackingPreventionEnabled = result != kTCCAccessPreflightDenied;
     });
-    return itpEnabled;
+    return trackingPreventionEnabled;
 }
 
 static std::atomic<bool> hasCheckedUsageStrings = false;

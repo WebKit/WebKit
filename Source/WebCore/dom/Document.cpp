@@ -5429,7 +5429,7 @@ String Document::referrer()
 #if ENABLE(TRACKING_PREVENTION)
     if (!m_referrerOverride.isEmpty())
         return m_referrerOverride;
-    if (DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && frame()) {
+    if (DeprecatedGlobalSettings::trackingPreventionEnabled() && frame()) {
         auto referrerStr = frame()->loader().referrer();
         if (!referrerStr.isEmpty()) {
             URL referrerURL { referrerStr };

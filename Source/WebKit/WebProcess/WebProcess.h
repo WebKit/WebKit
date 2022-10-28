@@ -431,7 +431,7 @@ private:
     void setDefaultRequestTimeoutInterval(double);
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothingForTesting(bool);
-    void setResourceLoadStatisticsEnabled(bool);
+    void setTrackingPreventionEnabled(bool);
     void clearResourceLoadStatistics();
     void flushResourceLoadStatistics();
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);

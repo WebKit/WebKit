@@ -10,14 +10,14 @@ description("Tests the behavior of origin-when-cross-origin referrer policy when
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the origin, not the full URL, because we are cross-origin.
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

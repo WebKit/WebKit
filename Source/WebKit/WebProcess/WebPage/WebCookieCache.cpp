@@ -59,13 +59,13 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         for (auto& cookie : cookies)
             inMemoryStorageSession().setCookie(cookie);
     }
-    return inMemoryStorageSession().cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, ShouldAskITP::No, ShouldRelaxThirdPartyCookieBlocking::No).first;
+    return inMemoryStorageSession().cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, ApplyTrackingPrevention::No, ShouldRelaxThirdPartyCookieBlocking::No).first;
 }
 
 void WebCookieCache::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
 {
     if (m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host()))
-        inMemoryStorageSession().setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, ShouldAskITP::No, cookieString, shouldRelaxThirdPartyCookieBlocking);
+        inMemoryStorageSession().setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, ApplyTrackingPrevention::No, cookieString, shouldRelaxThirdPartyCookieBlocking);
 }
 
 void WebCookieCache::cookiesAdded(const String& host, const Vector<Cookie>& cookies)

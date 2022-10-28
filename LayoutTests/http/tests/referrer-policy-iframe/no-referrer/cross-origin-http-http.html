@@ -9,14 +9,14 @@ description("Tests the behavior of no-referrer referrer policy when cross origin
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the empty string
     shouldBeEqualToString("referrer", "");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

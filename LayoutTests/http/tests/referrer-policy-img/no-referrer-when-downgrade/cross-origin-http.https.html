@@ -10,7 +10,7 @@ jsTestIsAsync = true;
 
 if (window.internals) {
     internals.settings.setAllowDisplayOfInsecureContent(true);
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 }
 
 if (window.testRunner) {
@@ -23,7 +23,7 @@ if (window.testRunner) {
         img.onerror = function() { testFailed("referrer is not as expected"); finishJSTest(); }
         img.src = "http://127.0.0.1:8000/referrer-policy/resources/image.py?expected=" + expected;
         if (window.internals)
-            internals.setResourceLoadStatisticsEnabled(true);
+            internals.setTrackingPreventionEnabled(true);
     });
 }
 

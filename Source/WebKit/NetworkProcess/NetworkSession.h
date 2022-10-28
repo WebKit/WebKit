@@ -121,8 +121,8 @@ public:
 
 #if ENABLE(TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
-    void setResourceLoadStatisticsEnabled(bool);
-    bool isResourceLoadStatisticsEnabled() const;
+    void setTrackingPreventionEnabled(bool);
+    bool isTrackingPreventionEnabled() const;
     void notifyResourceLoadStatisticsProcessed();
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);

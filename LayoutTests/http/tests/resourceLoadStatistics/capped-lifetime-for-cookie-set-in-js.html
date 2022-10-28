@@ -10,7 +10,7 @@
     jsTestIsAsync = true;
 
     if (internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
 
     let passedTests = 0;
     function checkThatCookieDoesNotExpireAfter(cookieData, maxAgeInSeconds) {
@@ -74,7 +74,7 @@
         testFailed("No internals object.");
 
     if (internals)
-        internals.setResourceLoadStatisticsEnabled(false);
+        internals.setTrackingPreventionEnabled(false);
 
     finishJSTest();
 </script>

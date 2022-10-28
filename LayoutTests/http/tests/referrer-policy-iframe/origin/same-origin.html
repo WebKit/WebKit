@@ -9,14 +9,14 @@ description("Tests the behavior of origin referrer policy when same origin.");
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the origin
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

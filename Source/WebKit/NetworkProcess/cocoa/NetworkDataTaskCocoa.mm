@@ -169,7 +169,7 @@ static WebCore::RegistrableDomain lastCNAMEDomain(NSArray<NSString *> *cnames)
 bool NetworkDataTaskCocoa::shouldApplyCookiePolicyForThirdPartyCloaking() const
 {
     auto* session = networkSession();
-    return session && session->networkStorageSession() && session->networkStorageSession()->resourceLoadStatisticsEnabled();
+    return session && session->networkStorageSession() && session->networkStorageSession()->trackingPreventionEnabled();
 }
 
 void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
@@ -220,7 +220,7 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore:
     auto firstPartyHostCNAME = networkSession()->firstPartyHostCNAMEDomain(firstPartyHostName);
     auto firstPartyAddress = networkSession()->firstPartyHostIPAddress(firstPartyHostName);
 
-    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->resourceLoadStatisticsDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
+    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->trackingPreventionDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;

@@ -1197,7 +1197,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser, IsSyntheticClick isSyntheticClick) const
 {
-    if (!DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() || !isParentProcessAFullWebBrowser)
+    if (!DeprecatedGlobalSettings::trackingPreventionEnabled() || !isParentProcessAFullWebBrowser)
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
 #if ENABLE(TRACKING_PREVENTION)

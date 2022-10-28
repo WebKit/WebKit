@@ -57,8 +57,8 @@ public:
     static bool lowPowerVideoAudioBufferSizeEnabled() { return shared().m_lowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
-    static bool resourceLoadStatisticsEnabled() { return shared().m_resourceLoadStatisticsEnabledEnabled; }
-    WEBCORE_EXPORT static void setResourceLoadStatisticsEnabled(bool);
+    static bool trackingPreventionEnabled() { return shared().m_trackingPreventionEnabled; }
+    WEBCORE_EXPORT static void setTrackingPreventionEnabled(bool);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
@@ -308,7 +308,7 @@ private:
     bool m_manageAudioSession;
 
     bool m_lowPowerVideoAudioBufferSizeEnabled;
-    bool m_resourceLoadStatisticsEnabledEnabled;
+    bool m_trackingPreventionEnabled;
     bool m_allowsAnySSLCertificate;
 
     String m_networkInterfaceName;

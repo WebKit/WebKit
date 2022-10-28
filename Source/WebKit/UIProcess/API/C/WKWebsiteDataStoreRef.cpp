@@ -122,9 +122,9 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef da
 {
     auto* websiteDataStore = WebKit::toImpl(dataStoreRef);
 #if ENABLE(TRACKING_PREVENTION)
-    websiteDataStore->useExplicitITPState();
+    websiteDataStore->useExplicitTrackingPreventionState();
 #endif
-    websiteDataStore->setResourceLoadStatisticsEnabled(enable);
+    websiteDataStore->setTrackingPreventionEnabled(enable);
 }
 
 void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsEphemeralFunction completionHandler)
@@ -140,7 +140,7 @@ void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef,
 
 bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef)
 {
-    return WebKit::toImpl(dataStoreRef)->resourceLoadStatisticsEnabled();
+    return WebKit::toImpl(dataStoreRef)->trackingPreventionEnabled();
 }
 
 void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef dataStoreRef, bool enable)

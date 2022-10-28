@@ -40,9 +40,9 @@ bool hasRequestedCrossWebsiteTrackingPermission();
 bool hasProhibitedUsageStrings();
 Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String&);
 bool isRunningTest(const String& bundleID);
-void determineITPState();
-bool doesAppHaveITPEnabled();
-bool doesParentProcessHaveITPEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);
+void determineTrackingPreventionState();
+bool doesAppHaveTrackingPreventionEnabled();
+bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);
 bool isFullWebBrowser();
 bool isParentProcessAFullWebBrowser(AuxiliaryProcess&);
 

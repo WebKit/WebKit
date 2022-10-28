@@ -11,7 +11,7 @@ jsTestIsAsync = true;
 
 if (window.internals) {
     internals.settings.setAllowDisplayOfInsecureContent(true);
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 }
 
 window.onmessage = function(event) {
@@ -19,7 +19,7 @@ window.onmessage = function(event) {
     // Should be the empty string
     shouldBeEqualToString("referrer", "");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

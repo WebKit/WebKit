@@ -170,7 +170,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
 #if ENABLE(TRACKING_PREVENTION)
-    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
+    setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -230,11 +230,11 @@ void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void(
 }
 
 #if ENABLE(TRACKING_PREVENTION)
-void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
+void NetworkSession::setTrackingPreventionEnabled(bool enable)
 {
     ASSERT(!m_isInvalidated);
     if (auto* storageSession = networkStorageSession())
-        storageSession->setResourceLoadStatisticsEnabled(enable);
+        storageSession->setTrackingPreventionEnabled(enable);
     if (!enable) {
         destroyResourceLoadStatistics([] { });
         return;
@@ -263,7 +263,7 @@ void NetworkSession::forwardResourceLoadStatisticsSettings()
     m_resourceLoadStatistics->setStandaloneApplicationDomain(m_standaloneApplicationDomain, [] { });
 }
 
-bool NetworkSession::isResourceLoadStatisticsEnabled() const
+bool NetworkSession::isTrackingPreventionEnabled() const
 {
     return !!m_resourceLoadStatistics;
 }

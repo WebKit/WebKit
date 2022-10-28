@@ -60,7 +60,7 @@ struct WebProcessDataStoreParameters {
     std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
 #endif
-    bool resourceLoadStatisticsEnabled { false };
+    bool trackingPreventionEnabled { false };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<WebProcessDataStoreParameters> decode(Decoder&);
@@ -93,7 +93,7 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << containerTemporaryDirectoryExtensionHandle;
 #endif
-    encoder << resourceLoadStatisticsEnabled;
+    encoder << trackingPreventionEnabled;
 }
 
 template<class Decoder>
@@ -187,8 +187,8 @@ std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::deco
         return std::nullopt;
 #endif
 
-    bool resourceLoadStatisticsEnabled = false;
-    if (!decoder.decode(resourceLoadStatisticsEnabled))
+    bool trackingPreventionEnabled = false;
+    if (!decoder.decode(trackingPreventionEnabled))
         return std::nullopt;
 
     return WebProcessDataStoreParameters {
@@ -216,7 +216,7 @@ std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::deco
         WTFMove(*containerCachesDirectoryExtensionHandle),
         WTFMove(*containerTemporaryDirectoryExtensionHandle),
 #endif
-        resourceLoadStatisticsEnabled
+        trackingPreventionEnabled
     };
 }
 

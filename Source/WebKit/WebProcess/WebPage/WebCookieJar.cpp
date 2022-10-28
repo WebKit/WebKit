@@ -54,9 +54,9 @@ WebCookieJar::WebCookieJar()
     : WebCore::CookieJar(adoptRef(*new WebStorageSessionProvider)) { }
 
 #if ENABLE(TRACKING_PREVENTION)
-static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ShouldAskITP& shouldAskITPInNetworkProcess)
+static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ApplyTrackingPrevention& applyTrackingPreventionInNetworkProcess)
 {
-    if (!WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
+    if (!WebCore::DeprecatedGlobalSettings::trackingPreventionEnabled())
         return false;
 
     RegistrableDomain firstPartyDomain { firstPartyForCookies };
@@ -86,7 +86,7 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
     // The WebContent process does not have enough information to deal with other policies than ThirdPartyCookieBlockingMode::All so we have to go to the NetworkProcess for all
     // other policies and the request may end up getting blocked on NetworkProcess side.
     if (WebProcess::singleton().thirdPartyCookieBlockingMode() != ThirdPartyCookieBlockingMode::All) {
-        shouldAskITPInNetworkProcess = ShouldAskITP::Yes;
+        applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::Yes;
         return false;
     }
 
@@ -130,9 +130,9 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
     if (!webFrame || !webFrame->page())
         return { };
 
-    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
 #if ENABLE(TRACKING_PREVENTION)
-    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
         return { };
 #endif
 
@@ -144,7 +144,7 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
     if (isEligibleForCache(*webFrame, document.firstPartyForCookies(), url))
         return m_cache.cookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
     auto [cookieString, secureCookiesAccessed] = sendResult.takeReplyOr(String { }, false);
 
     return cookieString;
@@ -156,9 +156,9 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     if (!webFrame || !webFrame->page())
         return;
 
-    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
 #if ENABLE(TRACKING_PREVENTION)
-    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
         return;
 #endif
 
@@ -169,7 +169,7 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     if (isEligibleForCache(*webFrame, document.firstPartyForCookies(), url))
         m_cache.setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, cookieString, shouldRelaxThirdPartyCookieBlocking(webFrame));
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, applyTrackingPreventionInNetworkProcess, cookieString, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
 }
 
 void WebCookieJar::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
@@ -204,7 +204,7 @@ bool WebCookieJar::cookiesEnabled(const Document& document) const
         return false;
 
 #if ENABLE(TRACKING_PREVENTION)
-    ShouldAskITP dummy;
+    ApplyTrackingPrevention dummy;
     if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), document.cookieURL(), dummy))
         return false;
 #endif
@@ -214,14 +214,14 @@ bool WebCookieJar::cookiesEnabled(const Document& document) const
 
 std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const
 {
-    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
 #if ENABLE(TRACKING_PREVENTION)
-    if (shouldBlockCookies(webFrame, firstParty, url, shouldAskITPInNetworkProcess))
+    if (shouldBlockCookies(webFrame, firstParty, url, applyTrackingPreventionInNetworkProcess))
         return { };
 #endif
 
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
     if (!sendResult)
         return { };
 
@@ -232,15 +232,15 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
 bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const
 {
     auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
-    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
 #if ENABLE(TRACKING_PREVENTION)
-    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
         return { };
 #endif
 
     std::optional<FrameIdentifier> frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
     std::optional<PageIdentifier> pageID = webFrame && webFrame->page() ? std::make_optional(webFrame->page()->identifier()) : std::nullopt;
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
     if (!sendResult)
         return false;
 
