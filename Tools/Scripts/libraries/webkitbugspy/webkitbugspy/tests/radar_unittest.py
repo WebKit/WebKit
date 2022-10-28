@@ -60,6 +60,10 @@ class TestRadar(unittest.TestCase):
                 User.Encoder().default(tracker.user(name='Felix Filer')),
                 dict(name='Felix Filer', username=809, emails=['ffiler@example.com']),
             )
+            self.assertEqual(
+                User.Encoder().default(tracker.user(name='Olivia Outsider', email='ooutsider@example.com')),
+                dict(name='Olivia Outsider', emails=['ooutsider@example.com']),
+            )
 
     def test_link(self):
         with mocks.Radar(users=mocks.USERS):
