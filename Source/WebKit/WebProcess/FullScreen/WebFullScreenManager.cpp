@@ -52,6 +52,7 @@
 #endif
 
 namespace WebKit {
+using namespace WebCore;
 
 using WebCore::FloatSize;
 

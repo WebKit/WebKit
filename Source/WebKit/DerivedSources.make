@@ -51,6 +51,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Automation \
     $(WebKit2)/WebProcess/Cache \
     $(WebKit2)/WebProcess/Databases/IndexedDB \
+    $(WebKit2)/WebProcess/Extensions/Interfaces \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/GPU \
@@ -326,6 +327,14 @@ GENERATE_MESSAGE_RECEIVER_SCRIPTS = \
 FRAMEWORK_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
 HEADER_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
 
+platform_h_compiler_command = $(CC) -std=c++2a -x c++ $(1) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null
+
+FEATURE_AND_PLATFORM_DEFINES := $(shell $(call platform_h_compiler_command,-E -P -dM) | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
+
+PLATFORM_HEADER_DIR := $(realpath $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH))
+PLATFORM_HEADER_DEPENDENCIES := $(filter $(PLATFORM_HEADER_DIR)/%,$(realpath $(shell $(call platform_h_compiler_command,-M) | $(PERL) -e "local \$$/; my (\$$target, \$$deps) = split(/:/, <>); print split(/\\\\/, \$$deps);")))
+FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebKit2)/DerivedSources.make $(PLATFORM_HEADER_DEPENDENCIES)
+
 MESSAGE_RECEIVER_FILES := $(addsuffix MessageReceiver.cpp,$(notdir $(MESSAGE_RECEIVERS)))
 MESSAGES_FILES := $(addsuffix Messages.h,$(notdir $(MESSAGE_RECEIVERS)))
 MESSAGE_REPLIES_FILES := $(addsuffix MessagesReplies.h,$(notdir $(MESSAGE_RECEIVERS)))
@@ -552,3 +561,27 @@ all : GeneratedSerializers.h GeneratedSerializers.cpp GeneratedSerializers.mm Se
 
 GeneratedSerializers.h GeneratedSerializers.cpp GeneratedSerializers.mm SerializedTypeInfo.cpp : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
 	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES)
+
+EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
+EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
+EXTENSIONS_INTERFACES_DIR = $(EXTENSIONS_DIR)/Interfaces
+IDL_ATTRIBUTES_FILE = $(EXTENSIONS_SCRIPTS_DIR)/IDLAttributes.json
+
+BINDINGS_SCRIPTS = \
+    $(WebCoreScripts)/generate-bindings.pl \
+    $(WebCoreScripts)/IDLParser.pm \
+    $(WebCoreScripts)/CodeGenerator.pm \
+    $(EXTENSIONS_SCRIPTS_DIR)/CodeGeneratorExtensions.pm \
+#
+
+EXTENSION_INTERFACES = \
+    WebExtensionAPIExtension \
+    WebExtensionAPINamespace \
+    WebExtensionAPIRuntime \
+#
+
+JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	@echo Generating bindings for $*...
+	$(PERL) -I $(WebCoreScripts) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCoreScripts)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --include $(EXTENSIONS_INTERFACES_DIR) --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
+
+all : $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm)
