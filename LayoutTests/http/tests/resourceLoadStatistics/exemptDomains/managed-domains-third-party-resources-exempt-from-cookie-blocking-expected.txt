@@ -1,0 +1,33 @@
+Tests that third party resources under managed domains are exempt from third-party cookie blocking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Should not receive cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'partitionedCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--frame2-->'
+--------
+Should receive cookie.
+Received cookie named 'firstPartyCookie'.
+Did not receive cookie named 'partitionedCookie'.
+Client-side document.cookie: firstPartyCookie=value
+
+--------
+Frame: '<!--frame3-->'
+--------
+Should receive cookie.
+Received cookie named 'firstPartyCookie'.
+Did not receive cookie named 'partitionedCookie'.
+Client-side document.cookie: firstPartyCookie=value

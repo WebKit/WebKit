@@ -475,6 +475,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetManagedDomains")) {
+        m_testRunner->didSetManagedDomainsCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
         m_testRunner->forceImmediateCompletion();
         return;
