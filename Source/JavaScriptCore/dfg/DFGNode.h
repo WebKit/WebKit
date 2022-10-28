@@ -3295,6 +3295,12 @@ public:
         return OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(m_opInfo2.as<unsigned>());
     }
 
+    void resetOpInfo()
+    {
+        m_opInfo = OpInfoWrapper();
+        m_opInfo2 = OpInfoWrapper();
+    }
+
     void dumpChildren(PrintStream& out)
     {
         if (!child1())

@@ -3710,7 +3710,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             insertChecks();
             Node* thisNumber = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             if (argumentCountIncludingThis == 1) {
-                Node* resultNode = addToGraph(ToString, thisNumber);
+                Node* resultNode = addToGraph(NumberToStringWithValidRadixConstant, OpInfo(10), thisNumber);
                 setResult(resultNode);
             } else {
                 Node* radix = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
