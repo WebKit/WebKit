@@ -159,6 +159,9 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
         return true;
     case ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains:
         return !shouldExemptDomainPairFromThirdPartyCookieBlocking(firstPartyDomain, resourceDomain);
+    case ThirdPartyCookieBlockingMode::AllExceptManagedDomains: {
+        return !m_managedDomains.contains(firstPartyDomain);
+    }
     case ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction:
         if (!hasHadUserInteractionAsFirstParty(firstPartyDomain))
             return true;
@@ -166,6 +169,7 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     case ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy:
         return shouldBlockThirdPartyCookies(resourceDomain);
     }
+
     ASSERT_NOT_REACHED();
     return false;
 }
@@ -367,6 +371,18 @@ void NetworkStorageSession::setAppBoundDomains(HashSet<RegistrableDomain>&& doma
 void NetworkStorageSession::resetAppBoundDomains()
 {
     m_appBoundDomains.clear();
+}
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+void NetworkStorageSession::setManagedDomains(HashSet<RegistrableDomain>&& domains)
+{
+    m_managedDomains = WTFMove(domains);
+}
+
+void NetworkStorageSession::resetManagedDomains()
+{
+    m_managedDomains.clear();
 }
 #endif
 

@@ -264,6 +264,7 @@ public:
     void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString);
     void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString);
     void setAppBoundDomains(WKArrayRef originURLs);
+    void setManagedDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();
@@ -367,6 +368,8 @@ public:
     void setPrivateClickMeasurementAppBundleIDForTesting(WKStringRef);
 
     void didSetAppBoundDomains() const;
+
+    void didSetManagedDomains() const;
 
     WKURLRef currentTestURL() const;
 
