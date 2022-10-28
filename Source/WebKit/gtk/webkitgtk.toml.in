@@ -38,4 +38,8 @@ show_class_hierarchy = true
 base_url = "https://github.com/WebKit/WebKit/tree/main"
 
 [extra]
+content_files = [
+    "migrating-to-webkitgtk-6.0.md"
+]
+
 urlmap_file = "urlmap.js"
