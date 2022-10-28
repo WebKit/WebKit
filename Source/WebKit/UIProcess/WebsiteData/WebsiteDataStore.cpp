@@ -1797,6 +1797,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (isAppBoundITPRelaxationEnabled)
         appBoundDomains = valueOrDefault(appBoundDomainsIfInitialized());
 #endif
+    HashSet<WebCore::RegistrableDomain> managedDomains;
+#if ENABLE(MANAGED_DOMAINS)
+    auto managedDomainsOptional = managedDomainsIfInitialized();
+    if (managedDomainsOptional)
+        managedDomains = *managedDomainsOptional;
+#endif
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource;
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
@@ -1818,6 +1824,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         firstPartyWebsiteDataRemovalMode,
         WTFMove(standaloneApplicationDomain),
         WTFMove(appBoundDomains),
+        WTFMove(managedDomains),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
     };
 
@@ -2031,6 +2038,37 @@ void WebsiteDataStore::setAppBoundDomainsForITP(const HashSet<WebCore::Registrab
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     networkProcess().setAppBoundDomainsForResourceLoadStatistics(m_sessionID, domains, [callbackAggregator] { });
+}
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+void WebsiteDataStore::forwardManagedDomainsToITPIfInitialized(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto managedDomains = managedDomainsIfInitialized();
+    if (!managedDomains || managedDomains->get().isEmpty())
+        return;
+
+    auto propagateManagedDomains = [callbackAggregator] (WebsiteDataStore* store, const HashSet<WebCore::RegistrableDomain>& domains) {
+        if (!store)
+            return;
+
+        if (store->thirdPartyCookieBlockingMode() != WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains && store->thirdPartyCookieBlockingMode() != WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains)
+            store->setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains, [callbackAggregator] { });
+        store->setManagedDomainsForITP(domains, [callbackAggregator] { });
+    };
+
+    propagateManagedDomains(globalDefaultDataStore().get(), *managedDomains);
+
+    for (auto* store : allDataStores().values())
+        propagateManagedDomains(store, *managedDomains);
+}
+
+void WebsiteDataStore::setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    networkProcess().setManagedDomainsForResourceLoadStatistics(m_sessionID, domains, [callbackAggregator] { });
 }
 #endif
 

@@ -97,6 +97,8 @@ public:
 
     void didSetAppBoundDomains();
 
+    void didSetManagedDomains();
+
     void dumpResourceLoadStatistics();
 
     bool canOpenWindows() const { return m_canOpenWindows; }

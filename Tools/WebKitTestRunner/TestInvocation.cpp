@@ -832,6 +832,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetManagedDomains")) {
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+        TestController::singleton().setManagedDomains(static_cast<WKArrayRef>(messageBody));
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -1656,6 +1662,11 @@ void TestInvocation::didRemoveAllSessionCredentials()
 void TestInvocation::didSetAppBoundDomains()
 {
     postPageMessage("CallDidSetAppBoundDomains");
+}
+
+void TestInvocation::didSetManagedDomains()
+{
+    postPageMessage("CallDidSetManagedDomains");
 }
 
 void TestInvocation::dumpResourceLoadStatistics()

@@ -84,7 +84,7 @@ struct SameSiteInfo;
 enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
-enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllExceptBetweenAppBoundDomains, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
+enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllExceptBetweenAppBoundDomains, AllExceptManagedDomains, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
 enum class SameSiteStrictEnforcementEnabled : bool { Yes, No };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ApplyTrackingPrevention : bool { No, Yes };
@@ -229,6 +229,11 @@ public:
     WEBCORE_EXPORT void resetAppBoundDomains();
 #endif
 
+#if ENABLE(MANAGED_DOMAINS)
+    WEBCORE_EXPORT void setManagedDomains(HashSet<RegistrableDomain>&&);
+    WEBCORE_EXPORT void resetManagedDomains();
+#endif
+
 private:
 #if PLATFORM(COCOA)
     enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
@@ -292,6 +297,7 @@ private:
     bool m_navigationWithLinkDecorationTestMode = false;
     ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { ThirdPartyCookieBlockingMode::All };
     HashSet<RegistrableDomain> m_appBoundDomains;
+    HashSet<RegistrableDomain> m_managedDomains;
 #endif
 
 #if PLATFORM(COCOA)
@@ -317,6 +323,7 @@ template<> struct EnumTraits<WebCore::ThirdPartyCookieBlockingMode> {
         WebCore::ThirdPartyCookieBlockingMode,
         WebCore::ThirdPartyCookieBlockingMode::All,
         WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains,
+        WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains,
         WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction,
         WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy
     >;

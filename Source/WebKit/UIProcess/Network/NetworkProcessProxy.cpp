@@ -1278,6 +1278,15 @@ void NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics(PAL::Sessi
 }
 #endif
 
+#if ENABLE(MANAGED_DOMAINS)
+void NetworkProcessProxy::setManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, const HashSet<RegistrableDomain>& appBoundDomains, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SetManagedDomainsForResourceLoadStatistics(sessionID, appBoundDomains), [completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
+}
+#endif
+
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
 void NetworkProcessProxy::getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
 {

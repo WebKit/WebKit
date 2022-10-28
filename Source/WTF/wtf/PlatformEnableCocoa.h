@@ -155,6 +155,10 @@
 #define ENABLE_APP_BOUND_DOMAINS 1
 #endif
 
+#if !defined(ENABLE_MANAGED_DOMAINS)
+#define ENABLE_MANAGED_DOMAINS 1
+#endif
+
 #if !defined(ENABLE_ASYNC_SCROLLING)
 #define ENABLE_ASYNC_SCROLLING 1
 #endif

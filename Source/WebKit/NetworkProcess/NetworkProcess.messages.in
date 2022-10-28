@@ -140,6 +140,9 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(APP_BOUND_DOMAINS)
     SetAppBoundDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain> appBoundDomains) -> ()
 #endif
+#if ENABLE(MANAGED_DOMAINS)
+    SetManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain> appBoundDomains) -> ()
+#endif
     SetShouldDowngradeReferrerForTesting(bool enabled) -> ()
     SetThirdPartyCookieBlockingMode(PAL::SessionID sessionID, enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetShouldEnbleSameSiteStrictEnforcementForTesting(PAL::SessionID sessionID, enum:bool WebCore::SameSiteStrictEnforcementEnabled enabled) -> ()

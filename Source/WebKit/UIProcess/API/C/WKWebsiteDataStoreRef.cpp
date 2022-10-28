@@ -701,6 +701,31 @@ void WKWebsiteDataStoreSetAppBoundDomainsForTesting(WKArrayRef originURLsRef, vo
 #endif
 }
 
+void WKWebsiteDataStoreSetManagedDomainsForTesting(WKArrayRef originURLsRef, void* context, WKWebsiteDataStoreSetManagedDomainsForTestingFunction completionHandler)
+{
+#if ENABLE(MANAGED_DOMAINS)
+    RefPtr<API::Array> originURLsArray = WebKit::toImpl(originURLsRef);
+    size_t newSize = originURLsArray ? originURLsArray->size() : 0;
+    HashSet<WebCore::RegistrableDomain> domains;
+    domains.reserveInitialCapacity(newSize);
+    for (size_t i = 0; i < newSize; ++i) {
+        auto* originURL = originURLsArray->at<API::URL>(i);
+        if (!originURL)
+            continue;
+
+        domains.add(WebCore::RegistrableDomain { URL { originURL->string() } });
+    }
+
+    WebKit::WebsiteDataStore::setManagedDomainsForTesting(WTFMove(domains), [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    UNUSED_PARAM(originURLsRef);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(completionHandler);
+#endif
+}
+
 void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler)
 {
 #if ENABLE(TRACKING_PREVENTION)

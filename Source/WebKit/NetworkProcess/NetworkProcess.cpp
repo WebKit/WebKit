@@ -1283,6 +1283,20 @@ void NetworkProcess::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID 
 }
 #endif
 
+#if ENABLE(MANAGED_DOMAINS)
+void NetworkProcess::setManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain>&& appBoundDomains, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
+            resourceLoadStatistics->setManagedDomains(WTFMove(appBoundDomains), WTFMove(completionHandler));
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
+    completionHandler();
+}
+#endif
+
 void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     forEachNetworkSession([enabled](auto& session) {

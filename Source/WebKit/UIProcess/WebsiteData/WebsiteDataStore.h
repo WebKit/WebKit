@@ -389,6 +389,16 @@ public:
     void reinitializeAppBoundDomains();
     static void setAppBoundDomainsForTesting(HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
 #endif
+#if ENABLE(MANAGED_DOMAINS)
+    void ensureManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
+    void getManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
+    void reinitializeManagedDomains();
+    static void setManagedDomainsForTesting(HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
+#endif
+
+
+
+
     void updateBundleIdentifierInNetworkProcess(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
 
@@ -411,6 +421,7 @@ private:
     void initializeAppBoundDomains(ForceReinitialization = ForceReinitialization::No);
     void addTestDomains() const;
 #endif
+    void initializeManagedDomains(ForceReinitialization = ForceReinitialization::No);
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Ref<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
@@ -446,6 +457,12 @@ private:
     constexpr static const std::atomic<bool> isAppBoundITPRelaxationEnabled = false;
     static void forwardAppBoundDomainsToITPIfInitialized(CompletionHandler<void()>&&);
     void setAppBoundDomainsForITP(const HashSet<WebCore::RegistrableDomain>&, CompletionHandler<void()>&&);
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+    static std::optional<std::reference_wrapper<HashSet<WebCore::RegistrableDomain>>> managedDomainsIfInitialized();
+    static void forwardManagedDomainsToITPIfInitialized(CompletionHandler<void()>&&);
+    void setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>&, CompletionHandler<void()>&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
