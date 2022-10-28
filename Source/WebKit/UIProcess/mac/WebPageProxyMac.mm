@@ -251,6 +251,7 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
     MESSAGE_CHECK(!imageHandle.isNull());
+    MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension));
 
     auto sharedMemoryImage = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)
