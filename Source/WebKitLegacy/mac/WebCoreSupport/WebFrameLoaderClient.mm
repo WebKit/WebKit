@@ -1899,27 +1899,6 @@ String WebFrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-#if ENABLE(WEBGL)
-static bool shouldBlockWebGL()
-{
-#if PLATFORM(MAC)
-    return WebCore::WebGLBlocklist::shouldBlockWebGL();
-#else
-    return false;
-#endif
-}
-
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL&) const
-{
-    return shouldBlockWebGL() ? WebCore::WebGLLoadPolicy::WebGLBlockCreation : WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL&) const
-{
-    return shouldBlockWebGL() ? WebCore::WebGLLoadPolicy::WebGLBlockCreation : WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-}
-#endif // ENABLE(WEBGL)
-
 void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld& world)
 {
     WebView *webView = getWebView(m_webFrame.get());

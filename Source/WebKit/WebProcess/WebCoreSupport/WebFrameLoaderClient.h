@@ -223,11 +223,6 @@ private:
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
     
-#if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLPolicyForURL(const URL&) const final;
-    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const final;
-#endif // ENABLE(WEBGL)
-
     WebCore::ObjectContentType objectContentType(const URL&, const String& mimeType) final;
     String overrideMediaType() const final;
 

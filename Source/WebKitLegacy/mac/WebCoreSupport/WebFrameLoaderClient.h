@@ -210,11 +210,6 @@ private:
     const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
-#if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLPolicyForURL(const URL&) const final;
-    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const final;
-#endif
-    
     WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) final;
     WTF::String overrideMediaType() const final;
     

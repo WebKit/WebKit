@@ -2272,10 +2272,6 @@ private:
     void setStatusText(const String&);
     void mouseDidMoveOverElement(WebHitTestResultData&&, uint32_t modifiers, UserData&&);
 
-#if ENABLE(WEBGL)
-    void webGLPolicyForURL(URL&&, Messages::WebPageProxy::WebGLPolicyForURLDelayedReply&&);
-    void resolveWebGLPolicyForURL(URL&&, Messages::WebPageProxy::ResolveWebGLPolicyForURLDelayedReply&&);
-#endif // ENABLE(WEBGL)
     void setToolbarsAreVisible(bool toolbarsAreVisible);
     void getToolbarsAreVisible(Messages::WebPageProxy::GetToolbarsAreVisibleDelayedReply&&);
     void setMenuBarIsVisible(bool menuBarIsVisible);

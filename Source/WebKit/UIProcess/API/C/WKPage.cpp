@@ -1178,8 +1178,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             RELEASE_ASSERT(!m_client.pluginLoadPolicy_deprecatedForUseWithV2);
             RELEASE_ASSERT(!m_client.pluginDidFail);
             RELEASE_ASSERT(!m_client.pluginLoadPolicy);
-            RELEASE_ASSERT(!m_client.webGLLoadPolicy);
-            RELEASE_ASSERT(!m_client.resolveWebGLLoadPolicy);
             RELEASE_ASSERT(!m_client.navigationGestureDidBegin);
             RELEASE_ASSERT(!m_client.navigationGestureWillEnd);
             RELEASE_ASSERT(!m_client.navigationGestureDidEnd);

@@ -6372,18 +6372,6 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
     setToolTip(hitTestResultData.toolTipText);
 }
 
-#if ENABLE(WEBGL)
-void WebPageProxy::webGLPolicyForURL(URL&& url, Messages::WebPageProxy::WebGLPolicyForURL::DelayedReply&& reply)
-{
-    m_navigationClient->webGLLoadPolicy(*this, url, WTFMove(reply));
-}
-
-void WebPageProxy::resolveWebGLPolicyForURL(URL&& url, Messages::WebPageProxy::ResolveWebGLPolicyForURL::DelayedReply&& reply)
-{
-    m_navigationClient->resolveWebGLLoadPolicy(*this, url, WTFMove(reply));
-}
-#endif // ENABLE(WEBGL)
-
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
 {
     m_uiClient->setToolbarsAreVisible(*this, toolbarsAreVisible);

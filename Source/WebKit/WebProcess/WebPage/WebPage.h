@@ -571,11 +571,6 @@ public:
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
-#if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLPolicyForURL(WebFrame*, const URL&);
-    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const URL&);
-#endif
-    
     enum class ShouldPerformLayout : bool { Default, Yes };
     EditorState editorState(ShouldPerformLayout = ShouldPerformLayout::Default) const;
     void updateEditorStateAfterLayoutIfEditabilityChanged();

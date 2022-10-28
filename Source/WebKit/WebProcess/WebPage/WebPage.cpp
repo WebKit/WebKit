@@ -1229,18 +1229,6 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 }
 #endif
 
-#if ENABLE(WEBGL) && !PLATFORM(MAC)
-WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL&)
-{
-    return WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL&)
-{
-    return WebGLLoadPolicy::WebGLAllowCreation;
-}
-#endif
-
 bool WebPage::hasPendingEditorStateUpdate() const
 {
     return m_pendingEditorStateUpdateStatus != PendingEditorStateUpdateStatus::NotScheduled;

@@ -30,10 +30,6 @@ messages -> WebPageProxy {
     RunJavaScriptPrompt(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message, String defaultValue) -> (String result) Synchronous
     MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
 
-#if ENABLE(WEBGL)
-    WebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
-    ResolveWebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
-#endif // ENABLE(WEBGL)
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
     SetCursor(WebCore::Cursor cursor)

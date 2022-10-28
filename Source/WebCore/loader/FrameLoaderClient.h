@@ -335,12 +335,6 @@ public:
     virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }
 #endif
 
-#if ENABLE(WEBGL)
-    virtual bool allowWebGL(bool enabledPerSettings) { return enabledPerSettings; }
-    virtual WebGLLoadPolicy webGLPolicyForURL(const URL&) const { return WebGLLoadPolicy::WebGLAllowCreation; }
-    virtual WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const { return WebGLLoadPolicy::WebGLAllowCreation; }
-#endif
-
     virtual void completePageTransitionIfNeeded() { }
 
     // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.

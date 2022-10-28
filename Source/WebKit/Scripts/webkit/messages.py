@@ -882,7 +882,6 @@ def headers_for_type(type):
         'WebCore::UsedLegacyTLS': ['<WebCore/ResourceResponseBase.h>'],
         'WebCore::VideoPresetData': ['<WebCore/VideoPreset.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
-        'WebCore::WebGLLoadPolicy': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::AllowOverwrite': ['"DownloadID.h"'],

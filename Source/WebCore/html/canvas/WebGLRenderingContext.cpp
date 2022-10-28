@@ -130,7 +130,7 @@ void WebGLRenderingContext::initializeVertexArrayObjects()
 
 WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
 {
-    if (isContextLostOrPending())
+    if (isContextLost())
         return nullptr;
 
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
@@ -187,9 +187,6 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 
     Vector<String> result;
 
-    if (m_isPendingPolicyResolution)
-        return result;
-
 #define APPEND_IF_SUPPORTED(nameLiteral, condition) \
     if (condition) \
         result.append(nameLiteral ## _s);
@@ -234,7 +231,7 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 
 WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname)
 {
-    if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
+    if (isContextLost() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
         return nullptr;
 
     if (!m_framebufferBinding || !m_framebufferBinding->object()) {

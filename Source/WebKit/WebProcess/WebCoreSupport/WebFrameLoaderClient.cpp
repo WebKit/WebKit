@@ -1661,26 +1661,6 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 #endif
 }
 
-#if ENABLE(WEBGL)
-
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL& url) const
-{
-    if (auto* webPage = m_frame->page())
-        return webPage->webGLPolicyForURL(m_frame.ptr(), url);
-
-    return WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL& url) const
-{
-    if (auto* webPage = m_frame->page())
-        return webPage->resolveWebGLPolicyForURL(m_frame.ptr(), url);
-
-    return WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-#endif
-
 static bool pluginSupportsExtension(const PluginData& pluginData, const String& extension)
 {
     ASSERT(extension.convertToASCIILowercase() == extension);

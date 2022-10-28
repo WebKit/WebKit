@@ -421,36 +421,6 @@ inline WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     return kWKAllowAllStorage;
 }
 
-inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPolicy)
-{
-    switch (webGLLoadPolicy) {
-    case kWKWebGLLoadPolicyLoadNormally:
-        return WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-    case kWKWebGLLoadPolicyBlocked:
-        return WebCore::WebGLLoadPolicy::WebGLBlockCreation;
-    case kWKWebGLLoadPolicyPending:
-        return WebCore::WebGLLoadPolicy::WebGLPendingCreation;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-inline WKWebGLLoadPolicy toAPI(WebCore::WebGLLoadPolicy webGLLoadPolicy)
-{
-    switch (webGLLoadPolicy) {
-    case WebCore::WebGLLoadPolicy::WebGLAllowCreation:
-        return kWKWebGLLoadPolicyLoadNormally;
-    case WebCore::WebGLLoadPolicy::WebGLBlockCreation:
-        return kWKWebGLLoadPolicyBlocked;
-    case WebCore::WebGLLoadPolicy::WebGLPendingCreation:
-        return kWKWebGLLoadPolicyPending;
-    }
-
-    ASSERT_NOT_REACHED();
-    return kWKWebGLLoadPolicyLoadNormally;
-}
-
 } // namespace WebKit
 
 #if defined(BUILDING_GTK__)

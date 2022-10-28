@@ -202,8 +202,6 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidRequestPasswordForQuickLookDocument = [delegate respondsToSelector:@selector(_webViewDidRequestPasswordForQuickLookDocument:)];
 #endif
 #if PLATFORM(MAC)
-    m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:webGLLoadPolicyForURL:decisionHandler:)];
-    m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:)];
     m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
 #endif
     m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInBackForwardCache = [delegate respondsToSelector:@selector(_webView:willGoToBackForwardListItem:inPageCache:)];
@@ -323,61 +321,6 @@ NavigationState::NavigationClient::~NavigationClient()
 }
 
 #if PLATFORM(MAC)
-inline WebCore::WebGLLoadPolicy toWebCoreWebGLLoadPolicy(_WKWebGLLoadPolicy policy)
-{
-    switch (policy) {
-    case _WKWebGLLoadPolicyAllowCreation:
-        return WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-    case _WKWebGLLoadPolicyBlockCreation:
-        return WebCore::WebGLLoadPolicy::WebGLBlockCreation;
-    case _WKWebGLLoadPolicyPendingCreation:
-        return WebCore::WebGLLoadPolicy::WebGLPendingCreation;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-void NavigationState::NavigationClient::webGLLoadPolicy(WebPageProxy&, const URL& url, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
-{
-    if (!m_navigationState)
-        return completionHandler(WebGLLoadPolicy::WebGLAllowCreation);
-
-    if (!m_navigationState->m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL) {
-        completionHandler(WebGLLoadPolicy::WebGLAllowCreation);
-        return;
-    }
-
-    auto navigationDelegate = m_navigationState->m_navigationDelegate.get();
-    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:webGLLoadPolicyForURL:decisionHandler:));
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView webGLLoadPolicyForURL:(NSURL *)url decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebGLLoadPolicy policy) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-        completionHandler(toWebCoreWebGLLoadPolicy(policy));
-    }).get()];
-}
-
-void NavigationState::NavigationClient::resolveWebGLLoadPolicy(WebPageProxy&, const URL& url, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
-{
-    if (!m_navigationState)
-        return completionHandler(WebGLLoadPolicy::WebGLAllowCreation);
-
-    if (!m_navigationState->m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL) {
-        completionHandler(WebGLLoadPolicy::WebGLAllowCreation);
-        return;
-    }
-    
-    auto navigationDelegate = m_navigationState->m_navigationDelegate.get();
-    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:));
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView resolveWebGLLoadPolicyForURL:(NSURL *)url decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebGLLoadPolicy policy) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-        completionHandler(toWebCoreWebGLLoadPolicy(policy));
-    }).get()];
-}
-
 bool NavigationState::NavigationClient::didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem* added, const Vector<Ref<WebBackForwardListItem>>& removed)
 {
     if (!m_navigationState)

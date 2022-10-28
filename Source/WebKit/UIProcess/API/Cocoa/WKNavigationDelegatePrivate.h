@@ -31,12 +31,6 @@
 @class _WKContentRuleListAction;
 
 #if !TARGET_OS_IPHONE
-typedef NS_ENUM(NSInteger, _WKWebGLLoadPolicy) {
-    _WKWebGLLoadPolicyBlockCreation,
-    _WKWebGLLoadPolicyAllowCreation,
-    _WKWebGLLoadPolicyPendingCreation,
-} WK_API_AVAILABLE(macos(10.13.4));
-
 typedef NS_ENUM(NSInteger, _WKPluginModuleLoadPolicy) {
     _WKPluginModuleLoadPolicyLoadNormally,
     _WKPluginModuleLoadPolicyLoadUnsandboxed,
@@ -116,8 +110,6 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
 - (void)_webViewDidRequestPasswordForQuickLookDocument:(WKWebView *)webView WK_API_AVAILABLE(ios(11.0));
 #else
-- (void)_webView:(WKWebView *)webView webGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
-- (void)_webView:(WKWebView *)webView resolveWebGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didFailToInitializePlugInWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didBlockInsecurePluginVersionWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info completionHandler:(void (^)(_WKPluginModuleLoadPolicy policy, NSString * unavailabilityDescription))completionHandler WK_API_AVAILABLE(macos(10.14.4));
