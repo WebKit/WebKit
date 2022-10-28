@@ -74,6 +74,13 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
     _WKWebsiteColorSchemePreferenceDark,
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+// Allow controlling a per-page network connection integrity policy.
+typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
+    _WKWebsiteNetworkConnectionIntegrityPolicyNone = 0,
+    _WKWebsiteNetworkConnectionIntegrityPolicyEnabled = 1 << 0,
+    _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst = 1 << 1,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @class _WKCustomHeaderFields;
 @class WKUserContentController;
 @class WKWebsiteDataStore;
@@ -104,6 +111,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
 
 @property (nonatomic, setter=_setColorSchemePreference:) _WKWebsiteColorSchemePreference _colorSchemePreference;
 
-@property (nonatomic, setter=_setNetworkConnectionIntegrityEnabled:) BOOL _networkConnectionIntegrityEnabled;
+@property (nonatomic, setter=_setNetworkConnectionIntegrityEnabled:) BOOL _networkConnectionIntegrityEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setNetworkConnectionIntegrityPolicy:) _WKWebsiteNetworkConnectionIntegrityPolicy _networkConnectionIntegrityPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end

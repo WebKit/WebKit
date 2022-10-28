@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,23 @@
 
 #pragma once
 
-#include "NetworkSession.h"
+namespace WebCore {
 
-namespace WebKit {
-
-struct NetworkSessionCreationParameters;
-
-class NetworkSessionCurl final : public NetworkSession {
-public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
-    {
-        return makeUnique<NetworkSessionCurl>(networkProcess, parameters);
-    }
-    NetworkSessionCurl(NetworkProcess&, const NetworkSessionCreationParameters&);
-    ~NetworkSessionCurl();
-
-private:
-    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::NetworkConnectionIntegrity>) final;
+enum class NetworkConnectionIntegrity : uint8_t {
+    Enabled = 1 << 0,
+    HTTPSFirst = 1 << 1,
 };
 
-} // namespace WebKit
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::NetworkConnectionIntegrity> {
+    using values = EnumValues<
+        WebCore::NetworkConnectionIntegrity,
+        WebCore::NetworkConnectionIntegrity::Enabled,
+        WebCore::NetworkConnectionIntegrity::HTTPSFirst
+    >;
+};
+
+} // namespace WTF

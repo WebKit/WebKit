@@ -40,6 +40,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPHeaderField.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
@@ -138,8 +139,8 @@ public:
     WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy() const { return m_modalContainerObservationPolicy; }
     void setModalContainerObservationPolicy(WebCore::ModalContainerObservationPolicy policy) { m_modalContainerObservationPolicy = policy; }
 
-    bool networkConnectionIntegrityEnabled() const { return m_networkConnectionIntegrityEnabled; }
-    void setNetworkConnectionIntegrityEnabled(bool enabled) { m_networkConnectionIntegrityEnabled = enabled; }
+    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
+    void setNetworkConnectionIntegrityPolicy(OptionSet<WebCore::NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
 
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
@@ -174,7 +175,7 @@ private:
     WebCore::AllowsContentJavaScript m_allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
     WebCore::MouseEventPolicy m_mouseEventPolicy { WebCore::MouseEventPolicy::Default };
     WebCore::ModalContainerObservationPolicy m_modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
-    bool m_networkConnectionIntegrityEnabled { false };
+    OptionSet<WebCore::NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     std::optional<bool> m_lockdownModeEnabled;
     WebCore::ColorSchemePreference m_colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };

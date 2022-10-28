@@ -66,7 +66,7 @@ void AsyncRevalidation::staleWhileRevalidateEnding()
         m_completionHandler(Result::Timeout);
 }
 
-AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, std::unique_ptr<NetworkCache::Entry>&& entry, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled, CompletionHandler<void(Result)>&& handler)
+AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, std::unique_ptr<NetworkCache::Entry>&& entry, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, CompletionHandler<void(Result)>&& handler)
     : m_timer(*this, &AsyncRevalidation::staleWhileRevalidateEnding)
     , m_completionHandler(WTFMove(handler))
 {
@@ -77,7 +77,7 @@ AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID,
     auto responseMaxStaleness = entry->response().cacheControlStaleWhileRevalidate();
     ASSERT(responseMaxStaleness);
     m_timer.startOneShot(*responseMaxStaleness + (lifetime - age));
-    m_load = makeUnique<SpeculativeLoad>(cache, frameID, WTFMove(revalidationRequest), WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled, [this, key, revalidationRequest](auto&& revalidatedEntry) {
+    m_load = makeUnique<SpeculativeLoad>(cache, frameID, WTFMove(revalidationRequest), WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy, [this, key, revalidationRequest](auto&& revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
         if (m_completionHandler)

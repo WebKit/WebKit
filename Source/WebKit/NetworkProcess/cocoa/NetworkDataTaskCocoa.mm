@@ -36,6 +36,7 @@
 #import "NetworkSessionCocoa.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/NetworkConnectionIntegrity.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/RegistrableDomain.h>
@@ -397,7 +398,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         [mutableRequest _setProhibitPrivacyProxy:YES];
 #endif
 
-    if (parameters.networkConnectionIntegrityEnabled)
+    if (parameters.networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled))
         enableNetworkConnectionIntegrity(mutableRequest.get(), NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(request));
 
 #if ENABLE(APP_PRIVACY_REPORT)
