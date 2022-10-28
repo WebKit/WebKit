@@ -51,6 +51,7 @@ struct ResourceLoadStatisticsParameters {
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
+    HashSet<WebCore::RegistrableDomain> managedDomains;
     WebCore::RegistrableDomain manualPrevalentResource;
     
     void encode(IPC::Encoder& encoder) const
@@ -71,6 +72,7 @@ struct ResourceLoadStatisticsParameters {
         encoder << firstPartyWebsiteDataRemovalMode;
         encoder << standaloneApplicationDomain;
         encoder << appBoundDomains;
+        encoder << managedDomains;
         encoder << manualPrevalentResource;
     }
 
@@ -148,6 +150,11 @@ struct ResourceLoadStatisticsParameters {
         if (!appBoundDomains)
             return std::nullopt;
 
+        std::optional<HashSet<WebCore::RegistrableDomain>> managedDomains;
+        decoder >> managedDomains;
+        if (!managedDomains)
+            return std::nullopt;
+
         std::optional<WebCore::RegistrableDomain> manualPrevalentResource;
         decoder >> manualPrevalentResource;
         if (!manualPrevalentResource)
@@ -170,6 +177,7 @@ struct ResourceLoadStatisticsParameters {
             WTFMove(*firstPartyWebsiteDataRemovalMode),
             WTFMove(*standaloneApplicationDomain),
             WTFMove(*appBoundDomains),
+            WTFMove(*managedDomains),
             WTFMove(*manualPrevalentResource),
         }};
     }
