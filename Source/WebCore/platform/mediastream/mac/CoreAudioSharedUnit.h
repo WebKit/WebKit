@@ -59,6 +59,7 @@ public:
         virtual OSStatus defaultInputDevice(uint32_t*) = 0;
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
+        virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 10_s : 2_s; }
     };
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
@@ -110,8 +111,6 @@ private:
 
     void verifyIsCapturing();
 
-    Seconds verifyCaptureInterval() { return isProducingMicrophoneSamples() ? 10_s : 2_s; }
-
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;
     std::unique_ptr<InternalUnit> m_ioUnit;
@@ -145,6 +144,7 @@ private:
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
 
+    std::optional<size_t> m_minimumMicrophoneSampleFrames;
     bool m_isReconfiguring { false };
     bool m_shouldNotifySpeakerSamplesProducer { false };
     bool m_hasNotifiedSpeakerSamplesProducer { false };

@@ -125,6 +125,7 @@ private:
     OSStatus defaultInputDevice(uint32_t*) final;
     OSStatus defaultOutputDevice(uint32_t*) final;
     void delaySamples(Seconds) final;
+    Seconds verifyCaptureInterval(bool) const final { return 1_s; }
 
     int sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
@@ -160,11 +161,13 @@ private:
     AURenderCallbackStruct m_speakerCallback;
 };
 
+static bool s_shouldIncreaseBufferSize;
 CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
 {
     static NeverDestroyed<CoreAudioSharedUnit> unit;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] () {
+        s_shouldIncreaseBufferSize = false;
         unit->setSampleRateRange(CapabilityValueOrRange(44100, 48000));
         unit->setInternalUnitCreationCallback([] {
             UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>();
@@ -173,6 +176,11 @@ CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
         unit->setInternalUnitGetSampleRateCallback([] { return 44100; });
     });
     return unit;
+}
+
+void MockAudioSharedUnit::increaseBufferSize()
+{
+    s_shouldIncreaseBufferSize = true;
 }
 
 static AudioStreamBasicDescription createAudioFormat(Float64 sampleRate, UInt32 channelCount)
@@ -292,8 +300,10 @@ void MockAudioSharedInternalUnit::emitSampleBuffers(uint32_t frameCount)
     memset(&timeStamp, 0, sizeof(AudioTimeStamp));
     timeStamp.mSampleTime = sampleTime;
     timeStamp.mHostTime = static_cast<UInt64>(sampleTime);
+
+    auto exposedFrameCount = s_shouldIncreaseBufferSize ? 10 * frameCount : frameCount;
     if (m_microphoneCallback.inputProc)
-        m_microphoneCallback.inputProc(m_microphoneCallback.inputProcRefCon, &ioActionFlags, &timeStamp, 1, frameCount, bufferList);
+        m_microphoneCallback.inputProc(m_microphoneCallback.inputProcRefCon, &ioActionFlags, &timeStamp, 1, exposedFrameCount, nullptr);
 
     ioActionFlags = 0;
     if (m_speakerCallback.inputProc)
@@ -340,6 +350,14 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
 
 OSStatus MockAudioSharedInternalUnit::render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32 frameCount, AudioBufferList* buffer)
 {
+    if (s_shouldIncreaseBufferSize) {
+        auto copySize = frameCount * m_streamFormat.mBytesPerPacket;
+        if (buffer->mNumberBuffers && copySize <= buffer->mBuffers[0].mDataByteSize)
+            s_shouldIncreaseBufferSize = false;
+        // We still return an error in case s_shouldIncreaseBufferSize is false since we do not have enough data to write.
+        return kAudio_ParamError;
+    }
+
     auto* sourceBuffer = m_audioBufferList->list();
     if (buffer->mNumberBuffers > sourceBuffer->mNumberBuffers)
         return kAudio_ParamError;
