@@ -43,7 +43,10 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
     auto canUseSimplifiedAlignment = [&] {
         if (!lineBox.hasContent())
             return true;
+
         auto& rootInlineBox = lineBox.rootInlineBox();
+        if (rootInlineBox.hasLineBoxContain())
+            return false;
         if (!layoutState().inStandardsMode() || !rootInlineBox.isPreferredLineHeightFontMetricsBased() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
             return false;
         if (rootInlineBox.hasAnnotation())
