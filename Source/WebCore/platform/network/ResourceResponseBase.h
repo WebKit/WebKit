@@ -52,6 +52,10 @@ enum class UsedLegacyTLS : bool { No, Yes };
 static constexpr unsigned bitWidthOfUsedLegacyTLS = 1;
 static_assert(static_cast<unsigned>(UsedLegacyTLS::Yes) <= ((1U << bitWidthOfUsedLegacyTLS) - 1));
 
+enum class WasPrivateRelayed : bool { No, Yes };
+static constexpr unsigned bitWidthOfWasPrivateRelayed = 1;
+static_assert(static_cast<unsigned>(WasPrivateRelayed::Yes) <= ((1U << bitWidthOfWasPrivateRelayed) - 1));
+
 // Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
@@ -147,6 +151,8 @@ public:
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     bool usedLegacyTLS() const { return m_usedLegacyTLS == UsedLegacyTLS::Yes; }
     void setUsedLegacyTLS(UsedLegacyTLS used) { m_usedLegacyTLS = used; }
+    bool wasPrivateRelayed() const { return m_wasPrivateRelayed == WasPrivateRelayed::Yes; }
+    void setWasPrivateRelayed(WasPrivateRelayed privateRelayed) { m_wasPrivateRelayed = privateRelayed; }
     
     // These functions return parsed values of the corresponding response headers.
     WEBCORE_EXPORT bool cacheControlContainsNoCache() const;
@@ -280,6 +286,7 @@ protected:
     bool m_isNull : 1;
     unsigned m_initLevel : 3; // Controlled by ResourceResponse.
     mutable UsedLegacyTLS m_usedLegacyTLS : bitWidthOfUsedLegacyTLS;
+    mutable WasPrivateRelayed m_wasPrivateRelayed : bitWidthOfWasPrivateRelayed;
 private:
     Tainting m_tainting : bitWidthOfTainting;
     Source m_source : bitWidthOfSource;
@@ -317,6 +324,8 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_isRedirected;
     UsedLegacyTLS usedLegacyTLS = m_usedLegacyTLS;
     encoder << usedLegacyTLS;
+    WasPrivateRelayed wasPrivateRelayed = m_wasPrivateRelayed;
+    encoder << wasPrivateRelayed;
     encoder << m_isRangeRequested;
 }
 
@@ -425,6 +434,12 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!usedLegacyTLS)
         return false;
     response.m_usedLegacyTLS = WTFMove(*usedLegacyTLS);
+
+    std::optional<WasPrivateRelayed> wasPrivateRelayed;
+    decoder >> wasPrivateRelayed;
+    if (!wasPrivateRelayed)
+        return false;
+    response.m_wasPrivateRelayed = WTFMove(*wasPrivateRelayed);
 
     std::optional<bool> isRangeRequested;
     decoder >> isRangeRequested;

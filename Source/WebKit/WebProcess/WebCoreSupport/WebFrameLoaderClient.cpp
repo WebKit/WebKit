@@ -541,7 +541,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), truncatedTitle.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent, std::optional<UsedLegacyTLS> usedLegacyTLSFromPageCache)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent, std::optional<UsedLegacyTLS> usedLegacyTLSFromPageCache, std::optional<WasPrivateRelayed> wasPrivateRelayedFromPageCache)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -558,9 +558,13 @@ void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureConten
     bool usedLegacyTLS = documentLoader.response().usedLegacyTLS();
     if (!usedLegacyTLS && usedLegacyTLSFromPageCache)
         usedLegacyTLS = usedLegacyTLSFromPageCache == UsedLegacyTLS::Yes;
+
+    bool wasPrivateRelayed = documentLoader.response().wasPrivateRelayed();
+    if (!wasPrivateRelayed && wasPrivateRelayedFromPageCache)
+        wasPrivateRelayed = wasPrivateRelayedFromPageCache == WasPrivateRelayed::Yes;
     
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader.request(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, m_frame->coreFrame()->loader().loadType(), valueOrCompute(documentLoader.response().certificateInfo(), [] { return CertificateInfo(); }), usedLegacyTLS, m_frame->coreFrame()->document()->isPluginDocument(), hasInsecureContent, documentLoader.mouseEventPolicy(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader.request(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, m_frame->coreFrame()->loader().loadType(), valueOrCompute(documentLoader.response().certificateInfo(), [] { return CertificateInfo(); }), usedLegacyTLS, wasPrivateRelayed, m_frame->coreFrame()->document()->isPluginDocument(), hasInsecureContent, documentLoader.mouseEventPolicy(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     webPage->didCommitLoad(m_frame.ptr());
 }
 

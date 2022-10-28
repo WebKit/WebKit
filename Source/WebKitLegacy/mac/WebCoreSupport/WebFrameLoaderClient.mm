@@ -682,7 +682,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const WebCore::StringWithDire
     }
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>, std::optional<WebCore::WasPrivateRelayed>)
 {
     // Tell the client we've committed this URL.
     ASSERT([m_webFrame->_private->webFrameView documentView] != nil);

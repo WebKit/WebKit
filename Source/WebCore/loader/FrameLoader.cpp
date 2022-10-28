@@ -697,7 +697,7 @@ void FrameLoader::receivedFirstData()
 {
     Ref protectedFrame { m_frame };
     
-    dispatchDidCommitLoad(std::nullopt, std::nullopt);
+    dispatchDidCommitLoad(std::nullopt, std::nullopt, std::nullopt);
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -2129,8 +2129,9 @@ void FrameLoader::commitProvisionalLoad()
 
         auto hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
         auto usedLegacyTLS = cachedPage->cachedMainFrame()->usedLegacyTLS();
+        auto privateRelayed = cachedPage->cachedMainFrame()->wasPrivateRelayed();
 
-        dispatchDidCommitLoad(hasInsecureContent, usedLegacyTLS);
+        dispatchDidCommitLoad(hasInsecureContent, usedLegacyTLS, privateRelayed);
 
         // FIXME: This API should be turned around so that we ground CachedPage into the Page.
         cachedPage->restore(*m_frame.page());
@@ -4168,12 +4169,12 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 #endif
 }
 
-void FrameLoader::dispatchDidCommitLoad(std::optional<HasInsecureContent> initialHasInsecureContent, std::optional<UsedLegacyTLS> initialUsedLegacyTLS)
+void FrameLoader::dispatchDidCommitLoad(std::optional<HasInsecureContent> initialHasInsecureContent, std::optional<UsedLegacyTLS> initialUsedLegacyTLS, std::optional<WasPrivateRelayed> initialWasPrivateRelayed)
 {
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 
-    m_client->dispatchDidCommitLoad(initialHasInsecureContent, initialUsedLegacyTLS);
+    m_client->dispatchDidCommitLoad(initialHasInsecureContent, initialUsedLegacyTLS, initialWasPrivateRelayed);
 
     if (auto* page = m_frame.page(); page && m_frame.isMainFrame())
         page->didCommitLoad();

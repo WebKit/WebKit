@@ -118,6 +118,8 @@ public:
     bool usedLegacyTLS() const { return m_usedLegacyTLS; }
     void setUsedLegacyTLS(bool used) { m_usedLegacyTLS = used; }
     const OptionSet<MixedContentType>& foundMixedContent() const { return m_mixedContentTypes; }
+    bool wasPrivateRelayed() const { return m_wasPrivateRelayed; }
+    void setWasPrivateRelayed(bool privateRelayed) { m_wasPrivateRelayed = privateRelayed; }
     void setFoundMixedContent(MixedContentType type) { m_mixedContentTypes.add(type); }
     bool geolocationAccessed() const { return m_geolocationAccessed; }
     void setGeolocationAccessed() { m_geolocationAccessed = true; }
@@ -159,6 +161,7 @@ private:
     bool m_secureCookiesAccessed { false };
     bool m_isStrictMixedContentMode { false };
     bool m_usedLegacyTLS { false };
+    bool m_wasPrivateRelayed { false };
 };
 
 } // namespace WebCore

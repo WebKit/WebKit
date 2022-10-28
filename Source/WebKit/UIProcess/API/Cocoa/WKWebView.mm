@@ -2126,6 +2126,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return _page->pageLoadState().hasNegotiatedLegacyTLS();
 }
 
+- (BOOL)_wasPrivateRelayed
+{
+    return _page->pageLoadState().wasPrivateRelayed();
+}
+
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (WebKit::FrameTreeNodeData&& data) {

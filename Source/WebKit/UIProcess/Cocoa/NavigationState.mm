@@ -1454,6 +1454,16 @@ void NavigationState::didChangeNegotiatedLegacyTLS()
     [m_webView didChangeValueForKey:@"_negotiatedLegacyTLS"];
 }
 
+void NavigationState::willChangeWasPrivateRelayed()
+{
+    [m_webView willChangeValueForKey:@"_wasPrivateRelayed"];
+}
+
+void NavigationState::didChangeWasPrivateRelayed()
+{
+    [m_webView didChangeValueForKey:@"_wasPrivateRelayed"];
+}
+
 void NavigationState::willChangeEstimatedProgress()
 {
     [m_webView willChangeValueForKey:@"estimatedProgress"];

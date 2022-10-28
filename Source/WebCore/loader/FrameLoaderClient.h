@@ -103,6 +103,7 @@ class Widget;
 enum class LockBackForwardList : bool;
 enum class PolicyDecisionMode;
 enum class UsedLegacyTLS : bool;
+enum class WasPrivateRelayed : bool;
 
 struct StringWithDirection;
 
@@ -171,7 +172,7 @@ public:
     virtual void dispatchDidReceiveIcon() { }
     virtual void dispatchDidStartProvisionalLoad() = 0;
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
-    virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>) = 0;
+    virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>) = 0;
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading) = 0;
     virtual void dispatchDidFailLoad(const ResourceError&) = 0;
     virtual void dispatchDidFinishDocumentLoad() = 0;

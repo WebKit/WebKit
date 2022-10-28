@@ -324,13 +324,27 @@ HasInsecureContent CachedFrame::hasInsecureContent() const
         if (!document->isSecureContext() || !document->foundMixedContent().isEmpty())
             return HasInsecureContent::Yes;
     }
-    
+
     for (const auto& cachedFrame : m_childFrames) {
         if (cachedFrame->hasInsecureContent() == HasInsecureContent::Yes)
             return HasInsecureContent::Yes;
     }
-    
+
     return HasInsecureContent::No;
+}
+
+WasPrivateRelayed CachedFrame::wasPrivateRelayed() const
+{
+    if (auto* document = this->document()) {
+        if (document->wasPrivateRelayed())
+            return WasPrivateRelayed::Yes;
+    }
+
+    bool allFramesRelayed { false };
+    for (const auto& cachedFrame : m_childFrames)
+        allFramesRelayed |= cachedFrame->wasPrivateRelayed() == WasPrivateRelayed::Yes;
+
+    return allFramesRelayed ? WasPrivateRelayed::Yes : WasPrivateRelayed::No;
 }
 
 } // namespace WebCore
