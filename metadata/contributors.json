@@ -7069,6 +7069,18 @@
    },
    {
       "emails" : [
+         "vitaly@igalia.com",
+         "obyknovenius@me.com",
+         "obyknovenius@gmail.com"
+      ],
+      "github" : "obyknovenius",
+      "name" : "Vitaly Dyachkov",
+      "nicks" : [
+         "obyknovenius"
+      ]
+   },
+   {
+      "emails" : [
          "vitalyr@chromium.org"
       ],
       "name" : "Vitaly Repeshko"
