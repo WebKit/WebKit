@@ -326,6 +326,7 @@ void MockRealtimeMediaSourceCenter::triggerMockMicrophoneConfigurationChange()
     auto devices = audioCaptureDeviceManager().captureDevices();
     if (devices.size() <= 1)
         return;
+    MockAudioSharedUnit::increaseBufferSize();
     MockAudioSharedUnit::singleton().handleNewCurrentMicrophoneDevice(WTFMove(devices[1]));
 #endif
 }

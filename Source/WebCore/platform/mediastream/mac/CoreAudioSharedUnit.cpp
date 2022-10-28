@@ -343,8 +343,14 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
         return err;
     }
 
-    m_shouldUpdateMicrophoneSampleBufferSize = false;
-    m_microphoneSampleBuffer = AudioSampleBufferList::create(microphoneProcFormat, preferredIOBufferSize() * 2);
+    auto bufferSize = preferredIOBufferSize();
+    if (m_minimumMicrophoneSampleFrames) {
+        auto minBufferSize = *m_minimumMicrophoneSampleFrames * microphoneProcFormat.mBytesPerPacket;
+        if (minBufferSize > bufferSize)
+            bufferSize = minBufferSize;
+        m_minimumMicrophoneSampleFrames = { };
+    }
+    m_microphoneSampleBuffer = AudioSampleBufferList::create(microphoneProcFormat, bufferSize * 2);
     m_microphoneProcFormat = microphoneProcFormat;
 
     return noErr;
@@ -433,8 +439,6 @@ OSStatus CoreAudioSharedUnit::speakerCallback(void *inRefCon, AudioUnitRenderAct
 
 OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlags& ioActionFlags, const AudioTimeStamp& timeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList* /*ioData*/)
 {
-    ++m_microphoneProcsCalled;
-
     if (m_isReconfiguring)
         return false;
 
@@ -443,15 +447,18 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     AudioBufferList& bufferList = m_microphoneSampleBuffer->bufferList();
     if (auto err = m_ioUnit->render(&ioActionFlags, &timeStamp, inBusNumber, inNumberFrames, &bufferList)) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::processMicrophoneSamples(%p) AudioUnitRender failed with error %d (%.4s), bufferList size %d, inNumberFrames %d ", this, (int)err, (char*)&err, (int)bufferList.mBuffers[0].mDataByteSize, (int)inNumberFrames);
-        if (err == kAudio_ParamError && !m_shouldUpdateMicrophoneSampleBufferSize) {
-            m_shouldUpdateMicrophoneSampleBufferSize = true;
+        if (err == kAudio_ParamError && !m_minimumMicrophoneSampleFrames) {
+            m_minimumMicrophoneSampleFrames = inNumberFrames;
             // Our buffer might be too small, the preferred buffer size or sample rate might have changed.
-            callOnMainThread([] {
-                CoreAudioSharedUnit::singleton().reconfigure();
+            callOnMainThread([weakThis = WeakPtr { *this }] {
+                if (weakThis)
+                    weakThis->reconfigure();
             });
         }
         return err;
     }
+
+    ++m_microphoneProcsCalled;
 
     if (!isProducingMicrophoneSamples())
         return noErr;
@@ -563,7 +570,7 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     m_ioUnitStarted = true;
 
-    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval());
+    m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(isProducingMicrophoneSamples()));
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
 
@@ -574,7 +581,7 @@ void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
 {
     if (!isProducingData())
         return;
-    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval());
+    m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(isProducingMicrophoneSamples()));
 }
 
 void CoreAudioSharedUnit::validateOutputDevice(uint32_t currentOutputDeviceID)
