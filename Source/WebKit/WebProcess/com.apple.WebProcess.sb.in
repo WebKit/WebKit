@@ -50,7 +50,8 @@
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow file-map-executable))
 (allow file-map-executable
-    (subpath "/System/Library/Components"))
+    (subpath "/System/Library/Components")
+    (subpath "/System/Library/Video/Plug-Ins"))
 #else
     (allow file-map-executable)
 #endif
