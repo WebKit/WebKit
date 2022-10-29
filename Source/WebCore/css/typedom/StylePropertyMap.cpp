@@ -28,6 +28,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "Document.h"
 
 namespace WebCore {
 

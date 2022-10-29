@@ -34,6 +34,8 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 class SVGCursorElement;
 
+enum class LoadedFromOpaqueSource : uint8_t;
+
 class StyleCursorImage final : public StyleMultiImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:

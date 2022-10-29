@@ -30,6 +30,7 @@
 
 #include "RemoteInspectorMessageParser.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace Inspector {
 

@@ -31,6 +31,7 @@
 #include "CSSToLengthConversionData.h"
 #include "ColorFromPrimitiveValue.h"
 #include "Document.h"
+#include "RenderStyle.h"
 #include "TransformFunctions.h"
 
 namespace WebCore {

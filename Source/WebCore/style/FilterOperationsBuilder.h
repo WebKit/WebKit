@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "FilterOperations.h"
+#include <optional>
+
 namespace WebCore {
 
 class CSSToLengthConversionData;

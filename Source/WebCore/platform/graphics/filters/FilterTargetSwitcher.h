@@ -27,6 +27,7 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
+#include <functional>
 
 namespace WebCore {
 
