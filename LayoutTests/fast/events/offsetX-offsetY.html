@@ -77,7 +77,9 @@
       positions = sumPositions(content);
       var inside = document.getElementById('inside-overflow');
       var overflow = document.getElementById('overflow');
-      clientX = positions.offsetLeft + overflow.clientLeft + content.clientWidth - inside.clientWidth - window.scrollX + offsetX;
+      var borderWidth = 2;
+      var scrollbarWidth = overflow.offsetWidth - overflow.clientWidth - 2*borderWidth;
+      clientX = positions.offsetLeft + overflow.clientLeft + content.clientWidth - scrollbarWidth - inside.clientWidth - window.scrollX + offsetX;
       dispatchEvent(clientX, clientY, 'inside-overflow', offsetX, offsetY);
 
       offsetX = 11;

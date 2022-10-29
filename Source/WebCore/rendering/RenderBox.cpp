@@ -5084,7 +5084,7 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 
     if (!m_overflow)
         m_overflow = adoptRef(new RenderOverflow(clientBox, borderBoxRect()));
-    
+
     m_overflow->addLayoutOverflow(overflowRect);
 }
 
@@ -5094,8 +5094,12 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
     if (borderBox.contains(rect) || rect.isEmpty())
         return;
         
-    if (!m_overflow)
-        m_overflow = adoptRef(new RenderOverflow(flippedClientBoxRect(), borderBox));
+    if (!m_overflow) {
+        LayoutRect clientBox = flippedClientBoxRect();
+        if (style().shouldPlaceVerticalScrollbarOnLeft())
+            clientBox.move(-verticalScrollbarWidth(), 0);
+        m_overflow = adoptRef(new RenderOverflow(clientBox, borderBox));
+    }
     
     m_overflow->addVisualOverflow(rect);
 }
