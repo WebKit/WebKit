@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<svg id="svg" version="1.1" xmlns="http://www.w3.org/2000/svg" style="background-color: rgb(232, 232, 237);" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200" viewBox="-4 -4 8 8">
+  <circle cx="0" cy="1" r="2" stroke="red" fill="none">
+    <animateTransform
+      attributeName="transform"
+      attributeType="XML"
+      type="rotate"
+      from="0"
+      to="360"
+      begin="0s"
+      dur="1s"
+      repeatCount="indefinite"/>
+  </circle>
+</svg>
+
+<script>
+description("This test ensures that animateTransform SVG animations are paused and resumed when the page-wide image animation setting is toggled.");
+window.jsTestIsAsync = true;
+
+var svgElement, initialAnimateTransformMatrix;
+window.onload = function() {
+  if (!window.internals)
+    return;
+  debug("Disabling animations.");
+  window.internals.settings.setImageAnimationControlEnabled(true);
+  window.internals.setImageAnimationEnabled(false);
+
+  svgElement = document.getElementById("svg");
+  setTimeout(() => {
+    svgElement.setCurrentTime(0);
+    initialAnimateTransformMatrix = getAnimateTransformMatrix(svgElement);
+
+    // Allow some time to pass.
+    setTimeout(() => {
+      // After 50ms, the animation should not have progressed because the page-wide image animation setting is disabled.
+      verifyAnimationIsPaused(true);
+
+      debug("Enabling animations.");
+      // Re-enable animations and allow time to pass so they can progress.
+      internals.setImageAnimationEnabled(true);
+      setTimeout(() => {
+        verifyAnimationIsPaused(false);
+        internals.clearMemoryCache();
+        finishJSTest();
+      }, 50);
+    }, 50);
+  }, 50)
+};
+
+// Hardcoded to the structure of #svg. If you change the markup, you must also change this function.
+function getAnimateTransformMatrix(element) {
+  return element.children[0].transform.animVal.getItem(0).matrix;
+}
+
+function svgMatricesAreEqual(matrixA, matrixB) {
+  return matrixA.a === matrixB.a
+    && matrixA.b === matrixB.b
+    && matrixA.c === matrixB.c
+    && matrixA.d === matrixB.d
+    && matrixA.e === matrixB.e
+    && matrixA.f === matrixB.f;
+}
+
+function verifyAnimationIsPaused(expectPaused) {
+  shouldBe("svgMatricesAreEqual(getAnimateTransformMatrix(svgElement), initialAnimateTransformMatrix)", expectPaused ? "true" : "false");
+  debug("");
+}
+</script>
+</body>
+</html>
+

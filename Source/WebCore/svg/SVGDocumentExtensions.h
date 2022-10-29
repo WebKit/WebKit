@@ -48,6 +48,7 @@ public:
 
     void addTimeContainer(SVGSVGElement&);
     void removeTimeContainer(SVGSVGElement&);
+    WEBCORE_EXPORT Vector<Ref<SVGSVGElement>> allSVGSVGElements() const;
 
     void addResource(const AtomString& id, RenderSVGResourceContainer&);
     void removeResource(const AtomString& id);

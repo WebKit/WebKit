@@ -25,15 +25,21 @@
 
 #pragma once
 
+#include <atomic>
 #include <cstring>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringView.h>
 
-// This macro is helpful for testing how many intermediate Strings are created while evaluating an
+#if defined(NDEBUG)
+#define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() do { } while (0)
+#else
+#define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() do { ++WTF::Detail::wtfStringCopyCount; } while (0)
+namespace WTF::Detail {
+// This variable is helpful for testing how many intermediate Strings are created while evaluating an
 // expression containing operator+.
-#ifndef WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING
-#define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() ((void)0)
+WTF_EXPORT_PRIVATE extern std::atomic<int> wtfStringCopyCount;
+}
 #endif
 
 namespace WTF {

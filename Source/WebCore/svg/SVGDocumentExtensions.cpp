@@ -42,10 +42,15 @@
 
 namespace WebCore {
 
+static bool animationsPausedForDocument(Document& document)
+{
+    return !document.page() || !document.page()->isVisible() || !document.page()->imageAnimationEnabled();
+}
+
 SVGDocumentExtensions::SVGDocumentExtensions(Document& document)
     : m_document(document)
     , m_resourcesCache(makeUnique<SVGResourcesCache>())
-    , m_areAnimationsPaused(!document.page() || !document.page()->isVisible())
+    , m_areAnimationsPaused(animationsPausedForDocument(document))
 {
 }
 
@@ -61,6 +66,11 @@ void SVGDocumentExtensions::addTimeContainer(SVGSVGElement& element)
 void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement& element)
 {
     m_timeContainers.remove(element);
+}
+
+Vector<Ref<SVGSVGElement>> SVGDocumentExtensions::allSVGSVGElements() const
+{
+    return copyToVectorOf<Ref<SVGSVGElement>>(m_timeContainers);
 }
 
 void SVGDocumentExtensions::addResource(const AtomString& id, RenderSVGResourceContainer& resource)
@@ -108,6 +118,10 @@ void SVGDocumentExtensions::pauseAnimations()
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
+    // If animations are paused at the document level, don't allow `this` to be unpaused.
+    if (animationsPausedForDocument(m_document))
+        return;
+
     for (auto& container : m_timeContainers)
         container.unpauseAnimations();
     m_areAnimationsPaused = false;

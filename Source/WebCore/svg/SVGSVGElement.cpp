@@ -501,6 +501,16 @@ void SVGSVGElement::unpauseAnimations()
         m_timeContainer->resume();
 }
 
+bool SVGSVGElement::resumePausedAnimationsIfNeeded(const IntRect& visibleRect)
+{
+    bool animationEnabled = document().page() ? document().page()->imageAnimationEnabled() : true;
+    if (!animationEnabled || !renderer() || !renderer()->isVisibleInDocumentRect(visibleRect))
+        return false;
+
+    unpauseAnimations();
+    return true;
+}
+
 bool SVGSVGElement::animationsPaused() const
 {
     return m_timeContainer->isPaused();

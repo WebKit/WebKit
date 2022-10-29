@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
- * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "config.h"
 #include "MarkupAccumulator.h"
 
+#include "Attr.h"
 #include "CDATASection.h"
 #include "Comment.h"
 #include "CommonAtomStrings.h"
@@ -599,7 +600,8 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
         result.append("<![CDATA[", downcast<CDATASection>(node).data(), "]]>");
         break;
     case Node::ATTRIBUTE_NODE:
-        ASSERT_NOT_REACHED();
+        // Only XMLSerializer can pass an Attr. So, |documentIsHTML| flag is false.
+        appendAttributeValue(result, downcast<Attr>(node).value(), false);
         break;
     }
 }

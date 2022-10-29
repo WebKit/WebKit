@@ -55,7 +55,10 @@ public:
     bool hasRelativeWidth() const final;
     bool hasRelativeHeight() const final;
 
+    // Start the animation from the beginning.
     void startAnimation() final;
+    // Resume the animation from where it was last stopped.
+    void resumeAnimation();
     void stopAnimation() final;
     void resetAnimation() final;
     bool isAnimating() const final;

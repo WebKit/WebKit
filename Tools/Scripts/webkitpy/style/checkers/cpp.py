@@ -3598,6 +3598,10 @@ def _classify_include(filename, include, is_system, include_state):
     target_base = FileInfo(filename).base_name()
     include_base = FileInfo(include).base_name()
 
+    # Test .cpp, .mm, .c files do not have primary header files.
+    if any(target_base.endswith(suffix) for suffix in ['Test', 'Tests']):
+        return _OTHER_HEADER
+
     # If we haven't encountered a primary header, then be lenient in checking.
     if not include_state.visited_primary_section():
         if target_base.find(include_base) != -1:

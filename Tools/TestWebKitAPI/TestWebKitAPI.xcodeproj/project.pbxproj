@@ -582,7 +582,6 @@
 		7BF5017828E55F7A0008BB16 /* StackTraceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */; };
 		7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3965051CDD74F90094DBB8 /* ColorTests.cpp */; };
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
-		7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */; };
 		7C83DE991D0A590C00FEBCF3 /* AtomString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomString.cpp */; };
 		7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */; };
 		7C83DEA01D0A590C00FEBCF3 /* CheckedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */; };
@@ -648,7 +647,6 @@
 		7C8BFF7123C0107A00C009B3 /* HexNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BFF7023C0106700C009B3 /* HexNumber.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
 		7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */; };
-		7CBD5A2322DE42A6004A9E32 /* WTFStringUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */; };
 		7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CCB4DA71C83AE7300CC6918 /* PageGroup.cpp */; };
 		7CCB99231D3B4A46003922F6 /* open-multiple-external-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */; };
 		7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
@@ -2752,7 +2750,6 @@
 		7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringStrikethrough.html; sourceTree = "<group>"; };
 		7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensions.cpp; sourceTree = "<group>"; };
 		7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSObjectPtr.cpp; sourceTree = "<group>"; };
-		7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WTFStringUtilities.cpp; sourceTree = "<group>"; };
 		7CC3E1FA197E234100BE6252 /* UserContentController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentController.mm; sourceTree = "<group>"; };
 		7CCB4DA71C83AE7300CC6918 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		7CCB99201D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInitiatedActionInNavigationAction.mm; sourceTree = "<group>"; };
@@ -3635,7 +3632,6 @@
 				7BB754AF274E39A100D00EC1 /* TestUtilities.h */,
 				7C83E0361D0A5F7000FEBCF3 /* Utilities.h */,
 				7BA3936D271EEC530015911C /* WebCoreUtilities.h */,
-				7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */,
 				44A622C114A0E2B60048515B /* WTFStringUtilities.h */,
 			);
 			name = Source;
@@ -6081,7 +6077,6 @@
 				57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */,
 				46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */,
 				7C83DF631D0A590C00FEBCF3 /* WTFString.cpp in Sources */,
-				7CBD5A2322DE42A6004A9E32 /* WTFStringUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6546,7 +6541,6 @@
 				CD27A1C123C661ED006E11DD /* WKWebViewPausePlayingAudioTests.mm in Sources */,
 				E520A36B25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm in Sources */,
 				3545E58927E2AD1300F1910E /* WritingModeTests.cpp in Sources */,
-				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
 				C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */,
 				5C581D3227C8A01C006B3BC4 /* YouTubePluginReplacement.cpp in Sources */,
 			);

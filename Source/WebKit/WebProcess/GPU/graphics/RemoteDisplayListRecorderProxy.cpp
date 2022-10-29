@@ -467,7 +467,7 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(DecomposedGlyphs& decompo
     return true;
 }
 
-void RemoteDisplayListRecorderProxy::flushContext(GraphicsContextFlushIdentifier identifier)
+void RemoteDisplayListRecorderProxy::flushContext(DisplayListRecorderFlushIdentifier identifier)
 {
     send(Messages::RemoteDisplayListRecorder::FlushContext(identifier));
 }

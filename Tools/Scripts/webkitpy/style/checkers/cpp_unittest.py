@@ -3636,6 +3636,20 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "bar.h"\n',
                                          '')
 
+        # .. for tests even if the base name of an include is the prefix of the includee base name.
+        self.assert_language_rules_check('FooTest.cpp',
+                                         '#include "config.h"\n'
+                                         '\n'
+                                         '#include "Foo.h"\n',
+                                         '')
+
+        # .. for tests even if the base name of an include is contained in the includee base name.
+        self.assert_language_rules_check('FooTests.cpp',
+                                         '#include "config.h"\n'
+                                         '\n'
+                                         '#include "Test.h"\n',
+                                         '')
+
         # Pretend that header files exist.
         os.path.isfile = lambda filename: True
 

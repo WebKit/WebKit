@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "DisplayListRecorderFlushIdentifier.h"
 #include "ImageBufferBackendHandle.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"
@@ -83,7 +84,7 @@ public:
 
     // Messages to be sent.
     void didCreateImageBufferBackend(ImageBufferBackendHandle, QualifiedRenderingResourceIdentifier, RemoteDisplayListRecorder&);
-    void didFlush(WebCore::GraphicsContextFlushIdentifier, QualifiedRenderingResourceIdentifier);
+    void didFlush(DisplayListRecorderFlushIdentifier, QualifiedRenderingResourceIdentifier);
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);

@@ -2864,13 +2864,10 @@ void FrameView::resumeVisibleImageAnimations(const IntRect& visibleRect)
         renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
 }
 
-void FrameView::repaintVisibleImageAnimations(const IntRect& visibleRect)
+void FrameView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
 {
-    if (visibleRect.isEmpty())
-        return;
-
     if (auto* renderView = frame().contentRenderer())
-        renderView->repaintImageAnimationsIfNeeded(visibleRect);
+        renderView->updatePlayStateForAllAnimations(visibleRect);
 }
 
 void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect)
@@ -2908,10 +2905,10 @@ void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
     });
 }
 
-void FrameView::repaintVisibleImageAnimationsIncludingSubframes()
+void FrameView::updatePlayStateForAllAnimationsIncludingSubframes()
 {
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
-        frameView.repaintVisibleImageAnimations(visibleRect);
+        frameView.updatePlayStateForAllAnimations(visibleRect);
     });
 }
 

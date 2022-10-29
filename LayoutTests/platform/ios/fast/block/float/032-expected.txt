@@ -16,7 +16,7 @@ layer at (0,0) size 800x1036
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,260) size 784x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
-        RenderImage {IMG} at (55,5) size 100x100 [bgcolor=#800080]
+        RenderImage {IMG} at (105,5) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,370) size 784x20
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,390) size 784x110 [border: (5px solid #000000)]
@@ -38,7 +38,7 @@ layer at (0,0) size 800x1036
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,780) size 784x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
-        RenderTextControl {INPUT} at (55,5) size 113x108 [bgcolor=#800080] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (105,5) size 113x108 [bgcolor=#800080] [border: (1px solid #3C3C4399)]
       RenderBlock (anonymous) at (0,890) size 784x20
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,910) size 784x110 [border: (5px solid #000000)]
@@ -49,7 +49,7 @@ layer at (220,579) size 100x14
   RenderBlock {DIV} at (6,46) size 101x15
 layer at (320,709) size 100x14
   RenderBlock {DIV} at (6,46) size 101x15
-layer at (70,839) size 100x14
+layer at (120,839) size 100x14
   RenderBlock {DIV} at (6,46) size 101x15
 layer at (70,969) size 100x14
   RenderBlock {DIV} at (6,46) size 101x15

@@ -401,6 +401,14 @@ void SVGImage::startAnimation()
     rootElement->setCurrentTime(0);
 }
 
+void SVGImage::resumeAnimation()
+{
+    auto rootElement = this->rootElement();
+    if (!rootElement || !rootElement->animationsPaused())
+        return;
+    rootElement->unpauseAnimations();
+}
+
 void SVGImage::stopAnimation()
 {
     m_startAnimationTimer.stop();

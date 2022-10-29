@@ -1994,7 +1994,7 @@ void Page::setImageAnimationEnabled(bool enabled)
     if (m_imageAnimationEnabled == enabled)
         return;
     m_imageAnimationEnabled = enabled;
-    repaintAnimatedImages();
+    updatePlayStateForAllAnimations();
 }
 
 void Page::suspendScriptedAnimations()
@@ -4096,10 +4096,10 @@ void Page::forceRepaintAllFrames()
     }
 }
 
-void Page::repaintAnimatedImages()
+void Page::updatePlayStateForAllAnimations()
 {
     if (auto* view = mainFrame().view())
-        view->repaintVisibleImageAnimationsIncludingSubframes();
+        view->updatePlayStateForAllAnimationsIncludingSubframes();
 }
 
 ScreenOrientationManager* Page::screenOrientationManager() const

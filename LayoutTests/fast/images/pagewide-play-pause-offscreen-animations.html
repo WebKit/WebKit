@@ -1,0 +1,150 @@
+<!-- webkit-test-runner [ runSingly=true ] -->
+<!-- Always run this test in a clean testing environment with runSingly=true. Without doing this, state preserved between
+     each run can cause repeated iterations of this test to fail. -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+#css-background-svg-container {
+  width: 100px;
+  height: 60px;
+  background: url('data:image/svg+xml;utf8,<svg id="css-background-svg" xmlns="http://www.w3.org/2000/svg"><rect id="background-image-svg-rect" width="30" height="30" fill="green"><animate attributeName="x" from="0" to="200" dur="5s" repeatCount="indefinite"/></rect></svg>');
+}
+</style>
+</head>
+<body>
+<div id="margin-bottom-anchor"></div>
+
+<svg id="inline-svg" xmlns="http://www.w3.org/2000/svg">
+  <rect id="svg-rect" width="30" height="30" fill="green">
+    <animate attributeName="x" from="0" to="30" dur="5s" repeatCount="indefinite"/>
+  </rect>
+</svg>
+
+<div id="css-background-svg-container"></div>
+
+<img id="img-src-svg-container" src=
+'data:image/svg+xml;utf8,
+  <svg id="img-src-svg" xmlns="http://www.w3.org/2000/svg">
+    <rect width="30" height="30" fill="green">
+      <animate attributeName="x" from="0" to="30" dur="5s" repeatCount="indefinite"/>
+    </rect>
+  </svg>
+'>
+
+<iframe id="iframe-srcdoc-svg-container" srcdoc='
+  <svg id="iframe-srcdoc-svg" xmlns="http://www.w3.org/2000/svg">
+    <rect width="30" height="30" fill="green">
+      <animate attributeName="x" from="0" to="30" dur="5s" repeatCount="indefinite"/>
+    </rect>
+  </svg>
+'></iframe>
+
+<img id="gif-element" src="resources/animation.gif" />
+
+<script>
+var testOutput = "This test ensures that animations resumed off-screen don't start playing until they become visible in the viewport.\n\n";
+window.jsTestIsAsync = true;
+
+window.onload = function() {
+  if (!window.internals)
+    return;
+  internals.settings.setImageAnimationControlEnabled(true);
+
+  setTimeout(async () => {
+    testOutput += "Verifying animations are initially playing.\n\n";
+    await verifyAnimationsArePaused(false);
+
+    testOutput += "Pausing animations page-wide.\n\n";
+    internals.setImageAnimationEnabled(false);
+    await verifyAnimationsArePaused(true);
+
+    testOutput += "Moving animations off-screen and enabling page-wide animation (which should have no effect for off-screen animations).\n\n";
+    document.getElementById("margin-bottom-anchor").style.marginBottom = "2000px";
+    // Wait for the page to update.
+    await new Promise(resolve => setTimeout(resolve, 10));
+    internals.setImageAnimationEnabled(true);
+    internals.settings.setImageAnimationControlEnabled(false);
+    await verifyAnimationsArePaused(true);
+
+    testOutput += "Scrolling to make animations visible again. They should resume automatically because page-wide animation is enabled.\n\n";
+    window.scrollBy(0, 2000);
+    await verifyAnimationsArePaused(false);
+
+    debug(testOutput);
+    internals.clearMemoryCache();
+    finishJSTest();
+  });
+};
+
+var gifElement = document.getElementById("gif-element");
+var svgSvgElement;
+async function verifyAnimationsArePaused(expectPaused) {
+  for (const element of internals.allSVGSVGElements())
+    element.setCurrentTime(0);
+
+  // Allow time to pass to see if the animations progress.
+  await new Promise(resolve => setTimeout(resolve, 50));
+
+  for (const element of sortedSVGSVGElements()) {
+    svgSvgElement = element;
+    testOutput += `Testing #${svgSvgElement.id}.\n`;
+
+    if (!(svgSvgElement.children[0] instanceof SVGRectElement))
+      testOutput += `FAIL: 'children[0]' of ${svgSvgElement.id} should've been an SVGRectElement but wasn't, so this test won't behave as expected.\n`;
+
+    testOutput += expect(`svgSvgElement.children[0].x.animVal.value ${expectPaused ? "===" : "!=="} 0`, "true");
+  }
+
+  testOutput += `Testing #${gifElement.id}.\n`;
+  await waitFor(() => internals.isImageAnimating(gifElement) === !expectPaused);
+  testOutput += expect("internals.isImageAnimating(gifElement)", `${!expectPaused}`);
+  testOutput += "\n";
+}
+
+// IntersectionObserver is not necessary for this test, but the output is helpful when reading the -expected.txt file.
+let hadFirstObservation = false;
+const viewportVisibilityObserver = new IntersectionObserver(function (entries) {
+  if (!hadFirstObservation) {
+    hadFirstObservation = true;
+    return;
+  }
+
+  for (const entry of entries) {
+    if (entry.isIntersecting)
+      testOutput += `#${entry.target.id} is now visible in the viewport.\n`;
+    else
+      testOutput += `#${entry.target.id} is no longer visible in the viewport.\n`;
+  }
+  testOutput += "\n";
+});
+
+for (const id of ["inline-svg", "css-background-svg-container", "img-src-svg-container", "iframe-srcdoc-svg-container", gifElement.id])
+  viewportVisibilityObserver.observe(document.getElementById(id));
+
+function sortedSVGSVGElements() {
+  // Sort the SVG elements by ID so the test output is consistent from run to run.
+  return internals.allSVGSVGElements().sort((elementA, elementB) => elementA.id.localeCompare(elementB.id));
+}
+
+function expect(expression, expectedValue) {
+  const evalExpression = `${expression} === ${expectedValue}`;
+  if (eval(evalExpression))
+    return `PASS: ${expression} is ${expectedValue}\n`;
+  return `FAIL: ${expression} didn't equal ${expectedValue}; was ${eval(expression)}\n`;
+}
+
+function waitFor(condition) {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (condition()) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 5);
+  });
+}
+</script>
+</body>
+</html>

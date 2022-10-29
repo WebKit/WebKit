@@ -572,6 +572,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     readonly attribute boolean areSVGAnimationsPaused;
     double svgAnimationsInterval(SVGSVGElement element);
+    sequence<SVGSVGElement> allSVGSVGElements();
 
     boolean testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
 

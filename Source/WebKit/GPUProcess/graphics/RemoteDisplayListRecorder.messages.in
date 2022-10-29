@@ -94,7 +94,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ApplyFillPattern()
 #endif
     ApplyDeviceScaleFactor(float scaleFactor)
-    FlushContext(WebCore::GraphicsContextFlushIdentifier identifier)
+    FlushContext(WebKit::DisplayListRecorderFlushIdentifier identifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)
