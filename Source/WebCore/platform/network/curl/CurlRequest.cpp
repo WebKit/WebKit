@@ -756,11 +756,12 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
     if (!networkLoadMetrics)
         return NetworkLoadMetrics();
 
+    networkLoadMetrics->responseBodyDecodedSize = m_totalReceivedSize;
+
     if (m_captureExtraMetrics) {
         m_curlHandle->addExtraNetworkLoadMetrics(*networkLoadMetrics);
         if (auto* additionalMetrics = networkLoadMetrics->additionalNetworkLoadMetricsForWebInspector.get())
             additionalMetrics->requestHeaders = m_requestHeaders;
-        networkLoadMetrics->responseBodyDecodedSize = m_totalReceivedSize;
     }
 
     return WTFMove(*networkLoadMetrics);

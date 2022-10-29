@@ -793,6 +793,7 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
     double appConnect = 0.0;
     double startTransfer = 0.0;
     long version = 0;
+    curl_off_t responseBodySize = 0;
 
     if (!m_handle)
         return std::nullopt;
@@ -814,6 +815,10 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
         return std::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_DOWNLOAD_T, &responseBodySize);
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
@@ -842,6 +847,8 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
     else if (version == CURL_HTTP_VERSION_3)
         networkLoadMetrics.protocol = httpVersion3;
 
+    networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
+
     return networkLoadMetrics;
 }
 
@@ -850,7 +857,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     long requestHeaderSize = 0;
     curl_off_t requestBodySize = 0;
     long responseHeaderSize = 0;
-    curl_off_t responseBodySize = 0;
     char* ip = nullptr;
     long port = 0;
 
@@ -867,10 +873,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     if (errorCode != CURLE_OK)
         return;
 
-    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_DOWNLOAD_T, &responseBodySize);
-    if (errorCode != CURLE_OK)
-        return;
-
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_IP, &ip);
     if (errorCode != CURLE_OK)
         return;
@@ -878,8 +880,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_PORT, &port);
     if (errorCode != CURLE_OK)
         return;
-
-    networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
 
     auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
     if (!m_tlsConnectionInfo) {

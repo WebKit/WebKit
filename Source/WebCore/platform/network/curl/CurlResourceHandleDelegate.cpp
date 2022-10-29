@@ -181,9 +181,15 @@ void CurlResourceHandleDelegate::curlDidFailWithError(CurlRequest&, ResourceErro
 
 void CurlResourceHandleDelegate::updateNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetrics)
 {
+    if (!d()->m_startTime)
+        d()->m_startTime = networkLoadMetrics.fetchStart;
+
     m_handle.checkTAO(m_response);
 
+    networkLoadMetrics.redirectStart = m_handle.startTimeBeforeRedirects();
+    networkLoadMetrics.redirectCount = m_handle.redirectCount();
     networkLoadMetrics.failsTAOCheck = m_handle.failsTAOCheck();
+    networkLoadMetrics.hasCrossOriginRedirect = m_handle.hasCrossOriginRedirect();
 }
 
 } // namespace WebCore
