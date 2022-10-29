@@ -20,7 +20,6 @@ endmacro()
 set(TestWTF_SOURCES
     Counters.cpp
     TestsController.cpp
-    WTFStringUtilities.cpp
 
     Tests/WTF/AtomString.cpp
     Tests/WTF/Bitmap.cpp
@@ -141,7 +140,6 @@ WEBKIT_EXECUTABLE_DECLARE(TestWTF)
 if (ENABLE_JAVASCRIPTCORE)
     set(TestJavaScriptCore_SOURCES
         TestsController.cpp
-        WTFStringUtilities.cpp
 
         Tests/JavaScriptCore/DisallowVMEntry.cpp
         Tests/JavaScriptCore/InspectorConsoleMessage.cpp
@@ -171,7 +169,6 @@ endif ()
 if (ENABLE_WEBCORE)
     set(TestWebCore_SOURCES
         TestsController.cpp
-        WTFStringUtilities.cpp
 
         Tests/WebCore/AffineTransform.cpp
         Tests/WebCore/CSSParser.cpp
@@ -229,7 +226,6 @@ endif ()
 if (ENABLE_WEBKIT_LEGACY)
     set(TestWebKitLegacy_SOURCES
         TestsController.cpp
-        WTFStringUtilities.cpp
     )
 
     set(TestWebKitLegacy_LIBRARIES
@@ -335,7 +331,6 @@ if (ENABLE_WEBKIT)
         JavaScriptTest.cpp
         PlatformUtilities.cpp
         TestsController.cpp
-        WTFStringUtilities.cpp
     )
     target_compile_definitions(TestWebKitAPIBase PRIVATE BUILDING_TestWebKit)
     target_include_directories(TestWebKitAPIBase PRIVATE ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES})
