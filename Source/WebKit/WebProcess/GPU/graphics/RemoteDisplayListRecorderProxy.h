@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DisplayListRecorderFlushIdentifier.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DrawGlyphsRecorder.h>
 #include <WebCore/GraphicsContext.h>
@@ -44,7 +45,7 @@ public:
 
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
-    void flushContext(WebCore::GraphicsContextFlushIdentifier);
+    void flushContext(DisplayListRecorderFlushIdentifier);
 
 private:
     template<typename T> void send(T&& message);

@@ -1601,7 +1601,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GradientColorStop.h
     platform/graphics/GradientColorStops.h
     platform/graphics/GraphicsContext.h
-    platform/graphics/GraphicsContextFlushIdentifier.h
     platform/graphics/GraphicsContextGL.h
     platform/graphics/GraphicsContextGLAttributes.h
     platform/graphics/GraphicsContextGLState.h

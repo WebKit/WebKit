@@ -51,12 +51,12 @@ public:
 
     ~RemoteImageBufferProxy();
 
-    WebCore::GraphicsContextFlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
+    DisplayListRecorderFlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
 
-    void waitForDidFlushOnSecondaryThread(WebCore::GraphicsContextFlushIdentifier);
+    void waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier);
 
     WebCore::ImageBufferBackend* ensureBackendCreated() const final;
-    void didFlush(WebCore::GraphicsContextFlushIdentifier) final;
+    void didFlush(DisplayListRecorderFlushIdentifier);
 
     void clearBackend();
     void backingStoreWillChange();
@@ -96,10 +96,10 @@ private:
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
     void prepareForBackingStoreChange();
 
-    WebCore::GraphicsContextFlushIdentifier m_sentFlushIdentifier;
+    DisplayListRecorderFlushIdentifier m_sentFlushIdentifier;
     Lock m_receivedFlushIdentifierLock;
     Condition m_receivedFlushIdentifierChangedCondition;
-    WebCore::GraphicsContextFlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
+    DisplayListRecorderFlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
     bool m_needsFlush { false };

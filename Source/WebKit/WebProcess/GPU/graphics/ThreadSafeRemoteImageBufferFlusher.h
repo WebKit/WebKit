@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/GraphicsContextFlushIdentifier.h>
+#include "DisplayListRecorderFlushIdentifier.h"
 #include <WebCore/ImageBufferBackend.h>
 
 namespace WebKit {
@@ -43,7 +43,7 @@ public:
 
 private:
     Ref<RemoteImageBufferProxy> m_imageBuffer;
-    WebCore::GraphicsContextFlushIdentifier m_targetFlushIdentifier;
+    DisplayListRecorderFlushIdentifier m_targetFlushIdentifier;
 };
 
 } // namespace WebKit

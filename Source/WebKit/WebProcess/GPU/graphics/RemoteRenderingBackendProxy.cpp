@@ -400,7 +400,7 @@ void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackend
     imageBuffer->didCreateImageBufferBackend(WTFMove(handle));
 }
 
-void RemoteRenderingBackendProxy::didFlush(GraphicsContextFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier))
         imageBuffer->didFlush(flushIdentifier);
