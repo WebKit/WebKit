@@ -87,8 +87,8 @@ public:
     const ShadowData* next() const { return m_next.get(); }
     void setNext(std::unique_ptr<ShadowData>&& shadow) { m_next = WTFMove(shadow); }
 
-    void adjustRectForShadow(LayoutRect&, int additionalOutlineSize = 0) const;
-    void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
+    void adjustRectForShadow(LayoutRect&) const;
+    void adjustRectForShadow(FloatRect&) const;
 
 private:
     void deleteNextLinkedListWithoutRecursion();

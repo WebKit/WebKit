@@ -78,10 +78,10 @@ bool ShadowData::operator==(const ShadowData& o) const
     return true;
 }
 
-static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
+static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
 {
     do {
-        LayoutUnit extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value()) + additionalOutlineSize;
+        LayoutUnit extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value());
         if (shadow->style() == ShadowStyle::Normal) {
             shadowLeft = std::min(LayoutUnit(shadow->x().value()) - extentAndSpread, shadowLeft);
             shadowRight = std::max(LayoutUnit(shadow->x().value()) + extentAndSpread, shadowRight);
@@ -93,26 +93,26 @@ static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit ad
     } while (shadow);
 }
 
-void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize) const
+void ShadowData::adjustRectForShadow(LayoutRect& rect) const
 {
     LayoutUnit shadowLeft;
     LayoutUnit shadowRight;
     LayoutUnit shadowTop;
     LayoutUnit shadowBottom;
-    calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
+    calculateShadowExtent(this, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);
     rect.setWidth(rect.width() - shadowLeft + shadowRight);
     rect.setHeight(rect.height() - shadowTop + shadowBottom);
 }
 
-void ShadowData::adjustRectForShadow(FloatRect& rect, int additionalOutlineSize) const
+void ShadowData::adjustRectForShadow(FloatRect& rect) const
 {
     LayoutUnit shadowLeft = 0;
     LayoutUnit shadowRight = 0;
     LayoutUnit shadowTop = 0;
     LayoutUnit shadowBottom = 0;
-    calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
+    calculateShadowExtent(this, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);
     rect.setWidth(rect.width() - shadowLeft + shadowRight);
