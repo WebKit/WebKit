@@ -582,10 +582,14 @@ const struct xdg_toplevel_listener WindowViewBackend::XDGStable::s_toplevelListe
         auto& window = *static_cast<WindowViewBackend*>(data);
         window.removeActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
     },
+#ifdef XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION
     // configure_bounds
     [](void*, struct xdg_toplevel*, int32_t, int32_t) { },
+#endif
+#ifdef XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION
     // wm_capabilities
     [](void*, struct xdg_toplevel*, struct wl_array*) { },
+#endif
 };
 
 const struct zxdg_surface_v6_listener WindowViewBackend::XDGUnstable::s_surfaceListener = {
