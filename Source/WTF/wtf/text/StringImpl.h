@@ -401,8 +401,11 @@ public:
     WTF_EXPORT_PRIVATE static StaticStringImpl s_emptyAtomString;
     ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
 
-    // FIXME: Does this really belong in StringImpl?
-    template<typename SourceCharacterType, typename DestinationCharacterType> static void copyCharacters(DestinationCharacterType* destination, const SourceCharacterType* source, unsigned numCharacters);
+
+    // FIXME: Do these functions really belong in StringImpl?
+    template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length);
+    static void copyCharacters(UChar* destination, const LChar* source, unsigned length);
+    static void copyCharacters(LChar* destination, const UChar* source, unsigned length);
     template<typename SourceCharacterType> static void iterCharacters(jsstring_iterator* iter, unsigned start, const SourceCharacterType* source, unsigned numCharacters);
 
     // Some string features, like reference counting and the atomicity flag, are not
@@ -1149,9 +1152,7 @@ inline void StringImpl::iterCharacters(jsstring_iterator* iter, unsigned start, 
     }
 }
 
-template<typename SourceCharacterType, typename DestinationCharacterType>
-inline void StringImpl::copyCharacters(DestinationCharacterType* destination, const SourceCharacterType* source, unsigned numCharacters)
-
+template<typename CharacterType> inline void StringImpl::copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length)
 {
     if (length == 1)
         *destination = *source;

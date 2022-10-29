@@ -467,11 +467,6 @@ inline String::String(RefPtr<ExternalStringImpl>&& string)
 {
 }
 
-template<size_t inlineCapacity, typename OverflowHandler> String::String(const Vector<UChar, inlineCapacity, OverflowHandler>& vector)
-    : m_impl(vector.size() ? StringImpl::create(vector.data(), vector.size()) : Ref<StringImpl> { *StringImpl::empty() })
-{
-}
-
 template<> inline const LChar* String::characters<LChar>() const
 {
     return characters8();

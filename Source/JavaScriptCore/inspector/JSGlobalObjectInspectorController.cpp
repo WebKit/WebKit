@@ -175,7 +175,7 @@ void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globa
 {
     VM& vm = globalObject->vm();
 #if ENABLE(REMOTE_INSPECTOR)
-    if (vm.isTerminationException(exception) || !m_didCreateLazyAgents || !m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
+    if (vm.isTerminationException(exception) || !m_didCreateLazyAgents || !m_globalObject.inspectorDebuggable().inspectable())
         return;
 #else
     if (vm.isTerminationException(exception) || !m_didCreateLazyAgents)

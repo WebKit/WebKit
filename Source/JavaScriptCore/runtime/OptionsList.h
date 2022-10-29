@@ -540,7 +540,6 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \
     v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
-    v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \
@@ -560,7 +559,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal.") \
     v(Bool, useWebAssemblyExceptions, true, Normal, "Allow the new section and instructions from the wasm exception handling spec.") \
     v(Bool, useWebAssemblyBranchHints, true, Normal, "Allow the new section from the wasm branch hinting spec.") \
-    \
+    v(Bool, useWebAssemblySIMD, false, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
     /* Bun Features */\
     v(Bool, showPrivateScriptsInStackTraces, false, Normal, "Show private scripts in stack traces.") \
 

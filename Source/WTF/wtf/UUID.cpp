@@ -155,21 +155,21 @@ String createVersion4UUIDString()
 
 String bootSessionUUIDString()
 {
-#if OS(DARWIN)
-    static LazyNeverDestroyed<String> bootSessionUUID;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        constexpr size_t maxUUIDLength = 37;
-        char uuid[maxUUIDLength];
-        size_t uuidLength = maxUUIDLength;
-        if (sysctlbyname("kern.bootsessionuuid", uuid, &uuidLength, nullptr, 0))
-            return;
-        bootSessionUUID.construct(static_cast<const char*>(uuid), uuidLength - 1);
-    });
-    return bootSessionUUID;
-#else
+// #if OS(DARWIN)
+//     static LazyNeverDestroyed<String> bootSessionUUID;
+//     static std::once_flag onceKey;
+//     std::call_once(onceKey, [] {
+//         constexpr size_t maxUUIDLength = 37;
+//         char uuid[maxUUIDLength];
+//         size_t uuidLength = maxUUIDLength;
+//         if (sysctlbyname("kern.bootsessionuuid", uuid, &uuidLength, nullptr, 0))
+//             return;
+//         bootSessionUUID.construct(static_cast<const char*>(uuid), uuidLength - 1);
+//     });
+//     return bootSessionUUID;
+// #else
     return String();
-#endif
+// #endif
 }
 
 bool isVersion4UUID(StringView value)
