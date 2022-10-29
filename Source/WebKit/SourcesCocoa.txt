@@ -613,8 +613,6 @@ WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
 
-WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
-
 WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm

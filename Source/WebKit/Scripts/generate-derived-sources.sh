@@ -8,7 +8,7 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit"
 
 export WebKit2="${SRCROOT}"
-export WebCoreScripts="${WEBCORE_PRIVATE_HEADERS_DIR}"
+
 
 if [ -z $1 ] || [ $1 != "sandbox-profiles-ios" ]; then
     /bin/ln -sfh "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" JavaScriptCorePrivateHeaders
