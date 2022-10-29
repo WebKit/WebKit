@@ -29,6 +29,7 @@
 #include <io.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

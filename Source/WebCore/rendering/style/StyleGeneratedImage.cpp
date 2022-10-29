@@ -24,6 +24,7 @@
 #include "config.h"
 #include "StyleGeneratedImage.h"
 
+#include "GeneratedImage.h"
 #include "RenderElement.h"
 #include "StyleResolver.h"
 

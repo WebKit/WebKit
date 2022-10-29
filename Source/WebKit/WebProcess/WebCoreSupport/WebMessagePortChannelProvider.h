@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/MessagePortChannelProvider.h>
+#include <WebCore/MessageWithMessagePorts.h>
 
 namespace WebKit {
 

@@ -36,6 +36,7 @@
 #include <windowsx.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 

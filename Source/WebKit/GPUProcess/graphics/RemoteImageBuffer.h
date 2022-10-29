@@ -27,6 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "QualifiedRenderingResourceIdentifier.h"
+#include "RemoteRenderingBackend.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include <WebCore/ImageBuffer.h>
 

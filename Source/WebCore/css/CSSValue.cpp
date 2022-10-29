@@ -75,6 +75,7 @@
 #include "CSSVariableReferenceValue.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
+#include "EventTarget.h"
 
 namespace WebCore {
 

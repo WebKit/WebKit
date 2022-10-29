@@ -27,6 +27,10 @@
 
 #define ASSERT_IS_TESTING_IPC() ASSERT(IPC::isTestingIPC(), "Untrusted connection sent invalid data. Should only happen when testing IPC.")
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 namespace IPC {
 
 // Function to check when asserting IPC-related failures, so that IPC testing skips the assertions

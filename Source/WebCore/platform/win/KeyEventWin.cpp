@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 
 #ifndef MAPVK_VSC_TO_VK_EX
 #define MAPVK_VSC_TO_VK_EX 3

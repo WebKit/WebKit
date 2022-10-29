@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGComponentTransferFunctionElement.h"
 
+#include "SVGComponentTransferFunctionElementInlines.h"
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>

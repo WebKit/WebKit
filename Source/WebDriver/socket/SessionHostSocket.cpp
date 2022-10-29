@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "SessionHost.h"
+
+#include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
 
 namespace WebDriver {

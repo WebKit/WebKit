@@ -40,8 +40,10 @@
 #include "CSSImageValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
+#include "CSSParser.h"
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
+#include "CSSVariableData.h"
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
@@ -4612,19 +4614,19 @@ const AtomString& genericFontFamily(CSSValueID ident)
 {
     switch (ident) {
     case CSSValueSerif:
-        return serifFamily.get();
+        return WebKitFontFamilyNames::serifFamily.get();
     case CSSValueSansSerif:
-        return sansSerifFamily.get();
+        return WebKitFontFamilyNames::sansSerifFamily.get();
     case CSSValueCursive:
-        return cursiveFamily.get();
+        return WebKitFontFamilyNames::cursiveFamily.get();
     case CSSValueFantasy:
-        return fantasyFamily.get();
+        return WebKitFontFamilyNames::fantasyFamily.get();
     case CSSValueMonospace:
-        return monospaceFamily.get();
+        return WebKitFontFamilyNames::monospaceFamily.get();
     case CSSValueWebkitPictograph:
-        return pictographFamily.get();
+        return WebKitFontFamilyNames::pictographFamily.get();
     case CSSValueSystemUi:
-        return systemUiFamily.get();
+        return WebKitFontFamilyNames::systemUiFamily.get();
     default:
         return emptyAtom();
     }

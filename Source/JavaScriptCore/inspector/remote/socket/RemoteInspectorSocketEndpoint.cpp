@@ -30,6 +30,7 @@
 
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 namespace Inspector {

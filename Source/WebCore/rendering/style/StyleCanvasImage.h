@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class Document;
 class HTMLCanvasElement;
 
 class StyleCanvasImage final : public StyleGeneratedImage, public CanvasObserver {

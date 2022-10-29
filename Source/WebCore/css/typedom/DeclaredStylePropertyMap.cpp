@@ -28,6 +28,7 @@
 
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "Document.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 
