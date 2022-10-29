@@ -482,6 +482,12 @@ void ResourceHandle::willSendRequest()
         newRequest.clearHTTPOrigin();
     }
 
+    // Check if the redirected url is allowed to access the redirecting url's timing information.
+    if (!hasCrossOriginRedirect() && !WebCore::SecurityOrigin::create(newRequest.url())->canRequest(delegate()->response().url()))
+        markAsHavingCrossOriginRedirect();
+
+    incrementRedirectCount();
+
     ResourceResponse responseCopy = delegate()->response();
     client()->willSendRequestAsync(this, WTFMove(newRequest), WTFMove(responseCopy), [this, protectedThis = Ref { *this }] (ResourceRequest&& request) {
         continueAfterWillSendRequest(WTFMove(request));

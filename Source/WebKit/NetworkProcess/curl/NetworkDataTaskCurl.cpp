@@ -335,6 +335,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
     request.setURL(redirectedURL);
 
+    m_hasCrossOriginRedirect = m_hasCrossOriginRedirect || !SecurityOrigin::create(m_response.url())->canRequest(request.url());
+
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s))
         request.clearHTTPReferrer();
@@ -587,13 +589,19 @@ bool NetworkDataTaskCurl::isThirdPartyRequest(const WebCore::ResourceRequest& re
 
 void NetworkDataTaskCurl::updateNetworkLoadMetrics(WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
+    if (!m_startTime)
+        m_startTime = networkLoadMetrics.fetchStart;
+
     if (!m_failsTAOCheck) {
         RefPtr<SecurityOrigin> origin = isTopLevelNavigation() ? SecurityOrigin::create(firstRequest().url()) : m_sourceOrigin;
         if (origin)
             m_failsTAOCheck = !passesTimingAllowOriginCheck(m_response, *origin);
     }
 
+    networkLoadMetrics.redirectStart = m_startTime;
+    networkLoadMetrics.redirectCount = m_redirectCount;
     networkLoadMetrics.failsTAOCheck = m_failsTAOCheck;
+    networkLoadMetrics.hasCrossOriginRedirect = m_hasCrossOriginRedirect;
 }
 
 } // namespace WebKit

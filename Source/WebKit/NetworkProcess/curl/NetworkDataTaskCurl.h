@@ -115,7 +115,9 @@ private:
 
     bool m_blockingCookies { false };
 
+    MonotonicTime m_startTime;
     bool m_failsTAOCheck { false };
+    bool m_hasCrossOriginRedirect { false };
 };
 
 } // namespace WebKit

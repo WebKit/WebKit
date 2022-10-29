@@ -69,7 +69,7 @@ public:
     bool hasLineBoxRelativeAlignment() const;
 
     InlineLayoutUnit preferredLineHeight() const;
-    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative() || (isInlineBox() && m_style.lineBoxContain.contains(LineBoxContain::Font)); } // FIXME: Adjust this property dynamically as the inline box gains content.
+    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
 
     bool lineBoxContain() const;
     bool hasLineBoxContain() const { return m_style.lineBoxContain != RenderStyle::initialLineBoxContain(); }
@@ -251,18 +251,18 @@ inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& lay
 inline bool InlineLevelBox::lineBoxContain() const
 {
     if (isRootInlineBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.contains(LineBoxContain::Font));
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     if (isAtomicInlineLevelBox())
         return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
 
     if (isInlineBox()) {
         // Either the inline box itself is included or its text content thorugh Glyph and Font.
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.contains(LineBoxContain::Font));
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
     }
 
     if (isLineBreakBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Font });
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     return true;
 }
