@@ -445,7 +445,7 @@ private:
     bool dispatchMouseEvent(const AtomString& eventType, Node* target, int clickCount, const PlatformMouseEvent&, FireMouseOverOut);
 
 #if ENABLE(DRAG_SUPPORT)
-    bool dispatchDragEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent&, DataTransfer&);
+    bool dispatchDragEvent(const AtomString& eventType, Element& target, const Element& relatedTarget, const PlatformMouseEvent&, DataTransfer&);
     DragTargetResponse dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&& , OptionSet<DragOperation>, bool draggingFiles);
     void invalidateDataTransfer();
 
