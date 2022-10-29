@@ -2004,7 +2004,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 auto setEffectiveLang = [&](Element& element) {
                     if (!newValue.isNull())
                         element.ensureElementRareData().setEffectiveLang(newValue);
-                    else if (hasRareData())
+                    else if (element.hasRareData())
                         element.elementRareData()->setEffectiveLang(nullAtom());
                 };
                 setEffectiveLang(*this);
