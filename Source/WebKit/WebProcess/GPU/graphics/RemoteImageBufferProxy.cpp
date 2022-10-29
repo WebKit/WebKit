@@ -231,11 +231,6 @@ GraphicsContext& RemoteImageBufferProxy::context() const
     return const_cast<RemoteImageBufferProxy*>(this)->m_remoteDisplayList;
 }
 
-GraphicsContext* RemoteImageBufferProxy::drawingContext()
-{
-    return &m_remoteDisplayList;
-}
-
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))

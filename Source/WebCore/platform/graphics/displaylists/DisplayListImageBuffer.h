@@ -76,8 +76,6 @@ public:
         return m_drawingContext.context();
     }
 
-    GraphicsContext* drawingContext() override { return &m_drawingContext.context(); }
-
     void flushDrawingContext() final
     {
         if (!m_drawingContext.displayList().isEmpty())

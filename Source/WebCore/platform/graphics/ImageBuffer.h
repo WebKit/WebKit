@@ -139,7 +139,6 @@ public:
     WEBCORE_EXPORT virtual GraphicsContext& context() const;
     WEBCORE_EXPORT virtual void flushContext();
 
-    virtual GraphicsContext* drawingContext() { return nullptr; }
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual bool flushDrawingContextAsync() { return false; }
