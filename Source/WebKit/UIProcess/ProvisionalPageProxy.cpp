@@ -331,14 +331,6 @@ void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frame
     m_page.didChangeProvisionalURLForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(url));
 }
 
-void ProvisionalPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::PolicyCheckIdentifier identifier, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
-{
-    if (!validateInput(frameID, navigationID))
-        return;
-
-    m_page.decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID, userData);
-}
-
 void ProvisionalPageProxy::didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, FrameIdentifier frameID)
 {
     if (!validateInput(frameID))
@@ -490,11 +482,6 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
     if (decoder.messageName() == Messages::WebPageProxy::StartURLSchemeTask::name()) {
         IPC::handleMessage<Messages::WebPageProxy::StartURLSchemeTask>(connection, decoder, this, &ProvisionalPageProxy::startURLSchemeTask);
-        return;
-    }
-
-    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DecidePolicyForResponse>(connection, decoder, this, &ProvisionalPageProxy::decidePolicyForResponse);
         return;
     }
 
