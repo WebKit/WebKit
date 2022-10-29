@@ -552,4 +552,10 @@ void StringView::setUnderlyingStringImpl(const StringView&)
 
 #endif // not CHECK_STRINGVIEW_LIFETIME
 
+#if !defined(NDEBUG)
+namespace Detail {
+std::atomic<int> wtfStringCopyCount;
+}
+#endif
+
 } // namespace WTF
