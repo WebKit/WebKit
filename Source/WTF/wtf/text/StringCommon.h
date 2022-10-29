@@ -473,7 +473,7 @@ ALWAYS_INLINE const uint16_t* find16(const uint16_t* pointer, uint16_t character
     // If the pointer is unaligned to 16bit access, then SIMD implementation does not work. But ARM64 allows unaligned access.
     // Fallback to a simple implementation. We also use it for smaller memory where length is less than 16.
     constexpr size_t thresholdLength = 32;
-    static_assert(!(thresholdLength % (16 / sizeof(uint16_t))), "length threshold should be16-byte aligned to make find16AlignedImpl simpler");
+    static_assert(!(thresholdLength % (16 / sizeof(uint16_t))), "length threshold should be 16-byte aligned to make find16AlignedImpl simpler");
 
     // For first check `threshold - (unaligned >> 1)` characters, we use normal loop.
     // This can (1) align pointer to 16-byte size so that SIMD loop gets simpler and (2) handle cases
@@ -542,7 +542,7 @@ WTF_EXPORT_PRIVATE const uint64_t* find64AlignedImpl(const uint64_t* pointer, ui
 ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
 {
     constexpr size_t thresholdLength = 32;
-    static_assert(!(thresholdLength % (16 / sizeof(uint64_t))), "length threshold should be16-byte aligned to make find64AlignedImpl simpler");
+    static_assert(!(thresholdLength % (16 / sizeof(uint64_t))), "length threshold should be 16-byte aligned to make find64AlignedImpl simpler");
 
     uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
 
@@ -575,7 +575,7 @@ WTF_EXPORT_PRIVATE const float* findFloatAlignedImpl(const float* pointer, float
 ALWAYS_INLINE const float* findFloat(const float* pointer, float target, size_t length)
 {
     constexpr size_t thresholdLength = 32;
-    static_assert(!(thresholdLength % (16 / sizeof(float))), "length threshold should be16-byte aligned to make floatFindAlignedImpl simpler");
+    static_assert(!(thresholdLength % (16 / sizeof(float))), "length threshold should be 16-byte aligned to make floatFindAlignedImpl simpler");
 
     uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
 
@@ -603,12 +603,47 @@ ALWAYS_INLINE const float* findFloat(const float* pointer, float target, size_t 
 #endif
 
 #if CPU(ARM64)
+WTF_EXPORT_PRIVATE const float* findFloatNaNAlignedImpl(const float* pointer, size_t length);
+
+ALWAYS_INLINE const float* findFloatNaN(const float* pointer, size_t length)
+{
+    constexpr size_t thresholdLength = 32;
+    static_assert(!(thresholdLength % (16 / sizeof(float))), "length threshold should be 16-byte aligned to make floatFindAlignedImpl simpler");
+
+    uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
+
+    size_t index = 0;
+    size_t runway = std::min(thresholdLength - (unaligned / sizeof(float)), length);
+    for (; index < runway; ++index) {
+        float value = pointer[index];
+        if (value != value)
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    ASSERT(index < length);
+    return findFloatNaNAlignedImpl(pointer + index, length - index);
+}
+#else
+ALWAYS_INLINE const float* findFloatNaN(const float* pointer, size_t length)
+{
+    for (size_t index = 0; index < length; ++index) {
+        float value = pointer[index];
+        if (value != value)
+            return pointer + index;
+    }
+    return nullptr;
+}
+#endif
+
+#if CPU(ARM64)
 WTF_EXPORT_PRIVATE const double* findDoubleAlignedImpl(const double* pointer, double target, size_t length);
 
 ALWAYS_INLINE const double* findDouble(const double* pointer, double target, size_t length)
 {
     constexpr size_t thresholdLength = 32;
-    static_assert(!(thresholdLength % (16 / sizeof(double))), "length threshold should be16-byte aligned to make doubleFindAlignedImpl simpler");
+    static_assert(!(thresholdLength % (16 / sizeof(double))), "length threshold should be 16-byte aligned to make doubleFindAlignedImpl simpler");
 
     uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
 
@@ -629,6 +664,41 @@ ALWAYS_INLINE const double* findDouble(const double* pointer, double target, siz
 {
     for (size_t index = 0; index < length; ++index) {
         if (pointer[index] == target)
+            return pointer + index;
+    }
+    return nullptr;
+}
+#endif
+
+#if CPU(ARM64)
+WTF_EXPORT_PRIVATE const double* findDoubleNaNAlignedImpl(const double* pointer, size_t length);
+
+ALWAYS_INLINE const double* findDoubleNaN(const double* pointer, size_t length)
+{
+    constexpr size_t thresholdLength = 32;
+    static_assert(!(thresholdLength % (16 / sizeof(double))), "length threshold should be 16-byte aligned to make doubleFindAlignedImpl simpler");
+
+    uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
+
+    size_t index = 0;
+    size_t runway = std::min(thresholdLength - (unaligned / sizeof(double)), length);
+    for (; index < runway; ++index) {
+        double value = pointer[index];
+        if (value != value)
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    ASSERT(index < length);
+    return findDoubleNaNAlignedImpl(pointer + index, length - index);
+}
+#else
+ALWAYS_INLINE const double* findDoubleNaN(const double* pointer, size_t length)
+{
+    for (size_t index = 0; index < length; ++index) {
+        double value = pointer[index];
+        if (value != value)
             return pointer + index;
     }
     return nullptr;

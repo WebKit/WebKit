@@ -1156,11 +1156,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         // through shifting and then realize we should have been in ArrayStorage mode.
         if (moveCount) {
             if (UNLIKELY(holesMustForwardToPrototype())) {
-                for (unsigned i = oldLength; i-- > startIndex;) {
-                    double v = butterfly->contiguousDouble().at(this, i);
-                    if (UNLIKELY(v != v))
-                        RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
-                }
+                if (UNLIKELY(WTF::findDoubleNaN(butterfly->contiguousDouble().data() + startIndex, moveCount)))
+                    RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
             }
 
             gcSafeMemmove(butterfly->contiguousDouble().data() + startIndex + count, butterfly->contiguousDouble().data() + startIndex, moveCount * sizeof(double));
