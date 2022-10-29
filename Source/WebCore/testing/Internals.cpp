@@ -783,6 +783,17 @@ ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) con
     return element.timeContainer().animationFrameDelay().value();
 }
 
+Vector<Ref<SVGSVGElement>> Internals::allSVGSVGElements() const
+{
+    Vector<Ref<SVGSVGElement>> elements;
+    for (auto* document : Document::allDocuments()) {
+        if (!document->svgExtensions())
+            continue;
+        elements.appendVector(document->accessSVGExtensions().allSVGSVGElements());
+    }
+    return elements;
+}
+
 String Internals::address(Node& node)
 {
     return makeString("0x", hex(reinterpret_cast<uintptr_t>(&node)));

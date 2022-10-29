@@ -1485,7 +1485,7 @@ void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
 {
     ASSERT(m_hasPausedImageAnimations);
-    if (!isVisibleInDocumentRect(visibleRect))
+    if (!page().imageAnimationEnabled() || !isVisibleInDocumentRect(visibleRect))
         return false;
 
     repaint();

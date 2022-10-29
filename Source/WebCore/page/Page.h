@@ -697,7 +697,7 @@ public:
 
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
-    void repaintAnimatedImages();
+    void updatePlayStateForAllAnimations();
 
     void didFinishLoadingImageForElement(HTMLImageElement&);
 

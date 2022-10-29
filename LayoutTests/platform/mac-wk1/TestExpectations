@@ -791,6 +791,11 @@ fast/forms/validation-message-on-textarea.html
 # Mac-WK1 only caches frames containing HTML at the moment.
 http/tests/navigation/page-cache-iframe-no-current-historyItem.html
 
+# Skipped on WK1 because this test relies on moving elements outside a fixed viewport,
+# but in WK1 / DumpRenderTree the viewport grows infinitely making nothing invisible.
+# The animation tests below (e.g. animated-gif-body-outside-viewport.html) are skipped for similar reasons.
+fast/images/pagewide-play-pause-offscreen-animations.html [ Skip ]
+
 # Animated image throttling behaves differently on WK1.
 fast/images/animated-gif-body-outside-viewport.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]

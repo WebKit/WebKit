@@ -1,0 +1,71 @@
+This test ensures that animations resumed off-screen don't start playing until they become visible in the viewport.
+
+Verifying animations are initially playing.
+
+Testing #css-background-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #iframe-srcdoc-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #img-src-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #inline-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #gif-element.
+PASS: internals.isImageAnimating(gifElement) is true
+
+Pausing animations page-wide.
+
+Testing #css-background-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #iframe-srcdoc-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #img-src-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #inline-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #gif-element.
+PASS: internals.isImageAnimating(gifElement) is false
+
+Moving animations off-screen and enabling page-wide animation (which should have no effect for off-screen animations).
+
+#inline-svg is no longer visible in the viewport.
+#css-background-svg-container is no longer visible in the viewport.
+#img-src-svg-container is no longer visible in the viewport.
+#iframe-srcdoc-svg-container is no longer visible in the viewport.
+#gif-element is no longer visible in the viewport.
+
+Testing #css-background-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #iframe-srcdoc-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #img-src-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #inline-svg.
+PASS: svgSvgElement.children[0].x.animVal.value === 0 is true
+Testing #gif-element.
+PASS: internals.isImageAnimating(gifElement) is false
+
+Scrolling to make animations visible again. They should resume automatically because page-wide animation is enabled.
+
+#inline-svg is now visible in the viewport.
+#css-background-svg-container is now visible in the viewport.
+#img-src-svg-container is now visible in the viewport.
+#iframe-srcdoc-svg-container is now visible in the viewport.
+#gif-element is now visible in the viewport.
+
+Testing #css-background-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #iframe-srcdoc-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #img-src-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #inline-svg.
+PASS: svgSvgElement.children[0].x.animVal.value !== 0 is true
+Testing #gif-element.
+PASS: internals.isImageAnimating(gifElement) is true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
