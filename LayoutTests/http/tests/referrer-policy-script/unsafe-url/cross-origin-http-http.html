@@ -9,7 +9,7 @@ description("Tests the behavior of unsafe-url referrer policy when cross origin.
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(true);
+    internals.setTrackingPreventionEnabled(true);
 
 function checkReferrer(value) {
     referrer = value;

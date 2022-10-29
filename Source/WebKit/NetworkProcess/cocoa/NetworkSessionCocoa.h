@@ -46,6 +46,10 @@ OBJC_CLASS _NSHSTSStorage;
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 
+namespace WebCore {
+enum class NetworkConnectionIntegrity : uint8_t;
+}
+
 namespace WebKit {
 
 enum class NegotiatedLegacyTLS : bool;
@@ -158,7 +162,7 @@ private:
     void clearAlternativeServices(WallTime) override;
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled) final;
+    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity>) final;
     void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) final;
     void removeWebSocketTask(SessionSet&, WebSocketTask&) final;
 #endif

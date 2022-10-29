@@ -1704,7 +1704,7 @@ private:
             // that it doesn't contain any indexed properties, and that any holes will result in
             // jsUndefined().
             if (node->child1()->shouldSpeculateArray()
-                && m_graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(node->child1().node())
+                && m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node->child1().node())
                 && m_graph.isWatchingArrayIteratorProtocolWatchpoint(node->child1().node())
                 && m_graph.isWatchingHavingABadTimeWatchpoint(node->child1().node()))
                 fixEdge<ArrayUse>(node->child1());
@@ -3831,7 +3831,7 @@ private:
 
     bool watchSaneChain(Node* node)
     {
-        return m_graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(node);
+        return m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node);
     }
 
     void setSaneChainIfPossible(Node* node, Array::Speculation speculation)

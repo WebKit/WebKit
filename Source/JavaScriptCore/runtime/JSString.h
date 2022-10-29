@@ -253,8 +253,6 @@ protected:
 private:
     friend class LLIntOffsetsExtractor;
 
-    static JSValue toThis(JSCell*, JSGlobalObject*, ECMAMode);
-
     StringView unsafeView(JSGlobalObject*) const;
 
     void swapToAtomString(VM&, RefPtr<AtomStringImpl>&&) const;

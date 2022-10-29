@@ -42,7 +42,7 @@ namespace JSC { namespace Wasm {
 namespace {
 size_t globalMemoryByteSize(Module& module)
 {
-    return Checked<size_t>(module.moduleInformation().globals.size()) * sizeof(Register);
+    return Checked<size_t>(module.moduleInformation().globals.size()) * sizeof(Global::Value);
 }
 }
 

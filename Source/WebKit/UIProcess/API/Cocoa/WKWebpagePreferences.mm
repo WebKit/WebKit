@@ -588,12 +588,41 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (BOOL)_networkConnectionIntegrityEnabled
 {
-    return _websitePolicies->networkConnectionIntegrityEnabled();
+    return _websitePolicies->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled);
 }
 
 - (void)_setNetworkConnectionIntegrityEnabled:(BOOL)networkConnectionIntegrityEnabled
 {
-    _websitePolicies->setNetworkConnectionIntegrityEnabled(networkConnectionIntegrityEnabled);
+    auto webCorePolicy = _websitePolicies->networkConnectionIntegrityPolicy();
+    webCorePolicy.add(WebCore::NetworkConnectionIntegrity::Enabled);
+    _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
+}
+
+- (_WKWebsiteNetworkConnectionIntegrityPolicy)_networkConnectionIntegrityPolicy
+{
+    _WKWebsiteNetworkConnectionIntegrityPolicy policy = _WKWebsiteNetworkConnectionIntegrityPolicyNone;
+    auto webCorePolicy = _websitePolicies->networkConnectionIntegrityPolicy();
+
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyEnabled;
+
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::HTTPSFirst))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst;
+
+    return policy;
+}
+
+- (void)_setNetworkConnectionIntegrityPolicy:(_WKWebsiteNetworkConnectionIntegrityPolicy)networkConnectionIntegrityPolicy
+{
+    OptionSet<WebCore::NetworkConnectionIntegrity> webCorePolicy;
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyEnabled)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::Enabled);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::HTTPSFirst);
+
+    _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }
 
 @end

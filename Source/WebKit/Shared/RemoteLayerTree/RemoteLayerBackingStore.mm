@@ -578,6 +578,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
         if (!replayCGDisplayListsIntoBackingStore) {
             [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+            layer.drawsAsynchronously = (m_parameters.type == Type::IOSurface);
         } else
             layer.opaque = m_parameters.isOpaque;
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];

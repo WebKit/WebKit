@@ -294,6 +294,118 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/utf8-invalid-encoding.wast.js
   cmd: runWebAssemblySpecTest :normal
+- path: wasm/spec-tests/simd_address.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_align.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_bit_shift.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_bitwise.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_boolean.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_const.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_conversions.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f32x4.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f32x4_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f32x4_cmp.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f32x4_pmin_pmax.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f32x4_rounding.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f64x2.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f64x2_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f64x2_cmp.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f64x2_pmin_pmax.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_f64x2_rounding.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_arith2.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_cmp.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_extadd_pairwise_i8x16.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_extmul_i8x16.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_q15mulr_sat_s.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i16x8_sat_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_arith2.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_cmp.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_dot_i16x8.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_extadd_pairwise_i16x8.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_extmul_i16x8.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_trunc_sat_f32x4.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i32x4_trunc_sat_f64x2.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i64x2_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i64x2_arith2.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i64x2_cmp.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i64x2_extmul_i32x4.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i8x16_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i8x16_arith2.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i8x16_cmp.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_i8x16_sat_arith.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_int_to_int_extend.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load16_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load32_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load64_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load8_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load_extend.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load_splat.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_load_zero.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_splat.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_store.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_store16_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_store32_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_store64_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
+- path: wasm/spec-tests/simd_store8_lane.wast.js
+  cmd: runWebAssemblySIMDSpecTest :normal
 
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly

@@ -16,7 +16,7 @@
             testFailed("Cookie not deleted: " + document.cookie);
         else
             testPassed("Cookie deleted.");
-        internals.setResourceLoadStatisticsEnabled(false);
+        internals.setTrackingPreventionEnabled(false);
         setEnableFeature(false, function() {
             testRunner.notifyDone();
         });

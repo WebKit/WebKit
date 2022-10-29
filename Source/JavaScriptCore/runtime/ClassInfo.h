@@ -75,9 +75,6 @@ struct MethodTable {
     using GetOwnPropertySlotByIndexFunctionPtr = bool (*)(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
     GetOwnPropertySlotByIndexFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertySlotByIndex);
 
-    using ToThisFunctionPtr = JSValue (*)(JSCell*, JSGlobalObject*, ECMAMode);
-    ToThisFunctionPtr METHOD_TABLE_ENTRY(toThis);
-
     using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertyNames);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnSpecialPropertyNames);
@@ -159,7 +156,6 @@ struct MethodTable {
         &ClassName::deletePropertyByIndex, \
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
-        &ClassName::toThis, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnSpecialPropertyNames, \
         &ClassName::customHasInstance, \

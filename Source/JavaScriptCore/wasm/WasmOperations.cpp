@@ -988,8 +988,13 @@ JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFra
     for (unsigned i = 0; i < tag.parameterCount(); ++i)
         values[i] = arguments[i];
 
-    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
-    throwException(globalObject, throwScope, exception);
+    if (tag.type().numVectors()) {
+        // Note: the spec is still in flux on what to do here, so we conservatively just disallow throwing any vectors.
+        throwException(globalObject, throwScope, createTypeError(globalObject, errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use)));
+    } else {
+        JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+        throwException(globalObject, throwScope, exception);
+    }
 
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
@@ -1049,6 +1054,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
         JSObject* error;
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(globalObject);
+        else if (isTypeErrorExceptionType(type))
+            error = createTypeError(globalObject, Wasm::errorMessageForExceptionType(type));
         else
             error = createJSWebAssemblyRuntimeError(globalObject, vm, type);
         throwException(globalObject, throwScope, error);

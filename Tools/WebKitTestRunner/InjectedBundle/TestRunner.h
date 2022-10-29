@@ -510,6 +510,9 @@ public:
     void setAppBoundDomains(JSValueRef originArray, JSValueRef callback);
     void didSetAppBoundDomainsCallback();
 
+    void setManagedDomains(JSValueRef originArray, JSValueRef callback);
+    void didSetManagedDomainsCallback();
+
     bool didLoadAppInitiatedRequest();
     bool didLoadNonAppInitiatedRequest();
 

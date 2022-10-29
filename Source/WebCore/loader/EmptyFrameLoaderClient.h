@@ -84,7 +84,7 @@ private:
     void dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const StringWithDirection&) final;
-    void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>) final;
+    void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>) final;
     void dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading) final;
     void dispatchDidFailLoad(const ResourceError&) final;
     void dispatchDidFinishDocumentLoad() final;

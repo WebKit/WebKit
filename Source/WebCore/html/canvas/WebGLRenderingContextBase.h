@@ -719,13 +719,6 @@ protected:
 
     bool m_preventBufferClearForInspector { false };
 
-    // A WebGLRenderingContext can be created in a state where it appears as
-    // a valid and active context, but will not execute any important operations
-    // until its load policy is completely resolved.
-    bool m_isPendingPolicyResolution { false };
-    bool m_hasRequestedPolicyResolution { false };
-    bool isContextLostOrPending();
-
     bool m_compositingResultsNeedUpdating { false };
     bool m_isDisplayingWithPaint { false };
 

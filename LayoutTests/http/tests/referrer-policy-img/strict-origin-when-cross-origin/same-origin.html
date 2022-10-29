@@ -9,7 +9,7 @@ description("Tests the behavior of strict-origin-when-cross-origin referrer poli
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 function loadImage() {
     // Should be the full URL because we are same-origin.
@@ -20,7 +20,7 @@ function loadImage() {
     img.onerror = function() { testFailed("referrer is not as expected"); finishJSTest(); }
     img.src = "http://127.0.0.1:8000/referrer-policy/resources/image.py?expected=" + expected;
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
 }
 
 </script>

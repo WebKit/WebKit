@@ -286,6 +286,13 @@ void ResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&
 }
 #endif
 
+#if ENABLE(MANAGED_DOMAINS)
+void ResourceLoadStatisticsStore::setManagedDomains(HashSet<RegistrableDomain>&& domains)
+{
+    m_managedDomains = WTFMove(domains);
+}
+#endif
+
 void ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary()
 {
     ASSERT(!RunLoop::isMain());
@@ -525,7 +532,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
 
 bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const RegistrableDomain& domain) const
 {
-    return !domain.isEmpty() && (domain == m_standaloneApplicationDomain || m_appBoundDomains.contains(domain));
+    return !domain.isEmpty() && (domain == m_standaloneApplicationDomain || m_appBoundDomains.contains(domain) || m_managedDomains.contains(domain));
 }
 
 } // namespace WebKit

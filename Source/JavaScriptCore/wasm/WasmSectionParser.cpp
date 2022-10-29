@@ -34,6 +34,7 @@
 #include "WasmMemoryInformation.h"
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
+#include "WasmSIMDOpcodes.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
@@ -345,10 +346,17 @@ auto SectionParser::parseGlobal() -> PartialResult
     for (uint32_t globalIndex = 0; globalIndex < globalCount; ++globalIndex) {
         GlobalInformation global;
         uint8_t initOpcode;
+        v128_t initVector { };
+        uint64_t initialBitsOrImportNumber = 0;
 
         WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
         Type typeForInitOpcode;
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, global.initialBitsOrImportNumber, typeForInitOpcode));
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initialBitsOrImportNumber, initVector, typeForInitOpcode));
+        if (typeForInitOpcode.isV128())
+            global.initialBits.initialVector = initVector;
+        else
+            global.initialBits.initialBitsOrImportNumber = initialBitsOrImportNumber;
+
         if (initOpcode == GetGlobal)
             global.initializationType = GlobalInformation::FromGlobalImport;
         else if (initOpcode == RefFunc)
@@ -357,8 +365,10 @@ auto SectionParser::parseGlobal() -> PartialResult
             global.initializationType = GlobalInformation::FromExpression;
         WASM_PARSER_FAIL_IF(!isSubtype(typeForInitOpcode, global.type), "Global init_expr opcode of type ", typeForInitOpcode.kind, " doesn't match global's type ", global.type.kind);
 
-        if (initOpcode == RefFunc)
-            m_info->addDeclaredFunction(global.initialBitsOrImportNumber);
+        if (initOpcode == RefFunc) {
+            ASSERT(global.initializationType != GlobalInformation::FromVector);
+            m_info->addDeclaredFunction(global.initialBits.initialBitsOrImportNumber);
+        }
 
         m_info->globals.uncheckedAppend(WTFMove(global));
     }
@@ -602,7 +612,7 @@ auto SectionParser::parseCode() -> PartialResult
     return { };
 }
 
-auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber, Type& resultType) -> PartialResult
+auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber, v128_t& vectorBits, Type& resultType) -> PartialResult
 {
     WASM_PARSER_FAIL_IF(!parseUInt8(opcode), "can't get init_expr's opcode");
 
@@ -638,6 +648,25 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         resultType = Types::F64;
         break;
     }
+
+#if ENABLE(B3_JIT)
+    case ExtSIMD: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "SIMD must be enabled");
+        WASM_PARSER_FAIL_IF(!parseUInt8(opcode), "can't get init_expr's simd opcode");
+        WASM_PARSER_FAIL_IF(static_cast<ExtSIMDOpType>(opcode) != ExtSIMDOpType::V128Const, "unknown init_expr simd opcode ", opcode);
+        v128_t constant;
+        WASM_PARSER_FAIL_IF(!parseImmByteArray16(constant), "get constant value for init_expr's v128.const");
+
+        vectorBits = constant;
+        resultType = Types::V128;
+        break;
+    }
+#else
+    case ExtSIMD:
+        WASM_PARSER_FAIL_IF(true, "wasm-simd is not supported");
+        (void) vectorBits;
+        break;
+#endif
 
     case GetGlobal: {
         uint32_t index;
@@ -710,7 +739,8 @@ auto SectionParser::parseI32InitExpr(std::optional<I32InitExpr>& initExpr, ASCII
     uint8_t initOpcode;
     uint64_t initExprBits;
     Type initExprType;
-    WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
+    v128_t unused;
+    WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, unused, initExprType));
     WASM_PARSER_FAIL_IF(!initExprType.isI32(), failMessage);
     initExpr = makeI32InitExpr(initOpcode, initExprBits);
 

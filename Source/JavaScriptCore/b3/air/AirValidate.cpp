@@ -111,6 +111,11 @@ public:
                     // use of this bit.
                     VALIDATE(!inst.kind.effects, ("At ", inst, " in ", *block));
                     break;
+                case VectorExtendLow:
+                case VectorExtendHigh:
+                    VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) <= 8, ("At ", inst, " in ", *block));
+                    VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) >= 2, ("At ", inst, " in ", *block));
+                    break;
                 default:
                     break;
                 }

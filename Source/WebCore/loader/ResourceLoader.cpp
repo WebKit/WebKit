@@ -553,6 +553,13 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
         }
     }
 
+    if (r.wasPrivateRelayed() && m_frame) {
+        if (auto* document = m_frame->document()) {
+            if (!document->wasPrivateRelayed())
+                document->setWasPrivateRelayed(true);
+        }
+    }
+
     logResourceResponseSource(m_frame.get(), r.source());
 
     m_response = r;

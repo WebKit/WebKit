@@ -3737,6 +3737,30 @@ void TestController::setAppBoundDomains(WKArrayRef originURLs)
     m_currentInvocation->didSetAppBoundDomains();
 }
 
+struct ManagedDomainsCallbackContext {
+    explicit ManagedDomainsCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    bool done { false };
+    TestController& testController;
+};
+
+static void didSetManagedDomainsCallback(void* callbackContext)
+{
+    auto* context = static_cast<ManagedDomainsCallbackContext*>(callbackContext);
+    context->done = true;
+}
+
+void TestController::setManagedDomains(WKArrayRef originURLs)
+{
+    ManagedDomainsCallbackContext context(*this);
+    WKWebsiteDataStoreSetManagedDomainsForTesting(originURLs, &context, didSetManagedDomainsCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetManagedDomains();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);

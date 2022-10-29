@@ -34,7 +34,6 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Span.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>

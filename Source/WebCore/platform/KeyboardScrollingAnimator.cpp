@@ -96,7 +96,7 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
     if (!(platformEvent->type() == PlatformEvent::RawKeyDown || platformEvent->type() == PlatformEvent::Char))
         return { };
 
-    static constexpr std::pair<ComparableASCIILiteral, KeyboardScrollingKey> mappings[] = {
+    static constexpr std::pair<PackedASCIILiteral<uint64_t>, KeyboardScrollingKey> mappings[] = {
         { "Down", KeyboardScrollingKey::DownArrow },
         { "Left", KeyboardScrollingKey::LeftArrow },
         { "PageDown", KeyboardScrollingKey::PageDown },

@@ -870,7 +870,7 @@ void webkit_website_data_manager_set_itp_enabled(WebKitWebsiteDataManager* manag
 {
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
 
-    webkitWebsiteDataManagerGetDataStore(manager).setResourceLoadStatisticsEnabled(enabled);
+    webkitWebsiteDataManagerGetDataStore(manager).setTrackingPreventionEnabled(enabled);
 }
 
 /**
@@ -887,7 +887,7 @@ gboolean webkit_website_data_manager_get_itp_enabled(WebKitWebsiteDataManager* m
 {
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
 
-    return webkitWebsiteDataManagerGetDataStore(manager).resourceLoadStatisticsEnabled();
+    return webkitWebsiteDataManagerGetDataStore(manager).trackingPreventionEnabled();
 }
 
 /**

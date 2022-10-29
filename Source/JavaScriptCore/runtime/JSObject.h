@@ -723,8 +723,6 @@ public:
     JS_EXPORT_PRIVATE double toNumber(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSString* toString(JSGlobalObject*) const;
 
-    JS_EXPORT_PRIVATE static JSValue toThis(JSCell*, JSGlobalObject*, ECMAMode);
-
     // This get function only looks at the property map.
     JSValue getDirect(VM& vm, PropertyName propertyName) const
     {

@@ -575,12 +575,7 @@ editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
 editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
 
 # Tests in the gesture folder exercise IOS-specific code, non appliable to GTK+
-fast/events/touch/gesture [ Skip ]
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
-
-# These tests require touch support
-fast/events/touch [ Skip ]
-imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 # HighDPI support is not enabled
 webkit.org/b/131347 fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]

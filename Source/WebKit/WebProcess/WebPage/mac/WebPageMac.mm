@@ -726,22 +726,6 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
     }
 }
 
-#if ENABLE(WEBGL)
-WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL& url)
-{
-    auto sendResult = sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url));
-    auto [policyResult] = sendResult.takeReplyOr(WebGLLoadPolicy::WebGLAllowCreation);
-    return policyResult;
-}
-
-WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL& url)
-{
-    auto sendResult = sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url));
-    auto [policyResult] = sendResult.takeReplyOr(WebGLLoadPolicy::WebGLAllowCreation);
-    return policyResult;
-}
-#endif // ENABLE(WEBGL)
-
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
 {

@@ -85,6 +85,7 @@ enum class NewLoadInProgress : bool;
 enum class NavigationPolicyDecision : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class UsedLegacyTLS : bool;
+enum class WasPrivateRelayed : bool;
 enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
 
@@ -382,7 +383,7 @@ private:
 
     bool shouldReloadToHandleUnreachableURL(DocumentLoader&);
 
-    void dispatchDidCommitLoad(std::optional<HasInsecureContent> initialHasInsecureContent, std::optional<UsedLegacyTLS> initialUsedLegacyTLS);
+    void dispatchDidCommitLoad(std::optional<HasInsecureContent> initialHasInsecureContent, std::optional<UsedLegacyTLS> initialUsedLegacyTLS, std::optional<WasPrivateRelayed> initialWasPrivateRelayed);
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, RefPtr<FormState>&&, AllowNavigationToInvalidURL, CompletionHandler<void()>&& = [] { }); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader&, const SecurityOrigin* requesterOrigin); // Calls loadWithDocumentLoader

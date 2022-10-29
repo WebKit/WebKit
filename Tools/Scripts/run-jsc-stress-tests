@@ -587,6 +587,7 @@ $architecture = determineArchitecture unless $architecture
 $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "windows" || $hostOS == "playstation")
 # Special case armv7, we want to run the wasm tests temporarily without B3/Air support
 $isWasmPlatform = $isFTLPlatform || $architecture == "arm"
+$isSIMDPlatform = $architecture == "arm64"
 
 if $architecture == "x86"
     # The JIT is temporarily disabled on this platform since
@@ -1899,6 +1900,11 @@ end
 
 def runWebAssemblyFunctionReferenceSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "spec-harness", "--useWebAssemblyTypedFunctionReferences=true")
+end
+
+def runWebAssemblySIMDSpecTest(mode)
+    return if !$isSIMDPlatform
+    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)

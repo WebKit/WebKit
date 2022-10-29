@@ -165,7 +165,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_allowsHSTSWithUntrustedRootCertificate = this->m_allowsHSTSWithUntrustedRootCertificate;
     copy->m_pcmMachServiceName = this->m_pcmMachServiceName;
     copy->m_webPushMachServiceName = this->m_webPushMachServiceName;
-    copy->m_resourceLoadStatisticsDebugModeEnabled = this->m_resourceLoadStatisticsDebugModeEnabled;
+    copy->m_trackingPreventionDebugModeEnabled = this->m_trackingPreventionDebugModeEnabled;
     copy->m_identifier = m_identifier;
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)

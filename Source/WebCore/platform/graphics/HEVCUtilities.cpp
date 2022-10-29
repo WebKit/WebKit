@@ -290,7 +290,7 @@ std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCo
 
 static std::optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
 {
-    static constexpr std::pair<PackedASCIILowerCodes<uint32_t>, DoViParameters::Codec> typesArray[] = {
+    static constexpr std::pair<PackedLettersLiteral<uint32_t>, DoViParameters::Codec> typesArray[] = {
         { "dva1", DoViParameters::Codec::AVC1 },
         { "dvav", DoViParameters::Codec::AVC3 },
         { "dvh1", DoViParameters::Codec::HVC1 },
@@ -303,7 +303,7 @@ static std::optional<DoViParameters::Codec> parseDoViCodecType(StringView string
 static std::optional<uint16_t> profileIDForAlphabeticDoViProfile(StringView profile)
 {
     // See Table 7 of "Dolby Vision Profiles and Levels Version 1.3.2"
-    static constexpr std::pair<PackedASCIILowerCodes<uint64_t>, uint16_t> profilesArray[] = {
+    static constexpr std::pair<PackedLettersLiteral<uint64_t>, uint16_t> profilesArray[] = {
         { "dvav.se", 9 },
         { "dvhe.dtb", 7 },
         { "dvhe.dtr", 4 },

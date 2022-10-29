@@ -35,6 +35,7 @@
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
+enum class NetworkConnectionIntegrity : uint8_t;
 class ResourceError;
 class SecurityOrigin;
 class SharedBuffer;
@@ -58,7 +59,7 @@ public:
         WebPageProxyIdentifier webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
         bool allowPrivacyProxy { true };
-        bool networkConnectionIntegrityEnabled { false };
+        OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 

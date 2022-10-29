@@ -114,7 +114,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << pageHasResourceLoadClient;
     encoder << parentFrameID;
     encoder << crossOriginAccessControlCheckEnabled;
-    encoder << networkConnectionIntegrityEnabled;
+    encoder << networkConnectionIntegrityPolicy;
     encoder << allowPrivacyProxy;
 
     encoder << documentURL;
@@ -313,11 +313,11 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
         return std::nullopt;
     result.crossOriginAccessControlCheckEnabled = *crossOriginAccessControlCheckEnabled;
 
-    std::optional<bool> networkConnectionIntegrityEnabled;
-    decoder >> networkConnectionIntegrityEnabled;
-    if (!networkConnectionIntegrityEnabled)
+    std::optional<OptionSet<NetworkConnectionIntegrity>> networkConnectionIntegrityPolicy;
+    decoder >> networkConnectionIntegrityPolicy;
+    if (!networkConnectionIntegrityPolicy)
         return std::nullopt;
-    result.networkConnectionIntegrityEnabled = *networkConnectionIntegrityEnabled;
+    result.networkConnectionIntegrityPolicy = *networkConnectionIntegrityPolicy;
 
     std::optional<bool> allowPrivacyProxy;
     decoder >> allowPrivacyProxy;

@@ -76,7 +76,7 @@ struct CallInformation {
                 usedResultRegisters.add(loc.location.jsr().tagGPR(), IgnoreVectors);
 #endif
             } else if (loc.location.isFPR()) {
-                ASSERT(loc.width <= Width64);
+                ASSERT(loc.width <= Width64 || argumentsOrResultsIncludeV128);
                 usedResultRegisters.add(loc.location.fpr(), loc.width);
             }
         }
@@ -89,6 +89,7 @@ struct CallInformation {
     bool resultsIncludeI64 { false };
     bool argumentsIncludeGCTypeIndex { false };
     bool resultsIncludeGCTypeIndex { false };
+    bool argumentsOrResultsIncludeV128 { false };
     Vector<ArgumentLocation> params;
     Vector<ArgumentLocation, 1> results;
     // As a callee this includes CallerFrameAndPC as a caller it does not.
@@ -151,6 +152,7 @@ public:
         bool resultsIncludeI64 = false;
         bool argumentsIncludeGCTypeIndex = false;
         bool resultsIncludeGCTypeIndex = false;
+        bool argumentsOrResultsIncludeV128 = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
         size_t argStackOffset = headerSizeInBytes + sizeof(Register);
@@ -160,6 +162,7 @@ public:
         Vector<ArgumentLocation> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
             argumentsIncludeI64 |= signature.argumentType(i).isI64();
+            argumentsOrResultsIncludeV128 |= signature.argumentType(i).isV128();
             argumentsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.argumentType(i)) && !TypeInformation::get(signature.argumentType(i).index).is<FunctionSignature>();
             params[i] = marshallLocation(role, signature.argumentType(i), gpArgumentCount, fpArgumentCount, argStackOffset);
         }
@@ -172,6 +175,7 @@ public:
         Vector<ArgumentLocation, 1> results(signature.returnCount());
         for (size_t i = 0; i < signature.returnCount(); ++i) {
             resultsIncludeI64 |= signature.returnType(i).isI64();
+            argumentsOrResultsIncludeV128 |= signature.returnType(i).isV128();
             resultsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.returnType(i)) && !TypeInformation::get(signature.returnType(i).index).is<FunctionSignature>();
             results[i] = marshallLocation(role, signature.returnType(i), gpArgumentCount, fpArgumentCount, resultStackOffset);
         }
@@ -181,6 +185,7 @@ public:
         result.resultsIncludeI64 = resultsIncludeI64;
         result.argumentsIncludeGCTypeIndex = argumentsIncludeGCTypeIndex;
         result.resultsIncludeGCTypeIndex = resultsIncludeGCTypeIndex;
+        result.argumentsOrResultsIncludeV128 = argumentsOrResultsIncludeV128;
         return result;
     }
 

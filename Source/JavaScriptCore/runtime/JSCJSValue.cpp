@@ -162,13 +162,8 @@ JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
     return nullptr;
 }
 
-JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
+JSValue JSValue::toThisSloppySlowCase(JSGlobalObject* globalObject) const
 {
-    ASSERT(!isCell());
-
-    if (ecmaMode.isStrict())
-        return *this;
-
     if (isInt32() || isDouble())
         return constructNumber(globalObject, asValue());
     if (isTrue() || isFalse())
@@ -177,9 +172,8 @@ JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode)
     if (isBigInt32())
         return BigIntObject::create(globalObject->vm(), globalObject, *this);
 #endif
-
-    ASSERT(isUndefinedOrNull());
-    return globalObject->globalThis();
+    ASSERT(isCell());
+    return toObject(globalObject);
 }
 
 JSObject* JSValue::synthesizePrototype(JSGlobalObject* globalObject) const

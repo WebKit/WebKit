@@ -2970,7 +2970,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     // FIXME: Is this relevent to WebKitLegacy? If not, we should remove it.
-    WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
+    WebCore::DeprecatedGlobalSettings::setTrackingPreventionEnabled([preferences resourceLoadStatisticsEnabled]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

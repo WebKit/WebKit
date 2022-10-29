@@ -10,14 +10,14 @@ description("Tests the behavior of same-origin referrer policy when cross origin
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the empty string because we are cross-origin.
     shouldBeEqualToString("referrer", "");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

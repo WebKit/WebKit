@@ -84,6 +84,7 @@ imported/w3c/web-platform-tests/screen-orientation [ Skip ]
 
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]
+http/tests/workers/shared [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.http.html [ Skip ]
@@ -786,9 +787,6 @@ fast/forms/validation-message-clone.html
 fast/forms/validation-message-in-relative-body.html
 fast/forms/validation-message-appearance.html
 fast/forms/validation-message-on-textarea.html
-
-# WK1 doesn't do pending WebGL policies 
-fast/canvas/webgl/useWhilePending.html [ Skip ]
 
 # Mac-WK1 only caches frames containing HTML at the moment.
 http/tests/navigation/page-cache-iframe-no-current-historyItem.html

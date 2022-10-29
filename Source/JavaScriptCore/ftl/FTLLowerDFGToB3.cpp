@@ -9160,7 +9160,7 @@ IGNORE_CLANG_WARNINGS_END
             // FIXME: Revisit JSGlobalObject.
             // https://bugs.webkit.org/show_bug.cgi?id=203204
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-            if (m_graph.isWatchingStringPrototypeIsSaneChainWatchpoint(m_node)) {
+            if (m_graph.isWatchingStringPrototypeChainIsSaneWatchpoint(m_node)) {
                 // FIXME: This could be captured using a Speculation mode that means
                 // "out-of-bounds loads return a trivial value", something like
                 // OutOfBoundsSaneChain.
@@ -20511,7 +20511,7 @@ IGNORE_CLANG_WARNINGS_END
     void speculateNonNullObject(Edge edge, LValue cell)
     {
         FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecObject, isNotObject(cell));
-        if (m_graph.isWatchingObjectPrototypeIsSaneChainWatchpoint(m_node))
+        if (m_graph.isWatchingObjectPrototypeChainIsSaneWatchpoint(m_node))
             return;
         
         speculate(

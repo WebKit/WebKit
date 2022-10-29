@@ -199,13 +199,13 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
 
     if (JSValue value = valueForNode.value()) {
         if (value.isCell()) {
-            auto* toThisMethod = value.asCell()->classInfo()->methodTable.toThis;
-            if (toThisMethod == &JSObject::toThis)
+            if (value.asCell()->isObject()) {
+                if (value.asCell()->inherits<JSScope>()) {
+                    if (ecmaMode.isStrict())
+                        return ToThisResult::Undefined;
+                    return ToThisResult::GlobalThis;
+                }
                 return ToThisResult::Identity;
-            if (toThisMethod == &JSScope::toThis) {
-                if (ecmaMode.isStrict())
-                    return ToThisResult::Undefined;
-                return ToThisResult::GlobalThis;
             }
         }
     }
@@ -225,7 +225,7 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
                 overridesToThis = true;
 
             // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
-            allStructuresAreJSScope &= structure->classInfoForCells()->methodTable.toThis == JSScope::info()->methodTable.toThis;
+            allStructuresAreJSScope &= structure->classInfoForCells()->isSubClassOf(JSScope::info());
         });
         if (!overridesToThis)
             return ToThisResult::Identity;
@@ -2248,7 +2248,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
 
                     if (node->arrayMode().isOutOfBounds()) {
-                        if (m_graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(node)) {
+                        if (m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node)) {
                             if (node->arrayMode().type() == Array::Double && node->arrayMode().isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther))
                                 setConstant(node, jsNumber(PNaN));
                             else

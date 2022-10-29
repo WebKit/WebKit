@@ -10,14 +10,14 @@ description("Tests the behavior of strict-origin-when-cross-origin referrer poli
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the full URL because we are same-origin.
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy/strict-origin-when-cross-origin/same-origin.html");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

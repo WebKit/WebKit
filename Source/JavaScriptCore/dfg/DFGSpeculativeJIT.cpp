@@ -3000,7 +3000,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
 #endif
 
-        if (m_graph.isWatchingStringPrototypeIsSaneChainWatchpoint(node)) {
+        if (m_graph.isWatchingStringPrototypeChainIsSaneWatchpoint(node)) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
             // loads return a trivial value". Something like OutOfBoundsSaneChain. This should
             // speculate that we don't take negative out-of-bounds, or better yet, it should rely

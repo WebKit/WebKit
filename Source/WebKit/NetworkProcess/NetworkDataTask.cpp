@@ -139,6 +139,8 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
     response.setSource(ResourceResponse::Source::Network);
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes)
         response.setUsedLegacyTLS(UsedLegacyTLS::Yes);
+    if (privateRelayed == PrivateRelayed::Yes)
+        response.setWasPrivateRelayed(WasPrivateRelayed::Yes);
 
     if (m_client)
         m_client->didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));
@@ -180,7 +182,7 @@ NetworkSession* NetworkDataTask::networkSession()
 void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
 {
 #if ENABLE(TRACKING_PREVENTION)
-    if ((m_session->sessionID().isEphemeral() || m_session->isResourceLoadStatisticsEnabled()) && m_session->shouldDowngradeReferrer() && request.isThirdParty())
+    if ((m_session->sessionID().isEphemeral() || m_session->isTrackingPreventionEnabled()) && m_session->shouldDowngradeReferrer() && request.isThirdParty())
         request.setExistingHTTPReferrerToOriginString();
 #endif
 }

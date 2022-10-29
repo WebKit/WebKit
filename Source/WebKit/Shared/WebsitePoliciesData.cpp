@@ -57,7 +57,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << mouseEventPolicy;
     encoder << modalContainerObservationPolicy;
     encoder << colorSchemePreference;
-    encoder << networkConnectionIntegrityEnabled;
+    encoder << networkConnectionIntegrityPolicy;
     encoder << idempotentModeAutosizingOnlyHonorsPercentages;
     encoder << allowPrivacyProxy;
 }
@@ -161,9 +161,9 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     if (!colorSchemePreference)
         return std::nullopt;
 
-    std::optional<bool> networkConnectionIntegrityEnabled;
-    decoder >> networkConnectionIntegrityEnabled;
-    if (!networkConnectionIntegrityEnabled)
+    std::optional<OptionSet<WebCore::NetworkConnectionIntegrity>> networkConnectionIntegrityPolicy;
+    decoder >> networkConnectionIntegrityPolicy;
+    if (!networkConnectionIntegrityPolicy)
         return std::nullopt;
 
     std::optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
@@ -198,7 +198,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         WTFMove(*mouseEventPolicy),
         WTFMove(*modalContainerObservationPolicy),
         WTFMove(*colorSchemePreference),
-        WTFMove(*networkConnectionIntegrityEnabled),
+        WTFMove(*networkConnectionIntegrityPolicy),
         WTFMove(*idempotentModeAutosizingOnlyHonorsPercentages),
         WTFMove(*allowPrivacyProxy),
     } };
@@ -328,7 +328,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setModalContainerObservationPolicy(websitePolicies.modalContainerObservationPolicy);
     documentLoader.setColorSchemePreference(websitePolicies.colorSchemePreference);
     documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
-    documentLoader.setNetworkConnectionIntegrityEnabled(websitePolicies.networkConnectionIntegrityEnabled);
+    documentLoader.setNetworkConnectionIntegrityPolicy(websitePolicies.networkConnectionIntegrityPolicy);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
 
     if (!documentLoader.frame())

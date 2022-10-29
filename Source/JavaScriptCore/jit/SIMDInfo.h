@@ -36,6 +36,7 @@ typedef union v128_u {
     uint16_t u16x8[8];
     uint32_t u32x4[4];
     uint64_t u64x2[2] = { 0, 0 };
+    v128_u() = default;
 } v128_t;
 
 enum class SIMDLane : uint8_t {

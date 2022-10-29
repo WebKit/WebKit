@@ -31,7 +31,6 @@
 #include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Packed.h>
-#include <wtf/Span.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>

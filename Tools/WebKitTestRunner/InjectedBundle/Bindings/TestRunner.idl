@@ -400,6 +400,8 @@ interface TestRunner {
     boolean didLoadAppInitiatedRequest();
     boolean didLoadNonAppInitiatedRequest();
 
+    undefined setManagedDomains(object originsArray, object callback);
+
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;
 

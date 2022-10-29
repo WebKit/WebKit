@@ -1167,10 +1167,10 @@ void NetworkProcess::setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::Ses
     }
 }
 
-void NetworkProcess::setResourceLoadStatisticsEnabled(PAL::SessionID sessionID, bool enabled)
+void NetworkProcess::setTrackingPreventionEnabled(PAL::SessionID sessionID, bool enabled)
 {
     if (auto* session = networkSession(sessionID))
-        session->setResourceLoadStatisticsEnabled(enabled);
+        session->setTrackingPreventionEnabled(enabled);
 }
 
 void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)
@@ -1275,6 +1275,20 @@ void NetworkProcess::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID 
     if (auto* session = networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
             resourceLoadStatistics->setAppBoundDomains(WTFMove(appBoundDomains), WTFMove(completionHandler));
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
+    completionHandler();
+}
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+void NetworkProcess::setManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain>&& appBoundDomains, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
+            resourceLoadStatistics->setManagedDomains(WTFMove(appBoundDomains), WTFMove(completionHandler));
             return;
         }
     }

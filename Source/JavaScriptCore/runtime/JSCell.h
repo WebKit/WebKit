@@ -186,8 +186,6 @@ public:
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
 
-    static JSValue toThis(JSCell*, JSGlobalObject*, ECMAMode);
-
     static bool canUseFastGetOwnProperty(const Structure&);
     JSValue fastGetOwnProperty(VM&, Structure&, PropertyName);
 

@@ -130,8 +130,8 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_resolvedConfiguration(WTFMove(configuration))
     , m_configuration(m_resolvedConfiguration->copy())
     , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    , m_resourceLoadStatisticsDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
+#if ENABLE(TRACKING_PREVENTION)
+    , m_trackingPreventionDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
 #endif
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 #if ENABLE(WEB_AUTHN)
@@ -452,7 +452,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 record.addHSTSCacheHostname(hostName);
             }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
             for (const auto& domain : websiteData.registrableDomainsWithResourceLoadStatistics) {
                 auto displayName = WebsiteDataRecord::displayNameForHostName(domain.string());
                 if (!displayName)
@@ -562,7 +562,7 @@ private:
     }
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain>&& domains, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
 {
     fetchDataAndApply(dataTypes, fetchOptions, m_queue.copyRef(), [domains = crossThreadCopy(domains), completionHandler = WTFMove(completionHandler)] (auto&& existingDataRecords) mutable {
@@ -627,7 +627,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     }
 #endif
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     bool didNotifyNetworkProcessToDeleteWebsiteData = false;
 #endif
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
@@ -639,7 +639,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     case ProcessAccessType::OnlyIfLaunched:
         if (m_networkProcess) {
             m_networkProcess->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
             didNotifyNetworkProcessToDeleteWebsiteData = true;
 #endif
         }
@@ -686,7 +686,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         });
     }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (!didNotifyNetworkProcessToDeleteWebsiteData)
             networkProcess().deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
@@ -751,7 +751,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                     cookieHostNames.append(hostName);
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
                     HSTSCacheHostNames.append(hostName);
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
                 registrableDomains.reserveCapacity(registrableDomains.size() + dataRecord.resourceLoadStatisticsRegistrableDomains.size());
                 for (auto& registrableDomain : dataRecord.resourceLoadStatisticsRegistrableDomains)
                     registrableDomains.uncheckedAppend(registrableDomain);
@@ -821,7 +821,7 @@ bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
 #endif
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1200,7 +1200,7 @@ void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds ti
 
 void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    useExplicitITPState();
+    useExplicitTrackingPreventionState();
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     networkProcess().setIsRunningResourceLoadStatisticsTest(m_sessionID, value, [callbackAggregator] { });
@@ -1408,7 +1408,7 @@ void WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(
 
     networkProcess().setThirdPartyCNAMEDomainForTesting(m_sessionID, WebCore::RegistrableDomain { cnameURL }, [callbackAggregator] { });
 }
-#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#endif // ENABLE(TRACKING_PREVENTION)
 
 void WebsiteDataStore::setCachedProcessSuspensionDelayForTesting(Seconds delay)
 {
@@ -1422,7 +1422,7 @@ void WebsiteDataStore::syncLocalStorage(CompletionHandler<void()>&& completionHa
 
 void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     networkProcess().setCacheMaxAgeCapForPrevalentResources(m_sessionID, seconds, [callbackAggregator] { });
@@ -1434,7 +1434,7 @@ void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, C
 
 void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     networkProcess().resetCacheMaxAgeCapForPrevalentResources(m_sessionID, WTFMove(completionHandler));
 #else
     completionHandler();
@@ -1598,10 +1598,10 @@ void WebsiteDataStore::sendNetworkProcessDidResume()
     networkProcess().sendProcessDidResume(ProcessThrottlerClient::ResumeReason::ForegroundActivity);
 }
 
-bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
+bool WebsiteDataStore::trackingPreventionEnabled() const
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    return m_resourceLoadStatisticsEnabled;
+#if ENABLE(TRACKING_PREVENTION)
+    return m_trackingPreventionEnabled;
 #else
     return false;
 #endif
@@ -1609,43 +1609,43 @@ bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
 
 bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    return m_resourceLoadStatisticsDebugMode;
+#if ENABLE(TRACKING_PREVENTION)
+    return m_trackingPreventionDebugMode;
 #else
     return false;
 #endif
 }
 
-void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
+void WebsiteDataStore::setTrackingPreventionEnabled(bool enabled)
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    if (enabled == resourceLoadStatisticsEnabled())
+#if ENABLE(TRACKING_PREVENTION)
+    if (enabled == trackingPreventionEnabled())
         return;
 
     if (enabled) {
-        m_resourceLoadStatisticsEnabled = true;
+        m_trackingPreventionEnabled = true;
         
         resolveDirectoriesIfNecessary();
         
         if (m_networkProcess)
-            m_networkProcess->send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, true), 0);
+            m_networkProcess->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, true), 0);
         for (auto& processPool : processPools())
-            processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(true), m_sessionID);
+            processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(true), m_sessionID);
         return;
     }
 
     if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, false), 0);
+        m_networkProcess->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, false), 0);
     for (auto& processPool : processPools())
-        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(false), m_sessionID);
+        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(false), m_sessionID);
 
-    m_resourceLoadStatisticsEnabled = false;
+    m_trackingPreventionEnabled = false;
 #else
     UNUSED_PARAM(enabled);
 #endif
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void WebsiteDataStore::setStatisticsTestingCallback(Function<void(const String&)>&& callback)
 {
     if (callback) {
@@ -1663,8 +1663,8 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
 
 void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    m_resourceLoadStatisticsDebugMode = enabled;
+#if ENABLE(TRACKING_PREVENTION)
+    m_trackingPreventionDebugMode = enabled;
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
@@ -1677,8 +1677,8 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 
 void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&& completionHandler) const
 {
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    if (!resourceLoadStatisticsEnabled() || !m_sessionID.isEphemeral()) {
+#if ENABLE(TRACKING_PREVENTION)
+    if (!trackingPreventionEnabled() || !m_sessionID.isEphemeral()) {
         completionHandler(false);
         return;
     }
@@ -1705,12 +1705,12 @@ void WebsiteDataStore::closeDatabases(CompletionHandler<void()>&& completionHand
 
     networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClosePCMDatabase(m_sessionID), [callbackAggregator] { });
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CloseITPDatabase(m_sessionID), [callbackAggregator] { });
 #endif
 }
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
 void WebsiteDataStore::logTestingEvent(const String& event)
 {
     ASSERT(RunLoop::isMain());
@@ -1721,7 +1721,7 @@ void WebsiteDataStore::logTestingEvent(const String& event)
 
 void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&& callback)
 {
-    if (resourceLoadStatisticsEnabled()) {
+    if (trackingPreventionEnabled()) {
         for (auto& processPool : processPools())
             processPool->sendToAllProcessesForSession(Messages::WebProcess::ClearResourceLoadStatistics(), m_sessionID);
     }
@@ -1797,13 +1797,19 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (isAppBoundITPRelaxationEnabled)
         appBoundDomains = valueOrDefault(appBoundDomainsIfInitialized());
 #endif
+    HashSet<WebCore::RegistrableDomain> managedDomains;
+#if ENABLE(MANAGED_DOMAINS)
+    auto managedDomainsOptional = managedDomainsIfInitialized();
+    if (managedDomainsOptional)
+        managedDomains = *managedDomainsOptional;
+#endif
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource;
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
-        resourceLoadStatisticsEnabled(),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-        isItpStateExplicitlySet(),
+        trackingPreventionEnabled(),
+#if ENABLE(TRACKING_PREVENTION)
+        isTrackingPreventionStateExplicitlySet(),
         hasStatisticsTestingCallback(),
 #else
         false,
@@ -1811,13 +1817,14 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #endif
         shouldIncludeLocalhostInResourceLoadStatistics,
         resourceLoadStatisticsDebugMode(),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         thirdPartyCookieBlockingMode(),
         WebCore::SameSiteStrictEnforcementEnabled::No,
 #endif
         firstPartyWebsiteDataRemovalMode,
         WTFMove(standaloneApplicationDomain),
         WTFMove(appBoundDomains),
+        WTFMove(managedDomains),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
     };
 
@@ -1869,8 +1876,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
 #endif
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_resourceLoadStatisticsEnabled;
+#if ENABLE(TRACKING_PREVENTION)
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_trackingPreventionEnabled;
 #endif
     platformSetNetworkParameters(parameters);
 #if PLATFORM(COCOA)
@@ -2031,6 +2038,37 @@ void WebsiteDataStore::setAppBoundDomainsForITP(const HashSet<WebCore::Registrab
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     networkProcess().setAppBoundDomainsForResourceLoadStatistics(m_sessionID, domains, [callbackAggregator] { });
+}
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+void WebsiteDataStore::forwardManagedDomainsToITPIfInitialized(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto managedDomains = managedDomainsIfInitialized();
+    if (!managedDomains || managedDomains->get().isEmpty())
+        return;
+
+    auto propagateManagedDomains = [callbackAggregator] (WebsiteDataStore* store, const HashSet<WebCore::RegistrableDomain>& domains) {
+        if (!store)
+            return;
+
+        if (store->thirdPartyCookieBlockingMode() != WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains && store->thirdPartyCookieBlockingMode() != WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains)
+            store->setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains, [callbackAggregator] { });
+        store->setManagedDomainsForITP(domains, [callbackAggregator] { });
+    };
+
+    propagateManagedDomains(globalDefaultDataStore().get(), *managedDomains);
+
+    for (auto* store : allDataStores().values())
+        propagateManagedDomains(store, *managedDomains);
+}
+
+void WebsiteDataStore::setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    networkProcess().setManagedDomainsForResourceLoadStatistics(m_sessionID, domains, [callbackAggregator] { });
 }
 #endif
 

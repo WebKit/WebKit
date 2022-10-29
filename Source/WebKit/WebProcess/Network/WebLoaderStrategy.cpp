@@ -338,7 +338,8 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
         }
     }
 
-    parameters.networkConnectionIntegrityEnabled = mainFrameDocumentLoader && mainFrameDocumentLoader->networkConnectionIntegrityEnabled();
+    auto networkConnectionIntegrityPolicy = mainFrameDocumentLoader ? mainFrameDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
+    parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
 }
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)

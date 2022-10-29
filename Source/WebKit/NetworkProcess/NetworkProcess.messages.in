@@ -83,7 +83,7 @@ messages -> NetworkProcess LegacyReceiver {
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
     ClearUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
     DumpResourceLoadStatistics(PAL::SessionID sessionID) -> (String dumpedStatistics)
-    SetResourceLoadStatisticsEnabled(PAL::SessionID sessionID, bool enabled)
+    SetTrackingPreventionEnabled(PAL::SessionID sessionID, bool enabled)
     SetResourceLoadStatisticsLogTestingEvent(bool enabled)
     UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> domainsToBlock) -> ()
     IsGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain) -> (bool isGrandfathered)
@@ -139,6 +139,9 @@ messages -> NetworkProcess LegacyReceiver {
     CloseITPDatabase(PAL::SessionID sessionID) -> ()
 #if ENABLE(APP_BOUND_DOMAINS)
     SetAppBoundDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain> appBoundDomains) -> ()
+#endif
+#if ENABLE(MANAGED_DOMAINS)
+    SetManagedDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain> appBoundDomains) -> ()
 #endif
     SetShouldDowngradeReferrerForTesting(bool enabled) -> ()
     SetThirdPartyCookieBlockingMode(PAL::SessionID sessionID, enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()

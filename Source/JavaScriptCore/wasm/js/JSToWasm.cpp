@@ -301,6 +301,26 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
 
     GPRReg wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
 
+    // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
+    // If parameters or results contain v128, throw a TypeError.
+    // Note: the above error is thrown each time the [[Call]] method is invoked.
+    if (Options::useWebAssemblySIMD() && (wasmFrameConvention.argumentsOrResultsIncludeV128)) {
+        GPRReg currentInstanceGPR = InvalidGPRReg;
+        if (Context::useFastTLS()) {
+            currentInstanceGPR = pinnedRegs.baseMemoryPointer;
+            jit.loadWasmContextInstance(currentInstanceGPR);
+        } else {
+            currentInstanceGPR = pinnedRegs.wasmContextInstancePointer;
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, JSCallingConvention::instanceStackOffset), wasmContextInstanceGPR);
+            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
+        }
+        ASSERT(currentInstanceGPR != InvalidGPRReg);
+
+        JIT_COMMENT(jit, "Throw an exception because this function uses v128");
+        emitThrowWasmToJSException(jit, currentInstanceGPR, ExceptionType::TypeErrorInvalidV128Use);
+        return result;
+    }
+
     {
         CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(typeDefinition, CallRole::Callee);
 

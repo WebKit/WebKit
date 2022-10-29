@@ -45,7 +45,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothingForTesting(bool useFontSmoothing)
-    SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
+    SetTrackingPreventionEnabled(bool enabled);
     ClearResourceLoadStatistics();
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)

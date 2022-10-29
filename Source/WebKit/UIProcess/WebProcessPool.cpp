@@ -217,7 +217,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
 #if PLATFORM(COCOA)
-        determineITPState();
+        determineTrackingPreventionState();
 
         // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
 #if PLATFORM(IOS_FAMILY)
@@ -625,9 +625,9 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, WebProcessProxy::IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode)
 {
 #if PLATFORM(COCOA)
-    m_tccPreferenceEnabled = doesAppHaveITPEnabled();
-    if (websiteDataStore && !websiteDataStore->isItpStateExplicitlySet())
-        websiteDataStore->setResourceLoadStatisticsEnabled(m_tccPreferenceEnabled);
+    m_tccPreferenceEnabled = doesAppHaveTrackingPreventionEnabled();
+    if (websiteDataStore && !websiteDataStore->isTrackingPreventionStateExplicitlySet())
+        websiteDataStore->setTrackingPreventionEnabled(m_tccPreferenceEnabled);
 #endif
 
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, isPrewarmed, crossOriginMode);
@@ -772,7 +772,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(containerCachesDirectoryExtensionHandle),
         WTFMove(containerTemporaryDirectoryExtensionHandle),
 #endif
-        websiteDataStore.resourceLoadStatisticsEnabled()
+        websiteDataStore.trackingPreventionEnabled()
     };
 }
 

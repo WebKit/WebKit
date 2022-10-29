@@ -523,7 +523,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
     auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
+    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
     if (!cookieHeaderField.isEmpty())
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
 }

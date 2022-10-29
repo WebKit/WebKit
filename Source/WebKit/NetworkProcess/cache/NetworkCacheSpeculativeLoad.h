@@ -37,6 +37,10 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
 
+namespace WebCore {
+enum class NetworkConnectionIntegrity : uint8_t;
+}
+
 namespace WebKit {
 
 class NetworkLoad;
@@ -47,7 +51,7 @@ class SpeculativeLoad final : public NetworkLoadClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using RevalidationCompletionHandler = CompletionHandler<void(std::unique_ptr<NetworkCache::Entry>)>;
-    SpeculativeLoad(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled, RevalidationCompletionHandler&&);
+    SpeculativeLoad(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, RevalidationCompletionHandler&&);
 
     virtual ~SpeculativeLoad();
 

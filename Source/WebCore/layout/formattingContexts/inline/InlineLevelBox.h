@@ -72,6 +72,7 @@ public:
     bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative() || (isInlineBox() && m_style.lineBoxContain.contains(LineBoxContain::Font)); } // FIXME: Adjust this property dynamically as the inline box gains content.
 
     bool lineBoxContain() const;
+    bool hasLineBoxContain() const { return m_style.lineBoxContain != RenderStyle::initialLineBoxContain(); }
 
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }

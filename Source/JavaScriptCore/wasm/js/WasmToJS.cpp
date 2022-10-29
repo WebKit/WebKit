@@ -53,7 +53,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
     jit.loadPtr(JIT::Address(result, Instance::offsetOfImportFunction(importIndex)), result);
 }
 
-static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadGCTypeIndexUse(VM& vm, JIT& jit, unsigned importIndex)
+static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadImportTypeUse(VM& vm, JIT& jit, unsigned importIndex, Wasm::ExceptionType exceptionType)
 {
     jit.loadWasmContextInstance(GPRInfo::argumentGPR2);
 
@@ -63,13 +63,13 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
     jit.prepareCallOperation(vm);
     jit.emitPutCellToCallFrameHeader(GPRInfo::argumentGPR1, CallFrameSlot::callee);
 
-    emitThrowWasmToJSException(jit, GPRInfo::argumentGPR2, Wasm::ExceptionType::InvalidGCTypeUse);
+    emitThrowWasmToJSException(jit, GPRInfo::argumentGPR2, exceptionType);
 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript invalid use of struct or array type definition in import[%i]", importIndex);
+    return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript throw exception due to invalid use of restricted type in import[%i]", importIndex);
 }
 
 Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, Bag<OptimizingCallLinkInfo>& callLinkInfos, TypeIndex typeIndex, unsigned importIndex)
@@ -99,7 +99,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     // GC support is experimental and currently will throw a runtime error when struct
     // and array type indices are exported via a function signature to JS.
     if (Options::useWebAssemblyGC() && (wasmCallInfo.argumentsIncludeGCTypeIndex || wasmCallInfo.resultsIncludeGCTypeIndex))
-        return handleBadGCTypeIndexUse(vm, jit, importIndex);
+        return handleBadImportTypeUse(vm, jit, importIndex, Wasm::ExceptionType::InvalidGCTypeUse);
+
+    // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
+    // If parameters or results contain v128, throw a TypeError.
+    // Note: the above error is thrown each time the [[Call]] method is invoked.
+    if (Options::useWebAssemblySIMD() && (wasmCallInfo.argumentsOrResultsIncludeV128))
+        return handleBadImportTypeUse(vm, jit, importIndex, ExceptionType::TypeErrorInvalidV128Use);
 
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
 #if ASSERT_ENABLED
@@ -512,6 +518,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::ExceptionType type)
 {
     ASSERT(wasmInstance != GPRInfo::argumentGPR0);
+    ASSERT(wasmInstance != InvalidGPRReg);
     jit.loadPtr(CCallHelpers::Address(wasmInstance, Wasm::Instance::offsetOfPointerToTopEntryFrame()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);

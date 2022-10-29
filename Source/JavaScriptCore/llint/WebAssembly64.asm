@@ -107,6 +107,7 @@ end)
 wasmOp(get_global, WasmGetGlobal, macro(ctx)
     loadp Wasm::Instance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
+    lshiftp 1, t1
     loadq [t0, t1, 8], t0
     returnq(ctx, t0)
 end)
@@ -114,6 +115,7 @@ end)
 wasmOp(set_global, WasmSetGlobal, macro(ctx)
     loadp Wasm::Instance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
+    lshiftp 1, t1
     mloadq(ctx, m_value, t2)
     storeq t2, [t0, t1, 8]
     dispatch(ctx)
@@ -122,6 +124,7 @@ end)
 wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
     loadp Wasm::Instance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
+    lshiftp 1, t1
     loadq [t0, t1, 8], t0
     loadq [t0], t0
     returnq(ctx, t0)
@@ -130,6 +133,7 @@ end)
 wasmOp(set_global_portable_binding, WasmSetGlobalPortableBinding, macro(ctx)
     loadp Wasm::Instance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
+    lshiftp 1, t1
     mloadq(ctx, m_value, t2)
     loadq [t0, t1, 8], t0
     storeq t2, [t0]

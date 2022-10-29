@@ -9,14 +9,14 @@ description("Tests the behavior of unsafe-url referrer policy when cross origin.
 jsTestIsAsync = true;
 
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the full URL
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy-iframe/unsafe-url/cross-origin-http-http.html");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

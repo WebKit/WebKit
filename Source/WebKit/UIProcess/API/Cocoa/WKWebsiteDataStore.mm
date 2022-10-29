@@ -357,13 +357,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (BOOL)_resourceLoadStatisticsEnabled
 {
-    return _websiteDataStore->resourceLoadStatisticsEnabled();
+    return _websiteDataStore->trackingPreventionEnabled();
 }
 
 - (void)_setResourceLoadStatisticsEnabled:(BOOL)enabled
 {
-    _websiteDataStore->useExplicitITPState();
-    _websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
+    _websiteDataStore->useExplicitTrackingPreventionState();
+    _websiteDataStore->setTrackingPreventionEnabled(enabled);
 }
 
 - (BOOL)_resourceLoadStatisticsDebugMode

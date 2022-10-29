@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that third party resources under managed domains are exempt from third-party cookie blocking.");
+    jsTestIsAsync = true;
+
+    const firstPartyOrigin = "http://127.0.0.1:8000";
+    const thirdPartyOrigin = "http://localhost:8000";
+    const thirdPartyResourceUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
+    const firstPartyCookieName = "firstPartyCookie";
+    const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
+    const partitionedCookieName = "partitionedCookie";
+    const subPathToSetPartitionedCookie = "/set-cookie.py?name=" + partitionedCookieName + "&value=value";
+    const returnUrl = firstPartyOrigin + "/resourceLoadStatistics/exemptDomains/managed-domains-third-party-resources-exempt-from-cookie-blocking.html";
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
+    const redirectChainUrl = thirdPartyResourceUrl + "/redirect.py?redirectTo=" + thirdPartyResourceUrl + subPathToGetCookies;
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                // Set first-party cookie for localhost.
+                document.location.href = thirdPartyResourceUrl + subPathToSetFirstPartyCookie + "#" + returnUrl + "#step2";
+                break;
+            case "#step2":
+                // Check that the cookie doesn't get sent for localhost under 127.0.0.1 since only localhost is configured as a managed domain.
+                document.location.hash = "step3";
+                testRunner.setManagedDomains([ thirdPartyOrigin ], function() {
+                    openIframe(thirdPartyResourceUrl + subPathToGetCookies + "&message=Should not receive cookie.", function() {
+                        runTest();
+                    });
+                });
+                break;
+            case "#step3":
+                // Check that the cookie does get sent for localhost under 127.0.0.1 since 127.0.0.1 is configured as a managed domain.
+                document.location.hash = "step4";
+                testRunner.setManagedDomains([ firstPartyOrigin ], function() {
+                    openIframe(thirdPartyResourceUrl + subPathToGetCookies + "&message=Should receive cookie.", function() {
+                        runTest();
+                    });
+                });
+                break;
+            case "#step4":
+                // Check that the cookie gets sent for localhost under 127.0.0.1 since they are now both configured as managed domains.
+                document.location.hash = "step5";
+                testRunner.setManagedDomains([ firstPartyOrigin, thirdPartyOrigin ], function() {
+                    openIframe(thirdPartyResourceUrl + subPathToGetCookies + "&message=Should receive cookie.", runTest);
+                });
+                break;
+            case "#step5":
+                testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                    setEnableFeature(false, finishJSTest);
+                });
+                break;
+        }
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true, function () {
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
+            runTest();
+        });
+    } else {
+        runTest();
+    }
+</script>
+</body>
+</html>

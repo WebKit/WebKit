@@ -4,7 +4,7 @@
     <title>Test for font loading data collection in resource load statistics</title>
 </head>
 <script>
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 </script>
 <body>
 <p> Tests for font loading data collection in ResourceLoadStatistics plist by loading fonts and dumping the entire resource load statistics map. The test tries to load various fonts through a comma separated font-family list to draw a string with many m's since they differ in width more prominently among fonts. </p>
@@ -39,7 +39,7 @@
         testRunner.dumpAsText();
         testRunner.dumpResourceLoadStatistics();
         testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
         runTestRunnerTest();
     }
 </script>
