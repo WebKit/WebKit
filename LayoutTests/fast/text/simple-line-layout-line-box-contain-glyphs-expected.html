@@ -1,20 +1,6 @@
-<!doctype html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
-<html>
-<head>
-<title>This tests that we don't use simple line layout when webkit-line-box-contain: glyphs is set and the glyphs overflow the line vertically.</title>
 <style>
 div {
-  -webkit-line-box-contain: glyphs;
-  line-height: 10px;
+  font-family: Ahem;
+  font-size: 10px;
 }
-</style>
-<script>
-  if (window.internals) {
-    internals.settings.setLegacyLineLayoutVisualCoverageEnabled(true);
- }
-</script>
-</head>
-<body>
-<div>foobar</div>
-</body>
-</html>
+</style><div>text should be vertically clipped.</div>

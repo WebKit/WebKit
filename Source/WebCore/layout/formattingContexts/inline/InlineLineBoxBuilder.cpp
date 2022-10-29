@@ -129,17 +129,16 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContentWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
     constructInlineLevelBoxes(lineBox, lineContent, lineIndex);
     adjustIdeographicBaselineIfApplicable(lineBox, lineIndex);
+    adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineContent, lineBox, lineIndex);
     auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
     lineBox.setLogicalRect({ lineContent.lineLogicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight });
     return lineBox;
 }
 
-void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline fontBaseline) const
+InlineLevelBox::LayoutBounds LineBoxBuilder::adjustedLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline fontBaseline) const
 {
     ASSERT(!fallbackFontsForContent.isEmpty());
     ASSERT(inlineBox.isInlineBox());
-    if (!inlineBox.isPreferredLineHeightFontMetricsBased())
-        return;
 
     // https://www.w3.org/TR/css-inline-3/#inline-height
     // When the computed line-height is normal, the layout bounds of an inline box encloses all its glyphs, going from the highest A to the deepest D. 
@@ -166,7 +165,7 @@ void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineB
 
     // We need floor/ceil to match legacy layout integral positioning.
     auto layoutBounds = *inlineBox.layoutBounds();
-    inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) });
+    return { std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) };
 }
 
 TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run& run, const RenderStyle& style)
@@ -401,7 +400,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             parentInlineBox.setHasContent();
             if (auto fallbackFonts = collectFallbackFonts(parentInlineBox, run, style); !fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-                adjustLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts, AlphabeticBaseline);
+                if (parentInlineBox.isPreferredLineHeightFontMetricsBased())
+                    parentInlineBox.setLayoutBounds(adjustedLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts, AlphabeticBaseline));
             }
             continue;
         }
@@ -422,6 +422,79 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         ASSERT_NOT_REACHED();
     }
     lineBox.setHasContent(lineHasContent);
+}
+
+void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(const LineBuilder::LineContent& lineContent, LineBox& lineBox, size_t lineIndex)
+{
+    // While line-box-contain normally tells whether a certain type of content should be included when computing the line box height,
+    // font and Glyphs values affect the "size" of the associated inline boxes (which affects the line box height).
+    auto lineBoxContain = !lineIndex ? rootBox().firstLineStyle().lineBoxContain() : rootBox().style().lineBoxContain();
+
+    // Collect layout bounds based on the contain property and set them on the inline boxes when they are applicable.
+    HashMap<InlineLevelBox*, TextUtil::EnclosingAscentDescent> inlineBoxBoundsMap;
+
+    if (lineBoxContain.contains(LineBoxContain::Font)) {
+        // Assign font based layout bounds to all inline boxes.
+        auto ensureFontMetricsBasedHeight = [&] (auto& inlineBox) {
+            ASSERT(inlineBox.isInlineBox());
+            if (inlineBox.isPreferredLineHeightFontMetricsBased()) {
+                auto fontMetricsBaseLayoutBounds = *inlineBox.layoutBounds();
+                inlineBoxBoundsMap.set(&inlineBox, TextUtil::EnclosingAscentDescent { fontMetricsBaseLayoutBounds.ascent, fontMetricsBaseLayoutBounds.descent });
+                return;
+            }
+
+            auto primaryTextMetrics = primaryFontMetricsForInlineBox(inlineBox, lineBox.baselineType());
+            auto logicalHeight = primaryTextMetrics.ascentAndDescent.ascent + primaryTextMetrics.ascentAndDescent.descent;
+            auto halfLeading = (primaryTextMetrics.lineSpacing - logicalHeight) / 2;
+            auto ascent = primaryTextMetrics.ascentAndDescent.ascent + halfLeading;
+            auto descent = primaryTextMetrics.ascentAndDescent.descent + halfLeading;
+            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineBox); !fallbackFonts.isEmpty()) {
+                auto layoutBounds = adjustedLayoutBoundsWithFallbackFonts(inlineBox, fallbackFonts, lineBox.baselineType());
+                ascent = std::max(ascent, layoutBounds.ascent);
+                descent = std::max(descent, layoutBounds.descent);
+            }
+            inlineBoxBoundsMap.set(&inlineBox, TextUtil::EnclosingAscentDescent { ascent, descent });
+        };
+
+        ensureFontMetricsBasedHeight(lineBox.rootInlineBox());
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            if (!inlineLevelBox.isInlineBox())
+                continue;
+            ensureFontMetricsBasedHeight(inlineLevelBox);
+        }
+    }
+
+    if (lineBoxContain.contains(LineBoxContain::Glyphs)) {
+        // Compute text content (glyphs) hugging inline box layout bounds.
+        for (auto run : lineContent.runs) {
+            if (!run.isText())
+                continue;
+
+            auto& textBox = downcast<InlineTextBox>(run.layoutBox());
+            auto textContent = run.textContent();
+            auto& style = !lineIndex ? textBox.firstLineStyle() : textBox.style();
+            auto enclosingAscentDescentForRun = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent->start, textContent->length), style);
+
+            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(textBox.parent());
+            auto enclosingAscentDescentForInlineBox = inlineBoxBoundsMap.get(&parentInlineBox);
+            enclosingAscentDescentForInlineBox.ascent = std::max(enclosingAscentDescentForInlineBox.ascent, -enclosingAscentDescentForRun.ascent);
+            enclosingAscentDescentForInlineBox.descent = std::max(enclosingAscentDescentForInlineBox.descent, enclosingAscentDescentForRun.descent);
+
+            inlineBoxBoundsMap.set(&parentInlineBox, enclosingAscentDescentForInlineBox);
+        }
+    }
+
+    for (auto entry : inlineBoxBoundsMap) {
+        auto* inlineBox = entry.key;
+        auto enclosingAscentDescentForInlineBox = entry.value;
+        auto inlineBoxLayoutBounds = *inlineBox->layoutBounds();
+
+        // "line-box-container: block" The extended block progression dimension of the root inline box must fit within the line box.
+        auto mayShrinkLineBox = inlineBox->isRootInlineBox() ? !lineBoxContain.contains(LineBoxContain::Block) : true;
+        auto ascent = mayShrinkLineBox ? enclosingAscentDescentForInlineBox.ascent : std::max(enclosingAscentDescentForInlineBox.ascent, inlineBoxLayoutBounds.ascent);
+        auto descent = mayShrinkLineBox ? enclosingAscentDescentForInlineBox.descent : std::max(enclosingAscentDescentForInlineBox.descent, inlineBoxLayoutBounds.descent);
+        inlineBox->setLayoutBounds({ ceilf(ascent), ceilf(descent) });
+    }
 }
 
 void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, size_t lineIndex)
@@ -472,8 +545,8 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
 
         auto needsFontFallbackAdjustment = inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox();
         if (needsFontFallbackAdjustment) {
-            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineLevelBox); !fallbackFonts.isEmpty())
-                adjustLayoutBoundsWithFallbackFonts(inlineLevelBox, fallbackFonts, IdeographicBaseline);
+            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineLevelBox); !fallbackFonts.isEmpty() && inlineLevelBox.isPreferredLineHeightFontMetricsBased())
+                inlineLevelBox.setLayoutBounds(adjustedLayoutBoundsWithFallbackFonts(inlineLevelBox, fallbackFonts, IdeographicBaseline));
         }
     };
 

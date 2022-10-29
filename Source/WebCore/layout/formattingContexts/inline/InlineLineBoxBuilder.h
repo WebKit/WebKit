@@ -44,7 +44,8 @@ public:
 
 private:
     void setVerticalPropertiesForInlineLevelBox(const LineBox&, InlineLevelBox&) const;
-    void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
+    void adjustInlineBoxHeightsForLineBoxContainIfApplicable(const LineBuilder::LineContent&, LineBox&, size_t lineIndex);
+    InlineLevelBox::LayoutBounds adjustedLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
 
     void constructInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
