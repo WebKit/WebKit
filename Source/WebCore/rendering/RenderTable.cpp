@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -299,7 +299,8 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(std::min(logicalWidth(), computedMaxLogicalWidth));
     }
 
-    // Ensure we aren't smaller than our min preferred width.
+    // Ensure we aren't smaller than our min preferred width. This MUST be done after 'max-width' as
+    // we ignore it if it means we wouldn't accomodate our content.
     setLogicalWidth(std::max(logicalWidth(), minPreferredLogicalWidth()));    
 
     // Ensure we aren't smaller than our min-width style.
@@ -327,6 +328,10 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(minimumValueForLength(style().marginStart(), availableLogicalWidth));
         setMarginEnd(minimumValueForLength(style().marginEnd(), availableLogicalWidth));
     }
+    
+    // We should NEVER shrink the table below the min-content logical width, or else the table can't accomodate
+    // its own content which doesn't match CSS nor what authors expect.
+    ASSERT(logicalWidth() >= minPreferredLogicalWidth());
 }
 
 // This method takes a RenderStyle's logical width, min-width, or max-width length and computes its actual value.
@@ -884,6 +889,7 @@ void RenderTable::computePreferredLogicalWidths()
 
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for maxWidth.
     if (styleToUse.logicalMaxWidth().isFixed()) {
+        // We don't constrain m_minPreferredLogicalWidth as the table should be at least the size of its min-content, regardless of 'max-width'.
         m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth()));
         m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, m_minPreferredLogicalWidth);
     }
