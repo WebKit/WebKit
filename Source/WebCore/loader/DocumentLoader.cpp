@@ -2109,6 +2109,8 @@ void DocumentLoader::startLoadingMainResource()
     ASSERT(timing().startTime());
 
     willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
+        request.setRequester(ResourceRequest::Requester::Main);
+
         m_request = request;
         // FIXME: Implement local URL interception by getting the service worker of the parent.
 
@@ -2118,7 +2120,6 @@ void DocumentLoader::startLoadingMainResource()
             return;
         }
 
-        request.setRequester(ResourceRequest::Requester::Main);
         // If this is a reload the cache layer might have made the previous request conditional. DocumentLoader can't handle 304 responses itself.
         request.makeUnconditional();
 

@@ -20,8 +20,9 @@
 #pragma once
 
 #include "WebKitWebResource.h"
+#include <WebCore/ResourceRequest.h>
 
-WebKitWebResource* webkitWebResourceCreate(WebKit::WebFrameProxy&, WebKitURIRequest*, bool isMainResource);
+WebKitWebResource* webkitWebResourceCreate(WebKit::WebFrameProxy&, const WebCore::ResourceRequest&);
 void webkitWebResourceSentRequest(WebKitWebResource*, WebKitURIRequest*, WebKitURIResponse*);
 void webkitWebResourceSetResponse(WebKitWebResource*, WebKitURIResponse*);
 void webkitWebResourceNotifyProgress(WebKitWebResource*, guint64 bytesReceived);
@@ -29,3 +30,4 @@ void webkitWebResourceFinished(WebKitWebResource*);
 void webkitWebResourceFailed(WebKitWebResource*, GError*);
 void webkitWebResourceFailedWithTLSErrors(WebKitWebResource*, GTlsCertificateFlags, GTlsCertificate*);
 WebKit::WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource*);
+bool webkitWebResourceIsMainResource(WebKitWebResource*);

@@ -39,6 +39,7 @@
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LinkIcon.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>
 
@@ -72,7 +73,7 @@ void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, W
 void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>);
 void webkitWebViewHandleDownloadRequest(WebKitWebView*, WebKit::DownloadProxy*);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
-void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy&, uint64_t resourceIdentifier, WebKitURIRequest*);
+void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy&, uint64_t resourceIdentifier, const WebCore::ResourceRequest&);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 #if PLATFORM(GTK)

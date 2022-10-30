@@ -233,12 +233,12 @@ static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CStrin
     g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_URI]);
 }
 
-WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, WebKitURIRequest* request, bool isMainResource)
+WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::ResourceRequest& request)
 {
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->frame = &frame;
-    resource->priv->uri = webkit_uri_request_get_uri(request);
-    resource->priv->isMainResource = isMainResource;
+    resource->priv->uri = request.url().string().utf8();
+    resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequest::Requester::Main;
     return resource;
 }
 
@@ -279,6 +279,11 @@ void webkitWebResourceFailedWithTLSErrors(WebKitWebResource* resource, GTlsCerti
 WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource* resource)
 {
     return resource->priv->frame.get();
+}
+
+bool webkitWebResourceIsMainResource(WebKitWebResource* resource)
+{
+    return resource->priv->isMainResource;
 }
 
 /**
