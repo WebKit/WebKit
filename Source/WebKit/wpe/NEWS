@@ -1,4 +1,20 @@
 =================
+WPE WebKit 2.38.1
+=================
+
+What's new in WPE WebKit 2.38.1?
+
+  - Make xdg-dbus-proxy work if host session bus address is an abstract socket.
+  - Use a single xdg-dbus-proxy process when sandbox is enabled.
+  - Fix high resolution video playback due to unimplemented changeType operation.
+  - Ensure GSubprocess uses posix_spawn() again and inherit file descriptors.
+  - Fix player stucking in buffering (paused) state for progressive streaming.
+  - Do not try to preconnect on link click when link preconnect setting is disabled.
+  - Fix close status code returned when the client closes a WebSocket in some cases.
+  - Fix media player duration calculation.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.38.0
 =================
 
