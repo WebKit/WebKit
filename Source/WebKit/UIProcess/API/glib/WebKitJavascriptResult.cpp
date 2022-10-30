@@ -34,8 +34,7 @@
 struct _WebKitJavascriptResult {
     explicit _WebKitJavascriptResult(WebCore::SerializedScriptValue& serializedScriptValue)
     {
-        auto* jsContext = SharedJavascriptContext::singleton().getOrCreateContext();
-        jsValue = jscContextGetOrCreateValue(jsContext, serializedScriptValue.deserialize(jscContextGetJSContext(jsContext), nullptr));
+        jsValue = API::SerializedScriptValue::deserialize(serializedScriptValue);
     }
 
     GRefPtr<JSCValue> jsValue;
