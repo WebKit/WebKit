@@ -325,11 +325,18 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (!renderer.parent()->style().lineClamp().isNone()) {
+    auto deprecatedFlexBoxAncestor = [&]() -> RenderBlock* {
         // Line clamp is on the deprecated flex box and not the root.
+        for (auto* ancestor = renderer.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (is<RenderDeprecatedFlexibleBox>(*ancestor))
+                return ancestor;
+            if (ancestor->establishesIndependentFormattingContext())
+                return nullptr;
+        }
+        return nullptr;
+    };
+    if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
-    }
-
     return reasons;
 }
 
