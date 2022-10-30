@@ -43,6 +43,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
+#include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <pal/Logging.h>
@@ -155,6 +156,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowHasInitialLetter:
         stream << "intial letter";
+        break;
+    case AvoidanceReason::FlowIsVTTCue:
+        stream << "media track";
         break;
     default:
         break;
@@ -490,6 +494,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (is<RenderListItem>(flow) && (flow.isPositioned() || flow.isFloating()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+    if (is<RenderVTTCue>(flow))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsVTTCue, reasons, includeReasons);
 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
