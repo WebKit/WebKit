@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(COCOA) && ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || (USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)))
+#if ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || (PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)))
 
 #import <wtf/SoftLinking.h>
 
@@ -33,7 +33,7 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARQuickLookPreviewItem);
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)
 #import <WebKitAdditions/ARKitSoftLinkAdditions.mm>
 #endif
 
