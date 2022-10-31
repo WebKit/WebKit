@@ -22,11 +22,10 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "RealtimeIncomingSourceGStreamer.h"
-#include "RealtimeMediaSource.h"
 
 namespace WebCore {
 
-class RealtimeIncomingAudioSourceGStreamer : public RealtimeMediaSource, public RealtimeIncomingSourceGStreamer {
+class RealtimeIncomingAudioSourceGStreamer : public RealtimeIncomingSourceGStreamer {
 public:
     static Ref<RealtimeIncomingAudioSourceGStreamer> create(AtomString&& audioTrackId) { return adoptRef(*new RealtimeIncomingAudioSourceGStreamer(WTFMove(audioTrackId))); }
 
@@ -36,9 +35,6 @@ protected:
 
 private:
     // RealtimeMediaSource API
-    void startProducingData() final;
-    void stopProducingData() final;
-    const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
     bool isIncomingAudioSource() const final { return true; }
 
