@@ -34,7 +34,7 @@ public:
     void handleUpstreamEvent(GRefPtr<GstEvent>&&);
 
 protected:
-    RealtimeIncomingSourceGStreamer(Type, AtomString&& name);
+    RealtimeIncomingSourceGStreamer(const CaptureDevice&);
 
     void closeValve() const;
     void openValve() const;

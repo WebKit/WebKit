@@ -50,7 +50,7 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
     m_page.userMediaPermissionRequestManager().cancelUserMediaRequest(request);
 }
 
-void WebUserMediaClient::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
+void WebUserMediaClient::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
     m_page.userMediaPermissionRequestManager().enumerateMediaDevices(document, WTFMove(completionHandler));
 }

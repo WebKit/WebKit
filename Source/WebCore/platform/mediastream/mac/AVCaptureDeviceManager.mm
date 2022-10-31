@@ -95,16 +95,16 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 {
     ASSERT(!isMainThread());
     auto* currentDevices = [PAL::getAVCaptureDeviceClass() devices];
-    auto changedDevices = adoptNS([[NSMutableArray alloc] init]);
+    auto removedDevices = adoptNS([[NSMutableArray alloc] init]);
     for (AVCaptureDevice *cachedDevice in m_avCaptureDevices.get()) {
         if (![currentDevices containsObject:cachedDevice])
-            [changedDevices addObject:cachedDevice];
+            [removedDevices addObject:cachedDevice];
     }
 
-    if ([changedDevices count]) {
-        for (AVCaptureDevice *device in changedDevices.get())
+    if ([removedDevices count]) {
+        for (AVCaptureDevice *device in removedDevices.get())
             [device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
-        [m_avCaptureDevices removeObjectsInArray:changedDevices.get()];
+        [m_avCaptureDevices removeObjectsInArray:removedDevices.get()];
     }
 
     for (AVCaptureDevice *device in currentDevices) {
@@ -121,10 +121,17 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 
 }
 
-static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device)
+static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device, bool isDefault = false)
 {
     CaptureDevice captureDevice { device.uniqueID, CaptureDevice::DeviceType::Camera, device.localizedName };
     captureDevice.setEnabled(deviceIsAvailable(device));
+    captureDevice.setIsDefault(isDefault);
+
+#if HAVE(CONTINUITY_CAMEARA)
+    if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(systemPreferredCamera)] && [device respondsToSelector:@selector(isContinuityCamera)])
+        captureDevice.setIsEphemeral(device.isContinuityCamera && [PAL::getAVCaptureDeviceClass() systemPreferredCamera] != device);
+#endif
+
     return captureDevice;
 }
 
@@ -165,11 +172,9 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
     }
 #endif
 
-    if (defaultVideoDevice) {
-        auto device = toCaptureDevice(defaultVideoDevice);
-        device.setIsDefault(true);
-        deviceList.append(WTFMove(device));
-    }
+    if (defaultVideoDevice)
+        deviceList.append(toCaptureDevice(defaultVideoDevice, true));
+
     for (AVCaptureDevice *platformDevice in currentDevices) {
         if (isVideoDevice(platformDevice) && platformDevice.uniqueID != defaultVideoDevice.uniqueID)
             deviceList.append(toCaptureDevice(platformDevice));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ static CaptureSourceOrError initializeCoreAudioCaptureSource(Ref<CoreAudioCaptur
     return CaptureSourceOrError(WTFMove(source));
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
     CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(nullptr);
 
@@ -88,22 +88,22 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
     if (!device)
         return { "No CoreAudioCaptureSource device"_s };
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), AtomString { device->label() }, WTFMove(hashSalt), device->deviceID(), nullptr, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(device.value(), device->deviceID(), WTFMove(hashSalts), nullptr, pageIdentifier));
 #elif PLATFORM(IOS_FAMILY)
     auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(WTFMove(deviceID));
     if (!device)
         return { "No AVAudioSessionCaptureDevice device"_s };
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), AtomString { device->label() }, WTFMove(hashSalt), 0, nullptr, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(device.value(), 0, WTFMove(hashSalts), nullptr, pageIdentifier));
 #endif
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, String&& hashSalt, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, PageIdentifier pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, PageIdentifier pageIdentifier)
 {
     CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(&overrideUnit);
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), WTFMove(label), WTFMove(hashSalt), 0, &overrideUnit, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(label) }, 0, WTFMove(hashSalts), &overrideUnit, pageIdentifier));
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
@@ -201,8 +201,8 @@ void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<vo
     return CoreAudioSharedUnit::unit().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, AtomString&& label, String&& hashSalt, uint32_t captureDeviceID, BaseAudioSharedUnit* overrideUnit, PageIdentifier pageIdentifier)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt), pageIdentifier)
+CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& device, uint32_t captureDeviceID, MediaDeviceHashSalts&& hashSalts, BaseAudioSharedUnit* overrideUnit, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_captureDeviceID(captureDeviceID)
     , m_overrideUnit(overrideUnit)
 {
