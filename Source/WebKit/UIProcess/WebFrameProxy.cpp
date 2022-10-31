@@ -367,7 +367,12 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
 void WebFrameProxy::swapToProcess(WebProcessProxy& process)
 {
     ASSERT(!isMainFrame());
+    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object());
     m_process = process;
+
+    // FIXME: This identifier may collide with identifiers generated in the new process.
+    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object(), *this);
+
     // FIXME: Do more here.
 }
 
