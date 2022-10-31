@@ -33,6 +33,8 @@
 #include <wtf/RefPtr.h>
 
 #if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+
 typedef struct _GVariant GVariant;
 typedef struct _JSCContext JSCContext;
 typedef struct _JSCValue JSCValue;
