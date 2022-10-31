@@ -50,6 +50,7 @@ static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIter
 LegacyTextBoxPainter::LegacyTextBoxPainter(const LegacyInlineTextBox& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : TextBoxPainter(InlineIterator::BoxLegacyPath { &textBox }, paintInfo, paintOffset)
 {
+    m_emphasisMarkExistsAndIsAbove = textBox.emphasisMarkExistsAndIsAbove(m_style);
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -76,7 +77,6 @@ TextBoxPainter<TextBoxPath>::TextBoxPainter(TextBoxPath&& textBox, PaintInfo& pa
     , m_haveSelection(computeHaveSelection())
     , m_containsComposition(m_renderer.textNode() && m_renderer.frame().editor().compositionNode() == m_renderer.textNode())
     , m_useCustomUnderlines(m_containsComposition && m_renderer.frame().editor().compositionUsesCustomUnderlines())
-    , m_emphasisMarkExistsAndIsAbove(RenderText::emphasisMarkExistsAndIsAbove(m_renderer, m_style))
 {
     ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection || paintInfo.phase == PaintPhase::TextClip || paintInfo.phase == PaintPhase::EventRegion);
 }

@@ -731,7 +731,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
                 }
             }
             if (is<LegacyInlineTextBox>(*child)) {
-                if (auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(downcast<LegacyInlineTextBox>(*child).renderer(), childLineStyle)) {
+                if (std::optional<bool> markExistsAndIsAbove = downcast<LegacyInlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle)) {
                     if (*markExistsAndIsAbove != childLineStyle.isFlippedLinesWritingMode())
                         hasAnnotationsBefore = true;
                     else
@@ -893,7 +893,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     auto leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
     auto rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
-    if (auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox.renderer(), lineStyle)) {
+    if (std::optional<bool> markExistsAndIsAbove = textBox.emphasisMarkExistsAndIsAbove(lineStyle)) {
         LayoutUnit emphasisMarkHeight = lineStyle.fontCascade().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
         if (*markExistsAndIsAbove == !lineStyle.isFlippedLinesWritingMode())
             topGlyphOverflow = std::min(topGlyphOverflow, -emphasisMarkHeight);
@@ -1234,7 +1234,7 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
 
         if (is<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
-            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(downcast<LegacyInlineTextBox>(*child).renderer(), childLineStyle);
+            std::optional<bool> markExistsAndIsAbove = downcast<LegacyInlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle);
             if (markExistsAndIsAbove && *markExistsAndIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
@@ -1282,7 +1282,7 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
 
         if (is<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
-            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(downcast<LegacyInlineTextBox>(*child).renderer(), childLineStyle);
+            std::optional<bool> markExistsAndIsAbove = downcast<LegacyInlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle);
             if (markExistsAndIsAbove && !*markExistsAndIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     LayoutUnit bottomOfEmphasisMark { child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString()) };
