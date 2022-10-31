@@ -18,14 +18,9 @@ self.onconnect = function(e) {
             port.postMessage(state);
             return;
         }
-        if (event.data === 'ping') {
-            port.postMessage('pong');
-            return;
-        }
         if (event.data.action === 'setState') {
             state = event.data.state;
             port.postMessage('ok');
-            return;
         }
     };
 }
