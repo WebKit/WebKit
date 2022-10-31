@@ -85,6 +85,11 @@ class WatchOSLayoutTraits extends LayoutTraits
         return false;
     }
 
+    inheritsBorderRadius()
+    {
+        return false;
+    }
+
     toString()
     {
         return `[WatchOSLayoutTraits]`;
