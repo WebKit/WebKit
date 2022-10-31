@@ -121,9 +121,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasTextCombine:
         stream << "text combine";
         break;
-    case AvoidanceReason::FlowTextIsCombineText:
-        stream << "text is combine";
-        break;
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
@@ -357,7 +354,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (is<RenderText>(child)) {
         if (child.isCombineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
         if (child.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
 
