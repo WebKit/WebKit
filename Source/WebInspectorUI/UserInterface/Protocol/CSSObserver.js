@@ -60,26 +60,26 @@ WI.CSSObserver = class CSSObserver extends InspectorBackend.Dispatcher
 
     namedFlowCreated(namedFlow)
     {
-        // COMPATIBILITY (iOS 11.3): Removed.
+        // COMPATIBILITY (iOS 11.0): Removed.
     }
 
     namedFlowRemoved(documentNodeId, flowName)
     {
-        // COMPATIBILITY (iOS 11.3): Removed.
+        // COMPATIBILITY (iOS 11.0): Removed.
     }
 
     regionOversetChanged(namedFlow)
     {
-        // COMPATIBILITY (iOS 11.3): Removed.
+        // COMPATIBILITY (iOS 11.0): Removed.
     }
 
     registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId)
     {
-        // COMPATIBILITY (iOS 11.3): Removed.
+        // COMPATIBILITY (iOS 11.0): Removed.
     }
 
     unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId)
     {
-        // COMPATIBILITY (iOS 11.3): Removed.
+        // COMPATIBILITY (iOS 11.0): Removed.
     }
 };

@@ -980,26 +980,6 @@ WI.Resource = class Resource extends WI.SourceCode
         this._finishedOrFailedTimestamp = NaN;
     }
 
-    legacyMarkServedFromMemoryCache()
-    {
-        // COMPATIBILITY (iOS 10.3): This is a legacy code path where we know the resource came from the MemoryCache.
-        console.assert(this._responseSource === WI.Resource.ResponseSource.Unknown);
-
-        this._responseSource = WI.Resource.ResponseSource.MemoryCache;
-
-        this.markAsCached();
-    }
-
-    legacyMarkServedFromDiskCache()
-    {
-        // COMPATIBILITY (iOS 10.3): This is a legacy code path where we know the resource came from the DiskCache.
-        console.assert(this._responseSource === WI.Resource.ResponseSource.Unknown);
-
-        this._responseSource = WI.Resource.ResponseSource.DiskCache;
-
-        this.markAsCached();
-    }
-
     isLoading()
     {
         return !this._finished && !this._failed;

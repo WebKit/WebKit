@@ -141,14 +141,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harImportNavigationItem, this._harExportNavigationItem, new WI.DividerNavigationItem]);
         this._buttonsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        // COMPATIBILITY (iOS 10.3): Network.setResourceCachingDisabled did not exist.
-        if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled")) {
-            this._disableResourceCacheNavigationItem = new WI.CheckboxNavigationItem("network-disable-resource-cache", WI.UIString("Disable Caches"), WI.settings.resourceCachingDisabled.value);
-            this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-            this._disableResourceCacheNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._toggleDisableResourceCache, this);
-
-            WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
-        }
+        this._disableResourceCacheNavigationItem = new WI.CheckboxNavigationItem("network-disable-resource-cache", WI.UIString("Disable Caches"), WI.settings.resourceCachingDisabled.value);
+        this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+        this._disableResourceCacheNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._toggleDisableResourceCache, this);
 
         // COMPATIBILITY (macOS 13.0, iOS 16.0): Network.setEmulatedConditions did not exist.
         if (WI.settings.experimentalEnableNetworkEmulatedCondition.value && InspectorBackend.hasCommand("Network.setEmulatedConditions")) {
@@ -180,7 +175,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
-        WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearNetworkOnNavigateChanged, this)
+        WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearNetworkOnNavigateChanged, this);
+        WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
         if (WI.MediaInstrument.supported())
             WI.settings.groupMediaRequestsByDOMNode.addEventListener(WI.Setting.Event.Changed, this._handleGroupMediaRequestsByDOMNodeChanged, this);
 
