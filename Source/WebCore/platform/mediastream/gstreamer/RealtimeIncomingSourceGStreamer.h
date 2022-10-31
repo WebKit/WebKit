@@ -22,16 +22,19 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GRefPtrGStreamer.h"
+#include "RealtimeMediaSource.h"
 
 namespace WebCore {
 
-class RealtimeIncomingSourceGStreamer {
+class RealtimeIncomingSourceGStreamer : public RealtimeMediaSource {
 public:
     GstElement* bin() { return m_bin.get(); }
     void registerClient();
 
+    void handleUpstreamEvent(GRefPtr<GstEvent>&&);
+
 protected:
-    RealtimeIncomingSourceGStreamer();
+    RealtimeIncomingSourceGStreamer(Type, AtomString&& name);
 
     void closeValve() const;
     void openValve() const;
@@ -39,7 +42,13 @@ protected:
     GRefPtr<GstElement> m_valve;
 
 private:
+    // RealtimeMediaSource API
+    void startProducingData() final;
+    void stopProducingData() final;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
+
     virtual void dispatchSample(GRefPtr<GstSample>&&) { }
+    void handleDownstreamEvent(GRefPtr<GstEvent>&&);
 
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_tee;
