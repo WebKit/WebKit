@@ -236,7 +236,7 @@ private:
     WeakPtr<HTMLPictureElement, WeakPtrImplWithEventTargetData> m_pictureElement;
     // The source element that was selected to provide the source URL.
     WeakPtr<HTMLSourceElement, WeakPtrImplWithEventTargetData> m_sourceElement;
-    MediaQueryDynamicResults m_mediaQueryDynamicResults;
+    Vector<MediaQueryResult> m_dynamicMediaQueryResults;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     String m_pendingClonedAttachmentID;

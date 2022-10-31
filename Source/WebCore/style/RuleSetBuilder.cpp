@@ -349,7 +349,7 @@ void RuleSetBuilder::addMutatingRulesToResolver()
 
 void RuleSetBuilder::updateDynamicMediaQueries()
 {
-    if (m_mediaQueryCollector.hasViewportDependentMediaQueries)
+    if (m_mediaQueryCollector.allDynamicDependencies.contains(MQ::MediaQueryDynamicDependency::Viewport))
         m_ruleSet->m_hasViewportDependentMediaQueries = true;
 
     if (!m_mediaQueryCollector.dynamicMediaQueryRules.isEmpty()) {
@@ -368,19 +368,17 @@ bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* s
     if (!set)
         return true;
 
-    // Only evaluate static expressions that require style rebuild.
-    MediaQueryDynamicResults dynamicResults;
-    auto mode = collectDynamic ? LegacyMediaQueryEvaluator::Mode::AlwaysMatchDynamic : LegacyMediaQueryEvaluator::Mode::Normal;
+    auto dynamicDependencies = mediaQueryDynamicDependencies(*set, evaluator);
 
-    bool result = evaluator.evaluate(*set, &dynamicResults, mode);
+    allDynamicDependencies.add(dynamicDependencies);
 
-    if (!dynamicResults.viewport.isEmpty())
-        hasViewportDependentMediaQueries = true;
-
-    if (!dynamicResults.isEmpty())
+    if (!dynamicDependencies.isEmpty()) {
         dynamicContextStack.append({ *set });
+        if (collectDynamic)
+            return true;
+    }
 
-    return result;
+    return evaluator.evaluate(*set);
 }
 
 void RuleSetBuilder::MediaQueryCollector::pop(const MediaQuerySet* set)

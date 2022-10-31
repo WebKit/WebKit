@@ -28,6 +28,7 @@
 #pragma once
 
 #include "IntSize.h"
+#include "MediaQuery.h"
 #include "MediaQueryExpression.h"
 #include <wtf/WeakPtr.h>
 
@@ -39,22 +40,8 @@ class MediaQuerySet;
 class RenderStyle;
 
 struct MediaQueryResult {
-    MediaQueryExpression expression;
+    Ref<const MediaQuerySet> query;
     bool result;
-};
-
-struct MediaQueryDynamicResults {
-    Vector<MediaQueryResult> viewport;
-    Vector<MediaQueryResult> appearance;
-    Vector<MediaQueryResult> accessibilitySettings;
-
-    void append(const MediaQueryDynamicResults& other)
-    {
-        viewport.appendVector(other.viewport);
-        appearance.appendVector(other.appearance);
-        accessibilitySettings.appendVector(other.accessibilitySettings);
-    }
-    bool isEmpty() const { return viewport.isEmpty() && appearance.isEmpty() && accessibilitySettings.isEmpty(); }
 };
 
 using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
@@ -82,10 +69,8 @@ public:
 
     // Evaluates media query subexpression, ie "and (media-feature: value)" part.
     bool evaluate(const MediaQueryExpression&) const;
-    bool evaluateForChanges(const MediaQueryDynamicResults&) const;
 
-    enum class Mode { Normal, AlwaysMatchDynamic };
-    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, MediaQueryDynamicResults* = nullptr, Mode = Mode::Normal) const;
+    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&) const;
 
     static bool mediaAttributeMatches(Document&, const String& attributeValue);
 
@@ -95,5 +80,7 @@ private:
     const RenderStyle* m_style { nullptr };
     bool m_fallbackResult { false };
 };
+
+OptionSet<MQ::MediaQueryDynamicDependency> mediaQueryDynamicDependencies(const MediaQuerySet&, const LegacyMediaQueryEvaluator&);
 
 } // namespace

@@ -67,9 +67,8 @@ float SizesAttributeParser::computeLength(double value, CSSUnitType type, const 
     return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, type, value));
 }
     
-SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document, MediaQueryDynamicResults* mediaQueryDynamicResults)
+SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document)
     : m_document(document)
-    , m_mediaQueryDynamicResults(mediaQueryDynamicResults)
 {
     m_isValid = parse(CSSTokenizer(attribute).tokenRange());
 }
@@ -112,7 +111,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondi
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return LegacyMediaQueryEvaluator { "screen"_s, m_document, &style }.evaluate(mediaCondition, m_mediaQueryDynamicResults);
+    return LegacyMediaQueryEvaluator { "screen"_s, m_document, &style }.evaluate(mediaCondition);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)
@@ -134,8 +133,13 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         float length;
         if (!calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd), length))
             continue;
-        RefPtr<MediaQuerySet> mediaCondition = LegacyMediaQueryParser::parseMediaCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(m_document));
-        if (!mediaCondition || !mediaConditionMatches(*mediaCondition))
+        auto mediaCondition = LegacyMediaQueryParser::parseMediaCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(m_document));
+        if (!mediaCondition)
+            continue;
+        bool matches = mediaConditionMatches(*mediaCondition);
+        if (!mediaQueryDynamicDependencies(*mediaCondition, { "screen"_s, false }).isEmpty())
+            m_dynamicMediaConditionResults.append({ *mediaCondition, matches });
+        if (!matches)
             continue;
         m_length = length;
         m_lengthWasSet = true;

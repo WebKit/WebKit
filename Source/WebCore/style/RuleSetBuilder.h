@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "MediaQuery.h"
 #include "RuleSet.h"
 
 namespace WebCore {
@@ -63,7 +64,7 @@ private:
         Vector<DynamicContext> dynamicContextStack { };
 
         Vector<RuleSet::DynamicMediaQueryRules> dynamicMediaQueryRules { };
-        bool hasViewportDependentMediaQueries { false };
+        OptionSet<MQ::MediaQueryDynamicDependency> allDynamicDependencies { };
 
         bool pushAndEvaluate(const MediaQuerySet*);
         void pop(const MediaQuerySet*);

@@ -31,23 +31,24 @@
 
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "LegacyMediaQueryEvaluator.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSValue;
 class Document;
-class MediaQuerySet;
-struct MediaQueryDynamicResults;
-    
+
 class SizesAttributeParser {
 public:
-    SizesAttributeParser(const String&, const Document&, MediaQueryDynamicResults* = nullptr);
+    SizesAttributeParser(const String&, const Document&);
 
     float length();
 
     static float defaultLength(const Document&);
     static float computeLength(double value, CSSUnitType, const Document&);
+
+    auto& dynamicMediaConditionResults() const { return m_dynamicMediaConditionResults; }
 
 private:
     bool parse(CSSParserTokenRange);
@@ -57,8 +58,7 @@ private:
     unsigned effectiveSizeDefaultValue();
 
     const Document& m_document;
-    RefPtr<MediaQuerySet> m_mediaCondition;
-    MediaQueryDynamicResults* m_mediaQueryDynamicResults { nullptr };
+    Vector<MediaQueryResult> m_dynamicMediaConditionResults;
     float m_length { 0 };
     bool m_lengthWasSet { false };
     bool m_isValid { false };
