@@ -109,9 +109,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case AvoidanceReason::FlowHasLineBoxContainProperty:
-        stream << "line-box-contain value indicates variable line height";
-        break;
     case AvoidanceReason::FlowHasUnsupportedWritingMode:
         stream << "unsupported writing mode (vertical-rl/horizontal-bt";
         break;
@@ -319,8 +316,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.
-    if (style.lineBoxContain().containsAny({ LineBoxContain::InlineBox }))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)

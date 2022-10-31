@@ -9,5 +9,5 @@ layer at (0,0) size 800x228
           text run at (260,0) width 239: "If you see any red, the test has failed."
       RenderBlock {DIV} at (0,20) size 384x192 [bgcolor=#FF0000]
         RenderInline {SPAN} at (0,0) size 384x129 [bgcolor=#008000]
-        RenderBR {BR} at (384,0) size 0x65
-        RenderBlock {DIV} at (0,130) size 384x64 [bgcolor=#008000]
+        RenderBR {BR} at (384,-1) size 0x65
+        RenderBlock {DIV} at (0,128) size 384x64 [bgcolor=#008000]

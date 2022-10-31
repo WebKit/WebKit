@@ -433,6 +433,18 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(const L
     // Collect layout bounds based on the contain property and set them on the inline boxes when they are applicable.
     HashMap<InlineLevelBox*, TextUtil::EnclosingAscentDescent> inlineBoxBoundsMap;
 
+    if (lineBoxContain.contains(LineBoxContain::InlineBox)) {
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            if (!inlineLevelBox.isInlineBox())
+                continue;
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+            auto layoutBounds = *inlineLevelBox.layoutBounds();
+            auto ascent = layoutBounds.ascent + inlineBoxGeometry.marginBorderAndPaddingBefore();
+            auto descent = layoutBounds.descent + inlineBoxGeometry.marginBorderAndPaddingAfter();
+            inlineBoxBoundsMap.set(&inlineLevelBox, TextUtil::EnclosingAscentDescent { ascent, descent });
+        }
+    }
+
     if (lineBoxContain.contains(LineBoxContain::Font)) {
         // Assign font based layout bounds to all inline boxes.
         auto ensureFontMetricsBasedHeight = [&] (auto& inlineBox) {
