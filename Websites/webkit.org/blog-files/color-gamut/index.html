@@ -169,7 +169,7 @@
                   main.src = event.target.src;
                   var info = section.querySelector("p");
                   var imageType = "";
-                  var suffix = event.target.src.match(/.*\-(\w+)\.jpg/)[1];
+                  var suffix = event.target.src.match(/.*\-(\w+)\.(jpg|png)/)[1];
                   switch (suffix) {
                   case "AdobeRGB":
                       imageType = "Adobe RGB";
