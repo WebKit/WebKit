@@ -145,20 +145,15 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-private:
-    WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, WebCore::FrameIdentifier);
-
-    void decidePolicyForNavigationActionAsync(FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo,
+    void decidePolicyForNavigationActionAsync(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo,
         std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
-    void decidePolicyForNavigationActionSync(bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo,
+    void decidePolicyForNavigationActionSync(WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo,
         std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, CompletionHandler<void(const PolicyDecision&)>&&);
-    void decidePolicyForNewWindowAction(FrameInfoData&&, WebCore::PolicyCheckIdentifier, NavigationActionData&&,
-        WebCore::ResourceRequest&&, const String& frameName, uint64_t listenerID, const UserData&);
-    void decidePolicyForResponse(FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID,
-        const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
-    void unableToImplementPolicy(const WebCore::ResourceError&, const UserData&);
+
+private:
+    WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, WebCore::FrameIdentifier);
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
