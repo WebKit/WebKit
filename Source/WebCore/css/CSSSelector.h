@@ -183,6 +183,8 @@ namespace WebCore {
             PseudoClassHasAttachment,
 #endif
             PseudoClassModal,
+            PseudoClassUserInvalid,
+            PseudoClassUserValid,
         };
 
         enum PseudoElementType {

@@ -292,6 +292,15 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_isSubmittingOrPreparingForSubmission = true;
     m_shouldSubmit = false;
 
+    bool processingUserGesture = !submitter;
+
+    if (processingUserGesture && trigger == NotSubmittedByJavaScript) {
+        for (auto& associatedElement : m_associatedElements) {
+            if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*associatedElement))
+                formControlElement->setInteractedSinceLastFormSubmitEvent(false);
+        }
+    }
+
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
     if (shouldValidate) {
         RefPtr submitElement = submitter ? submitter : findSubmitter(event);
@@ -328,7 +337,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     if (auto plannedFormSubmission = std::exchange(m_plannedFormSubmission, nullptr))
         plannedFormSubmission->cancel();
 
-    submit(event, !submitter, trigger, submitter);
+    submit(event, processingUserGesture, trigger, submitter);
 }
 
 void HTMLFormElement::submit()

@@ -687,6 +687,12 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassTarget:
                 builder.append(":target");
                 break;
+            case CSSSelector::PseudoClassUserInvalid:
+                builder.append(":user-invalid");
+                break;
+            case CSSSelector::PseudoClassUserValid:
+                builder.append(":user-valid");
+                break;
             case CSSSelector::PseudoClassValid:
                 builder.append(":valid");
                 break;

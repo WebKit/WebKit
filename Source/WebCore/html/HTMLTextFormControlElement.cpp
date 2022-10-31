@@ -232,6 +232,7 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
         setTextAsOfLastFormControlChangeEvent(value());
     }
     setChangedSinceLastFormControlChangeEvent(false);
+    setInteractedSinceLastFormSubmitEvent(true);
 }
 
 ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replacement)

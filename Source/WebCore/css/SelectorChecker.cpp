@@ -1128,6 +1128,12 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassModal:
             return matchesModalPseudoClass(element);
 
+        case CSSSelector::PseudoClassUserInvalid:
+            return matchesUserInvalidPseudoClass(element);
+
+        case CSSSelector::PseudoClassUserValid:
+            return matchesUserValidPseudoClass(element);
+
         case CSSSelector::PseudoClassUnknown:
             ASSERT_NOT_REACHED();
             break;

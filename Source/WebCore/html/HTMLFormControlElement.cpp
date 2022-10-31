@@ -73,6 +73,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_willValidate(true)
     , m_isValid(true)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
+    , m_wasInteractedSinceLastFormSubmitEvent(false)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -294,6 +295,27 @@ void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool chan
     m_wasChangedSinceLastFormControlChangeEvent = changed;
 }
 
+void HTMLFormControlElement::setInteractedSinceLastFormSubmitEvent(bool interacted)
+{
+    if (m_wasInteractedSinceLastFormSubmitEvent == interacted)
+        return;
+
+    auto wasInteractedSinceLastFormSubmitEvent = m_wasInteractedSinceLastFormSubmitEvent;
+    m_wasInteractedSinceLastFormSubmitEvent = interacted;
+
+    auto willMatchUserInvalidPseudoClass = matchesUserInvalidPseudoClass();
+    auto willMatchUserValidPseudoClass = matchesUserValidPseudoClass();
+
+    m_wasInteractedSinceLastFormSubmitEvent = wasInteractedSinceLastFormSubmitEvent;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassUserInvalid, willMatchUserInvalidPseudoClass },
+        { CSSSelector::PseudoClassUserValid, willMatchUserValidPseudoClass },
+    });
+
+    m_wasInteractedSinceLastFormSubmitEvent = interacted;
+}
+
 void HTMLFormControlElement::dispatchChangeEvent()
 {
     dispatchScopedEvent(Event::create(eventNames().changeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
@@ -308,6 +330,7 @@ void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
     dispatchChangeEvent();
     setChangedSinceLastFormControlChangeEvent(false);
+    setInteractedSinceLastFormSubmitEvent(true);
 }
 
 void HTMLFormControlElement::dispatchFormControlInputEvent()
@@ -580,6 +603,34 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
 bool HTMLFormControlElement::validationMessageShadowTreeContains(const Node& node) const
 {
     return m_validationMessage && m_validationMessage->shadowTreeContains(node);
+}
+
+bool HTMLFormControlElement::matchesUserInvalidPseudoClass() const
+{
+    if (m_wasInteractedSinceLastFormSubmitEvent)
+        return false;
+
+    if (matchesInvalidPseudoClass())
+        return true;
+
+    if (isOutOfRange())
+        return true;
+
+    if (valueMissing())
+        return true;
+
+    return false;
+}
+
+bool HTMLFormControlElement::matchesUserValidPseudoClass() const
+{
+    if (m_wasInteractedSinceLastFormSubmitEvent)
+        return false;
+
+    if (matchesValidPseudoClass())
+        return true;
+
+    return false;
 }
 
 void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
