@@ -347,6 +347,31 @@ PRINTED
                 Tracker.from_string('<rdar://problem/2>'),
             ], commit.issues)
 
+    def test_parse_issue_ignore_reference(self):
+        contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')
+        commit = Commit(
+            revision=1,
+            hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
+            identifier='1@main',
+            timestamp=1000,
+            author=Contributor.Encoder().default(contributor),
+            message='Remove something added in rdar://1\n'
+                    'https://bugs.example.com/show_bug.cgi?id=1\n'
+                    '<rdar://problem/2>\n\n'
+                    'Reviewed by NOBODY (OOPS!)\n\n'
+                    'Will fix this in https://bugs.example.com/show_bug.cgi?id=3 and <rdar://problem/4>\n',
+        )
+
+        with bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+        ), bmocks.Radar(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA), radar.Tracker()]):
+            self.assertEqual([
+                Tracker.from_string('https://bugs.example.com/show_bug.cgi?id=1'),
+                Tracker.from_string('<rdar://problem/2>'),
+                Tracker.from_string('<rdar://problem/1>'),
+            ], commit.issues)
+
 
 class TestDoCommit(testing.PathTestCase):
     basepath = 'mock/repository'
