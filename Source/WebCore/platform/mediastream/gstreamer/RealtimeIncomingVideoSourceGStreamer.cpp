@@ -30,8 +30,7 @@
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
-    , RealtimeIncomingSourceGStreamer()
+    : RealtimeIncomingSourceGStreamer(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
 {
     RealtimeMediaSourceSupportedConstraints constraints;
     constraints.setSupportsWidth(true);
@@ -56,21 +55,6 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
     }, nullptr, nullptr);
 
     start();
-}
-
-void RealtimeIncomingVideoSourceGStreamer::startProducingData()
-{
-    openValve();
-}
-
-void RealtimeIncomingVideoSourceGStreamer::stopProducingData()
-{
-    closeValve();
-}
-
-const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSourceGStreamer::capabilities()
-{
-    return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
 const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::settings()
