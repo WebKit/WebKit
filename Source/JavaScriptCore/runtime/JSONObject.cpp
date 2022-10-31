@@ -662,19 +662,22 @@ private:
     String firstGetterSetterPropertyName() const;
     void recordFastPropertyEnumerationFailure(JSObject&);
     bool haveFailure() const;
-    unsigned remainingCapacity() const;
+    bool hasRemainingCapacity(unsigned size = 1);
+    bool hasRemainingCapacitySlow(unsigned size);
     bool mayHaveToJSON(JSObject&) const;
 
     static void logOutcome(ASCIILiteral);
     static void logOutcome(String&&);
 
+    static unsigned usableBufferSize(unsigned availableBufferSize);
+
     JSGlobalObject& m_globalObject;
     VM& m_vm;
-    unsigned m_length { 0 };
+    unsigned m_length { 0 }; // length of content already filled into m_buffer.
+    unsigned m_capacity { 0 };
     bool m_checkedObjectPrototype { false };
     bool m_checkedArrayPrototype { false };
 
-    // Note that this buffer needs to be kept reasonably small; it acts as a recursion limit and a cycle detector as well.
     LChar m_buffer[6000];
 };
 
@@ -713,10 +716,77 @@ void FastStringifier::logOutcome(String&& outcome)
 
 #endif
 
+inline unsigned FastStringifier::usableBufferSize(unsigned availableBufferSize)
+{
+    // FastStringifier relies on m_capacity (i.e. the remaining usable capacity) in m_buffer
+    // to limit recursion. Hence, we need to compute an appropriate m_capacity value.
+    //
+    // To do this, we empirically measured the worst case stack usage incurred by 1 recursion
+    // of any of the append methods. Assuming each call to append() only consumes 1 LChar in
+    // m_buffer, the amount of buffer size that FastStringifier is allowed to run with can be
+    // estimated as:
+    //
+    //      stackCapacityForRecursion = remainingStackCapacity - maxLeafFunctionStackUsage
+    //      maxAllowedBufferSize = stackCapacityForRecursion / maxRecursionFrameSize
+    //      usableBufferSize = min(maxAllowedBufferSize, sizeof(m_buffer))
+    //
+    // 1. A leaf function is any function that append() calls which does not recurse.
+    //    At peak recursion, there needs to be enough room left on the stack to execute any
+    //    of these leaf functions i.e. maxLeafFunctionStackUsage.
+    //
+    //    We estimate maxLeafFunctionStackUsage to be StackBounds::DefaultReservedZone.
+    //    stack.recursionLimit() already adds DefaultReservedZone to the bottom of the stack.
+    //    Hence, using stack.recursionLimit() to compute stackCapacityForRecursion will leave
+    //    us with the needed stack space for leaf functions to execute.
+    //
+    // 2. We can compute m_capacity as:
+    //
+    //      m_capacity = m_length + usableBufferSize
+    //
+    //    where m_length is the position of the next usable character for emission in m_buffer.
+    //
+    // 3. This calculation of m_capacity is a best effort estimate. If we're not
+    //    conservative enough and get it wrong, the worst that can happen is that we'll
+    //    crash when recursion causes us to step on the stack guard page at the bottom of
+    //    the stack. The goal of trying to estimate a good m_capacity value is to avoid
+    //    this stack overflow crash.
+    //
+    //    Note that for a Release build, maxRecursionFrameSize is measured to be less than
+    //    384 bytes. This is well below stack guard page sizes which are between 4 and 16K
+    //    depending on the OS. Hence, recursing too deeply with FastStringifier::append()
+    //    is guaranteed to crash in the stack guard page.
+    //
+    // 4. If we're too conservative, we might fail out of FastStringifier too eagerly.
+    //    In this case, we'll just fall back to the slow path Stringifier. The only down
+    //    side here is potential loss of some performance opportunity when we encounter
+    //    a workload that recurses deeply. We expect such workloads to be rare.
+
+    auto& stack = Thread::current().stack();
+    uint8_t* stackPointer = bitwise_cast<uint8_t*>(currentStackPointer());
+    uint8_t* stackLimit = bitwise_cast<uint8_t*>(stack.recursionLimit());
+    size_t stackCapacityForRecursion = stackPointer - stackLimit;
+
+#if ASAN_ENABLED
+    // Measured to be ~4608 for a Debug ASAN build on arm64E, rounding up to 5K for margin.
+    constexpr size_t maxRecursionFrameSize = 5 * KB;
+#elif !defined(NDEBUG)
+    // Measured to be ~912 for a Debug build on arm64E, rounding up to 1280 for margin.
+    constexpr size_t maxRecursionFrameSize = 1280;
+#else
+    // Measured to be ~224 for a Release build on arm64E, rounding up to 384 for margin.
+    constexpr size_t maxRecursionFrameSize = 384;
+#endif
+    ASSERT(static_cast<unsigned>(stackCapacityForRecursion) == stackCapacityForRecursion);
+    unsigned allowedBufferSize = stackCapacityForRecursion / maxRecursionFrameSize;
+    unsigned usableBufferSize = std::min(allowedBufferSize, availableBufferSize);
+    return usableBufferSize;
+}
+
 inline FastStringifier::FastStringifier(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
     , m_vm(globalObject.vm())
 {
+    m_capacity = m_length + usableBufferSize(sizeof(m_buffer));
 }
 
 inline bool FastStringifier::haveFailure() const
@@ -751,10 +821,28 @@ inline void FastStringifier::recordBufferFull()
     recordFailure("buffer full"_s);
 }
 
-inline unsigned FastStringifier::remainingCapacity() const
+ALWAYS_INLINE bool FastStringifier::hasRemainingCapacity(unsigned size)
 {
     ASSERT(!haveFailure());
-    return std::size(m_buffer) - m_length;
+    ASSERT(size > 0);
+    unsigned remainingCapacity = m_capacity - m_length;
+    if (size <= remainingCapacity)
+        return true;
+    return hasRemainingCapacitySlow(size);
+}
+
+bool FastStringifier::hasRemainingCapacitySlow(unsigned size)
+{
+    ASSERT(!haveFailure());
+
+    unsigned unusedBufferSize = sizeof(m_buffer) - m_length;
+    unsigned usableSize = usableBufferSize(unusedBufferSize);
+    if (usableSize < size)
+        return false;
+
+    m_capacity = m_length + usableSize;
+    ASSERT(m_capacity - m_length >= size);
+    return true;
 }
 
 #if !FAST_STRINGIFY_LOG_USAGE
@@ -823,7 +911,7 @@ inline bool FastStringifier::mayHaveToJSON(JSObject& object) const
 
 inline void FastStringifier::append(char a, char b, char c, char d)
 {
-    if (UNLIKELY(remainingCapacity() < 4)) {
+    if (UNLIKELY(!hasRemainingCapacity(4))) {
         recordBufferFull();
         return;
     }
@@ -836,7 +924,7 @@ inline void FastStringifier::append(char a, char b, char c, char d)
 
 inline void FastStringifier::append(char a, char b, char c, char d, char e)
 {
-    if (UNLIKELY(remainingCapacity() < 5)) {
+    if (UNLIKELY(!hasRemainingCapacity(5))) {
         recordBufferFull();
         return;
     }
@@ -868,7 +956,7 @@ void FastStringifier::append(JSValue value)
     if (value.isInt32()) {
         auto number = value.asInt32();
         auto length = lengthOfIntegerAsString(number);
-        if (UNLIKELY(remainingCapacity() < length)) {
+        if (UNLIKELY(!hasRemainingCapacity(length))) {
             recordBufferFull();
             return;
         }
@@ -883,7 +971,7 @@ void FastStringifier::append(JSValue value)
             append('n', 'u', 'l', 'l');
             return;
         }
-        if (UNLIKELY(remainingCapacity() < sizeof(NumberToStringBuffer))) {
+        if (UNLIKELY(!hasRemainingCapacity(sizeof(NumberToStringBuffer)))) {
             recordBufferFull();
             return;
         }
@@ -911,7 +999,7 @@ void FastStringifier::append(JSValue value)
             return;
         }
         auto stringLength = string.length();
-        if (UNLIKELY(remainingCapacity() < 1 + stringLength + 1)) {
+        if (UNLIKELY(!hasRemainingCapacity(1 + stringLength + 1))) {
             recordBufferFull();
             return;
         }
@@ -953,7 +1041,7 @@ void FastStringifier::append(JSValue value)
             }
             m_checkedObjectPrototype = true;
         }
-        if (UNLIKELY(!remainingCapacity())) {
+        if (UNLIKELY(!hasRemainingCapacity())) {
             recordBufferFull();
             return;
         }
@@ -976,7 +1064,7 @@ void FastStringifier::append(JSValue value)
             }
             bool needComma = m_buffer[m_length - 1] != '{';
             unsigned nameLength = name.length();
-            if (UNLIKELY(remainingCapacity() < needComma + 1 + nameLength + 2)) {
+            if (UNLIKELY(!hasRemainingCapacity(needComma + 1 + nameLength + 2))) {
                 recordBufferFull();
                 return false;
             }
@@ -1005,7 +1093,7 @@ void FastStringifier::append(JSValue value)
         });
         if (UNLIKELY(haveFailure()))
             return;
-        if (UNLIKELY(!remainingCapacity())) {
+        if (UNLIKELY(!hasRemainingCapacity())) {
             recordBufferFull();
             return;
         }
@@ -1034,14 +1122,14 @@ void FastStringifier::append(JSValue value)
             if (haveFailure())
                 return;
         }
-        if (UNLIKELY(!remainingCapacity())) {
+        if (UNLIKELY(!hasRemainingCapacity())) {
             recordBufferFull();
             return;
         }
         m_buffer[m_length++] = '[';
         for (unsigned i = 0, length = array.length(); i < length; ++i) {
             if (i) {
-                if (UNLIKELY(!remainingCapacity())) {
+                if (UNLIKELY(!hasRemainingCapacity())) {
                     recordBufferFull();
                     return;
                 }
@@ -1055,7 +1143,7 @@ void FastStringifier::append(JSValue value)
             if (UNLIKELY(haveFailure()))
                 return;
         }
-        if (UNLIKELY(!remainingCapacity())) {
+        if (UNLIKELY(!hasRemainingCapacity())) {
             recordBufferFull();
             return;
         }
