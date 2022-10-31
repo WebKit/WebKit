@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ public:
     ~CoreAudioCaptureSourceFactoryIOS();
 
 private:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) final;
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) final;
     void addExtensiveObserver(ExtensiveObserver&) final;
     void removeExtensiveObserver(ExtensiveObserver&) final;
 

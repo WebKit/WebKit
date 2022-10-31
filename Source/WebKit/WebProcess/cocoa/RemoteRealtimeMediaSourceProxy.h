@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ public:
     bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }
 
     using CreateCallback = CompletionHandler<void(bool, String&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&, Vector<WebCore::VideoPresetData>&&, WebCore::IntSize, double)>;
-    void createRemoteMediaSource(const String&, WebCore::PageIdentifier, CreateCallback&&, bool shouldUseRemoteFrame = false);
+    void createRemoteMediaSource(const WebCore::MediaDeviceHashSalts&, WebCore::PageIdentifier, CreateCallback&&, bool shouldUseRemoteFrame = false);
 
     RemoteRealtimeMediaSourceProxy clone();
     void createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier, WebCore::PageIdentifier);

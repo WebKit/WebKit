@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> UserMediaCaptureManagerProxy NotRefCounted {
-    CreateMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier pageIdentifier) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities, Vector<WebCore::VideoPresetData> presets, WebCore::IntSize size, double frameRate) Async
+    CreateMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier id, WebCore::CaptureDevice device, struct WebCore::MediaDeviceHashSalts hashSalts, struct WebCore::MediaConstraints constraints, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier pageIdentifier) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities, Vector<WebCore::VideoPresetData> presets, WebCore::IntSize size, double frameRate) Async
     StartProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     StopProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     RemoveSource(WebCore::RealtimeMediaSourceIdentifier id)

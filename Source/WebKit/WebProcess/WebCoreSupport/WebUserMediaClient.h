@@ -40,7 +40,7 @@ private:
     void requestUserMediaAccess(WebCore::UserMediaRequest&) override;
     void cancelUserMediaAccessRequest(WebCore::UserMediaRequest&) override;
 
-    void enumerateMediaDevices(WebCore::Document&, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&) final;
+    void enumerateMediaDevices(WebCore::Document&, WebCore::UserMediaClient::EnumerateDevicesCallback&&) final;
 
     DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&) final;
     void removeDeviceChangeObserver(DeviceChangeObserverToken) final;

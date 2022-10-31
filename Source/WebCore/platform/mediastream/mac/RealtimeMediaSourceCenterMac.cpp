@@ -45,10 +45,10 @@ namespace WebCore {
 
 class VideoCaptureSourceFactoryMac final : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
-        return AVVideoCaptureSource::create(device, WTFMove(hashSalt), constraints, pageIdentifier);
+        return AVVideoCaptureSource::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
     }
 
 private:
@@ -57,9 +57,9 @@ private:
 
 class DisplayCaptureSourceFactoryMac final : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
-        return DisplayCaptureSourceCocoa::create(device, WTFMove(hashSalt), constraints, pageIdentifier);
+        return DisplayCaptureSourceCocoa::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
     }
 private:
     DisplayCaptureManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }

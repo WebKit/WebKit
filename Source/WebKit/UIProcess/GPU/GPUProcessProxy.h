@@ -85,6 +85,7 @@ public:
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String&);
+    void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockMicrophoneConfigurationChange();
