@@ -66,6 +66,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Qua
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM and libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
@@ -84,6 +85,7 @@ WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_GLES2 USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_WEBGL USE_OPENGL_OR_ES)
+WEBKIT_OPTION_DEPEND(USE_GBM USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL USE_OPENGL_OR_ES)
 
 WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
@@ -387,17 +389,23 @@ if (USE_OPENGL_OR_ES)
     SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA TRUE)
     SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
 
-    if (ENABLE_WEBGL)
+    if (USE_GBM)
         # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
-        # through libgbm and libdrm dependencies. When libgbm is found to be available,
-        # make libdrm a requirement and define the USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
+        # through libgbm and libdrm dependencies. When libgbm is enabled, make
+        # libdrm a requirement and define the USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
         # macros. When not available, ANGLE will be used in slower software-rasterization mode.
         find_package(GBM)
-        if (GBM_FOUND)
-            find_package(LibDRM REQUIRED)
-            SET_AND_EXPOSE_TO_BUILD(USE_LIBGBM TRUE)
-            SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
+        if (NOT GBM_FOUND)
+            message(FATAL_ERROR "GBM is required for USE_GBM")
         endif ()
+
+        find_package(LibDRM)
+        if (NOT LIBDRM_FOUND)
+            message(FATAL_ERROR "libdrm is required for USE_GBM")
+        endif ()
+
+        SET_AND_EXPOSE_TO_BUILD(USE_LIBGBM TRUE)
+        SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
     endif ()
 endif ()
 
