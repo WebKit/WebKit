@@ -418,8 +418,8 @@ void VisibleSelection::validate(TextGranularity granularity)
     adjustSelectionToAvoidCrossingEditingBoundaries();
     updateSelectionType();
 
-    bool shouldUpdateAnchor = false; // Set to false because of <rdar://problem/69542459>. Can be returned to original logic when this problem is fully fixed.
-    bool shouldUpdateFocus = false; // Ditto.
+    bool shouldUpdateAnchor = m_start != startBeforeAdjustments;
+    bool shouldUpdateFocus = m_end != endBeforeAdjustments;
 
     if (isRange()) {
         // "Constrain" the selection to be the smallest equivalent range of nodes.

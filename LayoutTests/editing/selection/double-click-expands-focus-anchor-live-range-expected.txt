@@ -1,0 +1,21 @@
+abc def ghi
+This tests selecting by granularity results in focus and anchor of selection to be adjusted
+To manually test, double click or double tap on "def".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().anchorNode is content.firstChild
+PASS getSelection().anchorOffset is 4
+PASS getSelection().focusNode is content.firstChild
+PASS getSelection().focusOffset is 7
+PASS getSelection().rangeCount is 1
+window.range = getSelection().getRangeAt(0);
+PASS range.startContainer is content.firstChild
+PASS range.startOffset is 4
+PASS range.endContainer is content.firstChild
+PASS range.endOffset is 7
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
