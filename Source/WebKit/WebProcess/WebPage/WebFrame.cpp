@@ -115,7 +115,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
     WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object(), *this);
     WebProcess::singleton().addWebFrame(frameID(), this);
 
-    page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
     m_coreFrame = coreFrame;
     m_coreFrame->tree().setName(nullAtom());
@@ -132,7 +132,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     frame->m_frameID = coreFrame->frameID();
     WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frame->m_frameID.object(), frame.get());
     WebProcess::singleton().addWebFrame(coreFrame->frameID(), frame.ptr());
-    parent.send(Messages::WebFrameProxy::DidCreateSubframe(coreFrame->frameID()), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    parent.send(Messages::WebFrameProxy::DidCreateSubframe(coreFrame->frameID()));
 
     coreFrame->tree().setName(frameName);
     ASSERT(ownerElement.document().frame());
