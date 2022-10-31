@@ -2,7 +2,7 @@
 PASS Test screen.orientation properties
 PASS Test screen.orientation default values.
 PASS Test the orientations and associated angles
-PASS Test that screen.orientation properties are not writable
+FAIL Test that screen.orientation properties are not writable Attempted to assign to readonly property.
 PASS Test that screen.orientation is always the same object
 PASS Test that screen.orientation values change if the orientation changes
 

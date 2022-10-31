@@ -1,20 +1,10 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Screen orientation locking is not supported
 
-Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking is not supported
-
-PASS Test screen.orientation properties
-FAIL Test screen.orientation default values. assert_true: expected true got false
-PASS Test the orientations and associated angles
-PASS Test that screen.orientation properties are not writable
-PASS Test that screen.orientation is always the same object
-TIMEOUT Test that screen.orientation values change if the orientation changes Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking is not supported
+Harness Error (FAIL), message = Test named 'Test the orientations and associated angles' specified 1 'cleanup' function, and 1 failed.
 
 PASS Test screen.orientation properties
 FAIL Test screen.orientation default values. assert_true: expected true got false
 PASS Test the orientations and associated angles
-PASS Test that screen.orientation properties are not writable
+FAIL Test that screen.orientation properties are not writable Attempted to assign to readonly property.
 PASS Test that screen.orientation is always the same object
-TIMEOUT Test that screen.orientation values change if the orientation changes Test timed out
+NOTRUN Test that screen.orientation values change if the orientation changes
 

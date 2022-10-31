@@ -3757,3 +3757,6 @@ webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-con
 
 fast/images/animated-avif.html [ Pass ]
 http/tests/images/avif-partial-load-crash.html [ Pass ]
+
+# Screen Orientation API doesn't support nested frames yet
+imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]

@@ -1,0 +1,9 @@
+
+Harness Error (FAIL), message = Test named 'unlock() doesn't throw when there is no lock with fullscreen' specified 1 'cleanup' function, and 1 failed.
+
+PASS unlock() doesn't throw when there is no lock
+PASS unlock() returns a void value
+PASS unlock() doesn't throw when there is no lock with fullscreen
+NOTRUN unlock() aborts a pending lock request
+NOTRUN unlock() aborts a pending lock request across documents
+

@@ -1,3 +1,4 @@
 
-PASS Re-locking orientation during event dispatch must reject existing orientationPendingPromise
+FAIL Re-locking the screen orientation after a change event fires must not abort promise_test: Unhandled rejection with value: object "AbortError: A new lock request was started"
+PASS Unlocking the screen orientation after a change event must not abort
 
