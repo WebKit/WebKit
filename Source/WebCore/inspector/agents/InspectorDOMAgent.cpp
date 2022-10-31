@@ -1300,19 +1300,6 @@ std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highligh
     return highlightConfig;
 }
 
-#if PLATFORM(IOS_FAMILY)
-Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig)
-{
-    Protocol::ErrorString errorString;
-
-    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), false);
-
-    if (!!errorString)
-        return makeUnexpected(errorString);
-
-    return { };
-}
-#else
 Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, std::optional<bool>&& showRulers)
 {
     Protocol::ErrorString errorString;
@@ -1324,7 +1311,6 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enab
 
     return { };
 }
-#endif
 
 Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {

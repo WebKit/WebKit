@@ -126,11 +126,8 @@ void RemoteLayerTreeDrawingArea::setPreferredFramesPerSecond(FramesPerSecond pre
 void RemoteLayerTreeDrawingArea::updateRootLayers()
 {
     Vector<Ref<GraphicsLayer>> children;
-    if (m_contentLayer) {
+    if (m_contentLayer)
         children.append(*m_contentLayer);
-        if (m_viewOverlayRootLayer)
-            children.append(*m_viewOverlayRootLayer);
-    }
 
     m_rootLayer->setChildren(WTFMove(children));
 }
@@ -138,7 +135,7 @@ void RemoteLayerTreeDrawingArea::updateRootLayers()
 void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(GraphicsLayer* viewOverlayRootLayer)
 {
     m_viewOverlayRootLayer = viewOverlayRootLayer;
-    updateRootLayers();
+    triggerRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
@@ -354,7 +351,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
 
     m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding(m_nextRenderingUpdateRequiresSynchronousImageDecoding);
-    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(m_rootLayer.get()).platformCALayer());
+    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(m_rootLayer.get()).platformCALayer(), m_viewOverlayRootLayer ? downcast<GraphicsLayerCARemote>(m_viewOverlayRootLayer.get())->platformCALayer() : nullptr);
     m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding(false);
 
     backingStoreCollection.willCommitLayerTree(layerTransaction);

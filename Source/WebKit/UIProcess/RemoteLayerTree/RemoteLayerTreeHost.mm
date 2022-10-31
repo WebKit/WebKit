@@ -99,7 +99,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     for (const auto& createdLayer : transaction.createdLayers())
         createLayer(createdLayer);
 
-    bool rootLayerChanged = false;
+    bool rootLayersChanged = false;
     auto* rootNode = nodeForID(transaction.rootLayerID());
     
     if (!rootNode)
@@ -107,7 +107,19 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
     if (m_rootNode != rootNode) {
         m_rootNode = rootNode;
-        rootLayerChanged = true;
+        rootLayersChanged = true;
+    }
+
+    RemoteLayerTreeNode* viewOverlayRootNode = nullptr;
+    if (transaction.hasViewOverlayRootLayerID()) {
+        viewOverlayRootNode = nodeForID(transaction.viewOverlayRootLayerID());
+        if (!viewOverlayRootNode)
+            REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find view overlay root layer with ID %llu", this, transaction.viewOverlayRootLayerID());
+    }
+
+    if (m_viewOverlayRootNode != viewOverlayRootNode) {
+        m_viewOverlayRootNode = viewOverlayRootNode;
+        rootLayersChanged = true;
     }
 
     struct LayerAndClone {
@@ -168,7 +180,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     for (auto& newlyUnreachableLayerID : transaction.layerIDsWithNewlyUnreachableBackingStore())
         layerForID(newlyUnreachableLayerID).contents = nullptr;
 
-    return rootLayerChanged;
+    return rootLayersChanged;
 }
 
 RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(GraphicsLayer::PlatformLayerID layerID) const
@@ -246,6 +258,7 @@ void RemoteLayerTreeHost::clearLayers()
 
     m_nodes.clear();
     m_rootNode = nullptr;
+    m_viewOverlayRootNode = nullptr;
 }
 
 CALayer *RemoteLayerTreeHost::layerWithIDForTesting(uint64_t layerID) const
@@ -266,6 +279,13 @@ CALayer *RemoteLayerTreeHost::rootLayer() const
     if (!m_rootNode)
         return nil;
     return m_rootNode->layer();
+}
+
+CALayer *RemoteLayerTreeHost::viewOverlayRootLayer() const
+{
+    if (!m_viewOverlayRootNode)
+        return nil;
+    return m_viewOverlayRootNode->layer();
 }
 
 void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
@@ -325,12 +345,17 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 }
 #endif
 
-void RemoteLayerTreeHost::detachRootLayer()
+void RemoteLayerTreeHost::detachRootLayers()
 {
-    if (!m_rootNode)
-        return;
-    m_rootNode->detachFromParent();
-    m_rootNode = nullptr;
+    if (m_rootNode) {
+        m_rootNode->detachFromParent();
+        m_rootNode = nullptr;
+    }
+
+    if (m_viewOverlayRootNode) {
+        m_viewOverlayRootNode->detachFromParent();
+        m_viewOverlayRootNode = nullptr;
+    }
 }
 
 static void recursivelyMapIOSurfaceBackingStore(CALayer *layer)

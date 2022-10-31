@@ -125,7 +125,6 @@
 #if PLATFORM(IOS_FAMILY)
 #include "DynamicViewportSizeUpdate.h"
 #include "GestureTypes.h"
-#include <WebCore/InspectorOverlay.h>
 #include <WebCore/IntPointHash.h>
 #include <WebCore/WKContentObservation.h>
 #endif
@@ -853,12 +852,6 @@ public:
     void contentSizeCategoryDidChange(const String&);
 
     Seconds eventThrottlingDelay() const;
-
-    void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&);
-    void hideInspectorHighlight();
-
-    void showInspectorIndication();
-    void hideInspectorIndication();
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();

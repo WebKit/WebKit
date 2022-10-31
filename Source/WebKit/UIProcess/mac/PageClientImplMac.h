@@ -80,7 +80,7 @@ private:
     bool isVisuallyIdle() override;
     LayerHostingMode viewLayerHostingMode() override;
     WebCore::DestinationColorSpace colorSpace() override;
-    void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
+    void setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode) override;
     CALayer *acceleratedCompositingRootLayer() const override;
 
     void processDidExit() override;

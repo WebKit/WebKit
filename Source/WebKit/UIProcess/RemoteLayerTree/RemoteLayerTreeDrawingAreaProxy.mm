@@ -133,9 +133,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
-            m_webPageProxy.setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());
+            m_webPageProxy.setRemoteLayerTreeRootNodes(m_remoteLayerTreeHost->rootNode(), m_remoteLayerTreeHost->viewOverlayRootNode());
         else
-            m_remoteLayerTreeHost->detachRootLayer();
+            m_remoteLayerTreeHost->detachRootLayers();
     }
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -158,12 +158,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     if (m_debugIndicatorLayerTreeHost) {
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
-        bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
+        bool rootLayersChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
         IntPoint scrollPosition;
 #if PLATFORM(MAC)
         scrollPosition = layerTreeTransaction.scrollPosition();
 #endif
-        updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale, scrollPosition);
+        updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayersChanged, scale, scrollPosition);
         m_debugIndicatorLayerTreeHost->rootLayer().name = @"Indicator host root";
     }
 
@@ -374,12 +374,12 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
     m_transactionIDForUnhidingContent = nextLayerTreeTransactionID();
-    m_remoteLayerTreeHost->detachRootLayer();
+    m_remoteLayerTreeHost->detachRootLayers();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilAnyUpdate()
 {
-    m_remoteLayerTreeHost->detachRootLayer();
+    m_remoteLayerTreeHost->detachRootLayers();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::prepareForAppSuspension()

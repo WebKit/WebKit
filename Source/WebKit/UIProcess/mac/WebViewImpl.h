@@ -463,8 +463,9 @@ public:
     void toolTipChanged(const String& oldToolTip, const String& newToolTip);
 
     void enterAcceleratedCompositingWithRootLayer(CALayer *);
-    void setAcceleratedCompositingRootLayer(CALayer *);
+    void setAcceleratedCompositingRootLayers(CALayer *rootLayer, CALayer *viewOverlayRootLayer);
     CALayer *acceleratedCompositingRootLayer() const { return m_rootLayer.get(); }
+    CALayer *acceleratedCompositingViewOverlayRootLayer() const { return m_viewOverlayRootLayer.get(); }
 
     void setThumbnailView(_WKThumbnailView *);
     _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
@@ -849,6 +850,7 @@ private:
     void* m_trackingRectUserData { nullptr };
 
     RetainPtr<CALayer> m_rootLayer;
+    RetainPtr<CALayer> m_viewOverlayRootLayer;
     RetainPtr<NSView> m_layerHostingView;
 
     _WKThumbnailView *m_thumbnailView { nullptr };

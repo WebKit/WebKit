@@ -288,6 +288,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             elementsSettingsView.addSeparator();
         }
 
+        // COMPATIBILITY (iOS 16.0): DOM.setInspectModeEnabled did not support showRulers on iOS yet.
         if (InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers")) {
             elementsSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
 

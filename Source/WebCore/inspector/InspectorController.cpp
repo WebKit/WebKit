@@ -429,14 +429,12 @@ Node* InspectorController::highlightedNode() const
 
 void InspectorController::setIndicating(bool indicating)
 {
-#if !PLATFORM(IOS_FAMILY)
     m_overlay->setIndicating(indicating);
-#else
+
     if (indicating)
         m_inspectorClient->showInspectorIndication();
     else
         m_inspectorClient->hideInspectorIndication();
-#endif
 }
 
 InspectorAgent& InspectorController::ensureInspectorAgent()

@@ -128,15 +128,21 @@ Ref<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::Graphics
     return adoptRef(*new GraphicsLayerCARemote(layerType, client, *this));
 }
 
-void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
+void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer, PlatformCALayer* viewOverlayRootLayer)
 {
     TraceScope tracingScope(BuildTransactionStart, BuildTransactionEnd);
 
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
 
+    auto* viewOverlayRootLayerRemote = downcast<PlatformCALayerRemote>(viewOverlayRootLayer);
+    if (viewOverlayRootLayerRemote)
+        transaction.setViewOverlayRootLayerID(viewOverlayRootLayerRemote->layerID());
+
     m_currentTransaction = &transaction;
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);
+    if (viewOverlayRootLayerRemote)
+        viewOverlayRootLayerRemote->recursiveBuildTransaction(*this, transaction);
     m_backingStoreCollection->prepareBackingStoresForDisplay(transaction);
     m_currentTransaction = nullptr;
 

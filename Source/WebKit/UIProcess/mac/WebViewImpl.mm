@@ -3695,15 +3695,18 @@ void WebViewImpl::enterAcceleratedCompositingWithRootLayer(CALayer *rootLayer)
         return;
     }
 
-    setAcceleratedCompositingRootLayer(rootLayer);
+    setAcceleratedCompositingRootLayers(rootLayer, nil);
 }
 
-void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
+void WebViewImpl::setAcceleratedCompositingRootLayers(CALayer *rootLayer, CALayer *viewOverlayRootLayer)
 {
     [rootLayer web_disableAllActions];
 
     m_rootLayer = rootLayer;
     rootLayer.hidden = NO;
+
+    m_viewOverlayRootLayer = viewOverlayRootLayer;
+    viewOverlayRootLayer.hidden = NO;
 
     if (m_thumbnailView) {
         updateThumbnailViewLayer();
@@ -3713,7 +3716,12 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_layerHostingView layer].sublayers = rootLayer ? @[ rootLayer ] : nil;
+    auto sublayers = adoptNS([[NSMutableArray alloc] init]);
+    if (rootLayer)
+        [sublayers addObject:rootLayer];
+    if (viewOverlayRootLayer)
+        [sublayers addObject:viewOverlayRootLayer];
+    [m_layerHostingView layer].sublayers = [sublayers count] ? sublayers.get() : nil;
 
     [CATransaction commit];
 }
@@ -3727,7 +3735,7 @@ void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
     if (thumbnailView)
         updateThumbnailViewLayer();
     else {
-        setAcceleratedCompositingRootLayer(m_rootLayer.get());
+        setAcceleratedCompositingRootLayers(m_rootLayer.get(), m_viewOverlayRootLayer.get());
         m_page->activityStateDidChange(WebCore::ActivityState::allFlags());
     }
 }

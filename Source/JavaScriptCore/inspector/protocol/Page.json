@@ -239,7 +239,6 @@
         {
             "name": "setShowRulers",
             "description": "Requests that backend draw rulers in the inspector overlay",
-            "condition": "!(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "result", "type": "boolean", "description": "True for showing rulers" }

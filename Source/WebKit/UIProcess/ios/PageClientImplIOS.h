@@ -29,7 +29,6 @@
 
 #import "PageClientImplCocoa.h"
 #import "WebFullScreenManagerProxy.h"
-#import <WebCore/InspectorOverlay.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -154,7 +153,7 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
+    void setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode) override;
     CALayer* acceleratedCompositingRootLayer() const override;
     LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
@@ -200,12 +199,6 @@ private:
 
     double minimumZoomScale() const override;
     WebCore::FloatRect documentRect() const override;
-
-    void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) override;
-    void hideInspectorHighlight() override;
-
-    void showInspectorIndication() override;
-    void hideInspectorIndication() override;
 
     void enableInspectorNodeSearch() override;
     void disableInspectorNodeSearch() override;

@@ -47,9 +47,11 @@ public:
 
     RemoteLayerTreeNode* nodeForID(WebCore::GraphicsLayer::PlatformLayerID) const;
     RemoteLayerTreeNode* rootNode() const { return m_rootNode.get(); }
+    RemoteLayerTreeNode* viewOverlayRootNode() const { return m_viewOverlayRootNode.get(); }
 
     CALayer *layerForID(WebCore::GraphicsLayer::PlatformLayerID) const;
     CALayer *rootLayer() const;
+    CALayer *viewOverlayRootLayer() const;
 
     RemoteLayerTreeDrawingAreaProxy& drawingArea() const { return *m_drawingArea; }
 
@@ -69,7 +71,7 @@ public:
     void clearLayers();
 
     // Detach the root layer; it will be reattached upon the next incoming commit.
-    void detachRootLayer();
+    void detachRootLayers();
 
     // Turn all CAMachPort objects in layer contents into actual IOSurfaces.
     // This avoids keeping an outstanding InUse reference when suspended.
@@ -93,6 +95,7 @@ private:
 
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
     WeakPtr<RemoteLayerTreeNode> m_rootNode;
+    WeakPtr<RemoteLayerTreeNode> m_viewOverlayRootNode;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

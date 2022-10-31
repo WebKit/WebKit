@@ -207,6 +207,11 @@ public:
 
     WebCore::GraphicsLayer::PlatformLayerID rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+
+    bool hasViewOverlayRootLayerID() const { return m_viewOverlayRootLayerID.has_value(); }
+    WebCore::GraphicsLayer::PlatformLayerID viewOverlayRootLayerID() const { return m_viewOverlayRootLayerID.value(); }
+    void setViewOverlayRootLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+
     void layerPropertiesChanged(PlatformCALayerRemote&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID>);
@@ -315,6 +320,7 @@ public:
 
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
+    std::optional<WebCore::GraphicsLayer::PlatformLayerID> m_viewOverlayRootLayerID;
     HashSet<RefPtr<PlatformCALayerRemote>> m_changedLayers; // Only used in the Web process.
     LayerPropertiesMap m_changedLayerProperties; // Only used in the UI process.
 

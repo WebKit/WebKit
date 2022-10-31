@@ -59,10 +59,6 @@
 #include "RemoteLayerTreeNode.h"
 #include "WKFoundation.h"
 
-#if PLATFORM(IOS_FAMILY)
-#include <WebCore/InspectorOverlay.h>
-#endif
-
 #if ENABLE(IMAGE_ANALYSIS)
 #include <WebCore/TextRecognitionResult.h>
 #endif
@@ -312,7 +308,7 @@ public:
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
     virtual void assistiveTechnologyMakeFirstResponder() = 0;
-    virtual void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) = 0;
+    virtual void setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode) = 0;
     virtual CALayer *acceleratedCompositingRootLayer() const = 0;
 #if ENABLE(MAC_GESTURE_EVENTS)
     virtual void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) = 0;
@@ -484,12 +480,6 @@ public:
     virtual void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) = 0;
     virtual void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
-
-    virtual void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) = 0;
-    virtual void hideInspectorHighlight() = 0;
-
-    virtual void showInspectorIndication() = 0;
-    virtual void hideInspectorIndication() = 0;
 
     virtual void enableInspectorNodeSearch() = 0;
     virtual void disableInspectorNodeSearch() = 0;

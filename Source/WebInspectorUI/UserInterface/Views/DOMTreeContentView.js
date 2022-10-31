@@ -750,6 +750,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showRulersButtonNavigationItem.activated = activated;
 
         for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 16.0): Page.setShowRulers did not exist on iOS yet.
             if (target.hasCommand("Page.setShowRulers"))
                 target.PageAgent.setShowRulers(activated);
         }

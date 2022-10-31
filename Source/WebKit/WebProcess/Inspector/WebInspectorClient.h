@@ -61,9 +61,6 @@ private:
     void hideHighlight() override;
 
 #if PLATFORM(IOS_FAMILY)
-    void showInspectorIndication() override;
-    void hideInspectorIndication() override;
-
     void didSetSearchingForNode(bool) override;
 #endif
 

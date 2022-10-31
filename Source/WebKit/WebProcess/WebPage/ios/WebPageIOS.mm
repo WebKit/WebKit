@@ -1289,26 +1289,6 @@ void WebPage::setFocusedElementSelectedIndex(const WebCore::ElementContext& cont
         downcast<HTMLSelectElement>(*element).optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
-void WebPage::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
-{
-    send(Messages::WebPageProxy::ShowInspectorHighlight(highlight));
-}
-
-void WebPage::hideInspectorHighlight()
-{
-    send(Messages::WebPageProxy::HideInspectorHighlight());
-}
-
-void WebPage::showInspectorIndication()
-{
-    send(Messages::WebPageProxy::ShowInspectorIndication());
-}
-
-void WebPage::hideInspectorIndication()
-{
-    send(Messages::WebPageProxy::HideInspectorIndication());
-}
-
 void WebPage::enableInspectorNodeSearch()
 {
     send(Messages::WebPageProxy::EnableInspectorNodeSearch());

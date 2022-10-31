@@ -107,9 +107,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(const String& source);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>> searchInResource(const Inspector::Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId&);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>> searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex);
-#if !PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> setShowRulers(bool);
-#endif
     Inspector::Protocol::ErrorStringOr<void> setShowPaintRects(bool);
     Inspector::Protocol::ErrorStringOr<void> setEmulatedMedia(const String&);
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
