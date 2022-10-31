@@ -36,6 +36,7 @@ WK_EXPORT void WKAddMockMediaDevice(WKContextRef, WKStringRef persistentId, WKSt
 WK_EXPORT void WKClearMockMediaDevices(WKContextRef);
 WK_EXPORT void WKRemoveMockMediaDevice(WKContextRef, WKStringRef persistentId);
 WK_EXPORT void WKResetMockMediaDevices(WKContextRef);
+WK_EXPORT void WKSetMockMediaDeviceIsEphemeral(WKContextRef, WKStringRef persistentId, bool isEphemeral);
 
 #ifdef __cplusplus
 }

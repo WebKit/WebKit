@@ -34,8 +34,8 @@ using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
 class GStreamerVideoCaptureSource : public RealtimeVideoCaptureSource, GStreamerCapturer::Observer {
 public:
-    static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*);
-    static CaptureSourceOrError createPipewireSource(String&& deviceID, const NodeAndFD&, String&& hashSalt, const MediaConstraints*, CaptureDevice::DeviceType);
+    static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
+    static CaptureSourceOrError createPipewireSource(String&& deviceID, const NodeAndFD&, MediaDeviceHashSalts&&, const MediaConstraints*, CaptureDevice::DeviceType);
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
@@ -51,8 +51,8 @@ public:
     void sourceCapsChanged(const GstCaps*) final;
 
 protected:
-    GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, String&& hashSalt, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
-    GStreamerVideoCaptureSource(GStreamerCaptureDevice, String&& hashSalt);
+    GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
+    GStreamerVideoCaptureSource(GStreamerCaptureDevice, MediaDeviceHashSalts&&);
     virtual ~GStreamerVideoCaptureSource();
     void startProducingData() override;
     void stopProducingData() override;

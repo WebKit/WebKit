@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -194,7 +194,7 @@ void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifi
     }, [](std::nullptr_t) { });
 }
 
-CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
@@ -207,7 +207,7 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    return RemoteRealtimeAudioSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
+    return RemoteRealtimeAudioSource::create(device, constraints, WTFMove(hashSalts), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
 }
 
 void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool value)
@@ -220,7 +220,7 @@ void UserMediaCaptureManager::VideoFactory::setShouldCaptureInGPUProcess(bool va
     m_shouldCaptureInGPUProcess = value;
 }
 
-CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
@@ -229,10 +229,10 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
     if (m_shouldCaptureInGPUProcess)
         m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
-    return RemoteRealtimeVideoSource::create(device, constraints, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
+    return RemoteRealtimeVideoSource::create(device, constraints, WTFMove(hashSalts), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
 }
 
-CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
@@ -241,7 +241,7 @@ CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptu
     if (m_shouldCaptureInGPUProcess)
         m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
-    return RemoteRealtimeVideoSource::create(device, constraints, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
+    return RemoteRealtimeVideoSource::create(device, constraints, WTFMove(hashSalts), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
 }
 
 void UserMediaCaptureManager::DisplayFactory::setShouldCaptureInGPUProcess(bool value)

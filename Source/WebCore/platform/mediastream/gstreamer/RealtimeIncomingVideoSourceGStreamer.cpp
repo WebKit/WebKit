@@ -30,7 +30,7 @@
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
-    : RealtimeIncomingSourceGStreamer(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
+    : RealtimeIncomingSourceGStreamer(CaptureDevice { WTFMove(videoTrackId), CaptureDevice::DeviceType::Camera, emptyString() })
 {
     RealtimeMediaSourceSupportedConstraints constraints;
     constraints.setSupportsWidth(true);
