@@ -102,6 +102,11 @@ class LayoutTraits
     {
         throw "Derived class must implement this function.";
     }
+
+    inheritsBorderRadius()
+    {
+        throw "Derived class must implement this function.";
+    }
 }
 
 LayoutTraits.Mode = {

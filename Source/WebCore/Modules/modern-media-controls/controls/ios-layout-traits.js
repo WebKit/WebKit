@@ -85,6 +85,11 @@ class IOSLayoutTraits extends LayoutTraits
         return false;
     }
 
+    inheritsBorderRadius()
+    {
+        return true;
+    }
+
     toString()
     {
         return `[IOSLayoutTraits]`;
