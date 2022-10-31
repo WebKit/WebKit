@@ -384,7 +384,7 @@ private:
 
     void processAuthenticationChallenge(PAL::SessionID, Ref<AuthenticationChallengeProxy>&&);
 
-#if USE(SOUP)
+#if USE(SOUP) || USE(CURL)
     void didExceedMemoryLimit();
 #endif
 

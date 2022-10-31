@@ -64,6 +64,9 @@ struct NetworkProcessCreationParameters {
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::AlwaysAccept };
     Vector<String> languages;
+#endif
+
+#if USE(SOUP) || USE(CURL)
     std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
 #endif
 

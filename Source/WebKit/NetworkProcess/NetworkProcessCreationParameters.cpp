@@ -57,6 +57,8 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(SOUP)
     encoder << cookieAcceptPolicy;
     encoder << languages;
+#endif
+#if USE(SOUP) || USE(CURL)
     encoder << memoryPressureHandlerConfiguration;
 #endif
 
@@ -100,7 +102,9 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.languages))
         return false;
+#endif
 
+#if USE(SOUP) || USE(CURL)
     std::optional<std::optional<MemoryPressureHandler::Configuration>> memoryPressureHandlerConfiguration;
     decoder >> memoryPressureHandlerConfiguration;
     if (!memoryPressureHandlerConfiguration)

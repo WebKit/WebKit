@@ -76,7 +76,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     
     TriggerBrowsingContextGroupSwitchForNavigation(WebKit::WebPageProxyIdentifier pageIdentifier, uint64_t navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, WebCore::RegistrableDomain responseDomain, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume) -> (bool success)
 
-#if USE(SOUP)
+#if USE(SOUP) || USE(CURL)
     DidExceedMemoryLimit()
 #endif
 
