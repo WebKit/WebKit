@@ -316,6 +316,7 @@ public:
     void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type);
     void clearMockMediaDevices();
     void removeMockMediaDevice(WKStringRef persistentID);
+    void setMockMediaDeviceIsEphemeral(WKStringRef, bool);
     void resetMockMediaDevices();
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;

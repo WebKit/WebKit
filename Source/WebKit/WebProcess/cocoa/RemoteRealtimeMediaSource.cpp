@@ -36,32 +36,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
-{
-    switch (type) {
-    case CaptureDevice::DeviceType::Microphone:
-    case CaptureDevice::DeviceType::SystemAudio:
-        return RealtimeMediaSource::Type::Audio;
-    case CaptureDevice::DeviceType::Camera:
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
-        return RealtimeMediaSource::Type::Video;
-    case CaptureDevice::DeviceType::Unknown:
-    case CaptureDevice::DeviceType::Speaker:
-        ASSERT_NOT_REACHED();
-        return RealtimeMediaSource::Type::Audio;
-    }
-}
-
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
-    : RealtimeMediaSource(toSourceType(device.type()), WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier)
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
 }
 
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, PageIdentifier pageIdentifier)
-    : RealtimeMediaSource(toSourceType(proxy.device().type()), WTFMove(name), String { proxy.device().persistentId() }, WTFMove(hashSalt), pageIdentifier)
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(proxy.device(), WTFMove(hashSalts), pageIdentifier)
     , m_proxy(WTFMove(proxy))
     , m_manager(manager)
 {
@@ -69,7 +52,7 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourcePr
 
 void RemoteRealtimeMediaSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), pageIdentifier(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), pageIdentifier(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
         if (!succeeded) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;

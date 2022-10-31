@@ -118,7 +118,7 @@ void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
         sendUserMediaRequest(pendingRequest);
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaRequestIdentifier requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
+void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaRequestIdentifier requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, WebCore::MediaDeviceHashSalts&& deviceIdentifierHashSalts, CompletionHandler<void()>&& completionHandler)
 {
     auto request = m_ongoingUserMediaRequests.take(requestID);
     if (!request) {
@@ -126,7 +126,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaReque
         return;
     }
 
-    request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt), WTFMove(completionHandler));
+    request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalts), WTFMove(completionHandler));
 }
 
 void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
@@ -138,11 +138,11 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaReques
     request->deny(reason, WTFMove(invalidConstraint));
 }
 
-void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
+void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, MediaDeviceHashSalts&&)>&& completionHandler)
 {
     auto* frame = document.frame();
     if (!frame) {
-        completionHandler({ }, emptyString());
+        completionHandler({ }, { });
         return;
     }
 

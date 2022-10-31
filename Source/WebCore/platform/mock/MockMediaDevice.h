@@ -168,14 +168,16 @@ struct MockMediaDevice {
     CaptureDevice captureDevice() const
     {
         if (isMicrophone())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId, true };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId, true, false, true, isEphemeral };
+
         if (isSpeaker())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId, true };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId, true, false, true, isEphemeral };
+
         if (isCamera())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId, true };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId, true, false, true, isEphemeral };
 
         ASSERT(isDisplay());
-        return CaptureDevice { persistentId, std::get<MockDisplayProperties>(properties).type, label, emptyString(), true };
+        return CaptureDevice { persistentId, std::get<MockDisplayProperties>(properties).type, label, emptyString(), true, false, true, isEphemeral };
     }
 
     CaptureDevice::DeviceType type() const
@@ -201,6 +203,7 @@ struct MockMediaDevice {
     {
         encoder << persistentId;
         encoder << label;
+        encoder << isEphemeral;
         WTF::switchOn(properties, [&](const MockMicrophoneProperties& properties) {
             encoder << (uint8_t)1;
             encoder << properties;
@@ -217,13 +220,13 @@ struct MockMediaDevice {
     }
 
     template <typename Properties, typename Decoder>
-    static std::optional<MockMediaDevice> decodeMockMediaDevice(Decoder& decoder, String&& persistentId, String&& label)
+    static std::optional<MockMediaDevice> decodeMockMediaDevice(Decoder& decoder, String&& persistentId, String&& label, bool isEphemeral)
     {
         std::optional<Properties> properties;
         decoder >> properties;
         if (!properties)
             return std::nullopt;
-        return MockMediaDevice { WTFMove(persistentId), WTFMove(label), WTFMove(*properties) };
+        return MockMediaDevice { WTFMove(persistentId), WTFMove(label), isEphemeral, WTFMove(*properties) };
     }
 
     template <class Decoder>
@@ -239,6 +242,11 @@ struct MockMediaDevice {
         if (!label)
             return std::nullopt;
 
+        std::optional<bool> isEphemeral;
+        decoder >> isEphemeral;
+        if (!isEphemeral)
+            return std::nullopt;
+
         std::optional<uint8_t> index;
         decoder >> index;
         if (!index)
@@ -246,19 +254,20 @@ struct MockMediaDevice {
 
         switch (*index) {
         case 1:
-            return decodeMockMediaDevice<MockMicrophoneProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
+            return decodeMockMediaDevice<MockMicrophoneProperties>(decoder, WTFMove(*persistentId), WTFMove(*label), *isEphemeral);
         case 2:
-            return decodeMockMediaDevice<MockSpeakerProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
+            return decodeMockMediaDevice<MockSpeakerProperties>(decoder, WTFMove(*persistentId), WTFMove(*label), *isEphemeral);
         case 3:
-            return decodeMockMediaDevice<MockCameraProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
+            return decodeMockMediaDevice<MockCameraProperties>(decoder, WTFMove(*persistentId), WTFMove(*label), *isEphemeral);
         case 4:
-            return decodeMockMediaDevice<MockDisplayProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
+            return decodeMockMediaDevice<MockDisplayProperties>(decoder, WTFMove(*persistentId), WTFMove(*label), *isEphemeral);
         }
         return std::nullopt;
     }
 
     String persistentId;
     String label;
+    bool isEphemeral;
     std::variant<MockMicrophoneProperties, MockSpeakerProperties, MockCameraProperties, MockDisplayProperties> properties;
 };
 

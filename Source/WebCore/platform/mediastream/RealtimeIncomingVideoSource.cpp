@@ -36,7 +36,7 @@
 namespace WebCore {
 
 RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
-    : RealtimeMediaSource(Type::Video, "remote video"_s, WTFMove(videoTrackId))
+    : RealtimeMediaSource(CaptureDevice { WTFMove(videoTrackId), CaptureDevice::DeviceType::Camera, "remote video"_s })
     , m_videoTrack(WTFMove(videoTrack))
 {
     ASSERT(m_videoTrack);
