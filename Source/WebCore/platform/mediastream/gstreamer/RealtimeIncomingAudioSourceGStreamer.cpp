@@ -31,8 +31,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 namespace WebCore {
 
 RealtimeIncomingAudioSourceGStreamer::RealtimeIncomingAudioSourceGStreamer(AtomString&& audioTrackId)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(audioTrackId))
-    , RealtimeIncomingSourceGStreamer()
+    : RealtimeIncomingSourceGStreamer(RealtimeMediaSource::Type::Audio, WTFMove(audioTrackId))
 {
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(bin(), makeString("incoming-audio-source-", sourceCounter.exchangeAdd(1)).ascii().data());
@@ -43,21 +42,6 @@ RealtimeIncomingAudioSourceGStreamer::RealtimeIncomingAudioSourceGStreamer(AtomS
 RealtimeIncomingAudioSourceGStreamer::~RealtimeIncomingAudioSourceGStreamer()
 {
     stop();
-}
-
-void RealtimeIncomingAudioSourceGStreamer::startProducingData()
-{
-    openValve();
-}
-
-void RealtimeIncomingAudioSourceGStreamer::stopProducingData()
-{
-    closeValve();
-}
-
-const RealtimeMediaSourceCapabilities& RealtimeIncomingAudioSourceGStreamer::capabilities()
-{
-    return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
 const RealtimeMediaSourceSettings& RealtimeIncomingAudioSourceGStreamer::settings()

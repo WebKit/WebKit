@@ -51,6 +51,10 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(GSTREAMER)
+typedef struct _GstEvent GstEvent;
+#endif
+
 namespace WTF {
 class MediaTime;
 }
@@ -91,6 +95,10 @@ public:
         virtual bool preventSourceFromStopping() { return false; }
 
         virtual void hasStartedProducingData() { }
+
+#if USE(GSTREAMER)
+        virtual void handleDownstreamEvent(GRefPtr<GstEvent>&&) { }
+#endif
     };
     class AudioSampleObserver {
     public:

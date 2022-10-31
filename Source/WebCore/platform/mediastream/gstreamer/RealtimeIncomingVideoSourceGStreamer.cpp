@@ -33,8 +33,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
-    , RealtimeIncomingSourceGStreamer()
+    : RealtimeIncomingSourceGStreamer(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
 {
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(bin(), makeString("incoming-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
@@ -63,23 +62,6 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
     }, nullptr, nullptr);
 
     start();
-}
-
-void RealtimeIncomingVideoSourceGStreamer::startProducingData()
-{
-    GST_DEBUG_OBJECT(bin(), "Starting data flow");
-    openValve();
-}
-
-void RealtimeIncomingVideoSourceGStreamer::stopProducingData()
-{
-    GST_DEBUG_OBJECT(bin(), "Stopping data flow");
-    closeValve();
-}
-
-const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSourceGStreamer::capabilities()
-{
-    return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
 const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::settings()
