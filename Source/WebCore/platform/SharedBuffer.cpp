@@ -389,12 +389,6 @@ bool FragmentedSharedBuffer::internallyConsistent() const
 }
 #endif // ASSERT_ENABLED
 
-#if !USE(CF)
-void FragmentedSharedBuffer::hintMemoryNotNeededSoon() const
-{
-}
-#endif
-
 bool FragmentedSharedBuffer::operator==(const FragmentedSharedBuffer& other) const
 {
     if (this == &other)

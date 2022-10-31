@@ -77,8 +77,10 @@ public:
     template<typename T>
     static T* reallocateCommitted(T*, size_t oldSize, size_t newSize, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false);
 
+#if USE(CF)
     // Hint to the OS that an address range is not expected to be accessed anytime soon.
     WTF_EXPORT_PRIVATE static void hintMemoryNotNeededSoon(void*, size_t);
+#endif
 };
 
 inline void* OSAllocator::reserveAndCommit(size_t reserveSize, size_t commitSize, Usage usage, bool writable, bool executable, bool jitCageEnabled)

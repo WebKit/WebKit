@@ -205,7 +205,9 @@ public:
 
     WEBCORE_EXPORT String toHexString() const;
 
+#if USE(CF)
     void hintMemoryNotNeededSoon() const;
+#endif
 
     WEBCORE_EXPORT bool operator==(const FragmentedSharedBuffer&) const;
     bool operator!=(const FragmentedSharedBuffer& other) const { return !operator==(other); }
