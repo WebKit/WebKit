@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -274,6 +274,7 @@ static int printTestCount;
 static int checkForWorldLeaks;
 static BOOL printSeparators;
 static std::set<std::string> allowedHosts;
+static std::set<std::string> localhostAliases;
 static std::string webCoreLogging;
 
 static RetainPtr<CFStringRef>& persistentUserStyleSheetLocation()
@@ -1009,6 +1010,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"print-test-count", no_argument, &printTestCount, YES},
         {"world-leaks", no_argument, &checkForWorldLeaks, NO},
         {"webcore-logging", required_argument, nullptr, 'w'},
+        {"localhost-alias", required_argument, nullptr, 'l'},
         {nullptr, 0, nullptr, 0}
     };
 
@@ -1021,6 +1023,10 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
                 break;
             case 'a': // "allowed-host"
                 allowedHosts.insert(optarg);
+                break;
+            case 'l': // "localhost-alias"
+                localhostAliases.insert(optarg);
+                allowedHosts.insert(optarg); // localhost is implicitly allowed and so should aliases to it.
                 break;
             case 'w': // "webcore-logging"
                 webCoreLogging = optarg;
@@ -1184,6 +1190,9 @@ void dumpRenderTree(int argc, const char *argv[])
 
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
+    for (auto& localhostAlias : localhostAliases)
+        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[NSString stringWithUTF8String:localhostAlias.c_str()]];
+
     if (allowAnyHTTPSCertificateForAllowedHosts) {
         for (auto& host : allowedHosts)
             [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[NSString stringWithUTF8String:host.c_str()]];
@@ -1901,7 +1910,9 @@ static void runTest(const std::string& inputLine)
 
     const char* testURL([[url absoluteString] UTF8String]);
     gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
+    gTestRunner->setAllowAnyHTTPSCertificateForAllowedHosts(allowAnyHTTPSCertificateForAllowedHosts);
     gTestRunner->setAllowedHosts(allowedHosts);
+    gTestRunner->setLocalhostAliases(localhostAliases);
     gTestRunner->setCustomTimeout(command.timeout.milliseconds());
     gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
 

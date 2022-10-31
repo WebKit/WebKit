@@ -154,6 +154,11 @@ void setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
     DeprecatedGlobalSettings::setAllowsAnySSLCertificate(allowAnySSLCertificate);
 }
 
+bool allowsAnySSLCertificate()
+{
+    return DeprecatedGlobalSettings::allowsAnySSLCertificate();
+}
+
 void setLinkedOnOrAfterEverythingForTesting()
 {
 #if PLATFORM(COCOA)

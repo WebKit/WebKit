@@ -1,0 +1,44 @@
+Blocked access to external URL http://www.localhost:8800/media/1x1-green.png
+Blocked access to external URL http://www.localhost:8801/media/1x1-green.png
+Blocked access to external URL http://www1.localhost:8800/media/1x1-green.png
+Blocked access to external URL http://www1.localhost:8801/media/1x1-green.png
+Blocked access to external URL http://www2.localhost:8800/media/1x1-green.png
+Blocked access to external URL http://www2.localhost:8801/media/1x1-green.png
+Blocked access to external URL http://xn--lve-6lad.localhost:8800/media/1x1-green.png
+Blocked access to external URL http://xn--lve-6lad.localhost:8801/media/1x1-green.png
+Blocked access to external URL http://xn--n8j6ds53lwwkrqhv28a.localhost:8800/media/1x1-green.png
+Blocked access to external URL http://xn--n8j6ds53lwwkrqhv28a.localhost:8801/media/1x1-green.png
+Blocked access to external URL http://nonexistent.localhost:8800/media/1x1-green.png
+Blocked access to external URL http://nonexistent.localhost:8801/media/1x1-green.png
+Blocked access to external URL https://www.localhost:9443/media/1x1-green.png
+Blocked access to external URL https://www1.localhost:9443/media/1x1-green.png
+Blocked access to external URL https://www2.localhost:9443/media/1x1-green.png
+Blocked access to external URL https://xn--lve-6lad.localhost:9443/media/1x1-green.png
+Blocked access to external URL https://xn--n8j6ds53lwwkrqhv28a.localhost:9443/media/1x1-green.png
+Blocked access to external URL https://nonexistent.localhost:8800/media/1x1-green.png
+Blocked access to external URL https://nonexistent.localhost:8801/media/1x1-green.png
+CONSOLE MESSAGE: Blocked https://localhost:9443/media/1x1-green.png from asking for credentials because it is a cross-origin request.
+
+PASS HTTP protocol, no subdomain, port #1
+PASS HTTP protocol, no subdomain, port #2
+FAIL HTTP protocol, www subdomain #1, port #1 assert_true: expected true got false
+FAIL HTTP protocol, www subdomain #1, port #2 assert_true: expected true got false
+FAIL HTTP protocol, www subdomain #2, port #1 assert_true: expected true got false
+FAIL HTTP protocol, www subdomain #2, port #2 assert_true: expected true got false
+FAIL HTTP protocol, www subdomain #3, port #1 assert_true: expected true got false
+FAIL HTTP protocol, www subdomain #3, port #2 assert_true: expected true got false
+FAIL HTTP protocol, punycode subdomain #1, port #1 assert_true: expected true got false
+FAIL HTTP protocol, punycode subdomain #1, port #2 assert_true: expected true got false
+FAIL HTTP protocol, punycode subdomain #2, port #1 assert_true: expected true got false
+FAIL HTTP protocol, punycode subdomain #2, port #2 assert_true: expected true got false
+PASS HTTP protocol, non-existent domain, port #1
+PASS HTTP protocol, non-existent domain, port #2
+PASS HTTPS protocol, no subdomain
+FAIL HTTPS protocol, www subdomain #1 assert_true: expected true got false
+FAIL HTTPS protocol, www subdomain #2 assert_true: expected true got false
+FAIL HTTPS protocol, www subdomain #3 assert_true: expected true got false
+FAIL HTTPS protocol, punycode subdomain #1 assert_true: expected true got false
+FAIL HTTPS protocol, punycode subdomain #2 assert_true: expected true got false
+PASS HTTPS protocol, non-existent domain, port #1
+PASS HTTPS protocol, non-existent domain, port #2
+

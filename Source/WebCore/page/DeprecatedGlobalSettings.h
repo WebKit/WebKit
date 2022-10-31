@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,8 +83,7 @@ public:
 #endif
 
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
-    static bool allowsAnySSLCertificate();
-
+    WEBCORE_EXPORT static bool allowsAnySSLCertificate();
 
     static void setPaintTimingEnabled(bool isEnabled) { shared().m_isPaintTimingEnabled = isEnabled; }
     static bool paintTimingEnabled() { return shared().m_isPaintTimingEnabled; }

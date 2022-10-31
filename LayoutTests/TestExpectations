@@ -426,7 +426,9 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 imported/w3c/web-platform-tests/clear-site-data/executionContexts.sub.html [ Skip ]
 
 # Console log lines may appear in a different order so we silence them.
+http/tests/security/cookie-module.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/cookie-module-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/webauthn/public-key-credential-create-failure.https.html [ DumpJSConsoleLogInStdErr ]
@@ -5077,6 +5079,10 @@ webkit.org/b/227084 http/wpt/webxr/xrSession_ended_by_system.https.html [ Skip ]
 # rdar://79367325
 webkit.org/b/227086 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Skip ]
 
+# Extra logging that needs to be silenced:
+imported/w3c/web-platform-tests/webxr/webxr_availability.http.sub.html [ DumpJSConsoleLogInStdErr ]
+
+
 # "Opacity on an inline element should apply on float child".
 webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity-float-child.html [ ImageOnlyFailure ]
 
@@ -6062,3 +6068,9 @@ imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]
 
 # WebKit2 Only
 fullscreen/fullscreen-enter-bottom-padding-animation.html [ Skip ]
+
+# Extra logging needed to be silenced:
+http/tests/loading/oauth.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url-initiated-grand-parent.https.window.html [ DumpJSConsoleLogInStdErr ]

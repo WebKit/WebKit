@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Blocked https://localhost:8443/resources/square100.png from asking for credentials because it is a cross-origin request.
+Tests that the NetworkAgent is able to get a serialized certificate for a given request.
+
+
+== Running test suite: Network.getSerializedCertificate
+-- Running test case: Network.getSerializedCertificate.HTTP
+PASS: Should produce an exception.
+Error: Missing certificate of resource for given requestId
+
+-- Running test case: Network.getSerializedCertificate.HTTPS
+PASS: Request should have serializable certificate.
+
+-- Running test case: Network.getSerializedCertificate.Invalid
+PASS: Should produce an exception.
+Error: Missing resource for given requestId
+

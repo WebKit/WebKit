@@ -307,8 +307,10 @@ imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.sharedworker
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
-webkit.org/b/246351 imported/w3c/web-platform-tests/reporting/reporting-api-honors-limits.https.sub.html [ Failure ]
+
+# WebKitLegacy is flaky on reporting API
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Pass Failure ]
+webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure ]
 
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
@@ -602,6 +604,7 @@ http/wpt/loading/redirect-headers.html [ Skip ]
 
 # No shared worker implementation for WK1
 http/wpt/shared-workers [ Skip ]
+imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Skip ]
 
 # No service worker implementation for WK1
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
@@ -1710,8 +1713,6 @@ webkit.org/b/225420 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-s
 
 webkit.org/b/228238 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Pass Timeout ]
 
-webkit.org/b/228245 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Pass Failure ]
-
 webkit.org/b/244499 [ Debug ]  imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Crash ]
 
 webkit.org/b/228260 [ BigSur Debug ] imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm [ Pass Timeout ]
@@ -2149,3 +2150,7 @@ webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxili
 webkit.org/b/245902 [ Debug ] contentfiltering/allow-media-document.html [ Skip ]
 
 webkit.org/b/246653 [ Debug ] media/modern-media-controls/media-documents/click-on-video-should-not-pause.html [ Skip ]
+
+# CONSOLE MESSAGE output is nondeterministic and varies from run-to-run
+http/tests/security/basic-auth-subresource.html [ Failure Pass ]
+http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
