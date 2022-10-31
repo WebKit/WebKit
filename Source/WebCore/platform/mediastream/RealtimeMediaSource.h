@@ -52,6 +52,8 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(GSTREAMER)
+#include <wtf/glib/GRefPtr.h>
+
 typedef struct _GstEvent GstEvent;
 #endif
 
