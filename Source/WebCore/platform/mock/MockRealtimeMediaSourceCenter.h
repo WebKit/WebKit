@@ -45,7 +45,8 @@ public:
 
     WEBCORE_EXPORT static void setDevices(Vector<MockMediaDevice>&&);
     WEBCORE_EXPORT static void addDevice(const MockMediaDevice&);
-    WEBCORE_EXPORT static void removeDevice(const String& persistentId);
+    WEBCORE_EXPORT static void removeDevice(const String&);
+    WEBCORE_EXPORT static void setDeviceIsEphemeral(const String&, bool);
     WEBCORE_EXPORT static void resetDevices();
     WEBCORE_EXPORT static void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
 

@@ -115,6 +115,7 @@
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/TranslationContextMenuInfo.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <WebCore/UserMediaClient.h>
 #include <WebCore/ViewportArguments.h>
 #include <memory>
 #include <pal/HysteresisActivity.h>
@@ -303,6 +304,7 @@ struct FileChooserSettings;
 struct GlobalWindowIdentifier;
 struct InteractionRegion;
 struct LinkIcon;
+struct MediaDeviceHashSalts;
 struct MediaStreamRequest;
 struct MediaUsageInfo;
 struct MockWebAuthenticationConfiguration;
@@ -2307,7 +2309,7 @@ private:
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
 #endif
     void requestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
-    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
+    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, WebCore::MediaDeviceHashSalts&&)>&&);
     void beginMonitoringCaptureDevices();
 
 #if ENABLE(ENCRYPTED_MEDIA)

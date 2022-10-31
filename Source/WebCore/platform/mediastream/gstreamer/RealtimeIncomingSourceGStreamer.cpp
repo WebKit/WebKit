@@ -31,8 +31,8 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 
 namespace WebCore {
 
-RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(Type type, AtomString&& name)
-    : RealtimeMediaSource(type, WTFMove(name))
+RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(const CaptureDevice& device)
+    : RealtimeMediaSource(device)
 {
     m_bin = gst_bin_new(nullptr);
     m_valve = gst_element_factory_make("valve", nullptr);

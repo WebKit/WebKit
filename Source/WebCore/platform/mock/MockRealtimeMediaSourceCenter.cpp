@@ -57,14 +57,14 @@ namespace WebCore {
 static inline Vector<MockMediaDevice> defaultDevices()
 {
     return Vector<MockMediaDevice> {
-        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, MockMicrophoneProperties { 44100 } },
-        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, MockMicrophoneProperties { 48000 } },
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, false, MockMicrophoneProperties { 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, false,  MockMicrophoneProperties { 48000 } },
 
-        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
-        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, MockSpeakerProperties { String { }, 48000 } },
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, false,  MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, false,  MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, false,  MockSpeakerProperties { String { }, 48000 } },
 
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s,
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, false,
             MockCameraProperties {
                 30,
                 RealtimeMediaSourceSettings::VideoFacingMode::User, {
@@ -76,7 +76,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::black,
             } },
 
-        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s,
+        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, false,
             MockCameraProperties {
                 15,
                 RealtimeMediaSourceSettings::VideoFacingMode::Environment, {
@@ -92,23 +92,23 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::darkGray,
             } },
 
-        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
-        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
 
-        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
-        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
+        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
     };
 }
 
 class MockRealtimeVideoSourceFactory : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
             return { "Unable to find mock camera device with given persistentID"_s };
 
-        return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
+        return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
     }
 
 private:
@@ -136,7 +136,7 @@ private:
 };
 
 MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device, PageIdentifier pageIdentifier)
-    : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, String { }, pageIdentifier))
+    : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
 {
 }
 
@@ -178,7 +178,7 @@ IntSize MockDisplayCapturer::intrinsicSize() const
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
             return { "Unable to find mock display device with given persistentID"_s };
@@ -187,12 +187,12 @@ public:
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window:
 #if PLATFORM(MAC)
-            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device, pageIdentifier)), device, WTFMove(hashSalt), constraints, pageIdentifier);
+            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device, pageIdentifier)), device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif USE(GSTREAMER)
             UNUSED_PARAM(pageIdentifier);
-            return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalt), constraints);
+            return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints);
 #else
-            return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
+            return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
 #endif
             break;
         case CaptureDevice::DeviceType::Microphone:
@@ -213,13 +213,13 @@ private:
 
 class MockRealtimeAudioSourceFactory final : public AudioCaptureFactory {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId()))
             return { "Unable to find mock microphone device with given persistentID"_s };
 
-        return MockRealtimeAudioSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
+        return MockRealtimeAudioSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
     }
 private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
@@ -300,6 +300,7 @@ static CaptureDevice toCaptureDevice(const MockMediaDevice& device)
     auto captureDevice = device.captureDevice();
     captureDevice.setEnabled(true);
     captureDevice.setIsMockDevice(true);
+
     return captureDevice;
 }
 
@@ -376,6 +377,22 @@ void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
 
     map.remove(iterator);
     RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
+}
+
+void MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+    ASSERT(!persistentId.isEmpty());
+
+    auto& map = deviceMap();
+    auto iterator = map.find(persistentId);
+    if (iterator == map.end())
+        return;
+
+    MockMediaDevice device = iterator->value;
+    device.isEphemeral = isEphemeral;
+
+    removeDevice(persistentId);
+    addDevice(device);
 }
 
 std::optional<MockMediaDevice> MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(const String& id)

@@ -30,7 +30,7 @@ namespace WebCore {
 
 class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource {
 public:
-    MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, String&& hashSalt);
+    MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
     ~MockRealtimeVideoSourceGStreamer() = default;
 
 private:
@@ -42,7 +42,7 @@ private:
 
 class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoFrameObserver {
 public:
-    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
+    static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*);
 
     void requestToEnd(Observer&) final;
     bool isProducingData() const final { return m_source->isProducingData(); }
@@ -53,7 +53,7 @@ protected:
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
 private:
-    MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type, Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);
+    MockDisplayCaptureSourceGStreamer(const CaptureDevice&, Ref<MockRealtimeVideoSourceGStreamer>&&, MediaDeviceHashSalts&&);
     ~MockDisplayCaptureSourceGStreamer();
 
     void startProducingData() final { m_source->start(); }

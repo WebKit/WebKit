@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,8 @@ class Document;
 class Page;
 class UserMediaRequest;
 
+struct MediaDeviceHashSalts;
+
 class UserMediaClient {
 public:
     virtual void pageDestroyed() = 0;
@@ -50,7 +52,8 @@ public:
     virtual void requestUserMediaAccess(UserMediaRequest&) = 0;
     virtual void cancelUserMediaAccessRequest(UserMediaRequest&) = 0;
 
-    virtual void enumerateMediaDevices(Document&, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&&) = 0;
+    using EnumerateDevicesCallback = CompletionHandler<void(const Vector<CaptureDevice>&, MediaDeviceHashSalts&&)>;
+    virtual void enumerateMediaDevices(Document&, EnumerateDevicesCallback&&) = 0;
 
     enum DeviceChangeObserverTokenType { };
     using DeviceChangeObserverToken = ObjectIdentifier<DeviceChangeObserverTokenType>;

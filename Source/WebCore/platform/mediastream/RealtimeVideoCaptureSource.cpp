@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(AtomString&& name, String&& id, String&& hashSalt, PageIdentifier pageIdentifier)
-    : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(id), WTFMove(hashSalt), pageIdentifier)
+RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
 {
 }
 

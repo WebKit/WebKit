@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 #include "APIObject.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/UserMediaRequestIdentifier.h>
 #include <wtf/CompletionHandler.h>
@@ -86,8 +87,8 @@ public:
 
     WebCore::MediaStreamRequest::Type requestType() const { return m_request.type; }
 
-    void setDeviceIdentifierHashSalt(String&& salt) { m_deviceIdentifierHashSalt = WTFMove(salt); }
-    const String& deviceIdentifierHashSalt() const { return m_deviceIdentifierHashSalt; }
+    void setDeviceIdentifierHashSalts(WebCore::MediaDeviceHashSalts&& salts) { m_deviceIdentifierHashSalts = WTFMove(salts); }
+    const WebCore::MediaDeviceHashSalts& deviceIdentifierHashSalts() const { return m_deviceIdentifierHashSalts; }
 
     WebCore::CaptureDevice audioDevice() const { return m_eligibleAudioDevices.isEmpty() ? WebCore::CaptureDevice { } : m_eligibleAudioDevices[0]; }
     WebCore::CaptureDevice videoDevice() const { return m_eligibleVideoDevices.isEmpty() ? WebCore::CaptureDevice { } : m_eligibleVideoDevices[0]; }
@@ -114,7 +115,7 @@ private:
     Vector<WebCore::CaptureDevice> m_eligibleAudioDevices;
     WebCore::MediaStreamRequest m_request;
     bool m_hasPersistentAccess { false };
-    String m_deviceIdentifierHashSalt;
+    WebCore::MediaDeviceHashSalts m_deviceIdentifierHashSalts;
     CompletionHandler<void(bool)> m_decisionCompletionHandler;
 };
 

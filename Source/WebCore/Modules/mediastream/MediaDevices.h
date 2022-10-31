@@ -101,7 +101,7 @@ private:
     void scheduledEventTimerFired();
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
 
-    void exposeDevices(const Vector<CaptureDevice>&, const String&, EnumerateDevicesPromise&&);
+    void exposeDevices(const Vector<CaptureDevice>&, MediaDeviceHashSalts&&, EnumerateDevicesPromise&&);
     void listenForDeviceChanges();
 
     friend class JSMediaDevicesOwner;

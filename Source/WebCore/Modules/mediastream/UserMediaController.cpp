@@ -30,8 +30,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
-#include "HTMLIFrameElement.h"
+#include "RealtimeMediaSourceCenter.h"
 #include "UserMediaRequest.h"
 
 namespace WebCore {

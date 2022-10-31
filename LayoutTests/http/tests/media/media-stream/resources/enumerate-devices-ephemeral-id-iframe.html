@@ -1,0 +1,29 @@
+<script>
+    async function enumerate(event)
+    {
+        if (event.data.setup && window.testRunner) {
+            testRunner.setUserMediaPermission(true);
+            testRunner.clearMockMediaDevices();
+            testRunner.addMockCameraDevice(event.data.cameraId, event.data.cameraName);
+        }
+
+        await navigator.mediaDevices.getUserMedia({ video: true });
+
+        testRunner.setMockMediaDeviceIsEphemeral(event.data.cameraId, event.data.isEphemeral);
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        let result;
+        devices.forEach(device => {
+            if (device.label == event.data.cameraName)
+                result = device;
+        });
+
+        parent.postMessage(JSON.stringify(result), '*');
+    }
+
+    window.addEventListener('message', enumerate);
+</script>
+
+<div id='result'></div>
+
+

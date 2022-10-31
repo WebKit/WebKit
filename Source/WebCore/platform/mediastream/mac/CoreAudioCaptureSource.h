@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,8 +52,8 @@ class WebAudioSourceProviderAVFObjC;
 
 class CoreAudioCaptureSource : public RealtimeMediaSource {
 public:
-    WEBCORE_EXPORT static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*, PageIdentifier);
-    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, String&& hashSalt, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, PageIdentifier);
+    WEBCORE_EXPORT static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, PageIdentifier);
 
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
@@ -62,7 +62,7 @@ public:
     void handleNewCurrentMicrophoneDevice(const CaptureDevice&);
 
 protected:
-    CoreAudioCaptureSource(String&& deviceID, AtomString&& label, String&& hashSalt, uint32_t persistentID, BaseAudioSharedUnit*, PageIdentifier);
+    CoreAudioCaptureSource(const CaptureDevice&, uint32_t, MediaDeviceHashSalts&&, BaseAudioSharedUnit*, PageIdentifier);
     virtual ~CoreAudioCaptureSource();
     BaseAudioSharedUnit& unit();
     const BaseAudioSharedUnit& unit() const;
@@ -147,7 +147,7 @@ private:
     void endAudioSessionInterruption(AudioSession::MayResume) final { endInterruption(); }
 
     // AudioCaptureFactory
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) override;
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) override;
     CaptureDeviceManager& audioCaptureDeviceManager() final;
     const Vector<CaptureDevice>& speakerDevices() const final;
 
@@ -157,9 +157,9 @@ private:
     BaseAudioSharedUnit* m_overrideUnit { nullptr };
 };
 
-inline CaptureSourceOrError CoreAudioCaptureSourceFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+inline CaptureSourceOrError CoreAudioCaptureSourceFactory::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
-    return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints, pageIdentifier);
+    return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints, pageIdentifier);
 }
 
 } // namespace WebCore

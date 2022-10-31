@@ -1912,6 +1912,11 @@ void WebProcess::removeMockMediaDevice(const String& persistentId)
     MockRealtimeMediaSourceCenter::removeDevice(persistentId);
 }
 
+void WebProcess::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+    MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
+}
+
 void WebProcess::resetMockMediaDevices()
 {
     MockRealtimeMediaSourceCenter::resetDevices();
