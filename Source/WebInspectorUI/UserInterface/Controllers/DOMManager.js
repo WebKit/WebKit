@@ -120,11 +120,6 @@ WI.DOMManager = class DOMManager extends WI.Object
         };
     }
 
-    static supportsDisablingEventListeners()
-    {
-        return InspectorBackend.hasCommand("DOM.setEventListenerDisabled");
-    }
-
     static supportsEventListenerBreakpoints()
     {
         return InspectorBackend.hasCommand("DOM.setBreakpointForEventListener")
@@ -613,12 +608,6 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     highlightDOMNodeList(nodes, mode)
     {
-        let target = WI.assumingMainTarget();
-
-        // COMPATIBILITY (iOS 11): DOM.highlightNodeList did not exist.
-        if (!target.hasCommand("DOM.highlightNodeList"))
-            return;
-
         if (this._hideDOMNodeHighlightTimeout) {
             clearTimeout(this._hideDOMNodeHighlightTimeout);
             this._hideDOMNodeHighlightTimeout = undefined;
@@ -633,6 +622,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             nodeIds.push(node.id);
         }
 
+        let target = WI.assumingMainTarget();
         target.DOMAgent.highlightNodeList(nodeIds, DOMManager.buildHighlightConfig(mode));
     }
 
@@ -729,14 +719,6 @@ WI.DOMManager = class DOMManager extends WI.Object
         };
 
         let target = WI.assumingMainTarget();
-
-        // COMPATIBILITY (iOS 11): DOM.setInspectedNode did not exist.
-        if (!target.hasCommand("DOM.setInspectedNode")) {
-            if (target.hasCommand("Console.addInspectedNode"))
-                target.ConsoleAgent.addInspectedNode(node.id, callback);
-            return;
-        }
-
         target.DOMAgent.setInspectedNode(node.id, callback);
     }
 

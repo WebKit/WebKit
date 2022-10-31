@@ -832,20 +832,6 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
 
         let target = WI.assumingMainTarget();
-
-        // COMPATIBILITY (iOS 11.0): DOM.insertAdjacentHTML did not exist.
-        if (!target.hasCommand("DOM.insertAdjacentHTML")) {
-            WI.RemoteObject.resolveNode(this).then((object) => {
-                function inspectedPage_node_insertAdjacentHTML(position, html) {
-                    this.insertAdjacentHTML(position, html);
-                }
-
-                object.callFunction(inspectedPage_node_insertAdjacentHTML, [position, html]);
-                object.release();
-            });
-            return;
-        }
-
         target.DOMAgent.insertAdjacentHTML(this.id, position, html, this._makeUndoableCallback());
     }
 
