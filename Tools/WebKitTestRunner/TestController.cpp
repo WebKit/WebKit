@@ -3673,6 +3673,11 @@ void TestController::removeMockMediaDevice(WKStringRef persistentID)
     WKRemoveMockMediaDevice(platformContext(), persistentID);
 }
 
+void TestController::setMockMediaDeviceIsEphemeral(WKStringRef persistentID, bool isEphemeral)
+{
+    WKSetMockMediaDeviceIsEphemeral(platformContext(), persistentID, isEphemeral);
+}
+
 void TestController::resetMockMediaDevices()
 {
     WKResetMockMediaDevices(platformContext());

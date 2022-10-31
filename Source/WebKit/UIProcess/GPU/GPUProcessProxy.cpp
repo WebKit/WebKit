@@ -341,6 +341,11 @@ void GPUProcessProxy::removeMockMediaDevice(const String& persistentId)
     send(Messages::GPUProcess::RemoveMockMediaDevice { persistentId }, 0);
 }
 
+void GPUProcessProxy::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+    send(Messages::GPUProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral }, 0);
+}
+
 void GPUProcessProxy::resetMockMediaDevices()
 {
     send(Messages::GPUProcess::ResetMockMediaDevices { }, 0);

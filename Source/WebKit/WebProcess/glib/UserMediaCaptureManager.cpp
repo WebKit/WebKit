@@ -31,6 +31,7 @@
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebProcess.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 
@@ -48,20 +49,20 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
 }
 
-void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::MediaStreamRequest request, String hashSalt, ValidateUserMediaRequestConstraintsCallback&& completionHandler)
+void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::MediaStreamRequest request, WebCore::MediaDeviceHashSalts&& deviceIdentifierHashSalts, ValidateUserMediaRequestConstraintsCallback&& completionHandler)
 {
     m_validateUserMediaRequestConstraintsCallback = WTFMove(completionHandler);
     auto invalidHandler = [this](const String& invalidConstraint) mutable {
         Vector<CaptureDevice> audioDevices;
         Vector<CaptureDevice> videoDevices;
-        m_validateUserMediaRequestConstraintsCallback(invalidConstraint, audioDevices, videoDevices, { });
+        m_validateUserMediaRequestConstraintsCallback(invalidConstraint, audioDevices, videoDevices);
     };
 
-    auto validHandler = [this](Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, String&& deviceIdentifierHashSalt) mutable {
-        m_validateUserMediaRequestConstraintsCallback(std::nullopt, audioDevices, videoDevices, deviceIdentifierHashSalt);
+    auto validHandler = [this](Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices) mutable {
+        m_validateUserMediaRequestConstraintsCallback(std::nullopt, audioDevices, videoDevices);
     };
 
-    RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), request, WTFMove(hashSalt));
+    RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), request, WTFMove(deviceIdentifierHashSalts));
 }
 
 void UserMediaCaptureManager::getMediaStreamDevices(GetMediaStreamDevicesCallback&& completionHandler)
