@@ -17,6 +17,6 @@ assert.eq(exception.getArg(tag, 0), 1);
 assert.eq(exception.getArg(tag, 1), 2.5);
 assert.eq(exception.getArg(tag, 2), parameters);
 
-assert.throws(() => exception.getArg(tag, 3), TypeError, "WebAssembly.Exception.getArg(): Index out of range");
+assert.throws(() => exception.getArg(tag, 3), RangeError, "WebAssembly.Exception.getArg(): Index out of range");
 
 assert.eq(WebAssembly.Exception.prototype.__proto__, Object.prototype)
