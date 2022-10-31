@@ -47,6 +47,29 @@ static inline std::ostream& operator<<(std::ostream& os, const ApplicationManife
         return os << "ApplicationManifest::Display::Fullscreen";
     }
 }
+
+static inline std::ostream& operator<<(std::ostream& os, const WebCore::ScreenOrientationLockType& orientation)
+{
+    switch (orientation) {
+    case WebCore::ScreenOrientationLockType::Any:
+        return os << "WebCore::ScreenOrientationLockType::Any";
+    case WebCore::ScreenOrientationLockType::Landscape:
+        return os << "WebCore::ScreenOrientationLockType::Landscape";
+    case WebCore::ScreenOrientationLockType::Portrait:
+        return os << "WebCore::ScreenOrientationLockType::Portrait";
+    case WebCore::ScreenOrientationLockType::PortraitPrimary:
+        return os << "WebCore::ScreenOrientationLockType::PortraitPrimary";
+    case WebCore::ScreenOrientationLockType::PortraitSecondary:
+        return os << "WebCore::ScreenOrientationLockType::PortraitSecondary";
+    case WebCore::ScreenOrientationLockType::LandscapePrimary:
+        return os << "WebCore::ScreenOrientationLockType::LandscapePrimary";
+    case WebCore::ScreenOrientationLockType::LandscapeSecondary:
+        return os << "WebCore::ScreenOrientationLockType::LandscapeSecondary";
+    case WebCore::ScreenOrientationLockType::Natural:
+        return os << "WebCore::ScreenOrientationLockType::Natural";
+    }
+}
+
 } // namespace WebCore
 
 class ApplicationManifestParserTest : public testing::Test {
@@ -103,6 +126,13 @@ public:
     {
         auto manifest = parseTopLevelProperty("display"_s, rawJSON);
         auto value = manifest.display;
+        EXPECT_EQ(expectedValue, value);
+    }
+
+    void testOrientation(const String& rawJSON, WebCore::ScreenOrientationLockType expectedValue)
+    {
+        auto manifest = parseTopLevelProperty("orientation"_s, rawJSON);
+        auto value = manifest.orientation;
         EXPECT_EQ(expectedValue, value);
     }
 
@@ -305,6 +335,26 @@ TEST_F(ApplicationManifestParserTest, Display)
     testDisplay("\"\t\nMINIMAL-UI \""_s, ApplicationManifest::Display::MinimalUI);
 }
 
+TEST_F(ApplicationManifestParserTest, Orientation)
+{
+    testOrientation("123"_s, WebCore::ScreenOrientationLockType());
+    testOrientation("null"_s, WebCore::ScreenOrientationLockType());
+    testOrientation("true"_s, WebCore::ScreenOrientationLockType());
+    testOrientation("{ }"_s, WebCore::ScreenOrientationLockType());
+    testOrientation("[ ]"_s, WebCore::ScreenOrientationLockType());
+    testOrientation("\"\""_s, WebCore::ScreenOrientationLockType());
+    testOrientation("\"garbage string\""_s, WebCore::ScreenOrientationLockType());
+
+    testOrientation("\"any\""_s, WebCore::ScreenOrientationLockType::Any);
+    testOrientation("\"natural\""_s, WebCore::ScreenOrientationLockType::Natural);
+    testOrientation("\"landscape\""_s, WebCore::ScreenOrientationLockType::Landscape);
+    testOrientation("\"landscape-primary\""_s, WebCore::ScreenOrientationLockType::LandscapePrimary);
+    testOrientation("\"landscape-secondary\""_s, WebCore::ScreenOrientationLockType::LandscapeSecondary);
+    testOrientation("\"portrait\""_s, WebCore::ScreenOrientationLockType::Portrait);
+    testOrientation("\"portrait-primary\""_s, WebCore::ScreenOrientationLockType::PortraitPrimary);
+    testOrientation("\"portrait-secondary\""_s, WebCore::ScreenOrientationLockType::PortraitSecondary);
+}
+
 TEST_F(ApplicationManifestParserTest, Name)
 {
     testName("123"_s, String());
@@ -440,7 +490,6 @@ TEST_F(ApplicationManifestParserTest, Icons)
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochromeAny { ApplicationManifest::Icon::Purpose::Monochrome, ApplicationManifest::Icon::Purpose::Any };
 
     testIconsPurposes("\"monochrome any\""_s, purposeMonochromeAny);
-
 }
 
 #endif

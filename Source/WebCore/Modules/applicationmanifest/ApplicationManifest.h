@@ -28,6 +28,7 @@
 #if ENABLE(APPLICATION_MANIFEST)
 
 #include "Color.h"
+#include "ScreenOrientationLockType.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -60,6 +61,7 @@ struct ApplicationManifest {
     String description;
     URL scope;
     Display display;
+    ScreenOrientationLockType orientation;
     URL startURL;
     URL id;
     Color themeColor;

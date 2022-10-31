@@ -162,6 +162,38 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
     return ApplicationManifest::Display::Browser;
 }
 
+WebCore::ScreenOrientationLockType ApplicationManifestParser::parseOrientation(const JSON::Object& manifest)
+{
+    auto value = manifest.getValue("orientation"_s);
+    if (!value)
+        return { };
+
+    auto stringValue = value->asString();
+    if (!stringValue) {
+        logManifestPropertyNotAString("orientation"_s);
+        return { };
+    }
+
+    static constexpr std::pair<ComparableLettersLiteral, WebCore::ScreenOrientationLockType> orientationValueMappings[] = {
+        { "any", WebCore::ScreenOrientationLockType::Any },
+        { "landscape-primary", WebCore::ScreenOrientationLockType::LandscapePrimary },
+        { "landscape-secondary", WebCore::ScreenOrientationLockType::LandscapeSecondary },
+        { "landscape", WebCore::ScreenOrientationLockType::Landscape },
+        { "natural", WebCore::ScreenOrientationLockType::Natural },
+        { "portrait-primary", WebCore::ScreenOrientationLockType::PortraitPrimary },
+        { "portrait-secondary", WebCore::ScreenOrientationLockType::PortraitSecondary },
+        { "portrait", WebCore::ScreenOrientationLockType::Portrait },
+    };
+
+    static SortedArrayMap orientationValues { orientationValueMappings };
+
+    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).stripWhiteSpace()))
+        return *orientationValue;
+
+    logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid orientation."_s));
+    return { };
+}
+
 String ApplicationManifestParser::parseName(const JSON::Object& manifest)
 {
     return parseGenericString(manifest, "name"_s);
