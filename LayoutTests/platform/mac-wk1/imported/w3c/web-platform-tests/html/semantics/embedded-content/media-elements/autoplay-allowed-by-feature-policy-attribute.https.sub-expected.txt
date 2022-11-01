@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/common/media.js from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/feature-policy/resources/autoplay.js from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/media/A4.mp4 from asking for credentials because it is a cross-origin request.
+
+
+PASS Feature policy "autoplay" can be enabled in same-origin iframe using allow="autoplay" attribute
+PASS Feature policy "autoplay" can be enabled in cross-origin iframe using allow="autoplay" attribute
+

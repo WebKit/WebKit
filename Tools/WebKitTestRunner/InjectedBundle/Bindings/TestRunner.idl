@@ -388,6 +388,7 @@ interface TestRunner {
     undefined addMockScreenDevice(DOMString persistentId, DOMString label);
     undefined clearMockMediaDevices();
     undefined removeMockMediaDevice(DOMString persistentId);
+    undefined setMockMediaDeviceIsEphemeral(DOMString persistentId, boolean isEphemeral);
     undefined resetMockMediaDevices();
     undefined setMockCameraOrientation(unsigned long orientation);
     boolean isMockRealtimeMediaSourceCenterEnabled();

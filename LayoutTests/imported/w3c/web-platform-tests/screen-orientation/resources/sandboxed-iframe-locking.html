@@ -8,21 +8,25 @@ test_driver.set_test_context(parent);
 screen.orientation?.unlock();
 
 test_driver.bless("request full screen", async () => {
-
-  let msg = "";
+  const data = {};
   try {
     await document.documentElement.requestFullscreen();
     await screen.orientation.lock("portrait")
-    msg = screen.orientation.type;
+    data.result = "locked";
+    data.orientation = screen.orientation.type;
   } catch (error) {
-    msg = `error: ${error.name} ${error.message}`;
+    data.result = "errored";
+    data.name = error.name;
   }
 
+  screen.orientation.unlock();
   try {
-    screen.orientation.unlock();
     await document.exitFullscreen();
   } catch (error) {
+    data.result = "errored";
+    data.name = "fullscreen exit failed";
   }
-  parent.window.postMessage({ type: "result", msg }, "*");
+
+  parent.window.postMessage(data, "*");
 });
 </script>

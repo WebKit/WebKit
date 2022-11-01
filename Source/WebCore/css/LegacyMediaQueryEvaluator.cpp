@@ -143,7 +143,7 @@ static bool applyRestrictor(LegacyMediaQuery::Restrictor r, bool value)
     return r == LegacyMediaQuery::Not ? !value : value;
 }
 
-bool LegacyMediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults, Mode mode) const
+bool LegacyMediaQueryEvaluator::evaluate(const MediaQuerySet& querySet) const
 {
     LOG_WITH_STREAM(MediaQueries, stream << "LegacyMediaQueryEvaluator::evaluate on " << (m_document ? m_document->url().string() : emptyString()));
 
@@ -163,37 +163,14 @@ bool LegacyMediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQue
 
         if (mediaTypeMatch(query.mediaType())) {
             auto& expressions = query.expressions();
+
             // Iterate through expressions, stop if any of them eval to false (AND semantics).
-            bool isDynamic = false;
             size_t j = 0;
             for (; j < expressions.size(); ++j) {
                 bool expressionResult = evaluate(expressions[j]);
-                if (dynamicResults) {
-                    if (expressions[j].isViewportDependent()) {
-                        isDynamic = true;
-                        dynamicResults->viewport.append({ expressions[j], expressionResult });
-                    }
-                    if (isAppearanceDependent(expressions[j].mediaFeature())) {
-                        isDynamic = true;
-                        dynamicResults->appearance.append({ expressions[j], expressionResult });
-                    }
-                    if (isAccessibilitySettingsDependent(expressions[j].mediaFeature())) {
-                        isDynamic = true;
-                        dynamicResults->accessibilitySettings.append({ expressions[j], expressionResult });
-                    }
-                }
-                if (mode == Mode::AlwaysMatchDynamic && isDynamic)
-                    continue;
-
                 if (!expressionResult)
                     break;
             }
-
-            if (mode == Mode::AlwaysMatchDynamic && isDynamic) {
-                result = true;
-                continue;
-            }
-
             // Assume true if we are at the end of the list, otherwise assume false.
             result = applyRestrictor(query.restrictor(), expressions.size() == j);
         } else
@@ -202,19 +179,6 @@ bool LegacyMediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQue
 
     LOG_WITH_STREAM(MediaQueries, stream << "LegacyMediaQueryEvaluator::evaluate " << querySet << " returning " << result);
     return result;
-}
-
-bool LegacyMediaQueryEvaluator::evaluateForChanges(const MediaQueryDynamicResults& dynamicResults) const
-{
-    auto hasChanges = [&](auto& dynamicResultsVector) {
-        for (auto& dynamicResult : dynamicResultsVector) {
-            if (evaluate(dynamicResult.expression) != dynamicResult.result)
-                return true;
-        }
-        return false;
-    };
-
-    return hasChanges(dynamicResults.viewport) || hasChanges(dynamicResults.appearance) || hasChanges(dynamicResults.accessibilitySettings);
 }
 
 template<typename T, typename U> bool compareValue(T a, U b, MediaFeaturePrefix op)
@@ -972,6 +936,31 @@ bool LegacyMediaQueryEvaluator::mediaAttributeMatches(Document& document, const 
     ASSERT(document.renderView());
     auto mediaQueries = MediaQuerySet::create(attributeValue, MediaQueryParserContext(document));
     return LegacyMediaQueryEvaluator { "screen"_s, document, &document.renderView()->style() }.evaluate(mediaQueries.get());
+}
+
+
+OptionSet<MQ::MediaQueryDynamicDependency> mediaQueryDynamicDependencies(const MediaQuerySet& queries, const LegacyMediaQueryEvaluator& evaluator)
+{
+    OptionSet<MQ::MediaQueryDynamicDependency> result;
+
+    for (auto& query : queries.queryVector()) {
+        if (query.ignored() || (!query.expressions().size() && query.mediaType().isEmpty()))
+            continue;
+
+        if (!evaluator.mediaTypeMatch(query.mediaType()))
+            continue;
+
+        for (auto& expression : query.expressions()) {
+            if (expression.isViewportDependent())
+                result.add(MQ::MediaQueryDynamicDependency::Viewport);
+            if (isAppearanceDependent(expression.mediaFeature()))
+                result.add(MQ::MediaQueryDynamicDependency::Appearance);
+            if (isAccessibilitySettingsDependent(expression.mediaFeature()))
+                result.add(MQ::MediaQueryDynamicDependency::Accessibility);
+        }
+    }
+
+    return result;
 }
 
 } // WebCore

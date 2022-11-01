@@ -33,6 +33,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderObject.h"
 #include "ScrollTypes.h"
+#include "SimpleRange.h"
 #include "TextEventInputType.h"
 #include "TextGranularity.h"
 #include "Timer.h"
@@ -606,6 +607,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     LayoutPoint m_dragStartPosition;
+    std::optional<SimpleRange> m_dragStartSelection;
     RefPtr<Element> m_dragTarget;
     bool m_mouseDownMayStartDrag { false };
     bool m_dragMayStartSelectionInstead { false };

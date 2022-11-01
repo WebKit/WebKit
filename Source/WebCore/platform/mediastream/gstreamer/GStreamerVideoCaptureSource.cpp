@@ -61,9 +61,9 @@ public:
 
 class GStreamerVideoCaptureSourceFactory final : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
     {
-        return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
+        return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
     }
 private:
     CaptureDeviceManager& videoCaptureDeviceManager() final { return GStreamerVideoCaptureDeviceManager::singleton(); }
@@ -71,16 +71,16 @@ private:
 
 class GStreamerDisplayCaptureSourceFactory final : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
     {
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
-        return manager.createDisplayCaptureSource(device, WTFMove(hashSalt), constraints);
+        return manager.createDisplayCaptureSource(device, WTFMove(hashSalts), constraints);
     }
 private:
     DisplayCaptureManager& displayCaptureDeviceManager() final { return GStreamerDisplayCaptureDeviceManager::singleton(); }
 };
 
-CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
 {
     auto device = GStreamerVideoCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
@@ -88,7 +88,7 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, Stri
         return CaptureSourceOrError(WTFMove(errorMessage));
     }
 
-    auto source = adoptRef(*new GStreamerVideoCaptureSource(device.value(), WTFMove(hashSalt)));
+    auto source = adoptRef(*new GStreamerVideoCaptureSource(device.value(), WTFMove(hashSalts)));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return WTFMove(result->badConstraint);
@@ -96,9 +96,9 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, Stri
     return CaptureSourceOrError(WTFMove(source));
 }
 
-CaptureSourceOrError GStreamerVideoCaptureSource::createPipewireSource(String&& deviceID, const NodeAndFD& nodeAndFd, String&& hashSalt, const MediaConstraints* constraints, CaptureDevice::DeviceType deviceType)
+CaptureSourceOrError GStreamerVideoCaptureSource::createPipewireSource(String&& deviceID, const NodeAndFD& nodeAndFd, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, CaptureDevice::DeviceType deviceType)
 {
-    auto source = adoptRef(*new GStreamerVideoCaptureSource(WTFMove(deviceID), { }, WTFMove(hashSalt), "pipewiresrc", deviceType, nodeAndFd));
+    auto source = adoptRef(*new GStreamerVideoCaptureSource(WTFMove(deviceID), { }, WTFMove(hashSalts), "pipewiresrc", deviceType, nodeAndFd));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return WTFMove(result->badConstraint);
@@ -118,8 +118,8 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
     return factory.get();
 }
 
-GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, String&& hashSalt, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
-    : RealtimeVideoCaptureSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt), { })
+GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
+    : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), { })
     , m_capturer(makeUnique<GStreamerVideoCapturer>(sourceFactory, deviceType))
     , m_deviceType(deviceType)
 {
@@ -128,8 +128,8 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, Atom
     m_capturer->addObserver(*this);
 }
 
-GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
-    : RealtimeVideoCaptureSource(AtomString { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), { })
+GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice device, MediaDeviceHashSalts&& hashSalts)
+    : RealtimeVideoCaptureSource(device, WTFMove(hashSalts), { })
     , m_capturer(makeUnique<GStreamerVideoCapturer>(device))
     , m_deviceType(CaptureDevice::DeviceType::Camera)
 {

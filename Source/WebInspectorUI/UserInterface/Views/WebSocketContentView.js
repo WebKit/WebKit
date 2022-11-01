@@ -39,22 +39,16 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
         this._framesRendered = 0;
         this._lastRenderedReadyState = null;
 
-        // COMPATIBILITY (iOS 10.3): `walltime` did not exist in 10.3 and earlier.
-        this._showTimeColumn = InspectorBackend.hasEvent("Network.webSocketWillSendHandshakeRequest", "walltime");
-
         this.element.classList.add("web-socket", "resource");
 
-        let columns = {data: {}};
+        let columns = {data: {}, time: {}};
 
         columns.data.title = WI.UIString("Data");
         columns.data.sortable = false;
         columns.data.width = "85%";
 
-        if (this._showTimeColumn) {
-            columns.time = {};
-            columns.time.title = WI.UIString("Time");
-            columns.time.sortable = true;
-        }
+        columns.time.title = WI.UIString("Time");
+        columns.time.sortable = true;
 
         this._dataGrid = new WI.DataGrid(columns);
         this._dataGrid.variableHeightRows = true;
@@ -156,11 +150,7 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
 
     _addRow(data, time, attributes = {})
     {
-        let node;
-        if (this._showTimeColumn)
-            node = new WI.WebSocketDataGridNode({...attributes, data, time});
-        else
-            node = new WI.WebSocketDataGridNode({...attributes, data});
+        let node = new WI.WebSocketDataGridNode({...attributes, data, time});
 
         this._dataGrid.appendChild(node);
 

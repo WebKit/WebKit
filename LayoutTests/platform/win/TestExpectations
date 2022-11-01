@@ -180,7 +180,6 @@ imported/w3c/web-platform-tests/webcodecs [ Skip ]
 
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]
-http/tests/workers/shared [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.http.html [ Skip ]

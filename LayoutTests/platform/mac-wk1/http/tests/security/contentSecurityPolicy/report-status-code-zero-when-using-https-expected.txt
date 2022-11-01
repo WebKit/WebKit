@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/contentSecurityPolicy/resources/go-to-echo-report.py?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html from asking for credentials because it is a cross-origin request.
+This tests that the status-code is 0 in the Content Security Policy violation report for a protected resource delivered over HTTPS.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+CSP report received:
+CONTENT_TYPE: application/csp-report
+HTTP_HOST: 127.0.0.1:8443
+HTTP_REFERER: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/generate-csp-report.py?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html
+REQUEST_METHOD: POST
+REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.py?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html
+=== POST DATA ===
+{"type":"csp-violation","url":"https://127.0.0.1:8443/security/contentSecurityPolicy/resources/generate-csp-report.py?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html","csp-report":{"document-uri":"https://127.0.0.1:8443/security/contentSecurityPolicy/resources/generate-csp-report.py?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html","referrer":"http://127.0.0.1:8000/","violated-directive":"script-src-elem","effective-directive":"script-src-elem","original-policy":"script-src 'self'; report-uri save-report.py?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html","blocked-uri":"inline","status-code":0}}

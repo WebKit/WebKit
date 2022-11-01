@@ -687,6 +687,8 @@ override;
         return style().isHorizontalWritingMode() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth();
     }
 
+    bool establishesIndependentFormattingContext() const override;
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);
@@ -696,8 +698,6 @@ protected:
     void updateFromStyle() override;
 
     void willBeDestroyed() override;
-
-    bool establishesIndependentFormattingContext() const override;
 
     virtual bool shouldResetLogicalHeightBeforeLayout() const { return false; }
     void resetLogicalHeightBeforeLayoutIfNeeded();

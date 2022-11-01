@@ -943,7 +943,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     }
 
     {
-        m_nicosia.layer->updateState(
+        m_nicosia.layer->accessPending(
             [this](Nicosia::CompositionLayer::LayerState& state)
             {
                 // OR the local delta value into the layer's pending state delta. After that,

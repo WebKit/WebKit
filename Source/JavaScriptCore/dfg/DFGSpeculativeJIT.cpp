@@ -1966,6 +1966,7 @@ void SpeculativeJIT::compileStringSubstring(Node* node)
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationStringSubstringWithEnd, resultGPR, JITCompiler::LinkableConstant::globalObject(m_jit, node), stringGPR, startGPR, endGPR);
+        m_jit.exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -1979,6 +1980,7 @@ void SpeculativeJIT::compileStringSubstring(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     callOperation(operationStringSubstring, resultGPR, JITCompiler::LinkableConstant::globalObject(m_jit, node), stringGPR, startGPR);
+    m_jit.exceptionCheck();
     cellResult(resultGPR, node);
 }
 

@@ -92,6 +92,11 @@ class AdwaitaLayoutTraits extends LayoutTraits
         return false;
     }
 
+    inheritsBorderRadius()
+    {
+        return false;
+    }
+
     toString()
     {
         const mode = this.isFullscreen ? "Fullscreen" : "Inline";

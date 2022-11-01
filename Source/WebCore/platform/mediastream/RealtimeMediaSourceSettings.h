@@ -46,7 +46,6 @@ public:
         Invalid,
     };
 
-
     static String facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
     static RealtimeMediaSourceSettings::VideoFacingMode videoFacingModeEnum(const String&);
     static String displaySurface(RealtimeMediaSourceSettings::DisplaySurfaceType);

@@ -1,3 +1,5 @@
 
+Harness Error (FAIL), message = Test named 'The 'change' event must fire before the [[orientationPendingPromise]] is resolved.' specified 1 'cleanup' function, and 1 failed.
+
 FAIL The 'change' event must fire before the [[orientationPendingPromise]] is resolved. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
 

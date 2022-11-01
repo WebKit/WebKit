@@ -2751,15 +2751,14 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 }
 #endif
 
-void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy& frame, uint64_t resourceIdentifier, WebKitURIRequest* request)
+void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy& frame, uint64_t resourceIdentifier, const ResourceRequest& request)
 {
-    WebKitWebViewPrivate* priv = webView->priv;
-    bool isMainResource = frame.isMainFrame() && !priv->mainResource;
-    WebKitWebResource* resource = webkitWebResourceCreate(frame, request, isMainResource);
-    if (isMainResource)
-        priv->mainResource = resource;
-    priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
-    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, request);
+    GRefPtr<WebKitWebResource> resource = adoptGRef(webkitWebResourceCreate(frame, request));
+    if (webkitWebResourceIsMainResource(resource.get()))
+        webView->priv->mainResource = resource;
+    webView->priv->loadingResourcesMap.set(resourceIdentifier, resource);
+    GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
+    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource.get(), uriRequest.get());
 }
 
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
@@ -3938,7 +3937,7 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     // We keep a reference to the js context in the view only when this method is called
     // for backwards compatibility.
     if (!webView->priv->jsContext)
-        webView->priv->jsContext = SharedJavascriptContext::singleton().getOrCreateContext();
+        webView->priv->jsContext = API::SerializedScriptValue::sharedJSCContext();
     return jscContextGetJSContext(webView->priv->jsContext.get());
 }
 #endif

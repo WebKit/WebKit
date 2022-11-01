@@ -32,6 +32,14 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/RefPtr.h>
 
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GVariant GVariant;
+typedef struct _JSCContext JSCContext;
+typedef struct _JSCValue JSCValue;
+#endif
+
 namespace API {
 
 class SerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
@@ -65,6 +73,8 @@ public:
 #endif
 
 #if USE(GLIB)
+    static JSCContext* sharedJSCContext();
+    static GRefPtr<JSCValue> deserialize(WebCore::SerializedScriptValue&);
     static RefPtr<SerializedScriptValue> createFromGVariant(GVariant*);
 #endif
 

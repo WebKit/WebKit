@@ -1510,33 +1510,57 @@ void Session::getComputedRole(const String& elementID, Function<void (CommandRes
             completionHandler(WTFMove(result));
             return;
         }
-        auto arguments = JSON::Array::create();
-        arguments->pushString(createElement(elementID)->toJSONString());
-
         auto parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        if (m_currentBrowsingContext)
-            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, makeString("function(element) { return element.getAttribute('role'); }"));
-        parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
+        parameters->setString("nodeHandle"_s, elementID);
+        m_host->sendCommandToBackend("getComputedRole"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
 
-            auto valueString = response.responseObject->getString("result"_s);
+            auto valueString = response.responseObject->getString("role"_s);
             if (!valueString) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
 
-            auto resultValue = JSON::Value::parseJSON(valueString);
-            if (!resultValue) {
+            auto resultValue = JSON::Value::create(valueString);
+            completionHandler(CommandResult::success(WTFMove(resultValue)));
+        });
+    });
+}
+
+void Session::getComputedLabel(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_currentBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, protectedThis = Ref { *this }, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        auto parameters = JSON::Object::create();
+        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
+        parameters->setString("nodeHandle"_s, elementID);
+        m_host->sendCommandToBackend("getComputedLabel"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+
+            auto valueString = response.responseObject->getString("label"_s);
+            if (!valueString) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
 
+            auto resultValue = JSON::Value::create(valueString);
             completionHandler(CommandResult::success(WTFMove(resultValue)));
         });
     });

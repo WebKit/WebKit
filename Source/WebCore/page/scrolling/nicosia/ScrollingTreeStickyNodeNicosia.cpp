@@ -72,7 +72,7 @@ void ScrollingTreeStickyNodeNicosia::applyLayerPositions()
     layerPosition -= m_constraints.alignmentOffset();
 
     ASSERT(m_layer);
-    m_layer->updateState(
+    m_layer->accessPending(
         [&layerPosition](Nicosia::CompositionLayer::LayerState& state)
         {
             state.position = layerPosition;

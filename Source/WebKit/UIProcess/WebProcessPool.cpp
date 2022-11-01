@@ -1983,6 +1983,18 @@ void WebProcessPool::removeMockMediaDevice(const String& persistentId)
 #endif
 }
 
+
+void WebProcessPool::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
+    sendToAllProcesses(Messages::WebProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral });
+#if ENABLE(GPU_PROCESS)
+    ensureGPUProcess().setMockMediaDeviceIsEphemeral(persistentId, isEphemeral);
+#endif
+#endif
+}
+
 void WebProcessPool::resetMockMediaDevices()
 {
 #if ENABLE(MEDIA_STREAM)

@@ -970,6 +970,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockMediaDeviceIsEphemeral")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto persistentID = stringValue(messageBodyDictionary, "PersistentID");
+        bool isEphemeral = booleanValue(messageBodyDictionary, "IsEphemeral");
+        TestController::singleton().setMockMediaDeviceIsEphemeral(persistentID, isEphemeral);
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetMockCameraOrientation")) {
         TestController::singleton().setMockCameraOrientation(uint64Value(messageBody));
         return nullptr;

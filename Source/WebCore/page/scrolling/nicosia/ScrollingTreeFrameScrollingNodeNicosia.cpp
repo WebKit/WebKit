@@ -117,7 +117,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers()
 
     auto scrollPosition = currentScrollPosition();
 
-    compositionLayer.updateState(
+    compositionLayer.accessPending(
         [&scrollPosition](Nicosia::CompositionLayer::LayerState& state)
         {
             state.position = -scrollPosition;
@@ -135,7 +135,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
     auto applyLayerPosition =
         [](auto& layer, auto&& position)
         {
-            layer.updateState(
+            layer.accessPending(
                 [&position](Nicosia::CompositionLayer::LayerState& state)
                 {
                     state.position = position;
@@ -148,7 +148,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
 
     float topContentInset = this->topContentInset();
     if (m_insetClipLayer && m_rootContentsLayer) {
-        m_insetClipLayer->updateState(
+        m_insetClipLayer->accessPending(
             [&scrollPosition, &topContentInset](Nicosia::CompositionLayer::LayerState& state)
             {
                 state.position = { state.position.x(), FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset) };

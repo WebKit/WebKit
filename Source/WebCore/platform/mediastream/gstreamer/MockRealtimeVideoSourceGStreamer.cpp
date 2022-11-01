@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier)
+CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -41,7 +41,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
         return { "No mock camera device"_s };
 #endif
 
-    auto source = adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    auto source = adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts)));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
             return WTFMove(error.value().badConstraint);
@@ -50,23 +50,23 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
-CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
 {
-    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, AtomString { device.label() }, String { hashSalt }));
+    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { hashSalts }));
 
     if (constraints) {
         if (auto error = mockSource->applyConstraints(*constraints))
             return WTFMove(error.value().badConstraint);
     }
 
-    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type::Video, WTFMove(mockSource), WTFMove(hashSalt), device.type()));
+    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(device, WTFMove(mockSource), WTFMove(hashSalts)));
     return CaptureSourceOrError(WTFMove(source));
 }
 
-MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type type, Ref<MockRealtimeVideoSourceGStreamer>&& source, String&& hashSalt, CaptureDevice::DeviceType deviceType)
-    : RealtimeMediaSource(type, AtomString { source->name().string().isolatedCopy() }, source->persistentID().isolatedCopy(), WTFMove(hashSalt))
+MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(const CaptureDevice& device, Ref<MockRealtimeVideoSourceGStreamer>&& source, MediaDeviceHashSalts&& hashSalts)
+    : RealtimeMediaSource(device, WTFMove(hashSalts))
     , m_source(WTFMove(source))
-    , m_deviceType(deviceType)
+    , m_deviceType(device.type())
 {
     m_source->addVideoFrameObserver(*this);
 }
@@ -145,8 +145,8 @@ const RealtimeMediaSourceSettings& MockDisplayCaptureSourceGStreamer::settings()
     return m_currentSettings.value();
 }
 
-MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, String&& hashSalt)
-    : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt), { })
+MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts)
+    : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), { })
 {
     ensureGStreamerInitialized();
 }

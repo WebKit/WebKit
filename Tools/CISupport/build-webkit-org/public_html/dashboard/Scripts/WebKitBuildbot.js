@@ -75,8 +75,6 @@ WebKitBuildbot = function()
         "Apple-iPadOS-16-Simulator-Debug-WK2-Tests": {platform: Dashboard.Platform.iOS16Simulator, heading:"iPadOS Debug", debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-tvOS-16-Release-Build": {platform: Dashboard.Platform.tvOS16Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-tvOS-Simulator-16-Release-Build": {platform: Dashboard.Platform.tvOS16Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-tvOS-15-Release-Build": {platform: Dashboard.Platform.tvOS15Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-tvOS-Simulator-15-Release-Build": {platform: Dashboard.Platform.tvOS15Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-watchOS-9-Release-Build": {platform: Dashboard.Platform.watchOS9Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
         "Apple-watchOS-Simulator-9-Release-Build": {platform: Dashboard.Platform.watchOS9Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Win-10-Debug-Build": {platform: Dashboard.Platform.Windows10, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit },

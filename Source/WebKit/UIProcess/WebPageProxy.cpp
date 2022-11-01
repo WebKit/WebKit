@@ -169,6 +169,7 @@
 #include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/ModalContainerTypes.h>
 #include <WebCore/NotImplemented.h>
@@ -4734,12 +4735,6 @@ void WebPageProxy::preferencesDidChange()
 
 void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 {
-    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateMainFrame one.
-    // When this happens, decidePolicyForNavigationActionSync() calls didCreateMainFrame() and we need to ignore the DidCreateMainFrame
-    // IPC when it later gets processed.
-    if (m_mainFrame && m_mainFrame->frameID() == frameID)
-        return;
-
     PageClientProtector protector(pageClient());
 
     MESSAGE_CHECK(m_process, !m_mainFrame);
@@ -5242,6 +5237,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
     if (frame->isMainFrame() && m_preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().webPageURLChanged(*this);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    userMediaPermissionRequestManager().didCommitLoadForFrame(frameID);
 #endif
 }
 
@@ -9038,7 +9037,7 @@ void WebPageProxy::requestUserMediaPermissionForFrame(UserMediaRequestIdentifier
 #endif
 }
 
-void WebPageProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
+void WebPageProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, WebCore::MediaDeviceHashSalts&&)>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
     RefPtr frame = WebFrameProxy::webFrame(frameID);

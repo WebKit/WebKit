@@ -1581,8 +1581,7 @@
     },
     "imported/w3c/webdriver/tests/get_computed_label/get.py": {
         "expected": {
-            "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/246814"},
-            "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/246814"}
+            "all": {"status": ["FAIL"], "bug": "webkit.org/b/246845"}
         }
     }
 }

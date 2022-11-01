@@ -59,12 +59,12 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
     callback();
 }
 
-CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
 {
     const auto it = m_sessions.find(device.persistentId());
     if (it != m_sessions.end()) {
         return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(),
-            it->value->nodeAndFd, WTFMove(hashSalt), constraints, device.type());
+            it->value->nodeAndFd, WTFMove(hashSalts), constraints, device.type());
     }
 
     GUniqueOutPtr<GError> error;
@@ -188,7 +188,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     NodeAndFD nodeAndFd = { *nodeId, fd };
     auto session = makeUnique<GStreamerDisplayCaptureDeviceManager::Session>(nodeAndFd, WTFMove(sessionPath));
     m_sessions.add(device.persistentId(), WTFMove(session));
-    return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(), nodeAndFd, WTFMove(hashSalt), constraints, device.type());
+    return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(), nodeAndFd, WTFMove(hashSalts), constraints, device.type());
 }
 
 void GStreamerDisplayCaptureDeviceManager::stopSource(const String& persistentID)

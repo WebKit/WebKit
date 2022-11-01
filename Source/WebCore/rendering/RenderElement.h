@@ -304,6 +304,8 @@ public:
 
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return { }; }
 
+    virtual bool establishesIndependentFormattingContext() const;
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -358,7 +360,6 @@ protected:
     bool isVisibleInViewport() const;
 
     bool createsNewFormattingContext() const;
-    virtual bool establishesIndependentFormattingContext() const;
 
     bool shouldApplyLayoutOrPaintContainment(bool) const;
     bool shouldApplySizeOrStyleContainment(bool) const;

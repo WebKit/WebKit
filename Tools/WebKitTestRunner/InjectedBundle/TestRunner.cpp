@@ -1824,6 +1824,14 @@ void TestRunner::removeMockMediaDevice(JSStringRef persistentId)
     postSynchronousMessage("RemoveMockMediaDevice", toWK(persistentId));
 }
 
+void TestRunner::setMockMediaDeviceIsEphemeral(JSStringRef persistentId, bool isEphemeral)
+{
+    postSynchronousMessage("SetMockMediaDeviceIsEphemeral", createWKDictionary({
+        { "PersistentID", toWK(persistentId) },
+        { "IsEphemeral", adoptWK(WKBooleanCreate(isEphemeral)) },
+    }));
+}
+
 void TestRunner::resetMockMediaDevices()
 {
     postSynchronousMessage("ResetMockMediaDevices");

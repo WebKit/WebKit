@@ -32,7 +32,7 @@ namespace WebCore {
 
 class GStreamerAudioCaptureSource : public RealtimeMediaSource {
 public:
-    static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*);
+    static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
     const RealtimeMediaSourceCapabilities& capabilities() override;
@@ -42,7 +42,7 @@ public:
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 
 protected:
-    GStreamerAudioCaptureSource(GStreamerCaptureDevice, String&& hashSalt);
+    GStreamerAudioCaptureSource(GStreamerCaptureDevice, MediaDeviceHashSalts&&);
     virtual ~GStreamerAudioCaptureSource();
     void startProducingData() override;
     void stopProducingData() override;

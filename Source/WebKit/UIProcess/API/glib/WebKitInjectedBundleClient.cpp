@@ -56,8 +56,7 @@ private:
             if (!webRequest)
                 return;
 
-            GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
-            webkitWebViewResourceLoadStarted(webView, *frame, resourceIdentifier->value(), request.get());
+            webkitWebViewResourceLoadStarted(webView, *frame, resourceIdentifier->value(), webRequest->resourceRequest());
         } else if (g_str_equal(messageName, "DidSendRequestForResource")) {
             API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
             if (!resourceIdentifier)

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/media-resources/content/test.mp4 from asking for credentials because it is a cross-origin request.
+This tests that loading a video with an HTTPS URL is allowed when the page has Content Security Policy "media-src *".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did load video.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

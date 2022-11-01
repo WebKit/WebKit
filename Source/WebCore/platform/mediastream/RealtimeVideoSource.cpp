@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@
 namespace WebCore {
 
 RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
-    : RealtimeMediaSource(Type::Video, AtomString { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() }, source->pageIdentifier())
+    : RealtimeMediaSource(source->captureDevice(), MediaDeviceHashSalts { source->deviceIDHashSalts() }, source->pageIdentifier())
     , m_source(WTFMove(source))
 #if PLATFORM(COCOA)
     , m_shouldUseIOSurface(shouldUseIOSurface)

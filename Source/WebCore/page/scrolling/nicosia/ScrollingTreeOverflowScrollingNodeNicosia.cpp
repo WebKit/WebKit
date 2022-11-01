@@ -69,7 +69,7 @@ void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 
     auto scrollOffset = currentScrollOffset();
 
-    compositionLayer.updateState(
+    compositionLayer.accessPending(
         [&scrollOffset](Nicosia::CompositionLayer::LayerState& state)
         {
             state.boundsOrigin = scrollOffset;

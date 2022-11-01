@@ -188,6 +188,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/rect", &WebDriverService::getElementRect },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/enabled", &WebDriverService::isElementEnabled },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/computedrole", &WebDriverService::getComputedRole },
+    { HTTPMethod::Get, "/session/$sessionId/element/$elementId/computedlabel", &WebDriverService::getComputedLabel },
 
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/click", &WebDriverService::elementClick },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/clear", &WebDriverService::elementClear },
@@ -1628,6 +1629,20 @@ void WebDriverService::getComputedRole(RefPtr<JSON::Object>&& parameters, Functi
         return;
 
     m_session->getComputedRole(elementID.value(), WTFMove(completionHandler));
+}
+
+void WebDriverService::getComputedLabel(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §12.4.10 Get Computed Role
+    // https://www.w3.org/TR/webdriver/#get-computed-label
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
+    if (!elementID)
+        return;
+
+    m_session->getComputedLabel(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::isElementDisplayed(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

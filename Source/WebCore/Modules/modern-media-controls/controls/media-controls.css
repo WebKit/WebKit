@@ -57,7 +57,6 @@
     -webkit-cursor-visibility: inherit;
     position: relative;
     will-change: z-index;
-    border-radius: inherit;
 }
 
 .media-controls-container,
@@ -89,6 +88,11 @@
 
 :host(:-webkit-animating-full-screen-transition) .media-controls {
     display: none;
+}
+
+.media-controls-container:has(.media-controls.inherits-border-radius),
+.media-controls.inherits-border-radius {
+    border-radius: inherit;
 }
 
 .media-controls > *,

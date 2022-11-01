@@ -37,6 +37,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace API {
 
@@ -47,6 +48,7 @@ public:
     SharedJSContext()
         : m_timer(RunLoop::main(), this, &SharedJSContext::releaseContextIfNecessary)
     {
+        m_timer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
     }
 
     JSCContext* ensureContext()
@@ -85,6 +87,19 @@ static SharedJSContext& sharedContext()
 {
     static NeverDestroyed<SharedJSContext> sharedContext;
     return sharedContext.get();
+}
+
+JSCContext* SerializedScriptValue::sharedJSCContext()
+{
+    return sharedContext().ensureContext();
+}
+
+GRefPtr<JSCValue> SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto* context = sharedJSCContext();
+    return jscContextGetOrCreateValue(context, serializedScriptValue.deserialize(jscContextGetJSContext(context), nullptr));
 }
 
 static GRefPtr<JSCValue> valueFromGVariant(JSCContext* context, GVariant* variant)
@@ -133,7 +148,7 @@ static RefPtr<WebCore::SerializedScriptValue> coreValueFromGVariant(GVariant* va
         return nullptr;
 
     ASSERT(RunLoop::isMain());
-    auto* context = sharedContext().ensureContext();
+    auto* context = SerializedScriptValue::sharedJSCContext();
     auto value = valueFromGVariant(context, variant);
     if (!value)
         return nullptr;

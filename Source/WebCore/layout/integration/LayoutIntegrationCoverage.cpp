@@ -43,6 +43,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
+#include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <pal/Logging.h>
@@ -108,9 +109,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case AvoidanceReason::FlowHasLineBoxContainProperty:
-        stream << "line-box-contain value indicates variable line height";
-        break;
     case AvoidanceReason::FlowHasUnsupportedWritingMode:
         stream << "unsupported writing mode (vertical-rl/horizontal-bt";
         break;
@@ -122,9 +120,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowHasTextCombine:
         stream << "text combine";
-        break;
-    case AvoidanceReason::FlowTextIsCombineText:
-        stream << "text is combine";
         break;
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
@@ -155,6 +150,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowHasInitialLetter:
         stream << "intial letter";
+        break;
+    case AvoidanceReason::FlowIsVTTCue:
+        stream << "media track";
         break;
     default:
         break;
@@ -315,17 +313,22 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.
-    if (style.lineBoxContain().containsAny({ LineBoxContain::InlineBox }))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (!renderer.parent()->style().lineClamp().isNone()) {
+    auto deprecatedFlexBoxAncestor = [&]() -> RenderBlock* {
         // Line clamp is on the deprecated flex box and not the root.
+        for (auto* ancestor = renderer.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (is<RenderDeprecatedFlexibleBox>(*ancestor))
+                return ancestor;
+            if (ancestor->establishesIndependentFormattingContext())
+                return nullptr;
+        }
+        return nullptr;
+    };
+    if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
-    }
-
     return reasons;
 }
 
@@ -351,7 +354,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (is<RenderText>(child)) {
         if (child.isCombineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
         if (child.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
 
@@ -490,6 +493,10 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (is<RenderListItem>(flow) && (flow.isPositioned() || flow.isFloating()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+    if (is<RenderVTTCue>(flow) || is<RenderVTTCue>(flow.parent())) {
+        // First child of the RenderVTTCue is the backdropBox.
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsVTTCue, reasons, includeReasons);
+    }
 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())

@@ -47,7 +47,7 @@ public:
     void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);
 
-    void enumerateMediaDevices(Document&, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&&);
+    void enumerateMediaDevices(Document&, UserMediaClient::EnumerateDevicesCallback&&);
 
     UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
@@ -73,7 +73,7 @@ inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& 
     m_client->cancelUserMediaAccessRequest(request);
 }
 
-inline void UserMediaController::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
+inline void UserMediaController::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
     m_client->enumerateMediaDevices(document, WTFMove(completionHandler));
 }

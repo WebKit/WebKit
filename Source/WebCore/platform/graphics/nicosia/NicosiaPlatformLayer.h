@@ -209,13 +209,6 @@ public:
     };
 
     template<typename T>
-    void updateState(const T& functor)
-    {
-        Locker locker { PlatformLayer::m_state.lock };
-        functor(m_state.pending);
-    }
-
-    template<typename T>
     void flushState(const T& functor)
     {
         Locker locker { PlatformLayer::m_state.lock };

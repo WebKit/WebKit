@@ -100,6 +100,8 @@ public:
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
     LayoutUnit verticalMarginBorderAndPadding() const { return marginBefore() + verticalBorder() + verticalPadding().value_or(0_lu) + marginAfter(); }
+    LayoutUnit marginBorderAndPaddingBefore() const { return marginBefore() + borderBefore() + paddingBefore().value_or(0_lu); }
+    LayoutUnit marginBorderAndPaddingAfter() const { return marginAfter() + borderAfter() + paddingAfter().value_or(0_lu); }
     LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().value_or(0_lu) + marginEnd(); }
 
     LayoutUnit verticalSpaceForScrollbar() const { return m_verticalSpaceForScrollbar; }

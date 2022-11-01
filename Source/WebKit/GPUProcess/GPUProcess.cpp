@@ -410,6 +410,11 @@ void GPUProcess::removeMockMediaDevice(const String& persistentId)
     MockRealtimeMediaSourceCenter::removeDevice(persistentId);
 }
 
+void GPUProcess::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+    MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
+}
+
 void GPUProcess::resetMockMediaDevices()
 {
     MockRealtimeMediaSourceCenter::resetDevices();

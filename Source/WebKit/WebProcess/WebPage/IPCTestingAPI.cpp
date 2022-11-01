@@ -2690,11 +2690,6 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
-    } else if (messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (uint64_t listenerID = 0; decoder.decode(listenerID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(listenerID));
-            RETURN_IF_EXCEPTION(scope, nullptr);
-        }
     }
 
     auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer(), decoder.length());

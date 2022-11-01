@@ -48,28 +48,49 @@
 
 namespace WebCore {
 
-RealtimeMediaSource::RealtimeMediaSource(Type type, AtomString&& name, String&& deviceID, String&& hashSalt, PageIdentifier pageIdentifier)
+static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
+{
+    switch (type) {
+    case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::SystemAudio:
+        return RealtimeMediaSource::Type::Audio;
+    case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        return RealtimeMediaSource::Type::Video;
+    case CaptureDevice::DeviceType::Unknown:
+    case CaptureDevice::DeviceType::Speaker:
+        ASSERT_NOT_REACHED();
+        return RealtimeMediaSource::Type::Audio;
+    }
+    ASSERT_NOT_REACHED();
+    return RealtimeMediaSource::Type::Audio;
+}
+
+RealtimeMediaSource::RealtimeMediaSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : m_pageIdentifier(pageIdentifier)
-    , m_idHashSalt(WTFMove(hashSalt))
-    , m_persistentID(WTFMove(deviceID))
-    , m_type(type)
-    , m_name(WTFMove(name))
+    , m_idHashSalts(WTFMove(hashSalts))
+    , m_type(toSourceType(device.type()))
+    , m_name({ device.label() })
+    , m_device(device)
 {
     initializePersistentId();
 }
 
 void RealtimeMediaSource::setPersistentId(const String& persistentID)
 {
-    m_persistentID = persistentID;
+    m_device.setPersistentId(persistentID);
     initializePersistentId();
 }
 
 void RealtimeMediaSource::initializePersistentId()
 {
-    if (m_persistentID.isEmpty())
-        m_persistentID = createVersion4UUIDString();
+    if (m_device.persistentId().isEmpty())
+        m_device.setPersistentId(createVersion4UUIDString());
 
-    m_hashedID = AtomString { RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt) };
+    auto& center = RealtimeMediaSourceCenter::singleton();
+    m_hashedID = AtomString { center.hashStringWithSalt(m_device.persistentId(), m_idHashSalts.persistentDeviceSalt) };
+    m_ephemeralHashedID = AtomString { center.hashStringWithSalt(m_device.persistentId(), m_idHashSalts.ephemeralDeviceSalt) };
 }
 
 void RealtimeMediaSource::addAudioSampleObserver(AudioSampleObserver& observer)
@@ -496,8 +517,8 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 
     case MediaConstraintType::DeviceId:
         ASSERT(constraint.isString());
-        ASSERT(!m_hashedID.isEmpty());
-        return downcast<StringConstraint>(constraint).fitnessDistance(m_hashedID);
+        ASSERT(!hashedId().isEmpty());
+        return downcast<StringConstraint>(constraint).fitnessDistance(hashedId());
         break;
 
     case MediaConstraintType::GroupId: {
@@ -1109,15 +1130,18 @@ void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
 
 const AtomString& RealtimeMediaSource::hashedId() const
 {
-#ifndef NDEBUG
     ASSERT(!m_hashedID.isEmpty());
-#endif
+    ASSERT(!m_ephemeralHashedID.isEmpty());
+
+    if (isEphemeral())
+        return m_ephemeralHashedID;
+
     return m_hashedID;
 }
 
-String RealtimeMediaSource::deviceIDHashSalt() const
+const MediaDeviceHashSalts& RealtimeMediaSource::deviceIDHashSalts() const
 {
-    return m_idHashSalt;
+    return m_idHashSalts;
 }
 
 void RealtimeMediaSource::setType(Type type)
@@ -1143,7 +1167,7 @@ void RealtimeMediaSource::setLogger(const Logger& newLogger, const void* newLogI
 {
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;
-    ALWAYS_LOG(LOGIDENTIFIER, m_type, ", ", m_name, ", ", m_hashedID);
+    ALWAYS_LOG(LOGIDENTIFIER, m_type, ", ", name(), ", ", m_hashedID, ", ", m_ephemeralHashedID);
 }
 
 WTFLogChannel& RealtimeMediaSource::logChannel() const
