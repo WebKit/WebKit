@@ -1723,6 +1723,7 @@ UseGPUProcessForDOMRenderingEnabled:
   defaultValue:
     WebKit:
       "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)": true
+      "PLATFORM(WIN)": true
       default: false
 
 UseGPUProcessForDisplayCapture:
