@@ -2295,9 +2295,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 [ BigSur Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
 [ BigSur Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
 
-#rdar://80333071
-[ BigSur+ ] compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
-
 [ BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
 
 # Was in LayoutTests/Expectations, now only happening on Mac
