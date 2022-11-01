@@ -69,10 +69,9 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
         && !allFrames().contains(frameID);
 }
 
-WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageID, FrameIdentifier frameID)
+WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, FrameIdentifier frameID)
     : m_page(page)
     , m_process(process)
-    , m_webPageID(pageID)
     , m_frameID(frameID)
 {
     ASSERT(!allFrames().contains(frameID));
@@ -359,7 +358,7 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
     MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(m_process, frameID.processIdentifier() == m_process->coreProcessIdentifier());
 
-    auto child = WebFrameProxy::create(*m_page, m_process, m_webPageID, frameID);
+    auto child = WebFrameProxy::create(*m_page, m_process, frameID);
     child->m_parentFrame = *this;
     m_childFrames.add(WTFMove(child));
 }
@@ -384,39 +383,6 @@ IPC::Connection* WebFrameProxy::messageSenderConnection() const
 uint64_t WebFrameProxy::messageSenderDestinationID() const
 {
     return m_frameID.object().toUInt64();
-}
-
-void WebFrameProxy::decidePolicyForNavigationActionAsync(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID,
-    NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request,
-    IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, uint64_t listenerID)
-{
-    if (!m_page)
-        return;
-    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, listenerID);
-}
-
-void WebFrameProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, bool isMainFrame, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
-    uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID,
-    const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse,
-    const UserData& userData, Messages::WebFrameProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
-{
-    if (!m_page)
-        return reply({ });
-
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame) {
-        // This synchronous IPC message was processed before the asynchronous DidCreateMainFrame / DidCreateSubframe one so we do not know about this frameID yet.
-        if (isMainFrame)
-            m_page->didCreateMainFrame(frameID);
-        else {
-            MESSAGE_CHECK(m_process, frameInfo.parentFrameID);
-            RefPtr parentFrame = WebFrameProxy::webFrame(*frameInfo.parentFrameID);
-            MESSAGE_CHECK(m_process, parentFrame);
-            parentFrame->didCreateSubframe(frameID);
-        }
-    }
-
-    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, frameID, isMainFrame, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));
 }
 
 } // namespace WebKit
