@@ -35,4 +35,14 @@ using StdUnorderedSet = std::unordered_set<Key, Hash, Predicate, Allocator>;
 
 } // namespace WTF
 
+template<typename Key, typename Hash, typename Predicate, typename Allocator>
+inline bool containedIn(const std::unordered_set<Key, Hash, Predicate, Allocator>& container, const Key& key)
+{
+#if HAVE(STD_CONTAINER_CONTAINS)
+    return container.contains(key);
+#else
+    return container.find(key) != container.end();
+#endif
+}
+
 using WTF::StdUnorderedSet;

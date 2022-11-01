@@ -271,7 +271,7 @@ bool RenderLayerModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo, 
     if (paintInfo.context().paintingDisabled())
         return false;
 
-    if (relevantPaintPhases && !relevantPaintPhases->contains(paintInfo.phase))
+    if (relevantPaintPhases && !containedIn(relevantPaintPhases, paintInfo.phase))
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))

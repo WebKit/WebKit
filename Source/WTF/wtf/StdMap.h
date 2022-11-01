@@ -35,4 +35,14 @@ using StdMap = std::map<Key, Value, Compare, Allocator>;
 
 } // namespace WTF
 
+template<typename Key, typename Value, typename Compare, typename Allocator>
+inline bool containedIn(const std::map<Key, Value, Compare, Allocator>& container, const Key& key)
+{
+#if HAVE(STD_CONTAINER_CONTAINS)
+    return container.contains(key);
+#else
+    return container.find(key) != container.end();
+#endif
+}
+
 using WTF::StdMap;

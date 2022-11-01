@@ -418,6 +418,18 @@ int main() {
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
     unset(CMAKE_REQUIRED_FLAGS)
+
+    # std::set::contains
+    set(CONTAINER_CONTAINS_TEST_SOUCE "
+        #include <set>
+        int main() {
+            std::set<int> example = {1, 2, 3, 4};
+            example.contains(2);
+        }
+    ")
+    set(CMAKE_REQUIRED_FLAGS "--std=c++2a")
+    check_cxx_source_compiles("${CONTAINER_CONTAINS_TEST_SOUCE}" STD_CONTAINER_CONTAINS_IS_AVAILABLE)
+    unset(CMAKE_REQUIRED_FLAGS)
 endif ()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)

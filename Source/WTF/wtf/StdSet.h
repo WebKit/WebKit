@@ -35,4 +35,14 @@ using StdSet = std::set<Key, Compare, Allocator>;
 
 } // namespace WTF
 
+template<typename Key, typename Compare, typename Allocator>
+inline bool containedIn(const std::set<Key, Compare, Allocator>& container, const Key& key)
+{
+#if HAVE(STD_CONTAINER_CONTAINS)
+    return container.contains(key);
+#else
+    return container.find(key) != container.end();
+#endif
+}
+
 using WTF::StdSet;
