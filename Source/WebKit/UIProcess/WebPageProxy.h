@@ -1131,7 +1131,7 @@ public:
     void accessibilitySettingsDidChange();
 
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond> nominalFramesPerSecond);
-    std::optional<WebCore::PlatformDisplayID> displayId() const { return m_displayID; }
+    std::optional<WebCore::PlatformDisplayID> displayID() const { return m_displayID; }
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::PlatformDisplayID generateDisplayIDFromPageID() const;

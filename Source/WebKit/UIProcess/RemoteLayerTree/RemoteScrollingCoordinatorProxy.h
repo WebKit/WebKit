@@ -103,6 +103,8 @@ public:
     void setRootNodeIsInUserScroll(bool);
 #endif
 
+    virtual void hasNodeWithAnimatedScrollChanged(bool) { }
+
     String scrollingTreeAsText() const;
 
     OptionSet<WebCore::TouchAction> activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const;
@@ -111,6 +113,8 @@ public:
     
     void resetStateAfterProcessExited();
     WebCore::ScrollingTreeScrollingNode* rootNode() const;
+
+    virtual void displayDidRefresh(WebCore::PlatformDisplayID);
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     void removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&);

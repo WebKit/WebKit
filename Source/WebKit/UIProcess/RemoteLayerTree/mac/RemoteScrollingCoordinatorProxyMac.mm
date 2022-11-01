@@ -28,6 +28,8 @@
 
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
+#import "RemoteLayerTreeDrawingAreaProxy.h"
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -41,10 +43,25 @@ void RemoteScrollingCoordinatorProxyMac::didReceiveWheelEvent(bool /* wasHandled
     scrollingTree()->applyLayerPositions();
 }
 
+void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
+{
+    RemoteScrollingCoordinatorProxy::displayDidRefresh(displayID);
+    scrollingTree()->applyLayerPositions();
+}
+
 bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&)
 {
     // Unlike iOS, we handle scrolling requests for the main frame in the same way we handle them for subscrollers.
     return false;
+}
+
+void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
+{
+    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
+    if (!drawingArea)
+        return;
+
+    drawingArea->setDisplayLinkWantsFullSpeedUpdates(hasAnimatedScrolls);
 }
 
 } // namespace WebKit

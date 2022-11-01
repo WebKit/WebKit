@@ -406,19 +406,6 @@ void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAni
     });
 }
 
-void ThreadedScrollingTree::serviceScrollAnimations(MonotonicTime currentTime)
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-
-    for (auto nodeID : nodesWithActiveScrollAnimations()) {
-        RefPtr targetNode = nodeForID(nodeID);
-        if (!is<ScrollingTreeScrollingNode>(targetNode))
-            continue;
-
-        downcast<ScrollingTreeScrollingNode>(*targetNode).serviceScrollAnimation(currentTime);
-    }
-}
-
 // This code allows the main thread about half a frame to complete its rendering udpate. If the main thread
 // is responsive (i.e. managing to render every frame), then we expect to get a didCompletePlatformRenderingUpdate()
 // within 8ms of willStartRenderingUpdate(). We time this via m_stateCondition, which blocks the scrolling

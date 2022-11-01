@@ -676,6 +676,17 @@ HashSet<ScrollingNodeID> ScrollingTree::nodesWithActiveScrollAnimations()
     return m_treeState.nodesWithActiveScrollAnimations;
 }
 
+void ScrollingTree::serviceScrollAnimations(MonotonicTime currentTime)
+{
+    for (auto nodeID : nodesWithActiveScrollAnimations()) {
+        RefPtr targetNode = nodeForID(nodeID);
+        if (!is<ScrollingTreeScrollingNode>(targetNode))
+            continue;
+
+        downcast<ScrollingTreeScrollingNode>(*targetNode).serviceScrollAnimation(currentTime);
+    }
+}
+
 void ScrollingTree::setMainFramePinnedState(RectEdges<bool> edgePinningState)
 {
     Locker locker { m_swipeStateLock };
