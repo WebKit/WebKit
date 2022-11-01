@@ -349,11 +349,16 @@ void WebFrameProxy::disconnect()
 
 void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
 {
+    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
+    // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
+    // IPC when it later gets processed.
+    if (WebFrameProxy::webFrame(frameID))
+        return;
+
+    MESSAGE_CHECK(m_process, m_page);
     MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(m_process, frameID.processIdentifier() == m_process->coreProcessIdentifier());
-    if (!m_page)
-        return;
-    
+
     auto child = WebFrameProxy::create(*m_page, m_process, m_webPageID, frameID);
     child->m_parentFrame = *this;
     m_childFrames.add(WTFMove(child));
