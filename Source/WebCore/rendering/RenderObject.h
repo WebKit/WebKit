@@ -791,6 +791,10 @@ public:
 
     void addPDFURLRect(const PaintInfo&, const LayoutPoint&) const;
 
+    bool isSkippedContent() const;
+
+    bool shouldSkipContent() const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!

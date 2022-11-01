@@ -1,6 +1,4 @@
 This text should be visible.
-This text should not be visible.
-This text is also not visible.
 
-FAIL innerText on locked element. assert_equals: expected "This text should be visible." but got "This text should be visible.\nThis text should not be visible.\nThis text is also not visible."
+FAIL innerText on locked element. assert_equals: expected "This text should be visible." but got "This text should be visible.\n"
 

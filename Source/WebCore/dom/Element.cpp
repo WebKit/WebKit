@@ -751,7 +751,8 @@ bool Element::isFocusable() const
         // focusable as long as their canvas is displayed and visible.
         if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
             return canvas->isFocusableWithoutResolvingFullStyle();
-    }
+    } else if (renderer()->isSkippedContent())
+        return false;
 
     return isFocusableWithoutResolvingFullStyle();
 }

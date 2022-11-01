@@ -2553,6 +2553,16 @@ String RenderObject::debugDescription() const
     return builder.toString();
 }
 
+bool RenderObject::isSkippedContent() const
+{
+    return parent() && parent()->style().effectiveSkipsContent();
+}
+
+bool RenderObject::shouldSkipContent() const
+{
+    return style().contentVisibility() == ContentVisibility::Hidden;
+}
+
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
 {
     ts << renderer.debugDescription();
