@@ -45,15 +45,8 @@
 (with-filter (mac-policy-name "Quarantine")
     (allow system-mac-syscall (mac-syscall-number 84 87)))
 
-(allow file-test-existence (with telemetry))
-(allow file-test-existence
-    (literal "/etc/localtime")
-    (literal "/private/etc/localtime")
-    (subpath "/System/Library/PrivateFrameworks")
-    (subpath "/System/Library/Frameworks")
-    (subpath "/usr/share/icu")
-    (subpath "/private/var/db/timezone")
-    (subpath "/var/db/timezone"))
+(allow file-test-existence)
+
 #define IOKIT_OPEN_USER_CLIENT iokit-open-user-client
 #define IOKIT_OPEN_SERVICE iokit-open-service
 #else

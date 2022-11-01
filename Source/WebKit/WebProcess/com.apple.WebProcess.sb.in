@@ -41,8 +41,10 @@
 (allow process-info-rusage (target self))
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
-(allow iokit-open-service (iokit-registry-entry-class "IOAccelerator"))
-(allow iokit-open-service (iokit-registry-entry-class "AppleM2ScalerCSCDriver"))
+(allow iokit-open-service (iokit-registry-entry-class
+    "AGPM"
+    "IOAccelerator"
+    "AppleM2ScalerCSCDriver"))
 
 (deny iokit-open-service (with no-report) (iokit-registry-entry-class "AppleJPEGDriver"))
 

@@ -56,9 +56,16 @@
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
 (allow iokit-open-service (iokit-user-client-class "AppleCLCD2"))
 
-(allow file-map-executable
-    (subpath "/System/Library/Components")
-    (subpath "/System/Library/Video/Plug-Ins"))
+(allow iokit-open-service (iokit-registry-entry-class
+    "AppleGFXHDAEngineOutputDP"
+    "AppleUpstreamUserClientDriver"
+    "AudioAUUCDriver"
+    "IOAudioSelectorControl"))
+
+(allow file-map-executable (subpath
+    "/System/Library/Components"
+    "/System/Library/Extensions"
+    "/System/Library/Video/Plug-Ins"))
 
 (allow iokit-open-user-client (iokit-user-client-class "AGXDeviceUserClient"))
 (allow iokit-open-service
