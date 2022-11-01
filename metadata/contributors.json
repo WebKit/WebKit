@@ -2015,6 +2015,17 @@
    },
    {
       "emails" : [
+         "dawn_flores@apple.com, matteo_flores@apple.com"
+      ],
+      "github" : "Smackteo",
+      "name" : "Dawn Flores",
+      "nicks" : [
+         "DawnF"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "dino@apple.com"
       ],
       "expertise" : "Transforms, Transitions, Animations, Filters",
@@ -4957,17 +4968,6 @@
       "name" : "Matt Woodrow",
       "nicks" : [
          "mattwoodrow"
-      ],
-      "status" : "committer"
-   },
-   {
-      "emails" : [
-         "Matteo_flores@apple.com"
-      ],
-      "github" : "Smackteo",
-      "name" : "Matteo Flores",
-      "nicks" : [
-         "MatteoF"
       ],
       "status" : "committer"
    },
