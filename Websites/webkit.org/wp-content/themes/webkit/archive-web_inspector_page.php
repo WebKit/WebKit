@@ -155,17 +155,14 @@
         }
 
         #reference-list {
+            column-count: 2;
+            column-width: 50%;
             margin-bottom: 3rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            box-sizing: border-box;
         }
 
         #reference-list div {
             position: relative;
-            width: 48%;
-            margin-top: -1px;
+            margin-bottom: -1px;
             padding: 0.5rem;
             break-inside: avoid;
             border-color: transparent;
@@ -214,6 +211,12 @@
         }
 
         @media only screen and (max-width: 600px) {
+            
+            #reference-list {
+                column-count: 1;
+                column-width: 100%;
+            }
+            
             #reference-list div {
                 width: 100%;
             }
