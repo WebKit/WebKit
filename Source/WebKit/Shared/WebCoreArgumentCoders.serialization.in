@@ -712,6 +712,7 @@ struct WebCore::ApplicationManifest {
     URL scope
     WebCore::ApplicationManifest::Display display
     URL startURL
+    URL id
     WebCore::Color themeColor
     Vector<WebCore::ApplicationManifest::Icon> icons
 }

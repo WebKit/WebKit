@@ -61,6 +61,7 @@ struct ApplicationManifest {
     URL scope;
     Display display;
     URL startURL;
+    URL id;
     Color themeColor;
     Vector<Icon> icons;
 };
