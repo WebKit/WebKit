@@ -1,0 +1,5 @@
+PASS $("sample").innerHTML is "foo quux&nbsp;baz"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
