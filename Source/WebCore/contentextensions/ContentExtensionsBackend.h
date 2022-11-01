@@ -86,6 +86,7 @@ private:
 };
 
 WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);
+std::optional<String> customLoadBlockingMessageForConsole(const ContentRuleListResults&, const URL& urlString = { }, const URL& mainDocumentURL = { });
 
 } // namespace WebCore::ContentExtensions
 } // namespace WebCore

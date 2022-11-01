@@ -67,6 +67,11 @@ static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& ur
         || url.host() == "download"_s)
         results.summary.madeHTTPS = true;
 }
+
+std::optional<String> customLoadBlockingMessageForConsole(const ContentRuleListResults&, const URL&, const URL&)
+{
+    return std::nullopt;
+}
 #endif
 
 bool ContentExtensionsBackend::shouldBeMadeSecure(const URL& url)
@@ -276,7 +281,12 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from ", url.string(), " to ", newProtocol));
         }
         if (results.summary.blockedLoad) {
-            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string()));
+            String consoleMessage;
+            if (auto message = customLoadBlockingMessageForConsole(results, url, mainDocumentURL))
+                consoleMessage = WTFMove(*message);
+            else
+                consoleMessage = makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string());
+            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTFMove(consoleMessage));
         
             // Quirk for content-blocker interference with Google's anti-flicker optimization (rdar://problem/45968770).
             // https://developers.google.com/optimize/
