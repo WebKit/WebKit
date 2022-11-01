@@ -60,10 +60,9 @@ WorkerScriptLoader::WorkerScriptLoader()
 
 WorkerScriptLoader::~WorkerScriptLoader()
 {
-    if (!m_clientIdentifier)
-        return;
+    if (m_didAddToWorkerScriptLoaderMap)
+        scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
 
-    scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
 #if ENABLE(SERVICE_WORKER)
     if (m_activeServiceWorkerData) {
         if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
@@ -141,6 +140,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     m_source = source;
     m_destination = fetchOptions.destination;
     m_isCOEPEnabled = scriptExecutionContext.settingsValues().crossOriginEmbedderPolicyEnabled;
+    m_clientIdentifier = clientIdentifier;
 
     ASSERT(scriptRequest.httpMethod() == "GET"_s);
 
@@ -163,12 +163,14 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     if ((m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker) && is<Document>(scriptExecutionContext) && downcast<Document>(scriptExecutionContext).settings().serviceWorkersEnabled()) {
         m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
         ASSERT(clientIdentifier);
-        options.clientIdentifier = m_clientIdentifier = clientIdentifier;
+        options.clientIdentifier = clientIdentifier;
         // In case of blob URLs, we reuse the document controlling service worker.
         if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
-        else
+        else {
             scriptExecutionContextIdentifierToWorkerScriptLoaderMap().add(m_clientIdentifier, this);
+            m_didAddToWorkerScriptLoaderMap = true;
+        }
     } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
