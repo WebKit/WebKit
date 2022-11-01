@@ -740,7 +740,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         NSDictionary *managedSitesPrefs = [NSDictionary dictionaryWithContentsOfFile:[[NSString stringWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier] stringByStandardizingPath]];
         crossSiteTrackingPreventionDisabledDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionDisabledDomainsKey];
 #elif !PLATFORM(MACCATALYST)
-        if ([PAL::getMCProfileConnectionClass() respondsToSelector:@selector(crossSiteTrackingAllowedDomains)])
+        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingAllowedDomains)])
             crossSiteTrackingPreventionDisabledDomains = [[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingAllowedDomains];
         else
             crossSiteTrackingPreventionDisabledDomains = @[];
