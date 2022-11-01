@@ -5343,3 +5343,14 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-subelements-0
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-subelements-003.html [ Pass ImageOnlyFailure ]
 http/tests/misc/iframe-shadow-realm.html [ Pass Timeout ]
 http/tests/workers/service/basic-timeout.https.html [ Pass Timeout ]
+
+# rdar://101816726 ([ Gardening ] REGRESSION  9* fast/* layout-tests are constant text failures)
+fast/css/focus-ring-exists-for-search-field.html [ Failure ]
+fast/forms/search-cancel-button-style-sharing.html [ Failure ]
+fast/forms/search-display-none-cancel-button.html [ Failure ]
+fast/forms/search-input-rtl.html [ Failure ]
+fast/forms/search-rtl.html [ Failure ]
+fast/forms/search-styled.html [ Failure ]
+fast/forms/search-vertical-alignment.html [ Failure ]
+fast/forms/search/search-padding-cancel-results-buttons.html [ Failure ]
+fast/repaint/search-field-cancel.html [ Failure ]
