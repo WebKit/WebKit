@@ -1754,3 +1754,15 @@ TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDark)
     [webView loadTestPageNamed:@"color-scheme"];
     [webView waitForMessage:@"dark-detected"];
 }
+
+TEST(WebpagePreferences, ToggleNetworkConnectionIntegrity)
+{
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    EXPECT_FALSE([preferences _networkConnectionIntegrityEnabled]);
+    [preferences _setNetworkConnectionIntegrityEnabled:YES];
+    EXPECT_TRUE([preferences _networkConnectionIntegrityEnabled]);
+    [preferences _setNetworkConnectionIntegrityEnabled:NO];
+    EXPECT_FALSE([preferences _networkConnectionIntegrityEnabled]);
+    [preferences _setNetworkConnectionIntegrityEnabled:YES];
+    EXPECT_TRUE([preferences _networkConnectionIntegrityEnabled]);
+}

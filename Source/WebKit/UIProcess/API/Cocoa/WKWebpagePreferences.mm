@@ -591,10 +591,10 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return _websitePolicies->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled);
 }
 
-- (void)_setNetworkConnectionIntegrityEnabled:(BOOL)networkConnectionIntegrityEnabled
+- (void)_setNetworkConnectionIntegrityEnabled:(BOOL)enabled
 {
     auto webCorePolicy = _websitePolicies->networkConnectionIntegrityPolicy();
-    webCorePolicy.add(WebCore::NetworkConnectionIntegrity::Enabled);
+    webCorePolicy.set(WebCore::NetworkConnectionIntegrity::Enabled, enabled);
     _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }
 
