@@ -3389,7 +3389,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (layerIterator.begin() == layerIterator.end())
         return;
 
-    if (!hasSelfPaintingLayerDescendant())
+    if (!hasSelfPaintingLayerDescendant() || renderer().shouldSkipContent())
         return;
 
 #if ASSERT_ENABLED

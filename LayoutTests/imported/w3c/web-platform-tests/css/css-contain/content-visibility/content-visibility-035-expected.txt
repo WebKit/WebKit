@@ -1,4 +1,4 @@
 
 
-FAIL Testing focus and force layout on element with hidden flat-tree ancestor assert_not_equals: got disallowed value Element node <input id="slotted" type="text"></input>
+PASS Testing focus and force layout on element with hidden flat-tree ancestor
 

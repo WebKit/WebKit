@@ -550,6 +550,8 @@ public:
 
     ContentVisibility contentVisibility() const { return static_cast<ContentVisibility>(m_rareNonInheritedData->contentVisibility); }
 
+    bool effectiveSkipsContent() const { return m_rareInheritedData->effectiveSkipsContent; }
+
     ContainIntrinsicSizeType containIntrinsicWidthType() const { return static_cast<ContainIntrinsicSizeType>(m_rareNonInheritedData->containIntrinsicWidthType); }
     ContainIntrinsicSizeType containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_rareNonInheritedData->containIntrinsicHeightType); }
     std::optional<Length> containIntrinsicWidth() const { return m_rareNonInheritedData->containIntrinsicWidth; }
@@ -1115,6 +1117,8 @@ public:
     void setContainIntrinsicHeight(std::optional<Length> height) { SET_VAR(m_rareNonInheritedData, containIntrinsicHeight, height); }
 
     void setContentVisibility(ContentVisibility value) { SET_VAR(m_rareNonInheritedData, contentVisibility, static_cast<unsigned>(value)); }
+
+    void setEffectiveSkipsContent(bool effectiveSkipsContent) { SET_VAR(m_rareInheritedData, effectiveSkipsContent, effectiveSkipsContent); }
 
     void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }

@@ -1611,7 +1611,8 @@ void RenderLayerBacking::updateAfterDescendants()
         m_graphicsLayer->setContentsOpaque(!m_hasSubpixelRounding && m_owningLayer.backgroundIsKnownToBeOpaqueInRect(compositedBounds()));
     }
 
-    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants());
+    bool isSkippedContent = renderer().isSkippedContent();
+    m_graphicsLayer->setContentsVisible(!isSkippedContent && (m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants()));
     if (m_scrollContainerLayer) {
         m_scrollContainerLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
 

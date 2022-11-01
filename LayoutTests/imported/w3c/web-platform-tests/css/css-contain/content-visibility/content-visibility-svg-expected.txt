@@ -1,5 +1,3 @@
-Hello World!
-Hello World Again!
 
 PASS getBBox() should return nonzero values in a c-v:hidden subtree.
 
