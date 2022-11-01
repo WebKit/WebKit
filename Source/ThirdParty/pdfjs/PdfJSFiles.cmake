@@ -185,6 +185,7 @@ set(PDFJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-noicon.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-note.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paragraph.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorInk.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-next.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-previous.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/loading-dark.svg

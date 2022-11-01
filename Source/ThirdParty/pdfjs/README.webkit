@@ -2,7 +2,7 @@ This directory contains an official PDF.js release version, distributed at: http
 
 To update to a newer version:
 
-1. Delete existing files except for this README.webkit.md.
+1. Delete existing files except for this README.webkit.
 2. Grab a new official release (*-dist.zip, modern browsers version) distributed at GitHub and extract everything into this directory.
 3. Delete the sourcemap (.js.map) files (currently viewer.js.map, pdf.js.map, pdf.worker.js.map, and pdf.sandbox.js.map).
 4. Delete the example PDF file, compressed.tracemonkey-pldi-09.pdf.

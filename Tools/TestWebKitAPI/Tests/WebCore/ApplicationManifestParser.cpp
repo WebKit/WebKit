@@ -53,6 +53,7 @@ class ApplicationManifestParserTest : public testing::Test {
 public:
     URL m_manifestURL;
     URL m_documentURL;
+    URL m_startURL;
 
     virtual void SetUp()
     {
@@ -176,6 +177,21 @@ public:
         EXPECT_EQ(expectedValues, value);
     }
 
+    void testId(const String& rawJSON, const URL& expectedValue)
+    {
+        auto manifest = parseTopLevelProperty("id"_s, rawJSON);
+        auto value = manifest.id;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
+    void testId(const String& rawJSON, const URL& startURL, const String& expectedValue)
+    {
+        String manifestContent = "{ \"id\" : \"" + rawJSON + "\", \"start_url\" : \"" + startURL.string() + "\" }";
+        auto manifest = parseString(manifestContent);
+        auto value = manifest.id;
+        EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
+    }
+
 };
 
 static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& documentURL, const ApplicationManifest& manifest)
@@ -185,6 +201,7 @@ static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& do
     EXPECT_TRUE(manifest.description.isNull());
     EXPECT_STREQ("https://example.com/", manifest.scope.string().utf8().data());
     EXPECT_STREQ(documentURL.string().utf8().data(), manifest.startURL.string().utf8().data());
+    EXPECT_STREQ(manifest.id.string().utf8().data(), manifest.startURL.string().utf8().data());
 }
 
 TEST_F(ApplicationManifestParserTest, DefaultManifest)
@@ -193,6 +210,37 @@ TEST_F(ApplicationManifestParserTest, DefaultManifest)
     assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString(""_s));
     assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("{ }"_s));
     assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("This is 100% not JSON."_s));
+}
+
+TEST_F(ApplicationManifestParserTest, Id)
+{
+    m_documentURL = URL { "https://example.com/home"_s };
+    m_manifestURL = URL { "https://example.com/manifest.json"_s };
+
+    testId("123"_s, m_documentURL);
+    testId("null"_s, m_documentURL);
+    testId("true"_s, m_documentURL);
+    testId("{ }"_s, m_documentURL);
+    testId("[ ]"_s, m_documentURL);
+    testId("[ \"http://example.com/somepage\" ]"_s, m_documentURL);
+    testId("\"\""_s, m_documentURL);
+    testId("\"http:?\""_s, m_documentURL);
+
+    testId("\"https://other-domain.com\""_s, m_documentURL);
+    testId("\"https://invalid.com:a\""_s, m_documentURL);
+
+    m_startURL = URL { "https://example.com/my-app/start?query=q#fragment"_s };
+    testId(""_s, m_startURL , m_startURL.string());
+    testId("/"_s, m_startURL, "https://example.com/"_s);
+    testId("foo"_s, m_startURL, "https://example.com/foo"_s);
+    testId("./foo"_s, m_startURL, "https://example.com/foo"_s);
+    testId("foo/"_s, m_startURL, "https://example.com/foo/"_s);
+    testId("../../foo/bar"_s, m_startURL, "https://example.com/foo/bar"_s);
+    testId("../../foo/bar?query=hi#hi"_s, m_startURL, "https://example.com/foo/bar?query=hi#hi"_s);
+
+    testId("https://example.com/foo"_s, m_startURL, "https://example.com/foo"_s);
+    testId("https://anothersite.com/foo"_s, m_startURL, m_startURL.string());
+    testId("https://invalid.com:a"_s, m_startURL, m_startURL.string());
 }
 
 TEST_F(ApplicationManifestParserTest, StartURL)

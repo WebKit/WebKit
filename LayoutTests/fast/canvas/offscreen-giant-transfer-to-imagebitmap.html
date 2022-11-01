@@ -1,0 +1,11 @@
+<script>
+  onload = () => {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    let offscreenCanvas = new OffscreenCanvas(1, 100000000);
+    offscreenCanvas.getContext('2d');
+    offscreenCanvas.width = 100;
+    offscreenCanvas.transferToImageBitmap();
+  }
+</script>

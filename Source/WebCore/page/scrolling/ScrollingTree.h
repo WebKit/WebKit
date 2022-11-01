@@ -229,7 +229,8 @@ public:
 
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
-    
+    WEBCORE_EXPORT virtual void displayDidRefresh(PlatformDisplayID) { }
+
     WEBCORE_EXPORT void willProcessWheelEvent();
 
     WEBCORE_EXPORT void addPendingScrollUpdate(ScrollUpdate&&);
@@ -257,6 +258,7 @@ protected:
     bool hasProcessedWheelEventsRecently();
 
     HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations();
+    WEBCORE_EXPORT void serviceScrollAnimations(MonotonicTime) WTF_REQUIRES_LOCK(m_treeLock);
 
     Lock m_treeLock; // Protects the scrolling tree.
 

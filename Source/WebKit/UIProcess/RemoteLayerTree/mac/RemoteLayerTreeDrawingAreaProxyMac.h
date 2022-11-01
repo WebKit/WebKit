@@ -29,15 +29,24 @@
 
 #if PLATFORM(MAC)
 
+#include "DisplayLinkObserverID.h"
+#include <WebCore/AnimationFrameRate.h>
+
 namespace WebKit {
 
-class RemoteScrollingCoordinatorProxy;
+class DisplayLink;
+class RemoteLayerTreeDisplayLinkClient;
 class RemoteLayerTreeTransaction;
+class RemoteScrollingCoordinatorProxy;
 class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxyMac final : public RemoteLayerTreeDrawingAreaProxy {
+friend class RemoteScrollingCoordinatorProxyMac;
 public:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
+    ~RemoteLayerTreeDrawingAreaProxyMac();
+
+    void didRefreshDisplay() override;
 
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
@@ -45,13 +54,25 @@ private:
 
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
+    void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
+    void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
 
     void didChangeViewExposedRect() override;
 
-    void displayLinkTimerFired();
+    void setDisplayLinkWantsFullSpeedUpdates(bool) override;
 
-    // Temporary, until we hook up the DisplayLink
-    RunLoop::Timer<RemoteLayerTreeDrawingAreaProxyMac> m_displayLinkTimer;
+    void removeObserver(std::optional<DisplayLinkObserverID>&);
+
+    DisplayLink* exisingDisplayLink();
+    DisplayLink& ensureDisplayLink();
+
+    std::optional<WebCore::PlatformDisplayID> m_displayID; // Would be nice to make this non-optional, and ensure we always get one on creation.
+    std::optional<WebCore::FramesPerSecond> m_displayNominalFramesPerSecond;
+    WebCore::FramesPerSecond m_clientPreferredFramesPerSecond { WebCore::FullSpeedFramesPerSecond };
+
+    std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
+    std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
+    std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
 };
 
 } // namespace WebKit

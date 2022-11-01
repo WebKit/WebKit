@@ -296,8 +296,13 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
 
         if (!m_hasCreatedImageBuffer) {
             auto buffer = ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated, m_context->colorSpace());
+            if (!buffer)
+                return { RefPtr<ImageBitmap> { nullptr } };
             return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer))) };
         }
+
+        if (!buffer())
+            return { RefPtr<ImageBitmap> { nullptr } };
 
         RefPtr<ImageBuffer> bitmap;
         if (is<OffscreenCanvasRenderingContext2D>(*m_context)) {

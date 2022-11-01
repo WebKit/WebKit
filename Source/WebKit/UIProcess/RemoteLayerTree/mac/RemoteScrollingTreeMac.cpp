@@ -47,10 +47,20 @@ RemoteScrollingTreeMac::RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy& 
 
 RemoteScrollingTreeMac::~RemoteScrollingTreeMac() = default;
 
-
 void RemoteScrollingTreeMac::handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase)
 {
     // FIXME: Is this needed?
+}
+
+void RemoteScrollingTreeMac::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
+{
+    m_scrollingCoordinatorProxy.hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
+}
+
+void RemoteScrollingTreeMac::displayDidRefresh(PlatformDisplayID)
+{
+    Locker locker { m_treeLock };
+    serviceScrollAnimations(MonotonicTime::now()); // FIXME: Share timestamp with the rest of the update.
 }
 
 Ref<ScrollingTreeNode> RemoteScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

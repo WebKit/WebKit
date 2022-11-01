@@ -242,6 +242,8 @@ public:
     void handleMemoryPressureWarning(Critical);
 
 #if HAVE(CVDISPLAYLINK)
+    DisplayLinkCollection& displayLinks() { return m_displayLinks; }
+
     std::optional<WebCore::FramesPerSecond> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
 
     void startDisplayLink(WebProcessProxy&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);

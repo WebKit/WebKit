@@ -38,8 +38,9 @@ public:
 private:
     void didReceiveWheelEvent(bool) override;
     bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
+    void hasNodeWithAnimatedScrollChanged(bool) override;
+    void displayDidRefresh(WebCore::PlatformDisplayID) override;
 };
-
 
 } // namespace WebKit
 

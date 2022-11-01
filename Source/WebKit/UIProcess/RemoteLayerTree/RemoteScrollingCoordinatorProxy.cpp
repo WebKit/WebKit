@@ -319,6 +319,11 @@ ScrollingTreeScrollingNode* RemoteScrollingCoordinatorProxy::rootNode() const
     return m_scrollingTree->rootNode();
 }
 
+void RemoteScrollingCoordinatorProxy::displayDidRefresh(PlatformDisplayID displayID)
+{
+    m_scrollingTree->displayDidRefresh(displayID);
+}
+
 bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
 {
     auto* rootNode = m_scrollingTree->rootNode();

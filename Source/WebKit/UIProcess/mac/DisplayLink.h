@@ -32,9 +32,9 @@
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/WeakHashMap.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
