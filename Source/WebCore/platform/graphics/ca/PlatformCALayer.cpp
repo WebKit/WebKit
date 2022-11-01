@@ -87,7 +87,6 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     constexpr auto backgroundColor = SRGBA<uint8_t> { 128, 64, 255 };
     constexpr auto acceleratedContextLabelColor = Color::red;
     constexpr auto unacceleratedContextLabelColor = Color::white;
-    constexpr auto linearGlyphMaskOutlineColor = Color::black.colorWithAlphaByte(192);
     constexpr auto displayListBorderColor = Color::black.colorWithAlphaByte(166);
 
     TextRun textRun(String::number(repaintCount));
@@ -127,12 +126,6 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     if (platformCALayer->owner()->isUsingDisplayListDrawing(platformCALayer)) {
         graphicsContext.setStrokeColor(displayListBorderColor);
         graphicsContext.strokeRect(indicatorBox, 2);
-    }
-
-    if (!platformCALayer->isOpaque() && platformCALayer->supportsSubpixelAntialiasedText() && platformCALayer->acceleratesDrawing()) {
-        graphicsContext.setStrokeColor(linearGlyphMaskOutlineColor);
-        graphicsContext.setStrokeThickness(4.5);
-        graphicsContext.setTextDrawingMode(TextDrawingModeFlags { TextDrawingMode::Fill, TextDrawingMode::Stroke });
     }
 
     graphicsContext.setFillColor(platformCALayer->acceleratesDrawing() ? acceleratedContextLabelColor : unacceleratedContextLabelColor);

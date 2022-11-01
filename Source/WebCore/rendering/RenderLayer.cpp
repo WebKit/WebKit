@@ -5131,12 +5131,6 @@ static bool hasVisibleBoxDecorationsOrBackground(const RenderElement& renderer)
     return renderer.hasVisibleBoxDecorations() || renderer.style().hasOutline();
 }
 
-static bool styleHasSmoothingTextMode(const RenderStyle& style)
-{
-    FontSmoothingMode smoothingMode = style.fontDescription().fontSmoothing();
-    return smoothingMode == FontSmoothingMode::AutoSmoothing || smoothingMode == FontSmoothingMode::SubpixelAntialiased;
-}
-
 // Constrain the depth and breadth of the search for performance.
 static const unsigned maxRendererTraversalCount = 200;
 
@@ -5156,12 +5150,8 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
             if (renderer.style().effectiveUserSelect() != UserSelect::None)
                 request.setHasPaintedContent();
 
-            if (!renderText.text().isAllSpecialCharacters<isHTMLSpace>()) {
+            if (!renderText.text().isAllSpecialCharacters<isHTMLSpace>())
                 request.setHasPaintedContent();
-
-                if (request.needToDetermineSubpixelAntialiasedTextState() && styleHasSmoothingTextMode(child.style()))
-                    request.setHasSubpixelAntialiasedText();
-            }
 
             if (request.isSatisfied())
                 return;
@@ -5183,13 +5173,6 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
         
         if (is<RenderReplaced>(renderElementChild)) {
             request.setHasPaintedContent();
-
-            if (is<RenderImage>(renderElementChild) && request.needToDetermineSubpixelAntialiasedTextState()) {
-                auto& imageRenderer = downcast<RenderImage>(renderElementChild);
-                // May draw text if showing alt text, or image is an SVG image or PDF image.
-                if ((imageRenderer.isShowingAltText() || imageRenderer.hasNonBitmapImage()) && styleHasSmoothingTextMode(child.style()))
-                    request.setHasSubpixelAntialiasedText();
-            }
 
             if (request.isSatisfied())
                 return;

@@ -400,12 +400,11 @@ bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setSubpixelAntialiasedLayerTextEnabled(flag);
 }
 
 bool WKPreferencesGetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->subpixelAntialiasedLayerTextEnabled();
+    return false;
 }
 
 void WKPreferencesSetAcceleratedDrawingEnabled(WKPreferencesRef preferencesRef, bool flag)

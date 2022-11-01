@@ -52,7 +52,6 @@ static NSString * const UsesGameControllerFrameworkKey = @"UsesGameControllerFra
 static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
 static NSString * const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
 static NSString * const DisplayListDrawingEnabledPreferenceKey = @"DisplayListDrawingEnabled";
-static NSString * const SubpixelAntialiasedLayerTextEnabledPreferenceKey = @"SubpixelAntialiasedLayerTextEnabled";
 static NSString * const ResourceLoadStatisticsEnabledPreferenceKey = @"ResourceLoadStatisticsEnabled";
 
 static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
@@ -94,7 +93,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NSArray *onByDefaultPrefs = @[
         UseWebKit2ByDefaultPreferenceKey,
         AcceleratedDrawingEnabledPreferenceKey,
-        SubpixelAntialiasedLayerTextEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
         WebViewFillsWindowKey,
@@ -177,7 +175,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Suppress Incremental Rendering in New Windows", @selector(toggleIncrementalRenderingSuppressed:));
     addItem(@"Enable Accelerated Drawing", @selector(toggleAcceleratedDrawingEnabled:));
     addItem(@"Enable Display List Drawing", @selector(toggleDisplayListDrawingEnabled:));
-    addItem(@"Enable Subpixel-antialiased Layer Text", @selector(toggleSubpixelAntialiasedLayerTextEnabled:));
     addItem(@"Enable Resource Load Statistics", @selector(toggleResourceLoadStatisticsEnabled:));
     addItem(@"Enable Large Image Async Decoding", @selector(toggleLargeImageAsyncDecodingEnabled:));
     addItem(@"Enable Animated Image Async Decoding", @selector(toggleAnimatedImageAsyncDecodingEnabled:));
@@ -331,8 +328,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self acceleratedDrawingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDisplayListDrawingEnabled:))
         [menuItem setState:[self displayListDrawingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleSubpixelAntialiasedLayerTextEnabled:))
-        [menuItem setState:[self subpixelAntialiasedLayerTextEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleResourceLoadStatisticsEnabled:))
         [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleLargeImageAsyncDecodingEnabled:))
@@ -518,16 +513,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)displayListDrawingEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:DisplayListDrawingEnabledPreferenceKey];
-}
-
-- (void)toggleSubpixelAntialiasedLayerTextEnabled:(id)sender
-{
-    [self _toggleBooleanDefault:SubpixelAntialiasedLayerTextEnabledPreferenceKey];
-}
-
-- (BOOL)subpixelAntialiasedLayerTextEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:SubpixelAntialiasedLayerTextEnabledPreferenceKey];
 }
 
 - (void)toggleReserveSpaceForBanners:(id)sender

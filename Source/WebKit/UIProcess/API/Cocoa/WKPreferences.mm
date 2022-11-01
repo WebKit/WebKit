@@ -418,16 +418,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setTextAutosizingEnabled(enabled);
 }
 
-- (BOOL)_subpixelAntialiasedLayerTextEnabled
-{
-    return _preferences->subpixelAntialiasedLayerTextEnabled();
-}
-
-- (void)_setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
-{
-    _preferences->setSubpixelAntialiasedLayerTextEnabled(enabled);
-}
-
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();
@@ -1657,6 +1647,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_requestAnimationFrameEnabled
 {
     return YES;
+}
+
+- (BOOL)_subpixelAntialiasedLayerTextEnabled
+{
+    return NO;
+}
+
+- (void)_setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
+{
 }
 
 #if !TARGET_OS_IPHONE

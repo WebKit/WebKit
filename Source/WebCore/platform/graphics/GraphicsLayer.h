@@ -419,9 +419,6 @@ public:
     bool contentsOpaque() const { return m_contentsOpaque; }
     virtual void setContentsOpaque(bool b) { m_contentsOpaque = b; }
 
-    bool supportsSubpixelAntialiasedText() const { return m_supportsSubpixelAntialiasedText; }
-    virtual void setSupportsSubpixelAntialiasedText(bool b) { m_supportsSubpixelAntialiasedText = b; }
-
     bool backfaceVisibility() const { return m_backfaceVisibility; }
     virtual void setBackfaceVisibility(bool b) { m_backfaceVisibility = b; }
 
@@ -636,7 +633,6 @@ public:
 
     static bool supportsLayerType(Type);
     static bool supportsContentsTiling();
-    static bool supportsSubpixelAntialiasedLayerText();
 
     void updateDebugIndicators();
 
@@ -731,7 +727,6 @@ protected:
 
     bool m_beingDestroyed : 1;
     bool m_contentsOpaque : 1;
-    bool m_supportsSubpixelAntialiasedText : 1;
     bool m_preserves3D: 1;
     bool m_backfaceVisibility : 1;
     bool m_masksToBounds : 1;

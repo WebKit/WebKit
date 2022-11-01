@@ -96,16 +96,6 @@ void PlatformCALayerRemoteTiledBacking::setWantsDeepColorBackingStore(bool wants
     m_tileController->setWantsDeepColorBackingStore(wantsDeepColorBackingStore);
 }
 
-bool PlatformCALayerRemoteTiledBacking::supportsSubpixelAntialiasedText() const
-{
-    return m_tileController->supportsSubpixelAntialiasedText();
-}
-
-void PlatformCALayerRemoteTiledBacking::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
-{
-    m_tileController->setSupportsSubpixelAntialiasedText(supportsSubpixelAntialiasedText);
-}
-
 float PlatformCALayerRemoteTiledBacking::contentsScale() const
 {
     return m_tileController->contentsScale();

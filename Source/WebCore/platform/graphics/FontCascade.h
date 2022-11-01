@@ -201,8 +201,6 @@ public:
     WEBCORE_EXPORT static void setShouldUseSmoothingForTesting(bool);
     WEBCORE_EXPORT static bool shouldUseSmoothingForTesting();
 
-    static bool isSubpixelAntialiasingAvailable();
-
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return CodePath::Simple; }

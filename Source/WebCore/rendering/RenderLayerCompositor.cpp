@@ -1631,9 +1631,6 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
                 prefix = ", ";
             }
         }
-        
-        if (backing->paintsSubpixelAntialiasedText())
-            logString.append(prefix, "texty");
 
         logString.append("] ");
     }

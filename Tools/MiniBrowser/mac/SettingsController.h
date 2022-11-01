@@ -48,7 +48,6 @@ extern NSString * const kUserAgentChangedNotificationName;
 @property (nonatomic, readonly) BOOL perWindowWebProcessesDisabled;
 @property (nonatomic, readonly) BOOL acceleratedDrawingEnabled;
 @property (nonatomic, readonly) BOOL displayListDrawingEnabled;
-@property (nonatomic, readonly) BOOL subpixelAntialiasedLayerTextEnabled;
 @property (nonatomic, readonly) BOOL resourceLoadStatisticsEnabled;
 @property (nonatomic, readonly) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic, readonly) BOOL animatedImageAsyncDecodingEnabled;

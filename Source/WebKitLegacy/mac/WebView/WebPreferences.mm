@@ -1796,12 +1796,11 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 - (BOOL)subpixelAntialiasedLayerTextEnabled
 {
-    return [self _boolValueForKey:WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey];
+    return NO;
 }
 
 - (void)setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
 {
-    [self _setBoolValue:enabled forKey:WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey];
 }
 
 - (BOOL)legacyLineLayoutVisualCoverageEnabled

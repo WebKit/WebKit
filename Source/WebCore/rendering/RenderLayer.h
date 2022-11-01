@@ -545,24 +545,17 @@ public:
         {
             if (hasPaintedContent == RequestState::Unknown)
                 hasPaintedContent = RequestState::Undetermined;
-
-            if (hasSubpixelAntialiasedText == RequestState::Unknown)
-                hasSubpixelAntialiasedText = RequestState::Undetermined;
         }
 
         void setHasPaintedContent() { hasPaintedContent = RequestState::True; }
-        void setHasSubpixelAntialiasedText() { hasSubpixelAntialiasedText = RequestState::True; }
 
         bool needToDeterminePaintedContentState() const { return hasPaintedContent == RequestState::Unknown; }
-        bool needToDetermineSubpixelAntialiasedTextState() const { return hasSubpixelAntialiasedText == RequestState::Unknown; }
 
         bool probablyHasPaintedContent() const { return hasPaintedContent == RequestState::True || hasPaintedContent == RequestState::Undetermined; }
-        bool probablyHasSubpixelAntialiasedText() const { return hasSubpixelAntialiasedText == RequestState::True || hasSubpixelAntialiasedText == RequestState::Undetermined; }
         
-        bool isSatisfied() const { return hasPaintedContent != RequestState::Unknown && hasSubpixelAntialiasedText != RequestState::Unknown; }
+        bool isSatisfied() const { return hasPaintedContent != RequestState::Unknown; }
 
         RequestState hasPaintedContent { RequestState::Unknown };
-        RequestState hasSubpixelAntialiasedText { RequestState::DontCare };
     };
 
     // Returns true if this layer has visible content (ignoring any child layers).

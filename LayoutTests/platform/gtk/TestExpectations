@@ -351,9 +351,6 @@ webkit.org/b/99028 fast/autoresize [ Failure ]
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
 webkit.org/b/169918 compositing/clipping/border-radius-overflow-hidden-stacking-context.html [ Failure ]
-webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style.html [ Failure ]
-webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-configs.html [ Failure ]
-webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-enabled.html [ Failure ]
 webkit.org/b/169918 compositing/contents-opaque/control-layer.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/animating.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
@@ -1667,8 +1664,6 @@ webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Fail
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
-
-webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/200037 fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html [ Missing Failure ]
