@@ -735,7 +735,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         static const auto maxManagedDomainCount = 10;
-        NSArray<NSString *> *crossSiteTrackingPreventionDisabledDomains;
+        NSArray<NSString *> *crossSiteTrackingPreventionDisabledDomains = nil;
 #if PLATFORM(MAC)
         NSDictionary *managedSitesPrefs = [NSDictionary dictionaryWithContentsOfFile:[[NSString stringWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier] stringByStandardizingPath]];
         crossSiteTrackingPreventionDisabledDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionDisabledDomainsKey];
