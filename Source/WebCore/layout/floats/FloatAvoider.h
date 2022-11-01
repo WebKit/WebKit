@@ -96,7 +96,7 @@ inline LayoutUnit FloatAvoider::right() const
 {
     auto right = left() + borderBoxWidth();
     if (isFloatingBox())
-        right += marginAfter();
+        right += marginEnd();
     return right;
 }
 
