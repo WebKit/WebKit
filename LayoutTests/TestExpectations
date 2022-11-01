@@ -1013,6 +1013,9 @@ imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Skip ]
 
+imported/w3c/web-platform-tests/workers/SharedWorkerGlobalScope_importScripts_prevents_gc.html [ Slow ]
+imported/w3c/web-platform-tests/workers/WorkerGlobalScope_importScripts_prevents_gc.html [ Slow ]
+
 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.html [ Pass Failure ]

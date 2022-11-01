@@ -107,6 +107,7 @@ ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& s
 
 ExceptionOr<void> DedicatedWorkerGlobalScope::importScripts(const FixedVector<String>& urls)
 {
+    thread().workerObjectProxy().reportPendingActivity(true);
     auto result = Base::importScripts(urls);
     thread().workerObjectProxy().reportPendingActivity(hasPendingActivity());
     return result;

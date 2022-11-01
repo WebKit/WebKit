@@ -1,0 +1,3 @@
+
+PASS Unreferenced shared worker that imports scripts doesn't get garbage collected.
+

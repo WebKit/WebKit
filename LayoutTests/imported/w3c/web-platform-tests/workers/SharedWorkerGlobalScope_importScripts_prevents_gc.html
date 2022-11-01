@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<title>Unreferenced shared worker that imports scripts doesn't get garbage collected.</title>
+<meta name="timeout" content="long">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/garbage-collect.js"></script>
+<script>
+async_test(function(t) {
+  const workersCreated = 5;
+  let workersFinished = 0;
+
+  const messageHandler = t.step_func((e) => {
+    if (e.data === "worker_finished") workersFinished++;
+    if (workersFinished === workersCreated) t.done();
+  });
+
+  for (let i = 0; i < workersCreated; i++) {
+    new SharedWorker(`support/importScripts-delayed-shared-worker.js?id=${i}`).port.onmessage = messageHandler;
+  }
+
+  setInterval(garbageCollect, 300);
+}, "Unreferenced shared worker that imports scripts doesn't get garbage collected.");
+</script>
