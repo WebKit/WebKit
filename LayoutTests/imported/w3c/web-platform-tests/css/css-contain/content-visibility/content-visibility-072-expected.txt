@@ -1,7 +1,7 @@
 
 PASS one.getBoundingClientRect():
 FAIL two.getBoundingClientRect():  assert_equals: y expected 3007 but got 3041
-FAIL three.getBoundingClientRect():  assert_equals: y expected 3007 but got 3075
-FAIL four.getBoundingClientRect():  assert_equals: y expected 3007 but got 3109
-FAIL five.getBoundingClientRect():  assert_equals: y expected 3007 but got 3143
+FAIL three.getBoundingClientRect():  assert_equals: y expected 3007 but got 3041
+FAIL four.getBoundingClientRect():  assert_equals: y expected 3007 but got 3041
+FAIL five.getBoundingClientRect():  assert_equals: y expected 3007 but got 3041
 

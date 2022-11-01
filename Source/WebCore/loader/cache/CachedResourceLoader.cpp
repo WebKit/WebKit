@@ -1027,7 +1027,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
                 return resource;
             }
-            return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
+            auto message = ContentExtensions::customLoadBlockingMessageForConsole(results).value_or("Resource blocked by content blocker"_s);
+            return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, WTFMove(message), ResourceError::Type::AccessControl });
         }
         if (madeHTTPS
             && type == CachedResource::Type::MainResource

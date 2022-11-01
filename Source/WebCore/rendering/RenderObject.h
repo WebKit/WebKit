@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -730,8 +730,7 @@ public:
     bool canUpdateSelectionOnRootLineBoxes();
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
-    // possible bounding box for the selection.
-    LayoutRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(nullptr, clipToVisibleContent); }
+    // possible bounding box for the selection. The rect returned is in the coordinate space of the paint invalidation container's backing.
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return LayoutRect(); }
 
     virtual bool canBeSelectionLeaf() const { return false; }
@@ -774,7 +773,7 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) { };
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) const { };
 
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
@@ -789,6 +788,12 @@ public:
     virtual String description() const;
     virtual String debugDescription() const;
 
+    void addPDFURLRect(const PaintInfo&, const LayoutPoint&) const;
+
+    bool isSkippedContent() const;
+
+    bool shouldSkipContent() const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -796,7 +801,6 @@ protected:
     void setNextSibling(RenderObject* next) { m_next = next; }
     void setParent(RenderElement*);
     //////////////////////////////////////////
-    void addPDFURLRect(PaintInfo&, const LayoutPoint&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;

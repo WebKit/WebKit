@@ -95,7 +95,6 @@ const TestFeatures& TestOptions::defaults()
             { "RequiresUserGestureForVideoPlayback", false },
             { "ShouldPrintBackgrounds", true },
             { "ShrinksStandaloneImagesToFit", true },
-            { "SubpixelAntialiasedLayerTextEnabled", false },
             { "TextAreasAreResizable", true },
             { "TextAutosizingEnabled", false },
             { "UsesBackForwardCache", false },

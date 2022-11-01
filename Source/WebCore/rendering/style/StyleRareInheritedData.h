@@ -168,6 +168,8 @@ public:
 
     unsigned isInSubtreeWithBlendMode : 1;
 
+    unsigned effectiveSkipsContent : 1;
+
     OptionSet<TouchAction> effectiveTouchActions;
     OptionSet<EventListenerRegionType> eventListenerRegionTypes;
 

@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ ServiceWorkersEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description('Make sure that shared workers are functional even when service workers are disabled.');
+window.jsTestIsAsync = true;
+
+window.addEventListener('load', function() {
+    worker = new SharedWorker('../../navigation/resources/shared-worker-script.js');
+    worker.port.onmessage = (event) => {
+        message = event.data;
+        shouldBeEqualToString("message", "pong");
+        finishJSTest();
+    }
+    worker.port.postMessage("ping");
+}, false);
+
+</script>
+</body>
+</html>

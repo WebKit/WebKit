@@ -2587,6 +2587,9 @@ bool FrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const Render
     if (options.revealMode == SelectionRevealMode::DoNotReveal)
         return false;
 
+    if (renderer.isSkippedContent())
+        return false;
+
     auto* layer = renderer.enclosingLayer();
     if (!layer)
         return false;

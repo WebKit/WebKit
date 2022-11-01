@@ -1556,9 +1556,6 @@ public:
     TextAutoSizing& textAutoSizing();
 #endif
 
-    // For debugging rdar://problem/49877867.
-    void setMayBeDetachedFromFrame(bool mayBeDetachedFromFrame) { m_mayBeDetachedFromFrame = mayBeDetachedFromFrame; }
-
     Logger& logger();
     WEBCORE_EXPORT static const Logger& sharedLogger();
 
@@ -2283,7 +2280,6 @@ private:
 #endif
     unsigned m_numberOfRejectedSyncXHRs { 0 };
     bool m_isRunningUserScripts { false };
-    bool m_mayBeDetachedFromFrame { true };
     bool m_shouldPreventEnteringBackForwardCacheForTesting { false };
     bool m_hasLoadedThirdPartyScript { false };
     bool m_hasLoadedThirdPartyFrame { false };

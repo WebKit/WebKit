@@ -89,11 +89,6 @@ bool GraphicsLayer::supportsLayerType(Type type)
     ASSERT_NOT_REACHED();
     return false;
 }
-
-bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
-{
-    return false;
-}
 #endif
 
 #if !USE(COORDINATED_GRAPHICS)
@@ -122,7 +117,6 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& layerClient)
     , m_type(type)
     , m_beingDestroyed(false)
     , m_contentsOpaque(false)
-    , m_supportsSubpixelAntialiasedText(false)
     , m_preserves3D(type == Type::Structural)
     , m_backfaceVisibility(true)
     , m_masksToBounds(false)
@@ -844,9 +838,6 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack = client().needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(*this);
     if (m_contentsOpaque || needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack)
         ts << indent << "(contentsOpaque " << (m_contentsOpaque || needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack) << ")\n";
-
-    if (m_supportsSubpixelAntialiasedText)
-        ts << indent << "(supports subpixel antialiased text " << m_supportsSubpixelAntialiasedText << ")\n";
 
     if (m_masksToBounds && options & LayerTreeAsTextOptions::IncludeClipping)
         ts << indent << "(clips " << m_masksToBounds << ")\n";

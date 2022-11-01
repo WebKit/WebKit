@@ -192,14 +192,12 @@ void TileGrid::updateTileLayerProperties()
 {
     bool acceleratesDrawing = m_controller.acceleratesDrawing();
     bool deepColor = m_controller.wantsDeepColorBackingStore();
-    bool subpixelAntialiasedText = m_controller.supportsSubpixelAntialiasedText();
     bool opaque = m_controller.tilesAreOpaque();
     Color tileDebugBorderColor = m_controller.tileDebugBorderColor();
     float tileDebugBorderWidth = m_controller.tileDebugBorderWidth();
     for (auto& tileInfo : m_tiles.values()) {
         tileInfo.layer->setAcceleratesDrawing(acceleratesDrawing);
         tileInfo.layer->setWantsDeepColorBackingStore(deepColor);
-        tileInfo.layer->setSupportsSubpixelAntialiasedText(subpixelAntialiasedText);
         tileInfo.layer->setOpaque(opaque);
         tileInfo.layer->setBorderColor(tileDebugBorderColor);
         tileInfo.layer->setBorderWidth(tileDebugBorderWidth);

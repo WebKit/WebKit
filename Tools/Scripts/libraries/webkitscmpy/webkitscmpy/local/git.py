@@ -914,15 +914,20 @@ class Git(Scm):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
         parsed_commit = Commit.parse(argument, do_assert=False)
-        if parsed_commit and not parsed_commit.hash:
-            return self.commit(
-                hash=parsed_commit.hash,
-                revision=parsed_commit.revision,
-                identifier=parsed_commit.identifier,
-                branch=parsed_commit.branch,
-                include_log=False,
-                include_identifier=False,
-            ).hash
+        try:
+            if parsed_commit and not parsed_commit.hash:
+                # It's possible that a branch can look like a hash (or revision), if this call fails,
+                # we should return the unsanitized argument to our caller assumeing this is the case.
+                return self.commit(
+                    hash=parsed_commit.hash,
+                    revision=parsed_commit.revision,
+                    identifier=parsed_commit.identifier,
+                    branch=parsed_commit.branch,
+                    include_log=False,
+                    include_identifier=False,
+                ).hash
+        except self.Exception:
+            pass
         return argument
 
     def checkout(self, argument):

@@ -341,15 +341,6 @@ bool GraphicsLayer::supportsLayerType(Type type)
     return false;
 }
 
-bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
-{
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
-}
-
 Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     if (factory) {
@@ -847,15 +838,6 @@ void GraphicsLayerCA::setContentsOpaque(bool opaque)
 
     GraphicsLayer::setContentsOpaque(opaque);
     noteLayerPropertyChanged(ContentsOpaqueChanged);
-}
-
-void GraphicsLayerCA::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
-{
-    if (m_supportsSubpixelAntialiasedText == supportsSubpixelAntialiasedText)
-        return;
-
-    GraphicsLayer::setSupportsSubpixelAntialiasedText(supportsSubpixelAntialiasedText);
-    noteLayerPropertyChanged(SupportsSubpixelAntialiasedTextChanged);
 }
 
 void GraphicsLayerCA::setBackfaceVisibility(bool visible)
@@ -2103,9 +2085,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsNeedsDisplay)
         updateContentsNeedsDisplay();
 
-    if (m_uncommittedChanges & SupportsSubpixelAntialiasedTextChanged)
-        updateSupportsSubpixelAntialiasedText();
-
     if (m_uncommittedChanges & DebugIndicatorsChanged)
         updateDebugIndicators();
 
@@ -2754,11 +2733,6 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
 void GraphicsLayerCA::updateAcceleratesDrawing()
 {
     m_layer->setAcceleratesDrawing(m_acceleratesDrawing);
-}
-
-void GraphicsLayerCA::updateSupportsSubpixelAntialiasedText()
-{
-    m_layer->setSupportsSubpixelAntialiasedText(m_supportsSubpixelAntialiasedText);
 }
 
 static void setLayerDebugBorder(PlatformCALayer& layer, Color borderColor, float borderWidth)
@@ -4324,7 +4298,6 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::ReplicatedLayerChanged: return "ReplicatedLayerChanged";
     case LayerChange::ContentsNeedsDisplay: return "ContentsNeedsDisplay";
     case LayerChange::AcceleratesDrawingChanged: return "AcceleratesDrawingChanged";
-    case LayerChange::SupportsSubpixelAntialiasedTextChanged: return "SupportsSubpixelAntialiasedTextChanged";
     case LayerChange::ContentsScaleChanged: return "ContentsScaleChanged";
     case LayerChange::ContentsVisibilityChanged: return "ContentsVisibilityChanged";
     case LayerChange::CoverageRectChanged: return "CoverageRectChanged";
@@ -4513,7 +4486,6 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | BackgroundColorChanged
         | ContentsScaleChanged
         | AcceleratesDrawingChanged
-        | SupportsSubpixelAntialiasedTextChanged
         | FiltersChanged
         | BackdropFiltersChanged
         | MaskLayerChanged

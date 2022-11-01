@@ -218,7 +218,6 @@ public:
     void setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom);
     
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
-    bool paintsSubpixelAntialiasedText() const { return m_paintsSubpixelAntialiasedText; }
 
     // GraphicsLayerClient interface
     void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
@@ -447,7 +446,6 @@ private:
     bool m_backgroundLayerPaintsFixedRootBackground { false };
     bool m_requiresBackgroundLayer { false };
     bool m_hasSubpixelRounding { false };
-    bool m_paintsSubpixelAntialiasedText { false }; // This is for logging only.
 #if ENABLE(ASYNC_SCROLLING)
     bool m_needsEventRegionUpdate { true };
 #endif

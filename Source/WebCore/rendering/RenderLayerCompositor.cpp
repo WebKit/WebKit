@@ -1631,9 +1631,6 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
                 prefix = ", ";
             }
         }
-        
-        if (backing->paintsSubpixelAntialiasedText())
-            logString.append(prefix, "texty");
 
         logString.append("] ");
     }
@@ -2951,6 +2948,8 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
         auto backgroundClip = clippedLayer.backgroundClipRect(RenderLayer::ClipRectsContext(&clippingRoot, TemporaryClipRects, options));
         ASSERT(!backgroundClip.affectedByRadius());
         auto clipRect = backgroundClip.rect();
+        if (clipRect.isInfinite())
+            return;
         auto offset = layer.convertToLayerCoords(&clippingRoot, { }, RenderLayer::AdjustForColumns);
         clipRect.moveBy(-offset);
 
@@ -2960,10 +2959,10 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
 
     traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool /*isPaintOrderAncestor*/) {
         if (&ancestorLayer == compositingAncestor) {
-        
+            bool canUseDescendantClip = canUseDescendantClippingLayer(ancestorLayer);
             if (haveNonScrollableClippingIntermediateLayer)
-                pushNonScrollableClip(*currentClippedLayer, ancestorLayer, !canUseDescendantClippingLayer(ancestorLayer) ? RespectOverflowClip : IgnoreOverflowClip);
-            else if (!canUseDescendantClippingLayer(ancestorLayer) && newStack.isEmpty())
+                pushNonScrollableClip(*currentClippedLayer, ancestorLayer, !canUseDescendantClip ? RespectOverflowClip : IgnoreOverflowClip);
+            else if (!canUseDescendantClip && newStack.isEmpty())
                 pushNonScrollableClip(*currentClippedLayer, ancestorLayer, RespectOverflowClip);
 
             return AncestorTraversal::Stop;
@@ -2988,6 +2987,11 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                 newStack.insert(0, WTFMove(clipData));
                 currentClippedLayer = &ancestorLayer;
             } else if (box->hasNonVisibleOverflow() && box->style().hasBorderRadius()) {
+                if (haveNonScrollableClippingIntermediateLayer) {
+                    pushNonScrollableClip(*currentClippedLayer, ancestorLayer);
+                    haveNonScrollableClippingIntermediateLayer = false;
+                }
+                
                 auto clipRoundedRect = box->style().getRoundedInnerBorderFor(box->borderBoxRect());
 
                 auto offset = layer.convertToLayerCoords(&ancestorLayer, { }, RenderLayer::AdjustForColumns);

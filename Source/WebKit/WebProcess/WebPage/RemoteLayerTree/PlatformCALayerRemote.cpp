@@ -672,15 +672,6 @@ void PlatformCALayerRemote::setWantsDeepColorBackingStore(bool wantsDeepColorBac
     updateBackingStore();
 }
 
-bool PlatformCALayerRemote::supportsSubpixelAntialiasedText() const
-{
-    return false;
-}
-
-void PlatformCALayerRemote::setSupportsSubpixelAntialiasedText(bool)
-{
-}
-
 bool PlatformCALayerRemote::hasContents() const
 {
     return !!m_properties.backingStore;
