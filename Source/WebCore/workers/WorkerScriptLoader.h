@@ -136,6 +136,7 @@ private:
     bool m_finishing { false };
     bool m_isRedirected { false };
     bool m_isCOEPEnabled { false };
+    bool m_didAddToWorkerScriptLoaderMap { false };
     ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceError m_error;
     ScriptExecutionContextIdentifier m_clientIdentifier;

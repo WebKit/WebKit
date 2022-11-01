@@ -1,0 +1,10 @@
+Make sure that shared workers are functional even when service workers are disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS message is "pong"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
