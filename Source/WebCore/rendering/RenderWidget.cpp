@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -339,8 +339,9 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document().printing()) {
-        // FIXME: selectionRect() is in absolute, not painting coordinates.
-        paintInfo.context().fillRect(snappedIntRect(selectionRect()), selectionBackgroundColor());
+        LayoutRect rect = localSelectionRect();
+        rect.moveBy(adjustedPaintOffset);
+        paintInfo.context().fillRect(snappedIntRect(rect), selectionBackgroundColor());
     }
 
     if (hasLayer() && layer()->canResize()) {
