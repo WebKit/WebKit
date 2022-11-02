@@ -2154,10 +2154,11 @@ static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
 
     return StyleGradientImage::create(
         StyleGradientImage::LinearData {
-            nullptr, nullptr, nullptr, nullptr, CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG)
+            {
+                CSSLinearGradientValue::Angle { CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG) }
+            },
+            CSSGradientRepeat::NonRepeating
         },
-        CSSGradientRepeat::NonRepeating,
-        CSSGradientType::CSSLinearGradient,
         CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied),
         WTFMove(stops)
     );

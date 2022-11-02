@@ -115,6 +115,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCursorImageValue>(*this));
     case CustomPropertyClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCustomPropertyValue>(*this));
+    case DeprecatedLinearGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSDeprecatedLinearGradientValue>(*this));
+    case DeprecatedRadialGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSDeprecatedRadialGradientValue>(*this));
     case FilterImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFilterImageValue>(*this));
     case FontClass:
@@ -153,6 +157,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearGradientValue>(*this));
     case NamedImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSNamedImageValue>(*this));
+    case PrefixedLinearGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPrefixedLinearGradientValue>(*this));
+    case PrefixedRadialGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPrefixedRadialGradientValue>(*this));
     case RadialGradientClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRadialGradientValue>(*this));
     case OffsetRotateClass:
