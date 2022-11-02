@@ -577,7 +577,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
             targetWidth = videoDimensions.width * preferredHeight / videoDimensions.height;
     }
 
-    [_window setFrame:CGRectMake(0, 0, targetWidth, targetHeight)];
+    [_window setFrame:CGRectMake(0, 0, floorf(targetWidth), floorf(targetHeight))];
     [_window setClipsToBounds:YES];
     [_window _setContinuousCornerRadius:kFullScreenWindowCornerRadius];
     [_window setNeedsLayout];
@@ -739,7 +739,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
             [_fullscreenViewController showBanner];
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, [_window frame].size);
+            configureViewControllerForEnteringFullscreen(_fullscreenViewController.get(), kAnimationDuration, [_window frame].size);
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -874,7 +874,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
         [self _dismissFullscreenViewController];
     };
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _originalWindowSize, WTFMove(completionHandler));
+    configureViewControllerForExitingFullscreen(_fullscreenViewController.get(), kAnimationDuration, _originalWindowSize, WTFMove(completionHandler));
 #else
     completionHandler();
 #endif
