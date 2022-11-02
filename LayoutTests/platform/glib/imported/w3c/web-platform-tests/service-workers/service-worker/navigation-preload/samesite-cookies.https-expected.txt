@@ -1,8 +1,0 @@
-
-
-PASS Set up a service worker for navigation preload tests.
-FAIL Navigation Preload for same site cookies (None). assert_equals: second visit expected "1" but got "0"
-PASS Navigation Preload for same site cookies (Strict).
-PASS Navigation Preload for same site cookies (Lax).
-PASS Unregister a service worker.
-
