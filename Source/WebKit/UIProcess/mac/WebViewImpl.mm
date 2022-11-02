@@ -333,7 +333,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [self startObservingFontPanel];
 
-    [self _observeWindow:window];
+    [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
+    [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
+
+    _observedWindow = window;
 }
 
 - (void)stopObserving:(NSWindow *)window
@@ -364,25 +367,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
 
-    [self _observeWindow:nil];
-}
-
-- (void)_observeWindow:(NSWindow *)window
-{
-    if (_observedWindow == window)
-        return;
-
-    if (_observedWindow) {
-        [_observedWindow removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
-        [_observedWindow removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
+    if (_observedWindow == window) {
+        [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
+        [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
     }
 
-    _observedWindow = window;
-
-    if (window) {
-        [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-        [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-    }
+    _observedWindow = nil;
 }
 
 - (void)startObservingFontPanel
