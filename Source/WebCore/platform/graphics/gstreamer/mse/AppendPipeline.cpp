@@ -738,7 +738,16 @@ createOptionalParserForFormat(const AtomString& trackId, const GstCaps* caps)
         }
     }
     GST_DEBUG("Creating %s parser for stream with caps %" GST_PTR_FORMAT, elementClass, caps);
-    return GRefPtr<GstElement>(makeGStreamerElement(elementClass, parserName.ascii().data()));
+    GRefPtr<GstElement> result(makeGStreamerElement(elementClass, parserName.ascii().data()));
+    if (!result) {
+        if (g_strcmp0(elementClass, "identity")) {
+            GST_WARNING("Couldn't create %s, there might be problems processing some MSE streams. "
+                "Continue at your own risk and consider adding %s to your build.", elementClass, elementClass);
+            result = makeGStreamerElement("identity", parserName.ascii().data());
+        } else
+            GST_ERROR("Couldn't create identity");
+    }
+    return result;
 }
 
 AtomString AppendPipeline::generateTrackId(StreamType streamType, int padIndex)
