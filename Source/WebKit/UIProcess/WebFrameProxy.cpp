@@ -322,3 +322,5 @@ void WebFrameProxy::collapseSelection()
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
