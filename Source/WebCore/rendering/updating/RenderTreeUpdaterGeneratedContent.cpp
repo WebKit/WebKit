@@ -27,7 +27,6 @@
 #include "RenderTreeUpdaterGeneratedContent.h"
 
 #include "ContentData.h"
-#include "FullscreenManager.h"
 #include "InspectorInstrumentation.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
