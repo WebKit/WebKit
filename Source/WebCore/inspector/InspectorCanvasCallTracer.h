@@ -78,6 +78,7 @@ enum class CanvasLineCap;
 enum class CanvasLineJoin;
 enum class CanvasTextAlign;
 enum class CanvasTextBaseline;
+enum class PredefinedColorSpace;
 enum ImageSmoothingQuality;
 
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT(macro) \
@@ -161,6 +162,7 @@ enum ImageSmoothingQuality;
     macro(std::optional<float>&) \
     macro(std::optional<double>&) \
     macro(Path2D*) \
+    macro(PredefinedColorSpace) \
     macro(RefPtr<CanvasGradient>&) \
     macro(RefPtr<CanvasPattern>&) \
     macro(RefPtr<HTMLCanvasElement>&) \

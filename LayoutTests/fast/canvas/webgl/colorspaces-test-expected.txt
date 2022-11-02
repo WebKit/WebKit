@@ -1,0 +1,134 @@
+This test ensures WebGL implementations correctly implement drawingbufferColorSpace.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test(w=4, h=4, drawingBufferColorSpace=DONT_SET, expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=DONT_SET, expectedDrawingBufferColorSpace="srgb", color="0,1,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=DONT_SET, expectedDrawingBufferColorSpace="srgb", color="0,0,1")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="srgb", expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="srgb"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="srgb", expectedDrawingBufferColorSpace="srgb", color="0,1,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="srgb"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="srgb", expectedDrawingBufferColorSpace="srgb", color="0,0,1")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="srgb"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="display-p3", expectedDrawingBufferColorSpace="display-p3", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="display-p3"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="display-p3", expectedDrawingBufferColorSpace="display-p3", color="0,1,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="display-p3"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="display-p3", expectedDrawingBufferColorSpace="display-p3", color="0,0,1")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="display-p3"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="invalid", expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace="invalid"
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace="", expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace=""
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=null, expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace=null
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=undefined, expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace=undefined
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=0, expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace=0
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=1, expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace=1
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+test(w=4, h=4, drawingBufferColorSpace=new Date, expectedDrawingBufferColorSpace="srgb", color="1,0,0")
+PASS context exists
+PASS gl.drawingBufferColorSpace is "srgb"
+Setting gl.drawingBufferColorSpace=new Date
+PASS gl.drawingBufferColorSpace is as_expected
+PASS gl.getError() is gl.NO_ERROR
+PASS Canvas color as expected
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

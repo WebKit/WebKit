@@ -600,6 +600,10 @@ bool GraphicsContextGL::extractTextureData(unsigned width, unsigned height, GCGL
     return true;
 }
 
+void GraphicsContextGL::setDrawingBufferColorSpace(const DestinationColorSpace&)
+{
+}
+
 void GraphicsContextGL::markContextChanged()
 {
     m_layerComposited = false;
