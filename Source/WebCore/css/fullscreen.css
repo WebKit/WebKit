@@ -103,4 +103,17 @@ iframe:-webkit-full-screen {
     max-height: none !important;
 }
 
+/* FIXME: Use top layer backdrop (webkit.org/b/84798). */
+:-webkit-full-screen-parent::before {
+    content: "" !important;
+    position: fixed !important;
+    background: black !important;
+    z-index: 2147483647 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    inset: 0 !important;
+    box-sizing: border-box !important;
+}
+
 #endif
