@@ -142,7 +142,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     __block bool indent = false;
 
     __auto_type addItemToMenu = ^(NSMenu *menu, NSString *title, SEL action, BOOL indent, NSInteger tag) {
-        return addItemToMenuWithTarget(menu, title, self, action, indent, 0);
+        return addItemToMenuWithTarget(menu, title, self, action, indent, tag);
     };
 
     __auto_type addItem = ^(NSString *title, SEL action) {

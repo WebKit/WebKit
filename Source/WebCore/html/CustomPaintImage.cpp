@@ -103,7 +103,7 @@ private:
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID propertyID) const final
     {
-        return m_map.get(getPropertyNameAtomString(propertyID));
+        return m_map.get(nameString(propertyID));
     }
 
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final

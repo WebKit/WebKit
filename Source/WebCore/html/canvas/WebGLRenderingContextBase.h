@@ -32,6 +32,7 @@
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
 #include "ImageBuffer.h"
+#include "PredefinedColorSpace.h"
 #include "SuspendableTimer.h"
 #include "Timer.h"
 #include "WebGLAny.h"
@@ -182,6 +183,9 @@ public:
 
     int drawingBufferWidth() const;
     int drawingBufferHeight() const;
+
+    PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }
+    void setDrawingBufferColorSpace(PredefinedColorSpace);
 
     void activeTexture(GCGLenum texture);
     void attachShader(WebGLProgram&, WebGLShader&);
@@ -693,6 +697,8 @@ protected:
 
     std::optional<ContextLostState>  m_contextLostState;
     WebGLContextAttributes m_attributes;
+
+    PredefinedColorSpace m_drawingBufferColorSpace { PredefinedColorSpace::SRGB };
 
     bool m_layerCleared;
     GCGLfloat m_clearColor[4];

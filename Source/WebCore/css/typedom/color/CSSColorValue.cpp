@@ -69,11 +69,74 @@ ExceptionOr<RectifiedCSSColorPercent> CSSColorValue::rectifyCSSColorPercent(CSSC
     });
 }
 
+// https://drafts.css-houdini.org/css-typed-om/#rectify-a-csscolorangle
+ExceptionOr<RectifiedCSSColorAngle> CSSColorValue::rectifyCSSColorAngle(CSSColorAngle&& colorAngle)
+{
+    return switchOn(WTFMove(colorAngle), [](double value) -> ExceptionOr<RectifiedCSSColorAngle> {
+        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::CSS_DEG) } };
+    }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorAngle> {
+        if (numericValue->type().matches<CSSNumericBaseType::Angle>())
+            return { WTFMove(numericValue) };
+        return Exception { SyntaxError, "Invalid CSSColorAngle"_s };
+    }, [](String&& string) -> ExceptionOr<RectifiedCSSColorAngle> {
+        return { RefPtr<CSSKeywordValue> { CSSKeywordValue::rectifyKeywordish(WTFMove(string)) } };
+    }, [](RefPtr<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorAngle> {
+        if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
+            return { WTFMove(keywordValue) };
+        return Exception { SyntaxError, "Invalid CSSColorAngle"_s };
+    });
+}
+
+// https://drafts.css-houdini.org/css-typed-om/#rectify-a-csscolornumber
+ExceptionOr<RectifiedCSSColorNumber> CSSColorValue::rectifyCSSColorNumber(CSSColorNumber&& colorNumber)
+{
+    return switchOn(WTFMove(colorNumber), [](double value) -> ExceptionOr<RectifiedCSSColorNumber> {
+        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::CSS_NUMBER) } };
+    }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorNumber> {
+        if (numericValue->type().matchesNumber())
+            return { WTFMove(numericValue) };
+        return Exception { SyntaxError, "Invalid CSSColorNumber"_s };
+    }, [](String&& string) -> ExceptionOr<RectifiedCSSColorNumber> {
+        return { RefPtr<CSSKeywordValue> { CSSKeywordValue::rectifyKeywordish(WTFMove(string)) } };
+    }, [](RefPtr<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorNumber> {
+        if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
+            return { WTFMove(keywordValue) };
+        return Exception { SyntaxError, "Invalid CSSColorNumber"_s };
+    });
+}
+
 CSSColorPercent CSSColorValue::toCSSColorPercent(const RectifiedCSSColorPercent& component)
 {
     return switchOn(component, [](const RefPtr<CSSKeywordValue>& keywordValue) -> CSSColorPercent {
         return keywordValue;
     }, [](const RefPtr<CSSNumericValue>& numericValue) -> CSSColorPercent {
+        return numericValue;
+    });
+}
+
+CSSColorPercent CSSColorValue::toCSSColorPercent(const CSSNumberish& numberish)
+{
+    return switchOn(numberish, [](double number) -> CSSColorPercent {
+        return number;
+    }, [](const RefPtr<CSSNumericValue>& numericValue) -> CSSColorPercent {
+        return numericValue;
+    });
+}
+
+CSSColorAngle CSSColorValue::toCSSColorAngle(const RectifiedCSSColorAngle& angle)
+{
+    return switchOn(angle, [](const RefPtr<CSSKeywordValue>& keywordValue) -> CSSColorAngle {
+        return keywordValue;
+    }, [](const RefPtr<CSSNumericValue>& numericValue) -> CSSColorAngle {
+        return numericValue;
+    });
+}
+
+CSSColorNumber CSSColorValue::toCSSColorNumber(const RectifiedCSSColorNumber& number)
+{
+    return switchOn(number, [](const RefPtr<CSSKeywordValue>& keywordValue) -> CSSColorNumber {
+        return keywordValue;
+    }, [](const RefPtr<CSSNumericValue>& numericValue) -> CSSColorNumber {
         return numericValue;
     });
 }

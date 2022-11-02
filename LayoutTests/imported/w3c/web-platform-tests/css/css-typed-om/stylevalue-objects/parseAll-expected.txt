@@ -2,6 +2,6 @@
 PASS CSSStyleValue.parseAll() with a valid property returns a list with a single CSSStyleValue
 PASS CSSStyleValue.parseAll() is not case sensitive
 PASS CSSStyleValue.parseAll() with a valid list-valued property returns a list with a single CSSStyleValue
-FAIL CSSStyleValue.parseAll() with a valid shorthand property returns a CSSStyleValue assert_equals: Result must be a list with one element expected 1 but got 4
+PASS CSSStyleValue.parseAll() with a valid shorthand property returns a CSSStyleValue
 PASS CSSStyleValue.parseAll() with a valid custom property returns a list with a single CSSStyleValue
 

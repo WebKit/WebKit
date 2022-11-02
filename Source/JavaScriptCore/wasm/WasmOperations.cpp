@@ -630,7 +630,6 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
         result->initializeIndex(initializationScope, i, value);
     }
 
-    ASSERT(result->indexingType() == indexingType);
     return result;
 }
 

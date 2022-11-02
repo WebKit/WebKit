@@ -307,6 +307,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void DrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
     void ProvokingVertexANGLE(uint32_t mode)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
+    void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
     void PaintRenderingResultsToPixelBuffer() -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
 }
 

@@ -153,8 +153,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
                 if (cssPropertyId == CSSPropertyCustom)
                     continue;
 
-                stylePayloadBuilder.append(getPropertyNameString(cssPropertyId));
-                stylePayloadBuilder.append(": ");
+                stylePayloadBuilder.append(nameString(cssPropertyId), ": ");
                 if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
                     stylePayloadBuilder.append(value->cssText());
                 stylePayloadBuilder.append(';');

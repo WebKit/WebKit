@@ -1397,6 +1397,11 @@
         m_context->getInternalformativ(target, internalformat, pname, params);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
     }
+    void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& arg0)
+    {
+        assertIsCurrent(workQueue());
+        m_context->setDrawingBufferColorSpace(arg0);
+    }
     void paintRenderingResultsToPixelBuffer(CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
         RefPtr<WebCore::PixelBuffer> returnValue = { };

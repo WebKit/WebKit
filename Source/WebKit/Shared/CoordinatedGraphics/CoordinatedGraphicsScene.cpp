@@ -47,15 +47,15 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
 
 CoordinatedGraphicsScene::~CoordinatedGraphicsScene() = default;
 
-void CoordinatedGraphicsScene::applyStateChanges(const Vector<CoordinatedGraphicsState>& states)
+void CoordinatedGraphicsScene::applyStateChanges(const Vector<RefPtr<Nicosia::Scene>>& states)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
 
     ensureRootLayer();
 
-    for (auto& state : states)
-        commitSceneState(state.nicosia);
+    for (auto& scene : states)
+        commitSceneState(scene);
 }
 
 void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
@@ -194,12 +194,12 @@ void removeLayer(Nicosia::CompositionLayer& layer)
     compositionState.layer = nullptr;
 }
 
-void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState::NicosiaState& state)
+void CoordinatedGraphicsScene::commitSceneState(const RefPtr<Nicosia::Scene>& scene)
 {
     if (!m_client)
         return;
 
-    m_nicosia.scene = state.scene;
+    m_nicosia.scene = scene;
 }
 
 void CoordinatedGraphicsScene::updateSceneState()

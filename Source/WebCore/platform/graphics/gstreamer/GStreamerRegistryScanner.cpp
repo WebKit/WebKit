@@ -328,7 +328,13 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     bool shouldAddMP4Container = false;
 
     auto h264DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h264, profile=(string){ constrained-baseline, baseline, high }", ElementFactories::CheckHardwareClassifier::Yes);
-    if (h264DecoderAvailable && (!m_isMediaSource || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h264"))) {
+    auto h264AllFormatsDecoderAvailable = GStreamerRegistryScanner::RegistryLookupResult::merge(
+        factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h264, profile=(string){ constrained-baseline, baseline, high }, stream-format=(string)avc", ElementFactories::CheckHardwareClassifier::Yes),
+        factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h264, profile=(string){ constrained-baseline, baseline, high }, stream-format=(string)byte-stream", ElementFactories::CheckHardwareClassifier::Yes)
+    );
+    auto needsH264Parse = h264DecoderAvailable != h264AllFormatsDecoderAvailable;
+
+    if (h264DecoderAvailable && (!needsH264Parse || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h264"))) {
         shouldAddMP4Container = true;
         m_decoderCodecMap.add(AtomString("x-h264"_s), h264DecoderAvailable.isUsingHardware);
         m_decoderCodecMap.add(AtomString("avc*"_s), h264DecoderAvailable.isUsingHardware);
@@ -336,7 +342,16 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     }
 
     auto h265DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h265", ElementFactories::CheckHardwareClassifier::Yes);
-    if (h265DecoderAvailable && (!m_isMediaSource || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h265"))) {
+    auto h265AllFormatsDecoderAvailable = GStreamerRegistryScanner::RegistryLookupResult::merge(
+        factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h265, stream-format=(string)byte-stream", ElementFactories::CheckHardwareClassifier::Yes),
+        GStreamerRegistryScanner::RegistryLookupResult::merge(
+            factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h265, stream-format=(string)hev1", ElementFactories::CheckHardwareClassifier::Yes),
+            factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h265, stream-format=(string)hvc1", ElementFactories::CheckHardwareClassifier::Yes)
+        )
+    );
+    auto needsH265Parse = h265DecoderAvailable != h265AllFormatsDecoderAvailable;
+
+    if (h265DecoderAvailable && (!needsH265Parse || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h265"))) {
         shouldAddMP4Container = true;
         m_decoderCodecMap.add(AtomString("x-h265"_s), h265DecoderAvailable.isUsingHardware);
         m_decoderCodecMap.add(AtomString("hvc1*"_s), h265DecoderAvailable.isUsingHardware);

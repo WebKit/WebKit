@@ -30,7 +30,6 @@
 #include "CSSPropertyParser.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
-#include "HashTools.h"
 #include "Settings.h"
 #include "StyledElement.h"
 #include <variant>
@@ -121,7 +120,7 @@ static inline void writeEpubPrefix(char*& buffer)
 
 static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyName)
 {
-    using CSSPropertyIDMap = HashMap<String, CSSPropertyID>;
+    using CSSPropertyIDMap = HashMap<AtomString, CSSPropertyID>;
     static NeverDestroyed<CSSPropertyIDMap> propertyIDCache;
 
     auto* propertyNameString = propertyName.impl();
@@ -132,10 +131,10 @@ static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyNa
     if (!length)
         return CSSPropertyInvalid;
 
-    if (auto id = propertyIDCache.get().get(propertyNameString))
+    if (auto id = propertyIDCache.get().get(propertyName))
         return id;
 
-    constexpr size_t bufferSize = maxCSSPropertyNameLength + 1;
+    constexpr size_t bufferSize = maxCSSPropertyNameLength;
     char buffer[bufferSize];
     char* bufferPtr = buffer;
     const char* name = bufferPtr;
@@ -181,26 +180,12 @@ static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyNa
         ASSERT_WITH_SECURITY_IMPLICATION(bufferPtr < bufferEnd);
     }
     ASSERT_WITH_SECURITY_IMPLICATION(bufferPtr < bufferEnd);
-    *bufferPtr = '\0';
 
     unsigned outputLength = bufferPtr - buffer;
-    auto hashTableEntry = findProperty(name, outputLength);
-    if (!hashTableEntry)
-        return CSSPropertyInvalid;
-
-    auto id = static_cast<CSSPropertyID>(hashTableEntry->id);
-    if (!id)
-        return CSSPropertyInvalid;
-
-    propertyIDCache.get().add(propertyNameString, id);
-    return id;
-}
-
-static CSSPropertyID propertyIDFromJavaScriptCSSPropertyName(const AtomString& propertyName, const Settings* settings)
-{
-    auto id = parseJavaScriptCSSPropertyName(propertyName);
-    if (!isCSSPropertyExposed(id, settings))
-        return CSSPropertyInvalid;
+    auto id = findCSSProperty(name, outputLength);
+    // FIXME: Why aren't we memoizing CSS property names we fail to find?
+    if (id != CSSPropertyInvalid)
+        propertyIDCache.get().add(propertyName, id);
     return id;
 }
 
@@ -208,8 +193,10 @@ static CSSPropertyID propertyIDFromJavaScriptCSSPropertyName(const AtomString& p
 
 CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(const AtomString& propertyName)
 {
-    // FIXME: This is going to return incorrect results for css properties disabled by Settings.
-    return propertyIDFromJavaScriptCSSPropertyName(propertyName, nullptr);
+    // FIXME: This exposes properties disabled by settings. Pass result of CSSStyleDeclaration::settings instead of null?
+    Settings* settings = nullptr;
+    auto property = parseJavaScriptCSSPropertyName(propertyName);
+    return isExposed(property, settings) ? property : CSSPropertyInvalid;
 }
 
 const Settings* CSSStyleDeclaration::settings() const
@@ -226,7 +213,7 @@ template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromI
     if (auto id = cache.get().get(attribute))
         return id;
 
-    char outputBuffer[maxCSSPropertyNameLength + 1];
+    char outputBuffer[maxCSSPropertyNameLength];
     char* outputBufferCurrent = outputBuffer;
     const char* outputBufferStart = outputBufferCurrent;
 
@@ -248,7 +235,6 @@ template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromI
                     *outputBufferCurrent++ = c;
             }
         });
-        *outputBufferCurrent = '\0';
     } else {
         readCharactersForParsing(attribute, [&](auto buffer) {
             while (buffer.hasCharactersRemaining()) {
@@ -257,13 +243,10 @@ template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromI
                 *outputBufferCurrent++ = c;
             }
         });
-        *outputBufferCurrent = '\0';
     }
 
-    auto hashTableEntry = findProperty(outputBufferStart, outputBufferCurrent - outputBuffer);
-    ASSERT_WITH_MESSAGE(hashTableEntry, "Invalid property name: %s", attribute.string().utf8().data());
-
-    auto id = static_cast<CSSPropertyID>(hashTableEntry->id);
+    auto id = findCSSProperty(outputBufferStart, outputBufferCurrent - outputBuffer);
+    ASSERT_WITH_MESSAGE(id != CSSPropertyInvalid, "Invalid property name: %s", attribute.string().utf8().data());
     cache.get().add(attribute, id);
     return id;
 }

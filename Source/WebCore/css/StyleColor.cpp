@@ -54,7 +54,7 @@ Color StyleColor::colorFromAbsoluteKeyword(CSSValueID keyword)
 {
     // TODO: maybe it should be a constexpr map for performance.
     ASSERT(StyleColor::isAbsoluteColorKeyword(keyword));
-    if (const char* valueName = getValueName(keyword)) {
+    if (const char* valueName = nameLiteral(keyword)) {
         if (auto namedColor = findColor(valueName, strlen(valueName)))
             return asSRGBA(PackedColor::ARGB { namedColor->ARGBValue });
     }

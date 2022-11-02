@@ -75,21 +75,21 @@ static inline void invalidateElement(const std::optional<const Styleable>& style
         styleable->element.invalidateStyleInternal();
 }
 
-String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
+String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID property)
 {
     // https://drafts.csswg.org/web-animations-1/#animation-property-name-to-idl-attribute-name
     // 1. If property follows the <custom-property-name> production, return property.
 
     // 2. If property refers to the CSS float property, return the string "cssFloat".
-    if (cssPropertyId == CSSPropertyFloat)
+    if (property == CSSPropertyFloat)
         return "cssFloat"_s;
 
     // 3. If property refers to the CSS offset property, return the string "cssOffset".
-    if (cssPropertyId == CSSPropertyOffset)
+    if (property == CSSPropertyOffset)
         return "cssOffset"_s;
 
     // 4. Otherwise, return the result of applying the CSS property to IDL attribute algorithm [CSSOM] to property.
-    return getJSPropertyName(cssPropertyId);
+    return nameForIDL(property);
 }
 
 static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomString& idlAttributeName)
@@ -233,7 +233,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     Vector<JSC::Identifier> animationProperties;
     for (auto& inputProperty : inputProperties) {
         auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
-        if (!isCSSPropertyExposed(cssProperty, &document.settings()))
+        if (!isExposed(cssProperty, &document.settings()))
             cssProperty = CSSPropertyInvalid;
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
         if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty))
@@ -277,7 +277,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
         auto propertyName = animationProperties[i].string();
         auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(propertyName);
-        ASSERT(isCSSPropertyExposed(cssPropertyID, &document.settings()));
+        ASSERT(isExposed(cssPropertyID, &document.settings()));
 
         // 5. Add a property to to keyframe output with normalized property name as the property name, and property values as the property value.
         if (cssPropertyID == CSSPropertyCustom)

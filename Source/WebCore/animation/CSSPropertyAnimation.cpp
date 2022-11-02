@@ -758,7 +758,7 @@ public:
 #if !LOG_DISABLED
     void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1680,7 +1680,7 @@ private:
     void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
         // FIXME: better logging.
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1865,7 +1865,7 @@ protected:
 #if !LOG_DISABLED
     void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const override
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1897,7 +1897,7 @@ private:
 #if !LOG_DISABLED
     void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(FillLayerPropertyWrapperGetter<const T&>::property())
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(FillLayerPropertyWrapperGetter<const T&>::property())
             << " from " << FillLayerPropertyWrapperGetter<const T&>::value(from)
             << " to " << FillLayerPropertyWrapperGetter<const T&>::value(to)
             << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<const T&>::value(destination));
@@ -1962,7 +1962,7 @@ private:
 #if !LOG_DISABLED
     void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1991,7 +1991,7 @@ private:
 #if !LOG_DISABLED
     void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const override
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(FillLayerPropertyWrapperGetter<T*>::property())
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(FillLayerPropertyWrapperGetter<T*>::property())
             << " from " << FillLayerPropertyWrapperGetter<T*>::value(from)
             << " to " << FillLayerPropertyWrapperGetter<T*>::value(to)
             << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<T*>::value(destination));
@@ -2027,7 +2027,7 @@ private:
 #if !LOG_DISABLED
     void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(this->property()) << " from " << this->value(from) << " to " << this->value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(this->property()) << " from " << this->value(from) << " to " << this->value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 };
@@ -2054,7 +2054,7 @@ private:
 #if !LOG_DISABLED
     void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(this->property()) << " from " << (from->*m_getter)() << " to " << (to->*m_getter)() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << (destination->*m_getter)());
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(this->property()) << " from " << (from->*m_getter)() << " to " << (to->*m_getter)() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << (destination->*m_getter)());
     }
 #endif
 
@@ -2617,7 +2617,7 @@ public:
 #if !LOG_DISABLED
     void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << from.logicalAspectRatio() << " to " << to.logicalAspectRatio() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << destination.logicalAspectRatio());
+        LOG_WITH_STREAM(Animations, stream << "  blending " << nameLiteral(property()) << " from " << from.logicalAspectRatio() << " to " << to.logicalAspectRatio() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << destination.logicalAspectRatio());
     }
 #endif
 
@@ -2834,7 +2834,7 @@ public:
 #if !LOG_DISABLED
     void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << " blending " << getPropertyName(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
+        LOG_WITH_STREAM(Animations, stream << " blending " << nameLiteral(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
     }
 #endif
 
@@ -2966,7 +2966,7 @@ public:
 #if !LOG_DISABLED
     void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << " blending " << getPropertyName(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
+        LOG_WITH_STREAM(Animations, stream << " blending " << nameLiteral(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
     }
 #endif
 
@@ -3093,7 +3093,7 @@ public:
 
     AnimationPropertyWrapperBase* wrapperForProperty(CSSPropertyID propertyID)
     {
-        if (propertyID < firstCSSProperty || propertyID > lastCSSProperty)
+        if (propertyID < firstCSSProperty || propertyID - firstCSSProperty >= numCSSProperties)
             return nullptr;
 
         unsigned wrapperIndex = indexFromPropertyID(propertyID);
@@ -3527,8 +3527,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     }
 
 #ifndef NDEBUG
-    for (auto i = firstCSSProperty; i <= lastCSSProperty; ++i) {
-        auto property = convertToCSSPropertyID(i);
+    for (auto property : allCSSProperties()) {
         switch (property) {
         // If a property is not animatable per spec, add it to this list of cases.
         // When adding a new property, you should make sure it belongs in this list

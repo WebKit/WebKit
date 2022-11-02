@@ -22,13 +22,13 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/NicosiaImageBackingStore.h>
 #include <WebCore/NicosiaPlatformLayer.h>
+#include <WebCore/NicosiaScene.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperBackingStore.h>
 #include <WebCore/TextureMapperFPSCounter.h>
@@ -64,7 +64,7 @@ public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
 
-    void applyStateChanges(const Vector<WebCore::CoordinatedGraphicsState>&);
+    void applyStateChanges(const Vector<RefPtr<Nicosia::Scene>>&);
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
     void updateSceneState();
     void detach();
@@ -77,7 +77,7 @@ public:
     void setActive(bool active) { m_isActive = active; }
 
 private:
-    void commitSceneState(const WebCore::CoordinatedGraphicsState::NicosiaState&);
+    void commitSceneState(const RefPtr<Nicosia::Scene>&);
 
     WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 

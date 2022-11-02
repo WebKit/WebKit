@@ -49,34 +49,42 @@ static inline bool operator==(const StyleGradientImageStop& a, const StyleGradie
 
 static inline bool operator==(const StyleGradientImage::LinearData& a, const StyleGradientImage::LinearData& b)
 {
-    return compareCSSValuePtr(a.firstX, b.firstX)
-        && compareCSSValuePtr(a.firstY, b.firstY)
-        && compareCSSValuePtr(a.secondX, b.secondX)
-        && compareCSSValuePtr(a.secondY, b.secondY)
-        && compareCSSValuePtr(a.angle, b.angle);
+    return a.repeating == b.repeating
+        && a.data == b.data;
+}
+
+static inline bool operator==(const StyleGradientImage::PrefixedLinearData& a, const StyleGradientImage::PrefixedLinearData& b)
+{
+    return a.repeating == b.repeating
+        && a.data == b.data;
+}
+
+static inline bool operator==(const StyleGradientImage::DeprecatedLinearData& a, const StyleGradientImage::DeprecatedLinearData& b)
+{
+    return a.data == b.data;
 }
 
 static inline bool operator==(const StyleGradientImage::RadialData& a, const StyleGradientImage::RadialData& b)
 {
-    return compareCSSValuePtr(a.firstX, b.firstX)
-        && compareCSSValuePtr(a.firstY, b.firstY)
-        && compareCSSValuePtr(a.secondX, b.secondX)
-        && compareCSSValuePtr(a.secondY, b.secondY)
-        && compareCSSValuePtr(a.firstRadius, b.firstRadius)
-        && compareCSSValuePtr(a.secondRadius, b.secondRadius)
-        && compareCSSValuePtr(a.shape, b.shape)
-        && compareCSSValuePtr(a.sizingBehavior, b.sizingBehavior)
-        && compareCSSValuePtr(a.endHorizontalSize, b.endHorizontalSize)
-        && compareCSSValuePtr(a.endVerticalSize, b.endVerticalSize);
+    return a.repeating == b.repeating
+        && a.data == b.data;
+}
+
+static inline bool operator==(const StyleGradientImage::PrefixedRadialData& a, const StyleGradientImage::PrefixedRadialData& b)
+{
+    return a.repeating == b.repeating
+        && a.data == b.data;
+}
+
+static inline bool operator==(const StyleGradientImage::DeprecatedRadialData& a, const StyleGradientImage::DeprecatedRadialData& b)
+{
+    return a.data == b.data;
 }
 
 static inline bool operator==(const StyleGradientImage::ConicData& a, const StyleGradientImage::ConicData& b)
 {
-    return compareCSSValuePtr(a.firstX, b.firstX)
-        && compareCSSValuePtr(a.firstY, b.firstY)
-        && compareCSSValuePtr(a.secondX, b.secondX)
-        && compareCSSValuePtr(a.secondY, b.secondY)
-        && compareCSSValuePtr(a.angle, b.angle);
+    return a.repeating == b.repeating
+        && a.data == b.data;
 }
 
 static bool stopsAreCacheable(const Vector<StyleGradientImage::Stop>& stops)
@@ -100,11 +108,9 @@ static Color resolveColorStopColor(const std::optional<StyleColor>& styleColor, 
     return style.colorResolvingCurrentColor(*styleColor);
 }
 
-StyleGradientImage::StyleGradientImage(Data&& data, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImageStop>&& stops)
+StyleGradientImage::StyleGradientImage(Data&& data, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImageStop>&& stops)
     : StyleGeneratedImage { Type::GradientImage, StyleGradientImage::isFixedSize }
     , m_data { WTFMove(data) }
-    , m_repeat { repeat }
-    , m_gradientType { gradientType }
     , m_colorInterpolationMethod { colorInterpolationMethod }
     , m_stops { WTFMove(stops) }
     , m_knownCacheableBarringFilter { stopsAreCacheable(stops) }
@@ -120,9 +126,7 @@ bool StyleGradientImage::operator==(const StyleImage& other) const
 
 bool StyleGradientImage::equals(const StyleGradientImage& other) const
 {
-    return m_repeat == other.m_repeat
-        && m_gradientType == other.m_gradientType
-        && m_colorInterpolationMethod == other.m_colorInterpolationMethod
+    return m_colorInterpolationMethod == other.m_colorInterpolationMethod
         && m_data == other.m_data
         && m_stops == other.m_stops;
 }
@@ -142,36 +146,25 @@ Ref<CSSValue> StyleGradientImage::computedStyleValue(const RenderStyle& style) c
 
     return WTF::switchOn(m_data,
         [&] (const LinearData& data) -> Ref<CSSValue> {
-            auto result = CSSLinearGradientValue::create(m_repeat, m_gradientType, m_colorInterpolationMethod, WTFMove(cssStopList));
-            result->setFirstX(data.firstX.copyRef());
-            result->setFirstY(data.firstY.copyRef());
-            result->setSecondX(data.secondX.copyRef());
-            result->setSecondY(data.secondY.copyRef());
-            result->setAngle(data.angle.copyRef());
-            return result;
+            return CSSLinearGradientValue::create(data.data, data.repeating, m_colorInterpolationMethod, WTFMove(cssStopList));
+        },
+        [&] (const PrefixedLinearData& data) -> Ref<CSSValue> {
+            return CSSPrefixedLinearGradientValue::create(data.data, data.repeating, m_colorInterpolationMethod, WTFMove(cssStopList));
+        },
+        [&] (const DeprecatedLinearData& data) -> Ref<CSSValue> {
+            return CSSDeprecatedLinearGradientValue::create(data.data, m_colorInterpolationMethod, WTFMove(cssStopList));
         },
         [&] (const RadialData& data) -> Ref<CSSValue> {
-            auto result = CSSRadialGradientValue::create(m_repeat, m_gradientType, m_colorInterpolationMethod, WTFMove(cssStopList));
-            result->setFirstX(data.firstX.copyRef());
-            result->setFirstY(data.firstY.copyRef());
-            result->setSecondX(data.secondX.copyRef());
-            result->setSecondY(data.secondY.copyRef());
-            result->setFirstRadius(data.firstRadius.copyRef());
-            result->setSecondRadius(data.secondRadius.copyRef());
-            result->setShape(data.shape.copyRef());
-            result->setSizingBehavior(data.sizingBehavior.copyRef());
-            result->setEndHorizontalSize(data.endHorizontalSize.copyRef());
-            result->setEndVerticalSize(data.endVerticalSize.copyRef());
-            return result;
+            return CSSRadialGradientValue::create(data.data, data.repeating, m_colorInterpolationMethod, WTFMove(cssStopList));
+        },
+        [&] (const PrefixedRadialData& data) -> Ref<CSSValue> {
+            return CSSPrefixedRadialGradientValue::create(data.data, data.repeating, m_colorInterpolationMethod, WTFMove(cssStopList));
+        },
+        [&] (const DeprecatedRadialData& data) -> Ref<CSSValue> {
+            return CSSDeprecatedRadialGradientValue::create(data.data, m_colorInterpolationMethod, WTFMove(cssStopList) );
         },
         [&] (const ConicData& data) -> Ref<CSSValue> {
-            auto result = CSSConicGradientValue::create(m_repeat, m_colorInterpolationMethod, WTFMove(cssStopList));
-            result->setFirstX(data.firstX.copyRef());
-            result->setFirstY(data.firstY.copyRef());
-            result->setSecondX(data.secondX.copyRef());
-            result->setSecondY(data.secondY.copyRef());
-            result->setAngle(data.angle.copyRef());
-            return result;
+            return CSSConicGradientValue::create(data.data, data.repeating, m_colorInterpolationMethod, WTFMove(cssStopList));
         }
     );
 }
@@ -421,25 +414,28 @@ public:
 } // anonymous namespace
 
 template<typename GradientAdapter>
-GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAdapter, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat) const
+GradientColorStops StyleGradientImage::computeStopsForDeprecatedVariants(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle& style) const
 {
     bool hasColorFilter = style.hasAppleColorFilter();
+    auto result = m_stops.map<GradientColorStops::StopVector>([&] (auto& stop) -> GradientColorStop {
+        return {
+            // FIXME: Use doubleValueDividingBy100IfPercentage? Or float version?
+            stop.position->isPercentage() ? stop.position->floatValue(CSSUnitType::CSS_PERCENTAGE) / 100 : stop.position->floatValue(CSSUnitType::CSS_NUMBER),
+            resolveColorStopColor(stop.color, style, hasColorFilter)
+        };
+    });
 
-    if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
-        auto result = m_stops.map<GradientColorStops::StopVector>([&] (auto& stop) -> GradientColorStop {
-            return {
-                // FIXME: Use doubleValueDividingBy100IfPercentage? Or float version?
-                stop.position->isPercentage() ? stop.position->floatValue(CSSUnitType::CSS_PERCENTAGE) / 100 : stop.position->floatValue(CSSUnitType::CSS_NUMBER),
-                resolveColorStopColor(stop.color, style, hasColorFilter)
-            };
-        });
+    std::stable_sort(result.begin(), result.end(), [] (const auto& a, const auto& b) {
+        return a.offset < b.offset;
+    });
 
-        std::stable_sort(result.begin(), result.end(), [] (const auto& a, const auto& b) {
-            return a.offset < b.offset;
-        });
+    return GradientColorStops::Sorted { WTFMove(result) };
+}
 
-        return GradientColorStops::Sorted { WTFMove(result) };
-    }
+template<typename GradientAdapter>
+GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAdapter, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat, CSSGradientRepeat repeating) const
+{
+    bool hasColorFilter = style.hasAppleColorFilter();
 
     size_t numberOfStops = m_stops.size();
     Vector<ResolvedGradientStop> stops(numberOfStops);
@@ -605,7 +601,7 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
     // If the gradient is repeating, repeat the color stops.
     // We can't just push this logic down into the platform-specific Gradient code,
     // because we have to know the extent of the gradient, and possible move the end points.
-    if (m_repeat == CSSGradientRepeat::Repeating && numberOfStops > 1) {
+    if (repeating == CSSGradientRepeat::Repeating && numberOfStops > 1) {
         // If the difference in the positions of the first and last color-stops is 0,
         // the gradient defines a solid-color image with the color of the last color-stop in the rule.
         float gradientRange = *stops.last().offset - *stops.first().offset;
@@ -672,25 +668,26 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
     };
 }
 
-static float positionFromValue(const CSSPrimitiveValue* value, const CSSToLengthConversionData& conversionData, const FloatSize& size, bool isHorizontal)
+static float positionFromValue(const CSSPrimitiveValue& initialValue, const CSSToLengthConversionData& conversionData, const FloatSize& size, bool isHorizontal)
 {
-    if (!value)
-        return 0;
-
     float origin = 0;
     float sign = 1;
     float edgeDistance = isHorizontal ? size.width() : size.height();
 
+    const CSSPrimitiveValue* value;
+
     // In this case the center of the gradient is given relative to an edge in the
     // form of: [ top | bottom | right | left ] [ <percentage> | <length> ].
-    if (value->isPair()) {
-        CSSValueID originID = value->pairValue()->first()->valueID();
+    if (initialValue.isPair()) {
+        auto originID = initialValue.pairValue()->first()->valueID();
         if (originID == CSSValueRight || originID == CSSValueBottom) {
             // For right/bottom, the offset is relative to the far edge.
             origin = edgeDistance;
             sign = -1;
         }
-        value = value->pairValue()->second();
+        value = initialValue.pairValue()->second();
+    } else {
+        value = &initialValue;
     }
 
     if (value->isNumber())
@@ -725,47 +722,31 @@ static float positionFromValue(const CSSPrimitiveValue* value, const CSSToLength
 }
 
 // Resolve points/radii to front end values.
-static FloatPoint computeEndPoint(const CSSPrimitiveValue* horizontal, const CSSPrimitiveValue* vertical, const CSSToLengthConversionData& conversionData, const FloatSize& size)
+static inline FloatPoint computeEndPoint(const CSSPrimitiveValue& horizontal, const CSSPrimitiveValue& vertical, const CSSToLengthConversionData& conversionData, const FloatSize& size)
 {
     return { positionFromValue(horizontal, conversionData, size, true), positionFromValue(vertical, conversionData, size, false) };
 }
 
 // Compute the endpoints so that a gradient of the given angle covers a box of the given size.
-static void endPointsFromAngle(float angleDeg, const FloatSize& size, FloatPoint& firstPoint, FloatPoint& secondPoint, CSSGradientType type)
+static std::pair<FloatPoint, FloatPoint> endPointsFromAngle(float angleDeg, const FloatSize& size)
 {
-    // Prefixed gradients use "polar coordinate" angles, rather than "bearing" angles.
-    if (type == CSSPrefixedLinearGradient)
-        angleDeg = 90 - angleDeg;
-
     angleDeg = toPositiveAngle(angleDeg);
 
-    if (!angleDeg) {
-        firstPoint.set(0, size.height());
-        secondPoint.set(0, 0);
-        return;
-    }
+    if (!angleDeg)
+        return { { 0, size.height() }, { 0, 0 } };
 
-    if (angleDeg == 90) {
-        firstPoint.set(0, 0);
-        secondPoint.set(size.width(), 0);
-        return;
-    }
+    if (angleDeg == 90)
+        return { { 0, 0 }, { size.width(), 0 } };
 
-    if (angleDeg == 180) {
-        firstPoint.set(0, 0);
-        secondPoint.set(0, size.height());
-        return;
-    }
+    if (angleDeg == 180)
+        return { { 0, 0 }, { 0, size.height() } };
 
-    if (angleDeg == 270) {
-        firstPoint.set(size.width(), 0);
-        secondPoint.set(0, 0);
-        return;
-    }
+    if (angleDeg == 270)
+        return { { size.width(), 0 }, { 0, 0 } };
 
     // angleDeg is a "bearing angle" (0deg = N, 90deg = E),
     // but tan expects 0deg = E, 90deg = N.
-    float slope = tan(deg2rad(90 - angleDeg));
+    float slope = std::tan(deg2rad(90 - angleDeg));
 
     // We find the endpoint by computing the intersection of the line formed by the slope,
     // and a line perpendicular to it that intersects the corner.
@@ -790,28 +771,46 @@ static void endPointsFromAngle(float angleDeg, const FloatSize& size, FloatPoint
     float endY = perpendicularSlope * endX + c;
 
     // We computed the end point, so set the second point,
-    // taking into account the moved origin and the fact that we're in drawing space (+y = down).
-    secondPoint.set(halfWidth + endX, halfHeight - endY);
-    // Reflect around the center for the start point.
-    firstPoint.set(halfWidth - endX, halfHeight + endY);
+    // taking into account the moved origin and the fact
+    // that we're in drawing space (+y = down). Reflect
+    // around the center for the start point.
+    
+    return { FloatPoint(halfWidth - endX, halfHeight + endY), FloatPoint(halfWidth + endX, halfHeight - endY) };
 }
 
-static float resolveRadius(CSSPrimitiveValue& radius, const CSSToLengthConversionData& conversionData, float* widthOrHeight = nullptr)
+static std::pair<FloatPoint, FloatPoint> endPointsFromAngleForPrefixedVariants(float angleDeg, const FloatSize& size)
 {
-    float result = 0;
-    if (radius.isNumber())
-        result = radius.floatValue() * conversionData.zoom();
-    else if (widthOrHeight && radius.isPercentage())
-        result = *widthOrHeight * radius.floatValue() / 100;
-    else if (widthOrHeight && radius.isCalculatedPercentageWithLength()) {
-        auto expression = radius.cssCalcValue()->createCalculationValue(conversionData);
-        result = expression->evaluate(*widthOrHeight);
-    } else
-        result = radius.computeLength<float>(conversionData);
-    return result;
+    // Prefixed gradients use "polar coordinate" angles, rather than "bearing" angles.
+    return endPointsFromAngle(angleDeg = 90 - angleDeg, size);
 }
 
-static float distanceToClosestCorner(const FloatPoint& p, const FloatSize& size, FloatPoint& corner)
+static float resolveRadius(CSSPrimitiveValue& radius, const CSSToLengthConversionData& conversionData, float widthOrHeight)
+{
+    if (radius.isNumber())
+        return radius.floatValue() * conversionData.zoom();
+    
+    if (radius.isPercentage())
+        return widthOrHeight * radius.floatValue() / 100;
+    
+    if (radius.isCalculatedPercentageWithLength())
+        return radius.cssCalcValue()->createCalculationValue(conversionData)->evaluate(widthOrHeight);
+
+    return radius.computeLength<float>(conversionData);
+}
+
+static float resolveRadius(CSSPrimitiveValue& radius, const CSSToLengthConversionData& conversionData)
+{
+    if (radius.isNumber())
+        return radius.floatValue() * conversionData.zoom();
+    return radius.computeLength<float>(conversionData);
+}
+
+struct DistanceToCorner {
+    float distance;
+    FloatPoint corner;
+};
+
+static DistanceToCorner distanceToClosestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
     float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
@@ -825,8 +824,9 @@ static float distanceToClosestCorner(const FloatPoint& p, const FloatSize& size,
     FloatPoint bottomRight(size.width(), size.height());
     float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
 
-    corner = topLeft;
+    FloatPoint corner = topLeft;
     float minDistance = topLeftDistance;
+
     if (topRightDistance < minDistance) {
         minDistance = topRightDistance;
         corner = topRight;
@@ -841,10 +841,10 @@ static float distanceToClosestCorner(const FloatPoint& p, const FloatSize& size,
         minDistance = bottomRightDistance;
         corner = bottomRight;
     }
-    return minDistance;
+    return { minDistance, corner };
 }
 
-static float distanceToFarthestCorner(const FloatPoint& p, const FloatSize& size, FloatPoint& corner)
+static DistanceToCorner distanceToFarthestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
     float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
@@ -858,8 +858,9 @@ static float distanceToFarthestCorner(const FloatPoint& p, const FloatSize& size
     FloatPoint bottomRight(size.width(), size.height());
     float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
 
-    corner = topLeft;
+    FloatPoint corner = topLeft;
     float maxDistance = topLeftDistance;
+
     if (topRightDistance > maxDistance) {
         maxDistance = topRightDistance;
         corner = topRight;
@@ -874,7 +875,8 @@ static float distanceToFarthestCorner(const FloatPoint& p, const FloatSize& size
         maxDistance = bottomRightDistance;
         corner = bottomRight;
     }
-    return maxDistance;
+
+    return { maxDistance, corner };
 }
 
 // Compute horizontal radius of ellipse with center at 0,0 which passes through p, and has
@@ -887,6 +889,8 @@ static inline float horizontalEllipseRadius(const FloatSize& p, float aspectRati
     return std::hypot(p.width(), p.height() * aspectRatio);
 }
 
+// MARK: - Linear create.
+
 Ref<Gradient> StyleGradientImage::createGradient(const LinearData& linear, const RenderElement& renderer, const FloatSize& size) const
 {
     ASSERT(!size.isEmpty());
@@ -897,63 +901,142 @@ Ref<Gradient> StyleGradientImage::createGradient(const LinearData& linear, const
 
     CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
 
-    FloatPoint firstPoint;
-    FloatPoint secondPoint;
-    if (linear.angle) {
-        float angle = linear.angle->floatValue(CSSUnitType::CSS_DEG);
-        endPointsFromAngle(angle, size, firstPoint, secondPoint, m_gradientType);
-    } else {
-        switch (m_gradientType) {
-        case CSSDeprecatedLinearGradient:
-            firstPoint = computeEndPoint(linear.firstX.get(), linear.firstY.get(), conversionData, size);
-            if (linear.secondX || linear.secondY)
-                secondPoint = computeEndPoint(linear.secondX.get(), linear.secondY.get(), conversionData, size);
-            else {
-                if (linear.firstX)
-                    secondPoint.setX(size.width() - firstPoint.x());
-                if (linear.firstY)
-                    secondPoint.setY(size.height() - firstPoint.y());
+    auto [firstPoint, secondPoint] = WTF::switchOn(linear.data.gradientLine,
+        [&] (std::monostate) -> std::pair<FloatPoint, FloatPoint> {
+            return { FloatPoint { 0, 0 }, FloatPoint { 0, size.height() } };
+        },
+        [&] (const CSSLinearGradientValue::Angle& angle) -> std::pair<FloatPoint, FloatPoint> {
+            return endPointsFromAngle(angle.value->floatValue(CSSUnitType::CSS_DEG), size);
+        },
+        [&] (CSSLinearGradientValue::Horizontal horizontal) -> std::pair<FloatPoint, FloatPoint> {
+            switch (horizontal) {
+            case CSSLinearGradientValue::Horizontal::Left:
+                return { FloatPoint { size.width(), 0 }, FloatPoint { 0, 0 } };
+            case CSSLinearGradientValue::Horizontal::Right:
+                return { FloatPoint { 0, 0 }, FloatPoint { size.width(), 0 } };
             }
-            break;
-        case CSSPrefixedLinearGradient:
-            firstPoint = computeEndPoint(linear.firstX.get(), linear.firstY.get(), conversionData, size);
-            if (linear.firstX)
-                secondPoint.setX(size.width() - firstPoint.x());
-            if (linear.firstY)
-                secondPoint.setY(size.height() - firstPoint.y());
-            break;
-        case CSSLinearGradient:
-            if (linear.firstX && linear.firstY) {
-                // "Magic" corners, so the 50% line touches two corners.
-                float rise = size.width();
-                float run = size.height();
-                if (linear.firstX && linear.firstX->valueID() == CSSValueLeft)
-                    run *= -1;
-                if (linear.firstY && linear.firstY->valueID() == CSSValueBottom)
-                    rise *= -1;
-                // Compute angle, and flip it back to "bearing angle" degrees.
-                float angle = 90 - rad2deg(atan2(rise, run));
-                endPointsFromAngle(angle, size, firstPoint, secondPoint, m_gradientType);
-            } else if (linear.firstX || linear.firstY) {
-                secondPoint = computeEndPoint(linear.firstX.get(), linear.firstY.get(), conversionData, size);
-                if (linear.firstX)
-                    firstPoint.setX(size.width() - secondPoint.x());
-                if (linear.firstY)
-                    firstPoint.setY(size.height() - secondPoint.y());
-            } else
-                secondPoint.setY(size.height());
-            break;
-        default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&] (CSSLinearGradientValue::Vertical vertical) -> std::pair<FloatPoint, FloatPoint> {
+            switch (vertical) {
+            case CSSLinearGradientValue::Vertical::Top:
+                return { FloatPoint { 0, size.height() }, FloatPoint { 0, 0 } };
+            case CSSLinearGradientValue::Vertical::Bottom:
+                return { FloatPoint { 0, 0 }, FloatPoint { 0, size.height() } };
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&] (const std::pair<CSSLinearGradientValue::Horizontal, CSSLinearGradientValue::Vertical>& pair) -> std::pair<FloatPoint, FloatPoint> {
+            float rise = size.width();
+            float run = size.height();
+            if (pair.first == CSSLinearGradientValue::Horizontal::Left)
+                run *= -1;
+            if (pair.second == CSSLinearGradientValue::Vertical::Bottom)
+                rise *= -1;
+            // Compute angle, and flip it back to "bearing angle" degrees.
+            float angle = 90 - rad2deg(atan2(rise, run));
+            return endPointsFromAngle(angle, size);
         }
-    }
+    );
 
     Gradient::LinearData data { firstPoint, secondPoint };
     LinearGradientAdapter adapter { data };
-    auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
+    auto stops = computeStops(adapter, conversionData, renderer.style(), 1, linear.repeating);
 
     return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
 }
+
+// MARK: - Prefixed Linear create.
+
+Ref<Gradient> StyleGradientImage::createGradient(const PrefixedLinearData& linear, const RenderElement& renderer, const FloatSize& size) const
+{
+    ASSERT(!size.isEmpty());
+
+    const RenderStyle* rootStyle = nullptr;
+    if (auto* documentElement = renderer.document().documentElement())
+        rootStyle = documentElement->renderStyle();
+
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
+
+    auto [firstPoint, secondPoint] = WTF::switchOn(linear.data.gradientLine,
+        [&] (std::monostate) -> std::pair<FloatPoint, FloatPoint> {
+            return { FloatPoint { 0, 0 }, FloatPoint { 0, size.height() } };
+        },
+        [&] (const CSSPrefixedLinearGradientValue::Angle& angle) -> std::pair<FloatPoint, FloatPoint> {
+            return endPointsFromAngleForPrefixedVariants(angle.value->floatValue(CSSUnitType::CSS_DEG), size);
+        },
+        [&] (CSSPrefixedLinearGradientValue::Horizontal horizontal) -> std::pair<FloatPoint, FloatPoint> {
+            switch (horizontal) {
+            case CSSPrefixedLinearGradientValue::Horizontal::Left:
+                return { FloatPoint { 0, 0 }, FloatPoint { size.width(), 0 } };
+            case CSSPrefixedLinearGradientValue::Horizontal::Right:
+                return { FloatPoint { size.width(), 0 }, FloatPoint { 0, 0 } };
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&] (CSSPrefixedLinearGradientValue::Vertical vertical) -> std::pair<FloatPoint, FloatPoint> {
+            switch (vertical) {
+            case CSSPrefixedLinearGradientValue::Vertical::Top:
+                return { FloatPoint { 0, 0 }, FloatPoint { 0, size.height() } };
+            case CSSPrefixedLinearGradientValue::Vertical::Bottom:
+                return { FloatPoint { 0, size.height() }, FloatPoint { 0, 0 } };
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&] (const std::pair<CSSPrefixedLinearGradientValue::Horizontal, CSSPrefixedLinearGradientValue::Vertical>& pair) -> std::pair<FloatPoint, FloatPoint> {
+            switch (pair.first) {
+            case CSSPrefixedLinearGradientValue::Horizontal::Left:
+                switch (pair.second) {
+                case CSSPrefixedLinearGradientValue::Vertical::Top:
+                    return { FloatPoint { 0, 0 }, FloatPoint { size.width(), size.height() } };
+                case CSSPrefixedLinearGradientValue::Vertical::Bottom:
+                    return { FloatPoint { 0, size.height() }, FloatPoint { size.width(), 0 } };
+                }
+                RELEASE_ASSERT_NOT_REACHED();
+
+            case CSSPrefixedLinearGradientValue::Horizontal::Right:
+                switch (pair.second) {
+                case CSSPrefixedLinearGradientValue::Vertical::Top:
+                    return { FloatPoint { size.width(), 0 }, FloatPoint { 0, size.height() } };
+                case CSSPrefixedLinearGradientValue::Vertical::Bottom:
+                    return { FloatPoint { size.width(), size.height() }, FloatPoint { 0, 0 } };
+                }
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    );
+
+    Gradient::LinearData data { firstPoint, secondPoint };
+    LinearGradientAdapter adapter { data };
+    auto stops = computeStops(adapter, conversionData, renderer.style(), 1, linear.repeating);
+
+    return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+}
+
+// MARK: - Deprecated Linear create.
+
+Ref<Gradient> StyleGradientImage::createGradient(const DeprecatedLinearData& linear, const RenderElement& renderer, const FloatSize& size) const
+{
+    ASSERT(!size.isEmpty());
+
+    const RenderStyle* rootStyle = nullptr;
+    if (auto* documentElement = renderer.document().documentElement())
+        rootStyle = documentElement->renderStyle();
+
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
+
+    auto firstPoint = computeEndPoint(linear.data.firstX, linear.data.firstY, conversionData, size);
+    auto secondPoint = computeEndPoint(linear.data.secondX, linear.data.secondY, conversionData, size);
+
+    Gradient::LinearData data { firstPoint, secondPoint };
+    LinearGradientAdapter adapter { data };
+    auto stops = computeStopsForDeprecatedVariants(adapter, conversionData, renderer.style());
+
+    return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+}
+
+// MARK: - Radial create.
 
 Ref<Gradient> StyleGradientImage::createGradient(const RadialData& radial, const RenderElement& renderer, const FloatSize& size) const
 {
@@ -965,139 +1048,294 @@ Ref<Gradient> StyleGradientImage::createGradient(const RadialData& radial, const
 
     CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
 
-    FloatPoint firstPoint = computeEndPoint(radial.firstX.get(), radial.firstY.get(), conversionData, size);
-    if (!radial.firstX)
-        firstPoint.setX(size.width() / 2);
-    if (!radial.firstY)
-        firstPoint.setY(size.height() / 2);
+    auto computeCenterPoint = [&](const CSSGradientPosition& position) -> FloatPoint {
+        return computeEndPoint(position.first, position.second, conversionData, size);
+    };
+    auto computeCenterPointOptional = [&](const std::optional<CSSGradientPosition>& position) -> FloatPoint {
+        return position ? computeCenterPoint(*position) : FloatPoint { size.width() / 2, size.height() / 2 };
+    };
 
-    FloatPoint secondPoint = computeEndPoint(radial.secondX.get(), radial.secondY.get(), conversionData, size);
-    if (!radial.secondX)
-        secondPoint.setX(size.width() / 2);
-    if (!radial.secondY)
-        secondPoint.setY(size.height() / 2);
+    auto computeCircleRadius = [&](CSSRadialGradientValue::ExtentKeyword extent, FloatPoint centerPoint) -> std::pair<float, float> {
+        switch (extent) {
+        case CSSRadialGradientValue::ExtentKeyword::ClosestSide:
+            return { std::min({ centerPoint.x(), size.width() - centerPoint.x(), centerPoint.y(), size.height() - centerPoint.y() }), 1 };
 
-    float firstRadius = 0;
-    if (radial.firstRadius)
-        firstRadius = resolveRadius(*radial.firstRadius, conversionData);
+        case CSSRadialGradientValue::ExtentKeyword::FarthestSide:
+            return { std::max({ centerPoint.x(), size.width() - centerPoint.x(), centerPoint.y(), size.height() - centerPoint.y() }), 1 };
 
-    float secondRadius = 0;
-    float aspectRatio = 1; // width / height.
-    if (radial.secondRadius)
-        secondRadius = resolveRadius(*radial.secondRadius, conversionData);
-    else if (radial.endHorizontalSize) {
-        float width = size.width();
-        float height = size.height();
-        secondRadius = resolveRadius(*radial.endHorizontalSize, conversionData, &width);
-        if (radial.endVerticalSize)
-            aspectRatio = secondRadius / resolveRadius(*radial.endVerticalSize, conversionData, &height);
-        else
-            aspectRatio = 1;
-    } else {
-        enum GradientShape { Circle, Ellipse };
-        GradientShape shape = Ellipse;
-        if ((radial.shape && radial.shape->valueID() == CSSValueCircle) || (!radial.shape && !radial.sizingBehavior && radial.endHorizontalSize && !radial.endVerticalSize))
-            shape = Circle;
+        case CSSRadialGradientValue::ExtentKeyword::ClosestCorner:
+            return { distanceToClosestCorner(centerPoint, size).distance, 1 };
 
-        enum GradientFill { ClosestSide, ClosestCorner, FarthestSide, FarthestCorner };
-        GradientFill fill = FarthestCorner;
+        case CSSRadialGradientValue::ExtentKeyword::FarthestCorner:
+            return { distanceToFarthestCorner(centerPoint, size).distance, 1 };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
 
-        switch (radial.sizingBehavior ? radial.sizingBehavior->valueID() : 0) {
-        case CSSValueContain:
-        case CSSValueClosestSide:
-            fill = ClosestSide;
-            break;
-        case CSSValueClosestCorner:
-            fill = ClosestCorner;
-            break;
-        case CSSValueFarthestSide:
-            fill = FarthestSide;
-            break;
-        case CSSValueCover:
-        case CSSValueFarthestCorner:
-            fill = FarthestCorner;
-            break;
-        default:
-            break;
+    auto computeEllipseRadii = [&](CSSRadialGradientValue::ExtentKeyword extent, FloatPoint centerPoint) -> std::pair<float, float> {
+        switch (extent) {
+        case CSSRadialGradientValue::ExtentKeyword::ClosestSide: {
+            float xDist = std::min(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::min(centerPoint.y(), size.height() - centerPoint.y());
+            return { xDist, xDist / yDist };
         }
 
-        // Now compute the end radii based on the second point, shape and fill.
-
-        // Horizontal
-        switch (fill) {
-        case ClosestSide: {
-            float xDist = std::min(secondPoint.x(), size.width() - secondPoint.x());
-            float yDist = std::min(secondPoint.y(), size.height() - secondPoint.y());
-            if (shape == Circle) {
-                float smaller = std::min(xDist, yDist);
-                xDist = smaller;
-                yDist = smaller;
-            }
-            secondRadius = xDist;
-            aspectRatio = xDist / yDist;
-            break;
-        }
-        case FarthestSide: {
-            float xDist = std::max(secondPoint.x(), size.width() - secondPoint.x());
-            float yDist = std::max(secondPoint.y(), size.height() - secondPoint.y());
-            if (shape == Circle) {
-                float larger = std::max(xDist, yDist);
-                xDist = larger;
-                yDist = larger;
-            }
-            secondRadius = xDist;
-            aspectRatio = xDist / yDist;
-            break;
-        }
-        case ClosestCorner: {
-            FloatPoint corner;
-            float distance = distanceToClosestCorner(secondPoint, size, corner);
-            if (shape == Circle)
-                secondRadius = distance;
-            else {
-                // If <shape> is ellipse, the gradient-shape has the same ratio of width to height
-                // that it would if closest-side or farthest-side were specified, as appropriate.
-                float xDist = std::min(secondPoint.x(), size.width() - secondPoint.x());
-                float yDist = std::min(secondPoint.y(), size.height() - secondPoint.y());
-
-                secondRadius = horizontalEllipseRadius(corner - secondPoint, xDist / yDist);
-                aspectRatio = xDist / yDist;
-            }
-            break;
+        case CSSRadialGradientValue::ExtentKeyword::FarthestSide: {
+            float xDist = std::max(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::max(centerPoint.y(), size.height() - centerPoint.y());
+            return { xDist, xDist / yDist };
         }
 
-        case FarthestCorner: {
-            FloatPoint corner;
-            float distance = distanceToFarthestCorner(secondPoint, size, corner);
-            if (shape == Circle)
-                secondRadius = distance;
-            else {
-                // If <shape> is ellipse, the gradient-shape has the same ratio of width to height
-                // that it would if closest-side or farthest-side were specified, as appropriate.
-                float xDist = std::max(secondPoint.x(), size.width() - secondPoint.x());
-                float yDist = std::max(secondPoint.y(), size.height() - secondPoint.y());
+        case CSSRadialGradientValue::ExtentKeyword::ClosestCorner: {
+            auto [distance, corner] = distanceToClosestCorner(centerPoint, size);
+            // If <shape> is ellipse, the gradient-shape has the same ratio of width to height
+            // that it would if closest-side or farthest-side were specified, as appropriate.
+            float xDist = std::min(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::min(centerPoint.y(), size.height() - centerPoint.y());
+            return { horizontalEllipseRadius(corner - centerPoint, xDist / yDist), xDist / yDist };
+        }
 
-                secondRadius = horizontalEllipseRadius(corner - secondPoint, xDist / yDist);
-                aspectRatio = xDist / yDist;
-            }
-            break;
+        case CSSRadialGradientValue::ExtentKeyword::FarthestCorner: {
+            auto [distance, corner] = distanceToFarthestCorner(centerPoint, size);
+            // If <shape> is ellipse, the gradient-shape has the same ratio of width to height
+            // that it would if closest-side or farthest-side were specified, as appropriate.
+            float xDist = std::max(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::max(centerPoint.y(), size.height() - centerPoint.y());
+            return { horizontalEllipseRadius(corner - centerPoint, xDist / yDist), xDist / yDist };
         }
         }
-    }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto computeRadii = [&] (CSSRadialGradientValue::ShapeKeyword shape, CSSRadialGradientValue::ExtentKeyword extent, FloatPoint centerPoint) -> std::pair<float, float> {
+        switch (shape) {
+        case CSSRadialGradientValue::ShapeKeyword::Circle:
+            return computeCircleRadius(extent, centerPoint);
+        case CSSRadialGradientValue::ShapeKeyword::Ellipse:
+            return computeEllipseRadii(extent, centerPoint);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto data = WTF::switchOn(radial.data.gradientBox,
+        [&] (std::monostate) -> Gradient::RadialData {
+            auto centerPoint = FloatPoint { size.width() / 2, size.height() / 2 };
+            auto [endRadius, aspectRatio] = computeRadii(CSSRadialGradientValue::ShapeKeyword::Ellipse, CSSRadialGradientValue::ExtentKeyword::FarthestCorner, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSRadialGradientValue::Shape& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto [endRadius, aspectRatio] = computeRadii(data.shape, CSSRadialGradientValue::ExtentKeyword::FarthestCorner, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSRadialGradientValue::Extent& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto [endRadius, aspectRatio] = computeRadii(CSSRadialGradientValue::ShapeKeyword::Ellipse, data.extent, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSRadialGradientValue::Length& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto endRadius = resolveRadius(data.length, conversionData, size.width());
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, 1 };
+        },
+        [&] (const CSSRadialGradientValue::CircleOfLength& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto endRadius = resolveRadius(data.length, conversionData, size.width());
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, 1 };
+        },
+        [&] (const CSSRadialGradientValue::CircleOfExtent& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto [endRadius, aspectRatio] = computeRadii(CSSRadialGradientValue::ShapeKeyword::Circle, data.extent, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, 1 };
+        },
+        [&] (const CSSRadialGradientValue::Size& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto endRadius = resolveRadius(data.size.first, conversionData, size.width());
+            auto aspectRatio = endRadius / resolveRadius(data.size.second, conversionData, size.height());
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSRadialGradientValue::EllipseOfSize& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto endRadius = resolveRadius(data.size.first, conversionData, size.width());
+            auto aspectRatio = endRadius / resolveRadius(data.size.second, conversionData, size.height());
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSRadialGradientValue::EllipseOfExtent& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPointOptional(data.position);
+            auto [endRadius, aspectRatio] = computeRadii(CSSRadialGradientValue::ShapeKeyword::Ellipse, data.extent, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, 1 };
+        },
+        [&] (const CSSGradientPosition& data) -> Gradient::RadialData {
+            auto centerPoint = computeCenterPoint(data);
+            auto [radius, aspectRatio] = computeRadii(CSSRadialGradientValue::ShapeKeyword::Ellipse, CSSRadialGradientValue::ExtentKeyword::FarthestCorner, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, radius, aspectRatio };
+        }
+    );
 
     // computeStops() only uses maxExtent for repeating gradients.
-    float maxExtent = 0;
-    if (m_repeat == CSSGradientRepeat::Repeating) {
-        FloatPoint corner;
-        maxExtent = distanceToFarthestCorner(secondPoint, size, corner);
-    }
+    float maxExtent = radial.repeating == CSSGradientRepeat::Repeating ? distanceToFarthestCorner(data.point1, size).distance : 0;
 
-    Gradient::RadialData data { firstPoint, secondPoint, firstRadius, secondRadius, aspectRatio };
     RadialGradientAdapter adapter { data };
-    auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent);
+    auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent, radial.repeating);
 
     return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
 }
+
+// MARK: - Prefixed Radial create.
+
+Ref<Gradient> StyleGradientImage::createGradient(const PrefixedRadialData& radial, const RenderElement& renderer, const FloatSize& size) const
+{
+    ASSERT(!size.isEmpty());
+
+    const RenderStyle* rootStyle = nullptr;
+    if (auto* documentElement = renderer.document().documentElement())
+        rootStyle = documentElement->renderStyle();
+
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
+
+    auto computeCircleRadius = [&](CSSPrefixedRadialGradientValue::ExtentKeyword extent, FloatPoint centerPoint) -> std::pair<float, float> {
+        switch (extent) {
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::Contain:
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestSide:
+            return { std::min({ centerPoint.x(), size.width() - centerPoint.x(), centerPoint.y(), size.height() - centerPoint.y() }), 1 };
+
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestSide:
+            return { std::max({ centerPoint.x(), size.width() - centerPoint.x(), centerPoint.y(), size.height() - centerPoint.y() }), 1 };
+
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestCorner:
+            return { distanceToClosestCorner(centerPoint, size).distance, 1 };
+
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::Cover:
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestCorner:
+            return { distanceToFarthestCorner(centerPoint, size).distance, 1 };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto computeEllipseRadii = [&](CSSPrefixedRadialGradientValue::ExtentKeyword extent, FloatPoint centerPoint) -> std::pair<float, float> {
+        switch (extent) {
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::Contain:
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestSide: {
+            float xDist = std::min(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::min(centerPoint.y(), size.height() - centerPoint.y());
+            return { xDist, xDist / yDist };
+        }
+
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestSide: {
+            float xDist = std::max(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::max(centerPoint.y(), size.height() - centerPoint.y());
+            return { xDist, xDist / yDist };
+        }
+
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestCorner: {
+            auto [distance, corner] = distanceToClosestCorner(centerPoint, size);
+            // If <shape> is ellipse, the gradient-shape has the same ratio of width to height
+            // that it would if closest-side or farthest-side were specified, as appropriate.
+            float xDist = std::min(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::min(centerPoint.y(), size.height() - centerPoint.y());
+            return { horizontalEllipseRadius(corner - centerPoint, xDist / yDist), xDist / yDist };
+        }
+
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::Cover:
+        case CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestCorner: {
+            auto [distance, corner] = distanceToFarthestCorner(centerPoint, size);
+            // If <shape> is ellipse, the gradient-shape has the same ratio of width to height
+            // that it would if closest-side or farthest-side were specified, as appropriate.
+            float xDist = std::max(centerPoint.x(), size.width() - centerPoint.x());
+            float yDist = std::max(centerPoint.y(), size.height() - centerPoint.y());
+            return { horizontalEllipseRadius(corner - centerPoint, xDist / yDist), xDist / yDist };
+        }
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto computeRadii = [&] (CSSPrefixedRadialGradientValue::ShapeKeyword shape, CSSPrefixedRadialGradientValue::ExtentKeyword extent, FloatPoint centerPoint) -> std::pair<float, float> {
+        switch (shape) {
+        case CSSPrefixedRadialGradientValue::ShapeKeyword::Circle:
+            return computeCircleRadius(extent, centerPoint);
+        case CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse:
+            return computeEllipseRadii(extent, centerPoint);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto centerPoint = radial.data.position ? computeEndPoint(radial.data.position->first, radial.data.position->second, conversionData, size) : FloatPoint { size.width() / 2, size.height() / 2 };
+
+    auto data = WTF::switchOn(radial.data.gradientBox,
+        [&] (std::monostate) -> Gradient::RadialData {
+            auto [endRadius, aspectRatio] = computeRadii(CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse, CSSPrefixedRadialGradientValue::ExtentKeyword::Cover, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSPrefixedRadialGradientValue::ShapeKeyword& shape) -> Gradient::RadialData {
+            auto [endRadius, aspectRatio] = computeRadii(shape, CSSPrefixedRadialGradientValue::ExtentKeyword::Cover, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSPrefixedRadialGradientValue::ExtentKeyword& extent) -> Gradient::RadialData {
+            auto [endRadius, aspectRatio] = computeRadii(CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse, extent, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSPrefixedRadialGradientValue::ShapeAndExtent& shapeAndExtent) -> Gradient::RadialData {
+            auto [endRadius, aspectRatio] = computeRadii(shapeAndExtent.shape, shapeAndExtent.extent, centerPoint);
+
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        },
+        [&] (const CSSPrefixedRadialGradientValue::MeasuredSize& measuredSize) -> Gradient::RadialData {
+            auto endRadius = resolveRadius(measuredSize.size.first, conversionData, size.width());
+            auto aspectRatio = endRadius / resolveRadius(measuredSize.size.second, conversionData, size.height());
+        
+            return Gradient::RadialData { centerPoint, centerPoint, 0, endRadius, aspectRatio };
+        }
+    );
+
+    // computeStops() only uses maxExtent for repeating gradients.
+    float maxExtent = radial.repeating == CSSGradientRepeat::Repeating ? distanceToFarthestCorner(data.point1, size).distance : 0;
+
+    RadialGradientAdapter adapter { data };
+    auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent, radial.repeating);
+
+    return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+}
+
+// MARK: - Deprecated Radial create.
+
+Ref<Gradient> StyleGradientImage::createGradient(const DeprecatedRadialData& radial, const RenderElement& renderer, const FloatSize& size) const
+{
+    ASSERT(!size.isEmpty());
+
+    const RenderStyle* rootStyle = nullptr;
+    if (auto* documentElement = renderer.document().documentElement())
+        rootStyle = documentElement->renderStyle();
+
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
+
+    auto firstPoint = computeEndPoint(radial.data.firstX, radial.data.firstY, conversionData, size);
+    auto secondPoint = computeEndPoint(radial.data.secondX, radial.data.secondY, conversionData, size);
+
+    auto firstRadius = resolveRadius(radial.data.firstRadius, conversionData);
+    auto secondRadius = resolveRadius(radial.data.secondRadius, conversionData);
+    auto aspectRatio = 1.0f;
+
+    Gradient::RadialData data { firstPoint, secondPoint, firstRadius, secondRadius, aspectRatio };
+    RadialGradientAdapter adapter { data };
+    auto stops = computeStopsForDeprecatedVariants(adapter, conversionData, renderer.style());
+
+    return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
+}
+
+// MARK: - Conic create.
 
 Ref<Gradient> StyleGradientImage::createGradient(const ConicData& conic, const RenderElement& renderer, const FloatSize& size) const
 {
@@ -1109,19 +1347,12 @@ Ref<Gradient> StyleGradientImage::createGradient(const ConicData& conic, const R
 
     CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view(), renderer.generatingElement());
 
-    FloatPoint centerPoint = computeEndPoint(conic.firstX.get(), conic.firstY.get(), conversionData, size);
-    if (!conic.firstX)
-        centerPoint.setX(size.width() / 2);
-    if (!conic.firstY)
-        centerPoint.setY(size.height() / 2);
-
-    float angleRadians = 0;
-    if (conic.angle)
-        angleRadians = conic.angle->floatValue(CSSUnitType::CSS_RAD);
+    auto centerPoint = conic.data.position ? computeEndPoint(conic.data.position->first, conic.data.position->second, conversionData, size) : FloatPoint { size.width() / 2, size.height() / 2 };
+    auto angleRadians = conic.data.angle.value ? conic.data.angle.value->floatValue(CSSUnitType::CSS_RAD) : 0;
 
     Gradient::ConicData data { centerPoint, angleRadians };
     ConicGradientAdapter adapter;
-    auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
+    auto stops = computeStops(adapter, conversionData, renderer.style(), 1, conic.repeating);
 
     return Gradient::create(WTFMove(data), m_colorInterpolationMethod.method, GradientSpreadMethod::Pad, WTFMove(stops));
 }

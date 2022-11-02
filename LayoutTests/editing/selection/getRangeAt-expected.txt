@@ -1,7 +1,8 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 This tests that Selection::getRangeAt(int) returns a valid Range object.
-
-hello
-hello
-[object Text]
-[object Text]
+| "\n"
+| <div>
+|   id="test"
+|   style="border:1px solid black; padding:1em;"
+|   "[range #0 start]<#selection-anchor>hello<#selection-focus>[range #0 end]"
+| "\n\n\n"

@@ -482,6 +482,12 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     readonly attribute GLsizei drawingBufferWidth;
     readonly attribute GLsizei drawingBufferHeight;
 
+#if defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3) && ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3
+# if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC // iOS to be implemented in http://webkit.org/b/247166
+    [EnabledBySetting=CanvasColorSpaceEnabled] attribute PredefinedColorSpace drawingBufferColorSpace;
+# endif
+#endif
+
     undefined activeTexture(GLenum texture);
     undefined attachShader(WebGLProgram program, WebGLShader shader);
     undefined bindAttribLocation(WebGLProgram program, GLuint index, DOMString name);

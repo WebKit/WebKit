@@ -1,5 +1,5 @@
 
 PASS CSSUnparsedValue containing strings serializes to its concatenated contents
-FAIL CSSUnparsedValue containing variable references serializes its concatenated contents assert_equals: expected "var(--A,var(--B))var(--C)" but got "var(--A, var(--B))var(--C)"
-FAIL CSSUnparsedValue containing mix of strings and variable references serializes to its concatenated contents assert_equals: expected "foobar var(--A,baz var(--B)lemon)var(--C,ade)" but got "foobar var(--A, baz var(--B)lemon)var(--C, ade)"
+PASS CSSUnparsedValue containing variable references serializes its concatenated contents
+PASS CSSUnparsedValue containing mix of strings and variable references serializes to its concatenated contents
 

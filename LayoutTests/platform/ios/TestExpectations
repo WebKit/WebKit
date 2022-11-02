@@ -2607,6 +2607,11 @@ fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
 # rendering to floating point FBOs not supported on iOS
 fast/canvas/webgl/readPixels-float.html [ Skip ]
 
+# No colorspaces in iOS WebGL yet.
+webkit.org/b/247166 fast/canvas/webgl/colorspaces-test.html [ Failure ]
+webkit.org/b/247166 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
+webkit.org/b/247166 fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnlyFailure ]
+
 # Skipped on iOS since UIHelper.activateAt() doesn't produce a user gesture that ITP captures on iOS
 webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]

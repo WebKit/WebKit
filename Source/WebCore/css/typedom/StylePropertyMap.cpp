@@ -53,7 +53,7 @@ ExceptionOr<void> StylePropertyMap::remove(Document& document, const AtomString&
     }
 
     auto propertyID = cssPropertyID(property);
-    if (propertyID == CSSPropertyInvalid || !isCSSPropertyExposed(propertyID, &document.settings()))
+    if (!isExposed(propertyID, &document.settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     removeProperty(propertyID);

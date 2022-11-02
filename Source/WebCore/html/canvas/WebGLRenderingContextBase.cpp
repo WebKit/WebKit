@@ -738,7 +738,9 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_backDrawBuffer = GraphicsContextGL::BACK;
     m_drawBuffersWebGLRequirementsChecked = false;
     m_drawBuffersSupported = false;
-    
+
+    m_context->setDrawingBufferColorSpace(toDestinationColorSpace(m_drawingBufferColorSpace));
+
     IntSize canvasSize = clampedCanvasSize();
     m_context->reshape(canvasSize.width(), canvasSize.height());
     m_context->viewport(0, 0, canvasSize.width(), canvasSize.height());
@@ -1140,6 +1142,19 @@ int WebGLRenderingContextBase::drawingBufferHeight() const
         return 0;
 
     return m_context->getInternalFramebufferSize().height();
+}
+
+void WebGLRenderingContextBase::setDrawingBufferColorSpace(PredefinedColorSpace colorSpace)
+{
+    if (m_drawingBufferColorSpace == colorSpace)
+        return;
+
+    m_drawingBufferColorSpace = colorSpace;
+
+    if (isContextLost())
+        return;
+
+    m_context->setDrawingBufferColorSpace(toDestinationColorSpace(colorSpace));
 }
 
 unsigned WebGLRenderingContextBase::sizeInBytes(GCGLenum type)

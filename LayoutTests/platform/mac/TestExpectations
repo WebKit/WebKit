@@ -2042,6 +2042,10 @@ webkit.org/b/222239 webgl/2.0.0/conformance/uniforms/uniform-default-values.html
 webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
+# No WebGL drawingBufferColorSpace (because no PREDEFINED_COLOR_SPACE_DISPLAY_P3) until Monterey.
+webkit.org/b/247165 [ BigSur ] fast/canvas/webgl/colorspaces-test.html [ Failure ]
+webkit.org/b/247165 [ BigSur ] fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
+
 # ASTC may be supported on M1 macs, but we should skip it for now
 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 
@@ -2355,9 +2359,6 @@ imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allow
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
-
-webkit.org/b/246355 imported/w3c/web-platform-tests/import-maps/multiple-import-maps/basic.html [ Pass Failure ]
-webkit.org/b/246355 imported/w3c/web-platform-tests/import-maps/multiple-import-maps/with-errors.html [ Pass Failure ]
 
 webkit.org/b/244928 http/tests/media/fairplay/fps-mse-unmuxed-multiple-keys.html [ Pass Failure ]
 

@@ -112,8 +112,20 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
         return downcast<CSSCrossfadeValue>(value).createStyleImage(*this);
     if (is<CSSFilterImageValue>(value))
         return downcast<CSSFilterImageValue>(value).createStyleImage(*this);
-    if (is<CSSGradientValue>(value))
-        return downcast<CSSGradientValue>(value).createStyleImage(*this);
+    if (is<CSSLinearGradientValue>(value))
+        return downcast<CSSLinearGradientValue>(value).createStyleImage(*this);
+    if (is<CSSPrefixedLinearGradientValue>(value))
+        return downcast<CSSPrefixedLinearGradientValue>(value).createStyleImage(*this);
+    if (is<CSSDeprecatedLinearGradientValue>(value))
+        return downcast<CSSDeprecatedLinearGradientValue>(value).createStyleImage(*this);
+    if (is<CSSRadialGradientValue>(value))
+        return downcast<CSSRadialGradientValue>(value).createStyleImage(*this);
+    if (is<CSSPrefixedRadialGradientValue>(value))
+        return downcast<CSSPrefixedRadialGradientValue>(value).createStyleImage(*this);
+    if (is<CSSDeprecatedRadialGradientValue>(value))
+        return downcast<CSSDeprecatedRadialGradientValue>(value).createStyleImage(*this);
+    if (is<CSSConicGradientValue>(value))
+        return downcast<CSSConicGradientValue>(value).createStyleImage(*this);
 #if ENABLE(CSS_PAINTING_API)
     if (is<CSSPaintImageValue>(value))
         return downcast<CSSPaintImageValue>(value).createStyleImage(*this);

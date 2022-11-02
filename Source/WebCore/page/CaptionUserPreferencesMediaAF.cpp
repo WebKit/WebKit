@@ -374,7 +374,7 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
     if (!opacity)
         return windowStyle;
 
-    return makeString(windowStyle, getPropertyNameString(CSSPropertyPadding), ": .4em !important;");
+    return makeString(windowStyle, nameLiteral(CSSPropertyPadding), ": .4em !important;");
 }
 
 String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
@@ -422,11 +422,11 @@ String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
     return colorPropertyCSS(CSSPropertyColor, textColor, important);
 }
 
-static void appendCSS(StringBuilder& builder, CSSPropertyID id, const String& value, bool important)
+template<typename... Types> void appendCSS(StringBuilder& builder, CSSPropertyID id, bool important, const Types&... values)
 {
-    builder.append(getPropertyNameString(id), ':', value, important ? " !important;" : ";");
+    builder.append(nameLiteral(id), ':', values..., important ? " !important;" : ";");
 }
-    
+
 String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
 {
     MACaptionAppearanceBehavior behavior;
@@ -435,7 +435,7 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
         return emptyString();
 
     StringBuilder builder;
-    appendCSS(builder, CSSPropertyBorderRadius, makeString(radius, "px"), behavior == kMACaptionAppearanceBehaviorUseValue);
+    appendCSS(builder, CSSPropertyBorderRadius, behavior == kMACaptionAppearanceBehaviorUseValue, radius, "px");
     return builder.toString();
 }
 
@@ -443,7 +443,7 @@ String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const C
 {
     StringBuilder builder;
     // FIXME: Seems like this should be using serializationForCSS instead?
-    appendCSS(builder, id, serializationForHTML(color), important);
+    appendCSS(builder, id, important, serializationForHTML(color));
     return builder.toString();
 }
 
@@ -469,10 +469,6 @@ bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, co
 
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
-    static NeverDestroyed<const String> edgeStyleRaised(MAKE_STATIC_STRING_IMPL(" -.1em -.1em .16em "));
-    static NeverDestroyed<const String> edgeStyleDepressed(MAKE_STATIC_STRING_IMPL(" .1em .1em .16em "));
-    static NeverDestroyed<const String> edgeStyleDropShadow(MAKE_STATIC_STRING_IMPL(" 0 .1em .16em "));
-
     MACaptionAppearanceBehavior behavior;
     MACaptionAppearanceTextEdgeStyle textEdgeStyle = MACaptionAppearanceGetTextEdgeStyle(kMACaptionAppearanceDomainUser, &behavior);
     
@@ -482,17 +478,17 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
     StringBuilder builder;
     bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
     if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleRaised)
-        appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleRaised.get(), " black"), important);
+        appendCSS(builder, CSSPropertyTextShadow, important, "-.1em -.1em .16em black");
     else if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDepressed)
-        appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDepressed.get(), " black"), important);
+        appendCSS(builder, CSSPropertyTextShadow, important, ".1em .1em .16em black");
     else if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow)
-        appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDropShadow.get(), " black"), important);
+        appendCSS(builder, CSSPropertyTextShadow, important, "0 .1em .16em black");
 
     if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUniform) {
-        appendCSS(builder, CSSPropertyStrokeColor, "black"_s, important);
-        appendCSS(builder, CSSPropertyPaintOrder, getValueName(CSSValueStroke), important);
-        appendCSS(builder, CSSPropertyStrokeLinejoin, getValueName(CSSValueRound), important);
-        appendCSS(builder, CSSPropertyStrokeLinecap, getValueName(CSSValueRound), important);
+        appendCSS(builder, CSSPropertyStrokeColor, important, "black");
+        appendCSS(builder, CSSPropertyPaintOrder, important, nameLiteral(CSSValueStroke));
+        appendCSS(builder, CSSPropertyStrokeLinejoin, important, nameLiteral(CSSValueRound));
+        appendCSS(builder, CSSPropertyStrokeLinecap, important, nameLiteral(CSSValueRound));
     }
     
     return builder.toString();

@@ -839,13 +839,12 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
 {
     auto cssProperties = JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>::create();
 
-    for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
-        CSSPropertyID propertyID = convertToCSSPropertyID(i);
-        if (!isCSSPropertyExposed(propertyID, &m_inspectedPage.settings()))
+    for (auto propertyID : allCSSProperties()) {
+        if (!isExposed(propertyID, &m_inspectedPage.settings()))
             continue;
 
         auto property = Protocol::CSS::CSSPropertyInfo::create()
-            .setName(getPropertyNameString(propertyID))
+            .setName(nameString(propertyID))
             .release();
 
         auto aliases = CSSProperty::aliasesForProperty(propertyID);
@@ -860,8 +859,8 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
         if (shorthand.length()) {
             auto longhands = JSON::ArrayOf<String>::create();
             for (auto longhand : shorthand) {
-                if (isCSSPropertyExposed(longhand, &m_inspectedPage.settings()))
-                    longhands->addItem(getPropertyNameString(longhand));
+                if (isExposed(longhand, &m_inspectedPage.settings()))
+                    longhands->addItem(nameString(longhand));
             }
             if (longhands->length())
                 property->setLonghands(WTFMove(longhands));
@@ -869,10 +868,9 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
 
         if (CSSParserFastPaths::isKeywordPropertyID(propertyID)) {
             auto values = JSON::ArrayOf<String>::create();
-            for (int j = firstCSSValueKeyword; j <= lastCSSValueKeyword; ++j) {
-                CSSValueID valueID = convertToCSSValueID(j);
+            for (auto valueID : allCSSValueKeywords()) {
                 if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyID, valueID, strictCSSParserContext()))
-                    values->addItem(getValueNameString(valueID));
+                    values->addItem(nameString(valueID));
             }
             if (values->length())
                 property->setValues(WTFMove(values));

@@ -68,7 +68,7 @@ void CSSOMVariableReferenceValue::serialize(StringBuilder& builder, OptionSet<Se
     builder.append("var(");
     builder.append(m_variable);
     if (m_fallback) {
-        builder.append(", ");
+        builder.append(',');
         m_fallback->serialize(builder, arguments);
     }
     builder.append(')');

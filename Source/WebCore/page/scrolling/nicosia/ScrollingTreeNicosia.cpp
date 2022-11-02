@@ -82,12 +82,12 @@ static bool collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& lay
     bool existsOnLayer = false;
     bool existsOnDescendent = false;
 
-    parent->accessPending([&](const CompositionLayer::LayerState& state) {
+    parent->accessCommitted([&](const CompositionLayer::LayerState& state) {
         existsOnLayer = !!state.scrollingNodeID && FloatRect({ }, state.size).contains(point) && state.eventRegion.contains(roundedIntPoint(point));
 
         for (auto child : state.children) {
             FloatPoint transformedPoint(point);
-            child->accessPending([&](const CompositionLayer::LayerState& childState) {
+            child->accessCommitted([&](const CompositionLayer::LayerState& childState) {
                 if (!childState.transform.isInvertible())
                     return;
                 float originX = childState.anchorPoint.x() * childState.size.width();

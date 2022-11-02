@@ -672,7 +672,7 @@ TextStream& operator<<(TextStream& ts, ListStylePosition position)
 
 TextStream& operator<<(TextStream& ts, ListStyleType styleType)
 {
-    return ts << getValueName(toCSSValueID(styleType)).characters();
+    return ts << nameLiteral(toCSSValueID(styleType)).characters();
 }
 
 TextStream& operator<<(TextStream& ts, MarqueeBehavior marqueeBehavior)

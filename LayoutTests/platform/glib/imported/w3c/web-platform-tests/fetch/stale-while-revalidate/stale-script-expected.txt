@@ -1,3 +1,0 @@
-
-FAIL Cache returns stale resource assert_equals: (revalidated version loaded) expected 2 but got 1
-

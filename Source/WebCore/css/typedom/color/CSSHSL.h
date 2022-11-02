@@ -29,27 +29,27 @@
 
 namespace WebCore {
 
-class CSSHSL : public CSSColorValue {
+class CSSHSL final : public CSSColorValue {
     WTF_MAKE_ISO_ALLOCATED(CSSHSL);
 public:
-    template<typename... Args> static Ref<CSSHSL> create(Args&&... args) { return adoptRef(*new CSSHSL(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSHSL>> create(CSSColorAngle&& hue, CSSColorPercent&& saturation, CSSColorPercent&& lightness, CSSColorPercent&& alpha);
 
-    const CSSColorAngle& h() const { return m_hue; }
-    void setH(CSSColorAngle hue) { m_hue = WTFMove(hue); }
-    const CSSColorPercent& s() const { return m_saturation; }
-    void setS(CSSColorPercent saturation) { m_saturation = WTFMove(saturation); }
-    const CSSColorPercent& l() const { return m_lightness; }
-    void setL(CSSColorPercent lightness) { m_lightness = WTFMove(lightness); }
-    const CSSColorPercent& alpha() const { return m_alpha; }
-    void setAlpha(CSSColorPercent alpha) { m_alpha = WTFMove(alpha); }
+    CSSColorAngle h() const;
+    ExceptionOr<void> setH(CSSColorAngle&&);
+    CSSColorPercent s() const;
+    ExceptionOr<void> setS(CSSColorPercent&&);
+    CSSColorPercent l() const;
+    ExceptionOr<void> setL(CSSColorPercent&&);
+    CSSColorPercent alpha() const;
+    ExceptionOr<void> setAlpha(CSSColorPercent&&);
 
 private:
-    CSSHSL(CSSColorAngle, CSSColorPercent, CSSColorPercent, CSSColorPercent);
+    CSSHSL(RectifiedCSSColorAngle&&, RectifiedCSSColorPercent&&, RectifiedCSSColorPercent&&, RectifiedCSSColorPercent&&);
 
-    CSSColorAngle m_hue;
-    CSSColorPercent m_saturation;
-    CSSColorPercent m_lightness;
-    CSSColorPercent m_alpha;
+    RectifiedCSSColorAngle m_hue;
+    RectifiedCSSColorPercent m_saturation;
+    RectifiedCSSColorPercent m_lightness;
+    RectifiedCSSColorPercent m_alpha;
 };
     
 } // namespace WebCore

@@ -2863,10 +2863,12 @@ void RemoteGraphicsContextGLProxy::drawElementsInstancedBaseVertexBaseInstanceAN
 
 void RemoteGraphicsContextGLProxy::provokingVertexANGLE(GCGLenum mode)
 {
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::ProvokingVertexANGLE(mode));
-        if (!sendResult)
-            markContextLost();
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::ProvokingVertexANGLE(mode));
+    if (!sendResult) {
+        markContextLost();
+        return;
     }
 }
 
@@ -2881,6 +2883,17 @@ void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum
     }
     auto& [paramsReply] = sendResult.reply();
     memcpy(params.data(), paramsReply.data(), params.size() * sizeof(int32_t));
+}
+
+void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::DestinationColorSpace& arg0)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::SetDrawingBufferColorSpace(arg0));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
 }
 
 RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::paintRenderingResultsToPixelBuffer()

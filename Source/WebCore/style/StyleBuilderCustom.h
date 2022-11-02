@@ -2065,7 +2065,7 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
             break;
         default:
             if (primitiveValue.isPropertyID()) {
-                if (!isCSSPropertyExposed(primitiveValue.propertyID(), &builderState.document().settings()))
+                if (!isExposed(primitiveValue.propertyID(), &builderState.document().settings()))
                     break;
                 willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
             }

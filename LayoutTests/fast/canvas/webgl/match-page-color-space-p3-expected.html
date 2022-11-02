@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+.box {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+}
+</style>
+
+<p>The boxes below should all be uniform in color. Any difference is likely to be extremely subtle.</p>
+<div class="box" style="background-color: red"></div>
+<div class="box" style="background-color: green"></div>
+<div class="box" style="background-color: blue"></div>
+<p>rgb red, srgb red, display-p3 red (should be brighter):</p>
+<div class="box" style="background-color: rgb(255, 0, 0)"></div>
+<div class="box" style="background-color: color(srgb 1 0 0)"></div>
+<div class="box" style="background-color: color(display-p3 1 0 0)"></div>

@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,1) size 437x17
           text run at (0,1) width 437: "The caret should be in the middle of the Hebrew word."
       RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,99) size 784x19
-        RenderText {#text} at (0,1) size 58x17
-          text run at (0,1) width 58 RTL: "\x{5D0}\x{5D5}\x{5DB}\x{5DE}\x{5E0}\x{5D9}\x{5D5}\x{5EA}"
+      RenderBlock {DIV} at (0,99) size 784x18
+        RenderText {#text} at (0,0) size 58x17
+          text run at (0,0) width 58 RTL: "\x{5D0}\x{5D5}\x{5DB}\x{5DE}\x{5E0}\x{5D9}\x{5D5}\x{5EA}"
 caret: position 5 of child 0 {#text} of child 7 {DIV} of body

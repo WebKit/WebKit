@@ -30,6 +30,7 @@
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
 #include "DocumentInlines.h"
+#include "EventLoop.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
@@ -135,29 +136,33 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject,
     return JSC::Identifier::fromString(vm, result->string());
 }
 
-static void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
+static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<DeferredPromise>&& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
 {
-    deferred.rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
-        // We annotate exception with special private symbol. It allows us to distinguish these errors from the user thrown ones.
-        JSC::VM& vm = jsGlobalObject.vm();
-        // FIXME: Propagate more descriptive error.
-        // https://bugs.webkit.org/show_bug.cgi?id=167553
-        auto* error = JSC::createTypeError(&jsGlobalObject, message);
-        ASSERT(error);
-        error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(failureKind)));
-        return error;
+    context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTFMove(deferred), failureKind, message]() {
+        deferred->rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
+            // We annotate exception with special private symbol. It allows us to distinguish these errors from the user thrown ones.
+            JSC::VM& vm = jsGlobalObject.vm();
+            // FIXME: Propagate more descriptive error.
+            // https://bugs.webkit.org/show_bug.cgi?id=167553
+            auto* error = JSC::createTypeError(&jsGlobalObject, message);
+            ASSERT(error);
+            error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(failureKind)));
+            return error;
+        });
     });
 }
 
-static void rejectWithFetchError(DeferredPromise& deferred, ExceptionCode ec, const String& message)
+static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPromise>&& deferred, ExceptionCode ec, String&& message)
 {
     // Used to signal to the promise client that the failure was from a fetch, but not one that was propagated from another context.
-    deferred.rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
-        JSC::VM& vm = jsGlobalObject.vm();
-        JSC::JSObject* error = jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
-        ASSERT(error);
-        error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(ModuleFetchFailureKind::WasFetchError)));
-        return error;
+    context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTFMove(deferred), ec, message = WTFMove(message)]() {
+        deferred->rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
+            JSC::VM& vm = jsGlobalObject.vm();
+            JSC::JSObject* error = jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
+            ASSERT(error);
+            error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(ModuleFetchFailureKind::WasFetchError)));
+            return error;
+        });
     });
 }
 
@@ -171,12 +176,12 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     RELEASE_ASSERT(jsPromise);
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     if (moduleKeyValue.isSymbol()) {
-        rejectWithFetchError(deferred.get(), TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
+        rejectWithFetchError(m_context, WTFMove(deferred), TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
         return jsPromise;
     }
 
     if (!moduleKeyValue.isString()) {
-        rejectWithFetchError(deferred.get(), TypeError, "Module key is not Symbol or String."_s);
+        rejectWithFetchError(m_context, WTFMove(deferred), TypeError, "Module key is not Symbol or String."_s);
         return jsPromise;
     }
 
@@ -184,7 +189,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     URL completedURL { asString(moduleKeyValue)->value(jsGlobalObject) };
     if (!completedURL.isValid()) {
-        rejectWithFetchError(deferred.get(), TypeError, "Module key is a valid URL."_s);
+        rejectWithFetchError(m_context, WTFMove(deferred), TypeError, "Module key is a valid URL."_s);
         return jsPromise;
     }
 
@@ -198,7 +203,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         if (!loader->load(downcast<Document>(m_context), WTFMove(completedURL))) {
             loader->clearClient();
             m_loaders.remove(WTFMove(loader));
-            rejectToPropagateNetworkError(deferred.get(), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
+            rejectToPropagateNetworkError(m_context, WTFMove(deferred), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return jsPromise;
         }
     } else {
@@ -273,12 +278,11 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     return JSC::jsUndefined();
 }
 
-static JSC::JSInternalPromise* rejectPromise(JSDOMGlobalObject& globalObject, ExceptionCode ec, String message)
+static JSC::JSInternalPromise* rejectPromise(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, ExceptionCode ec, String message)
 {
     auto* jsPromise = JSC::JSInternalPromise::create(globalObject.vm(), globalObject.internalPromiseStructure());
     RELEASE_ASSERT(jsPromise);
-    auto deferred = DeferredPromise::create(globalObject, *jsPromise);
-    rejectWithFetchError(deferred.get(), ec, WTFMove(message));
+    rejectWithFetchError(context, DeferredPromise::create(globalObject, *jsPromise), ec, WTFMove(message));
     return jsPromise;
 }
 
@@ -303,7 +307,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     // If settings object's global object implements WorkletGlobalScope or ServiceWorkerGlobalScope, then:
     if (isWorkletOrServiceWorker(m_context)) {
         scope.release();
-        return rejectPromise(globalObject, TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
+        return rejectPromise(m_context, globalObject, TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
     }
 
     auto reject = [&](auto& scope) {
@@ -351,7 +355,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         baseURL = URL { sourceOrigin.string() };
         if (!baseURL.isValid()) {
             scope.release();
-            return rejectPromise(globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
+            return rejectPromise(m_context, globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
         }
 
         auto type = getTypeFromAssertions();
@@ -449,22 +453,23 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         return responseURL;
     };
 
+    JSC::SourceCode sourceCode;
     if (m_ownerType == OwnerType::Document) {
         auto& loader = static_cast<CachedModuleScriptLoader&>(moduleScriptLoader);
         auto& cachedScript = *loader.cachedScript();
 
         if (cachedScript.resourceError().isAccessControl()) {
-            rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
+            rejectToPropagateNetworkError(m_context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
             return;
         }
 
         if (cachedScript.errorOccurred()) {
-            rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
+            rejectToPropagateNetworkError(m_context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return;
         }
 
         if (cachedScript.wasCanceled()) {
-            rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
+            rejectToPropagateNetworkError(m_context, WTFMove(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
             return;
         }
 
@@ -482,7 +487,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(promise.get(), TypeError, makeString("'", cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."));
+            rejectWithFetchError(m_context, WTFMove(promise), TypeError, makeString("'", cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."));
             return;
         }
 
@@ -491,7 +496,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             if (!integrity.isEmpty()) {
                 if (!matchIntegrityMetadata(cachedScript, integrity)) {
                     m_context.addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(cachedScript, integrity)));
-                    rejectWithFetchError(promise.get(), TypeError, "Cannot load script due to integrity mismatch"_s);
+                    rejectWithFetchError(m_context, WTFMove(promise), TypeError, "Cannot load script due to integrity mismatch"_s);
                     return;
                 }
             }
@@ -499,26 +504,21 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         URL responseURL = canonicalizeAndRegisterResponseURL(cachedScript.response().url(), cachedScript.hasRedirections(), cachedScript.response().source());
         m_requestURLToResponseURLMap.add(sourceURL.string(), WTFMove(responseURL));
-        promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
-            switch (type) {
-            case ModuleType::JavaScript:
-                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                    JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
-                break;
+        switch (type) {
+        case ModuleType::JavaScript:
+            sourceCode = JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
+            break;
 #if ENABLE(WEBASSEMBLY)
-            case ModuleType::WebAssembly:
-                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                    JSC::SourceCode { WebAssemblyScriptSourceCode { &cachedScript, loader.scriptFetcher() }.jsSourceCode() });
-                break;
+        case ModuleType::WebAssembly:
+            sourceCode = JSC::SourceCode { WebAssemblyScriptSourceCode { &cachedScript, loader.scriptFetcher() }.jsSourceCode() };
+            break;
 #endif
-            case ModuleType::JSON:
-                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                    JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() });
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        });
+        case ModuleType::JSON:
+            sourceCode = JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     } else {
         auto& loader = static_cast<WorkerModuleScriptLoader&>(moduleScriptLoader);
 
@@ -527,16 +527,16 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             auto& workerScriptLoader = loader.scriptLoader();
             ASSERT(workerScriptLoader.failed());
             if (workerScriptLoader.error().isAccessControl()) {
-                rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
+                rejectToPropagateNetworkError(m_context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
                 return;
             }
 
             if (workerScriptLoader.error().isCancellation()) {
-                rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
+                rejectToPropagateNetworkError(m_context, WTFMove(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
                 return;
             }
 
-            rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
+            rejectToPropagateNetworkError(m_context, WTFMove(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return;
         }
 
@@ -554,7 +554,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(promise.get(), TypeError, makeString("'", loader.responseMIMEType(), "' is not a valid JavaScript MIME type."));
+            rejectWithFetchError(m_context, WTFMove(promise), TypeError, makeString("'", loader.responseMIMEType(), "' is not a valid JavaScript MIME type."));
             return;
         }
 
@@ -573,27 +573,29 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 #endif
         }
         m_requestURLToResponseURLMap.add(sourceURL.string(), responseURL);
-        promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
-            switch (type) {
-            case ModuleType::JavaScript:
-                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                    JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
-                break;
+
+        switch (type) {
+        case ModuleType::JavaScript:
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
+            break;
 #if ENABLE(WEBASSEMBLY)
-            case ModuleType::WebAssembly:
-                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                    JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTFMove(responseURL), loader.scriptFetcher() }.jsSourceCode() });
-                break;
+        case ModuleType::WebAssembly:
+            sourceCode = JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTFMove(responseURL), loader.scriptFetcher() }.jsSourceCode() };
+            break;
 #endif
-            case ModuleType::JSON:
-                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                    JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() });
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        });
+        case ModuleType::JSON:
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
+
+    m_context.eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise), sourceCode = WTFMove(sourceCode)]() {
+        promise->resolveWithCallback([&, sourceCode](JSDOMGlobalObject& jsGlobalObject) {
+            return JSC::JSSourceCode::create(jsGlobalObject.vm(), JSC::SourceCode { sourceCode });
+        });
+    });
 }
 
 }

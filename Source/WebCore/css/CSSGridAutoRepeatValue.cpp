@@ -37,7 +37,7 @@ namespace WebCore {
 
 String CSSGridAutoRepeatValue::customCSSText() const
 {
-    return makeString("repeat("_s, getValueName(autoRepeatID()), ", "_s, CSSValueList::customCSSText(), ')');
+    return makeString("repeat("_s, nameLiteral(autoRepeatID()), ", "_s, CSSValueList::customCSSText(), ')');
 }
 
 bool CSSGridAutoRepeatValue::equals(const CSSGridAutoRepeatValue& other) const

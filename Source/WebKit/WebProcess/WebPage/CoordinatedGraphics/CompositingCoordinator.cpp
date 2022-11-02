@@ -58,7 +58,6 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 {
     m_nicosia.scene = Nicosia::Scene::create();
     m_nicosia.sceneIntegration = Nicosia::SceneIntegration::create(*m_nicosia.scene, *this);
-    m_state.nicosia.scene = m_nicosia.scene;
 
     m_rootLayer = GraphicsLayer::create(this, *this);
 #ifndef NDEBUG
@@ -138,7 +137,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     coordinatedLayer.syncPendingStateChangesIncludingSubLayers();
 
     if (m_shouldSyncFrame) {
-        m_state.nicosia.scene->accessState(
+        m_nicosia.scene->accessState(
             [this](Nicosia::Scene::State& state)
             {
                 bool platformLayerUpdated = false;
@@ -170,7 +169,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
                 state.rootLayer = m_nicosia.state.rootLayer;
             });
 
-        m_client.commitSceneState(m_state);
+        m_client.commitSceneState(m_nicosia.scene);
         m_shouldSyncFrame = false;
     }
 

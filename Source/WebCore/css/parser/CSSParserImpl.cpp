@@ -1091,7 +1091,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
 
     size_t propertiesCount = m_parsedProperties.size();
 
-    if (!isCSSPropertyExposed(propertyID, &m_context.propertySettings))
+    if (!isExposed(propertyID, &m_context.propertySettings))
         propertyID = CSSPropertyInvalid;
 
     if (propertyID == CSSPropertyInvalid && CSSVariableParser::isValidVariableName(token)) {
