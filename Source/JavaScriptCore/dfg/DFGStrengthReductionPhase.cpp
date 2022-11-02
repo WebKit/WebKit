@@ -748,8 +748,10 @@ private:
                             PromotedLocationDescriptor(NamedPropertyPLoc, groupsIndex));
 
                         auto materializeString = [&] (const String& string) -> Node* {
-                            if (string.isNull())
-                                return nullptr;
+                            if (string.isNull()) {
+                                return m_insertionSet.insertConstant(
+                                    m_nodeIndex, origin, jsUndefined());
+                            }
                             if (string.isEmpty()) {
                                 return m_insertionSet.insertConstant(
                                     m_nodeIndex, origin, vm().smallStrings.emptyString());
@@ -761,11 +763,10 @@ private:
                         };
 
                         for (unsigned i = 0; i < resultArray.size(); ++i) {
-                            if (Node* node = materializeString(resultArray[i])) {
-                                m_graph.m_varArgChildren.append(Edge(node, UntypedUse));
-                                data->m_properties.append(
-                                    PromotedLocationDescriptor(IndexedPropertyPLoc, i));
-                            }
+                            Node* node = materializeString(resultArray[i]);
+                            m_graph.m_varArgChildren.append(Edge(node, UntypedUse));
+                            data->m_properties.append(
+                                PromotedLocationDescriptor(IndexedPropertyPLoc, i));
                         }
 
                         Node* resultNode = m_insertionSet.insertNode(

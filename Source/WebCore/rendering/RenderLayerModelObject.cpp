@@ -266,12 +266,12 @@ void RenderLayerModelObject::updateLayerTransform()
 }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-bool RenderLayerModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo, const std::optional<StdUnorderedSet<PaintPhase>>& relevantPaintPhases) const
+bool RenderLayerModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo, const OptionSet<PaintPhase> relevantPaintPhases) const
 {
     if (paintInfo.context().paintingDisabled())
         return false;
 
-    if (relevantPaintPhases && !relevantPaintPhases->contains(paintInfo.phase))
+    if (!relevantPaintPhases.isEmpty() && !relevantPaintPhases.contains(paintInfo.phase))
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))

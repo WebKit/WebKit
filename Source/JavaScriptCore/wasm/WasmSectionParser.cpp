@@ -83,6 +83,14 @@ auto SectionParser::parseType() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseRecursionGroup(i, signature));
             break;
         }
+        case TypeKind::Sub: {
+            if (!Options::useWebAssemblyGC())
+                return fail(i, "th type failed to parse because sub types are not enabled");
+
+            Vector<TypeIndex> empty;
+            WASM_FAIL_IF_HELPER_FAILS(parseSubtype(i, signature, empty));
+            break;
+        }
         default:
             return fail(i, "th Type is non-Func, non-Struct, and non-Array ", typeKind);
         }
@@ -93,26 +101,19 @@ auto SectionParser::parseType() -> PartialResult
         // notations for recursion groups with one type. Here we ensure that if such a
         // shorthand type is actually recursive, it is represented with a recursion group.
         if (Options::useWebAssemblyGC()) {
-            bool hasRecursiveReference = false;
-            if (signature->is<FunctionSignature>())
-                hasRecursiveReference = signature->as<FunctionSignature>()->hasRecursiveReference();
-            else if (signature->is<StructType>())
-                hasRecursiveReference = signature->as<StructType>()->hasRecursiveReference();
-            else if (signature->is<ArrayType>())
-                hasRecursiveReference = signature->as<ArrayType>()->hasRecursiveReference();
-
-            if (hasRecursiveReference) {
-                Vector<TypeIndex> types;
-                bool result = types.tryAppend(signature->index());
-                WASM_PARSER_FAIL_IF(!result, "can't allocate enough memory for Type section's ", i, "th signature");
-                RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
-                RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
-                m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
-            } else if (!signature->is<RecursionGroup>()) {
-                // Recursion group parsing will append the entries itself, as there may
-                // be multiple entries that need to be added to the type section for
-                // each recursion group.
-                m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
+            // Recursion group parsing will append the entries itself, as there may
+            // be multiple entries that need to be added to the type section for
+            // each recursion group.
+            if (!signature->is<RecursionGroup>()) {
+                if (signature->hasRecursiveReference()) {
+                    Vector<TypeIndex> types;
+                    bool result = types.tryAppend(signature->index());
+                    WASM_PARSER_FAIL_IF(!result, "can't allocate enough memory for Type section's ", i, "th signature");
+                    RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
+                    RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
+                    m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
+                } else
+                    m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
             }
         } else
             m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
@@ -849,6 +850,10 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
             WASM_FAIL_IF_HELPER_FAILS(parseArrayType(i, signature));
             break;
         }
+        case TypeKind::Sub: {
+            WASM_FAIL_IF_HELPER_FAILS(parseSubtype(i, signature, types, DeferSubtypeCheck::Yes));
+            break;
+        }
         default:
             return fail(i, "th Type is non-Func, non-Struct, and non-Array ", typeKind);
         }
@@ -870,18 +875,148 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
         for (uint32_t i = 0; i < typeCount; ++i) {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), i);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's ", i, "th projection");
+
+            // Checking subtyping requirements has to be deferred until we construct
+            // projections in case recursive references show up in the type.
+            if (TypeInformation::get(types[i]).is<Subtype>())
+                WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll()), "structural type is not a subtype of the specified supertype");
+
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
         }
     } else {
-        // If a type definition is idempotent for the below replacement, then it is non-recursive and doesn't need a projection.
-        if (*firstSignature == firstSignature->replacePlaceholders(recursionGroup->index()))
+        if (!firstSignature->hasRecursiveReference())
             m_info->typeSignatures.uncheckedAppend(firstSignature.releaseNonNull());
         else {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), 0);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's 0th projection");
+            if (firstSignature->is<Subtype>())
+                WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll()), "structural type is not a subtype of the specified supertype");
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
         }
     }
+
+    return { };
+}
+
+// Checks subtyping between a concrete structural type and a parent type definition,
+// following the subtyping relation described in the GC proposal specification:
+//
+//   https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#structural-types
+//
+// The subtype argument should be unrolled before it is passed here, if needed.
+bool SectionParser::checkStructuralSubtype(const TypeDefinition& subtype, const TypeDefinition& supertype)
+{
+    ASSERT(subtype.is<FunctionSignature>() || subtype.is<StructType>() || subtype.is<ArrayType>());
+    const TypeDefinition& expanded = supertype.expand();
+    ASSERT(expanded.is<FunctionSignature>() || expanded.is<StructType>() || expanded.is<ArrayType>());
+
+    if (subtype.is<FunctionSignature>() && expanded.is<FunctionSignature>()) {
+        const FunctionSignature& subFunc = *subtype.as<FunctionSignature>();
+        const FunctionSignature& superFunc = *expanded.as<FunctionSignature>();
+        if (subFunc.argumentCount() == superFunc.argumentCount() && subFunc.returnCount() == superFunc.returnCount()) {
+            for (FunctionArgCount i = 0; i < subFunc.argumentCount(); ++i)  {
+                if (!isSubtype(superFunc.argumentType(i), subFunc.argumentType(i)))
+                    return false;
+            }
+            for (FunctionArgCount i = 0; i < subFunc.returnCount(); ++i)  {
+                if (!isSubtype(subFunc.returnType(i), superFunc.returnType(i)))
+                    return false;
+            }
+            return true;
+        }
+    } else if (subtype.is<StructType>() && expanded.is<StructType>()) {
+        const StructType& subStruct = *subtype.as<StructType>();
+        const StructType& superStruct = *expanded.as<StructType>();
+        if (subStruct.fieldCount() >= superStruct.fieldCount()) {
+            for (StructFieldCount i = 0; i < superStruct.fieldCount(); ++i)  {
+                FieldType subField = subStruct.field(i);
+                FieldType superField = superStruct.field(i);
+                if (subField.mutability != superField.mutability)
+                    return false;
+                if (subField.mutability == Mutability::Mutable && subField.type != superField.type)
+                    return false;
+                if (subField.mutability == Mutability::Immutable && !isSubtype(subField.type, superField.type))
+                    return false;
+            }
+            return true;
+        }
+    } else if (subtype.is<ArrayType>() && expanded.is<ArrayType>()) {
+        FieldType subField = subtype.as<ArrayType>()->elementType();
+        FieldType superField = expanded.as<ArrayType>()->elementType();
+        if (subField.mutability != superField.mutability)
+            return false;
+        if (subField.mutability == Mutability::Mutable && subField.type != superField.type)
+            return false;
+        if (subField.mutability == Mutability::Immutable && !isSubtype(subField.type, superField.type))
+            return false;
+        return true;
+    }
+
+    return false;
+}
+
+bool SectionParser::checkSubtypeValidity(const TypeDefinition& subtype)
+{
+    ASSERT(subtype.is<Subtype>());
+    return checkStructuralSubtype(TypeInformation::get(subtype.as<Subtype>()->underlyingType()), TypeInformation::get(subtype.as<Subtype>()->superType()));
+}
+
+auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subtype, Vector<TypeIndex>& recursionGroupTypes, DeferSubtypeCheck defer) -> PartialResult
+{
+    ASSERT(Options::useWebAssemblyGC());
+
+    uint32_t supertypeCount;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(supertypeCount), "can't get ", position, "th subtype's supertype count");
+    WASM_PARSER_FAIL_IF(supertypeCount > maxSubtypeSupertypeCount, "number of supertypes for subtype at position ", position, " is too big ", supertypeCount, " maximum ", maxSubtypeSupertypeCount);
+
+    // The following assumes the MVP restriction that only up to a single supertype is allowed.
+    TypeIndex supertypeIndex = TypeDefinition::invalidIndex;
+    if (supertypeCount > 0) {
+        uint32_t typeIndex;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get subtype's supertype index");
+        WASM_PARSER_FAIL_IF(typeIndex >= m_info->typeCount() + recursionGroupTypes.size(), "supertype index is a forward reference");
+        // It is possible for a sub type declaration to refer to an earlier
+        // definition in the same recursion group, before it has been
+        // registered in the type signatures. In that case, we look it up
+        // in the recursion group type index vector.
+        if (typeIndex < m_info->typeCount())
+            supertypeIndex = TypeInformation::get(m_info->typeSignatures[typeIndex]);
+        else
+            supertypeIndex = recursionGroupTypes[typeIndex - m_info->typeCount()];
+    }
+
+    int8_t typeKind;
+    WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get subtype's underlying Type's type");
+    RefPtr<TypeDefinition> underlyingType;
+    switch (static_cast<TypeKind>(typeKind)) {
+    case TypeKind::Func: {
+        WASM_FAIL_IF_HELPER_FAILS(parseFunctionType(position, underlyingType));
+        break;
+    }
+    case TypeKind::Struct: {
+        WASM_FAIL_IF_HELPER_FAILS(parseStructType(position, underlyingType));
+        break;
+    }
+    case TypeKind::Array: {
+        WASM_FAIL_IF_HELPER_FAILS(parseArrayType(position, underlyingType));
+        break;
+    }
+    default:
+        return fail("invalid structural type definition for subtype ", typeKind);
+    }
+
+    if (defer == DeferSubtypeCheck::No)
+        WASM_PARSER_FAIL_IF(!checkStructuralSubtype(*underlyingType, TypeInformation::get(supertypeIndex)), "structural type is not a subtype of the specified supertype");
+
+    // When no supertypes are specified, we will normalize type definitions to
+    // not have the subtype. This ensures that type shorthands and the full
+    // subtype form are represented in the same way.
+    if (!supertypeCount) {
+        subtype = underlyingType;
+        return { };
+    }
+
+    subtype = TypeInformation::typeDefinitionForSubtype(supertypeIndex, TypeInformation::get(*underlyingType));
 
     return { };
 }

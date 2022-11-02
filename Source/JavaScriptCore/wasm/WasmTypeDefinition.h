@@ -35,6 +35,7 @@
 #include "Width.h"
 #include "WriteBarrier.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
@@ -82,6 +83,7 @@ using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
 using RecursionGroupCount = uint32_t;
 using ProjectionIndex = uint32_t;
+using DisplayCount = uint32_t;
 
 inline Width Type::width() const
 {
@@ -130,6 +132,7 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     case TypeKind::Func:
     case TypeKind::Struct:
     case TypeKind::Void:
+    case TypeKind::Sub:
     case TypeKind::Rec:
     case TypeKind::I31ref: {
         break;
@@ -323,12 +326,49 @@ private:
 };
 static_assert(sizeof(ProjectionIndex) <= sizeof(TypeIndex));
 
+// A Subtype represents a type that is declared to be a subtype of another type
+// definition. It contains a display data structure that allows subtyping of
+// references to be checked in constant time.
+//
+// See https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#runtime-types
+// for an explanation of displays.
+//
+// The representation assumes a single supertype. The binary format is designed to allow
+// multiple supertypes, but these are not supported in the initial GC proposal.
+class Subtype {
+public:
+    Subtype(TypeIndex* payload, DisplayCount displaySize)
+        : m_payload(payload)
+        , m_displaySize(displaySize)
+    {
+    }
+
+    TypeIndex superType() const { return const_cast<Subtype*>(this)->getSuperType(); }
+    TypeIndex underlyingType() const { return const_cast<Subtype*>(this)->getUnderlyingType(); }
+    TypeIndex displayType(DisplayCount i) const { return const_cast<Subtype*>(this)->getDisplayType(i); }
+    DisplayCount displaySize() const { return m_displaySize; }
+
+    WTF::String toString() const;
+    void dump(WTF::PrintStream& out) const;
+
+    TypeIndex& getSuperType() { return *storage(1); }
+    TypeIndex& getUnderlyingType() { return *storage(0); }
+    TypeIndex& getDisplayType(DisplayCount i) { return *storage(i + 2); }
+    TypeIndex* storage(uint32_t i) { return i + m_payload; }
+    TypeIndex* storage(uint32_t i) const { return const_cast<Subtype*>(this)->storage(i); }
+
+private:
+    TypeIndex* m_payload;
+    uint32_t m_displaySize;
+};
+
 enum class TypeDefinitionKind : uint8_t {
     FunctionSignature,
     StructType,
     ArrayType,
     RecursionGroup,
-    Projection
+    Projection,
+    Subtype
 };
 
 class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
@@ -352,7 +392,10 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     TypeDefinition(TypeDefinitionKind kind, uint32_t fieldCount)
         : m_typeHeader { RecursionGroup { static_cast<TypeIndex*>(payload()), static_cast<RecursionGroupCount>(fieldCount) } }
     {
-        RELEASE_ASSERT(kind == TypeDefinitionKind::RecursionGroup);
+        if (kind == TypeDefinitionKind::Subtype)
+            m_typeHeader = { Subtype { static_cast<TypeIndex*>(payload()), static_cast<DisplayCount>(fieldCount) } };
+        else
+            RELEASE_ASSERT(kind == TypeDefinitionKind::RecursionGroup);
     }
 
     TypeDefinition(TypeDefinitionKind kind)
@@ -372,6 +415,7 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     static size_t allocatedArraySize() { return sizeof(TypeDefinition) + sizeof(FieldType); }
     static size_t allocatedRecursionGroupSize(Checked<RecursionGroupCount> typeCount) { return sizeof(TypeDefinition) + typeCount * sizeof(TypeIndex); }
     static size_t allocatedProjectionSize() { return sizeof(TypeDefinition) + 2 * sizeof(TypeIndex); }
+    static size_t allocatedSubtypeSize(Checked<DisplayCount> displayCount) { return sizeof(TypeDefinition) + (displayCount + 2) * sizeof(TypeIndex); }
 
 public:
     template <typename T>
@@ -391,7 +435,9 @@ public:
     unsigned hash() const;
 
     const TypeDefinition& replacePlaceholders(TypeIndex) const;
+    const TypeDefinition& unroll() const;
     const TypeDefinition& expand() const;
+    bool hasRecursiveReference() const;
 
     // Type definitions are uniqued and, for call_indirect, validated at runtime. Tables can create invalid TypeIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in TypeInformation.
     static const constexpr TypeIndex invalidIndex = 0;
@@ -403,16 +449,18 @@ private:
     friend struct ArrayParameterTypes;
     friend struct RecursionGroupParameterTypes;
     friend struct ProjectionParameterTypes;
+    friend struct SubtypeParameterTypes;
 
     static RefPtr<TypeDefinition> tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount);
     static RefPtr<TypeDefinition> tryCreateStructType(StructFieldCount, const FieldType*);
     static RefPtr<TypeDefinition> tryCreateArrayType();
     static RefPtr<TypeDefinition> tryCreateRecursionGroup(RecursionGroupCount);
     static RefPtr<TypeDefinition> tryCreateProjection();
+    static RefPtr<TypeDefinition> tryCreateSubtype(DisplayCount);
 
     static Type substitute(Type, TypeIndex);
 
-    std::variant<FunctionSignature, StructType, ArrayType, RecursionGroup, Projection> m_typeHeader;
+    std::variant<FunctionSignature, StructType, ArrayType, RecursionGroup, Projection, Subtype> m_typeHeader;
     // Payload is stored here.
 };
 
@@ -465,7 +513,11 @@ public:
     static RefPtr<TypeDefinition> typeDefinitionForArray(FieldType);
     static RefPtr<TypeDefinition> typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types);
     static RefPtr<TypeDefinition> typeDefinitionForProjection(TypeIndex, ProjectionIndex);
+    static RefPtr<TypeDefinition> typeDefinitionForSubtype(TypeIndex, TypeIndex);
     ALWAYS_INLINE const TypeDefinition* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
+
+    static void addCachedUnrolling(TypeIndex, TypeIndex);
+    static std::optional<TypeIndex> tryGetCachedUnrolling(TypeIndex);
 
     static const TypeDefinition& get(TypeIndex);
     static TypeIndex get(const TypeDefinition&);
@@ -475,6 +527,7 @@ public:
     static void tryCleanup();
 private:
     HashSet<Wasm::TypeHash> m_typeSet;
+    HashMap<TypeIndex, TypeIndex> m_unrollingCache;
     const TypeDefinition* thunkTypes[numTypes];
     Lock m_lock;
 };

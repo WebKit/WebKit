@@ -474,7 +474,7 @@ Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionTy
         // Animations are started at the end of document parsing and after firing the load event,
         // but if we miss that train (deferred programmatic element insertion for example) we need
         // to initialize the time container here.
-        if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished() && !m_timeContainer->isStarted())
+        if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished())
             m_timeContainer->begin();
     }
     return SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);

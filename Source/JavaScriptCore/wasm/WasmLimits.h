@@ -46,6 +46,7 @@ constexpr size_t maxGlobals = 1000000;
 constexpr size_t maxDataSegments = 100000;
 constexpr size_t maxStructFieldCount = 10000;
 constexpr size_t maxRecursionGroupCount = 10000;
+constexpr size_t maxSubtypeSupertypeCount = 1;
 
 constexpr size_t maxStringSize = 100000;
 constexpr size_t maxModuleSize = 1024 * 1024 * 1024;

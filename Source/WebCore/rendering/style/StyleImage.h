@@ -74,6 +74,7 @@ public:
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual float imageScaleFactor() const { return 1; }
+    virtual bool imageHasNaturalDimensions() const { return true; }
 
     // Image.
     virtual RefPtr<Image> image(const RenderElement*, const FloatSize&) const = 0;

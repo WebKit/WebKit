@@ -56,6 +56,7 @@ protected:
     bool imageHasRelativeHeight() const final { return !m_fixedSize; }
     bool usesImageContainerSize() const final { return !m_fixedSize; }
     void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float) final { m_containerSize = containerSize; }
+    bool imageHasNaturalDimensions() const final { return !usesImageContainerSize(); }
     
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;

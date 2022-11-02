@@ -114,7 +114,8 @@ bool SMILTimeContainer::isStarted() const
 
 void SMILTimeContainer::begin()
 {
-    ASSERT(!m_beginTime);
+    if (isStarted())
+        return;
 
     ASSERT(Page::nonUtilityPageCount());
     if (!Page::nonUtilityPageCount())

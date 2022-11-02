@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    onload = async () => {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        document.body.appendChild(svg);
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+        document.open();
+        document.write('PASS');
+        document.body.appendChild(svg);
+        document.close();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+Wait a moment...

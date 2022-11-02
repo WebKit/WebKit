@@ -34,9 +34,11 @@
 #if defined(ZYAN_CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-qual"
+#pragma clang diagnostic ignored "-Wcast-align"
 #elif defined(ZYAN_GCC)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
+#pragma GCC diagnostic ignored "-Wcast-align"
 #endif
 
 /* ============================================================================================== */

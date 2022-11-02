@@ -178,6 +178,27 @@ inline bool isTypeIndexHeapType(int32_t heapType)
     return heapType >= 0;
 }
 
+inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
+{
+    if (sub == parent)
+        return true;
+
+    const TypeDefinition& sig = TypeInformation::get(sub).unroll();
+    if (sig.is<Subtype>()) {
+        const Subtype& subtype = *sig.as<Subtype>();
+        const TypeDefinition& parentSig = TypeInformation::get(parent).unroll();
+        if (parentSig.is<Subtype>()) {
+            if (subtype.displaySize() < parentSig.as<Subtype>()->displaySize())
+                return false;
+            return parent == subtype.displayType(subtype.displaySize() - parentSig.as<Subtype>()->displaySize() - 1);
+        }
+        // If not a subtype itself, the parent must be at the top of the display.
+        return parent == subtype.displayType(subtype.displaySize() - 1);
+    }
+
+    return false;
+}
+
 inline bool isSubtype(Type sub, Type parent)
 {
     if (sub.isNullable() && !parent.isNullable())
@@ -189,6 +210,9 @@ inline bool isSubtype(Type sub, Type parent)
 
         if (TypeInformation::get(sub.index).expand().is<FunctionSignature>() && isFuncref(parent))
             return true;
+
+        if (isRefWithTypeIndex(parent))
+            return isSubtypeIndex(sub.index, parent.index);
     }
 
     if (sub.isRef() && parent.isRefNull() && sub.index == parent.index)

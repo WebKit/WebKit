@@ -1505,7 +1505,7 @@
 
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow ipc-posix-shm
     (ipc-posix-name-prefix "CFPBS:")) ; <rdar://problem/13757475>
 #endif
@@ -2351,11 +2351,6 @@
 )
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
-;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
-(deny user-preference-read (with enable-state-flag "BlockIOKitInWebContentSandbox")
-    (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
-
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
     (deny iokit-open-service (with telemetry-backtrace))
     (deny iokit-open-user-client (with telemetry-backtrace))
