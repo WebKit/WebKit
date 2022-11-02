@@ -386,3 +386,5 @@ uint64_t WebFrameProxy::messageSenderDestinationID() const
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
