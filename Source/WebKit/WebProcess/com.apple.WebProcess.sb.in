@@ -2351,11 +2351,6 @@
 )
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
-;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
-(deny user-preference-read (with enable-state-flag "BlockIOKitInWebContentSandbox")
-    (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
-
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
     (deny iokit-open-service (with telemetry-backtrace))
     (deny iokit-open-user-client (with telemetry-backtrace))

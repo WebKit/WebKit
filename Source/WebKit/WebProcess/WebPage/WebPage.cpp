@@ -596,7 +596,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     if (shouldBlockIOKit) {
 #if HAVE(SANDBOX_STATE_FLAGS)
-        CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"), nullptr);
+        auto auditToken = WebProcess::singleton().auditTokenForSelf();
+        sandbox_enable_state_flag("BlockIOKitInWebContentSandbox", *auditToken);
 #endif
         ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
