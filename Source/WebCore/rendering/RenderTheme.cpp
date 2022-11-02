@@ -831,11 +831,10 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     case MenulistPart:
     case ProgressBarPart:
     case MeterPart:
-    // FIXME: SearchFieldPart should be included here when making search fields style-able.
+    case SearchFieldPart:
     case TextFieldPart:
     case TextAreaPart:
-        // Test the style to see if the UA border and background match.
-        return !style.borderAndBackgroundEqual(userAgentStyle);
+        return !style.borderAndBackgroundEqual(userAgentStyle) || style.hasAuthorOriginPropertyDisablingAppearance();
     default:
         return false;
     }

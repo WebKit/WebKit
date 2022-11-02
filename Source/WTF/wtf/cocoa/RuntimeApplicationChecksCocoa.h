@@ -35,6 +35,7 @@ enum class SDKAlignedBehavior {
     AllowsWheelEventGesturesToBecomeNonBlocking,
     ApplicationCacheDisabledByDefault,
     AuthorizationHeaderOnSameOriginRedirects,
+    AuthorOriginBorderBackgroundDeclarationsDisableAppearance,
     BlanksViewOnJSPrompt,
     ContextMenuTriggersLinkActivationNavigationType,
     ConvertsInvalidURLsToBlank,

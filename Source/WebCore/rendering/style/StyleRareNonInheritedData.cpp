@@ -120,6 +120,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , containIntrinsicHeightType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicHeightType()))
     , containerType(static_cast<unsigned>(RenderStyle::initialContainerType()))
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
+    , hasAuthorOriginPropertyDisablingAppearance(false)
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
     , offsetDistance(RenderStyle::initialOffsetDistance())
@@ -231,6 +232,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , containIntrinsicHeightType(o.containIntrinsicHeightType)
     , containerType(o.containerType)
     , overflowAnchor(o.overflowAnchor)
+    , hasAuthorOriginPropertyDisablingAppearance(o.hasAuthorOriginPropertyDisablingAppearance)
     , containerNames(o.containerNames)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
@@ -356,7 +358,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && offsetPosition == o.offsetPosition
         && offsetAnchor == o.offsetAnchor
         && offsetRotate == o.offsetRotate
-        && overflowAnchor == o.overflowAnchor;
+        && overflowAnchor == o.overflowAnchor
+        && hasAuthorOriginPropertyDisablingAppearance == o.hasAuthorOriginPropertyDisablingAppearance;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const

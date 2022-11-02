@@ -45,6 +45,8 @@ protected:
     void paintAttachmentText(GraphicsContext&, AttachmentLayout*) final;
 #endif
 
+    bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const override;
+
 private:
     void purgeCaches() override;
 

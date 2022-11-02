@@ -1165,6 +1165,7 @@
                 "scroll"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "name-for-methods": "Attachment",
                 "fill-layer-property": true,
                 "separator": ","
@@ -1215,6 +1216,7 @@
                 }
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "related-property": "-webkit-background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
@@ -1227,6 +1229,7 @@
         },
         "background-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "visited-link-color-support": true,
                 "color-property": true
             },
@@ -1237,6 +1240,7 @@
         },
         "background-image": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "name-for-methods": "Image",
                 "fill-layer-property": true,
                 "separator": " "
@@ -1248,6 +1252,7 @@
         },
         "background-origin": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "related-property": "-webkit-background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
@@ -1260,6 +1265,7 @@
         },
         "background-position": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "longhands": [
                     "background-position-x",
                     "background-position-y"
@@ -1302,6 +1308,7 @@
         },
         "background-size": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "name-for-methods": "Size",
                 "fill-layer-property": true,
                 "separator": " "
@@ -1405,6 +1412,7 @@
         },
         "border-block-end-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-after-color"
                 ],
@@ -1434,6 +1442,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-after-style"
                 ],
@@ -1450,6 +1459,7 @@
         },
         "border-block-end-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-after-width"
                 ],
@@ -1482,6 +1492,7 @@
         },
         "border-block-start-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-before-color"
                 ],
@@ -1527,6 +1538,7 @@
         },
         "border-block-start-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-before-width"
                 ],
@@ -1580,6 +1592,7 @@
         },
         "border-bottom-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
@@ -1595,6 +1608,7 @@
         },
         "border-bottom-left-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-bottom-left-radius"
                 ],
@@ -1611,6 +1625,7 @@
         },
         "border-bottom-right-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-bottom-right-radius"
                 ],
@@ -1639,6 +1654,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderStyle",
                 "logical-property-group": {
                     "name": "border-style",
@@ -1652,6 +1668,7 @@
         },
         "border-bottom-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderWidth",
                 "converter": "LineWidth<float>",
                 "logical-property-group": {
@@ -1691,6 +1708,7 @@
         },
         "border-end-end-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "skip-builder": true,
                 "logical-property-group": {
                     "name": "border-radius",
@@ -1704,6 +1722,7 @@
         },
         "border-end-start-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "skip-builder": true,
                 "logical-property-group": {
                     "name": "border-radius",
@@ -1732,6 +1751,7 @@
         },
         "border-image-outset": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "custom": "All"
             },
             "specification": {
@@ -1741,6 +1761,7 @@
         },
         "border-image-repeat": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "custom": "All"
             },
             "specification": {
@@ -1750,6 +1771,7 @@
         },
         "border-image-slice": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "custom": "All"
             },
             "specification": {
@@ -1759,6 +1781,7 @@
         },
         "border-image-source": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "converter": "StyleImage<CSSPropertyBorderImageSource>"
             },
             "specification": {
@@ -1768,6 +1791,7 @@
         },
         "border-image-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "custom": "All"
             },
             "specification": {
@@ -1821,6 +1845,7 @@
         },
         "border-inline-end-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-end-color"
                 ],
@@ -1850,6 +1875,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-end-style"
                 ],
@@ -1866,6 +1892,7 @@
         },
         "border-inline-end-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-end-width"
                 ],
@@ -1898,6 +1925,7 @@
         },
         "border-inline-start-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-start-color"
                 ],
@@ -1927,6 +1955,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-start-style"
                 ],
@@ -1943,6 +1972,7 @@
         },
         "border-inline-start-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-start-width"
                 ],
@@ -1996,6 +2026,7 @@
         },
         "border-left-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
@@ -2023,6 +2054,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderStyle",
                 "logical-property-group": {
                     "name": "border-style",
@@ -2036,6 +2068,7 @@
         },
         "border-left-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderWidth",
                 "converter": "LineWidth<float>",
                 "logical-property-group": {
@@ -2077,6 +2110,7 @@
         },
         "border-right-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
@@ -2104,6 +2138,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderStyle",
                 "logical-property-group": {
                     "name": "border-style",
@@ -2117,6 +2152,7 @@
         },
         "border-right-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderWidth",
                 "converter": "LineWidth<float>",
                 "logical-property-group": {
@@ -2144,6 +2180,7 @@
         },
         "border-start-end-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "skip-builder": true,
                 "logical-property-group": {
                     "name": "border-radius",
@@ -2157,6 +2194,7 @@
         },
         "border-start-start-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "skip-builder": true,
                 "logical-property-group": {
                     "name": "border-radius",
@@ -2197,6 +2235,7 @@
         },
         "border-top-color": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
@@ -2212,6 +2251,7 @@
         },
         "border-top-left-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-top-left-radius"
                 ],
@@ -2228,6 +2268,7 @@
         },
         "border-top-right-radius": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "aliases": [
                     "-webkit-border-top-right-radius"
                 ],
@@ -2256,6 +2297,7 @@
                 "double"
             ],
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderStyle",
                 "logical-property-group": {
                     "name": "border-style",
@@ -2269,6 +2311,7 @@
         },
         "border-top-width": {
             "codegen-properties": {
+                "is-appearance-disabling-property": true,
                 "initial": "initialBorderWidth",
                 "converter": "LineWidth<float>",
                 "logical-property-group": {
@@ -3795,7 +3838,6 @@
         "outline-color": {
             "codegen-properties": {
                 "initial": "currentColor",
-                "visited-link-color-support": true,
                 "color-property": true
             },
             "specification": {
@@ -5766,7 +5808,6 @@
                     "-webkit-column-rule-color"
                 ],
                 "initial": "currentColor",
-                "visited-link-color-support": true,
                 "color-property": true
             },
             "specification":  {

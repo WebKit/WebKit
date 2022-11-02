@@ -92,6 +92,9 @@ public:
     bool useSVGZoomRulesForLength() const;
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
+    bool isAuthorOrigin() const { return m_currentProperty && m_currentProperty->cascadeLevel == CascadeLevel::Author; };
+
+    static bool isImage(const CSSValue&);
     RefPtr<StyleImage> createStyleImage(const CSSValue&);
     std::optional<FilterOperations> createFilterOperations(const CSSValue&);
 

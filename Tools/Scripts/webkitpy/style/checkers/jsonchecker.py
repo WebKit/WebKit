@@ -314,6 +314,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'synonym': self.validate_string,
             'svg': self.validate_boolean,
             'visited-link-color-support': self.validate_boolean,
+            'is-appearance-disabling-property': self.validate_boolean,
         }
 
         for key, value in codegen_properties.items():

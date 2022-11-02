@@ -110,6 +110,7 @@ my %styleBuilderOptions = (
     "skip-builder" => 1,
     "setter" => 1,
     "visited-link-color-support" => 1,
+    "is-appearance-disabling-property" => 1,
 );
 my %nameToId;
 my %nameToAliases;
@@ -1244,13 +1245,18 @@ sub generateColorValueSetter {
   my $valueIsPrimitive = @_ ? shift : VALUE_IS_COLOR;
 
   my $style = "builderState.style()";
-  my $setterContent .= $indent . "if (builderState.applyPropertyToRegularStyle())\n";
+  my $setterContent .= $indent . "if (builderState.applyPropertyToRegularStyle())";
   my $setValue = $style . "." . $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $color = $valueIsPrimitive ? colorFromPrimitiveValue($value) : $value;
   $setterContent .= $indent . "    " . $setValue . "(" . $color . ");\n";
-  $setterContent .= $indent . "if (builderState.applyPropertyToVisitedLinkStyle())\n";
+  $setterContent .= $indent . "if (builderState.applyPropertyToVisitedLinkStyle()) {\n";
   $color = $valueIsPrimitive ? colorFromPrimitiveValue($value, FOR_VISITED_LINK) : $value;
   $setterContent .= $indent . "    " . getVisitedLinkSetter($name, $style) . "(" . $color . ");\n";
+  $setterContent .= $indent . "    builderState.style().setHasAuthorOriginPropertyDisablingAppearance(false);\n";
+  $setterContent .= $indent . "} else {     \n";
+  $setterContent .= $indent . "    if (builderState.isAuthorOrigin() && !value.isCSSWideKeyword())\n";
+  $setterContent .= $indent . "        builderState.style().setHasAuthorOriginPropertyDisablingAppearance(true);\n";
+  $setterContent .= $indent . "}\n";
 
   return $setterContent;
 }
@@ -1424,8 +1430,10 @@ sub generateInitialValueSetter {
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $initial = $propertiesWithStyleBuilderOptions{$name}{"initial"};
   my $isSVG = exists $propertiesWithStyleBuilderOptions{$name}{"svg"};
+  my $propertiesWithStyleBuilderOptionsWasSet = 0;
+  my $needsValue = exists $propertiesWithStyleBuilderOptions{$name}{"is-appearance-disabling-property"} || (!(exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) && exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"});
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyInitial$nameToId{$name}(BuilderState& builderState)\n";
+  $setterContent .= $indent . "static void applyInitial$nameToId{$name}(BuilderState& builderState" . ($needsValue ? ", CSSValue& value)\n" : ", CSSValue&)\n");
   $setterContent .= $indent . "{\n";
   my $style = "builderState.style()";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) {
@@ -1433,6 +1441,7 @@ sub generateInitialValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"}) {
       my $initialColor = "RenderStyle::" . $initial . "()";
       $setterContent .= generateColorValueSetter($name, $initialColor, $indent . "    ");
+      $propertiesWithStyleBuilderOptionsWasSet = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {
     $setterContent .= generateAnimationPropertyInitialValueSetter($name, $indent . "    ");
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
@@ -1448,6 +1457,10 @@ sub generateInitialValueSetter {
   if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
     $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
   }
+  if (!$propertiesWithStyleBuilderOptionsWasSet and exists $propertiesWithStyleBuilderOptions{$name}{"is-appearance-disabling-property"}) {
+    $setterContent .= $indent . "    if (builderState.isAuthorOrigin() && !value.isCSSWideKeyword())\n";
+    $setterContent .= $indent . "        builderState.style().setHasAuthorOriginPropertyDisablingAppearance(true);\n";
+  }
 
   $setterContent .= $indent . "}\n";
 
@@ -1458,8 +1471,10 @@ sub generateInheritValueSetter {
   my $name = shift;
   my $indent = shift;
 
+  my $needsValue = exists $propertiesWithStyleBuilderOptions{$name}{"is-appearance-disabling-property"} || (!(exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) && exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"});
+
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyInherit$nameToId{$name}(BuilderState& builderState)\n";
+  $setterContent .= $indent . "static void applyInherit$nameToId{$name}(BuilderState& builderState" . ($needsValue ? ", CSSValue& value)\n" : ", CSSValue&)\n");
   $setterContent .= $indent . "{\n";
   my $isSVG = exists $propertiesWithStyleBuilderOptions{$name}{"svg"};
   my $parentStyle = "builderState.parentStyle()";
@@ -1467,6 +1482,7 @@ sub generateInheritValueSetter {
   my $getter = $propertiesWithStyleBuilderOptions{$name}{"getter"};
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $didCallSetValue = 0;
+    my $propertiesWithStyleBuilderOptionsWasSet = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) {
     $setterContent .= $indent . "    if (" . getAutoGetter($name, $parentStyle) . ") {\n";
     $setterContent .= $indent . "        " . getAutoSetter($name, $style) . ";\n";
@@ -1476,6 +1492,7 @@ sub generateInheritValueSetter {
     $setterContent .= $indent . "    auto color = " . $parentStyle . "." . $getter . "();\n";
     $setterContent .= generateColorValueSetter($name, "color", $indent . "    ");
     $didCallSetValue = 1;
+    $propertiesWithStyleBuilderOptionsWasSet = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {
     $setterContent .= generateAnimationPropertyInheritValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
@@ -1495,6 +1512,12 @@ sub generateInheritValueSetter {
   if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
     $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
   }
+
+  if (!$propertiesWithStyleBuilderOptionsWasSet and exists $propertiesWithStyleBuilderOptions{$name}{"is-appearance-disabling-property"}) {
+    $setterContent .= $indent . "    if (builderState.isAuthorOrigin() && !value.isCSSWideKeyword())\n";
+    $setterContent .= $indent . "        builderState.style().setHasAuthorOriginPropertyDisablingAppearance(true);\n";
+  }
+
   $setterContent .= $indent . "}\n";
 
   return $setterContent;
@@ -1528,6 +1551,7 @@ sub generateValueSetter {
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $style = "builderState.style()";
   my $didCallSetValue = 0;
+  my $propertiesWithStyleBuilderOptionsWasSet = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) {
     $setterContent .= $indent . "    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto) {\n";
     $setterContent .= $indent . "        ". getAutoSetter($name, $style) . ";\n";
@@ -1537,6 +1561,7 @@ sub generateValueSetter {
     $setterContent .= $indent . "    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);\n";
     $setterContent .= generateColorValueSetter($name, "primitiveValue", $indent . "    ", VALUE_IS_PRIMITIVE);
     $didCallSetValue = 1;
+    $propertiesWithStyleBuilderOptionsWasSet = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {
     $setterContent .= generateAnimationPropertyValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
@@ -1558,6 +1583,10 @@ sub generateValueSetter {
   }
   if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
     $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
+  }
+  if (!$propertiesWithStyleBuilderOptionsWasSet and exists $propertiesWithStyleBuilderOptions{$name}{"is-appearance-disabling-property"}) {
+    $setterContent .= $indent . "    if (builderState.isAuthorOrigin() && !value.isCSSWideKeyword())\n";
+    $setterContent .= $indent . "        builderState.style().setHasAuthorOriginPropertyDisablingAppearance(true);\n";
   }
   $setterContent .= $indent . "}\n";
 
@@ -1643,9 +1672,9 @@ foreach my $name (@names) {
     print STYLEBUILDER "        ASSERT_NOT_REACHED();\n";
   } elsif (!exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"}) {
     print STYLEBUILDER "        if (isInitial)\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Initial") . "::applyInitial$nameToId{$name}(builderState);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Initial") . "::applyInitial$nameToId{$name}(builderState, value);\n";
     print STYLEBUILDER "        else if (isInherit)\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit$nameToId{$name}(builderState);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit$nameToId{$name}(builderState, value);\n";
     print STYLEBUILDER "        else\n";
     print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue$nameToId{$name}(" . $valueApplierFirstArgument . "builderState, value);\n";
   }

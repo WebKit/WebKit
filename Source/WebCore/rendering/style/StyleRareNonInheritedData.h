@@ -249,6 +249,8 @@ public:
 
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
 
+    unsigned hasAuthorOriginPropertyDisablingAppearance : 1;
+
     Vector<AtomString> containerNames;
 
     GapLength columnGap;

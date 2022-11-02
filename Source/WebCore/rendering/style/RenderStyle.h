@@ -900,6 +900,8 @@ public:
 
     MathStyle mathStyle() const { return static_cast<MathStyle>(m_rareInheritedData->mathStyle); }
 
+    bool hasAuthorOriginPropertyDisablingAppearance() const { return m_rareNonInheritedData->hasAuthorOriginPropertyDisablingAppearance; }
+
 // attribute setter methods
 
     void setDisplay(DisplayType value)
@@ -1616,6 +1618,8 @@ public:
     void setDisallowsFastPathInheritance() { m_nonInheritedFlags.disallowsFastPathInheritance = true; }
 
     void setMathStyle(const MathStyle& v) { SET_VAR(m_rareInheritedData, mathStyle, static_cast<unsigned>(v)); }
+
+    void setHasAuthorOriginPropertyDisablingAppearance(bool value) { SET_VAR(m_rareNonInheritedData, hasAuthorOriginPropertyDisablingAppearance, static_cast<unsigned>(value)); }
 
     // Initial values for all the properties
     static Overflow initialOverflowX() { return Overflow::Visible; }

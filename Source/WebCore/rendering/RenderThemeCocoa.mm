@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#include "rendering/style/RenderStyleConstants.h"
 #import "RenderThemeCocoa.h"
 
 #import "AttachmentLayout.h"
@@ -41,6 +42,7 @@
 #import <algorithm>
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/Language.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #if ENABLE(VIDEO)
 #import "LocalizedStrings.h"
@@ -261,5 +263,37 @@ void RenderThemeCocoa::paintAttachmentText(GraphicsContext& context, AttachmentL
 }
 
 #endif
+
+bool RenderThemeCocoa::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
+{
+    switch (style.effectiveAppearance()) {
+    case SearchFieldPart:
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorOriginBorderBackgroundDeclarationsDisableAppearance))
+            return false;
+
+        FALLTHROUGH;
+    case PushButtonPart:
+    case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
+    case DefaultButtonPart:
+    case ButtonPart:
+    case ListboxPart:
+    case MenulistPart:
+    case ProgressBarPart:
+    case MeterPart:
+    case TextFieldPart:
+    case TextAreaPart:
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorOriginBorderBackgroundDeclarationsDisableAppearance)) {
+            // Test the style to see if the UA border and background match.
+            return !style.borderAndBackgroundEqual(userAgentStyle);
+        }
+
+        return !style.borderAndBackgroundEqual(userAgentStyle) || style.hasAuthorOriginPropertyDisablingAppearance();
+    default:
+        return false;
+    }
+}
 
 }

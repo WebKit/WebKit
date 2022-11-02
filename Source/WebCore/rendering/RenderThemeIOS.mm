@@ -90,6 +90,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -461,19 +462,21 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 
 bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
-    // Buttons and MenulistButtons are styled if they contain a background image.
-    if (style.effectiveAppearance() == PushButtonPart || style.effectiveAppearance() == MenulistButtonPart)
-        return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorOriginBorderBackgroundDeclarationsDisableAppearance)) {
+        // Buttons and MenulistButtons are styled if they contain a background image.
+        if (style.effectiveAppearance() == PushButtonPart || style.effectiveAppearance() == MenulistButtonPart)
+            return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
 
-    if (style.effectiveAppearance() == TextFieldPart || style.effectiveAppearance() == TextAreaPart)
-        return style.backgroundLayers() != userAgentStyle.backgroundLayers();
+        if (style.effectiveAppearance() == TextFieldPart || style.effectiveAppearance() == TextAreaPart)
+            return style.backgroundLayers() != userAgentStyle.backgroundLayers();
 
 #if ENABLE(DATALIST_ELEMENT)
-    if (style.effectiveAppearance() == ListButtonPart)
-        return style.hasContent() || style.hasEffectiveContentNone();
+        if (style.effectiveAppearance() == ListButtonPart)
+            return style.hasContent() || style.hasEffectiveContentNone();
 #endif
+    }
 
-    return RenderTheme::isControlStyled(style, userAgentStyle);
+    return RenderThemeCocoa::isControlStyled(style, userAgentStyle);
 }
 
 void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
