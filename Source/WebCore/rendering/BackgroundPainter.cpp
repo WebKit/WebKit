@@ -723,11 +723,12 @@ LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& 
 
         // If one of the values is auto we have to use the appropriate
         // scale to maintain our aspect ratio.
+        bool hasNaturalAspectRatio = image && image->imageHasNaturalDimensions();
         if (layerWidth.isAuto() && !layerHeight.isAuto()) {
-            if (imageIntrinsicSize.height())
+            if (hasNaturalAspectRatio && imageIntrinsicSize.height())
                 tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
         } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
-            if (imageIntrinsicSize.width())
+            if (hasNaturalAspectRatio && imageIntrinsicSize.width())
                 tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
         } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
             // If both width and height are auto, use the image's intrinsic size.

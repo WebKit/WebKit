@@ -91,7 +91,7 @@ static inline LayoutSize resolveAgainstIntrinsicRatio(LayoutSize size, const Lay
 static LayoutSize calculateImageIntrinsicDimensions(StyleImage* image, LayoutSize positioningAreaSize)
 {
     // A generated image without a fixed size, will always return the container size as intrinsic size.
-    if (image->isGeneratedImage() && image->usesImageContainerSize())
+    if (!image->imageHasNaturalDimensions())
         return LayoutSize(positioningAreaSize.width(), positioningAreaSize.height());
 
     // FIXME: Call computeIntrinsicDimensions().
@@ -168,11 +168,12 @@ static LayoutSize calculateFillTileSize(const FillLayer& fillLayer, LayoutSize p
 
         // If one of the values is auto we have to use the appropriate
         // scale to maintain our aspect ratio.
+        bool hasNaturalAspectRatio = image && image->imageHasNaturalDimensions();
         if (layerWidth.isAuto() && !layerHeight.isAuto()) {
-            if (imageIntrinsicSize.height())
+            if (hasNaturalAspectRatio && imageIntrinsicSize.height())
                 tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
         } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
-            if (imageIntrinsicSize.width())
+            if (hasNaturalAspectRatio && imageIntrinsicSize.width())
                 tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
         } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
             // If both width and height are auto, use the image's intrinsic size.
