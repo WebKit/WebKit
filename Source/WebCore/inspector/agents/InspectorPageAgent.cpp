@@ -368,9 +368,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     m_instrumentingAgents.setEnabledPageAgent(nullptr);
 
     setShowPaintRects(false);
-#if !PLATFORM(IOS_FAMILY)
     setShowRulers(false);
-#endif
     overrideUserAgent(nullString());
     setEmulatedMedia(emptyString());
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
@@ -806,14 +804,12 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> Inspec
     return result;
 }
 
-#if !PLATFORM(IOS_FAMILY)
 Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
     m_overlay->setShowRulers(showRulers);
 
     return { };
 }
-#endif
 
 Protocol::ErrorStringOr<void> InspectorPageAgent::setShowPaintRects(bool show)
 {

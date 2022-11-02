@@ -589,6 +589,13 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
 void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
     encoder << m_rootLayerID;
+
+    if (m_viewOverlayRootLayerID) {
+        encoder << true;
+        encoder << m_viewOverlayRootLayerID.value();
+    } else
+        encoder << false;
+
     encoder << m_createdLayers;
 
     encoder << static_cast<uint64_t>(m_changedLayers.size());
@@ -654,6 +661,17 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
     if (!result.m_rootLayerID)
         return false;
+
+    bool hasViewOverlayRootLayerID;
+    if (!decoder.decode(hasViewOverlayRootLayerID))
+        return false;
+
+    if (hasViewOverlayRootLayerID) {
+        WebCore::GraphicsLayer::PlatformLayerID viewOverlayRootLayerID;
+        if (!decoder.decode(viewOverlayRootLayerID))
+            return false;
+        result.setViewOverlayRootLayerID(viewOverlayRootLayerID);
+    }
 
     if (!decoder.decode(result.m_createdLayers))
         return false;
@@ -795,6 +813,13 @@ void RemoteLayerTreeTransaction::setRootLayerID(WebCore::GraphicsLayer::Platform
     ASSERT_ARG(rootLayerID, rootLayerID);
 
     m_rootLayerID = rootLayerID;
+}
+
+void RemoteLayerTreeTransaction::setViewOverlayRootLayerID(WebCore::GraphicsLayer::PlatformLayerID viewOverlayRootLayerID)
+{
+    ASSERT_ARG(viewOverlayRootLayerID, viewOverlayRootLayerID);
+
+    m_viewOverlayRootLayerID = viewOverlayRootLayerID;
 }
 
 void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote& remoteLayer)
@@ -1024,6 +1049,7 @@ String RemoteLayerTreeTransaction::description() const
     ts.dumpProperty("isInStableState", m_isInStableState);
     ts.dumpProperty("renderTreeSize", m_renderTreeSize);
     ts.dumpProperty("root-layer", m_rootLayerID);
+    ts.dumpProperty("view-overlay-root-layer", m_viewOverlayRootLayerID);
 
     if (!m_createdLayers.isEmpty()) {
         TextStream::GroupScope group(ts);

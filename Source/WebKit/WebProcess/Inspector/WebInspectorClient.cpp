@@ -36,10 +36,6 @@
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include <WebCore/InspectorOverlay.h>
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -111,17 +107,16 @@ void WebInspectorClient::didResizeMainFrame(Frame*)
 
 void WebInspectorClient::highlight()
 {
-    if (!m_page->corePage()->settings().acceleratedCompositingEnabled()) {
 #if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(PLAYSTATION)
+    if (!m_page->corePage()->settings().acceleratedCompositingEnabled()) {
         // FIXME: It can be optimized by marking only highlighted rect dirty.
         // setNeedsDisplay always makes whole rect dirty, and could lead to poor performance.
         // https://bugs.webkit.org/show_bug.cgi?id=195933
         m_page->drawingArea()->setNeedsDisplay();
-#endif
         return;
     }
+#endif
 
-#if !PLATFORM(IOS_FAMILY)
     if (!m_highlightOverlay) {
         auto highlightOverlay = PageOverlay::create(*this);
         m_highlightOverlay = highlightOverlay.ptr();
@@ -131,11 +126,6 @@ void WebInspectorClient::highlight()
         m_highlightOverlay->stopFadeOutAnimation();
         m_highlightOverlay->setNeedsDisplay();
     }
-#else
-    InspectorOverlay::Highlight highlight;
-    m_page->corePage()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::Document);
-    m_page->showInspectorHighlight(highlight);
-#endif
 }
 
 void WebInspectorClient::hideHighlight()
@@ -150,18 +140,16 @@ void WebInspectorClient::hideHighlight()
     }
 #endif
 
-#if !PLATFORM(IOS_FAMILY)
     if (m_highlightOverlay)
         m_page->corePage()->pageOverlayController().uninstallPageOverlay(*m_highlightOverlay, PageOverlay::FadeMode::Fade);
-#else
-    m_page->hideInspectorHighlight();
-#endif
 }
 
 void WebInspectorClient::showPaintRect(const FloatRect& rect)
 {
+#if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(PLAYSTATION)
     if (!m_page->corePage()->settings().acceleratedCompositingEnabled())
         return;
+#endif
 
     if (!m_paintRectOverlay) {
         m_paintRectOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
@@ -204,16 +192,6 @@ void WebInspectorClient::animationEndedForLayer(const GraphicsLayer* layer)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebInspectorClient::showInspectorIndication()
-{
-    m_page->showInspectorIndication();
-}
-
-void WebInspectorClient::hideInspectorIndication()
-{
-    m_page->hideInspectorIndication();
-}
-
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
     if (enabled)

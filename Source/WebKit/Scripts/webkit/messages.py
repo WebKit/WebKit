@@ -812,7 +812,6 @@ def headers_for_type(type):
         'WebCore::IncludeSecureCookies': ['<WebCore/CookieJar.h>'],
         'WebCore::IndexedDB::ObjectStoreOverwriteMode': ['<WebCore/IndexedDB.h>'],
         'WebCore::InputMode': ['<WebCore/InputMode.h>'],
-        'WebCore::InspectorOverlay::Highlight': ['<WebCore/InspectorOverlay.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
         'WebCore::LastNavigationWasAppInitiated': ['<WebCore/ServiceWorkerClientData.h>'],

@@ -142,7 +142,6 @@
 #include "DynamicViewportSizeUpdate.h"
 #include "GestureTypes.h"
 #include "WebAutocorrectionContext.h"
-#include <WebCore/InspectorOverlay.h>
 #endif
 
 #if PLATFORM(MACCATALYST)
@@ -547,11 +546,6 @@ public:
     void setControlledByAutomation(bool);
 
     WebPageInspectorController& inspectorController() { return *m_inspectorController; }
-
-#if PLATFORM(IOS_FAMILY)
-    void showInspectorIndication();
-    void hideInspectorIndication();
-#endif
 
     void createInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
     void destroyInspectorTarget(const String& targetId);
@@ -968,7 +962,7 @@ public:
     void setMainFrameIsScrollable(bool);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
 
-    void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
+    void setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode);
     CALayer *acceleratedCompositingRootLayer() const;
 
     void setTextAsync(const String&);
@@ -2532,9 +2526,6 @@ private:
     void updateInputContextAfterBlurringAndRefocusingElement();
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
-
-    void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&);
-    void hideInspectorHighlight();
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();

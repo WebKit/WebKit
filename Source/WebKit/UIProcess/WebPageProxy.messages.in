@@ -387,11 +387,6 @@ messages -> WebPageProxy {
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
     ScrollingNodeScrollWillStartScroll(uint64_t nodeID)
     ScrollingNodeScrollDidEndScroll(uint64_t nodeID)
-    ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
-    HideInspectorHighlight()
-
-    ShowInspectorIndication()
-    HideInspectorIndication()
 
     EnableInspectorNodeSearch()
     DisableInspectorNodeSearch()

@@ -58,7 +58,7 @@ public:
 
     LayerHostingMode layerHostingMode() const;
 
-    void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
+    void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::PlatformCALayer* viewOverlayRootLayer);
 
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
 

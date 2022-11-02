@@ -41,7 +41,6 @@
 #import "UIKitSPI.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
-#import "WKInspectorHighlightView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKUIDelegatePrivate.h"
@@ -58,7 +57,6 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/InspectorOverlay.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
@@ -73,23 +71,6 @@
 #import <wtf/text/TextStream.h>
 #import <wtf/threads/BinarySemaphore.h>
 #import "AppKitSoftLink.h"
-
-
-@interface WKInspectorIndicationView : UIView
-@end
-
-@implementation WKInspectorIndicationView
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-    self.userInteractionEnabled = NO;
-    self.backgroundColor = [UIColor colorWithRed:(111.0 / 255.0) green:(168.0 / 255.0) blue:(220.0 / 255.0) alpha:0.66f];
-    return self;
-}
-
-@end
 
 @interface WKQuirkyNSUndoManager : NSUndoManager
 @property (readonly, weak) WKContentView *contentView;
@@ -134,8 +115,6 @@
 
     RetainPtr<UIView> _rootContentView;
     RetainPtr<UIView> _fixedClippingView;
-    RetainPtr<WKInspectorIndicationView> _inspectorIndicationView;
-    RetainPtr<WKInspectorHighlightView> _inspectorHighlightView;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     RetainPtr<_UILayerHostView> _visibilityPropagationViewForWebProcess;
@@ -404,44 +383,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [self isEditable];
 }
 
-- (void)_showInspectorHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight
-{
-    if (!_inspectorHighlightView) {
-        _inspectorHighlightView = adoptNS([[WKInspectorHighlightView alloc] initWithFrame:CGRectZero]);
-        [self insertSubview:_inspectorHighlightView.get() aboveSubview:_rootContentView.get()];
-    }
-    [_inspectorHighlightView update:highlight scale:[self _contentZoomScale] frame:_page->unobscuredContentRect()];
-}
-
-- (void)_hideInspectorHighlight
-{
-    if (_inspectorHighlightView) {
-        [_inspectorHighlightView removeFromSuperview];
-        _inspectorHighlightView = nil;
-    }
-}
-
-- (BOOL)isShowingInspectorIndication
-{
-    return !!_inspectorIndicationView;
-}
-
-- (void)setShowingInspectorIndication:(BOOL)show
-{
-    if (show) {
-        if (!_inspectorIndicationView) {
-            _inspectorIndicationView = adoptNS([[WKInspectorIndicationView alloc] initWithFrame:[self bounds]]);
-            [_inspectorIndicationView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-            [self insertSubview:_inspectorIndicationView.get() aboveSubview:_rootContentView.get()];
-        }
-    } else {
-        if (_inspectorIndicationView) {
-            [_inspectorIndicationView removeFromSuperview];
-            _inspectorIndicationView = nil;
-        }
-    }
-}
-
 - (void)updateFixedClippingView:(WebCore::FloatRect)fixedPositionRectForUI
 {
     WebCore::FloatRect clippingBounds = [self bounds];
@@ -685,9 +626,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 {
     [self _updateRemoteAccessibilityRegistration:NO];
     [self cleanUpInteraction];
-
-    [self setShowingInspectorIndication:NO];
-    [self _hideInspectorHighlight];
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _removeVisibilityPropagationViewForWebProcess];

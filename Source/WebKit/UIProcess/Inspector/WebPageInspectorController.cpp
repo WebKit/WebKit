@@ -140,14 +140,7 @@ void WebPageInspectorController::dispatchMessageFromFrontend(const String& messa
 #if ENABLE(REMOTE_INSPECTOR)
 void WebPageInspectorController::setIndicating(bool indicating)
 {
-#if !PLATFORM(IOS_FAMILY)
     m_inspectedPage.setIndicating(indicating);
-#else
-    if (indicating)
-        m_inspectedPage.showInspectorIndication();
-    else
-        m_inspectedPage.hideInspectorIndication();
-#endif
 }
 #endif
 

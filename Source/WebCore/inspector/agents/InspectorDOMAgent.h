@@ -134,11 +134,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> discardSearchResults(const String& searchId);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveNode(Inspector::Protocol::DOM::NodeId, const String& objectGroup);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getAttributes(Inspector::Protocol::DOM::NodeId);
-#if PLATFORM(IOS_FAMILY)
-    Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig);
-#else
     Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig, std::optional<bool>&& showRulers);
-#endif
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Runtime::RemoteObjectId&);
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> pushNodeByPathToFrontend(const String& path);
     Inspector::Protocol::ErrorStringOr<void> hideHighlight();

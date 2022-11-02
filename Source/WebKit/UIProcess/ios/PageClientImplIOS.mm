@@ -557,9 +557,10 @@ bool PageClientImpl::effectiveUserInterfaceLevelIsElevated() const
     return [m_webView _effectiveUserInterfaceLevelIsElevated];
 }
 
-void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
+void PageClientImpl::setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode)
 {
-    [m_contentView _setAcceleratedCompositingRootView:rootNode ? rootNode->uiView() : nil];
+    [m_contentView _setAcceleratedCompositingRootView:(rootNode ? rootNode->uiView() : nil)];
+    [m_webView _setViewOverlayRootView:(viewOverlayRootNode ? viewOverlayRootNode->uiView() : nil)];
 }
 
 CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
@@ -678,26 +679,6 @@ bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF
 void PageClientImpl::showContactPicker(const WebCore::ContactsRequestData& requestData, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler)
 {
     [m_contentView _showContactPicker:requestData completionHandler:WTFMove(completionHandler)];
-}
-
-void PageClientImpl::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
-{
-    [m_contentView _showInspectorHighlight:highlight];
-}
-
-void PageClientImpl::hideInspectorHighlight()
-{
-    [m_contentView _hideInspectorHighlight];
-}
-
-void PageClientImpl::showInspectorIndication()
-{
-    [m_contentView setShowingInspectorIndication:YES];
-}
-
-void PageClientImpl::hideInspectorIndication()
-{
-    [m_contentView setShowingInspectorIndication:NO];
 }
 
 void PageClientImpl::enableInspectorNodeSearch()

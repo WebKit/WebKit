@@ -280,6 +280,8 @@ struct PerWebProcessState {
     RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;
     RetainPtr<UIView> _customContentFixedOverlayView;
 
+    RetainPtr<UIView> _viewOverlayRootView;
+
     RetainPtr<NSTimer> _enclosingScrollViewScrollTimer;
     BOOL _didScrollSinceLastTimerFire;
 

@@ -371,9 +371,9 @@ void WebPageProxy::handleAcceptsFirstMouse(bool acceptsFirstMouse)
     m_acceptsFirstMouse = acceptsFirstMouse;
 }
 
-void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
+void WebPageProxy::setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode)
 {
-    pageClient().setRemoteLayerTreeRootNode(rootNode);
+    pageClient().setRemoteLayerTreeRootNodes(rootNode, viewOverlayRootNode);
     m_frozenRemoteLayerTreeHost = nullptr;
 }
 

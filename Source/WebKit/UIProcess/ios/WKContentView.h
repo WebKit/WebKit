@@ -28,7 +28,6 @@
 #import "WKBrowsingContextController.h"
 #import "WKBrowsingContextGroup.h"
 #import "WKProcessGroup.h"
-#import <WebCore/InspectorOverlay.h>
 #import <wtf/NakedRef.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -67,7 +66,6 @@ enum class ViewStabilityFlag : uint8_t;
 
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isFocusingElement;
-@property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;
 @property (nonatomic, readonly, getter=isResigningFirstResponder) BOOL resigningFirstResponder;
 @property (nonatomic) BOOL sizeChangedSinceLastVisibleContentRectUpdate;
 @property (nonatomic, readonly) UIInterfaceOrientation interfaceOrientation;
@@ -114,9 +112,6 @@ enum class ViewStabilityFlag : uint8_t;
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 - (void)_removeTemporaryDirectoriesWhenDeallocated:(Vector<RetainPtr<NSURL>>&&)urls;
-
-- (void)_showInspectorHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight;
-- (void)_hideInspectorHighlight;
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 - (void)_layerTreeCommitComplete;

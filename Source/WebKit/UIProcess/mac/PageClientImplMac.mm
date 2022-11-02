@@ -257,7 +257,7 @@ void PageClientImpl::processWillSwap()
 void PageClientImpl::processDidExit()
 {
     m_impl->processDidExit();
-    m_impl->setAcceleratedCompositingRootLayer(nil);
+    m_impl->setAcceleratedCompositingRootLayers(nil, nil);
 }
 
 void PageClientImpl::pageClosed()
@@ -608,12 +608,12 @@ void PageClientImpl::didFirstLayerFlush(const LayerTreeContext& layerTreeContext
     ASSERT(!layerTreeContext.isEmpty());
 
     CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID];
-    m_impl->setAcceleratedCompositingRootLayer(renderLayer);
+    m_impl->setAcceleratedCompositingRootLayers(renderLayer, nil);
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
-    m_impl->setAcceleratedCompositingRootLayer(nil);
+    m_impl->setAcceleratedCompositingRootLayers(nil, nil);
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -621,12 +621,12 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& la
     ASSERT(!layerTreeContext.isEmpty());
 
     CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID];
-    m_impl->setAcceleratedCompositingRootLayer(renderLayer);
+    m_impl->setAcceleratedCompositingRootLayers(renderLayer, nil);
 }
 
-void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
+void PageClientImpl::setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode)
 {
-    m_impl->setAcceleratedCompositingRootLayer(rootNode ? rootNode->layer() : nil);
+    m_impl->setAcceleratedCompositingRootLayers(rootNode ? rootNode->layer() : nil, viewOverlayRootNode ? viewOverlayRootNode->layer() : nil);
 }
 
 CALayer *PageClientImpl::acceleratedCompositingRootLayer() const

@@ -969,26 +969,6 @@ void WebPageProxy::autofillLoginCredentials(const String& username, const String
     m_process->send(Messages::WebPage::AutofillLoginCredentials(username, password), m_webPageID);
 }
 
-void WebPageProxy::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
-{
-    pageClient().showInspectorHighlight(highlight);
-}
-
-void WebPageProxy::hideInspectorHighlight()
-{
-    pageClient().hideInspectorHighlight();
-}
-
-void WebPageProxy::showInspectorIndication()
-{
-    pageClient().showInspectorIndication();
-}
-
-void WebPageProxy::hideInspectorIndication()
-{
-    pageClient().hideInspectorIndication();
-}
-
 void WebPageProxy::enableInspectorNodeSearch()
 {
     pageClient().enableInspectorNodeSearch();
@@ -1026,9 +1006,9 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
     pageClient().didPerformDictionaryLookup(dictionaryPopupInfo);
 }
 
-void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
+void WebPageProxy::setRemoteLayerTreeRootNodes(RemoteLayerTreeNode* rootNode, RemoteLayerTreeNode* viewOverlayRootNode)
 {
-    pageClient().setRemoteLayerTreeRootNode(rootNode);
+    pageClient().setRemoteLayerTreeRootNodes(rootNode, viewOverlayRootNode);
     m_frozenRemoteLayerTreeHost = nullptr;
 }
 

@@ -530,6 +530,16 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
+- (void)_setViewOverlayRootView:(UIView *)viewOverlayRootView
+{
+    [_viewOverlayRootView removeFromSuperview];
+
+    _viewOverlayRootView = viewOverlayRootView;
+
+    if (_viewOverlayRootView)
+        [self addSubview:_viewOverlayRootView.get()];
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)_handleKeyUIEvent:(::UIEvent *)event
 {

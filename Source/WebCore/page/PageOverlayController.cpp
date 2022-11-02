@@ -187,6 +187,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
 
     auto layerType = (overlay.alwaysTileOverlayLayer() == PageOverlay::AlwaysTileOverlayLayer::Yes) ? GraphicsLayer::Type::TiledBacking : GraphicsLayer::Type::Normal;
     auto layer = GraphicsLayer::create(m_page.chrome().client().graphicsLayerFactory(), *this, layerType);
+    layer->setAllowsBackingStoreDetaching(false);
     layer->setAnchorPoint({ });
     layer->setBackgroundColor(overlay.backgroundColor());
     layer->setName(MAKE_STATIC_STRING_IMPL("Overlay content"));
