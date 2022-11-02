@@ -2594,13 +2594,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     return wrapper(_page->loadRequest(request, policy));
 }
 
-- (void)_loadServiceWorker:(NSURL *)url  completionHandler:(void (^)(BOOL success))completionHandler
+- (void)_loadServiceWorker:(NSURL *)url usingModules:(BOOL)usingModules completionHandler:(void (^)(BOOL success))completionHandler
 {
     THROW_IF_SUSPENDED;
     if (_page->isServiceWorkerPage())
         [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was already used to load a service worker"];
 
-    _page->loadServiceWorker(url, [completionHandler = makeBlockPtr(completionHandler)](bool success) mutable {
+    _page->loadServiceWorker(url, usingModules, [completionHandler = makeBlockPtr(completionHandler)](bool success) mutable {
         completionHandler(success);
     });
 }

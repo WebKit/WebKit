@@ -2677,7 +2677,7 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     didStartURLSchemeTask = false;
     didStartURLSchemeTaskForXMLFile = false;
     didStartURLSchemeTaskForImportedScript = false;
-    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] completionHandler:^(BOOL success) {
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] usingModules:NO completionHandler:^(BOOL success) {
         EXPECT_TRUE(success);
         EXPECT_TRUE(didStartURLSchemeTask);
         done = true;
@@ -2712,6 +2712,42 @@ TEST(ServiceWorker, ExtensionServiceWorker)
         TestWebKitAPI::Util::spinRunLoop(10);
 }
 
+TEST(ServiceWorker, ExtensionServiceWorkerWithModules)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
+
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/exports.js" toData:"const x = 805; export { x };"];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:"import { x } from './exports.js'; x;"];
+
+    WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+    webViewConfiguration.websiteDataStore = [adoptNS([WKWebViewConfiguration new]) websiteDataStore];
+    [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+
+    auto object = adoptNS([[ServiceWorkerPageRemoteObject alloc] init]);
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
+    [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+
+    // The service worker script should get loaded over the custom scheme handler.
+    done = false;
+    didStartURLSchemeTask = false;
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] usingModules:YES completionHandler:^(BOOL success) {
+        EXPECT_TRUE(success);
+        EXPECT_TRUE(didStartURLSchemeTask);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(ServiceWorker, ExtensionServiceWorkerFailureBadScript)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -2737,7 +2773,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureBadScript)
     // The service worker script should get loaded over the custom scheme handler.
     done = false;
     didStartURLSchemeTask = false;
-    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/bad-sw.js"] completionHandler:^(BOOL success) {
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/bad-sw.js"] usingModules:NO completionHandler:^(BOOL success) {
         EXPECT_FALSE(success);
         EXPECT_TRUE(didStartURLSchemeTask);
         done = true;
@@ -2764,7 +2800,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureBadURL)
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
     done = false;
-    [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] completionHandler:^(BOOL success) {
+    [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] usingModules:NO completionHandler:^(BOOL success) {
         EXPECT_FALSE(success);
         done = true;
     }];
@@ -2789,7 +2825,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewClosed)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
-    [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] completionHandler:^(BOOL success) {
+    [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] usingModules:NO completionHandler:^(BOOL success) {
         EXPECT_FALSE(success);
         done = true;
     }];
@@ -2816,7 +2852,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewDestroyed)
         _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
         [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
-        [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] completionHandler:^(BOOL success) {
+        [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] usingModules:NO completionHandler:^(BOOL success) {
             EXPECT_FALSE(success);
             done = true;
         }];

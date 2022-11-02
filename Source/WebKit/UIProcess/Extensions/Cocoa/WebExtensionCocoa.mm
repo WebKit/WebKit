@@ -84,6 +84,8 @@ static NSString * const backgroundPageManifestKey = @"page";
 static NSString * const backgroundServiceWorkerManifestKey = @"service_worker";
 static NSString * const backgroundScriptsManifestKey = @"scripts";
 static NSString * const backgroundPersistentManifestKey = @"persistent";
+static NSString * const backgroundPageTypeKey = @"type";
+static NSString * const backgroundPageTypeModuleValue = @"module";
 
 static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 
@@ -870,6 +872,12 @@ bool WebExtension::backgroundContentIsPersistent()
     return hasBackgroundContent() && m_backgroundContentIsPersistent;
 }
 
+bool WebExtension::backgroundContentUsesModules()
+{
+    populateBackgroundPropertiesIfNeeded();
+    return hasBackgroundContent() && m_backgroundPageUsesModules;
+}
+
 bool WebExtension::backgroundContentIsServiceWorker()
 {
     populateBackgroundPropertiesIfNeeded();
@@ -907,6 +915,9 @@ NSString *WebExtension::generatedBackgroundContent()
         return nil;
 
     NSArray<NSString *> *scriptTagsArray = mapObjects(m_backgroundScriptPaths, ^(NSNumber *index, NSString *scriptPath) {
+        if (backgroundContentUsesModules())
+            return [NSString stringWithFormat:@"<script type=\"module\" src=\"%@\"></script>", scriptPath];
+
         return [NSString stringWithFormat:@"<script src=\"%@\"></script>", scriptPath];
     });
 
@@ -937,6 +948,7 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     m_backgroundScriptPaths = objectForKey<NSArray>(backgroundManifestDictionary, backgroundScriptsManifestKey, true, NSString.class);
     m_backgroundPagePath = objectForKey<NSString>(backgroundManifestDictionary, backgroundPageManifestKey);
     m_backgroundServiceWorkerPath = objectForKey<NSString>(backgroundManifestDictionary, backgroundServiceWorkerManifestKey);
+    m_backgroundPageUsesModules = [objectForKey<NSString>(backgroundManifestDictionary, backgroundPageTypeKey) isEqualToString:backgroundPageTypeModuleValue];
 
     m_backgroundScriptPaths = filterObjects(m_backgroundScriptPaths, ^(NSNumber *index, NSString *scriptPath) {
         return !!scriptPath.length;

@@ -448,6 +448,7 @@ TEST(WKWebExtension, BackgroundParsing)
 #else
     EXPECT_TRUE(testExtension.backgroundContentIsPersistent);
 #endif
+    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
     EXPECT_NULL(testExtension.errors);
 
     testManifestDictionary[@"background"] = @{ @"page": @"test.html", @"persistent": @NO };
@@ -516,6 +517,7 @@ TEST(WKWebExtension, BackgroundParsing)
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -591,6 +593,20 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
+
+    testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"type": @"module" };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_TRUE(testExtension.hasBackgroundContent);
+    EXPECT_TRUE(testExtension._backgroundContentUsesModules);
+    EXPECT_NULL(testExtension.errors);
+
+    testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test.js", @"test2.js" ], @"type": @"module" };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_TRUE(testExtension.hasBackgroundContent);
+    EXPECT_TRUE(testExtension._backgroundContentUsesModules);
+    EXPECT_NULL(testExtension.errors);
 }
 
 } // namespace TestWebKitAPI

@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
 
+@property (readonly, nonatomic) BOOL _backgroundContentUsesModules;
+
 @end
 
 NS_ASSUME_NONNULL_END
