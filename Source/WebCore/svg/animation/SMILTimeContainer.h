@@ -55,7 +55,6 @@ public:
 
     bool isActive() const;
     bool isPaused() const;
-    bool isStarted() const;
 
     void begin();
     void pause();
@@ -67,6 +66,7 @@ public:
 private:
     SMILTimeContainer(SVGSVGElement& owner);
 
+    bool isStarted() const;
     void timerFired();
     void startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay = 0);
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);
