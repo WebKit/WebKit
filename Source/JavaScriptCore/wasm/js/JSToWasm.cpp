@@ -220,6 +220,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
         jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
+        JIT_COMMENT(jit, "operationAllocateResultsArray");
         jit.callOperation(FunctionPtr<OperationPtrTag>(operationAllocateResultsArray));
         if constexpr (maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);

@@ -181,6 +181,9 @@ Wasm::Instance* WebAssemblyFunction::previousInstance(CallFrame* callFrame)
 
 MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 {
+    if (Options::forceICFailure())
+        return nullptr;
+
     VM& vm = this->vm();
     CCallHelpers jit;
 
