@@ -49,13 +49,12 @@ const RealtimeMediaSourceSettings& RealtimeIncomingAudioSourceGStreamer::setting
     return m_currentSettings;
 }
 
-void RealtimeIncomingAudioSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& gstSample)
+void RealtimeIncomingAudioSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& sample)
 {
-    auto* buffer = gst_sample_get_buffer(gstSample.get());
+    auto presentationTime = MediaTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(gst_sample_get_buffer(sample.get()))), G_USEC_PER_SEC);
     GStreamerAudioStreamDescription description;
-    GStreamerAudioData frames(WTFMove(gstSample), description.getInfo());
-
-    audioSamplesAvailable(MediaTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(buffer)), G_USEC_PER_SEC), frames, description, 0);
+    GStreamerAudioData frames(WTFMove(sample), description.getInfo());
+    audioSamplesAvailable(presentationTime, frames, description, 0);
 }
 
 }
