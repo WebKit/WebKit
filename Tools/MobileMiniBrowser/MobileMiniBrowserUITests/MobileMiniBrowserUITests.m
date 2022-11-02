@@ -108,7 +108,7 @@
     [self loadURL:@"bundle:/looping.html"];
     [self waitToTapButtonNamed:@"Start Playback" forApp:app];
 
-    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    UIUserInterfaceIdiom idiom = [[UIDevice currentDevice] userInterfaceIdiom];
     if (idiom == UIUserInterfaceIdiomPhone) {
         [self waitToTapButtonNamed:@"PauseButton" forApp:app];
         [self waitToTapButtonNamed:@"Done" forApp:app];
@@ -121,7 +121,7 @@
     [self loadURL:@"bundle:/looping.html"];
     [self waitToTapButtonNamed:@"Start Playback" forApp:app];
     
-    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    UIUserInterfaceIdiom idiom = [[UIDevice currentDevice] userInterfaceIdiom];
     if (idiom == UIUserInterfaceIdiomPad)
         [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
     
@@ -137,7 +137,7 @@
     [self loadURL:@"bundle:/looping.html"];
     [self waitToTapButtonNamed:@"Start Playback" forApp:app];
     
-    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    UIUserInterfaceIdiom idiom = [[UIDevice currentDevice] userInterfaceIdiom];
     if (idiom == UIUserInterfaceIdiomPad)
         [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
     
@@ -153,7 +153,7 @@
     [self loadURL:@"bundle:/looping.html"];
     [self waitToTapButtonNamed:@"Start Playback" forApp:app];
     
-    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    UIUserInterfaceIdiom idiom = [[UIDevice currentDevice] userInterfaceIdiom];
     if (idiom == UIUserInterfaceIdiomPad)
         [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
     
