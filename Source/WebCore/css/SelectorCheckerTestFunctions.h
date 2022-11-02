@@ -425,6 +425,14 @@ ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(con
     return element.document().fullscreenManager().isAnimatingFullscreen();
 }
 
+/* FIXME: Remove when we use top layer, since this won't be needed (webkit.org/b/84798). */
+ALWAYS_INLINE bool matchesFullScreenParentPseudoClass(const Element& element)
+{
+    if (!element.document().fullscreenManager().isFullscreen())
+        return false;
+    return &element == element.document().fullscreenManager().currentFullscreenElement()->parentElement();
+}
+
 ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element& element)
 {
     return element.containsFullScreenElement();
