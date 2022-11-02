@@ -545,14 +545,22 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
 
     auto trimTrailingContent = [&] {
         auto& quirks = m_inlineFormattingContext.formattingQuirks();
-        auto lineHasOverflow = horizontalAvailableSpace < m_line.contentLogicalWidth();
-        auto lineEndsWithLineBreak = !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
-        auto isLineBreakAfterWhitespace = (!isLastLine || lineHasOverflow) && rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
-        auto shouldApplyPreserveTrailingWhitespaceQuirk = quirks.shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode(), m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak);
+        auto lineHasOverflow = [&] {
+            return horizontalAvailableSpace < m_line.contentLogicalWidth();
+        };
+        auto lineEndsWithLineBreak = [&] {
+            return !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
+        };
+        auto isLineBreakAfterWhitespace = [&] {
+            return (!isLastLine || lineHasOverflow()) && rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
+        };
+        auto shouldApplyPreserveTrailingWhitespaceQuirk = [&] {
+            return quirks.shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode(), m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak());
+        };
 
-        m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk || isLineBreakAfterWhitespace ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
-        if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), lineHasOverflow))
-            m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
+        m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk() || isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
+        if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), lineHasOverflow()))
+            m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
         if (isInIntrinsicWidthMode()) {
             // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
@@ -561,7 +569,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
                 m_line.removeHangingGlyphs();
             else {
                 // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
-                auto isConditionalHanging = isLastLine || lineEndsWithLineBreak;
+                auto isConditionalHanging = isLastLine || lineEndsWithLineBreak();
                 if (!isConditionalHanging)
                     m_line.removeHangingGlyphs();
             }
