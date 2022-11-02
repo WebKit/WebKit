@@ -365,7 +365,7 @@ private:
 
     bool shouldRepaintForStyleDifference(StyleDifference) const;
 
-    void updateFillImages(const FillLayer*, const FillLayer&);
+    void updateFillImages(const FillLayer*, const FillLayer*);
     void updateImage(StyleImage*, StyleImage*);
     void updateShapeImage(const ShapeValue*, const ShapeValue*);
 
