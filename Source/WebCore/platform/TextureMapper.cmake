@@ -79,7 +79,6 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
-        platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h
         platform/graphics/texmap/coordinated/SurfaceUpdateInfo.h
         platform/graphics/texmap/coordinated/Tile.h
         platform/graphics/texmap/coordinated/TiledBackingStore.h

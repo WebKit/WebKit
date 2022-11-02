@@ -30,7 +30,6 @@
 #include "CompositingRunLoop.h"
 #include "CoordinatedGraphicsScene.h"
 #include "ThreadedDisplayRefreshMonitor.h"
-#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/TextureMapper.h>
@@ -40,9 +39,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
-
-class CoordinatedGraphicsScene;
-class CoordinatedGraphicsSceneClient;
 
 class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
@@ -66,7 +62,7 @@ public:
     void setScrollPosition(const WebCore::IntPoint&, float scale);
     void setViewportSize(const WebCore::IntSize&, float scale);
 
-    void updateSceneState(const WebCore::CoordinatedGraphicsState&);
+    void updateSceneState(const RefPtr<Nicosia::Scene>&);
     void updateScene();
     void updateSceneWithoutRendering();
 
@@ -109,7 +105,7 @@ private:
         WebCore::IntPoint scrollPosition;
         float scaleFactor { 1 };
         bool needsResize { false };
-        Vector<WebCore::CoordinatedGraphicsState> states;
+        Vector<RefPtr<Nicosia::Scene>> states;
 
         bool clientRendersNextFrame { false };
     } m_attributes;

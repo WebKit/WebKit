@@ -378,7 +378,7 @@ void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
         m_viewOverlayRootLayer->flushCompositingState(visibleContentRect);
 }
 
-void LayerTreeHost::commitSceneState(const CoordinatedGraphicsState& state)
+void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
 {
     m_isWaitingForRenderer = true;
     m_compositor->updateSceneState(state);

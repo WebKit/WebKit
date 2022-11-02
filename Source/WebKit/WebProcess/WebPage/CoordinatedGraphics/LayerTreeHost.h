@@ -50,7 +50,6 @@ class IntRect;
 class IntSize;
 class GraphicsLayer;
 class GraphicsLayerFactory;
-struct CoordinatedGraphicsState;
 struct ViewportAttributes;
 }
 
@@ -112,7 +111,7 @@ private:
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
     void notifyFlushRequired() override { scheduleLayerFlush(); };
-    void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
+    void commitSceneState(const RefPtr<Nicosia::Scene>&) override;
     void updateScene() override;
 
     // AcceleratedSurface::Client

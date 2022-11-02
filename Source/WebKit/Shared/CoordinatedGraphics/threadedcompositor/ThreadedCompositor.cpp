@@ -189,7 +189,7 @@ void ThreadedCompositor::renderLayerTree()
     float scaleFactor;
     bool needsResize;
 
-    Vector<WebCore::CoordinatedGraphicsState> states;
+    Vector<RefPtr<Nicosia::Scene>> states;
 
     {
         Locker locker { m_attributes.lock };
@@ -267,7 +267,7 @@ void ThreadedCompositor::sceneUpdateFinished()
     m_compositingRunLoop->updateCompleted(stateLocker);
 }
 
-void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
+void ThreadedCompositor::updateSceneState(const RefPtr<Nicosia::Scene>& state)
 {
     Locker locker { m_attributes.lock };
     m_attributes.states.append(state);
@@ -281,7 +281,7 @@ void ThreadedCompositor::updateScene()
 
 void ThreadedCompositor::updateSceneWithoutRendering()
 {
-    Vector<WebCore::CoordinatedGraphicsState> states;
+    Vector<RefPtr<Nicosia::Scene>> states;
 
     {
         Locker locker { m_attributes.lock };
