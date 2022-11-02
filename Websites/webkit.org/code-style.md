@@ -1372,6 +1372,40 @@ drawJpg(); // FIXME(joe): Make this code handle jpg in addition to the png suppo
 drawJpg(); // TODO: Make this code handle jpg in addition to the png support.
 ```
 
+[](#comments-override-disambiguation) If needed for clarity, add a comment containing the source class name for a block of virtual function override declarations.
+
+###### Right:
+```cpp
+class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public IPC::Connection::Client {
+public:
+    /// ...
+
+    // IPC::Connection::Client
+    void didClose(IPC::Connection&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
+
+    // ...
+};
+```
+
+[](#comments-messages-disambiguation) If needed for clarity, add `// Messages` before a block of IPC message function declarations.
+
+###### Right:
+```cpp
+class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public IPC::Connection::Client {
+public:
+    /// ...
+
+    // Messages
+    void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+    void didInitialize(std::optional<GPUProcessConnectionInfo>&&);
+
+    // ...
+};
+```
+
 ### Overriding Virtual Methods
 
 [](#override-methods) The base level declaration of a virtual method inside a class must be declared with the `virtual` keyword. All subclasses of that class must either specify the `override` keyword when overriding the virtual method or the `final` keyword when overriding the virtual method and requiring that no further subclasses can override it. You never want to annotate a method with more than one of the `virtual`, `override`, or `final` keywords.
