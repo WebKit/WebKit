@@ -148,23 +148,24 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
     auto originData = origin ? origin->data() : SecurityOriginData { };
 
     if (document) {
-        if (!document->page()) {
+        WeakPtr page = document->page();
+        if (!page) {
             promise.reject(Exception { InvalidStateError, "The page does not exist"_s });
             return;
         }
 
         if (!isAllowedByFeaturePolicy(*document, permissionDescriptor.name)) {
-            promise.resolve(PermissionStatus::create(*context, PermissionState::Denied, permissionDescriptor, PermissionQuerySource::Window, *document->page()));
+            promise.resolve(PermissionStatus::create(*context, PermissionState::Denied, permissionDescriptor, PermissionQuerySource::Window, *page));
             return;
         }
 
-        PermissionController::shared().query(ClientOrigin { document->topOrigin().data(), WTFMove(originData) }, permissionDescriptor, *document->page(), *source, [document = Ref { *document }, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+        PermissionController::shared().query(ClientOrigin { document->topOrigin().data(), WTFMove(originData) }, permissionDescriptor, *page, *source, [document = Ref { *document }, page, permissionDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
             if (!permissionState) {
                 promise.reject(Exception { NotSupportedError, "Permissions::query does not support this API"_s });
                 return;
             }
 
-            promise.resolve(PermissionStatus::create(document, *permissionState, permissionDescriptor, PermissionQuerySource::Window, *document->page()));
+            promise.resolve(PermissionStatus::create(document, *permissionState, permissionDescriptor, PermissionQuerySource::Window, WTFMove(page)));
         });
         return;
     }
