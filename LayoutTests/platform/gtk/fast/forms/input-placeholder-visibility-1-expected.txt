@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (11,46) size 186x18
-  RenderBlock {DIV} at (3,3) size 186x19 [color=#A9A9A9]
+layer at (11,45) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 86x17
       text run at (0,0) width 86: "Placeholder"
 layer at (11,45) size 186x18

@@ -56,20 +56,20 @@ layer at (0,0) size 785x1452
       RenderBlock {DIV} at (0,236) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (687,0) size 58x17
           text run at (687,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 82x17
-          RenderInline {EM} at (0,0) size 82x17
-            RenderInline {SPAN} at (0,0) size 1x17
+        RenderInline {SPAN} at (0,0) size 25x17
+          RenderInline {EM} at (0,0) size 25x17
+            RenderInline {SPAN} at (0,0) size 0x17
             RenderText {#text} at (744,0) size 25x17
               text run at (744,0) width 25: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,254) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (687,0) size 58x17
           text run at (687,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 82x17
-          RenderInline {EM} at (0,0) size 82x17
+        RenderInline {SPAN} at (0,0) size 25x17
+          RenderInline {EM} at (0,0) size 25x17
             RenderText {#text} at (744,0) size 25x17
               text run at (744,0) width 25: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,272) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (687,0) size 58x17
           text run at (687,0) width 58: "This is a "
@@ -103,20 +103,20 @@ layer at (0,0) size 785x1452
       RenderBlock {DIV} at (0,386) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (684,0) size 58x17
           text run at (684,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 85x17
-          RenderInline {STRONG} at (0,0) size 85x17
-            RenderInline {SPAN} at (0,0) size 1x17
+        RenderInline {SPAN} at (0,0) size 28x17
+          RenderInline {STRONG} at (0,0) size 28x17
+            RenderInline {SPAN} at (0,0) size 0x17
             RenderText {#text} at (741,0) size 28x17
               text run at (741,0) width 28: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,404) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (684,0) size 58x17
           text run at (684,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 85x17
-          RenderInline {STRONG} at (0,0) size 85x17
+        RenderInline {SPAN} at (0,0) size 28x17
+          RenderInline {STRONG} at (0,0) size 28x17
             RenderText {#text} at (741,0) size 28x17
               text run at (741,0) width 28: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,422) size 769x18
         RenderText {#text} at (684,0) size 58x17
           text run at (684,0) width 58: "This is a "
@@ -139,20 +139,20 @@ layer at (0,0) size 785x1452
       RenderBlock {DIV} at (0,518) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (687,0) size 58x17
           text run at (687,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 82x17
-          RenderInline {I} at (0,0) size 82x17
-            RenderInline {SPAN} at (0,0) size 1x17
+        RenderInline {SPAN} at (0,0) size 25x17
+          RenderInline {I} at (0,0) size 25x17
+            RenderInline {SPAN} at (0,0) size 0x17
             RenderText {#text} at (744,0) size 25x17
               text run at (744,0) width 25: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,536) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (687,0) size 58x17
           text run at (687,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 82x17
-          RenderInline {I} at (0,0) size 82x17
+        RenderInline {SPAN} at (0,0) size 25x17
+          RenderInline {I} at (0,0) size 25x17
             RenderText {#text} at (744,0) size 25x17
               text run at (744,0) width 25: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,554) size 769x18
         RenderText {#text} at (687,0) size 58x17
           text run at (687,0) width 58: "This is a "
@@ -175,20 +175,20 @@ layer at (0,0) size 785x1452
       RenderBlock {DIV} at (0,650) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (684,0) size 58x17
           text run at (684,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 85x17
-          RenderInline {B} at (0,0) size 85x17
-            RenderInline {SPAN} at (0,0) size 1x17
+        RenderInline {SPAN} at (0,0) size 28x17
+          RenderInline {B} at (0,0) size 28x17
+            RenderInline {SPAN} at (0,0) size 0x17
             RenderText {#text} at (741,0) size 28x17
               text run at (741,0) width 28: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,668) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (684,0) size 58x17
           text run at (684,0) width 58: "This is a "
-        RenderInline {SPAN} at (0,0) size 85x17
-          RenderInline {B} at (0,0) size 85x17
+        RenderInline {SPAN} at (0,0) size 28x17
+          RenderInline {B} at (0,0) size 28x17
             RenderText {#text} at (741,0) size 28x17
               text run at (741,0) width 28: "Test"
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
       RenderBlock {DIV} at (0,686) size 769x18
         RenderText {#text} at (684,0) size 58x17
           text run at (684,0) width 58: "This is a "
@@ -235,11 +235,11 @@ layer at (0,0) size 785x1452
         RenderBlock {DIV} at (0,94) size 769x18 [bgcolor=#FF0000]
           RenderText {#text} at (683,0) size 61x17
             text run at (683,0) width 61: "This is a "
-          RenderInline {SPAN} at (0,0) size 86x17
-            RenderInline {EM} at (0,0) size 86x17
+          RenderInline {SPAN} at (0,0) size 26x17
+            RenderInline {EM} at (0,0) size 26x17
               RenderText {#text} at (743,0) size 26x17
                 text run at (743,0) width 26: "Test"
-              RenderInline {A} at (0,0) size 1x17 [color=#551A8B]
+              RenderInline {A} at (0,0) size 0x17 [color=#551A8B]
         RenderBlock {DIV} at (0,112) size 769x24 [bgcolor=#FF0000]
           RenderText {#text} at (683,6) size 61x17
             text run at (683,6) width 61: "This is a "

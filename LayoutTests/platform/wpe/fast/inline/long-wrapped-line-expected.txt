@@ -1,9 +1,9 @@
-layer at (0,0) size 1983x585
+layer at (0,0) size 1987x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderInline {SPAN} at (0,0) size 1975x17
-        RenderText {#text} at (0,0) size 1975x17
-          text run at (0,0) width 1975: "Side note.  Both GR's have been cleaned by both myself and Miguet -  Please keep our GR's clean or there will be Fire and Brimstone.  The state of the GR2 today was Unacceptable with random parts that were suppose to be KGB that were not labeled,  RTW,  RFP and attached to a machine in awaiting parts. .  "
+      RenderInline {SPAN} at (0,0) size 1979x17
+        RenderText {#text} at (0,0) size 1979x17
+          text run at (0,0) width 1979: "Side note.  Both GR's have been cleaned by both myself and Miguet -  Please keep our GR's clean or there will be Fire and Brimstone.  The state of the GR2 today was Unacceptable with random parts that were suppose to be KGB that were not labeled,  RTW,  RFP and attached to a machine in awaiting parts. .   "
       RenderText {#text} at (0,0) size 0x0
