@@ -26,18 +26,94 @@
 #include "config.h"
 #include "CSSOKLCH.h"
 
+#include "Exception.h"
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSOKLCH);
 
-CSSOKLCH::CSSOKLCH(CSSColorPercent lightness, CSSColorPercent chroma, CSSColorAngle hue, CSSColorPercent alpha)
+ExceptionOr<Ref<CSSOKLCH>> CSSOKLCH::create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    auto rectifiedChroma = rectifyCSSColorPercent(WTFMove(chroma));
+    if (rectifiedChroma.hasException())
+        return rectifiedChroma.releaseException();
+    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    if (rectifiedHue.hasException())
+        return rectifiedHue.releaseException();
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+
+    return adoptRef(*new CSSOKLCH(rectifiedLightness.releaseReturnValue(), rectifiedChroma.releaseReturnValue(), rectifiedHue.releaseReturnValue(), rectifiedAlpha.releaseReturnValue()));
+}
+
+CSSOKLCH::CSSOKLCH(RectifiedCSSColorPercent&& lightness, RectifiedCSSColorPercent&& chroma, RectifiedCSSColorAngle&& hue, RectifiedCSSColorPercent&& alpha)
     : m_lightness(WTFMove(lightness))
     , m_chroma(WTFMove(chroma))
     , m_hue(WTFMove(hue))
     , m_alpha(WTFMove(alpha))
 {
+}
+
+CSSColorPercent CSSOKLCH::l() const
+{
+    return toCSSColorPercent(m_lightness);
+}
+
+ExceptionOr<void> CSSOKLCH::setL(CSSColorPercent&& lightness)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    m_lightness = rectifiedLightness.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSOKLCH::c() const
+{
+    return toCSSColorPercent(m_chroma);
+}
+
+ExceptionOr<void> CSSOKLCH::setC(CSSColorPercent&& chroma)
+{
+    auto rectifiedChroma = rectifyCSSColorPercent(WTFMove(chroma));
+    if (rectifiedChroma.hasException())
+        return rectifiedChroma.releaseException();
+    m_chroma = rectifiedChroma.releaseReturnValue();
+    return { };
+}
+
+CSSColorAngle CSSOKLCH::h() const
+{
+    return toCSSColorAngle(m_hue);
+}
+
+ExceptionOr<void> CSSOKLCH::setH(CSSColorAngle&& hue)
+{
+    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    if (rectifiedHue.hasException())
+        return rectifiedHue.releaseException();
+    m_hue = rectifiedHue.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSOKLCH::alpha() const
+{
+    return toCSSColorPercent(m_alpha);
+}
+
+ExceptionOr<void> CSSOKLCH::setAlpha(CSSColorPercent&& alpha)
+{
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+    m_alpha = rectifiedAlpha.releaseReturnValue();
+    return { };
 }
 
 } // namespace WebCore

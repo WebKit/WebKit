@@ -29,27 +29,27 @@
 
 namespace WebCore {
 
-class CSSOKLab : public CSSColorValue {
+class CSSOKLab final : public CSSColorValue {
     WTF_MAKE_ISO_ALLOCATED(CSSOKLab);
 public:
-    template<typename... Args> static Ref<CSSOKLab> create(Args&&... args) { return adoptRef(*new CSSOKLab(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSOKLab>> create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha);
 
-    const CSSColorPercent& l() const { return m_lightness; }
-    void setL(CSSColorPercent lightness) { m_lightness = WTFMove(lightness); }
-    const CSSColorNumber& a() const { return m_a; }
-    void setA(CSSColorNumber a) { m_a = WTFMove(a); }
-    const CSSColorNumber& b() const { return m_b; }
-    void setB(CSSColorNumber b) { m_b = WTFMove(b); }
-    const CSSColorPercent& alpha() const { return m_alpha; }
-    void setAlpha(CSSColorPercent alpha) { m_alpha = WTFMove(alpha); }
+    CSSColorPercent l() const;
+    ExceptionOr<void> setL(CSSColorPercent&&);
+    CSSColorNumber a() const;
+    ExceptionOr<void> setA(CSSColorNumber&&);
+    CSSColorNumber b() const;
+    ExceptionOr<void> setB(CSSColorNumber&&);
+    CSSColorPercent alpha() const;
+    ExceptionOr<void> setAlpha(CSSColorPercent&&);
 
 private:
-    CSSOKLab(CSSColorPercent, CSSColorNumber, CSSColorNumber, CSSColorPercent alpha);
+    CSSOKLab(RectifiedCSSColorPercent&&, RectifiedCSSColorNumber&&, RectifiedCSSColorNumber&&, RectifiedCSSColorPercent&& alpha);
 
-    CSSColorPercent m_lightness;
-    CSSColorNumber m_a;
-    CSSColorNumber m_b;
-    CSSColorPercent m_alpha;
+    RectifiedCSSColorPercent m_lightness;
+    RectifiedCSSColorNumber m_a;
+    RectifiedCSSColorNumber m_b;
+    RectifiedCSSColorPercent m_alpha;
 };
     
 } // namespace WebCore

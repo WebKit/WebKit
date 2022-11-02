@@ -1,23 +1,26 @@
 
+PASS Constructing a CSSHSL with a number for the hue works as intended.
+PASS CSSHSL.h can be updated with a a number.
 PASS Constructing a CSSHSL with degrees for the hue works as intended.
 PASS CSSHSL.h can be updated with a degrees.
 PASS Constructing a CSSHSL with radians for the hue works as intended.
 PASS CSSHSL.h can be updated with a radians.
 PASS Constructing a CSSHSL with gradians for the hue works as intended.
 PASS CSSHSL.h can be updated with a gradians.
-FAIL Constructing a CSSHSL with a number for hue throws a type error. assert_throws_js: function "() => new CSSHSL(hue, 0, 0)" did not throw
-FAIL Constructing a CSSHSL with css pixels for hue throws a type error. assert_throws_js: function "() => new CSSHSL(hue, 0, 0)" did not throw
-FAIL Constructing a CSSHSL with undefined for hue throws a type error. assert_throws_js: function "() => new CSSHSL(hue, 0, 0)" did not throw
-FAIL CSSHSL can be constructed from three numbers and will get an alpha of 100%. assert_equals: expected "CSSUnitValue" but got "Number"
-FAIL CSSHSL can be constructed from four numbers. assert_equals: expected "CSSUnitValue" but got "Number"
-FAIL Constructing a CSSHSL with CSS.number for s, l or alpha throws a TypeError assert_throws_js: function "() => new CSSHSL(CSS.deg(0), CSS.number(1), 0, 0)" did not throw
-FAIL Updating a CSSHSL with CSS.number for s throws a TypeError assert_throws_js: function "() => result[attr] = CSS.number(1)" did not throw
-FAIL CSSHSL.s can be updated to a number. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS Constructing a CSSHSL with undefined for the hue works as intended.
+PASS CSSHSL.h can be updated with a undefined.
+PASS Constructing a CSSHSL with css pixels for hue throws a SyntaxError.
+PASS Constructing a CSSHSL with css em for hue throws a SyntaxError.
+PASS CSSHSL can be constructed from three numbers and will get an alpha of 100%.
+PASS CSSHSL can be constructed from four numbers.
+PASS Constructing a CSSHSL with CSS.number for s, l or alpha throws a TypeError
+PASS Updating a CSSHSL with CSS.number for s throws a SyntaxError
+PASS CSSHSL.s can be updated to a number.
 PASS CSSHSL.s can be updated with a CSS percent.
-FAIL Updating a CSSHSL with CSS.number for l throws a TypeError assert_throws_js: function "() => result[attr] = CSS.number(1)" did not throw
-FAIL CSSHSL.l can be updated to a number. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS Updating a CSSHSL with CSS.number for l throws a SyntaxError
+PASS CSSHSL.l can be updated to a number.
 PASS CSSHSL.l can be updated with a CSS percent.
-FAIL Updating a CSSHSL with CSS.number for alpha throws a TypeError assert_throws_js: function "() => result[attr] = CSS.number(1)" did not throw
-FAIL CSSHSL.alpha can be updated to a number. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS Updating a CSSHSL with CSS.number for alpha throws a SyntaxError
+PASS CSSHSL.alpha can be updated to a number.
 PASS CSSHSL.alpha can be updated with a CSS percent.
 
