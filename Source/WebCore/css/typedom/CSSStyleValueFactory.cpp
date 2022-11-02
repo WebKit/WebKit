@@ -55,6 +55,37 @@
 
 namespace WebCore {
 
+ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::constructStyleValueForShorthandProperty(CSSPropertyID propertyID, const Function<RefPtr<CSSValue>(CSSPropertyID)>& propertyValue, Document* document)
+{
+    auto shorthand = shorthandForProperty(propertyID);
+    Vector<Ref<CSSValue>> values;
+    for (auto& longhand : shorthand) {
+        RefPtr value = propertyValue(longhand);
+        if (!value)
+            return nullptr;
+        if (value->isImplicitInitialValue())
+            continue;
+        values.append(value.releaseNonNull());
+        // VariableReference set from the shorthand, value will be the same for all longhands.
+        if (is<CSSPendingSubstitutionValue>(values.last().get()))
+            break;
+    }
+    if (values.isEmpty())
+        return nullptr;
+
+    if (values.size() == 1) {
+        auto reifiedValue = reifyValue(values[0].copyRef(), document);
+        if (reifiedValue.hasException())
+            return reifiedValue.releaseException();
+        return { reifiedValue.releaseReturnValue() };
+    }
+
+    auto valueList = CSSValueList::createSpaceSeparated();
+    for (auto& value : values)
+        valueList->append(WTFMove(value));
+    return { CSSStyleValue::create(WTFMove(valueList)) };
+}
+
 ExceptionOr<RefPtr<CSSValue>> CSSStyleValueFactory::extractCSSValue(const CSSPropertyID& propertyID, const String& cssText)
 {
     auto styleDeclaration = MutableStyleProperties::create();
@@ -68,7 +99,7 @@ ExceptionOr<RefPtr<CSSValue>> CSSStyleValueFactory::extractCSSValue(const CSSPro
     return styleDeclaration->getPropertyCSSValue(propertyID);
 }
 
-ExceptionOr<void> CSSStyleValueFactory::extractShorthandCSSValues(Vector<Ref<CSSValue>>& cssValues, const CSSPropertyID& propertyID, const String& cssText)
+ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::extractShorthandCSSValues(const CSSPropertyID& propertyID, const String& cssText)
 {
     auto styleDeclaration = MutableStyleProperties::create();
 
@@ -78,12 +109,9 @@ ExceptionOr<void> CSSStyleValueFactory::extractShorthandCSSValues(Vector<Ref<CSS
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { TypeError, makeString(cssText, " cannot be parsed.")};
 
-    auto shorthand = shorthandForProperty(propertyID);
-    for (auto longhand : shorthand) {
-        if (auto cssValue = styleDeclaration->getPropertyCSSValue(longhand))
-            cssValues.append(cssValue.releaseNonNull());
-    }
-    return { };
+    return constructStyleValueForShorthandProperty(propertyID, [&](auto longhandPropertyID) {
+        return styleDeclaration->getPropertyCSSValue(longhandPropertyID);
+    });
 }
 
 ExceptionOr<void> CSSStyleValueFactory::extractCustomCSSValues(Vector<Ref<CSSValue>>& cssValues, const AtomString& customPropertyName, const String& cssText)
@@ -124,26 +152,29 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
         if (propertyID == CSSPropertyInvalid)
             return Exception { TypeError, "Property String is not a valid CSS property."_s };
         
-        
         if (isShorthandCSSProperty(propertyID)) {
-            auto result = extractShorthandCSSValues(cssValues, propertyID, cssText);
+            auto result = extractShorthandCSSValues(propertyID, cssText);
             if (result.hasException())
                 return result.releaseException();
-        } else {
-            auto result = extractCSSValue(propertyID, cssText);
-            if (result.hasException())
-                return result.releaseException();
-            if (auto cssValue = result.releaseReturnValue()) {
-                // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
-                if (CSSProperty::isListValuedProperty(propertyID)) {
-                    if (auto* valueList = dynamicDowncast<CSSValueList>(*cssValue)) {
-                        for (size_t i = 0, length = valueList->length(); i < length; ++i)
-                            cssValues.append(*valueList->item(i));
-                    }
+            auto cssValue = result.releaseReturnValue();
+            if (!cssValue)
+                return Vector<Ref<CSSStyleValue>> { };
+            return Vector { cssValue.releaseNonNull() };
+        }
+
+        auto result = extractCSSValue(propertyID, cssText);
+        if (result.hasException())
+            return result.releaseException();
+        if (auto cssValue = result.releaseReturnValue()) {
+            // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
+            if (CSSProperty::isListValuedProperty(propertyID)) {
+                if (auto* valueList = dynamicDowncast<CSSValueList>(*cssValue)) {
+                    for (size_t i = 0, length = valueList->length(); i < length; ++i)
+                        cssValues.append(*valueList->item(i));
                 }
-                if (cssValues.isEmpty())
-                    cssValues.append(cssValue.releaseNonNull());
             }
+            if (cssValues.isEmpty())
+                cssValues.append(cssValue.releaseNonNull());
         }
     }
 

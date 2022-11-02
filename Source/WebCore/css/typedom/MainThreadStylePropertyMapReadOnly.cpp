@@ -30,6 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleValue.h"
+#include "CSSStyleValueFactory.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
 #include "CSSVariableData.h"
@@ -105,29 +106,10 @@ ExceptionOr<bool> MainThreadStylePropertyMapReadOnly::has(ScriptExecutionContext
 
 RefPtr<CSSStyleValue> MainThreadStylePropertyMapReadOnly::shorthandPropertyValue(Document& document, CSSPropertyID propertyID) const
 {
-    auto shorthand = shorthandForProperty(propertyID);
-    Vector<Ref<CSSValue>> values;
-    for (auto& longhand : shorthand) {
-        RefPtr value = propertyValue(longhand);
-        if (!value)
-            return nullptr;
-        if (value->isImplicitInitialValue())
-            continue;
-        // VariableReference set from the shorthand.
-        if (is<CSSPendingSubstitutionValue>(*value))
-            return CSSUnparsedValue::create(downcast<CSSPendingSubstitutionValue>(*value).shorthandValue().data().tokenRange());
-        values.append(value.releaseNonNull());
-    }
-    if (values.isEmpty())
-        return nullptr;
-
-    if (values.size() == 1)
-        return reifyValue(values[0].ptr(), document);
-
-    auto valueList = CSSValueList::createSpaceSeparated();
-    for (auto& value : values)
-        valueList->append(WTFMove(value));
-    return CSSStyleValue::create(WTFMove(valueList));
+    auto result = CSSStyleValueFactory::constructStyleValueForShorthandProperty(propertyID, [this](auto longhandPropertyID) {
+        return propertyValue(longhandPropertyID);
+    }, &document);
+    return result.hasException() ? nullptr : RefPtr<CSSStyleValue> { result.releaseReturnValue() };
 }
 
 } // namespace WebCore
