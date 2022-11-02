@@ -145,8 +145,10 @@ static constexpr auto annotationStyle =
 "} "
 "input.annotation[type='password'] { "
 "    position: static; "
-"    width: 200px; "
-"    margin-top: 100px; "
+"    width: 238px; "
+"    height: 20px; "
+"    margin-top: 110px; "
+"    font-size: 15px; "
 "} "_s;
 
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
