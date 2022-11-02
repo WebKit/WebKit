@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class RegistrableDomain;
-
 class ServiceWorkerRegistrationKey {
 public:
     ServiceWorkerRegistrationKey() = default;
@@ -50,7 +48,6 @@ public:
     size_t scopeLength() const { return m_scope.string().length(); }
 
     const SecurityOriginData& topOrigin() const { return m_topOrigin; }
-    WEBCORE_EXPORT RegistrableDomain firstPartyForCookies() const;
     const URL& scope() const { return m_scope; }
     void setScope(URL&& scope) { m_scope = WTFMove(scope); }
 

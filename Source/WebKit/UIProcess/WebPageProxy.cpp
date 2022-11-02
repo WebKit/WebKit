@@ -3562,9 +3562,6 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         navigation->websitePolicies()->setContentBlockersEnabled(false);
     }
 
-    if (policyAction == PolicyAction::Use && navigation && frame.isMainFrame())
-        websiteDataStore->networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process().coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
-
 #if ENABLE(DEVICE_ORIENTATION)
     if (navigation && (!navigation->websitePolicies() || navigation->websitePolicies()->deviceOrientationAndMotionAccessState() == WebCore::DeviceOrientationOrMotionPermissionState::Prompt)) {
         auto deviceOrientationPermission = websiteDataStore->deviceOrientationAndMotionAccessController().cachedDeviceOrientationPermission(SecurityOriginData::fromURL(navigation->currentRequest().url()));

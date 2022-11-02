@@ -28,7 +28,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
 #include <wtf/URLHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -81,11 +80,6 @@ bool ServiceWorkerRegistrationKey::relatesToOrigin(const SecurityOriginData& sec
         return true;
 
     return SecurityOriginData::fromURL(m_scope) == securityOrigin;
-}
-
-RegistrableDomain ServiceWorkerRegistrationKey::firstPartyForCookies() const
-{
-    return RegistrableDomain::uncheckedCreateFromHost(m_topOrigin.host);
 }
 
 static const char separatorCharacter = '_';

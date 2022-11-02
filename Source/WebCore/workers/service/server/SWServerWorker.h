@@ -83,7 +83,6 @@ public:
 
     SWServer* server() { return m_server.get(); }
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
-    RegistrableDomain firstPartyForCookies() const { return m_registrationKey.firstPartyForCookies(); }
     const URL& scriptURL() const { return m_data.scriptURL; }
     const ScriptBuffer& script() const { return m_script; }
     const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
