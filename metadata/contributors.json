@@ -3027,6 +3027,17 @@
    },
    {
       "emails" : [
+         "hmw@apple.com"
+      ],
+      "expertise" : "Safari Technology Preview",
+      "github" : "harrisonweinerman",
+      "name" : "Harrison Weinerman",
+      "nicks" : [
+         "hmw"
+      ]
+   },
+   {
+      "emails" : [
          "harshil.sratnu@gmail.com"
       ],
       "expertise" : "Web Inspector",
