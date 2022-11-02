@@ -319,26 +319,21 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
             (encoder << ... << std::get<Indices>(tuple));
     }
 
-    template<typename Decoder>
-    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
+    template<typename Decoder, typename... DecodedTypes>
+    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder, std::optional<DecodedTypes>&&... decodedObjects)
     {
-        return decode(decoder, std::tuple<> { }, std::index_sequence_for<> { });
-    }
+        constexpr size_t index = sizeof...(DecodedTypes);
+        static_assert(index <= sizeof...(Elements));
+        constexpr bool shouldHandleElement = index < sizeof...(Elements); // MSVC++ workaround (https://webkit.org/b/247226)
 
-    template<typename Decoder, typename OptionalTuple, size_t... Indices>
-    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder, OptionalTuple&& optionalTuple, std::index_sequence<Indices...>)
-    {
-        constexpr size_t Index = sizeof...(Indices);
-        static_assert(Index == std::tuple_size_v<OptionalTuple>);
-
-        if constexpr (Index < sizeof...(Elements)) {
-            auto optional = decoder.template decode<std::tuple_element_t<Index, std::tuple<Elements...>>>();
+        if constexpr (shouldHandleElement) {
+            auto optional = decoder.template decode<std::tuple_element_t<index, std::tuple<Elements...>>>();
             if (!optional)
                 return std::nullopt;
-            return decode(decoder, std::forward_as_tuple(std::get<Indices>(WTFMove(optionalTuple))..., WTFMove(optional)), std::make_index_sequence<Index + 1> { });
+            return decode(decoder, WTFMove(decodedObjects)..., WTFMove(optional));
         } else {
-            static_assert(Index == sizeof...(Elements));
-            return std::make_tuple(*std::get<Indices>(WTFMove(optionalTuple))...);
+            static_assert((std::is_same_v<DecodedTypes, Elements> && ...));
+            return std::make_tuple(*WTFMove(decodedObjects)...);
         }
     }
 };
@@ -375,30 +370,22 @@ template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>> {
             encoder << item;
     }
 
-    template<typename Decoder>
-    static std::optional<std::array<T, size>> decode(Decoder& decoder)
+    template<typename Decoder, typename... DecodedTypes>
+    static std::optional<std::array<T, size>> decode(Decoder& decoder, std::optional<DecodedTypes>&&... decodedObjects)
     {
-        std::array<std::optional<T>, size> items;
+        constexpr size_t index = sizeof...(DecodedTypes);
+        static_assert(index <= size);
+        constexpr bool shouldHandleElement = index < size; // MSVC++ workaround (https://webkit.org/b/247226)
 
-        for (auto& item : items) {
-            decoder >> item;
-            if (!item)
+        if constexpr (shouldHandleElement) {
+            auto optional = decoder.template decode<T>();
+            if (!optional)
                 return std::nullopt;
+            return decode(decoder, WTFMove(decodedObjects)..., WTFMove(optional));
+        } else {
+            static_assert((std::is_same_v<DecodedTypes, T> && ...));
+            return std::array<T, size> { *WTFMove(decodedObjects)... };
         }
-
-        return unwrapArray(WTFMove(items));
-    }
-
-private:
-    static std::array<T, size> unwrapArray(std::array<std::optional<T>, size>&& array)
-    {
-        return unwrapArrayHelper(WTFMove(array), std::make_index_sequence<size>());
-    }
-
-    template<size_t... index>
-    static std::array<T, size> unwrapArrayHelper(std::array<std::optional<T>, size>&& array, std::index_sequence<index...>)
-    {
-        return { WTFMove(*array[index])... };
     }
 };
 
