@@ -21,6 +21,7 @@
         "func":      { "type": "varint7", "value":  -32, "b3type": "B3::Void",   "width": 0 },
         "struct":    { "type": "varint7", "value":  -33, "b3type": "B3::Void",   "width": 0 },
         "array":     { "type": "varint7", "value":  -34, "b3type": "B3::Void",   "width": 0 },
+        "sub":       { "type": "varint7", "value":  -48, "b3type": "B3::Void",   "width": 0 },
         "rec":       { "type": "varint7", "value":  -49, "b3type": "B3::Void",   "width": 0 },
         "void":      { "type": "varint7", "value":  -64, "b3type": "B3::Void",   "width": 0 }
     },
