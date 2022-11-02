@@ -114,15 +114,12 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible eventVisibility)
 {
     auto platformGamepads = GamepadProvider::singleton().platformGamepads();
-    ASSERT(platformGamepads.size() == m_gamepads.size());
 
-    for (size_t i = 0; i < platformGamepads.size(); ++i) {
-        if (!platformGamepads[i]) {
-            ASSERT(!m_gamepads[i]);
+    auto end = std::min(m_gamepads.size(), platformGamepads.size());
+    for (size_t i = 0; i < end; ++i) {
+        if (!m_gamepads[i] || !platformGamepads[i])
             continue;
-        }
 
-        ASSERT(m_gamepads[i]);
         m_gamepads[i]->updateFromPlatformGamepad(*platformGamepads[i]);
     }
 
