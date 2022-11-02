@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef HashTools_h
-#define HashTools_h
+#pragma once
 
 namespace WebCore {
 
@@ -27,20 +26,6 @@ struct NamedColor {
     unsigned ARGBValue;
 };
 
-struct Property {
-    const char* name;
-    int id;
-};
-
-struct Value {
-    const char* name;
-    int id;
-};
-
 const NamedColor* findColor(const char* str, unsigned len);
-const Property* findProperty(const char* str, unsigned len);
-const Value* findValue(const char* str, unsigned len);
 
 } // namespace WebCore
-
-#endif // HashTools_h

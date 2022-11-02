@@ -62,7 +62,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> MainThreadStylePropertyMapReadOnly::get(Scrip
         return reifyValue(customPropertyValue(property), *document);
 
     auto propertyID = cssPropertyID(property);
-    if (propertyID == CSSPropertyInvalid || !isCSSPropertyExposed(propertyID, &document->settings()))
+    if (!isExposed(propertyID, &document->settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID))
@@ -82,7 +82,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::g
         return reifyValueToVector(customPropertyValue(property), *document);
 
     auto propertyID = cssPropertyID(property);
-    if (propertyID == CSSPropertyInvalid || !isCSSPropertyExposed(propertyID, &document->settings()))
+    if (!isExposed(propertyID, &document->settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {

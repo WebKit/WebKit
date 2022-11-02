@@ -82,7 +82,7 @@ private:
     ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
     
     Ref<MutableStyleProperties> copyProperties() const final;
-    bool isCSSPropertyExposed(CSSPropertyID) const;
+    bool isExposed(CSSPropertyID) const;
 
     RefPtr<DeprecatedCSSOMValue> wrapForDeprecatedCSSOM(CSSValue*);
     

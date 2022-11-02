@@ -67,7 +67,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const Ref<CSSVariableReferenceValue>& value) {
             m_stringValue = value->cssText();
         }, [&](const CSSValueID& value) {
-            m_stringValue = getValueName(value);
+            m_stringValue = nameString(value);
         }, [&](const Ref<CSSVariableData>& value) {
             m_stringValue = value->tokenRange().serialize();
         }, [&](const Length& value) {

@@ -1378,7 +1378,7 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
 {
     if (auto result = parseSimpleLengthValue(propertyID, string, context.mode))
         return result;
-    if ((propertyID == CSSPropertyCaretColor || propertyID == CSSPropertyAccentColor) && isCSSPropertyExposed(propertyID, &context.propertySettings))
+    if ((propertyID == CSSPropertyCaretColor || propertyID == CSSPropertyAccentColor) && isExposed(propertyID, &context.propertySettings))
         return parseColorWithAuto(string, context);
     if (CSSProperty::isColorProperty(propertyID))
         return parseColor(string, context);

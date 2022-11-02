@@ -139,7 +139,7 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
         return String();
 
     if (i < exposedComputedCSSPropertyIDs().size())
-        return getPropertyNameString(exposedComputedCSSPropertyIDs().at(i));
+        return nameString(exposedComputedCSSPropertyIDs().at(i));
 
     auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)

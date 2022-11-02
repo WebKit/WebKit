@@ -8948,15 +8948,13 @@ bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
 {
     if (!m_exposedComputedCSSPropertyIDs.has_value()) {
-        std::array<CSSPropertyID, numComputedPropertyIDs> exposed;
-        auto last = std::copy_if(std::begin(computedPropertyIDs), std::end(computedPropertyIDs),
-            exposed.begin(), [&](CSSPropertyID x) {
-                return isCSSPropertyExposed(x, m_settings.ptr());
+        std::remove_const_t<decltype(computedPropertyIDs)> exposed;
+        auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(),
+            [&](CSSPropertyID property) {
+                return isExposed(property, m_settings.ptr());
             });
-
-        FixedVector<CSSPropertyID> active(std::distance(exposed.begin(), last));
-        std::copy(exposed.begin(), last, active.begin());
-        m_exposedComputedCSSPropertyIDs = WTFMove(active);
+        m_exposedComputedCSSPropertyIDs.emplace(end - exposed.begin());
+        std::copy(exposed.begin(), end, m_exposedComputedCSSPropertyIDs->begin());
     }
 
     return m_exposedComputedCSSPropertyIDs.value();

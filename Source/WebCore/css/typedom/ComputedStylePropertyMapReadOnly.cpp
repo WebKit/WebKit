@@ -54,7 +54,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> ComputedStylePropertyMapReadOnly::get(ScriptE
         return StylePropertyMapReadOnly::reifyValue(ComputedStyleExtractor(m_element.ptr()).customPropertyValue(property), m_element->document());
 
     auto propertyID = cssPropertyID(property);
-    if (!propertyID || !isCSSPropertyExposed(propertyID, &m_element->document().settings()))
+    if (!isExposed(propertyID, &m_element->document().settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {
@@ -72,7 +72,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::get
         return StylePropertyMapReadOnly::reifyValueToVector(ComputedStyleExtractor(m_element.ptr()).customPropertyValue(property), m_element->document());
 
     auto propertyID = cssPropertyID(property);
-    if (!propertyID || !isCSSPropertyExposed(propertyID, &m_element->document().settings()))
+    if (!isExposed(propertyID, &m_element->document().settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {
@@ -116,9 +116,8 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     const auto& exposedComputedCSSPropertyIDs = m_element->document().exposedComputedCSSPropertyIDs();
     values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
     for (auto propertyID : exposedComputedCSSPropertyIDs) {
-        auto key = getPropertyNameString(propertyID);
         auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
-        values.uncheckedAppend(makeKeyValuePair(WTFMove(key), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), m_element->document())));
+        values.uncheckedAppend(makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), m_element->document())));
     }
 
     for (auto* map : { &nonInheritedCustomProperties, &inheritedCustomProperties }) {

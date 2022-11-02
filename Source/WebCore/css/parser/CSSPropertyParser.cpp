@@ -70,12 +70,6 @@
 #include "CSSVariableReferenceValue.h"
 #include "Counter.h"
 #include "FontFace.h"
-#include "HashTools.h"
-// FIXME-NEWPARSER: CSSPrimitiveValue is a large class that holds many unrelated objects,
-// switching behavior on the type of the object it is holding.
-// Since CSSValue is already a class hierarchy, this adds an unnecessary second level to the hierarchy that complicates code.
-// So we need to remove the various behaviors from CSSPrimitiveValue and split them into separate subclasses of CSSValue.
-// FIXME-NEWPARSER: Replace Pair and Rect with actual CSSValue subclasses (CSSValuePair and CSSQuadValue).
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderTheme.h"
@@ -89,6 +83,12 @@
 #include <bitset>
 #include <memory>
 #include <wtf/text/StringBuilder.h>
+
+// FIXME-NEWPARSER: CSSPrimitiveValue is a large class that holds many unrelated objects,
+// switching behavior on the type of the object it is holding.
+// Since CSSValue is already a class hierarchy, this adds an unnecessary second level to the hierarchy that complicates code.
+// So we need to remove the various behaviors from CSSPrimitiveValue and split them into separate subclasses of CSSValue.
+// FIXME-NEWPARSER: Replace Pair and Rect with actual CSSValue subclasses (CSSValuePair and CSSQuadValue).
 
 namespace WebCore {
 
@@ -108,71 +108,46 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-template <typename CharacterType>
-static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned length)
+template<typename CharacterType> static CSSPropertyID cssPropertyID(const CharacterType* characters, unsigned length)
 {
-    char buffer[maxCSSPropertyNameLength + 1 + 1]; // 1 to turn "apple"/"khtml" into "webkit", 1 for null character
-    
+    char buffer[maxCSSPropertyNameLength];
     for (unsigned i = 0; i != length; ++i) {
-        CharacterType c = propertyName[i];
-        if (!c || c >= 0x7F)
-            return CSSPropertyInvalid; // illegal character
-        buffer[i] = toASCIILower(c);
+        auto character = characters[i];
+        if (!character || !isASCII(character))
+            return CSSPropertyInvalid;
+        buffer[i] = toASCIILower(character);
     }
-    buffer[length] = '\0';
-    
-    if (auto hashTableEntry = findProperty(buffer, length))
-        return static_cast<CSSPropertyID>(hashTableEntry->id);
-
-    return CSSPropertyInvalid;
+    return findCSSProperty(buffer, length);
 }
 
-static bool isAppleLegacyCssValueKeyword(const char* valueKeyword, unsigned length)
+// FIXME: Remove this mechanism entirely once we can do it without breaking the web.
+static bool isAppleLegacyCSSValueKeyword(const char* characters, unsigned length)
 {
-    static const char applePrefix[] = "-apple-";
-    static const char appleSystemPrefix[] = "-apple-system";
-    static const char applePayPrefix[] = "-apple-pay";
-
-#if PLATFORM(COCOA)
-    static const char* appleWirelessPlaybackTargetActive = getValueName(CSSValueAppleWirelessPlaybackTargetActive);
-#endif
-
-    return hasPrefix(valueKeyword, length, applePrefix)
-    && !hasPrefix(valueKeyword, length, appleSystemPrefix)
-    && !hasPrefix(valueKeyword, length, applePayPrefix)
-#if PLATFORM(COCOA)
-    && !equal(reinterpret_cast<const LChar*>(valueKeyword), reinterpret_cast<const LChar*>(appleWirelessPlaybackTargetActive), length)
-#endif
-    ;
+    return hasPrefix(characters + 1, length - 1, "apple-")
+        && !hasPrefix(characters + 7, length - 7, "system")
+        && !hasPrefix(characters + 7, length - 7, "pay")
+        && !hasPrefix(characters + 7, length - 7, "wireless");
 }
 
-template <typename CharacterType>
-static CSSValueID cssValueKeywordID(const CharacterType* valueKeyword, unsigned length)
+template<typename CharacterType> static CSSValueID cssValueKeywordID(const CharacterType* characters, unsigned length)
 {
-    char buffer[maxCSSValueKeywordLength + 1 + 1]; // 1 to turn "apple"/"khtml" into "webkit", 1 for null character
+    char buffer[maxCSSValueKeywordLength + 1]; // 1 to turn "apple" into "webkit"
     
     for (unsigned i = 0; i != length; ++i) {
-        CharacterType c = valueKeyword[i];
-        if (!c || c >= 0x7F)
-            return CSSValueInvalid; // illegal keyword.
-        buffer[i] = toASCIILower(c);
+        auto character = characters[i];
+        if (!character || !isASCII(character))
+            return CSSValueInvalid;
+        buffer[i] = toASCIILower(character);
     }
-    buffer[length] = '\0';
-    
-    if (buffer[0] == '-') {
-        // If the prefix is -apple- or -khtml-, change it to -webkit-.
-        // This makes the string one character longer.
-        // On iOS we don't want to change values starting with -apple-system to -webkit-system.
-        // FIXME: Remove this mangling without breaking the web.
-        if (isAppleLegacyCssValueKeyword(buffer, length)) {
-            memmove(buffer + 7, buffer + 6, length + 1 - 6);
-            memcpy(buffer, "-webkit", 7);
-            ++length;
-        }
+
+    // In most cases, if the prefix is -apple-, change it to -webkit-. This makes the string one character longer.
+    if (buffer[0] == '-' && isAppleLegacyCSSValueKeyword(buffer, length)) {
+        memmove(buffer + 7, buffer + 6, length - 6);
+        memcpy(buffer + 1, "webkit", 6);
+        ++length;
     }
-    
-    const Value* hashTableEntry = findValue(buffer, length);
-    return hashTableEntry ? static_cast<CSSValueID>(hashTableEntry->id) : CSSValueInvalid;
+
+    return findCSSValueKeyword(buffer, length);
 }
 
 CSSValueID cssValueKeywordID(StringView string)
@@ -226,7 +201,7 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
     // regardless of whether the longhands are enabled), and allow internal properties as we use
     // them to handle certain DOM-exposed values (e.g. -webkit-font-size-delta from
     // execCommand('FontSizeDelta')).
-    ASSERT(isCSSPropertyExposed(property, &m_context.propertySettings) || setFromShorthand || isInternalCSSProperty(property));
+    ASSERT(isExposed(property, &m_context.propertySettings) || setFromShorthand || isInternal(property));
 
     m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
 }
@@ -521,7 +496,7 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, const CSSP
             CSSPropertyID propertyID = cssPropertyID(range.peek().value());
             if (propertyID == CSSPropertyWillChange)
                 return nullptr;
-            if (!isCSSPropertyExposed(propertyID, &context.propertySettings))
+            if (!isExposed(propertyID, &context.propertySettings))
                 propertyID = CSSPropertyInvalid;
             if (propertyID != CSSPropertyInvalid) {
                 values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
@@ -4419,7 +4394,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
             return nullptr;
     }
 
-    if (!isCSSPropertyExposed(property, &m_context.propertySettings) && !isInternalCSSProperty(property)) {
+    if (!isExposed(property, &m_context.propertySettings) && !isInternal(property)) {
         // Allow internal properties as we use them to parse several internal-only-shorthands (e.g. background-repeat),
         // and to handle certain DOM-exposed values (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).
         ASSERT_NOT_REACHED();
@@ -5165,7 +5140,7 @@ static RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
 RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(context.propertySettings.cssCounterStyleAtRulesEnabled);
-    ASSERT(isCSSPropertyExposed(propId, &context.propertySettings));
+    ASSERT(isExposed(propId, &context.propertySettings));
 
     switch (propId) {
     case CSSPropertySystem:
@@ -5205,7 +5180,7 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, const 
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
 {
-    ASSERT(isCSSPropertyExposed(propId, &m_context.propertySettings));
+    ASSERT(isExposed(propId, &m_context.propertySettings));
 
     RefPtr<CSSValue> parsedValue;
     switch (propId) {
@@ -5328,7 +5303,7 @@ static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange&
 
 bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID propId)
 {
-    ASSERT(isCSSPropertyExposed(propId, &m_context.propertySettings));
+    ASSERT(isExposed(propId, &m_context.propertySettings));
 
     RefPtr<CSSValue> parsedValue;
     switch (propId) {
@@ -6394,7 +6369,7 @@ bool CSSPropertyParser::consumeContainerShorthand(bool important)
 bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyContainIntrinsicSize).length() == 2);
-    ASSERT(isCSSPropertyExposed(CSSPropertyContainIntrinsicSize, &m_context.propertySettings));
+    ASSERT(isExposed(CSSPropertyContainIntrinsicSize, &m_context.propertySettings));
 
     if (m_range.atEnd())
         return false;

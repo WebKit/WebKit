@@ -1281,7 +1281,7 @@ static Ref<CSSValue> createTransitionPropertyValue(const Animation& animation)
     case Animation::TransitionMode::All:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
     case Animation::TransitionMode::SingleProperty:
-        return CSSValuePool::singleton().createCustomIdent(getPropertyNameString(animation.property().id));
+        return CSSValuePool::singleton().createCustomIdent(nameString(animation.property().id));
     case Animation::TransitionMode::UnknownProperty:
         return CSSValuePool::singleton().createCustomIdent(animation.unknownProperty());
     }
@@ -2789,7 +2789,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
-    if (!isCSSPropertyExposed(propertyID, &m_element->document().settings())) {
+    if (!isExposed(propertyID, &m_element->document().settings())) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -2839,7 +2839,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
-    ASSERT(isCSSPropertyExposed(propertyID, &m_element->document().settings()));
+    ASSERT(isExposed(propertyID, &m_element->document().settings()));
 
     switch (propertyID) {
     case CSSPropertyInvalid:
@@ -4160,7 +4160,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         ASSERT_NOT_REACHED();
         return nullptr;
 
-    // Internal properties should be handled by isCSSPropertyExposed above.
+    // Internal properties should be handled by isExposed above.
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitMarqueeDirection:
     case CSSPropertyWebkitMarqueeIncrement:
@@ -4350,9 +4350,8 @@ Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CS
 Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties()
 {
     Vector<CSSProperty> list;
-    list.reserveInitialCapacity(firstShorthandProperty - firstCSSProperty);
-    for (unsigned i = firstCSSProperty; i < firstShorthandProperty; ++i) {
-        auto propertyID = convertToCSSPropertyID(i);
+    list.reserveInitialCapacity(numCSSPropertyLonghands);
+    for (auto propertyID : allLonghandCSSProperties()) {
         if (auto value = propertyValue(propertyID))
             list.append(CSSProperty(propertyID, WTFMove(value)));
     }
