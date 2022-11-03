@@ -61,10 +61,8 @@ public:
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
-#if GST_CHECK_VERSION(1, 16, 0)
         if (m_systemId == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s)
             return "webm"_s;
-#endif
         return "cenc"_s;
     }
 
@@ -113,10 +111,8 @@ public:
     static constexpr auto s_WidevineKeySystem = "com.widevine.alpha"_s;
     static constexpr auto s_PlayReadyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_PLAYREADY_UUID ""_s;
     static constexpr std::array<ASCIILiteral, 2> s_PlayReadyKeySystems = { "com.microsoft.playready"_s,  "com.youtube.playready"_s };
-#if GST_CHECK_VERSION(1, 16, 0)
     static constexpr auto s_unspecifiedUUID = GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s;
     static constexpr auto s_unspecifiedKeySystem = GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s;
-#endif
 
     static bool isClearKeyKeySystem(const String& keySystem)
     {
@@ -148,7 +144,6 @@ public:
         return equalIgnoringASCIICase(uuid, s_PlayReadyUUID);
     }
 
-#if GST_CHECK_VERSION(1, 16, 0)
     static bool isUnspecifiedKeySystem(const String& keySystem)
     {
         return equalIgnoringASCIICase(keySystem, s_unspecifiedKeySystem);
@@ -158,7 +153,6 @@ public:
     {
         return equalIgnoringASCIICase(uuid, s_unspecifiedUUID);
     }
-#endif
 
     static const char* keySystemToUuid(const String& keySystem)
     {
@@ -171,10 +165,8 @@ public:
         if (isPlayReadyKeySystem(keySystem))
             return s_PlayReadyUUID;
 
-#if GST_CHECK_VERSION(1, 16, 0)
         if (isUnspecifiedKeySystem(keySystem))
             return s_unspecifiedUUID;
-#endif
 
         ASSERT_NOT_REACHED();
         return { };
@@ -191,10 +183,8 @@ public:
         if (isPlayReadyUUID(uuid))
             return s_PlayReadyKeySystems[0];
 
-#if GST_CHECK_VERSION(1, 16, 0)
         if (isUnspecifiedUUID(uuid))
             return s_unspecifiedKeySystem;
-#endif
 
         ASSERT_NOT_REACHED();
         return ""_s;
