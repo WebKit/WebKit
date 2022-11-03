@@ -115,11 +115,12 @@ struct SameSizeAsRenderObject {
     bool weakPtrFactorWasConstructedOnMainThread;
     HashSet<void*> cachedResourceClientAssociatedResources;
 #endif
-    void* pointers[6];
+    void* pointers[5];
 #if ASSERT_ENABLED
     unsigned m_debugBitfields : 2;
 #endif
     unsigned m_bitfields;
+    WeakPtr<Node> m_node;
 };
 
 #if CPU(ADDRESS64)
