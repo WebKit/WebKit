@@ -1887,18 +1887,26 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
 void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (!document().frame()->selection().isFocusedAndActive() || document().focusedElement() != &element)
+    if (!document().frame()->selection().isFocusedAndActive())
         return;
 
     auto* object = getOrCreate(&element);
     if (!object)
         return;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(*object, AXNotification::AXActiveDescendantChanged);
+#endif
+
+    // Notify active descendant changes only for the focused element.
+    if (document().focusedElement() != &element)
+        return;
+
     auto* activeDescendant = object->activeDescendant();
     // We want to notify that the combo box has changed its active descendant,
     // but we do not want to change the focus, because focus should remain with the combo box.
     if (activeDescendant && (object->isComboBox() || object->shouldFocusActiveDescendant())) {
-        auto target = object;
+        auto* target = object;
 
 #if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
@@ -1910,7 +1918,12 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
         }
 #endif
 
-        postNotification(target, &document(), AXActiveDescendantChanged);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (target != object)
+            updateIsolatedTree(target, AXNotification::AXActiveDescendantChanged);
+#endif
+
+        postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
     }
 }
 

@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -12,37 +13,35 @@
 </ul>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This test makes sure that an ARIA active descendant change does not change focus, because focus should remain in the textfield portion of the combo box.");
+    let output = "This test makes sure that an ARIA active descendant change does not change focus, because focus should remain in the textfield portion of the combo box.\n\n";
 
     if (window.testRunner && window.accessibilityController) {
         jsTestIsAsync = true;
 
-        document.getElementById("combo").focus();
-        var combo = accessibilityController.accessibleElementById("combo");
-        debug("The ComboBox should start out as the focused element.");
-        shouldBeTrue("combo.isEqual(accessibilityController.focusedElement)");
+        combo.focus();
+        var axCombo = accessibilityController.accessibleElementById("combo");
+        output += "The ComboBox should start out as the focused element.\n";
+        output += expect("axCombo.isEqual(accessibilityController.focusedElement)", "true");
 
         // When the active descendant changes, we should receive a selected children changed notification.
-        var list = accessibilityController.accessibleElementById("list");
-        list.addNotificationListener(function(notification) {
-            debug("Received notification: " + notification);
+        var axList = accessibilityController.accessibleElementById("list");
+        axList.addNotificationListener(function(notification) {
+            output += `Received notification: ${notification}\n`;
             if (notification == "AXSelectedChildrenChanged") {
-                list.removeNotificationListener();
-                document.getElementById("content").style.visibility = 'hidden';
+                output += "The ComboBox should still be the focused element even after the aria-activedescendant was changed.\n";
+                output += expect("axCombo.isEqual(accessibilityController.focusedElement)", "true");
+
+                axList.removeNotificationListener();
+                content.style.visibility = "hidden";
+                debug(output);
                 finishJSTest();
             }
         });
 
         // After the descendant changes, the combo box should still be the focused object.
-        document.getElementById("combo").setAttribute("aria-activedescendant", "item1");
-        debug("\nThe ComboBox should still be the focused element even after the aria-activedescendant was changed.");
-        shouldBeTrue("combo.isEqual(accessibilityController.focusedElement)");
+        combo.setAttribute("aria-activedescendant", "item1");
     }
-
 </script>
 </body>
 </html>
