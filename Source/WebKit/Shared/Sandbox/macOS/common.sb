@@ -38,6 +38,7 @@
 (allow file-map-executable (with telemetry))
 (allow iokit-open-service (with telemetry))
 (allow system-mac-syscall (with telemetry))
+(allow syscall-mach)
 
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 2 4 6 7)))
