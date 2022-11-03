@@ -35,7 +35,6 @@
 #include "JSEXTColorBufferHalfFloat.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
-#include "JSEXTProvokingVertex.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
@@ -71,6 +70,7 @@
 #include "JSWebGLMultiDraw.h"
 #include "JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 #include "JSWebGLProgram.h"
+#include "JSWebGLProvokingVertex.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
 #include "JSWebGLTexture.h"
@@ -176,7 +176,6 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTColorBufferHalfFloat)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
-        TO_JS(EXTProvokingVertex)
         TO_JS(EXTShaderTextureLOD)
         TO_JS(EXTTextureCompressionBPTC)
         TO_JS(EXTTextureCompressionRGTC)
@@ -209,6 +208,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(WebGLLoseContext)
         TO_JS(WebGLMultiDraw)
         TO_JS(WebGLMultiDrawInstancedBaseVertexBaseInstance)
+        TO_JS(WebGLProvokingVertex)
     }
     ASSERT_NOT_REACHED();
     return jsNull();

@@ -23,23 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
 
-#include "WebGLExtension.h"
+#if ENABLE(WEBGL)
+#include "WebGLProvokingVertex.h"
+
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-class EXTProvokingVertex final : public WebGLExtension {
-    WTF_MAKE_ISO_ALLOCATED(EXTProvokingVertex);
-public:
-    explicit EXTProvokingVertex(WebGLRenderingContextBase&);
-    virtual ~EXTProvokingVertex();
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLProvokingVertex);
 
-    ExtensionName getName() const override;
+WebGLProvokingVertex::WebGLProvokingVertex(WebGLRenderingContextBase& context)
+    : WebGLExtension(context)
+{
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_provoking_vertex"_s);
+}
 
-    static bool supported(GraphicsContextGL&);
+WebGLProvokingVertex::~WebGLProvokingVertex() = default;
 
-    void provokingVertexEXT(GCGLenum mode);
-};
+WebGLExtension::ExtensionName WebGLProvokingVertex::getName() const
+{
+    return WebGLProvokingVertexName;
+}
+
+bool WebGLProvokingVertex::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_ANGLE_provoking_vertex"_s);
+}
+
+void WebGLProvokingVertex::provokingVertexWEBGL(GCGLenum mode)
+{
+    auto context = WebGLExtensionScopedContext(this);
+    if (context.isLost())
+        return;
+
+    context->graphicsContextGL()->provokingVertexANGLE(mode);
+}
 
 } // namespace WebCore
+
+#endif // ENABLE(WEBGL)

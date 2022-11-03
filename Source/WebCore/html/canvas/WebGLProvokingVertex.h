@@ -23,14 +23,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNoInterfaceObject,
-    Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
-] interface EXTProvokingVertex {
-    const unsigned long FIRST_VERTEX_CONVENTION_EXT = 0x8E4D;
-    const unsigned long LAST_VERTEX_CONVENTION_EXT  = 0x8E4E;
-    const unsigned long PROVOKING_VERTEX_EXT        = 0x8E4F;
+#pragma once
 
-    undefined provokingVertexEXT(unsigned long mode);
+#include "WebGLExtension.h"
+
+namespace WebCore {
+
+class WebGLProvokingVertex final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(WebGLProvokingVertex);
+public:
+    explicit WebGLProvokingVertex(WebGLRenderingContextBase&);
+    virtual ~WebGLProvokingVertex();
+
+    ExtensionName getName() const override;
+
+    static bool supported(GraphicsContextGL&);
+
+    void provokingVertexWEBGL(GCGLenum mode);
 };
+
+} // namespace WebCore

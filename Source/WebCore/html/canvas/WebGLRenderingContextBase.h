@@ -82,7 +82,6 @@ class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
 class EXTFloatBlend;
 class EXTFragDepth;
-class EXTProvokingVertex;
 class EXTShaderTextureLOD;
 class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
@@ -127,6 +126,7 @@ class WebGLLoseContext;
 class WebGLMultiDraw;
 class WebGLMultiDrawInstancedBaseVertexBaseInstance;
 class WebGLObject;
+class WebGLProvokingVertex;
 class WebGLShader;
 class WebGLShaderPrecisionFormat;
 class WebGLSharedObject;
@@ -736,7 +736,6 @@ protected:
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
-    RefPtr<EXTProvokingVertex> m_extProvokingVertex;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     RefPtr<EXTTextureCompressionBPTC> m_extTextureCompressionBPTC;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
@@ -769,6 +768,7 @@ protected:
     RefPtr<WebGLLoseContext> m_webglLoseContext;
     RefPtr<WebGLMultiDraw> m_webglMultiDraw;
     RefPtr<WebGLMultiDrawInstancedBaseVertexBaseInstance> m_webglMultiDrawInstancedBaseVertexBaseInstance;
+    RefPtr<WebGLProvokingVertex> m_webglProvokingVertex;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
     bool m_areOESTextureFloatFormatsAndTypesAdded { false };

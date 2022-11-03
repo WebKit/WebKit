@@ -23,44 +23,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+[
+    LegacyNoInterfaceObject,
+    Conditional=WEBGL,
+    GenerateIsReachable=ImplWebGLRenderingContext,
+] interface WebGLProvokingVertex {
+    const unsigned long FIRST_VERTEX_CONVENTION_WEBGL = 0x8E4D;
+    const unsigned long LAST_VERTEX_CONVENTION_WEBGL  = 0x8E4E;
+    const unsigned long PROVOKING_VERTEX_WEBGL        = 0x8E4F;
 
-#if ENABLE(WEBGL)
-#include "EXTProvokingVertex.h"
-
-#include <wtf/IsoMallocInlines.h>
-
-namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(EXTProvokingVertex);
-
-EXTProvokingVertex::EXTProvokingVertex(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
-{
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_provoking_vertex"_s);
-}
-
-EXTProvokingVertex::~EXTProvokingVertex() = default;
-
-WebGLExtension::ExtensionName EXTProvokingVertex::getName() const
-{
-    return EXTProvokingVertexName;
-}
-
-bool EXTProvokingVertex::supported(GraphicsContextGL& context)
-{
-    return context.supportsExtension("GL_ANGLE_provoking_vertex"_s);
-}
-
-void EXTProvokingVertex::provokingVertexEXT(GCGLenum mode)
-{
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
-        return;
-
-    context->graphicsContextGL()->provokingVertexANGLE(mode);
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGL)
+    undefined provokingVertexWEBGL(unsigned long mode);
+};

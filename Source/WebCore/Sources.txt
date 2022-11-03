@@ -1411,7 +1411,6 @@ html/canvas/EXTColorBufferFloat.cpp
 html/canvas/EXTColorBufferHalfFloat.cpp
 html/canvas/EXTFloatBlend.cpp
 html/canvas/EXTFragDepth.cpp
-html/canvas/EXTProvokingVertex.cpp
 html/canvas/EXTShaderTextureLOD.cpp
 html/canvas/EXTTextureCompressionBPTC.cpp
 html/canvas/EXTTextureCompressionRGTC.cpp
@@ -1460,6 +1459,7 @@ html/canvas/WebGLMultiDraw.cpp
 html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
 html/canvas/WebGLObject.cpp
 html/canvas/WebGLProgram.cpp
+html/canvas/WebGLProvokingVertex.cpp
 html/canvas/WebGLQuery.cpp
 html/canvas/WebGLRenderbuffer.cpp
 html/canvas/WebGLRenderingContext.cpp
@@ -3240,7 +3240,6 @@ JSEXTColorBufferFloat.cpp
 JSEXTColorBufferHalfFloat.cpp
 JSEXTFloatBlend.cpp
 JSEXTFragDepth.cpp
-JSEXTProvokingVertex.cpp
 JSEXTShaderTextureLOD.cpp
 JSEXTTextureCompressionBPTC.cpp
 JSEXTTextureCompressionRGTC.cpp
@@ -4190,6 +4189,7 @@ JSWebGLLoseContext.cpp
 JSWebGLMultiDraw.cpp
 JSWebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
 JSWebGLProgram.cpp
+JSWebGLProvokingVertex.cpp
 JSWebGLQuery.cpp
 JSWebGLRenderbuffer.cpp
 JSWebGLRenderingContext.cpp

@@ -8,7 +8,7 @@ found in the LICENSE.txt file.
 <html>
 <head>
 <meta charset="utf-8">
-<title>WebGL EXT_provoking_vertex Conformance Tests</title>
+<title>WebGL WEBGL_provoking_vertex Conformance Tests</title>
 <LINK rel="stylesheet" href="../../resources/js-test-style.css"/>
 <script src="../../js/js-test-pre.js"></script>
 <script src="../../js/webgl-test-utils.js"></script>
@@ -19,7 +19,7 @@ found in the LICENSE.txt file.
 <div id="console"></div>
 <script>
 "use strict";
-description("This test verifies the functionality of the EXT_provoking_vertex extension, if it is available.");
+description("This test verifies the functionality of the WEBGL_provoking_vertex extension, if it is available.");
 
 debug("");
 
@@ -30,7 +30,7 @@ var ext;
 function runTestNoExtension() {
     debug("");
     debug("Check getParameter without the extension");
-    shouldBeNull("gl.getParameter(0x8E4F /* PROVOKING_VERTEX_EXT */)");
+    shouldBeNull("gl.getParameter(0x8E4F /* PROVOKING_VERTEX_WEBGL */)");
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "parameter unknown without enabling the extension");
     debug("");
 }
@@ -38,33 +38,33 @@ function runTestNoExtension() {
 function runTestExtension() {
     debug("");
     debug("Check enums");
-    shouldBe("ext.FIRST_VERTEX_CONVENTION_EXT", "0x8E4D");
-    shouldBe("ext.LAST_VERTEX_CONVENTION_EXT", "0x8E4E");
-    shouldBe("ext.PROVOKING_VERTEX_EXT", "0x8E4F");
-    shouldBe("ext.QUADS_FOLLOW_PROVOKING_VERTEX_CONVENTION_EXT", "undefined");
+    shouldBe("ext.FIRST_VERTEX_CONVENTION_WEBGL", "0x8E4D");
+    shouldBe("ext.LAST_VERTEX_CONVENTION_WEBGL", "0x8E4E");
+    shouldBe("ext.PROVOKING_VERTEX_WEBGL", "0x8E4F");
+    shouldBe("ext.QUADS_FOLLOW_PROVOKING_VERTEX_CONVENTION_WEBGL", "undefined");
 
     debug("");
     debug("Check default state");
-    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_EXT)", "ext.LAST_VERTEX_CONVENTION_EXT");
+    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_WEBGL)", "ext.LAST_VERTEX_CONVENTION_WEBGL");
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "parameter known with the extension enabled");
 
     debug("");
     debug("Check state updates");
-    ext.provokingVertexEXT(ext.FIRST_VERTEX_CONVENTION_EXT);
-    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "provokingVertexEXT(ext.FIRST_VERTEX_CONVENTION_EXT) generates no errors");
-    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_EXT)", "ext.FIRST_VERTEX_CONVENTION_EXT");
+    ext.provokingVertexWEBGL(ext.FIRST_VERTEX_CONVENTION_WEBGL);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "provokingVertexWEBGL(ext.FIRST_VERTEX_CONVENTION_WEBGL) generates no errors");
+    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_WEBGL)", "ext.FIRST_VERTEX_CONVENTION_WEBGL");
     wtu.glErrorShouldBe(gl, gl.NO_ERROR);
-    ext.provokingVertexEXT(ext.LAST_VERTEX_CONVENTION_EXT);
-    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "provokingVertexEXT(ext.LAST_VERTEX_CONVENTION_EXT) generates no errors");
-    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_EXT)", "ext.LAST_VERTEX_CONVENTION_EXT");
+    ext.provokingVertexWEBGL(ext.LAST_VERTEX_CONVENTION_WEBGL);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "provokingVertexWEBGL(ext.LAST_VERTEX_CONVENTION_WEBGL) generates no errors");
+    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_WEBGL)", "ext.LAST_VERTEX_CONVENTION_WEBGL");
     wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
     debug("");
     debug("Check invalid provoking vertex mode");
-    ext.provokingVertexEXT(ext.FIRST_VERTEX_CONVENTION_EXT);
-    ext.provokingVertexEXT(ext.PROVOKING_VERTEX_EXT);
+    ext.provokingVertexWEBGL(ext.FIRST_VERTEX_CONVENTION_WEBGL);
+    ext.provokingVertexWEBGL(ext.PROVOKING_VERTEX_WEBGL);
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "invalid provoking mode generates an error");
-    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_EXT)", "ext.FIRST_VERTEX_CONVENTION_EXT");
+    shouldBe("gl.getParameter(ext.PROVOKING_VERTEX_WEBGL)", "ext.FIRST_VERTEX_CONVENTION_WEBGL");
     wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
     debug("");
@@ -114,7 +114,7 @@ function runTestExtension() {
 
     const pixel = new Int32Array(4);
 
-    ext.provokingVertexEXT(ext.LAST_VERTEX_CONVENTION_EXT);
+    ext.provokingVertexWEBGL(ext.LAST_VERTEX_CONVENTION_WEBGL);
     gl.clearBufferiv(gl.COLOR, 0, new Int32Array(4));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.readPixels(0, 0, 1, 1, gl.RGBA_INTEGER, gl.INT, pixel);
@@ -125,7 +125,7 @@ function runTestExtension() {
         testFailed("Incorrect last provoking vertex");
     }
 
-    ext.provokingVertexEXT(ext.FIRST_VERTEX_CONVENTION_EXT);
+    ext.provokingVertexWEBGL(ext.FIRST_VERTEX_CONVENTION_WEBGL);
     gl.clearBufferiv(gl.COLOR, 0, new Int32Array(4));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.readPixels(0, 0, 1, 1, gl.RGBA_INTEGER, gl.INT, pixel);
@@ -145,14 +145,14 @@ function runTest() {
 
     runTestNoExtension();
 
-    ext = gl.getExtension("EXT_provoking_vertex");
+    ext = gl.getExtension("WEBGL_provoking_vertex");
 
-    wtu.runExtensionSupportedTest(gl, "EXT_provoking_vertex", ext !== null);
+    wtu.runExtensionSupportedTest(gl, "WEBGL_provoking_vertex", ext !== null);
 
     if (ext !== null) {
       runTestExtension();
     } else {
-      testPassed("No EXT_provoking_vertex support -- this is legal");
+      testPassed("No WEBGL_provoking_vertex support -- this is legal");
     }
   }
 }

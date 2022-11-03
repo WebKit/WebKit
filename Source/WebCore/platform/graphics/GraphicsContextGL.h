@@ -789,10 +789,10 @@ public:
     static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
     static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
 
-    // GL_EXT_provoking_vertex
-    static constexpr GCGLenum FIRST_VERTEX_CONVENTION_EXT = 0x8E4D;
-    static constexpr GCGLenum LAST_VERTEX_CONVENTION_EXT = 0x8E4E;
-    static constexpr GCGLenum PROVOKING_VERTEX_EXT = 0x8E4F;
+    // GL_ANGLE_provoking_vertex
+    static constexpr GCGLenum FIRST_VERTEX_CONVENTION_ANGLE = 0x8E4D;
+    static constexpr GCGLenum LAST_VERTEX_CONVENTION_ANGLE = 0x8E4E;
+    static constexpr GCGLenum PROVOKING_VERTEX_ANGLE = 0x8E4F;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
