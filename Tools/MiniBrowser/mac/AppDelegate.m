@@ -84,8 +84,6 @@ enum {
     if ([_settingsController usesGameControllerFramework])
         [WKProcessPool _forceGameControllerFramework];
 
-//    [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
-
     if ([NSApp respondsToSelector:@selector(setAutomaticCustomizeTouchBarMenuItemEnabled:)])
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
 }
@@ -95,7 +93,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
     static WKWebsiteDataStore *dataStore;
 
     if (!dataStore) {
-        _WKWebsiteDataStoreConfiguration *configuration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+        _WKWebsiteDataStoreConfiguration *configuration = [[_WKWebsiteDataStoreConfiguration alloc] init];
         configuration.networkCacheSpeculativeValidationEnabled = YES;
 
         // FIXME: When built-in notifications are enabled, WebKit doesn't yet gracefully handle a missing webpushd service
@@ -116,13 +114,13 @@ static WKWebsiteDataStore *persistentDataStore(void)
         configuration = [[WKWebViewConfiguration alloc] init];
         configuration.websiteDataStore = persistentDataStore();
 
-        _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
+        _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
         if (_settingsController.processSwapOnWindowOpenWithOpenerEnabled)
             processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         
-        configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processConfiguration] autorelease];
+        configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 
         NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
         for (_WKExperimentalFeature *feature in experimentalFeatures) {
@@ -208,7 +206,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
     privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:privateConfiguraton];
-    [privateConfiguraton release];
 
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindowControllers addObject:controller];
@@ -235,7 +232,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
 {
     WebHistory *webHistory = [[WebHistory alloc] init];
     [WebHistory setOptionalSharedHistory:webHistory];
-    [webHistory release];
 
     [self _updateNewWindowKeyEquivalents];
 
@@ -281,7 +277,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
     BrowserWindowController *browserWindowController = [self frontmostBrowserWindowController];
 
     if (browserWindowController) {
-        NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
+        NSOpenPanel *openPanel = [NSOpenPanel openPanel];
         [openPanel beginSheetModalForWindow:browserWindowController.window completionHandler:^(NSInteger result) {
             if (result != NSModalResponseOK)
                 return;

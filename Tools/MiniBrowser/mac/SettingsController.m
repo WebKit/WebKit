@@ -112,7 +112,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 
 static NSMenuItem *addItemToMenuWithTarget(NSMenu *menu, NSString *title, id target, SEL action, BOOL indent, NSInteger tag)
 {
-    NSMenuItem *item = [[[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:@""] autorelease];
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:@""];
     if (action)
         item.target = target;
     if (tag)
@@ -130,8 +130,8 @@ static void addSeparatorToMenu(NSMenu *menu)
 
 static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 {
-    NSMenuItem *submenuItem = [[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""] autorelease];
-    NSMenu *submenu = [[[NSMenu alloc] initWithTitle:title] autorelease];
+    NSMenuItem *submenuItem = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+    NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];
     [submenuItem setSubmenu:submenu];
     [menu addItem:submenuItem];
     return submenu;
@@ -450,9 +450,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     [alert addButtonWithTitle:@"Switch and Quit"];
     [alert addButtonWithTitle:@"Cancel"];
 
-    NSModalResponse response = [alert runModal];    
-    [alert release];
-
+    NSModalResponse response = [alert runModal];
     if (response != NSAlertFirstButtonReturn)
         return;
 
