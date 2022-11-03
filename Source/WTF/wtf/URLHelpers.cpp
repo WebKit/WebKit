@@ -116,6 +116,16 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(UC
     }
 }
 
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_THAI>(UChar32 codePoint)
+{
+    switch (codePoint) {
+    case 0x0E01: // THAI CHARACTER KO KAI
+        return true;
+    default:
+        return false;
+    }
+}
+
 template <UScriptCode ScriptType>
 bool isOfScriptType(UChar32 codePoint)
 {
@@ -313,7 +323,8 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     default:
         return isLookalikeSequence<USCRIPT_ARMENIAN>(previousCodePoint, codePoint)
             || isLookalikeSequence<USCRIPT_TAMIL>(previousCodePoint, codePoint)
-            || isLookalikeSequence<USCRIPT_CANADIAN_ABORIGINAL>(previousCodePoint, codePoint);
+            || isLookalikeSequence<USCRIPT_CANADIAN_ABORIGINAL>(previousCodePoint, codePoint)
+            || isLookalikeSequence<USCRIPT_THAI>(previousCodePoint, codePoint);
     }
 }
 
