@@ -2605,6 +2605,11 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     });
 }
 
+- (void)_loadServiceWorker:(NSURL *)url completionHandler:(void (^)(BOOL success))completionHandler
+{
+    [self _loadServiceWorker:url usingModules:NO completionHandler:completionHandler];
+}
+
 - (void)_grantAccessToAssetServices
 {
     THROW_IF_SUSPENDED;
