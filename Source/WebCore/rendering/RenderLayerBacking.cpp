@@ -3009,6 +3009,9 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
         return false;
     }
 
+    if (renderer().style().imageRendering() == ImageRendering::CrispEdges || renderer().style().imageRendering() == ImageRendering::Pixelated)
+        return false;
+
     auto& canvasRenderer = downcast<RenderHTMLCanvas>(renderer());
     if (snappedIntRect(contents).size() == canvasRenderer.canvasElement().size())
         return true;
