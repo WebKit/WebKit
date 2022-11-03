@@ -176,7 +176,10 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     // slashes into an ASCII solidus. But one of the two callers uses this
     // on characters that have not been processed by ICU, so they are needed here.
     
-    if (!u_isprint(codePoint) || u_isUWhiteSpace(codePoint) || u_hasBinaryProperty(codePoint, UCHAR_DEFAULT_IGNORABLE_CODE_POINT))
+    if (!u_isprint(codePoint)
+        || u_isUWhiteSpace(codePoint)
+        || u_hasBinaryProperty(codePoint, UCHAR_DEFAULT_IGNORABLE_CODE_POINT)
+        || ublock_getCode(codePoint) == UBLOCK_IPA_EXTENSIONS)
         return true;
     
     switch (codePoint) {
@@ -190,8 +193,6 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     case 0x0237: /* LATIN SMALL LETTER DOTLESS J */
     case 0x0251: /* LATIN SMALL LETTER ALPHA */
     case 0x0261: /* LATIN SMALL LETTER SCRIPT G */
-    case 0x0274: /* LATIN LETTER SMALL CAPITAL N */
-    case 0x027E: /* LATIN SMALL LETTER R WITH FISHHOOK */
     case 0x02D0: /* MODIFIER LETTER TRIANGULAR COLON */
     case 0x0335: /* COMBINING SHORT STROKE OVERLAY */
     case 0x0337: /* COMBINING SHORT SOLIDUS OVERLAY */
