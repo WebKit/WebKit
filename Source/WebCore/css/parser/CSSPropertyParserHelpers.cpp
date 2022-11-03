@@ -97,6 +97,24 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange& range)
     return contents;
 }
 
+template<typename Map>
+static std::optional<typename Map::ValueType> consumeIdentUsingMapping(CSSParserTokenRange& range, Map& map)
+{
+    if (auto value = map.tryGet(range.peek().id())) {
+        range.consumeIncludingWhitespace();
+        return std::make_optional(*value);
+    }
+    return std::nullopt;
+}
+
+template<typename Map>
+static std::optional<typename Map::ValueType> peekIdentUsingMapping(CSSParserTokenRange& range, Map& map)
+{
+    if (auto value = map.tryGet(range.peek().id()))
+        return std::make_optional(*value);
+    return std::nullopt;
+}
+
 inline bool shouldAcceptUnitlessValue(double value, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
@@ -2774,27 +2792,18 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
     return selectFirstColorWithHighestContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst));
 }
 
-static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSParserTokenRange& args)
+static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSParserTokenRange& range)
 {
-    switch (args.peek().id()) {
-    case CSSValueShorter:
-        args.consumeIncludingWhitespace();
-        return HueInterpolationMethod::Shorter;
-    case CSSValueLonger:
-        args.consumeIncludingWhitespace();
-        return HueInterpolationMethod::Longer;
-    case CSSValueIncreasing:
-        args.consumeIncludingWhitespace();
-        return HueInterpolationMethod::Increasing;
-    case CSSValueDecreasing:
-        args.consumeIncludingWhitespace();
-        return HueInterpolationMethod::Decreasing;
-    case CSSValueSpecified:
-        args.consumeIncludingWhitespace();
-        return HueInterpolationMethod::Specified;
-    default:
-        return { };
-    }
+    static constexpr std::pair<CSSValueID, HueInterpolationMethod> hueInterpolationMethodMappings[] {
+        { CSSValueShorter, HueInterpolationMethod::Shorter },
+        { CSSValueLonger, HueInterpolationMethod::Longer },
+        { CSSValueIncreasing, HueInterpolationMethod::Increasing },
+        { CSSValueDecreasing, HueInterpolationMethod::Decreasing },
+        { CSSValueSpecified, HueInterpolationMethod::Specified },
+    };
+    static constexpr SortedArrayMap hueInterpolationMethodMap { hueInterpolationMethodMappings };
+
+    return consumeIdentUsingMapping(range, hueInterpolationMethodMap);
 }
 
 static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args)
@@ -3628,6 +3637,22 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
     //
     // see https://www.w3.org/TR/2011/WD-css3-images-20110217/#radial-gradients.
 
+    static constexpr std::pair<CSSValueID, CSSPrefixedRadialGradientValue::ShapeKeyword> shapeMappings[] {
+        { CSSValueCircle, CSSPrefixedRadialGradientValue::ShapeKeyword::Circle },
+        { CSSValueEllipse, CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse },
+    };
+    static constexpr SortedArrayMap shapeMap { shapeMappings };
+    
+    static constexpr std::pair<CSSValueID, CSSPrefixedRadialGradientValue::ExtentKeyword> extentMappings[] {
+        { CSSValueContain, CSSPrefixedRadialGradientValue::ExtentKeyword::Contain },
+        { CSSValueCover, CSSPrefixedRadialGradientValue::ExtentKeyword::Cover },
+        { CSSValueClosestSide, CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestSide },
+        { CSSValueClosestCorner, CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestCorner },
+        { CSSValueFarthestSide, CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestSide },
+        { CSSValueFarthestCorner, CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestCorner },
+    };
+    static constexpr SortedArrayMap extentMap { extentMappings };
+
     std::optional<CSSGradientPosition> position;
     if (auto centerCoordinate = consumeOneOrTwoValuedPositionCoordinates(range, context.mode, UnitlessQuirk::Forbid)) {
         if (!consumeCommaIncludingWhitespace(range))
@@ -3635,51 +3660,13 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
         position = CSSGradientPosition { WTFMove(centerCoordinate->x), WTFMove(centerCoordinate->y) };
     }
 
-    auto consumeShapeKeyword = [](auto& range) -> std::optional<CSSPrefixedRadialGradientValue::ShapeKeyword> {
-        switch (range.peek().id()) {
-        case CSSValueCircle:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ShapeKeyword::Circle;
-        case CSSValueEllipse:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse;
-        default:
-            return std::nullopt;
-        }
-    };
-
-    auto consumeExtentKeyword = [](auto& range) -> std::optional<CSSPrefixedRadialGradientValue::ExtentKeyword> {
-        switch (range.peek().id()) {
-        case CSSValueClosestSide:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestSide;
-        case CSSValueClosestCorner:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ExtentKeyword::ClosestCorner;
-        case CSSValueFarthestSide:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestSide;
-        case CSSValueFarthestCorner:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ExtentKeyword::FarthestCorner;
-        case CSSValueContain:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ExtentKeyword::Contain;
-        case CSSValueCover:
-            range.consumeIncludingWhitespace();
-            return CSSPrefixedRadialGradientValue::ExtentKeyword::Cover;
-        default:
-            return std::nullopt;
-        }
-    };
-
     std::optional<CSSPrefixedRadialGradientValue::ShapeKeyword> shapeKeyword;
     std::optional<CSSPrefixedRadialGradientValue::ExtentKeyword> extentKeyword;
     if (range.peek().type() == IdentToken) {
-        shapeKeyword = consumeShapeKeyword(range);
-        extentKeyword = consumeExtentKeyword(range);
+        shapeKeyword = consumeIdentUsingMapping(range, shapeMap);
+        extentKeyword = consumeIdentUsingMapping(range, extentMap);
         if (!shapeKeyword)
-            shapeKeyword = consumeShapeKeyword(range);
+            shapeKeyword = consumeIdentUsingMapping(range, shapeMap);
     }
 
     CSSPrefixedRadialGradientValue::GradientBox gradientBox = std::monostate { };
@@ -3769,31 +3756,19 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     //   <color-stop-list>
     // )
 
-    auto peekShapeKeyword = [](auto& range) -> std::optional<CSSRadialGradientValue::ShapeKeyword> {
-        switch (range.peek().id()) {
-        case CSSValueCircle:
-            return CSSRadialGradientValue::ShapeKeyword::Circle;
-        case CSSValueEllipse:
-            return CSSRadialGradientValue::ShapeKeyword::Ellipse;
-        default:
-            return std::nullopt;
-        }
+    static constexpr std::pair<CSSValueID, CSSRadialGradientValue::ShapeKeyword> shapeMappings[] {
+        { CSSValueCircle, CSSRadialGradientValue::ShapeKeyword::Circle },
+        { CSSValueEllipse, CSSRadialGradientValue::ShapeKeyword::Ellipse },
     };
-
-    auto peekExtentKeyword = [](auto& range) -> std::optional<CSSRadialGradientValue::ExtentKeyword> {
-        switch (range.peek().id()) {
-        case CSSValueClosestSide:
-            return CSSRadialGradientValue::ExtentKeyword::ClosestSide;
-        case CSSValueClosestCorner:
-            return CSSRadialGradientValue::ExtentKeyword::ClosestCorner;
-        case CSSValueFarthestSide:
-            return CSSRadialGradientValue::ExtentKeyword::FarthestSide;
-        case CSSValueFarthestCorner:
-            return CSSRadialGradientValue::ExtentKeyword::FarthestCorner;
-        default:
-            return std::nullopt;
-        }
+    static constexpr SortedArrayMap shapeMap { shapeMappings };
+    
+    static constexpr std::pair<CSSValueID, CSSRadialGradientValue::ExtentKeyword> extentMappings[] {
+        { CSSValueClosestSide, CSSRadialGradientValue::ExtentKeyword::ClosestSide },
+        { CSSValueClosestCorner, CSSRadialGradientValue::ExtentKeyword::ClosestCorner },
+        { CSSValueFarthestSide, CSSRadialGradientValue::ExtentKeyword::FarthestSide },
+        { CSSValueFarthestCorner, CSSRadialGradientValue::ExtentKeyword::FarthestCorner },
     };
+    static constexpr SortedArrayMap extentMap { extentMappings };
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
@@ -3819,12 +3794,12 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     //   ]?
     for (int i = 0; i < 3; ++i) {
         if (range.peek().type() == IdentToken) {
-            if (auto peekedShape = peekShapeKeyword(range)) {
+            if (auto peekedShape = peekIdentUsingMapping(range, shapeMap)) {
                 if (shape)
                     return nullptr;
                 shape = *peekedShape;
                 range.consumeIncludingWhitespace();
-            } else if (auto peekedExtent = peekExtentKeyword(range)) {
+            } else if (auto peekedExtent = peekIdentUsingMapping(range, extentMap)) {
                 if (size)
                     return nullptr;
                 size = *peekedExtent;
@@ -3960,30 +3935,28 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
     //
     // see https://www.w3.org/TR/2011/WD-css3-images-20110217/#linear-gradients.
 
+    static constexpr std::pair<CSSValueID, CSSPrefixedLinearGradientValue::Vertical> verticalMappings[] {
+        { CSSValueTop, CSSPrefixedLinearGradientValue::Vertical::Top },
+        { CSSValueBottom, CSSPrefixedLinearGradientValue::Vertical::Bottom },
+    };
+    static constexpr SortedArrayMap verticalMap { verticalMappings };
+    
+    static constexpr std::pair<CSSValueID, CSSPrefixedLinearGradientValue::Horizontal> horizontalMappings[] {
+        { CSSValueLeft, CSSPrefixedLinearGradientValue::Horizontal::Left },
+        { CSSValueRight, CSSPrefixedLinearGradientValue::Horizontal::Right },
+    };
+    static constexpr SortedArrayMap horizontalMap { horizontalMappings };
+
     auto consumeKeywordGradientLineKnownHorizontal = [&](CSSParserTokenRange& range, CSSPrefixedLinearGradientValue::Horizontal knownHorizontal) -> CSSPrefixedLinearGradientValue::GradientLine {
-        switch (range.peek().id()) {
-        case CSSValueTop:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(knownHorizontal, CSSPrefixedLinearGradientValue::Vertical::Top);
-        case CSSValueBottom:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(knownHorizontal, CSSPrefixedLinearGradientValue::Vertical::Bottom);
-        default:
-            return knownHorizontal;
-        }
+        if (auto vertical = consumeIdentUsingMapping(range, verticalMap))
+            return std::make_pair(knownHorizontal, *vertical);
+        return knownHorizontal;
     };
 
     auto consumeKeywordGradientLineKnownVertical = [&](CSSParserTokenRange& range, CSSPrefixedLinearGradientValue::Vertical knownVertical) -> CSSPrefixedLinearGradientValue::GradientLine {
-        switch (range.peek().id()) {
-        case CSSValueLeft:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(CSSPrefixedLinearGradientValue::Horizontal::Left, knownVertical);
-        case CSSValueRight:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(CSSPrefixedLinearGradientValue::Horizontal::Right, knownVertical);
-        default:
-            return knownVertical;
-        }
+        if (auto horizontal = consumeIdentUsingMapping(range, horizontalMap))
+            return std::make_pair(*horizontal, knownVertical);
+        return knownVertical;
     };
 
     auto consumeKeywordGradientLine = [&](CSSParserTokenRange& range) -> std::optional<CSSPrefixedLinearGradientValue::GradientLine> {
@@ -4017,7 +3990,6 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
             return nullptr;
     }
 
-
     auto stops = consumeLengthColorStopList(range, context, SupportsColorHints::No);
     if (!stops)
         return nullptr;
@@ -4040,30 +4012,28 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
     //   <color-stop-list>
     // )
 
+    static constexpr std::pair<CSSValueID, CSSLinearGradientValue::Vertical> verticalMappings[] {
+        { CSSValueTop, CSSLinearGradientValue::Vertical::Top },
+        { CSSValueBottom, CSSLinearGradientValue::Vertical::Bottom },
+    };
+    static constexpr SortedArrayMap verticalMap { verticalMappings };
+    
+    static constexpr std::pair<CSSValueID, CSSLinearGradientValue::Horizontal> horizontalMappings[] {
+        { CSSValueLeft, CSSLinearGradientValue::Horizontal::Left },
+        { CSSValueRight, CSSLinearGradientValue::Horizontal::Right },
+    };
+    static constexpr SortedArrayMap horizontalMap { horizontalMappings };
+
     auto consumeKeywordGradientLineKnownHorizontal = [&](CSSParserTokenRange& range, CSSLinearGradientValue::Horizontal knownHorizontal) -> CSSLinearGradientValue::GradientLine {
-        switch (range.peek().id()) {
-        case CSSValueTop:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(knownHorizontal, CSSLinearGradientValue::Vertical::Top);
-        case CSSValueBottom:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(knownHorizontal, CSSLinearGradientValue::Vertical::Bottom);
-        default:
-            return knownHorizontal;
-        }
+        if (auto vertical = consumeIdentUsingMapping(range, verticalMap))
+            return std::make_pair(knownHorizontal, *vertical);
+        return knownHorizontal;
     };
 
     auto consumeKeywordGradientLineKnownVertical = [&](CSSParserTokenRange& range, CSSLinearGradientValue::Vertical knownVertical) -> CSSLinearGradientValue::GradientLine {
-        switch (range.peek().id()) {
-        case CSSValueLeft:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(CSSLinearGradientValue::Horizontal::Left, knownVertical);
-        case CSSValueRight:
-            range.consumeIncludingWhitespace();
-            return std::make_pair(CSSLinearGradientValue::Horizontal::Right, knownVertical);
-        default:
-            return knownVertical;
-        }
+        if (auto horizontal = consumeIdentUsingMapping(range, horizontalMap))
+            return std::make_pair(*horizontal, knownVertical);
+        return knownVertical;
     };
 
     auto consumeKeywordGradientLine = [&](CSSParserTokenRange& range) -> std::optional<CSSLinearGradientValue::GradientLine> {
