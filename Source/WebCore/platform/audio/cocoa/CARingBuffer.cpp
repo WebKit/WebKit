@@ -40,56 +40,22 @@ const uint32_t kGeneralRingTimeBoundsQueueMask = kGeneralRingTimeBoundsQueueSize
 
 namespace WebCore {
 
-CARingBufferStorageVector::CARingBufferStorageVector()
-    : m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
-{
-}
+CARingBuffer::CARingBuffer() = default;
 
-CARingBuffer::CARingBuffer()
-    : m_buffers(makeUniqueRef<CARingBufferStorageVector>())
-{
-}
+CARingBuffer::~CARingBuffer() = default;
 
-CARingBuffer::~CARingBuffer()
-{
-    deallocate();
-}
-
-CARingBuffer::CARingBuffer(UniqueRef<CARingBufferStorage>&& storage)
-    : m_buffers(WTFMove(storage))
-{
-}
-
-static CheckedSize computeCapacityBytes(const CAAudioStreamDescription& format, size_t frameCount)
+CheckedSize CARingBuffer::computeCapacityBytes(const CAAudioStreamDescription& format, size_t frameCount)
 {
     CheckedSize capacityBytes = format.bytesPerFrame();
     capacityBytes *= frameCount;
     return capacityBytes;
 }
 
-static CheckedSize computeSizeForBuffers(const CAAudioStreamDescription& format, size_t frameCount)
+CheckedSize CARingBuffer::computeSizeForBuffers(const CAAudioStreamDescription& format, size_t frameCount)
 {
     auto sizeForBuffers = computeCapacityBytes(format, frameCount);
     sizeForBuffers *= format.numberOfChannelStreams();
     return sizeForBuffers;
-}
-
-UniqueRef<CARingBuffer> CARingBuffer::adoptStorage(UniqueRef<CARingBufferStorage>&& storage, const CAAudioStreamDescription& format, size_t frameCount)
-{
-    // Validate the parameters as they may be coming from an untrusted process.
-    auto expectedStorageSize = computeSizeForBuffers(format, frameCount);
-    if (expectedStorageSize.hasOverflowed()) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::adoptStorage: Overflowed when trying to compute the storage size");
-        return makeUniqueRef<CARingBuffer>();
-    }
-    if (storage->size() < expectedStorageSize) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::adoptStorage: Storage size is insufficient for format and frameCount");
-        return makeUniqueRef<CARingBuffer>();
-    }
-
-    auto ringBuffer = makeUniqueRef<CARingBuffer>(WTFMove(storage));
-    ringBuffer->initializeAfterAllocation(format, frameCount);
-    return ringBuffer;
 }
 
 void CARingBuffer::initializeAfterAllocation(const CAAudioStreamDescription& format, size_t frameCount)
@@ -101,7 +67,7 @@ void CARingBuffer::initializeAfterAllocation(const CAAudioStreamDescription& for
     m_capacityBytes = computeCapacityBytes(format, frameCount);
 
     m_pointers.resize(m_channelCount);
-    Byte* channelData = static_cast<Byte*>(m_buffers->data());
+    Byte* channelData = static_cast<Byte*>(data());
 
     for (auto& pointer : m_pointers) {
         pointer = channelData;
@@ -122,7 +88,7 @@ bool CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frame
         return false;
     }
 
-    if (UNLIKELY(!m_buffers->allocate(sizeForBuffers, format, frameCount))) {
+    if (UNLIKELY(!allocateBuffers(sizeForBuffers, format, frameCount))) {
         RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers.value());
         return false;
     }
@@ -133,7 +99,7 @@ bool CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frame
 
 void CARingBuffer::deallocate()
 {
-    m_buffers->deallocate();
+    deallocateBuffers();
     m_pointers.clear();
     m_channelCount = 0;
     m_capacityBytes = 0;
@@ -218,31 +184,6 @@ inline void ZeroABL(AudioBufferList* list, size_t destOffset, size_t nbytes)
     }
 }
 
-void CARingBuffer::flush()
-{
-    m_buffers->flush();
-}
-
-bool CARingBufferStorageVector::allocate(size_t byteCount, const CAAudioStreamDescription&, size_t)
-{
-    if (!m_buffer.tryReserveCapacity(byteCount))
-        return false;
-
-    m_buffer.grow(byteCount);
-    return true;
-}
-
-void CARingBufferStorageVector::flush()
-{
-    Locker locker { m_currentFrameBoundsLock };
-    for (auto& timeBounds : m_timeBoundsQueue) {
-        timeBounds.m_startFrame = 0;
-        timeBounds.m_endFrame = 0;
-        timeBounds.m_updateCounter = 0;
-    }
-    m_timeBoundsQueuePtr = 0;
-}
-
 CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t framesToWrite, uint64_t startFrame)
 {
     if (!framesToWrite)
@@ -301,42 +242,10 @@ CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t fram
     return Ok;
 }
 
-void CARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
-{
-    m_buffers->setCurrentFrameBounds(startTime, endTime);
-}
-
-void CARingBufferStorageVector::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
-{
-    Locker locker { m_currentFrameBoundsLock };
-    uint32_t nextPtr = m_timeBoundsQueuePtr.load() + 1;
-    uint32_t index = nextPtr & kGeneralRingTimeBoundsQueueMask;
-
-    m_timeBoundsQueue[index].m_startFrame = startTime;
-    m_timeBoundsQueue[index].m_endFrame = endTime;
-    m_timeBoundsQueue[index].m_updateCounter = nextPtr;
-    m_timeBoundsQueuePtr++;
-}
-
 void CARingBuffer::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
 {
     updateFrameBounds();
     getCurrentFrameBoundsWithoutUpdate(startFrame, endFrame);
-}
-
-void CARingBuffer::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame)
-{
-    m_buffers->getCurrentFrameBounds(startFrame, endFrame);
-}
-
-SUPPRESS_TSAN void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
-{
-    uint32_t curPtr = m_timeBoundsQueuePtr.load();
-    uint32_t index = curPtr & kGeneralRingTimeBoundsQueueMask;
-    auto& bounds = m_timeBoundsQueue[index];
-
-    startFrame = bounds.m_startFrame;
-    endFrame = bounds.m_endFrame;
 }
 
 void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
@@ -354,33 +263,6 @@ void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
     startRead = std::max(startRead, startTime);
     endRead = std::min(endRead, endTime);
     endRead = std::max(endRead, startRead);
-}
-
-uint64_t CARingBuffer::currentStartFrame() const
-{
-    return m_buffers->currentStartFrame();
-}
-
-SUPPRESS_TSAN uint64_t CARingBufferStorageVector::currentStartFrame() const
-{
-    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
-    return m_timeBoundsQueue[index].m_startFrame;
-}
-
-uint64_t CARingBuffer::currentEndFrame() const
-{
-    return m_buffers->currentEndFrame();
-}
-
-SUPPRESS_TSAN uint64_t CARingBufferStorageVector::currentEndFrame() const
-{
-    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
-    return m_timeBoundsQueue[index].m_endFrame;
-}
-
-void CARingBuffer::updateFrameBounds()
-{
-    m_buffers->updateFrameBounds();
 }
 
 bool CARingBuffer::fetchIfHasEnoughData(AudioBufferList* list, size_t frameCount, uint64_t startFrame, FetchMode mode)
@@ -453,6 +335,67 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
         dest->mDataByteSize = nbytes;
         dest++;
     }
+}
+
+InProcessCARingBuffer::InProcessCARingBuffer()
+    : m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
+{
+}
+
+InProcessCARingBuffer::~InProcessCARingBuffer() = default;
+
+void InProcessCARingBuffer::flush()
+{
+    Locker locker { m_currentFrameBoundsLock };
+    for (auto& timeBounds : m_timeBoundsQueue) {
+        timeBounds.m_startFrame = 0;
+        timeBounds.m_endFrame = 0;
+        timeBounds.m_updateCounter = 0;
+    }
+    m_timeBoundsQueuePtr = 0;
+}
+
+bool InProcessCARingBuffer::allocateBuffers(size_t byteCount, const CAAudioStreamDescription&, size_t)
+{
+    if (!m_buffer.tryReserveCapacity(byteCount))
+        return false;
+
+    m_buffer.grow(byteCount);
+    return true;
+}
+
+void InProcessCARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
+{
+    Locker locker { m_currentFrameBoundsLock };
+    uint32_t nextPtr = m_timeBoundsQueuePtr.load() + 1;
+    uint32_t index = nextPtr & kGeneralRingTimeBoundsQueueMask;
+
+    m_timeBoundsQueue[index].m_startFrame = startTime;
+    m_timeBoundsQueue[index].m_endFrame = endTime;
+    m_timeBoundsQueue[index].m_updateCounter = nextPtr;
+    m_timeBoundsQueuePtr++;
+}
+
+SUPPRESS_TSAN void InProcessCARingBuffer::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame)
+{
+    uint32_t curPtr = m_timeBoundsQueuePtr.load();
+    uint32_t index = curPtr & kGeneralRingTimeBoundsQueueMask;
+    auto& bounds = m_timeBoundsQueue[index];
+
+    startFrame = bounds.m_startFrame;
+    endFrame = bounds.m_endFrame;
+}
+
+SUPPRESS_TSAN uint64_t InProcessCARingBuffer::currentStartFrame() const
+{
+    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
+    return m_timeBoundsQueue[index].m_startFrame;
+}
+
+SUPPRESS_TSAN uint64_t InProcessCARingBuffer::currentEndFrame() const
+{
+    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
+    return m_timeBoundsQueue[index].m_endFrame;
 }
 
 }

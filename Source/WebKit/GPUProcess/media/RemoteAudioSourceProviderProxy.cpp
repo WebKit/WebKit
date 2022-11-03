@@ -57,9 +57,9 @@ RemoteAudioSourceProviderProxy::~RemoteAudioSourceProviderProxy() = default;
 
 UniqueRef<WebCore::CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer()
 {
-    return makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = Ref { *this }](SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount) mutable {
+    return makeUniqueRef<ProducerSharedCARingBuffer>([protectedThis = Ref { *this }](SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount) mutable {
         protectedThis->storageChanged(memory, format, frameCount);
-    }));
+    });
 }
 
 void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t startFrame, uint64_t numberOfFrames)

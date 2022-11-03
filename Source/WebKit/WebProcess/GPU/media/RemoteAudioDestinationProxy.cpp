@@ -60,7 +60,7 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 #if PLATFORM(COCOA)
     : WebCore::AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate, false)
     , m_numberOfFrames(hardwareSampleRate() * ringBufferSizeInSecond)
-    , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))))
+    , m_ringBuffer(makeUnique<ProducerSharedCARingBuffer>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
     , m_sampleRate(hardwareSampleRate())
 #else
     : WebCore::AudioDestinationGStreamer(callback, numberOfOutputChannels, sampleRate)

@@ -29,7 +29,7 @@
 
 #include "GPUProcessConnection.h"
 #include "MediaRecorderIdentifier.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include "SharedVideoFrame.h"
 
 #include <WebCore/MediaRecorderPrivate.h>
@@ -75,7 +75,7 @@ private:
     Ref<WebCore::MediaStreamPrivate> m_stream;
     Ref<IPC::Connection> m_connection;
 
-    std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     WebCore::CAAudioStreamDescription m_description { };
     std::unique_ptr<WebCore::WebAudioBufferList> m_silenceAudioBuffer;
     int64_t m_numberOfFrames { 0 };

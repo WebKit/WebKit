@@ -30,7 +30,7 @@
 #include "Logging.h"
 #include "RemoteAudioSourceProvider.h"
 #include "RemoteAudioSourceProviderManagerMessages.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include "WebProcess.h"
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
@@ -90,7 +90,7 @@ void RemoteAudioSourceProviderManager::removeProvider(MediaPlayerIdentifier iden
     });
 }
 
-void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -99,7 +99,7 @@ void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier
         RELEASE_LOG_ERROR(Media, "Unable to find provider %llu for storageChanged", identifier.toUInt64());
         return;
     }
-    iterator->value->setStorage(handle, description, numberOfFrames);
+    iterator->value->setStorage(WTFMove(handle), description, numberOfFrames);
 }
 
 void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifier identifier, uint64_t startFrame, uint64_t numberOfFrames)
@@ -116,18 +116,17 @@ void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifi
 
 RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio(Ref<RemoteAudioSourceProvider>&& provider)
     : m_provider(WTFMove(provider))
-    , m_ringBuffer(makeUnique<CARingBuffer>())
 {
 }
 
-void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
-    m_description = description;
-
-    // Take ownership of shared memory and mark it as media-related memory.
+    m_buffer = nullptr;
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
-
-    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    if (!m_ringBuffer)
+        return;
+    m_description = description;
     m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
 }
 

@@ -32,7 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "RemoteVideoFrameObjectHeap.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
@@ -55,23 +55,23 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_identifier(identifier)
     , m_writer(WTFMove(writer))
+    , m_recordAudio(recordAudio)
     , m_sharedVideoFrameReader(Ref { gpuConnectionToWebProcess.videoFrameObjectHeap() }, { gpuConnectionToWebProcess.webProcessIdentity() })
 {
-    if (recordAudio)
-        m_ringBuffer = makeUnique<CARingBuffer>();
 }
 
 RemoteMediaRecorder::~RemoteMediaRecorder()
 {
 }
 
-void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
-    MESSAGE_CHECK(m_ringBuffer);
-
+    MESSAGE_CHECK(m_recordAudio);
+    m_audioBufferList = nullptr;
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    if (!m_ringBuffer)
+        return;
     m_description = description;
-
-    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 

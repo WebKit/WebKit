@@ -60,7 +60,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #endif
 
 #if USE(AVFOUNDATION)

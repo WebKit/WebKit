@@ -35,7 +35,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/AudioOutputUnitAdaptor.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
@@ -74,7 +74,6 @@ public:
         : m_id(identifier)
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
-        , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>())
 #endif
         , m_renderSemaphore(WTFMove(renderSemaphore))
     {
@@ -93,22 +92,17 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    void audioSamplesStorageChanged(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+    void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
-        auto newRingBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
-
-        if (!m_isPlaying) {
-            m_ringBuffer = WTFMove(newRingBuffer);
-            return;
+        if (m_isPlaying) {
+            stop();
+            ASSERT(!m_isPlaying);
+            if (m_isPlaying)
+                return;
         }
-
-        // Synchronously stop the render thread before replacing the ring buffer, then restart.
-        stop();
-        ASSERT(!m_isPlaying);
-        if (m_isPlaying)
+        m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+        if (!m_ringBuffer)
             return;
-
-        m_ringBuffer = WTFMove(newRingBuffer);
         start();
         ASSERT(m_isPlaying);
     }
@@ -163,8 +157,7 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
-
-    UniqueRef<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
     unsigned m_extraRequestedFrames { 0 };
 #endif
@@ -226,10 +219,10 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 }
 
 #if PLATFORM(COCOA)
-void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     if (auto* item = m_audioDestinations.get(identifier))
-        item->audioSamplesStorageChanged(handle, description, numberOfFrames);
+        item->audioSamplesStorageChanged(WTFMove(handle), description, numberOfFrames);
 }
 #endif
 

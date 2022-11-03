@@ -28,7 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
 
 #include "Connection.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/AudioSourceProviderClient.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaPlayerIdentifier.h>

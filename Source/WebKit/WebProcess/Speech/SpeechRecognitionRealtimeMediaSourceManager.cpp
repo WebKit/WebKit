@@ -36,7 +36,7 @@
 #include <WebCore/SpeechRecognitionCaptureSource.h>
 
 #if PLATFORM(COCOA)
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/WebAudioBufferList.h>
 #else
@@ -63,7 +63,7 @@ public:
         , m_source(WTFMove(source))
         , m_connection(WTFMove(connection))
 #if PLATFORM(COCOA)
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&Source::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
+        , m_ringBuffer(std::bind(&Source::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
 #endif
     {
         m_source->addObserver(*this);
@@ -73,7 +73,7 @@ public:
     ~Source()
     {
 #if PLATFORM(COCOA)
-        storage().invalidate();
+        m_ringBuffer.invalidate();
 #endif
         m_source->removeAudioSampleObserver(*this);
         m_source->removeObserver(*this);
@@ -88,13 +88,6 @@ public:
     {
         m_source->stop();
     }
-
-#if PLATFORM(COCOA)
-    SharedRingBufferStorage& storage()
-    {
-        return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage());
-    }
-#endif
 
 private:
     void sourceStopped() final
@@ -155,7 +148,7 @@ private:
     Ref<IPC::Connection> m_connection;
 
 #if PLATFORM(COCOA)
-    CARingBuffer m_ringBuffer;
+    ProducerSharedCARingBuffer m_ringBuffer;
     CAAudioStreamDescription m_description { };
 #endif
 };

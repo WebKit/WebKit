@@ -1978,7 +1978,7 @@
 		CD491B131E73482100009066 /* UserMediaCaptureManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CD491B111E73482100009066 /* UserMediaCaptureManagerProxy.h */; };
 		CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD491B151E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp */; };
 		CD491B181E73525500009066 /* UserMediaCaptureManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CD491B161E73525500009066 /* UserMediaCaptureManagerProxyMessages.h */; };
-		CD4B4D9D1E765E0000D27092 /* SharedRingBufferStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4B4D9B1E765E0000D27092 /* SharedRingBufferStorage.h */; };
+		CD4B4D9D1E765E0000D27092 /* SharedCARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4B4D9B1E765E0000D27092 /* SharedCARingBuffer.h */; };
 		CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */; };
 		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
@@ -6924,8 +6924,8 @@
 		CD491B141E7349F300009066 /* UserMediaCaptureManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = UserMediaCaptureManagerProxy.messages.in; path = ../Cocoa/UserMediaCaptureManagerProxy.messages.in; sourceTree = "<group>"; };
 		CD491B151E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UserMediaCaptureManagerProxyMessageReceiver.cpp; path = DerivedSources/WebKit/UserMediaCaptureManagerProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD491B161E73525500009066 /* UserMediaCaptureManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserMediaCaptureManagerProxyMessages.h; path = DerivedSources/WebKit/UserMediaCaptureManagerProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD4B4D9A1E765E0000D27092 /* SharedRingBufferStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedRingBufferStorage.cpp; sourceTree = "<group>"; };
-		CD4B4D9B1E765E0000D27092 /* SharedRingBufferStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedRingBufferStorage.h; sourceTree = "<group>"; };
+		CD4B4D9A1E765E0000D27092 /* SharedCARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedCARingBuffer.cpp; sourceTree = "<group>"; };
+		CD4B4D9B1E765E0000D27092 /* SharedCARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedCARingBuffer.h; sourceTree = "<group>"; };
 		CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFullScreenClient.cpp; sourceTree = "<group>"; };
 		CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFullScreenClient.h; sourceTree = "<group>"; };
 		CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebFullScreenManager.cpp; path = FullScreen/WebFullScreenManager.cpp; sourceTree = "<group>"; };
@@ -10417,8 +10417,8 @@
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
 				7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */,
-				CD4B4D9A1E765E0000D27092 /* SharedRingBufferStorage.cpp */,
-				CD4B4D9B1E765E0000D27092 /* SharedRingBufferStorage.h */,
+				CD4B4D9A1E765E0000D27092 /* SharedCARingBuffer.cpp */,
+				CD4B4D9B1E765E0000D27092 /* SharedCARingBuffer.h */,
 				44C51842266BE8C3006DD522 /* TCCSoftLink.h */,
 				44C51843266BE8C3006DD522 /* TCCSoftLink.mm */,
 				1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */,
@@ -15261,9 +15261,9 @@
 				F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */,
+				CD4B4D9D1E765E0000D27092 /* SharedCARingBuffer.h in Headers */,
 				93122C862710CCDF001D819F /* SharedFileHandle.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
-				CD4B4D9D1E765E0000D27092 /* SharedRingBufferStorage.h in Headers */,
 				8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */,
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
 				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,

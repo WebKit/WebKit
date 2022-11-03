@@ -32,8 +32,7 @@
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessages.h"
-#include "SharedMemory.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include "WebProcess.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
 #include <WebCore/AudioMediaStreamTrackRendererUnit.h>
@@ -82,7 +81,7 @@ private:
 
     std::optional<WebCore::CAAudioStreamDescription> m_description;
     std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
-    std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     int64_t m_writeOffset { 0 };
     size_t m_frameChunkSize { 0 };
     size_t m_numberOfFrames { 0 };
@@ -185,7 +184,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
 
     m_numberOfFrames = m_description->sampleRate() * 2;
     m_ringBuffer.reset();
-    m_ringBuffer = makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+    m_ringBuffer = makeUnique<ProducerSharedCARingBuffer>(std::bind(&AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     m_ringBuffer->allocate(m_description->streamDescription(), m_numberOfFrames);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);

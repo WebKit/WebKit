@@ -33,7 +33,7 @@
 #include "GPUProcessConnectionMessages.h"
 #include "IPCSemaphore.h"
 #include "Logging.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
 #include <WebCore/AudioSampleBufferList.h>
 #include <WebCore/AudioSession.h>
@@ -56,7 +56,7 @@ public:
     Unit(AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<IPC::Connection>&&, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(const WebCore::CAAudioStreamDescription&, size_t)>&&);
     ~Unit();
 
-    void start(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&);
+    void start(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&);
     void stop();
     void setAudioOutputDevice(const String&);
     OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&);
@@ -89,7 +89,7 @@ private:
     uint64_t m_generateOffset { 0 };
     uint64_t m_frameChunkSize { 0 };
     IPC::Semaphore m_renderSemaphore;
-    std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     bool m_isPlaying { false };
     WebCore::CAAudioStreamDescription m_description;
     bool m_shouldRegisterAsSpeakerSamplesProducer { false };
@@ -120,10 +120,10 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMed
         m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
-void RemoteAudioMediaStreamTrackRendererInternalUnitManager::startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore)
+void RemoteAudioMediaStreamTrackRendererInternalUnitManager::startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore)
 {
     if (auto* unit = m_units.get(identifier))
-        unit->start(handle, description, numberOfFrames, WTFMove(semaphore));
+        unit->start(WTFMove(handle), description, numberOfFrames, WTFMove(semaphore));
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::stopUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -206,16 +206,17 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::setShouldRegi
         WebCore::CoreAudioCaptureSourceFactory::singleton().registerSpeakerSamplesProducer(*this);
 }
 
-void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore)
+void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore)
 {
     if (m_isPlaying)
         stop();
-
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    if (!m_ringBuffer)
+        return;
     m_readOffset = 0;
     m_generateOffset = 0;
     m_isPlaying = true;
     m_canReset = true;
-    m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_renderSemaphore = WTFMove(semaphore);
     m_description = description;
 
