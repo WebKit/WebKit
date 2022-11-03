@@ -32,13 +32,13 @@
 namespace WebCore {
 
 class AccessibilitySVGElement : public AccessibilityRenderObject {
-
 public:
-    static Ref<AccessibilitySVGElement> create(RenderObject*);
+    static Ref<AccessibilitySVGElement> create(RenderObject*, AXObjectCache*);
     virtual ~AccessibilitySVGElement();
 
 protected:
-    explicit AccessibilitySVGElement(RenderObject*);
+    explicit AccessibilitySVGElement(RenderObject*, AXObjectCache*);
+    AXObjectCache* axObjectCache() const override { return m_axObjectCache.get(); }
 
 private:
     String accessibilityDescription() const final;
@@ -53,6 +53,8 @@ private:
 
     template <typename ChildrenType>
     Element* childElementWithMatchingLanguage(ChildrenType&) const;
+
+    WeakPtr<AXObjectCache> m_axObjectCache;
 };
 
 } // namespace WebCore

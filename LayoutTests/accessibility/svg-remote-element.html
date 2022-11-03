@@ -1,74 +1,69 @@
 <!DOCTYPE HTML>
 <html>
-<body>
-<script src="../resources/js-test-pre.js"></script>
+<head>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
 
-<img tabindex="0" id="svg-image" alt="interactive SVG" >
+<img id="svg-image" alt="interactive SVG" onload="runTest()">
 
-<div id="console"></div>
 <script>
+    let output = "This test ensures that accessibility elements can be created out of what a remote SVG image defines.\n\n";
+    window.jsTestIsAsync = true;
 
-description("This test ensures that accessibility elements can be created out of what a remote SVG image defines.")
-window.jsTestIsAsync = true;
+    // Return the page's relative coordinates. If we rely on the x() or y() of the accessibility object, then
+    // accessibility transforms are applied that fail because there is no window available.
+    function pageX(element) {
+        return element.clickPointX - element.width / 2;
+    }
 
-// Return the page's relative coordinates. If we rely on the x() or y() of the accessibility object, then
-// accessibility transforms are applied that fail because there is no window available
-function pageX(element) {
-    return element.clickPointX - element.width/2;
-}
+    function pageY(element) {
+        return element.clickPointY - element.height / 2;
+    }
 
-function pageY(element) {
-    return element.clickPointY - element.height/2;
-}
+    function runTest() {
+        var container = accessibilityController.accessibleElementById("svg-image");
+        var x = pageX(container) - 1;
+        var y = pageY(container) - 1;
+        output += `container location: (${x}, ${y})\n`;
 
-function runAXTest() {    
-    var container = accessibilityController.accessibleElementById("svg-image");
+        var face = null;
+        setTimeout(async () => {
+            await waitFor(() => {
+                face = container.childAtIndex(0);
+                return face;
+            });
+            output += `Face ${face.role}\n`;
+            output += `Face ${platformValueForW3CName(face, true)}\n`;
+            output += `FaceX: ${pageX(face) - x}\n`;
+            output += `FaceY: ${Math.abs(pageY(face) - y)}\n`;
 
-    var x = pageX(container) - 1;
-    var y = pageY(container) - 1;
+            var eye = container.childAtIndex(1);
+            output += `Eye ${eye.role}\n`;
+            output += `Eye ${platformValueForW3CName(eye, true)}\n`;
+            output += `EyeX: ${pageX(eye) - x}\n`;
+            output += `EyeY: ${Math.abs(pageY(eye) - y)}\n`;
 
-    debug("container location: (" + x + ", " + y + ")");
+            var nose = container.childAtIndex(3);
+            output += `Nose ${nose.role}\n`;
+            output += `Nose ${platformValueForW3CName(nose, true)}\n`;
+            output += `NoseX: ${pageX(nose) - x}\n`;
+            output += `NoseY: ${Math.abs(pageY(nose) - y)}\n`;
 
-    var face = container.childAtIndex(0);
-    debug('Face role: ' + face.role);
-    debug('Face label: ' + platformValueForW3CName(face, true));
-    debug('FaceX: ' + (pageX(face) - x));
-    debug('FaceY: ' + Math.abs(pageY(face) - y));
-    debug('<br>');
+            var mouth = container.childAtIndex(4);
+            output += `Mouth ${mouth.role}\n`;
+            output += `Mouth ${platformValueForW3CName(mouth, true)}\n`;
+            output += `MouthX: ${pageX(mouth) - x}\n`;
+            output += `MouthY: ${Math.floor(Math.abs(pageY(mouth) - y))}\n`;
 
-    var eye = container.childAtIndex(1);
-    debug('Eye role: ' + eye.role);
-    debug('Eye label: ' + platformValueForW3CName(eye, true));
-    debug('EyeX: ' + (pageX(eye) - x));
-    debug('EyeY: ' + Math.abs(pageY(eye) - y));
-    debug('<br>');
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
 
-    var nose = container.childAtIndex(3);
-    debug('Nose role: ' + nose.role);
-    debug('Nose label: ' + platformValueForW3CName(nose, true));
-    debug('NoseX: ' + (pageX(nose) - x));
-    debug('NoseY: ' + Math.abs(pageY(nose) - y));
-    debug('<br>');
-
-    var mouth = container.childAtIndex(4);
-    debug('Mouth role: ' + mouth.role);
-    debug('Mouth label: ' + platformValueForW3CName(mouth, true));
-    debug('MouthX: ' + (pageX(mouth) - x));
-    debug('MouthY: ' + Math.floor(Math.abs(pageY(mouth) - y)));
-    debug('<br>');
-
-    finishJSTest();
-}
-
-if (window.accessibilityController) {
-    document.getElementById("svg-image").addEventListener("load", runAXTest);
-}
-document.getElementById("svg-image").src = "resources/svg-face.svg";
-
+    if (window.accessibilityController)
+        document.getElementById("svg-image").src = "resources/svg-face.svg";
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
-

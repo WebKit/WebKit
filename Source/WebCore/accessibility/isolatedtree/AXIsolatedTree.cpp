@@ -329,10 +329,11 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(const Vector<AXID>& subtr
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::collectNodeChangesForSubtree"_s);
+    AXLOG(axObject);
     ASSERT(isMainThread());
 
-    if (!axObject.objectID().isValid()) {
-        // Bail out here, we can't build an isolated tree branch rooted at an object with no ID.
+    if (axObject.isDetached()) {
+        AXLOG("Can't build an isolated tree branch rooted at a detached object.");
         return;
     }
 
