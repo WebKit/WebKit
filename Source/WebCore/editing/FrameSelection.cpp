@@ -1848,6 +1848,8 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     UNUSED_PARAM(node);
+    if (elementStyle.hasAutoCaretColor())
+        return { };
     return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
 #else
     RefPtr parentElement = node ? node->parentElement() : nullptr;
