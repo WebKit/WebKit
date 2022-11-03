@@ -129,35 +129,6 @@ CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length,
     return pixelBuffer;
 }
 
-bool copyPixelBufferInI420Buffer(uint8_t* buffer, size_t length, CVPixelBufferRef pixelBuffer, I420BufferLayout layout)
-{
-    if (CVPixelBufferGetPixelFormatType(pixelBuffer) != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
-        return false;
-
-    if (CVPixelBufferLockBaseAddress(pixelBuffer, 0) != kCVReturnSuccess)
-        return false;
-
-    size_t width = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0);
-    size_t height = CVPixelBufferGetHeightOfPlane(pixelBuffer, 0);
-
-    uint8_t* sourceY = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
-    int sourceStrideY = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
-
-    uint8_t* sourceUV = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
-    int sourceStrideUV = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
-
-    bool result = !libyuv::NV12ToI420(
-        sourceY, sourceStrideY,
-        sourceUV, sourceStrideUV,
-        buffer + layout.offsetY, layout.strideY,
-        buffer + layout.offsetU, layout.strideU,
-        buffer + layout.offsetV, layout.strideV,
-        width, height);
-
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-    return result;
-}
-
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame, CVPixelBufferRef pixel_buffer) {
     RTC_DCHECK(pixel_buffer);
     RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
