@@ -40,6 +40,21 @@
 (allow system-mac-syscall (with telemetry))
 (allow syscall-mach)
 
+;; FIXME: Add telemetry to these
+(allow darwin-notification-post)
+(allow dynamic-code-generation)
+(allow file-clone)
+(allow fs-quota*)
+(allow fs-snapshot-mount)
+(allow mach-bootstrap)
+(allow mach-cross-domain-lookup)
+(allow mach-kernel-endpoint)
+(allow process-info-codesignature)
+(allow socket-ioctl)
+(allow socket-option-get)
+(allow socket-option-set)
+(allow system-memorystatus-control)
+
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 2 4 6 7)))
 
