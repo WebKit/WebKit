@@ -642,7 +642,7 @@ print GPERF<< "EOF";
 
 bool CSSProperty::isInheritedProperty(CSSPropertyID id)
 {
-    ASSERT(id < numCSSProperties);
+    ASSERT(id < firstCSSProperty + numCSSProperties);
     ASSERT(id != CSSPropertyInvalid);
     return isInheritedPropertyTable[id];
 }
