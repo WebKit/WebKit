@@ -89,7 +89,6 @@ TEST(WTF_URLExtras, URLExtras)
     
 TEST(WTF_URLExtras, URLExtras_Spoof)
 {
-<<<<<<< HEAD
     Vector<String> punycodedSpoofHosts = {
         "xn--cfa45g", // U+0131, U+0307
         "xn--tma03b", // U+0237, U+0307
@@ -119,8 +118,11 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--2-zic", // U+0032 U+05E1
         "xn--uoa", // U+027E
         "xn--fja", // U+01C0
+        "xn--jna", // U+0250
         "xn--koa", // U+0274
+        "xn--spa", // U+029F
         "xn--tma", // U+0237
+        "xn--8pa", // U+02AF
         "xn--o-pdc", // U+0585 'o'
         "xn--o-qdc", // 'o' U+0585
         "xn--g-hdc", // U+0581 'g'
