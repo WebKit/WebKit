@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function run() {
+    container.appendChild(namedElement);
+    document.body.innerHTML = '<p>This test passes if WebKit does not hit any debug assertions.</p><p>PASS</p>';
+}
+</script>
+<body onload=run()>
+<div id="container">
+<img id="namedElement" name="">

@@ -2477,7 +2477,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
                 updateIdForDocument(*newDocument, nullAtom(), idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
         }
 
-        if (auto& nameValue = getNameAttribute(); !nameValue.isNull()) {
+        if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
             if (newScope)
                 newScope->addElementByName(*nameValue.impl(), *this);
             if (newDocument)
