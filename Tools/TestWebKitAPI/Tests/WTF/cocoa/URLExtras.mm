@@ -131,6 +131,8 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--o-10e", // 'o' U+0BE6
         "xn--a-53i", // U+15AF 'a'
         "xn--a-63i", // 'a' U+15AF
+        "xn--n-twf", // U+0E01 'n'
+        "xn--n-uwf", // 'n' U+0E01
         "xn--3hb112n", // U+065B
         "xn--a-ypc062v", // 'a' U+065B
     };
@@ -162,6 +164,9 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 
     // Canadian aboriginal
     EXPECT_STREQ("https://\u15AF\u1401abc/", userVisibleString(literalURL("https://\u15AF\u1401abc/")));
+
+    // Thai
+    EXPECT_STREQ("https://\u0E01\u0E02abc/", userVisibleString(literalURL("https://\u0E01\u0E02abc/")));
 
     // Arabic
     EXPECT_STREQ("https://\u0620\u065Babc/", userVisibleString(literalURL("https://\u0620\u065Babc/")));
