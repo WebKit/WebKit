@@ -1,7 +1,6 @@
 # Timeouts
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 accessibility/slider-with-lost-renderer.html [ Timeout ]
-accessibility/svg-remote-element.html [ Timeout ]
 
 # Text failures
 accessibility/aria-controls-with-tabs.html [ Failure ]
@@ -56,7 +55,6 @@ accessibility/scroll-to-make-visible-nested-2.html [ Failure ]
 accessibility/scroll-to-make-visible-nested.html [ Failure ]
 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 accessibility/slider-with-lost-renderer.html [ Failure ]
-accessibility/svg-remote-element.html [ Failure ]
 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 accessibility/title-ui-element-correctness.html [ Failure ]
 accessibility/text-alternative-calculation-hidden-nodes.html [ Failure ]

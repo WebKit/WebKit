@@ -451,6 +451,7 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
             if (auto child = tree()->nodeForID(childID))
                 m_children.uncheckedAppend(child);
         }
+        ASSERT(m_children.size() == m_childrenIDs.size());
     }
     return m_children;
 }
