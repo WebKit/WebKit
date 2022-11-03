@@ -118,8 +118,11 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--2-zic"_s, // U+0032 U+05E1
         "xn--uoa"_s, // U+027E
         "xn--fja"_s, // U+01C0
+        "xn--jna"_s, // U+0250
         "xn--koa"_s, // U+0274
+        "xn--spa"_s, // U+029F
         "xn--tma"_s, // U+0237
+        "xn--8pa"_s, // U+02AF
         "xn--o-pdc"_s, // U+0585 'o'
         "xn--o-qdc"_s, // 'o' U+0585
         "xn--g-hdc"_s, // U+0581 'g'
