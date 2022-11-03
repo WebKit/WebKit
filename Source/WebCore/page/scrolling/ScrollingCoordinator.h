@@ -48,6 +48,7 @@ class Document;
 class Frame;
 class FrameView;
 class GraphicsLayer;
+struct KeyboardScroll;
 class Page;
 class Region;
 class RenderObject;
@@ -118,6 +119,9 @@ public:
 
     // These virtual functions are currently unique to the threaded scrolling architecture. 
     virtual void commitTreeStateIfNeeded() { }
+
+    virtual bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) { return false; }
+    virtual bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) { return false; }
 
     virtual bool requestScrollPositionUpdate(ScrollableArea&, const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped) { return false; }
     virtual bool requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping) { return false; }

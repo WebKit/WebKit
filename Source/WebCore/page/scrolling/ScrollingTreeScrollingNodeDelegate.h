@@ -47,6 +47,8 @@ public:
 
     virtual void updateFromStateNode(const ScrollingStateScrollingNode&) { }
 
+    virtual void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&) { }
+
     virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
 
 protected:

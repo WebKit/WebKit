@@ -68,11 +68,10 @@ TEST(WebKit, SpacebarScrolling)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
-    // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
-    // update using WKPageForceRepaint would be better, but for some reason the test still fails occasionally.
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("AsyncScrollingPageGroup").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetThreadedScrollingEnabled(preferences, false);
+    WKPreferencesSetThreadedScrollingEnabled(preferences, true);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, Util::toWK("AsyncFrameScrollingEnabled").get());
 
     PlatformWebView webView(context.get(), pageGroup.get());
 
