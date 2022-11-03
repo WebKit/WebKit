@@ -2351,12 +2351,9 @@ public:
 
 private:
 
-    const float maxFontWeightValue = 1000.0f;
-    const float minFontWeightValue = 1.0f;
-
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination.*m_setter)(FontSelectionValue(std::min(std::max(minFontWeightValue, blendFunc(static_cast<float>(this->value(from)), static_cast<float>(this->value(to)), context)), maxFontWeightValue)));
+        (destination.*m_setter)(FontSelectionValue(std::clamp(blendFunc(static_cast<float>(this->value(from)), static_cast<float>(this->value(to)), context), 1.0f, 1000.0f)));
     }
 };
 
