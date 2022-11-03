@@ -61,21 +61,7 @@ private:
     void removeObserver(WebCore::PermissionObserver&) final;
     void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&) final;
 
-    void tryProcessingRequests();
-
     WeakHashSet<WebCore::PermissionObserver> m_observers;
-
-    using PermissionEntry = std::pair<WebCore::PermissionDescriptor, WebCore::PermissionState>;
-
-    struct PermissionRequest {
-        WebCore::ClientOrigin origin;
-        WebCore::PermissionDescriptor descriptor;
-        std::optional<WebPageProxyIdentifier> identifier;
-        WebCore::PermissionQuerySource source;
-        CompletionHandler<void(std::optional<WebCore::PermissionState>)> completionHandler;
-        bool isWaitingForReply { false };
-    };
-    Deque<PermissionRequest> m_requests;
 };
 
 } // namespace WebCore
