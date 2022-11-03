@@ -3014,6 +3014,22 @@ bool FrameView::isRubberBandInProgress() const
     return false;
 }
 
+bool FrameView::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
+{
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->requestStartKeyboardScrollAnimation(*this, scrollData);
+
+    return false;
+}
+
+bool FrameView::requestStopKeyboardScrollAnimation(bool immediate)
+{
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->requestStopKeyboardScrollAnimation(*this, immediate);
+
+    return false;
+}
+
 bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "FrameView::requestScrollPositionUpdate " << position);
