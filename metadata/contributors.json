@@ -2057,15 +2057,12 @@
    },
    {
       "emails" : [
-         "drousso@apple.com",
-         "dcrousso@apple.com",
-         "webkit@devinrousso.com"
+         "hi@devinrousso.com"
       ],
-      "expertise" : "Web Inspector, Media Controls, Payment Request",
+      "expertise" : "Web Inspector, Media Controls, Payment Request, Web Manifest, CSS Viewport, Pointer Events",
       "github" : "dcrousso",
       "name" : "Devin Rousso",
       "nicks" : [
-         "drousso",
          "dcrousso"
       ],
       "status" : "reviewer"
