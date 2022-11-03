@@ -59,6 +59,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementRareData.h"
 #include "EmptyClients.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -138,6 +139,7 @@
 #include "ScrollingCoordinator.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SharedBuffer.h"
 #include "SocketProvider.h"
 #include "SpeechRecognitionProvider.h"
@@ -1728,6 +1730,15 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::AnimationFrameCallbacks, [] (Document& document) {
         document.serviceRequestAnimationFrameCallbacks();
+    });
+
+    runProcessingStep(RenderingUpdateStep::FocusFixupRule, [] (Document& document) {
+        if (auto* activeElement = document.activeElement()) {
+            if (auto* root = activeElement->shadowRoot(); root && root->activeElement())
+                activeElement = root->activeElement();
+            if (!activeElement->isFocusable())
+                document.setFocusedElement(nullptr);
+        }
     });
 
     layoutIfNeeded();
@@ -3930,6 +3941,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #endif
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
+    case RenderingUpdateStep::FocusFixupRule: ts << "FocusFixupRule"; break;
     }
     return ts;
 }

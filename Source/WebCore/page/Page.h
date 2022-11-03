@@ -233,6 +233,7 @@ enum class RenderingUpdateStep : uint32_t {
     FlushAutofocusCandidates        = 1 << 14,
     VideoFrameCallbacks             = 1 << 15,
     PrepareCanvasesForDisplay       = 1 << 16,
+    FocusFixupRule                  = 1 << 17,
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
