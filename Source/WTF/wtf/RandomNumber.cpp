@@ -29,7 +29,6 @@
 #include <wtf/RandomNumber.h>
 
 #include <limits>
-#include <stdint.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/WeakRandom.h>
 
@@ -39,6 +38,17 @@ double randomNumber()
 {
     uint32_t bits = cryptographicallyRandomNumber();
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
+}
+
+unsigned cryptographicallyRandomUint32()
+{
+    return cryptographicallyRandomNumber();
+}
+
+uint64_t cryptographicallyRandomUint64()
+{
+    auto high = static_cast<uint64_t>(cryptographicallyRandomNumber());
+    return (high << 32) | cryptographicallyRandomNumber();
 }
 
 unsigned weakRandomUint32()

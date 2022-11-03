@@ -140,7 +140,7 @@ static UnixFileDescriptor createSharedMemory()
 #else
     CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
-        auto name = makeString("/WK2SharedMemory.", static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
+        auto name = makeString("/WK2SharedMemory.", WTF::cryptographicallyRandomUint32());
         tempName = name.utf8();
 
         do {

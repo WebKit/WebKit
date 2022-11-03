@@ -25,10 +25,18 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace WTF {
 
 // Returns a cryptographically secure pseudo-random number in the range [0, 1).
 WTF_EXPORT_PRIVATE double randomNumber();
+
+// Returns a cryptographically secure pseudo-random number in the range (0, UINT_MAX].
+WTF_EXPORT_PRIVATE unsigned cryptographicallyRandomUint32();
+
+// Returns a cryptographically secure pseudo-random number in the range (0, UINT64_MAX].
+WTF_EXPORT_PRIVATE uint64_t cryptographicallyRandomUint64();
 
 // Returns a cheap pseudo-random number in the range (0, UINT_MAX].
 WTF_EXPORT_PRIVATE unsigned weakRandomUint32();
@@ -36,4 +44,6 @@ WTF_EXPORT_PRIVATE unsigned weakRandomUint32();
 }
 
 using WTF::randomNumber;
+using WTF::cryptographicallyRandomUint32;
+using WTF::cryptographicallyRandomUint64;
 using WTF::weakRandomUint32;
