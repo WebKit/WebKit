@@ -722,7 +722,7 @@ static HashSet<WebCore::RegistrableDomain>& managedDomains()
 }
 
 NSString *kManagedSitesIdentifier = @"com.apple.mail-shared";
-NSString *kCrossSiteTrackingPreventionDisabledDomainsKey = @"crossSiteTrackingRelaxedDomains";
+NSString *kCrossSiteTrackingPreventionRelaxedDomainsKey = @"CrossSiteTrackingPreventionRelaxedDomains";
 
 void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReinitialization)
 {
@@ -735,26 +735,26 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         static const auto maxManagedDomainCount = 10;
-        NSArray<NSString *> *crossSiteTrackingPreventionDisabledDomains = nil;
+        NSArray<NSString *> *crossSiteTrackingPreventionRelaxedDomains = nil;
 #if PLATFORM(MAC)
         NSDictionary *managedSitesPrefs = [NSDictionary dictionaryWithContentsOfFile:[[NSString stringWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier] stringByStandardizingPath]];
-        crossSiteTrackingPreventionDisabledDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionDisabledDomainsKey];
+        crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
 #elif !PLATFORM(MACCATALYST)
-        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingAllowedDomains)])
-            crossSiteTrackingPreventionDisabledDomains = [[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingAllowedDomains];
+        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
+            crossSiteTrackingPreventionRelaxedDomains = [[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
         else
-            crossSiteTrackingPreventionDisabledDomains = @[];
+            crossSiteTrackingPreventionRelaxedDomains = @[];
 #endif
-        managedKeyExists = crossSiteTrackingPreventionDisabledDomains ? true : false;
+        managedKeyExists = crossSiteTrackingPreventionRelaxedDomains ? true : false;
     
-        RunLoop::main().dispatch([forceReinitialization, crossSiteTrackingPreventionDisabledDomains = retainPtr(crossSiteTrackingPreventionDisabledDomains)] {
+        RunLoop::main().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains = retainPtr(crossSiteTrackingPreventionRelaxedDomains)] {
             if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
             if (forceReinitialization == ForceReinitialization::Yes)
                 managedDomains().clear();
 
-            for (NSString *data in crossSiteTrackingPreventionDisabledDomains.get()) {
+            for (NSString *data in crossSiteTrackingPreventionRelaxedDomains.get()) {
                 if (managedDomains().size() >= maxManagedDomainCount)
                     break;
 
