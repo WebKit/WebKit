@@ -889,10 +889,6 @@ public:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
 
-#if ENABLE(CSS_TRAILING_WORD)
-    TrailingWord trailingWord() const { return TrailingWord::Auto; }
-#endif
-
 #if ENABLE(APPLE_PAY)
     ApplePayButtonStyle applePayButtonStyle() const { return static_cast<ApplePayButtonStyle>(m_rareNonInheritedData->applePayButtonStyle); }
     ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(m_rareNonInheritedData->applePayButtonType); }
@@ -1410,10 +1406,6 @@ public:
     void setTextSecurity(TextSecurity security) { SET_VAR(m_rareInheritedData, textSecurity, static_cast<unsigned>(security)); }
     void setInputSecurity(InputSecurity security) { SET_VAR(m_rareNonInheritedData, inputSecurity, static_cast<unsigned>(security)); }
 
-#if ENABLE(CSS_TRAILING_WORD)
-    void setTrailingWord(TrailingWord) { }
-#endif
-
 #if ENABLE(APPLE_PAY)
     void setApplePayButtonStyle(ApplePayButtonStyle style) { SET_VAR(m_rareNonInheritedData, applePayButtonStyle, static_cast<unsigned>(style)); }
     void setApplePayButtonType(ApplePayButtonType type) { SET_VAR(m_rareNonInheritedData, applePayButtonType, static_cast<unsigned>(type)); }
@@ -1816,10 +1808,6 @@ public:
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
-
-#if ENABLE(CSS_TRAILING_WORD)
-    static TrailingWord initialTrailingWord() { return TrailingWord::Auto; }
-#endif
 
 #if ENABLE(APPLE_PAY)
     static ApplePayButtonStyle initialApplePayButtonStyle() { return ApplePayButtonStyle::Black; }
