@@ -40,6 +40,8 @@ public:
     static ExceptionOr<Ref<CSSMathSum>> create(Vector<Ref<CSSNumericValue>>);
     const CSSNumericArray& values() const { return m_values.get(); }
 
+    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Sum; }
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSMathSum; }

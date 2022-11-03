@@ -1,26 +1,26 @@
 
 PASS CSS.cqw function
 PASS Reify value with cqw unit
-FAIL Set value with cqw unit (string) set() is not yet supported
-FAIL Set value with cqw unit (CSS.cqw) set() is not yet supported
+PASS Set value with cqw unit (string)
+PASS Set value with cqw unit (CSS.cqw)
 PASS CSS.cqh function
 PASS Reify value with cqh unit
-FAIL Set value with cqh unit (string) set() is not yet supported
-FAIL Set value with cqh unit (CSS.cqh) set() is not yet supported
+PASS Set value with cqh unit (string)
+PASS Set value with cqh unit (CSS.cqh)
 PASS CSS.cqi function
 PASS Reify value with cqi unit
-FAIL Set value with cqi unit (string) set() is not yet supported
-FAIL Set value with cqi unit (CSS.cqi) set() is not yet supported
+PASS Set value with cqi unit (string)
+PASS Set value with cqi unit (CSS.cqi)
 PASS CSS.cqb function
 PASS Reify value with cqb unit
-FAIL Set value with cqb unit (string) set() is not yet supported
-FAIL Set value with cqb unit (CSS.cqb) set() is not yet supported
+PASS Set value with cqb unit (string)
+PASS Set value with cqb unit (CSS.cqb)
 PASS CSS.cqmin function
 PASS Reify value with cqmin unit
-FAIL Set value with cqmin unit (string) set() is not yet supported
-FAIL Set value with cqmin unit (CSS.cqmin) set() is not yet supported
+PASS Set value with cqmin unit (string)
+PASS Set value with cqmin unit (CSS.cqmin)
 PASS CSS.cqmax function
 PASS Reify value with cqmax unit
-FAIL Set value with cqmax unit (string) set() is not yet supported
-FAIL Set value with cqmax unit (CSS.cqmax) set() is not yet supported
+PASS Set value with cqmax unit (string)
+PASS Set value with cqmax unit (CSS.cqmax)
 

@@ -170,4 +170,26 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
 
+RefPtr<CSSValue> CSSTranslate::toCSSValue() const
+{
+    auto x = m_x->toCSSValue();
+    if (!x)
+        return nullptr;
+
+    auto y = m_y->toCSSValue();
+    if (!y)
+        return nullptr;
+
+    auto result = CSSFunctionValue::create(is2D() ? CSSValueTranslate : CSSValueTranslate3d);
+    result->append(x.releaseNonNull());
+    result->append(y.releaseNonNull());
+    if (!is2D()) {
+        auto z = m_z->toCSSValue();
+        if (!z)
+            return nullptr;
+        result->append(z.releaseNonNull());
+    }
+    return result;
+}
+
 } // namespace WebCore

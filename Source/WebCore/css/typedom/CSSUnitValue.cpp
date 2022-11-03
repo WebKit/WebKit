@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSUnitValue.h"
 
+#include "CSSCalcPrimitiveValueNode.h"
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
 #include <wtf/IsoMallocInlines.h>
@@ -178,6 +179,16 @@ bool CSSUnitValue::equals(const CSSNumericValue& other) const
     if (!otherUnitValue)
         return false;
     return m_value == otherUnitValue->m_value && m_unit == otherUnitValue->m_unit;
+}
+
+RefPtr<CSSValue> CSSUnitValue::toCSSValue() const
+{
+    return CSSPrimitiveValue::create(m_value, m_unit);
+}
+
+RefPtr<CSSCalcExpressionNode> CSSUnitValue::toCalcExpressionNode() const
+{
+    return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(m_value, m_unit));
 }
 
 } // namespace WebCore

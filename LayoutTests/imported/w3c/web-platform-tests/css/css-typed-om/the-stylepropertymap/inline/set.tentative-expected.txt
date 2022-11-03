@@ -1,38 +1,16 @@
 
-FAIL Setting a StylePropertyMap with an unsupported property name throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a StylePropertyMap with an null property name throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a StylePropertyMap with a descriptor throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a StylePropertyMap with an invalid CSSStyleValue throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a StylePropertyMap with an invalid String throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a non list-valued property with multiple arguments throws TypeError assert_throws_js: function "() => styleMap.set('width', CSS.px(10), CSS.px(10))" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a non list-valued property with list-valued string throws TypeError assert_throws_js: function "() => styleMap.set('width', '1s, 2s')" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a list-valued property with a CSSUnparsedValue and other values throws TypeError assert_throws_js: function "() => {
-    styleMap.set('transition-duration', '1s', new CSSUnparsedValue([]));
-  }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a list-valued property with a var ref() and other values throws TypeError assert_throws_js: function "() => {
-    styleMap.set('transition-duration', '1s', 'var(--A)');
-  }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a property with CSSStyleValue or String updates its value set() is not yet supported
-FAIL Setting a list-valued property with CSSStyleValue or String updates its values set() is not yet supported
-FAIL Setting a list-valued property with a list-valued string updates its value set() is not yet supported
-FAIL Setting a custom property with CSSStyleValue or String updates its value set() is not yet supported
-FAIL StylePropertyMap.set is case-insensitive set() is not yet supported
+PASS Setting a StylePropertyMap with an unsupported property name throws TypeError
+PASS Setting a StylePropertyMap with an null property name throws TypeError
+PASS Setting a StylePropertyMap with a descriptor throws TypeError
+PASS Setting a StylePropertyMap with an invalid CSSStyleValue throws TypeError
+PASS Setting a StylePropertyMap with an invalid String throws TypeError
+PASS Setting a non list-valued property with multiple arguments throws TypeError
+PASS Setting a non list-valued property with list-valued string throws TypeError
+PASS Setting a list-valued property with a CSSUnparsedValue and other values throws TypeError
+PASS Setting a list-valued property with a var ref() and other values throws TypeError
+PASS Setting a property with CSSStyleValue or String updates its value
+PASS Setting a list-valued property with CSSStyleValue or String updates its values
+PASS Setting a list-valued property with a list-valued string updates its value
+PASS Setting a custom property with CSSStyleValue or String updates its value
+PASS StylePropertyMap.set is case-insensitive
 

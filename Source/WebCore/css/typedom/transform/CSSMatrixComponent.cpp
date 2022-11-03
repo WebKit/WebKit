@@ -32,6 +32,7 @@
 
 #include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "DOMMatrix.h"
@@ -174,6 +175,26 @@ DOMMatrix& CSSMatrixComponent::matrix()
 void CSSMatrixComponent::setMatrix(Ref<DOMMatrix>&& matrix)
 {
     m_matrix = WTFMove(matrix);
+}
+
+RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
+{
+    auto result = CSSFunctionValue::create(is2D() ? CSSValueMatrix : CSSValueMatrix3d);
+    if (is2D()) {
+        double values[] = { m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f() };
+        for (double value : values)
+            result->append(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER));
+    } else {
+        double values[] = {
+            m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
+            m_matrix->m21(), m_matrix->m22(), m_matrix->m23(), m_matrix->m24(),
+            m_matrix->m31(), m_matrix->m32(), m_matrix->m33(), m_matrix->m34(),
+            m_matrix->m41(), m_matrix->m42(), m_matrix->m43(), m_matrix->m44()
+        };
+        for (double value : values)
+            result->append(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER));
+    }
+    return result;
 }
 
 } // namespace WebCore

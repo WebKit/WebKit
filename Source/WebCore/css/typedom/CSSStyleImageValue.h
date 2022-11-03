@@ -52,6 +52,8 @@ public:
     
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSStyleImageValue; }
     
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     CSSStyleImageValue(Ref<CSSImageValue>&&, Document*);
 

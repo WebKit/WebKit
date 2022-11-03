@@ -26,8 +26,8 @@
 #include "config.h"
 #include "CSSMathNegate.h"
 
+#include "CSSCalcNegateNode.h"
 #include "CSSNumericValue.h"
-
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -82,7 +82,13 @@ bool CSSMathNegate::equals(const CSSNumericValue& other) const
     if (!otherNegate)
         return false;
     return m_value->equals(otherNegate->value());
+}
 
+RefPtr<CSSCalcExpressionNode> CSSMathNegate::toCalcExpressionNode() const
+{
+    if (auto value = m_value->toCalcExpressionNode())
+        return CSSCalcNegateNode::create(value.releaseNonNull());
+    return nullptr;
 }
 
 } // namespace WebCore

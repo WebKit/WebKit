@@ -51,6 +51,9 @@ public:
     ExceptionOr<Ref<DOMMatrix>> toMatrix();
     
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSTransformValue; }
+
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&&);
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;

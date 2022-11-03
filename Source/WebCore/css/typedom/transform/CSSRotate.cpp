@@ -202,4 +202,30 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
 
+RefPtr<CSSValue> CSSRotate::toCSSValue() const
+{
+    auto result = CSSFunctionValue::create(is2D() ? CSSValueRotate : CSSValueRotate3d);
+    if (!is2D()) {
+        auto x = m_x->toCSSValue();
+        if (!x)
+            return nullptr;
+        auto y = m_y->toCSSValue();
+        if (!y)
+            return nullptr;
+        auto z = m_z->toCSSValue();
+        if (!z)
+            return nullptr;
+
+        result->append(x.releaseNonNull());
+        result->append(y.releaseNonNull());
+        result->append(z.releaseNonNull());
+    }
+
+    auto angle = m_angle->toCSSValue();
+    if (!angle)
+        return nullptr;
+    result->append(angle.releaseNonNull());
+    return result;
+}
+
 } // namespace WebCore

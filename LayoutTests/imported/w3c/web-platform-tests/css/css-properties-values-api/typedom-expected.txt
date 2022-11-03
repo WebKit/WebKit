@@ -1,5 +1,5 @@
 
-FAIL Computed * is reified as CSSUnparsedValue set() is not yet supported
+PASS Computed * is reified as CSSUnparsedValue
 FAIL Computed <angle> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <color> is reified as CSSStyleValue The given initial value does not parse for the given syntax.
 FAIL Computed <custom-ident> is reified as CSSKeywordValue The given initial value does not parse for the given syntax.
@@ -19,8 +19,8 @@ FAIL First computed value correctly reified in space-separated list assert_false
 FAIL First computed value correctly reified in comma-separated list assert_false: expected false got true
 FAIL All computed values correctly reified in space-separated list The given initial value does not parse for the given syntax.
 FAIL All computed values correctly reified in comma-separated list The given initial value does not parse for the given syntax.
-FAIL Specified * is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified * is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
+PASS Specified * is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified * is reified as CSSUnparsedValue from get/getAll [styleMap]
 FAIL Specified foo is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified foo is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <angle> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -31,14 +31,14 @@ FAIL Specified <custom-ident> is reified as CSSUnparsedValue from get/getAll [at
 FAIL Specified <custom-ident> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <image> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <image> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <integer> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified <integer> is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
-FAIL Specified <length-percentage> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified <length-percentage> is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
-FAIL Specified <length> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified <length> is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
-FAIL Specified <number> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified <number> is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
+PASS Specified <integer> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <integer> is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified <length-percentage> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <length-percentage> is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified <length> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <length> is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified <number> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <number> is reified as CSSUnparsedValue from get/getAll [styleMap]
 FAIL Specified <percentage> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <percentage> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <resolution> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -51,12 +51,12 @@ FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [
 FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <url> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <url> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <length>+ is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified <length>+ is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
-FAIL Specified <length># is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] set() is not yet supported
-FAIL Specified <length># is reified as CSSUnparsedValue from get/getAll [styleMap] set() is not yet supported
-FAIL Specified string "foo" accepted by set() for syntax * [attributeStyleMap] set() is not yet supported
-FAIL Specified string "foo" accepted by set() for syntax * [styleMap] set() is not yet supported
+PASS Specified <length>+ is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <length>+ is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified <length># is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <length># is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified string "foo" accepted by set() for syntax * [attributeStyleMap]
+PASS Specified string "foo" accepted by set() for syntax * [styleMap]
 FAIL Specified string "foo" accepted by set() for syntax foo [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "foo" accepted by set() for syntax foo [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "10deg" accepted by set() for syntax <angle> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -67,14 +67,14 @@ FAIL Specified string "foo" accepted by set() for syntax <custom-ident> [attribu
 FAIL Specified string "foo" accepted by set() for syntax <custom-ident> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "url("a")" accepted by set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "url("a")" accepted by set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "1" accepted by set() for syntax <integer> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "1" accepted by set() for syntax <integer> [styleMap] set() is not yet supported
-FAIL Specified string "calc(10% + 10px)" accepted by set() for syntax <length-percentage> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "calc(10% + 10px)" accepted by set() for syntax <length-percentage> [styleMap] set() is not yet supported
-FAIL Specified string "10px" accepted by set() for syntax <length> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "10px" accepted by set() for syntax <length> [styleMap] set() is not yet supported
-FAIL Specified string "1" accepted by set() for syntax <number> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "1" accepted by set() for syntax <number> [styleMap] set() is not yet supported
+PASS Specified string "1" accepted by set() for syntax <integer> [attributeStyleMap]
+PASS Specified string "1" accepted by set() for syntax <integer> [styleMap]
+PASS Specified string "calc(10% + 10px)" accepted by set() for syntax <length-percentage> [attributeStyleMap]
+PASS Specified string "calc(10% + 10px)" accepted by set() for syntax <length-percentage> [styleMap]
+PASS Specified string "10px" accepted by set() for syntax <length> [attributeStyleMap]
+PASS Specified string "10px" accepted by set() for syntax <length> [styleMap]
+PASS Specified string "1" accepted by set() for syntax <number> [attributeStyleMap]
+PASS Specified string "1" accepted by set() for syntax <number> [styleMap]
 FAIL Specified string "10%" accepted by set() for syntax <percentage> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "10%" accepted by set() for syntax <percentage> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "10dpi" accepted by set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -87,10 +87,10 @@ FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <t
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "url("a")" accepted by set() for syntax <url> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "url("a")" accepted by set() for syntax <url> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "10px 11px" accepted by set() for syntax <length>+ [attributeStyleMap] set() is not yet supported
-FAIL Specified string "10px 11px" accepted by set() for syntax <length>+ [styleMap] set() is not yet supported
-FAIL Specified string "10px, 11px" accepted by set() for syntax <length># [attributeStyleMap] set() is not yet supported
-FAIL Specified string "10px, 11px" accepted by set() for syntax <length># [styleMap] set() is not yet supported
+PASS Specified string "10px 11px" accepted by set() for syntax <length>+ [attributeStyleMap]
+PASS Specified string "10px 11px" accepted by set() for syntax <length>+ [styleMap]
+PASS Specified string "10px, 11px" accepted by set() for syntax <length># [attributeStyleMap]
+PASS Specified string "10px, 11px" accepted by set() for syntax <length># [styleMap]
 FAIL Specified string "bar" accepted by set() for syntax foo [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "bar" accepted by set() for syntax foo [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "10px" accepted by set() for syntax <angle> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -101,14 +101,14 @@ FAIL Specified string "10px" accepted by set() for syntax <custom-ident> [attrib
 FAIL Specified string "10px" accepted by set() for syntax <custom-ident> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "a" accepted by set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "a" accepted by set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "float" accepted by set() for syntax <integer> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "float" accepted by set() for syntax <integer> [styleMap] set() is not yet supported
-FAIL Specified string "red" accepted by set() for syntax <length-percentage> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "red" accepted by set() for syntax <length-percentage> [styleMap] set() is not yet supported
-FAIL Specified string "red" accepted by set() for syntax <length> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "red" accepted by set() for syntax <length> [styleMap] set() is not yet supported
-FAIL Specified string "red" accepted by set() for syntax <number> [attributeStyleMap] set() is not yet supported
-FAIL Specified string "red" accepted by set() for syntax <number> [styleMap] set() is not yet supported
+PASS Specified string "float" accepted by set() for syntax <integer> [attributeStyleMap]
+PASS Specified string "float" accepted by set() for syntax <integer> [styleMap]
+PASS Specified string "red" accepted by set() for syntax <length-percentage> [attributeStyleMap]
+PASS Specified string "red" accepted by set() for syntax <length-percentage> [styleMap]
+PASS Specified string "red" accepted by set() for syntax <length> [attributeStyleMap]
+PASS Specified string "red" accepted by set() for syntax <length> [styleMap]
+PASS Specified string "red" accepted by set() for syntax <number> [attributeStyleMap]
+PASS Specified string "red" accepted by set() for syntax <number> [styleMap]
 FAIL Specified string "var(--x)" accepted by set() for syntax <percentage> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "var(--x)" accepted by set() for syntax <percentage> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "blue" accepted by set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -121,12 +121,12 @@ FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [at
 FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "a" accepted by set() for syntax <url> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "a" accepted by set() for syntax <url> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "a b" accepted by set() for syntax <length>+ [attributeStyleMap] set() is not yet supported
-FAIL Specified string "a b" accepted by set() for syntax <length>+ [styleMap] set() is not yet supported
-FAIL Specified string "a, b" accepted by set() for syntax <length># [attributeStyleMap] set() is not yet supported
-FAIL Specified string "a, b" accepted by set() for syntax <length># [styleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax * [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax * [styleMap] set() is not yet supported
+PASS Specified string "a b" accepted by set() for syntax <length>+ [attributeStyleMap]
+PASS Specified string "a b" accepted by set() for syntax <length>+ [styleMap]
+PASS Specified string "a, b" accepted by set() for syntax <length># [attributeStyleMap]
+PASS Specified string "a, b" accepted by set() for syntax <length># [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax * [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax * [styleMap]
 FAIL CSSUnparsedValue is accepted via set() for syntax foo [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax foo [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <angle> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -137,14 +137,14 @@ FAIL CSSUnparsedValue is accepted via set() for syntax <custom-ident> [attribute
 FAIL CSSUnparsedValue is accepted via set() for syntax <custom-ident> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <integer> [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <integer> [styleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length-percentage> [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length-percentage> [styleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length> [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length> [styleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <number> [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <number> [styleMap] set() is not yet supported
+PASS CSSUnparsedValue is accepted via set() for syntax <integer> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <integer> [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length-percentage> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length-percentage> [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length> [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <number> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <number> [styleMap]
 FAIL CSSUnparsedValue is accepted via set() for syntax <percentage> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <percentage> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -157,20 +157,12 @@ FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [attribu
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <url> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <url> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <length>+ [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length>+ [styleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length># [attributeStyleMap] set() is not yet supported
-FAIL CSSUnparsedValue is accepted via set() for syntax <length># [styleMap] set() is not yet supported
-FAIL CSSKeywordValue rejected by set() for syntax * [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSKeywordValue rejected by set() for syntax * [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS CSSUnparsedValue is accepted via set() for syntax <length>+ [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length>+ [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length># [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <length># [styleMap]
+PASS CSSKeywordValue rejected by set() for syntax * [attributeStyleMap]
+PASS CSSKeywordValue rejected by set() for syntax * [styleMap]
 FAIL CSSKeywordValue rejected by set() for syntax foo [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSKeywordValue rejected by set() for syntax foo [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnitValue rejected by set() for syntax <angle> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -179,46 +171,14 @@ FAIL CSSKeywordValue rejected by set() for syntax <custom-ident> [attributeStyle
 FAIL CSSKeywordValue rejected by set() for syntax <custom-ident> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSImageValue rejected by set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSImageValue rejected by set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnitValue rejected by set() for syntax <integer> [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <integer> [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length-percentage> [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length-percentage> [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length> [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length> [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <number> [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <number> [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS CSSUnitValue rejected by set() for syntax <integer> [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <integer> [styleMap]
+PASS CSSUnitValue rejected by set() for syntax <length-percentage> [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <length-percentage> [styleMap]
+PASS CSSUnitValue rejected by set() for syntax <length> [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <length> [styleMap]
+PASS CSSUnitValue rejected by set() for syntax <number> [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <number> [styleMap]
 FAIL CSSUnitValue rejected by set() for syntax <percentage> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnitValue rejected by set() for syntax <percentage> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnitValue rejected by set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -227,26 +187,10 @@ FAIL CSSUnitValue rejected by set() for syntax <time> [attributeStyleMap] The gi
 FAIL CSSUnitValue rejected by set() for syntax <time> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSTransformValue rejected by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSTransformValue rejected by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnitValue rejected by set() for syntax <length>+ [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length>+ [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length># [attributeStyleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL CSSUnitValue rejected by set() for syntax <length># [styleMap] assert_throws_js: function "() => {
-        map.set(name, value);
-    }" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS CSSUnitValue rejected by set() for syntax <length>+ [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <length>+ [styleMap]
+PASS CSSUnitValue rejected by set() for syntax <length># [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <length># [styleMap]
 FAIL Appending a string to * is not allowed [attributeStyleMap] assert_throws_js: function "() => {
         map.append(name, value);
     }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
@@ -427,8 +371,8 @@ PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>+
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>#
 FAIL Direct CSSStyleValue may not be set [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Direct CSSStyleValue may not be set [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified * is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified * is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
+PASS Specified * is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified * is reified CSSUnparsedValue by iterator [styleMap]
 FAIL Specified foo is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified foo is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <angle> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -439,14 +383,14 @@ FAIL Specified <custom-ident> is reified CSSUnparsedValue by iterator [attribute
 FAIL Specified <custom-ident> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <image> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <image> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <integer> is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified <integer> is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
-FAIL Specified <length-percentage> is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified <length-percentage> is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
-FAIL Specified <length> is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified <length> is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
-FAIL Specified <number> is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified <number> is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
+PASS Specified <integer> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <integer> is reified CSSUnparsedValue by iterator [styleMap]
+PASS Specified <length-percentage> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <length-percentage> is reified CSSUnparsedValue by iterator [styleMap]
+PASS Specified <length> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <length> is reified CSSUnparsedValue by iterator [styleMap]
+PASS Specified <number> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <number> is reified CSSUnparsedValue by iterator [styleMap]
 FAIL Specified <percentage> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <percentage> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <resolution> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -459,18 +403,18 @@ FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [attribu
 FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <url> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <url> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <length>+ is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified <length>+ is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
-FAIL Specified <length># is reified CSSUnparsedValue by iterator [attributeStyleMap] set() is not yet supported
-FAIL Specified <length># is reified CSSUnparsedValue by iterator [styleMap] set() is not yet supported
+PASS Specified <length>+ is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <length>+ is reified CSSUnparsedValue by iterator [styleMap]
+PASS Specified <length># is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <length># is reified CSSUnparsedValue by iterator [styleMap]
 FAIL Registered property with initial value show up on iteration of computedStyleMap assert_true: expected true got false
-FAIL Computed * is reified as CSSUnparsedValue by iterator set() is not yet supported
+FAIL Computed * is reified as CSSUnparsedValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <angle> is reified as CSSUnitValue by iterator The given initial value does not parse for the given syntax.
 FAIL Computed <custom-ident> is reified as CSSKeywordValue by iterator The given initial value does not parse for the given syntax.
 FAIL Computed <image> is reified as CSSImageValue by iterator The given initial value does not parse for the given syntax.
-FAIL Computed <integer> is reified as CSSUnitValue by iterator set() is not yet supported
-FAIL Computed <length> is reified as CSSUnitValue by iterator set() is not yet supported
-FAIL Computed <number> is reified as CSSUnitValue by iterator set() is not yet supported
+FAIL Computed <integer> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
+FAIL Computed <length> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
+FAIL Computed <number> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <percentage> is reified as CSSUnitValue by iterator The given initial value does not parse for the given syntax.
 FAIL Computed <resolution> is reified as CSSUnitValue by iterator The given initial value does not parse for the given syntax.
 FAIL Computed <time> is reified as CSSUnitValue by iterator The given initial value does not parse for the given syntax.

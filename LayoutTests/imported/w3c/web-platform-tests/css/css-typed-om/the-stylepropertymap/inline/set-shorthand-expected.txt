@@ -1,10 +1,6 @@
 
-FAIL Setting a shorthand with an invalid CSSStyleValue on inline style throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a shorthand with an invalid String on inline style throws TypeError assert_throws_js: function "() => styleMap.set(property, ...values)" threw object "NotSupportedError: set() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Setting a shorthand with a CSSStyleValue updates inline style set() is not yet supported
-FAIL Setting a shorthand with a string updates inline style set() is not yet supported
+PASS Setting a shorthand with an invalid CSSStyleValue on inline style throws TypeError
+PASS Setting a shorthand with an invalid String on inline style throws TypeError
+PASS Setting a shorthand with a CSSStyleValue updates inline style
+PASS Setting a shorthand with a string updates inline style
 

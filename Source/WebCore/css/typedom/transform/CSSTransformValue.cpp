@@ -179,4 +179,14 @@ void CSSTransformValue::serialize(StringBuilder& builder, OptionSet<Serializatio
     }
 }
 
+RefPtr<CSSValue> CSSTransformValue::toCSSValue() const
+{
+    auto cssValueList = CSSValueList::createSpaceSeparated();
+    for (auto& component : m_components) {
+        if (auto cssComponent = component->toCSSValue())
+            cssValueList->append(cssComponent.releaseNonNull());
+    }
+    return cssValueList;
+}
+
 } // namespace WebCore

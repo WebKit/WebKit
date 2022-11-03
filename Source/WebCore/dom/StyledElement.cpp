@@ -132,6 +132,36 @@ private:
             m_element->removeInlineStyleProperty(propertyID);
     }
 
+    bool setShorthandProperty(CSSPropertyID propertyID, const String& value) final
+    {
+        if (!m_element)
+            return false;
+        bool didFailParsing = false;
+        bool important = false;
+        m_element->setInlineStyleProperty(propertyID, value, important, &didFailParsing);
+        return !didFailParsing;
+    }
+
+    bool setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value) final
+    {
+        if (!m_element)
+            return false;
+        bool didFailParsing = false;
+        bool important = false;
+        m_element->setInlineStyleProperty(propertyID, value->cssText(), important, &didFailParsing);
+        return !didFailParsing;
+    }
+
+    bool setCustomProperty(Document&, const AtomString& property, Ref<CSSVariableReferenceValue>&& value) final
+    {
+        if (!m_element)
+            return false;
+
+        auto customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTFMove(value));
+        m_element->setInlineStyleCustomProperty(WTFMove(customPropertyValue));
+        return true;
+    }
+
     void removeCustomProperty(const AtomString& property) final
     {
         if (m_element)
@@ -286,12 +316,34 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double valu
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, bool important)
 {
-    bool changes = ensureMutableInlineStyle().setProperty(propertyID, value, important, CSSParserContext(document()));
+    ensureMutableInlineStyle().setProperty(propertyID, WTFMove(value), important);
+    inlineStyleChanged();
+    return true;
+}
+
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, bool important, bool* didFailParsing)
+{
+    bool changes = ensureMutableInlineStyle().setProperty(propertyID, value, important, CSSParserContext(document()), didFailParsing);
     if (changes)
         inlineStyleChanged();
     return changes;
+}
+
+bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, bool important)
+{
+    bool changes = ensureMutableInlineStyle().setCustomProperty(&document(), property.string(), value, important, CSSParserContext(document()));
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+bool StyledElement::setInlineStyleCustomProperty(Ref<CSSValue>&& customPropertyValue, bool important)
+{
+    ensureMutableInlineStyle().addParsedProperty(CSSProperty(CSSPropertyCustom, WTFMove(customPropertyValue), important));
+    inlineStyleChanged();
+    return true;
 }
 
 bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)

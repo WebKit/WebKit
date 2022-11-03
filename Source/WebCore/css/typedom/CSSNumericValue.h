@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class CSSCalcExpressionNode;
 class CSSNumericValue;
 class CSSUnitValue;
 class CSSMathSum;
@@ -71,6 +72,8 @@ public:
     using SumValue = Vector<Addend>;
     virtual std::optional<SumValue> toSumValue() const = 0;
     virtual bool equals(const CSSNumericValue&) const = 0;
+
+    virtual RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const = 0;
 
 protected:
     ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);

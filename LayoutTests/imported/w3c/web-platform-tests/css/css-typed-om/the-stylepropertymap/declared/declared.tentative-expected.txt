@@ -5,5 +5,5 @@ PASS Declared StylePropertyMap does not contain inline styles
 FAIL Declared StylePropertyMap contains custom property declarations assert_equals: expected " auto" but got "auto"
 PASS Declared StylePropertyMap does not contain properties with invalid values
 PASS Declared StylePropertyMap contains properties with their last valid value
-FAIL Declared StylePropertyMap is live set() is not yet supported
+PASS Declared StylePropertyMap is live
 
