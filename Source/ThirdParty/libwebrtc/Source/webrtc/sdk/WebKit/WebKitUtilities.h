@@ -71,6 +71,5 @@ struct I420BufferLayout {
 };
 
 CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout) CF_RETURNS_RETAINED;
-bool copyPixelBufferInI420Buffer(uint8_t* buffer, size_t length, CVPixelBufferRef, I420BufferLayout);
 
 }
