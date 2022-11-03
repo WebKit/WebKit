@@ -120,6 +120,10 @@
 (allow socket-ioctl
     (ioctl-command CTLIOCGINFO))
 
+;; FIXME: Add telemetry to these
+(allow system-necp-client-action)
+(allow necp-client-open)
+
 (allow iokit-open-service (iokit-registry-entry-class "IOPMrootDomain"))
 
 (allow file-link
