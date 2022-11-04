@@ -106,7 +106,6 @@ private:
     TextureMapperContextAttributes m_contextAttributes;
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;
-    bool m_enableEdgeDistanceAntialiasing;
 };
 
 } // namespace WebCore
