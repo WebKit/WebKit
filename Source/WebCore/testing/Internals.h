@@ -101,6 +101,7 @@ class MallocStatistics;
 class MediaStream;
 class MediaStreamTrack;
 class MemoryInfo;
+class MessagePort;
 class MockCDMFactory;
 class MockContentFilterSettings;
 class MockPageOverlay;
@@ -515,6 +516,9 @@ public:
 
     String documentIdentifier(const Document&) const;
     bool isDocumentAlive(const String& documentIdentifier) const;
+
+    uint64_t messagePortIdentifier(const MessagePort&) const;
+    bool isMessagePortAlive(uint64_t messagePortIdentifier) const;
 
     uint64_t storageAreaMapCount() const;
 

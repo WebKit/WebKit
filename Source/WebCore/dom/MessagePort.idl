@@ -27,6 +27,7 @@
 
 [
     ActiveDOMObject,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker,AudioWorklet),
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
