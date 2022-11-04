@@ -30,7 +30,7 @@
 namespace WTF {
 
 // Returns a cryptographically secure pseudo-random number in the range [0, 1).
-WTF_EXPORT_PRIVATE double randomNumber();
+WTF_EXPORT_PRIVATE double cryptographicallyRandomUnitInterval();
 
 // Returns a cryptographically secure pseudo-random number in the range (0, UINT_MAX].
 WTF_EXPORT_PRIVATE unsigned cryptographicallyRandomUint32();
@@ -43,7 +43,7 @@ WTF_EXPORT_PRIVATE unsigned weakRandomUint32();
 
 }
 
-using WTF::randomNumber;
+using WTF::cryptographicallyRandomUnitInterval;
 using WTF::cryptographicallyRandomUint32;
 using WTF::cryptographicallyRandomUint64;
 using WTF::weakRandomUint32;

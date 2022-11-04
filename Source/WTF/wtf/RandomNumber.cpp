@@ -34,7 +34,7 @@
 
 namespace WTF {
 
-double randomNumber()
+double cryptographicallyRandomUnitInterval()
 {
     uint32_t bits = cryptographicallyRandomNumber();
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
