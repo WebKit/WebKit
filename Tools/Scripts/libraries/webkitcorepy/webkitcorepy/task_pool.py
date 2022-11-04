@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,12 +27,15 @@ import multiprocessing
 import signal
 import sys
 
-if sys.version_info < (3, 0):
-    import Queue
-else:
-    import queue as Queue
-
 from webkitcorepy import OutputCapture, Timeout, log
+
+if sys.version_info < (3, 0):
+    import Queue as SimpleQueue
+    from multiprocessing import Queue
+    Empty = SimpleQueue.Empty
+else:
+    from webkitcorepy.multiprocessing_utils import Queue
+    Empty = Queue.Empty
 
 
 class _Message(object):
@@ -136,8 +139,8 @@ class _ChildException(_Message):
 
 class _BiDirectionalQueue(object):
     def __init__(self, outgoing=None, incoming=None):
-        self.outgoing = outgoing or multiprocessing.Queue()
-        self.incoming = incoming or multiprocessing.Queue()
+        self.outgoing = outgoing or Queue()
+        self.incoming = incoming or Queue()
 
     def send(self, object):
         if self.outgoing._closed:
@@ -155,15 +158,15 @@ class _BiDirectionalQueue(object):
                 if difference is not None:
                     return self.incoming.get(timeout=difference)
                 return self.incoming.get()
-            except Queue.Empty:
+            except Empty:
                 pass
 
     def close(self):
         with OutputCapture():
             self.outgoing.close()
             self.incoming.close()
-            self.outgoing.join_thread()
-            self.incoming.join_thread()
+            getattr(self.outgoing, 'join_thread', lambda: None)()
+            getattr(self.incoming, 'join_thread', lambda: None)()
 
 
 class _DummyQueue(object):
@@ -334,7 +337,7 @@ class TaskPool(object):
         pass
 
     def __init__(
-        self, workers=1, name=None, setup=None, teardown=None, grace_period=5, block_size=1000,
+        self, workers=1, name=None, setup=None, teardown=None, grace_period=5,
         setupargs=None, setupkwargs=None,
         teardownargs=None, teardownkwargs=None,
         force_fork=False,
@@ -363,7 +366,6 @@ class TaskPool(object):
         self._id_count = 0
         self.pending_count = 0
         self.grace_period = grace_period
-        self.block_size = block_size
         self.force_fork = force_fork
 
         if not self.force_fork and self._num_workers == 1 and TaskPool.Process.queue:
@@ -413,13 +415,15 @@ class TaskPool(object):
         self.queue.send(self.Task(function, self._id_count, *args, **kwargs))
         self._id_count += 1
 
-        # For every block of tasks passed to our workers, we need consume messages so we don't get deadlocked
-        if not self._id_count % self.block_size:
-            while self.pending_count > 2 * self._num_workers:
-                try:
-                    self.queue.receive(blocking=False)(self)
-                except Queue.Empty:
-                    break
+        # Process messages from workers as long as too many jobs are pending
+        while self.pending_count > 2 * self._num_workers:
+            self.queue.receive()(self)
+        # Process messages from workers if jobs are pending and messages are available
+        while self.pending_count > self._num_workers:
+            try:
+                self.queue.receive(blocking=False)(self)
+            except Empty:
+                break
 
     def wait(self):
         if not self.queue:
