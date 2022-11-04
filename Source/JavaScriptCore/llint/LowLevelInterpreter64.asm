@@ -1864,12 +1864,10 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
         finishGetByVal(scratch1, scratch2)
     end
 
-    macro setLargeTypedArray()
-        if LARGE_TYPED_ARRAYS
-            storeb 1, OpGetByVal::Metadata::m_arrayProfile + ArrayProfile::m_mayBeLargeTypedArray[t5]
-        else
-            crash()
-        end
+    macro setLargeTypedArray(scratch)
+        loadi OpGetByVal::Metadata::m_arrayProfile.m_arrayProfileFlags[t5], scratch
+        ori constexpr ArrayProfileFlag::MayBeLargeTypedArray, scratch
+        storei scratch, OpGetByVal::Metadata::m_arrayProfile.m_arrayProfileFlags[t5]
     end
 
     metadata(t5, t2)
@@ -2057,7 +2055,9 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
 
         .outOfBounds:
             biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-            storeb 1, %opcodeStruct%::Metadata::m_arrayProfile.m_mayStoreToHole[t5]
+            loadi %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5], t2
+            ori constexpr ArrayProfileFlag::MayStoreHole, t2
+            storei t2, %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5]
             addi 1, t3, t2
             storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
             jmp .storeResult
@@ -2122,7 +2122,9 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         dispatch()
 
     .opPutByValArrayStorageEmpty:
-        storeb 1, %opcodeStruct%::Metadata::m_arrayProfile.m_mayStoreToHole[t5]
+        loadi %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5], t2
+        ori constexpr ArrayProfileFlag::MayStoreHole, t2
+        storei t2, %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5]
         addi 1, ArrayStorage::m_numValuesInVector[t0]
         bib t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .opPutByValArrayStorageStoreResult
         addi 1, t3, t1
@@ -2130,7 +2132,9 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         jmp .opPutByValArrayStorageStoreResult
 
     .opPutByValOutOfBounds:
-        storeb 1, %opcodeStruct%::Metadata::m_arrayProfile.m_outOfBounds[t5]
+        loadi %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5], t2
+        ori constexpr ArrayProfileFlag::OutOfBounds , t2
+        storei t2, %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5]
     .opPutByValSlow:
         callSlowPath(_llint_slow_path_%opcodeName%)
         dispatch()
