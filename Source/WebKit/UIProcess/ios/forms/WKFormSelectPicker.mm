@@ -564,12 +564,6 @@ static const float GroupOptionTextColorAlpha = 0.5;
             NSString *groupText = optionItem.text;
             NSMutableArray *groupedItems = [NSMutableArray array];
 
-            if (groupText.length) {
-                UIAction *action = [UIAction actionWithTitle:groupText image:nil identifier:nil handler:^(UIAction *action) { }];
-                action.attributes = UIMenuElementAttributesDisabled;
-                [groupedItems addObject:action];
-            }
-
             currentIndex++;
             while (currentIndex < _view.focusedSelectElementOptions.size()) {
                 auto& childOptionItem = _view.focusedSelectElementOptions[currentIndex];
@@ -627,10 +621,6 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
         UIMenu *groupedMenu = (UIMenu *)menuElement;
         NSUInteger numGroupedOptions = groupedMenu.children.count;
-
-        // The first child of a grouped menu with a title represents the title, and is not a selectable option.
-        if (groupedMenu.title.length)
-            numGroupedOptions--;
 
         if (currentIndex + numGroupedOptions <= (NSUInteger)optionIndex)
             currentIndex += numGroupedOptions;
