@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,8 @@
 #import "APIUIClient.h"
 #import "Logging.h"
 #import "SOAuthorizationLoadPolicy.h"
-#import <WebKit/WKUIDelegatePrivate.h>
+#import "WKSOAuthorizationDelegate.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebsiteDataStore.h"
@@ -86,8 +87,8 @@ static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore:
 
 } // namespace
 
-SOAuthorizationSession::SOAuthorizationSession(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
-    : m_soAuthorization(soAuthorization)
+SOAuthorizationSession::SOAuthorizationSession(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
+    : m_soAuthorization(adoptNS([PAL::allocSOAuthorizationInstance() init]))
     , m_navigationAction(WTFMove(navigationAction))
     , m_page(page)
     , m_action(action)
@@ -107,6 +108,11 @@ SOAuthorizationSession::~SOAuthorizationSession()
         becomeCompleted();
     else
         dismissViewController();
+}
+
+void SOAuthorizationSession::setSOAuthorizationDelegate(WKSOAuthorizationDelegate *delegate)
+{
+    [m_soAuthorization setDelegate:delegate];
 }
 
 const char* SOAuthorizationSession::initiatingActionString() const
