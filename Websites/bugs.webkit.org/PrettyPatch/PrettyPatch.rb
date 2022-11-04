@@ -614,7 +614,7 @@ div:focus {
     clear: both;
 }
 </style>
-<script src="https://webkit.org/ajax/libs/jquery/jquery-1.4.2.min.js"></script> 
+<script src="jquery/jquery-3.6.1.min.js"></script> 
 <script src="js/status-bubble.js"></script>
 <script src="code-review.js?version=48"></script>
 </head>
