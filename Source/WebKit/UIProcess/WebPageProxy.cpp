@@ -1712,6 +1712,8 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
 
+    websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), 0);
+
     LoadParameters loadParameters;
     loadParameters.navigationID = 0;
     loadParameters.data = htmlData;
