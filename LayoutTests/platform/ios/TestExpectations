@@ -3678,3 +3678,5 @@ webkit.org/b/242840 fast/text/international/system-language/han-text-style.html 
 webkit.org/b/242905 compositing/tiling/tiled-mask-inwindow.html [ Pass Failure ]
 
 webkit.org/b/243547 fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
+
+webkit.org/b/247499 [ Debug ] storage/indexeddb/crash-on-getdatabases.html [ Pass Crash ]
