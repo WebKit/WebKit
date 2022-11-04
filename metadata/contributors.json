@@ -50,6 +50,16 @@
    },
    {
       "emails" : [
+         "abigail_fox@apple.com"
+      ],
+      "name" : "Abigail Fox",
+      "nicks" : [
+         "abigailf",
+         "abigailfox"
+      ]
+   },
+   {
+      "emails" : [
          "adachan@apple.com"
       ],
       "expertise" : "WebKit on Windows",
