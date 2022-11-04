@@ -47,6 +47,7 @@ private:
     // WebCore::RTCNetworkManager
     void setICECandidateFiltering(bool doFiltering) final { m_useMDNSCandidates = doFiltering; }
     void unregisterMDNSNames() final;
+    void close() final;
 
     // webrtc::NetworkManagerBase
     void StartUpdating() final;
@@ -64,6 +65,9 @@ private:
     WebCore::ScriptExecutionContextIdentifier m_documentIdentifier;
     bool m_useMDNSCandidates { true };
     bool m_receivedNetworkList { false };
+#if ASSERT_ENABLED
+    bool m_isClosed { false };
+#endif
 };
 
 } // namespace WebKit

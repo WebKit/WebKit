@@ -48,6 +48,7 @@ LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExe
         auto newNetworkManager = adoptRef(*new LibWebRTCNetworkManager(identifier));
         networkManager = newNetworkManager.ptr();
         document->setRTCNetworkManager(WTFMove(newNetworkManager));
+        WebProcess::singleton().libWebRTCNetwork().monitor().addObserver(*networkManager);
     }
 
     return networkManager;
@@ -56,11 +57,18 @@ LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExe
 LibWebRTCNetworkManager::LibWebRTCNetworkManager(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
     : m_documentIdentifier(documentIdentifier)
 {
-    WebProcess::singleton().libWebRTCNetwork().monitor().addObserver(*this);
 }
 
 LibWebRTCNetworkManager::~LibWebRTCNetworkManager()
 {
+    ASSERT(m_isClosed);
+}
+
+void LibWebRTCNetworkManager::close()
+{
+#if ASSERT_ENABLED
+    m_isClosed = true;
+#endif
     WebProcess::singleton().libWebRTCNetwork().monitor().removeObserver(*this);
 }
 
