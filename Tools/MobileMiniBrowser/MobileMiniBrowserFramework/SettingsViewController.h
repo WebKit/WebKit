@@ -33,6 +33,7 @@
 @property (weak, nonatomic) WebViewController *parent;
 
 - (IBAction)setDefaultURLToCurrentURL:(id)sender;
+- (IBAction)closeModal:(id)sender;
 - (NSString *)defaultURL;
 
 @end
