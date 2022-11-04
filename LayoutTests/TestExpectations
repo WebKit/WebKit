@@ -5313,7 +5313,6 @@ imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ Du
 # Display list logging is only available in debug
 [ Release ] fast/text/glyph-display-lists [ Skip ]
 
-webkit.org/b/242498 svg/resource-invalidation/filter-resource-invalidation.html [ ImageOnlyFailure ]
 webkit.org/b/242498 svg/resource-invalidation/mask-resource-invalidation.html [ ImageOnlyFailure ]
 
 # Plugins
