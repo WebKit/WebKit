@@ -113,13 +113,17 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.private.screencapturekit.sharingsession bool YES
             plistbuddy Add :com.apple.private.tcc.allow array
             plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceScreenCapture
-            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitGPUSandbox bool YES
         plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+    fi
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+    then
+        plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     fi
 }
 
@@ -144,11 +148,6 @@ function mac_process_network_entitlements()
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
         fi
 
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
-        then
-            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
-        fi
-
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:0 string LSActivePageUserVisibleOriginsKey
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:1 string LSDisplayName
@@ -157,6 +156,11 @@ function mac_process_network_entitlements()
         plistbuddy Add :com.apple.symptom_analytics.configure bool YES
         plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
         plistbuddy Add :com.apple.private.webkit.webpush bool YES
+    fi
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+    then
+        plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     fi
 }
 
@@ -198,13 +202,17 @@ function mac_process_webcontent_shared_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
             webcontent_sandbox_entitlements
-            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
         then
             plistbuddy Add :com.apple.private.xpc.domain-extension bool YES
         fi
+    fi
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+    then
+        plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     fi
 
     if [[ "${WK_XPC_SERVICE_VARIANT}" == Development ]]
