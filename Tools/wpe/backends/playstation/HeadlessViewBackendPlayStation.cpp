@@ -57,7 +57,7 @@ PlatformImage HeadlessViewBackend::snapshot()
     return nullptr;
 }
 
-void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
+void HeadlessViewBackend::updateSnapshot(PlatformBuffer)
 {
 }
 
