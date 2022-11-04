@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2008, 2011, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -115,7 +115,11 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
             auto* callee = callFrame && !callFrame->isWasmFrame() ? callFrame->jsCallee() : nullptr;
             ASCIILiteral calleeName = "Array.isArray"_s;
             auto* function = callee ? jsDynamicCast<JSFunction*>(callee) : nullptr;
-            if (function && function->intrinsic() == ObjectToStringIntrinsic)
+            // If this function is from a different globalObject than the one passed in above,
+            // then this test will fail even if function is Object.prototype.toString. The only
+            // way this test will be work everytime is if we check against the
+            // Object.prototype.toString of the function's own globalObject.
+            if (function && function == function->globalObject()->objectProtoToStringFunctionConcurrently())
                 calleeName = "Object.prototype.toString"_s;
             throwTypeError(globalObject, scope, makeString(calleeName, " cannot be called on a Proxy that has been revoked"_s));
             return false;
