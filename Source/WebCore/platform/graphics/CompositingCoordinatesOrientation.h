@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#include "CompositingCoordinatesOrientation.h"
-#include <wtf/RefCounted.h>
-
-#if !USE(CA)
-#include "PlatformLayer.h"
-#endif
 namespace WebCore {
-#if USE(CA)
-class PlatformCALayer;
-#endif
-
-// Platform specific interface for attaching contents to GraphicsLayer.
-// Responsible for creating compositor resources to show the particular contents
-// in the platform specific GraphicsLayer.
-class WEBCORE_EXPORT GraphicsLayerContentsDisplayDelegate : public RefCounted<GraphicsLayerContentsDisplayDelegate> {
-public:
-    virtual ~GraphicsLayerContentsDisplayDelegate();
-
-#if USE(CA)
-    virtual void prepareToDelegateDisplay(PlatformCALayer&);
-    // Must not detach the platform layer backing store.
-    virtual void display(PlatformCALayer&) = 0;
-    virtual CompositingCoordinatesOrientation orientation() const;
-#else
-    virtual PlatformLayer* platformLayer() const = 0;
-#endif
-};
-
-}
+enum class CompositingCoordinatesOrientation : uint8_t { TopDown, BottomUp };
+} // namespace WebCore

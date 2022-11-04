@@ -60,9 +60,9 @@ public:
             layer.clearContents();
     }
 
-    GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    CompositingCoordinatesOrientation orientation() const final
     {
-        return GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
+        return CompositingCoordinatesOrientation::BottomUp;
     }
 
     void setDisplayBuffer(IOSurface* displayBuffer)

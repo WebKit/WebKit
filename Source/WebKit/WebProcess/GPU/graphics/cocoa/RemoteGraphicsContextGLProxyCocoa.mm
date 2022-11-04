@@ -62,9 +62,9 @@ public:
             layer.clearContents();
     }
 
-    WebCore::GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    WebCore::CompositingCoordinatesOrientation orientation() const final
     {
-        return WebCore::GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
+        return WebCore::CompositingCoordinatesOrientation::BottomUp;
     }
 
     void setDisplayBuffer(const MachSendRight& displayBuffer)

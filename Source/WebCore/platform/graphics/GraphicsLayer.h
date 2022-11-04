@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "CompositingCoordinatesOrientation.h"
 #include "EventRegion.h"
 #include "FilterOperations.h"
 #include "FloatPoint.h"
@@ -33,6 +34,7 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "Path.h"
 #include "PlatformLayer.h"
 #include "Region.h"
@@ -58,7 +60,6 @@ namespace WebCore {
 class Animation;
 class GraphicsContext;
 class GraphicsLayerFactory;
-class GraphicsLayerContentsDisplayDelegate;
 class Image;
 class Model;
 class TiledBacking;
@@ -530,8 +531,6 @@ public:
 
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return nullptr; }
-
-    enum class CompositingCoordinatesOrientation : uint8_t { TopDown, BottomUp };
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
