@@ -848,10 +848,10 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& c
     networkStorageSession->deleteCookie(url, cookieName, WTFMove(completionHandler));
 }
 
-void NetworkConnectionToWebProcess::domCookiesForHost(const String& host, bool subscribeToCookieChangeNotifications, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+void NetworkConnectionToWebProcess::domCookiesForHost(const String& host, const URL& firstParty, bool subscribeToCookieChangeNotifications, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
-    // FIXME: This should only get cookies for a given first party, and that should be checked with NetworkProcess::allowsFirstPartyForCookies.
     NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(host), completionHandler({ }));
+    NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler({ }));
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -867,7 +867,7 @@ void NetworkConnectionToWebProcess::domCookiesForHost(const String& host, bool s
     UNUSED_PARAM(subscribeToCookieChangeNotifications);
 #endif
 
-    completionHandler(networkStorageSession->domCookiesForHost(host));
+    completionHandler(networkStorageSession->domCookiesForHost(firstParty.host().toString()));
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
