@@ -108,11 +108,20 @@ static inline bool rendererCanHaveResources(RenderObject& renderer)
 
 void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    if (diff == StyleDifference::Equal || !renderer.parent())
+    if (!renderer.parent())
         return;
 
-    // In this case the proper SVGFE*Element will decide whether the modified CSS properties require a relayout or repaint.
-    if (renderer.isSVGResourceFilterPrimitive() && (diff == StyleDifference::Repaint || diff == StyleDifference::RepaintIfText))
+    // For filter primitives, when diff is Repaint or RepaintIsText, the
+    // SVGFE*Element will decide whether the modified CSS properties require a
+    // relayout or repaint.
+    //
+    // Since diff can be Equal even if we have have a filter property change
+    // (due to how RenderElement::adjustStyleDifference works), in general we
+    // want to continue to the comparison of oldStyle and newStyle below, and
+    // so we don't return early just when diff == StyleDifference::Equal. But
+    // this isn't necessary for filter primitives, to which the filter property
+    // doesn't apply, so we check for it here too.
+    if (renderer.isSVGResourceFilterPrimitive() && (diff == StyleDifference::Equal || diff == StyleDifference::Repaint || diff == StyleDifference::RepaintIfText))
         return;
 
     auto& cache = resourcesCacheFromRenderer(renderer);
