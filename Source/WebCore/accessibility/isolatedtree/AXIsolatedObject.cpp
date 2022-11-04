@@ -1543,8 +1543,10 @@ bool AXIsolatedObject::isSelectedOptionActive() const
 
 bool AXIsolatedObject::hasMisspelling() const
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    return Accessibility::retrieveValueFromMainThread<bool>([this] () {
+        auto* axObject = associatedAXObject();
+        return axObject ? axObject->hasMisspelling() : false;
+    });
 }
 
 bool AXIsolatedObject::hasSameFont(const AXCoreObject& otherObject) const
