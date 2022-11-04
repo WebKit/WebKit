@@ -15,7 +15,6 @@ This is a link.
         (region
             (rect (-3,-3) width=35 height=24)
 )
-        (hasLightBackground 0)
         (borderRadius 0.00)])
       )
     )

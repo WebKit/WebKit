@@ -19,7 +19,6 @@ short second line.
             (rect (197,15) width=31 height=6)
             (rect (-3,21) width=115 height=18)
 )
-        (hasLightBackground 1)
         (borderRadius 0.00)])
       )
     )

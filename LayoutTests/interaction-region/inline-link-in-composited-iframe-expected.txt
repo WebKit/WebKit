@@ -16,7 +16,6 @@ This is a link, outside the frame.
         (region
             (rect (-3,-3) width=35 height=24)
 )
-        (hasLightBackground 1)
         (borderRadius 0.00)])
       )
       (children 1
@@ -31,7 +30,6 @@ This is a link, outside the frame.
             (region
                 (rect (7,7) width=35 height=24)
 )
-            (hasLightBackground 1)
             (borderRadius 0.00)])
           )
         )
