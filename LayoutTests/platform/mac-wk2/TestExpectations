@@ -1785,3 +1785,5 @@ webkit.org/b/245802 imported/w3c/web-platform-tests/permissions/permissions-cg.h
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
+
+webkit.org/b/247499 [ Debug ] storage/indexeddb/crash-on-getdatabases.html [ Pass Crash ]
