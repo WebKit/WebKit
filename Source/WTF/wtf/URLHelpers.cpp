@@ -149,6 +149,20 @@ bool isLookalikeSequence(const std::optional<UChar32>& previousCodePoint, UChar3
         || isLookalikePair(*previousCodePoint, codePoint);
 }
 
+template <>
+bool isLookalikeSequence<USCRIPT_ARABIC>(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
+{
+    auto isArabicDiacritic = [](UChar32 codePoint) {
+        return 0x064B <= codePoint && codePoint <= 0x065F;
+    };
+    auto isArabicCodePoint = [](const std::optional<UChar32>& codePoint) {
+        if (!codePoint)
+            return false;
+        return ublock_getCode(*codePoint) == UBLOCK_ARABIC;
+    };
+    return isArabicDiacritic(codePoint) && !isArabicCodePoint(previousCodePoint);
+}
+
 static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
 {
     // This function treats the following as unsafe, lookalike characters:
@@ -167,7 +181,7 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
         || u_hasBinaryProperty(codePoint, UCHAR_DEFAULT_IGNORABLE_CODE_POINT)
         || ublock_getCode(codePoint) == UBLOCK_IPA_EXTENSIONS)
         return true;
-    
+
     switch (codePoint) {
     case 0x00BC: /* VULGAR FRACTION ONE QUARTER */
     case 0x00BD: /* VULGAR FRACTION ONE HALF */
@@ -299,7 +313,8 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     default:
         return isLookalikeSequence<USCRIPT_ARMENIAN>(previousCodePoint, codePoint)
             || isLookalikeSequence<USCRIPT_TAMIL>(previousCodePoint, codePoint)
-            || isLookalikeSequence<USCRIPT_CANADIAN_ABORIGINAL>(previousCodePoint, codePoint);
+            || isLookalikeSequence<USCRIPT_CANADIAN_ABORIGINAL>(previousCodePoint, codePoint)
+            || isLookalikeSequence<USCRIPT_ARABIC>(previousCodePoint, codePoint);
     }
 }
 
