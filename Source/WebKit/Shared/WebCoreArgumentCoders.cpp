@@ -137,27 +137,6 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
-#define DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(Type) \
-    template<typename Encoder> \
-    void ArgumentCoder<Type>::encode(Encoder& encoder, const Type& value) { SimpleArgumentCoder<Type>::encode(encoder, value); } \
-    bool ArgumentCoder<Type>::decode(Decoder& decoder, Type& value) { return SimpleArgumentCoder<Type>::decode(decoder, value); } \
-    std::optional<Type> ArgumentCoder<Type>::decode(Decoder& decoder) \
-    { \
-        Type value; \
-        if (!decode(decoder, value)) \
-            return std::nullopt; \
-        return value; \
-    } \
-    template void ArgumentCoder<Type>::encode<Encoder>(Encoder&, const Type&); \
-    template void ArgumentCoder<Type>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Type&);
-
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatBoxExtent)
-
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineFillColor)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
-
-#undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
-
 void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCacheEngine::Record& record)
 {
     encoder << record.identifier;

@@ -47,6 +47,10 @@ namespace WebCore { class InheritsFrom; }
 namespace WebCore { class InheritanceGrandchild; }
 namespace WTF { class Seconds; }
 namespace WTF { class CreateUsingClass; }
+namespace WebCore {
+template<typename> class RectEdges;
+using FloatBoxExtent = RectEdges<float>;
+}
 
 namespace IPC {
 
@@ -106,6 +110,11 @@ template<> struct ArgumentCoder<WTF::Seconds> {
 template<> struct ArgumentCoder<WTF::CreateUsingClass> {
     static void encode(Encoder&, const WTF::CreateUsingClass&);
     static std::optional<WTF::CreateUsingClass> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
+    static void encode(Encoder&, const WebCore::FloatBoxExtent&);
+    static std::optional<WebCore::FloatBoxExtent> decode(Decoder&);
 };
 
 } // namespace IPC

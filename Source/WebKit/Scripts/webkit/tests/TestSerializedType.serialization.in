@@ -89,3 +89,10 @@ class WTF::Seconds {
 [CreateUsing=fromDouble] class WTF::CreateUsingClass {
     double value
 }
+
+[Alias=RectEdges<float>] alias WebCore::FloatBoxExtent {
+    float top()
+    float right()
+    float bottom()
+    float left()
+};

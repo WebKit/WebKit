@@ -38,6 +38,7 @@
 #include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/ReturnRefClass.h>
+#include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <wtf/CreateUsingClass.h>
@@ -466,6 +467,51 @@ std::optional<WTF::CreateUsingClass> ArgumentCoder<WTF::CreateUsingClass>::decod
         WTF::CreateUsingClass::fromDouble(
             WTFMove(*value)
         )
+    };
+}
+
+
+void ArgumentCoder<WebCore::FloatBoxExtent>::encode(Encoder& encoder, const WebCore::FloatBoxExtent& instance)
+{
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.top())>>, float>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.right())>>, float>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.bottom())>>, float>);
+    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.left())>>, float>);
+    encoder << instance.top();
+    encoder << instance.right();
+    encoder << instance.bottom();
+    encoder << instance.left();
+}
+
+std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::decode(Decoder& decoder)
+{
+    std::optional<float> top;
+    decoder >> top;
+    if (!top)
+        return std::nullopt;
+
+    std::optional<float> right;
+    decoder >> right;
+    if (!right)
+        return std::nullopt;
+
+    std::optional<float> bottom;
+    decoder >> bottom;
+    if (!bottom)
+        return std::nullopt;
+
+    std::optional<float> left;
+    decoder >> left;
+    if (!left)
+        return std::nullopt;
+
+    return {
+        WebCore::FloatBoxExtent {
+            WTFMove(*top),
+            WTFMove(*right),
+            WTFMove(*bottom),
+            WTFMove(*left)
+        }
     };
 }
 

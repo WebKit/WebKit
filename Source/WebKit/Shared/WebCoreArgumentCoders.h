@@ -217,20 +217,6 @@ struct Record;
 
 namespace IPC {
 
-#define DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(Type) \
-    template<> struct ArgumentCoder<Type> { \
-        template<typename Encoder> static void encode(Encoder&, const Type&); \
-        static WARN_UNUSED_RETURN bool decode(Decoder&, Type&); \
-        static std::optional<Type> decode(Decoder&); \
-    };
-
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatBoxExtent)
-
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::DisplayList::SetInlineFillColor)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::DisplayList::SetInlineStrokeColor)
-
-#undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER
-
 template<> struct ArgumentCoder<WebCore::AttributedString> {
     static void encode(Encoder&, const WebCore::AttributedString&);
     static std::optional<WebCore::AttributedString> decode(Decoder&);
