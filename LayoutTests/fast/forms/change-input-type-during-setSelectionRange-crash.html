@@ -1,0 +1,18 @@
+<script>
+    addEventListener("load", () => {
+        initialFocus.focus();
+        input.setSelectionRange(0, 0);
+    });
+    function focusout() {
+        input.type = 'password';
+    }
+    function focusin() {
+        input.type = 'text';
+    }
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<p>PASS if this does not crash</p>
+<div tabindex="0" id="initialFocus" onfocusout="focusout()">
+    <input id="input" onfocusin="focusin()">
+</div>

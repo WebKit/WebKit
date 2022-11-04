@@ -486,7 +486,7 @@ void TextFieldInputType::createDataListDropdownIndicator()
 {
     ASSERT(!m_dataListDropdownIndicator);
     if (!m_container)
-        createContainer();
+        createContainer(PreserveSelectionRange::Yes);
 
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
@@ -822,7 +822,7 @@ void TextFieldInputType::autoFillButtonElementWasClicked()
     page->chrome().client().handleAutoFillButtonClick(*element());
 }
 
-void TextFieldInputType::createContainer()
+void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelection)
 {
     ASSERT(!m_container);
     ASSERT(element());
@@ -833,7 +833,7 @@ void TextFieldInputType::createContainer()
 
     // FIXME: <https://webkit.org/b/245977> Suppress selectionchange events during subtree modification.
     std::optional<std::tuple<unsigned, unsigned, TextFieldSelectionDirection>> selectionState;
-    if (enclosingTextFormControl(element()->document().selection().selection().start()) == element())
+    if (preserveSelection == PreserveSelectionRange::Yes && enclosingTextFormControl(element()->document().selection().selection().start()) == element())
         selectionState = { element()->selectionStart(), element()->selectionEnd(), element()->computeSelectionDirection() };
 
     m_container = TextControlInnerContainer::create(element()->document());
@@ -878,7 +878,7 @@ void TextFieldInputType::updateAutoFillButton()
 
     if (shouldDrawAutoFillButton()) {
         if (!m_container)
-            createContainer();
+            createContainer(PreserveSelectionRange::Yes);
 
         AutoFillButtonType autoFillButtonType = element()->autoFillButtonType();
         if (!m_autoFillButton)
