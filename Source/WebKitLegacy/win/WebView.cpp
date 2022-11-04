@@ -6302,7 +6302,7 @@ bool WebView::paintCompositedContentToHDC(HDC deviceContext)
 #if USE(CA)
     m_layerTreeHost->flushPendingLayerChangesNow();
 #elif USE(TEXTURE_MAPPER_GL)
-    m_acceleratedCompositingContext->flushAndRenderLayers();
+    m_acceleratedCompositingContext->flushPendingLayerChanges();
 #endif
 
     // Flushing might have taken us out of compositing mode.
@@ -6311,6 +6311,8 @@ bool WebView::paintCompositedContentToHDC(HDC deviceContext)
 
 #if USE(CA)
     m_layerTreeHost->paint(deviceContext);
+#elif USE(TEXTURE_MAPPER_GL)
+    m_acceleratedCompositingContext->paint(deviceContext);
 #endif
 
     return true;
