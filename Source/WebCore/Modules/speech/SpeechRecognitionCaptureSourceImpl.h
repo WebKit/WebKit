@@ -62,8 +62,7 @@ private:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
 #if PLATFORM(COCOA)
-    bool updateDataSource(const CAAudioStreamDescription&);
-    void pullSamplesAndCallDataCallback(const MediaTime&, const CAAudioStreamDescription&, size_t sampleCount);
+    void pullSamplesAndCallDataCallback(AudioSampleDataSource*, const MediaTime&, const CAAudioStreamDescription&, size_t sampleCount);
 #endif
 
     // RealtimeMediaSource::Observer
