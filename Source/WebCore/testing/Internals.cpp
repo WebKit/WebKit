@@ -148,6 +148,7 @@
 #include "MediaUsageInfo.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
+#include "MessagePort.h"
 #include "MockAudioDestinationCocoa.h"
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
@@ -2859,6 +2860,17 @@ bool Internals::isDocumentAlive(const String& documentIdentifier) const
     auto uuid = UUID::parseVersion4(documentIdentifier);
     ASSERT(uuid);
     return uuid ? Document::allDocumentsMap().contains({ *uuid, Process::identifier() }) : false;
+}
+
+uint64_t Internals::messagePortIdentifier(const MessagePort& port) const
+{
+    return port.identifier().portIdentifier.toUInt64();
+}
+
+bool Internals::isMessagePortAlive(uint64_t messagePortIdentifier) const
+{
+    MessagePortIdentifier portIdentifier { Process::identifier(), makeObjectIdentifier<MessagePortIdentifier::PortIdentifierType>(messagePortIdentifier) };
+    return MessagePort::isMessagePortAliveForTesting(portIdentifier);
 }
 
 uint64_t Internals::storageAreaMapCount() const
