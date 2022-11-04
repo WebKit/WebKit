@@ -42,7 +42,6 @@
 namespace WebKit {
 
 class ProcessThrottler;
-class ProcessAssertion;
 
 class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
@@ -136,10 +135,6 @@ public:
 
     void setProcessSuppressionEnabled(bool);
     bool platformIsBeingDebugged() const;
-
-#if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    void setRunningBoardThrottlingEnabled();
-#endif
 
     enum class UseLazyStop : bool { No, Yes };
     void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);

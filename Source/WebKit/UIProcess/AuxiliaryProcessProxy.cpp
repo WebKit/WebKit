@@ -291,10 +291,6 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     if (!connectionIdentifier)
         return;
 
-#if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s).moveToUniquePtr();
-#endif
-
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
 
     connectionWillOpen(*m_connection);

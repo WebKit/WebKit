@@ -50,7 +50,7 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
     return "unknown"_s;
 }
 
-#if !PLATFORM(COCOA) || !USE(RUNNINGBOARD)
+#if !PLATFORM(IOS_FAMILY)
 
 ProcessAssertion::ProcessAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
@@ -88,7 +88,7 @@ ProcessAndUIAssertion::ProcessAndUIAssertion(ProcessID pid, const String& reason
 
 ProcessAndUIAssertion::~ProcessAndUIAssertion() = default;
 
-#endif // !USE(RUNNINGBOARD)
+#endif // !PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
 

@@ -160,7 +160,7 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
     return connectedProcessIsSandboxed(m_connection.get());
 }
 
-#if !USE(RUNNINGBOARD)
+##if PLATFORM(MAC)
 void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 {
     static NeverDestroyed<OSObjectPtr<os_transaction_t>> globalTransaction;
@@ -187,7 +187,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 
 void XPCServiceExit()
 {
-#if !USE(RUNNINGBOARD)
+##if PLATFORM(MAC)
     setOSTransaction(nullptr);
 #endif
 

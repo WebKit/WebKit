@@ -59,7 +59,7 @@ namespace WebKit {
 
 static const char* webContentServiceName(bool nonValidInjectedCodeAllowed, ProcessLauncher::Client* client)
 {
-    if (client && client->shouldEnableLockdownMode())
+    if (client && client->shouldEnableCaptivePortalMode())
         return "com.apple.WebKit.WebContent.CaptivePortal";
 
     return nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
@@ -77,6 +77,23 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return "com.apple.WebKit.GPU";
 #endif
     }
+}
+
+static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
+{
+#if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(launchOptions);
+    // On iOS, we don't need to leak a boost message because RunningBoard process assertions give us the
+    // right priorities.
+    return false;
+#else
+    // On Mac, leak a boost onto the NetworkProcess and GPUProcess.
+#if ENABLE(GPU_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::ProcessType::GPU)
+        return true;
+#endif
+    return launchOptions.processType == ProcessLauncher::ProcessType::Network;
+#endif
 }
 
 void ProcessLauncher::launchProcess()
@@ -127,6 +144,12 @@ void ProcessLauncher::launchProcess()
 #endif
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 
+    if (shouldLeakBoost(m_launchOptions)) {
+        auto preBootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_string(preBootstrapMessage.get(), "message-name", "pre-bootstrap");
+        xpc_connection_send_message(m_xpcConnection.get(), preBootstrapMessage.get());
+    }
+
     // Create the listening port.
     mach_port_t listeningPort = MACH_PORT_NULL;
     auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -164,7 +187,7 @@ void ProcessLauncher::launchProcess()
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
         if (m_client->shouldEnableSharedArrayBuffer())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
-        if (m_client->shouldEnableLockdownMode())
+        if (m_client->shouldEnableCaptivePortalMode())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-captive-portal-mode", true);
     }
 
