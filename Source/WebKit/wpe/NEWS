@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.38.2
+=================
+
+What's new in WPE WebKit 2.38.2?
+
+  - Fix scrolling issues in some sites having fixed background.
+  - Fix prolonged buffering during progressive live playback.
+  - Fix the build with accessibility disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.38.1
 =================
 
