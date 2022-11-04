@@ -2411,8 +2411,6 @@ imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-l
 
 webkit.org/b/246547 animations/steps-transform-rendering-updates.html [ Pass Failure ]
 
-webkit.org/b/246698 media/video-object-fit.html [ ImageOnlyFailure ]
-
 # webkit.org/b/246701 Flaky failure only on iOS
 imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html [ Pass Failure ]

@@ -41,7 +41,7 @@ namespace WebKit {
 
 void RemoteMediaPlayerProxy::setVideoInlineSizeIfPossible(const WebCore::FloatSize& size)
 {
-    if (!m_inlineLayerHostingContext->rootLayer() || size.isEmpty())
+    if (!m_inlineLayerHostingContext || !m_inlineLayerHostingContext->rootLayer() || size.isEmpty())
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
@@ -51,21 +51,6 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeIfPossible(const WebCore::FloatSi
     [CATransaction setDisableActions:YES];
     [m_inlineLayerHostingContext->rootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
     [CATransaction commit];
-}
-
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode, CompletionHandler<void(std::optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
-{
-    m_player->setPrivateBrowsingMode(privateMode);
-    m_player->setPreload(preload);
-    m_player->setPreservesPitch(preservesPitch);
-    m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode);
-    m_player->setPresentationSize(presentationSize);
-    if (prepareForRendering)
-        m_player->prepareForRendering();
-    m_videoContentScale = videoContentScale;
-    if (!m_inlineLayerHostingContext)
-        m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-    completionHandler(m_inlineLayerHostingContext->contextID());
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
@@ -78,14 +63,28 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
+
+    auto* layer = m_player->platformLayer();
+    if (layer && !m_inlineLayerHostingContext) {
+        m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+        IntSize presentationSize = enclosingIntRect(FloatRect(layer.frame)).size();
+        m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextIdChanged(m_inlineLayerHostingContext->contextID(), presentationSize), m_id);
+    } else if (!layer && m_inlineLayerHostingContext) {
+        m_inlineLayerHostingContext = nullptr;
+        m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextIdChanged(std::nullopt, { }), m_id);
+    }
+
+    if (m_inlineLayerHostingContext)
+        m_inlineLayerHostingContext->setRootLayer(layer);
+
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
-    m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
+    if (m_inlineLayerHostingContext)
+        m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
 
     m_videoInlineSize = size;
     setVideoInlineSizeIfPossible(size);
