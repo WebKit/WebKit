@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@ SOAuthorizationCoordinator::SOAuthorizationCoordinator()
         return;
 #endif
     m_soAuthorizationDelegate = adoptNS([[WKSOAuthorizationDelegate alloc] init]);
+    m_soAuthorization.get().delegate = m_soAuthorizationDelegate.get();
     [NSURLSession _disableAppSSO];
 }
 
@@ -81,7 +82,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
         return;
     }
 
-    auto session = subframeNavigation ? SubFrameSOAuthorizationSession::create(WTFMove(navigationAction), page, WTFMove(completionHandler), targetFrame->handle()->frameID()) : RedirectSOAuthorizationSession::create(WTFMove(navigationAction), page, WTFMove(completionHandler));
+    auto session = subframeNavigation ? SubFrameSOAuthorizationSession::create(m_soAuthorization.get(), WTFMove(navigationAction), page, WTFMove(completionHandler), targetFrame->handle()->frameID()) : RedirectSOAuthorizationSession::create(m_soAuthorization.get(), WTFMove(navigationAction), page, WTFMove(completionHandler));
     [m_soAuthorizationDelegate setSession:WTFMove(session)];
 }
 
@@ -107,13 +108,12 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
         return;
     }
 
-    auto session = PopUpSOAuthorizationSession::create(page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback));
+    auto session = PopUpSOAuthorizationSession::create(m_soAuthorization.get(), page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback));
     [m_soAuthorizationDelegate setSession:WTFMove(session)];
 }
 
 } // namespace WebKit
 
-#undef AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR
 #undef AUTHORIZATIONCOORDINATOR_RELEASE_LOG
 
 #endif
