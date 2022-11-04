@@ -4,10 +4,12 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id="body" role="group">
+<body>
 
-<blockquote>first blockquote level 1</blockquote>
-<blockquote>second blockquote level 1</blockquote>
+<div id="content" role="group">
+
+<blockquote>first block quote level 1</blockquote>
+<blockquote>second block quote level 1</blockquote>
 <p style="color:black; font-family:sans-serif; font-weight:bold; text-decoration:underline;">sans-serif black bold text with underline</p>
 <p style="color:blue; font-family:serif; font-style:italic;">serif blue italic text</p>
 <form>
@@ -36,6 +38,7 @@
 <thead><tr><td>second table heading level 1</td></tr></thead>
 <tbody><tr><td>second table body level 1</td></tr></tbody>
 </table>
+<p>misspellleedd</p>
 <ul role="tree"><li role="treeitem">tree item</li></ul>
 
 <h1>isVisible test start</h1>
@@ -54,252 +57,222 @@
 </div>
 <button id="button">test button 3</button>
 
-    
-<p id="description"></p>
-<div id="console"></div>
+</div>
 
 <script>
-    description("This tests the ability to search for accessible elements by key or text.");
+    let output = "This tests the ability to search for accessible elements by key or text.\n\n";
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        window.containerElement = accessibilityController.accessibleElementById("body");
+        window.containerElement = accessibilityController.accessibleElementById("content");
         // Any element.
         window.startElement = containerElement.childAtIndex(0);
         window.resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
-        shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
+        output += expect("resultElement.role", "'AXRole: AXStaticText'");
+        output += expect("resultElement.stringValue", "'AXValue: first block quote level 1'");
 
         // Same level blockquote.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXBlockquoteSameLevelSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second blockquote level 1'");
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: second block quote level 1'");
 
         // Blockquote.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXBlockquoteSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second blockquote level 1'");
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: second block quote level 1'");
 
         // Bold font.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXBoldFontSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: sans-serif black bold text with underline'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: sans-serif black bold text with underline'");
+
         // Button.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXButton'");
-        
+        output += expect("resultElement.role", "'AXRole: AXButton'");
+
         // Check box.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXCheckBoxSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXCheckBox'");
-        
+        output += expect("resultElement.role", "'AXRole: AXCheckBox'");
+
         // Control.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXCheckBoxSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXCheckBox'");
-        
+        output += expect("resultElement.role", "'AXRole: AXCheckBox'");
+
         // Different type element.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXDifferentTypeSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
-        shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXStaticText'");
+        output += expect("resultElement.stringValue", "'AXValue: first block quote level 1'");
+
         // Font change.
         startElement = containerElement.childAtIndex(2);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXFontChangeSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
+
         // Font color change.
-        startElement = containerElement.childAtIndex(2);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXFontColorChangeSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
+
         // Graphic.
         startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXGraphicSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXImage'");
-        
+        output += expect("resultElement.role", "'AXRole: AXImage'");
+
         // Heading level 1.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel1SearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: first heading level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: first heading level 1'");
+
         // Heading level 2.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel2SearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
+
         // Heading level 3.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel3SearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 3'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 3'");
+
         // Heading level 4.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel4SearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 4'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 4'");
+
         // Heading level 5.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel5SearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 5'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 5'");
+
         // Heading level 6.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel6SearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 6'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 6'");
+
         // Same level heading.
         startElement = containerElement.childAtIndex(6);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingSameLevelSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second heading level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: second heading level 1'");
+
         // Heading.
         startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: first heading level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: first heading level 1'");
+
         // Italic font.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXItalicFontSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
+
         // Landmark.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLandmarkSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.subrole", "'AXSubrole: AXLandmarkBanner'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.subrole", "'AXSubrole: AXLandmarkBanner'");
+
         // Link.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXLink'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
-        
+        output += expect("resultElement.role", "'AXRole: AXLink'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+
         // List.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXListSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXList'");
-        
+        output += expect("resultElement.role", "'AXRole: AXList'");
+
         // Live Region.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLiveRegionSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.stringAttributeValue('AXARIALive')", "'polite'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.stringAttributeValue('AXARIALive')", "'polite'");
+
         // Misspelled word.
-        // FIXME: Handle this search key.
-        
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXMisspelledWordSearchKey", "", false);
+        output += expect("resultElement.role", "'AXRole: AXStaticText'");
+        output += expect("resultElement.stringValue", "'AXValue: misspellleedd'");
+
         // Outline.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXOutlineSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXOutline'");
-        shouldBe("resultElement.childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: tree item'");
-        
+        output += expect("resultElement.role", "'AXRole: AXOutline'");
+        output += expect("resultElement.childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: tree item'");
+
         // Plain text.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXPlainTextSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
-        shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXStaticText'");
+        output += expect("resultElement.stringValue", "'AXValue: first block quote level 1'");
+
         // Radio group.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioGroup'");
-        
+        output += expect("resultElement.role", "'AXRole: AXRadioGroup'");
+
         // Same type element.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXSameTypeSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second blockquote level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: second block quote level 1'");
+
         // Static text.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXStaticTextSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
-        shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXStaticText'");
+        output += expect("resultElement.stringValue", "'AXValue: first block quote level 1'");
+
         // Style change.
         startElement = containerElement.childAtIndex(2);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXStyleChangeSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
+
         // Same level table.
         startElement = containerElement.childAtIndex(18);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXTableSameLevelSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXTable'");
-        shouldBe("resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: second table heading level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXTable'");
+        output += expect("resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: second table heading level 1'");
+
         // Table.
         startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXTableSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXTable'");
-        shouldBe("resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: first table heading level 1'");
-        
+        output += expect("resultElement.role", "'AXRole: AXTable'");
+        output += expect("resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: first table heading level 1'");
+
         // Text field.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXTextFieldSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXTextField'");
-        
+        output += expect("resultElement.role", "'AXRole: AXTextField'");
+
         // Underline.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnderlineSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXGroup'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: sans-serif black bold text with underline'");
-        
+        output += expect("resultElement.role", "'AXRole: AXGroup'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: sans-serif black bold text with underline'");
+
         // Unvisited link.
-        startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnvisitedLinkSearchKey", "", false);
-        shouldBe("resultElement.boolAttributeValue('AXVisited')", "false");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+        output += expect("resultElement.boolAttributeValue('AXVisited')", "false");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
 
         // Previous text search.
         startElement = containerElement.childAtIndex(10);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "", "sans-serif black bold text with underline", false);
-        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
-        shouldBe("resultElement.stringValue", "'AXValue: sans-serif black bold text with underline'");
-        
+        output += expect("resultElement.role", "'AXRole: AXStaticText'");
+        output += expect("resultElement.stringValue", "'AXValue: sans-serif black bold text with underline'");
+
         // Execute a search for the next heading level 2 or the next link.
         startElement = containerElement.childAtIndex(0);
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, ["AXHeadingLevel2SearchKey", "AXLinkSearchKey"], "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
-        
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
+
         // After finding the heading, execute the search again and we should find the link.
         resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, ["AXHeadingLevel2SearchKey", "AXLinkSearchKey"], "", false);
-        shouldBe("resultElement.role", "'AXRole: AXLink'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+        output += expect("resultElement.role", "'AXRole: AXLink'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
 
         // From the link, execute the search in reverse and we should land back on the heading.
         resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, ["AXHeadingLevel2SearchKey", "AXLinkSearchKey"], "", false);
-        shouldBe("resultElement.role", "'AXRole: AXHeading'");
-        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
-           
-        // Now, we need to test isVisible. Save off the first object
-        startElement = containerElement.childAtIndex(0);
+        output += expect("resultElement.role", "'AXRole: AXHeading'");
+        output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
 
         // Scroll all the way to the bottom of the content
         resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "", "test button 3", false);
-        shouldBe("resultElement.role", "'AXRole: AXButton'");
-        shouldBe("resultElement.title", "'AXTitle: test button 3'");
+        output += expect("resultElement.role", "'AXRole: AXButton'");
+        output += expect("resultElement.title", "'AXTitle: test button 3'");
         setTimeout(async function() {
             resultElement.scrollToMakeVisible();
             await waitFor(() => {
@@ -308,36 +281,36 @@
 
             // find the start of the isVisible test section
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "", "isVisible test start", false);
-            shouldBe("resultElement.role", "'AXRole: AXHeading'");
-            shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: isVisible test start'");
+            output += expect("resultElement.role", "'AXRole: AXHeading'");
+            output += expect("resultElement.childAtIndex(0).stringValue", "'AXValue: isVisible test start'");
 
             // save away the "isVisible test start" heading as the start element
             startElement = resultElement;
 
             // If we don't care about visible only, then we should easily find 3 buttons
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 1'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 1'");
 
             resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXButtonSearchKey", "", false);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 2'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 2'");
 
             // save away testButton2 so we can make it visible later
             window.testButton2 = resultElement;
 
             resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXButtonSearchKey", "", false);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 3'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 3'");
 
             // if we care about visible only, then we should not find "test button 2"
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", true);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 1'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 1'");
 
             resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXButtonSearchKey", "", true);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 3'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 3'");
 
             // now, scroll to the second button, and confirm that we don't see the first button
             testButton2.scrollToMakeVisible();
@@ -346,19 +319,21 @@
             });
 
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", true);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 2'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 2'");
 
             resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXButtonSearchKey", "", true);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 3'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 3'");
 
             // Now since the page is scrolled to the bottom, the first visible button should be #2
             startElement = containerElement.childAtIndex(0);
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", true);
-            shouldBe("resultElement.role", "'AXRole: AXButton'");
-            shouldBe("resultElement.title", "'AXTitle: test button 2'");
+            output += expect("resultElement.role", "'AXRole: AXButton'");
+            output += expect("resultElement.title", "'AXTitle: test button 2'");
 
+            debug(output);
+            content.style.visibility = "hidden";
             finishJSTest();
         }, 0);
     }
