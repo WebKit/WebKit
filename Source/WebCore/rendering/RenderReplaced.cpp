@@ -558,9 +558,11 @@ static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsic
 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
+    if (style().logicalWidth().isSpecified())
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
     if (shouldApplyInlineSizeContainment())
         return LayoutUnit();
-    if (style().logicalWidth().isSpecified() || style().logicalWidth().isIntrinsic())
+    if (style().logicalWidth().isIntrinsic())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();

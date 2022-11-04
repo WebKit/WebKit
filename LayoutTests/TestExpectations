@@ -4891,11 +4891,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-023.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-024.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-025.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-032.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-033.sub.https.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 # c-v: auto
@@ -4905,7 +4900,6 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-001.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-002.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-003.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-canvas.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002.html [ ImageOnlyFailure ]
