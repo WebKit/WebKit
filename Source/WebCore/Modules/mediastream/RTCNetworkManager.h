@@ -33,6 +33,7 @@ namespace WebCore {
 class RTCNetworkManager : public ThreadSafeRefCounted<RTCNetworkManager, WTF::DestructionThread::MainRunLoop> {
 public:
     virtual ~RTCNetworkManager() = default;
+    virtual void close() = 0;
     virtual void setICECandidateFiltering(bool) = 0;
     virtual void unregisterMDNSNames() = 0;
 };
