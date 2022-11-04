@@ -184,6 +184,18 @@ void RemoteMediaPlayerProxy::cancelLoad()
     m_player->cancelLoad();
 }
 
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode)
+{
+    m_player->setPrivateBrowsingMode(privateMode);
+    m_player->setPreload(preload);
+    m_player->setPreservesPitch(preservesPitch);
+    m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode);
+    m_player->setPresentationSize(presentationSize);
+    if (prepareForRendering)
+        m_player->prepareForRendering();
+    m_videoContentScale = videoContentScale;
+}
+
 void RemoteMediaPlayerProxy::prepareToPlay()
 {
     ALWAYS_LOG(LOGIDENTIFIER);

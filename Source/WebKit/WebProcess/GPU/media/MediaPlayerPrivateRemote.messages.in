@@ -94,6 +94,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 
 #if PLATFORM(COCOA)
     PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, WebKit::RemoteVideoFrameProxy::Properties frameProperties);
+    LayerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId, WebCore::IntSize presentationSize);
 #endif
 }
 
