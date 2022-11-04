@@ -161,6 +161,8 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--a-47i"_s, // 'a' U+15F4
         "xn--n-twf"_s, // U+0E01 'n'
         "xn--n-uwf"_s, // 'n' U+0E01
+        "xn--3hb112n"_s, // U+065B
+        "xn--a-ypc062v"_s, // 'a' U+065B
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -207,6 +209,9 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 
     // Thai
     EXPECT_STREQ("https://\u0E01\u0E02abc/", userVisibleString(literalURL("https://\u0E01\u0E02abc/")));
+
+    // Arabic
+    EXPECT_STREQ("https://\u0620\u065Babc/", userVisibleString(literalURL("https://\u0620\u065Babc/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)
