@@ -803,13 +803,14 @@ public:
             if (m_constantPoolMap.contains(value))
                 return true;
 
-            if (!set.isStillValid()) {
+            if (set.isStillValid()) {
                 auto result = m_constantPoolMap.add(value, m_constantPoolMap.size());
                 ASSERT_UNUSED(result, result.isNewEntry);
                 m_constantPool.append(value);
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         if (watchpoints().isWatched(set))
