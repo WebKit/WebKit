@@ -1417,10 +1417,12 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
     return consumeMetaConsumer<ResolutionConsumer>(range, { }, ValueRange::All, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid, CSSValuePool::singleton());
 }
 
+#if ENABLE(CSS_CONIC_GRADIENTS)
 static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
     return consumeMetaConsumer<AngleOrPercentConsumer>(range, { }, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow, CSSValuePool::singleton());
 }
+#endif
 
 static std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
@@ -3618,10 +3620,12 @@ static std::optional<CSSGradientColorStopList> consumeLengthColorStopList(CSSPar
     return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeLengthOrPercent(range, context.mode, ValueRange::All); });
 }
 
+#if ENABLE(CSS_CONIC_GRADIENTS)
 static std::optional<CSSGradientColorStopList> consumeAngularColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
 {
     return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeAngleOrPercent(range, context.mode); });
 }
+#endif
 
 static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
