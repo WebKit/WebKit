@@ -221,6 +221,7 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 #if PLATFORM(COCOA)
 void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
+    MESSAGE_CHECK(description.isPCM(), "Only PCM data is supported");
     if (auto* item = m_audioDestinations.get(identifier))
         item->audioSamplesStorageChanged(WTFMove(handle), description, numberOfFrames);
 }

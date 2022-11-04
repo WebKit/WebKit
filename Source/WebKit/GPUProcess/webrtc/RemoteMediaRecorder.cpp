@@ -67,6 +67,7 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     MESSAGE_CHECK(m_recordAudio);
+    MESSAGE_CHECK(description.isPCM());
     m_audioBufferList = nullptr;
     m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
     if (!m_ringBuffer)

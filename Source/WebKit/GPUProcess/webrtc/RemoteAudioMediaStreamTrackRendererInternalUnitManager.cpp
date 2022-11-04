@@ -122,6 +122,11 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMed
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore)
 {
+    if (!description.isPCM()) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+
     if (auto* unit = m_units.get(identifier))
         unit->start(WTFMove(handle), description, numberOfFrames, WTFMove(semaphore));
 }
