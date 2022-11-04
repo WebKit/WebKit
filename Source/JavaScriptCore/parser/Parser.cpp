@@ -1918,15 +1918,16 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
     if (shouldPushLexicalScope) {
         ScopeRef newScope = pushScope();
         newScope->setIsLexicalScope();
-        newScope->preventVarDeclarations();
         switch (type) {
         case BlockType::CatchBlock:
             newScope->setIsCatchBlockScope();
+            newScope->preventVarDeclarations();
             break;
         case BlockType::StaticBlock:
             newScope->setIsStaticBlock();
             break;
         case BlockType::Normal:
+            newScope->preventVarDeclarations();
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
