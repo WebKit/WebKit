@@ -48,7 +48,7 @@ static int const ExponentMax = 1023;
 static int const ExponentMin = -1023;
 static int const Precision = 18;
 
-static const uint64_t MaxCoefficient = UINT64_C(0x16345785D89FFFF); // 999999999999999999 == 18 9's
+static const uint64_t MaxCoefficient = UINT64_C(0xDE0B6B3A763FFFF); // 999999999999999999 == 18 9's
 
 // This class handles Decimal special values.
 class SpecialValueHandler {
