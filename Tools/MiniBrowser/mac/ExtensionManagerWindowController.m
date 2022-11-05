@@ -34,11 +34,10 @@
 {
     self = [self initWithWindowNibName:@"ExtensionManagerWindowController"];
     if (self) {
-        NSArray* installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
+        NSArray *installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
         if (installedContentExtensions) {
             for (NSString *identifier in installedContentExtensions) {
-                [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *list, NSError *error)
-                {
+                [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *list, NSError *error) {
                     if (error) {
                         NSLog(@"Extension store got out of sync with system defaults.");
                         return;
@@ -58,7 +57,7 @@
 {
     [super windowDidLoad];
 
-    NSArray* installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
+    NSArray *installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
     if (installedContentExtensions) {
         for (NSString *extension in installedContentExtensions)
             [arrayController addObject:extension];
@@ -73,8 +72,7 @@
     openPanel.allowedFileTypes = @[ @"public.json" ];
 #pragma clang diagnostic pop
     
-    [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result)
-    {
+    [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result != NSModalResponseOK)
             return;
 
@@ -82,8 +80,7 @@
         NSString *identifier = url.lastPathComponent;
         NSString *jsonString = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
 
-        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:jsonString completionHandler:^(WKContentRuleList *list, NSError *error)
-        {
+        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:jsonString completionHandler:^(WKContentRuleList *list, NSError *error) {
             
             if (error) {
                 NSAlert *alert = [NSAlert alertWithError:error];
@@ -93,7 +90,7 @@
 
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-            NSArray* installedContentExtensions = [defaults arrayForKey:@"InstalledContentExtensions"];
+            NSArray *installedContentExtensions = [defaults arrayForKey:@"InstalledContentExtensions"];
             NSMutableArray *mutableInstalledContentExtensions;
             if (installedContentExtensions)
                 mutableInstalledContentExtensions = [installedContentExtensions mutableCopy];
@@ -105,7 +102,7 @@
 
             [self->arrayController addObject:identifier];
 
-            BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
+            BrowserAppDelegate *appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
             [appDelegate.userContentContoller addContentRuleList:list];
         }];
     }];
@@ -118,8 +115,7 @@
 
     NSString *identifierToRemove = arrayController.arrangedObjects[index];
 
-    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:identifierToRemove completionHandler:^(NSError *error)
-    {
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:identifierToRemove completionHandler:^(NSError *error) {
         if (error) {
             NSAlert *alert = [NSAlert alertWithError:error];
             [alert runModal];
@@ -133,7 +129,7 @@
         [defaults setObject:installedContentExtensions forKey:@"InstalledContentExtensions"];
 
         [self->arrayController removeObjectAtArrangedObjectIndex:index];
-        BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
+        BrowserAppDelegate *appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
         [appDelegate.userContentContoller _removeUserContentFilter:identifierToRemove];
     }];
 }
