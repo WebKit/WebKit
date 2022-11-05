@@ -651,8 +651,11 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
         }
         nonOverflowingContentWidth += runLogicalWidth;
     }
-    // We have to have an overflowing run.
-    RELEASE_ASSERT(overflowingRunIndex < runs.size());
+    if (overflowingRunIndex == runs.size()) {
+        // We have to have an overflowing run.
+        ASSERT_NOT_REACHED();
+        return { runs.size() ? runs.size() - 1 : 0 };
+    }
 
     // Check first if we can actually break the overflowing run.
     if (auto breakingPosition = tryBreakingOverflowingRun(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
