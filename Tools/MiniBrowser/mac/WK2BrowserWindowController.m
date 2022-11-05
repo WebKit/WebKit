@@ -539,16 +539,28 @@ static BOOL areEssentiallyEqual(double a, double b)
         title = url.lastPathComponent ?: url._web_userVisibleString;
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     self.window.title = title;
-    pid_t gpuProcessIdentifier = _webView._gpuProcessIdentifier;
-    if (gpuProcessIdentifier)
-        self.window.subtitle = [NSString stringWithFormat:@"[WK2 wp %d gpup %d]%@%@", _webView._webProcessIdentifier, gpuProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
-    else
-        self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
-#else
-    self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]%@", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier, _webView._editable ? @" [Editable]" : @""];
-#endif
+
+    NSMutableString *subtitle = [@"[WK2" mutableCopy];
+    __auto_type appendProcessIdentifier = ^(NSString *name, pid_t processIdentifier) {
+        if (!processIdentifier)
+            return;
+        [subtitle appendFormat:@" %@:%d", name, processIdentifier];
+    };
+
+    appendProcessIdentifier(@"web", _webView._webProcessIdentifier);
+    appendProcessIdentifier(@"net", _webView.configuration.websiteDataStore._networkProcessIdentifier);
+    appendProcessIdentifier(@"gpu", _webView._gpuProcessIdentifier);
+
+    [subtitle appendString:@"]"];
+
+    if (_isPrivateBrowsingWindow)
+        [subtitle appendString:@" 🙈"];
+
+    if (_webView._editable)
+        [subtitle appendString:@" ✏️"];
+
+    self.window.subtitle = subtitle;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
