@@ -40,7 +40,7 @@ private:
 };
 
 inline ConstraintsForTableContent::ConstraintsForTableContent(const ConstraintsForInFlowContent& inFlowContraints, std::optional<LayoutUnit> availableVerticalSpaceForContent)
-    : ConstraintsForInFlowContent(inFlowContraints.horizontal(), inFlowContraints.logicalTop(), TableContent)
+    : ConstraintsForInFlowContent(inFlowContraints.horizontal(), inFlowContraints.logicalTop(), { }, TableContent)
     , m_availableVerticalSpaceForContent(availableVerticalSpaceForContent)
 {
 }

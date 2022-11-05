@@ -38,7 +38,7 @@ class InlineDisplayLineBuilder {
 public:
     InlineDisplayLineBuilder(const InlineFormattingContext&);
 
-    InlineDisplay::Line build(const LineBuilder::LineContent&, const LineBox&) const;
+    InlineDisplay::Line build(const LineBuilder::LineContent&, const LineBox&, const ConstraintsForInFlowContent&) const;
 
 private:
     struct EnclosingLineGeometry {

@@ -443,8 +443,8 @@ void LineLayout::layout()
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
 
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
-
-    inlineFormattingContext.layoutInFlowContentForIntegration({ horizontalConstraints, rootGeometry.contentBoxTop() });
+    auto visualLeft = rootLayoutBox.style().isLeftToRightDirection() ? rootGeometry.contentBoxLeft() : rootGeometry.borderEnd() + rootGeometry.horizontalSpaceForScrollbar() + rootGeometry.paddingEnd().value_or(0_lu);
+    inlineFormattingContext.layoutInFlowContentForIntegration({ horizontalConstraints, rootGeometry.contentBoxTop(), visualLeft });
 
     constructContent();
 

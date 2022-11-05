@@ -90,17 +90,14 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, scrollableOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const ConstraintsForInFlowContent& constraints) const
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
-    auto& rootGeometry = layoutState().geometryForBox(root());
     auto isLeftToRightDirection = lineContent.inlineBaseDirection == TextDirection::LTR;
-    auto lineOffsetFromContentBox = lineContent.lineLogicalTopLeft.x() - rootGeometry.contentBoxLeft();
     auto lineBoxLogicalWidth = lineBox.logicalRect().width();
-
     auto lineBoxVisualLeft = isLeftToRightDirection
-        ? rootGeometry.contentBoxLeft() + lineOffsetFromContentBox
-        :  InlineLayoutUnit { rootGeometry.borderEnd() } + rootGeometry.horizontalSpaceForScrollbar() + rootGeometry.paddingEnd().value_or(0_lu) + rootGeometry.contentBoxWidth() - lineOffsetFromContentBox - lineBoxLogicalWidth;
+        ? lineContent.lineLogicalTopLeft.x()
+        : InlineLayoutUnit { constraints.visualLeft() + constraints.horizontal().logicalWidth + constraints.horizontal().logicalLeft  } - (lineContent.lineLogicalTopLeft.x() + lineBoxLogicalWidth);
 
     auto contentVisualLeft = isLeftToRightDirection
         ? lineBox.rootInlineBoxAlignmentOffset()

@@ -229,7 +229,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
         auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
-        auto lineLogicalRect = computeGeometryForLineContent(lineContent);
+        auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
@@ -438,13 +438,13 @@ void InlineFormattingContext::collectContentIfNeeded()
     formattingState.addInlineItems(inlineItemsBuilder.build());
 }
 
-InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent)
+InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
 
     auto lineBox = LineBoxBuilder { *this }.build(lineContent, currentLineIndex);
-    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox);
+    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox, constraints);
     formattingState.addBoxes(InlineDisplayContentBuilder { *this, formattingState }.build(lineContent, lineBox, displayLine, currentLineIndex));
     formattingState.addLineBox(WTFMove(lineBox));
     formattingState.addLine(displayLine);

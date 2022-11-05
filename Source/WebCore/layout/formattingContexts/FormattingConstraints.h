@@ -43,12 +43,13 @@ struct VerticalConstraints {
     LayoutUnit logicalHeight;
 };
 
-// FIXME: Move the vertical bits to a dedicated ConstraintsForBlockContent class.
+// FIXME: Create a dedicated ConstraintsForInlineContent class.
 struct ConstraintsForInFlowContent {
-    ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop);
+    ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, LayoutUnit visualLeft = { });
 
     HorizontalConstraints horizontal() const { return m_horizontal; }
     LayoutUnit logicalTop() const { return m_logicalTop; }
+    LayoutUnit visualLeft() const { return m_visualLeft; }
 
     enum BaseTypeFlag : uint8_t {
         GenericContent = 1 << 0,
@@ -59,7 +60,7 @@ struct ConstraintsForInFlowContent {
     bool isConstraintsForFlexContent() const { return baseTypeFlags().contains(FlexContent); }
 
 protected:
-    ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, OptionSet<BaseTypeFlag>);
+    ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, LayoutUnit visualLeft, OptionSet<BaseTypeFlag>);
 
 private:
     OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
@@ -67,6 +68,7 @@ private:
     unsigned m_baseTypeFlags : 3; // OptionSet<BaseTypeFlag>
     HorizontalConstraints m_horizontal;
     LayoutUnit m_logicalTop;
+    LayoutUnit m_visualLeft;
 };
 
 struct ConstraintsForOutOfFlowContent {
@@ -76,15 +78,16 @@ struct ConstraintsForOutOfFlowContent {
     LayoutUnit borderAndPaddingConstraints;
 };
 
-inline ConstraintsForInFlowContent::ConstraintsForInFlowContent(HorizontalConstraints horizontal, LayoutUnit logicalTop, OptionSet<BaseTypeFlag> baseTypeFlags)
+inline ConstraintsForInFlowContent::ConstraintsForInFlowContent(HorizontalConstraints horizontal, LayoutUnit logicalTop, LayoutUnit visualLeft, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_baseTypeFlags(baseTypeFlags.toRaw())
     , m_horizontal(horizontal)
     , m_logicalTop(logicalTop)
+    , m_visualLeft(visualLeft)
 {
 }
 
-inline ConstraintsForInFlowContent::ConstraintsForInFlowContent(HorizontalConstraints horizontal, LayoutUnit logicalTop)
-    : ConstraintsForInFlowContent(horizontal, logicalTop, GenericContent)
+inline ConstraintsForInFlowContent::ConstraintsForInFlowContent(HorizontalConstraints horizontal, LayoutUnit logicalTop, LayoutUnit visualLeft)
+    : ConstraintsForInFlowContent(horizontal, logicalTop, visualLeft, GenericContent)
 {
 }
 

@@ -70,7 +70,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&);
+    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const ConstraintsForInFlowContent&);
     void invalidateFormattingState();
 
     const InlineDamage* m_lineDamage { nullptr };
