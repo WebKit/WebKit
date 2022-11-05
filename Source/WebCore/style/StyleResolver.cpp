@@ -102,7 +102,7 @@ public:
         auto& document = element.document();
         auto* documentElement = document.documentElement();
         if (!documentElement || documentElement == &element)
-            m_rootElementStyle = document.renderStyle();
+            m_rootElementStyle = document.initialContainingBlockStyle();
         else
             m_rootElementStyle = documentElementStyle ? documentElementStyle : documentElement->renderStyle();
     }
@@ -159,7 +159,7 @@ Resolver::Resolver(Document& document)
         m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { };
 
     if (auto* documentElement = m_document.documentElement()) {
-        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.renderStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
+        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
@@ -478,15 +478,15 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 {
     auto* documentElement = m_document.documentElement();
-    if (!documentElement)
+    if (!documentElement || !documentElement->renderStyle())
         return RenderStyle::createPtr();
 
-    auto state = State(*documentElement, m_document.renderStyle());
+    auto state = State(*documentElement, m_document.initialContainingBlockStyle());
 
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());
 
-    PageRuleCollector collector(m_ruleSets, state.rootElementStyle()->direction());
+    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->direction());
     collector.matchAllPageRules(pageIndex);
 
     auto& result = collector.matchResult();

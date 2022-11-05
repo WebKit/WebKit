@@ -105,6 +105,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 
     m_styleUpdate = WTFMove(styleUpdate);
 
+    updateRenderViewStyle();
+
     for (auto& root : m_styleUpdate->roots()) {
         auto* renderingRoot = findRenderingRoot(*root);
         if (!renderingRoot)
@@ -514,6 +516,12 @@ void RenderTreeUpdater::storePreviousRenderer(Node& node)
         return;
     ASSERT(renderingParent().previousChildRenderer != renderer);
     renderingParent().previousChildRenderer = renderer;
+}
+
+void RenderTreeUpdater::updateRenderViewStyle()
+{
+    if (m_styleUpdate->initialContainingBlockUpdate())
+        m_document.renderView()->setStyle(RenderStyle::clone(*m_styleUpdate->initialContainingBlockUpdate()));
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root)

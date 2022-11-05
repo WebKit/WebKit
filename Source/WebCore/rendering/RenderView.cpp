@@ -94,6 +94,23 @@ RenderView::~RenderView()
     ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
 }
 
+void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
+
+    bool writingModeChanged = oldStyle && style().writingMode() != oldStyle->writingMode();
+    bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
+
+    if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
+        if (frameView().pagination().mode != Pagination::Unpaginated)
+            updateColumnProgressionFromStyle(style());
+        updateStylesForColumnChildren();
+    }
+
+    if (directionChanged)
+        frameView().topContentDirectionDidChange();
+}
+
 void RenderView::scheduleLazyRepaint(RenderBox& renderer)
 {
     if (renderer.renderBoxNeedsLazyRepaint())

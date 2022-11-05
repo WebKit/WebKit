@@ -4555,8 +4555,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/srl-al
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/tcy-white-space-processing-001.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-initial.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-001.html [ ImageOnlyFailure ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-032.html [ ImageOnlyFailure ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-033.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-034.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-035.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-036.html [ ImageOnlyFailure ]

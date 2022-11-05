@@ -214,6 +214,8 @@ public:
     const WeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
 
 private:
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;

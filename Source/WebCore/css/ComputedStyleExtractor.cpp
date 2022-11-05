@@ -3134,8 +3134,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWebkitCursorVisibility:
         return cssValuePool.createValue(style.cursorVisibility());
 #endif
-    case CSSPropertyDirection:
-        return cssValuePool.createValue(style.direction());
+    case CSSPropertyDirection:  {
+        auto direction = [&] {
+            if (m_element == m_element->document().documentElement() && !style.hasExplicitlySetDirection())
+                return RenderStyle::initialDirection();
+            return style.direction();
+        }();
+        return cssValuePool.createValue(direction);
+    }
     case CSSPropertyDisplay:
         return cssValuePool.createValue(style.display());
     case CSSPropertyEmptyCells:
@@ -3873,8 +3879,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSPrimitiveValue::create(style.lineSnap());
     case CSSPropertyWebkitLineAlign:
         return CSSPrimitiveValue::create(style.lineAlign());
-    case CSSPropertyWritingMode:
-        return cssValuePool.createValue(style.writingMode());
+    case CSSPropertyWritingMode: {
+        auto writingMode = [&] {
+            if (m_element == m_element->document().documentElement() && !style.hasExplicitlySetWritingMode())
+                return RenderStyle::initialWritingMode();
+            return style.writingMode();
+        }();
+        return cssValuePool.createValue(writingMode);
+    }
     case CSSPropertyWebkitTextCombine:
         if (style.textCombine() == TextCombine::All)
             return CSSPrimitiveValue::createIdentifier(CSSValueHorizontal);

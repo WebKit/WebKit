@@ -66,6 +66,8 @@ public:
 
     const TextUpdate* textUpdate(const Text&) const;
 
+    const RenderStyle* initialContainingBlockUpdate() const { return m_initialContainingBlockUpdate.get(); }
+
     const RenderStyle* elementStyle(const Element&) const;
     RenderStyle* elementStyle(const Element&);
 
@@ -78,6 +80,7 @@ public:
     void addText(Text&, Element* parent, TextUpdate&&);
     void addText(Text&, TextUpdate&&);
     void addSVGRendererUpdate(SVGElement&);
+    void addInitialContainingBlockUpdate(std::unique_ptr<RenderStyle> style) { m_initialContainingBlockUpdate = WTFMove(style); }
 
 private:
     void addPossibleRoot(Element*);
@@ -86,6 +89,7 @@ private:
     ListHashSet<RefPtr<ContainerNode>> m_roots;
     HashMap<RefPtr<const Element>, ElementUpdate> m_elements;
     HashMap<RefPtr<const Text>, TextUpdate> m_texts;
+    std::unique_ptr<RenderStyle> m_initialContainingBlockUpdate;
 };
 
 }

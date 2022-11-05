@@ -2102,16 +2102,14 @@ void Document::resolveStyle(ResolveStyleType type)
             m_hasNodesWithNonFinalStyle = false;
             m_hasNodesWithMissingStyle = false;
 
-            auto documentStyle = Style::resolveForDocument(*this);
+            auto newStyle = Style::resolveForDocument(*this);
 
-            // Inserting the pictograph font at the end of the font fallback list is done by the
-            // font selector, so set a font selector if needed.
-            if (settings().fontFallbackPrefersPictographs())
-                documentStyle.fontCascade().update(&fontSelector());
-
-            auto documentChange = Style::determineChange(documentStyle, m_renderView->style());
-            if (documentChange != Style::Change::None)
-                renderView()->setStyle(WTFMove(documentStyle));
+            auto documentChange = m_initialContainingBlockStyle ? Style::determineChange(newStyle, *m_initialContainingBlockStyle) : Style::Change::Renderer;
+            if (documentChange != Style::Change::None) {
+                m_initialContainingBlockStyle = RenderStyle::clonePtr(newStyle);
+                // The used style may end up differing from the computed style due to propagation of properties from elements.
+                renderView()->setStyle(WTFMove(newStyle));
+            }
 
             if (RefPtr documentElement = this->documentElement())
                 documentElement->invalidateStyleForSubtree();
@@ -2634,6 +2632,7 @@ void Document::destroyRenderTree()
         view()->willDestroyRenderTree();
 
     m_pendingRenderTreeUpdate = { };
+    m_initialContainingBlockStyle = { };
 
     if (m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*m_documentElement);

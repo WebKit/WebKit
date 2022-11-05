@@ -1,5 +1,5 @@
 
 PASS Check computed writing-mode for body element.
-FAIL Check computed writing-mode for html root element. assert_not_equals: got disallowed value "vertical-lr"
-FAIL Check computed writing-mode for body element when style no longer applies. assert_not_equals: got disallowed value "vertical-lr"
+PASS Check computed writing-mode for html root element.
+PASS Check computed writing-mode for body element when style no longer applies.
 
