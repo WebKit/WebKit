@@ -187,13 +187,26 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_parameters.size)));
 }
 
-PixelFormat RemoteLayerBackingStore::pixelFormat() const
+bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
 {
 #if HAVE(IOSURFACE_RGB10)
     if (m_parameters.type == Type::IOSurface && m_parameters.deepColor)
-        return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
+        return true;
 #endif
+    return false;
+}
 
+DestinationColorSpace RemoteLayerBackingStore::colorSpace() const
+{
+    if (usesDeepColorBackingStore())
+        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+    return DestinationColorSpace::SRGB();
+}
+
+PixelFormat RemoteLayerBackingStore::pixelFormat() const
+{
+    if (usesDeepColorBackingStore())
+        return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
     return PixelFormat::BGRA8;
 }
 
@@ -360,6 +373,7 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
     if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         ImageBuffer::CreationContext creationContext;
         creationContext.useCGDisplayListImageCache = m_parameters.useCGDisplayListImageCache;
+        // FIXME: This should use colorSpace(), not hardcode sRGB.
         m_displayListBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_parameters.size, m_parameters.scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
     }
 #endif
