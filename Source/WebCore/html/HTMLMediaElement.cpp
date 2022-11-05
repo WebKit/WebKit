@@ -6126,8 +6126,7 @@ void HTMLMediaElement::userCancelledLoad()
     m_readyState = HAVE_NOTHING;
     updateMediaController();
 
-    auto* context = scriptExecutionContext();
-    if (!context || context->activeDOMObjectsAreStopped())
+    if (isSuspended())
         return; // Document is about to be destructed. Avoid updating layout in updateActiveTextTrackCues.
 
     updateActiveTextTrackCues(MediaTime::zeroTime());
@@ -6730,7 +6729,7 @@ void HTMLMediaElement::exitFullscreen()
         }
     }
 
-    if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
+    if (isSuspended()) {
         setFullscreenMode(VideoFullscreenModeNone);
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
     } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
@@ -6978,7 +6977,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     if (m_processingPreferenceChange)
         return;
 
-    if (document().activeDOMObjectsAreStopped())
+    if (isSuspended())
         return;
 
     bool haveVisibleTextTrack = false;
@@ -8053,7 +8052,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 {
     // Don't execute script if the controls script hasn't been injected yet, or we have
     // stopped/suspended the object.
-    if (!m_mediaControlsHost || document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
+    if (!m_mediaControlsHost || isSuspended())
         return;
 
 #if !ENABLE(MODERN_MEDIA_CONTROLS)
