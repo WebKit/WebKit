@@ -8574,6 +8574,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
         if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
             return YES;
+        
+        if (gestureRecognizer == _highlightLongPressGestureRecognizer)
+            return YES;
 
         if (auto *tapGesture = dynamic_objc_cast<UITapGestureRecognizer>(gestureRecognizer))
             return tapGesture.numberOfTapsRequired > 1 && tapGesture.numberOfTouchesRequired < 2;
