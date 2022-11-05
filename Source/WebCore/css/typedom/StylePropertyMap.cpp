@@ -28,14 +28,78 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "CSSStyleValueFactory.h"
+#include "CSSUnparsedValue.h"
+#include "CSSVariableReferenceValue.h"
 #include "Document.h"
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
 
-// https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-set
-ExceptionOr<void> StylePropertyMap::set(Document&, const AtomString&, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&&)
+static RefPtr<CSSValue> cssValueFromStyleValues(std::optional<CSSPropertyID> propertyID, Vector<Ref<CSSStyleValue>>&& values)
 {
-    return Exception { NotSupportedError, "set() is not yet supported"_s };
+    if (values.isEmpty())
+        return nullptr;
+    if (values.size() == 1)
+        return values[0]->toCSSValue();
+    auto list = propertyID ? CSSProperty::createListForProperty(*propertyID) : CSSValueList::createCommaSeparated();
+    for (auto&& value : WTFMove(values)) {
+        if (auto cssValue = value->toCSSValue())
+            list->append(cssValue.releaseNonNull());
+    }
+    return list;
+}
+
+// https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-set
+ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
+{
+    if (isCustomPropertyName(property)) {
+        auto styleValues = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+        if (styleValues.size() != 1 || !is<CSSUnparsedValue>(styleValues[0].get()))
+            return Exception { TypeError, "Invalid values"_s };
+
+        auto value = styleValues[0]->toCSSValue();
+        if (!value)
+            return Exception { TypeError, "Invalid values"_s };
+        setCustomProperty(document, property, static_reference_cast<CSSVariableReferenceValue>(value.releaseNonNull()));
+        return { };
+    }
+    auto propertyID = cssPropertyID(property);
+    if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, &document.settings()))
+        return Exception { TypeError, makeString("Invalid property ", property) };
+
+    if (!CSSProperty::isListValuedProperty(propertyID) && values.size() > 1)
+        return Exception { TypeError, makeString(property, " is not a list-valued property but more than one value was provided"_s) };
+
+    if (isShorthandCSSProperty(propertyID)) {
+        if (values.size() != 1)
+            return Exception { TypeError, "Wrong number of values for shorthand CSS property"_s };
+        String value;
+        switchOn(values[0], [&](const RefPtr<CSSStyleValue>& styleValue) {
+            value = styleValue->toString();
+        }, [&](const String& string) {
+            value = string;
+        });
+        if (value.isEmpty() || !setShorthandProperty(propertyID, value))
+            return Exception { TypeError, "Bad value for shorthand CSS property"_s };
+        return { };
+    }
+
+    auto styleValues = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+    if (styleValues.size() > 1) {
+        for (auto& styleValue : styleValues) {
+            if (is<CSSUnparsedValue>(styleValue.get()))
+                return Exception { TypeError, "There is more than one value and one is either a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
+        }
+    }
+    auto value = cssValueFromStyleValues(propertyID, WTFMove(styleValues));
+    if (!value)
+        return Exception { TypeError, "Invalid values"_s };
+
+    if (!setProperty(propertyID, value.releaseNonNull()))
+        return Exception { TypeError, "Invalid values"_s };
+
+    return { };
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-append

@@ -1345,7 +1345,6 @@ $(PROJECT_DIR)/html/canvas/EXTColorBufferFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTColorBufferHalfFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTFloatBlend.idl
 $(PROJECT_DIR)/html/canvas/EXTFragDepth.idl
-$(PROJECT_DIR)/html/canvas/EXTProvokingVertex.idl
 $(PROJECT_DIR)/html/canvas/EXTShaderTextureLOD.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionBPTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionRGTC.idl
@@ -1392,6 +1391,7 @@ $(PROJECT_DIR)/html/canvas/WebGLLoseContext.idl
 $(PROJECT_DIR)/html/canvas/WebGLMultiDraw.idl
 $(PROJECT_DIR)/html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl
 $(PROJECT_DIR)/html/canvas/WebGLProgram.idl
+$(PROJECT_DIR)/html/canvas/WebGLProvokingVertex.idl
 $(PROJECT_DIR)/html/canvas/WebGLQuery.idl
 $(PROJECT_DIR)/html/canvas/WebGLRenderbuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLRenderingContext.idl

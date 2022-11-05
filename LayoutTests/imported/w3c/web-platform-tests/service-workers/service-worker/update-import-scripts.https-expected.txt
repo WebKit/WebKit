@@ -3,4 +3,5 @@ PASS update() should fail when a new worker imports an unavailable script.
 PASS update() should succeed when the old imported script no longer exist but the new worker doesn't import it.
 PASS update() should treat 404 on imported scripts as no change.
 FAIL update() should find an update in an imported script but update() should result in failure due to missing the other imported script. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL update() should work with cross-origin importScripts. assert_unreached: unregister and register should not fail: NetworkError: Load failed Reached unreachable code
 

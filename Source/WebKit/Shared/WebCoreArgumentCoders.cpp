@@ -92,6 +92,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
+#include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
@@ -135,27 +136,6 @@
 namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
-
-#define DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(Type) \
-    template<typename Encoder> \
-    void ArgumentCoder<Type>::encode(Encoder& encoder, const Type& value) { SimpleArgumentCoder<Type>::encode(encoder, value); } \
-    bool ArgumentCoder<Type>::decode(Decoder& decoder, Type& value) { return SimpleArgumentCoder<Type>::decode(decoder, value); } \
-    std::optional<Type> ArgumentCoder<Type>::decode(Decoder& decoder) \
-    { \
-        Type value; \
-        if (!decode(decoder, value)) \
-            return std::nullopt; \
-        return value; \
-    } \
-    template void ArgumentCoder<Type>::encode<Encoder>(Encoder&, const Type&); \
-    template void ArgumentCoder<Type>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Type&);
-
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatBoxExtent)
-
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineFillColor)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
-
-#undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
 
 void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCacheEngine::Record& record)
 {
@@ -1898,6 +1878,31 @@ bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaCon
         && decoder.decode(constraints.isValid);
 }
 #endif
+
+void ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::encode(Encoder& encoder, const RefPtr<WebCore::SerializedScriptValue>& instance)
+{
+    encoder << !!instance;
+    if (instance)
+        encoder << instance->wireBytes();
+}
+
+std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::decode(Decoder& decoder)
+{
+    std::optional<bool> nonEmpty;
+    decoder >> nonEmpty;
+    if (!nonEmpty)
+        return std::nullopt;
+
+    if (!*nonEmpty)
+        return nullptr;
+
+    std::optional<Vector<uint8_t>> wireBytes;
+    decoder >> wireBytes;
+    if (!wireBytes)
+        return std::nullopt;
+
+    return SerializedScriptValue::createFromWireBytes(WTFMove(*wireBytes));
+}
 
 #if ENABLE(SERVICE_WORKER)
 void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)

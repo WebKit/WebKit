@@ -186,6 +186,58 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
     EXPECT_NULL(testExtension.errors);
 }
 
+// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=246632 is resolved
+#if PLATFORM(IOS)
+TEST(WKWebExtensionController, DISABLED_BackgroundPageWithModulesLoading)
+#else
+TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
+#endif
+{
+    NSDictionary *resources = @{
+        @"main.js": @"import { x } from './exports.js'; x;",
+        @"exports.js": @"const x = 805; export { x };",
+    };
+
+    NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"scripts": @[ @"main.js", @"exports.js" ], @"type": @"module" } } mutableCopy];
+
+    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+
+    EXPECT_NULL(testExtension.errors);
+
+    NSError *error;
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    EXPECT_NULL(testExtension.errors);
+
+    manifest[@"background"] = @{ @"service_worker": @"main.js", @"type": @"module" };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
+
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

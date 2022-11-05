@@ -196,8 +196,11 @@ public:
         : m_colorData(colorData)
     {
     }
+    SetInlineFillColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+        : SetInlineFillColor(SRGBA<uint8_t> { red, green, blue, alpha }) { }
 
     Color color() const { return { m_colorData }; }
+    const SRGBA<uint8_t>& colorData() const { return m_colorData; }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
@@ -215,9 +218,11 @@ public:
         : m_colorData(colorData)
     {
     }
+    SetInlineStrokeColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+        : SetInlineStrokeColor(SRGBA<uint8_t> { red, green, blue, alpha }) { }
 
     Color color() const { return { m_colorData }; }
-
+    const SRGBA<uint8_t>& colorData() const { return m_colorData; }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:

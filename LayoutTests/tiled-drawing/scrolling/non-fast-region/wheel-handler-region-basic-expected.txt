@@ -20,7 +20,9 @@ Child
         (rect (0,0) width=785 height=672)
       (wheel event listener region
         (rect (8,8) width=65 height=18)
-        (rect (8,26) width=769 height=108)
+        (rect (8,26) width=108 height=60)
+        (rect (8,86) width=108 height=48)
+        (rect (300,86) width=226 height=48)
         (rect (8,134) width=28 height=18)
         (rect (300,134) width=226 height=18)
         (rect (300,152) width=226 height=13)
@@ -38,7 +40,9 @@ Child
         (rect (8,575) width=83 height=27)
         (non-passive
           (rect (8,8) width=65 height=18)
-          (rect (8,26) width=769 height=108)
+          (rect (8,26) width=108 height=60)
+          (rect (8,86) width=108 height=48)
+          (rect (300,86) width=226 height=48)
           (rect (8,134) width=28 height=18)
           (rect (300,134) width=226 height=18)
           (rect (300,152) width=226 height=13)

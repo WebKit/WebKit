@@ -114,7 +114,7 @@ private:
 
     RefPtr<AudioSampleBufferList> m_scratchBuffer;
 
-    UniqueRef<CARingBuffer> m_ringBuffer;
+    InProcessCARingBuffer m_ringBuffer;
     size_t m_maximumSampleCount { 0 };
 
     float m_volume { 1.0 };

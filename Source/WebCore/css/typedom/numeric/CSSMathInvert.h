@@ -36,6 +36,8 @@ public:
     CSSNumericValue& value() { return m_value.get(); }
     const CSSNumericValue& value() const { return m_value.get(); }
 
+    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Invert; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathInvert; }

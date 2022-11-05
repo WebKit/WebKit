@@ -1523,7 +1523,7 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
     return propertyAt(foundPropertyIndex).isImplicit();
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext, bool* didFailParsing)
 {
     if (!isExposed(propertyID, &parserContext.propertySettings) && !isInternal(propertyID)) {
         // Allow internal properties as we use them to handle certain DOM-exposed values
@@ -1541,13 +1541,16 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(*this, propertyID, value, important, parserContext) == CSSParser::ParseResult::Changed;
+    auto parseResult = CSSParser::parseValue(*this, propertyID, value, important, parserContext);
+    if (didFailParsing)
+        *didFailParsing = parseResult == CSSParser::ParseResult::Error;
+    return parseResult == CSSParser::ParseResult::Changed;
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, bool* didFailParsing)
 {
     CSSParserContext parserContext(cssParserMode());
-    return setProperty(propertyID, value, important, parserContext);
+    return setProperty(propertyID, value, important, parserContext, didFailParsing);
 }
 
 bool MutableStyleProperties::setCustomProperty(const Document* document, const String& propertyName, const String& value, bool important, CSSParserContext parserContext)

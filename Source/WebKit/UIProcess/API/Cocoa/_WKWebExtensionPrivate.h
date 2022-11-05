@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest NS_DESIGNATED_INITIALIZER;
 - (instancetype)_initWithManifestData:(NSData *)manifestData NS_DESIGNATED_INITIALIZER;
 
+@property (readonly, nonatomic) BOOL _backgroundContentUsesModules;
+
 @end
 
 NS_ASSUME_NONNULL_END

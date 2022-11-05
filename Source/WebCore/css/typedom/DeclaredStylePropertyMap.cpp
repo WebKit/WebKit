@@ -26,8 +26,10 @@
 #include "config.h"
 #include "DeclaredStylePropertyMap.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSUnparsedValue.h"
 #include "Document.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
@@ -85,6 +87,45 @@ RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString&
     if (!styleRule)
         return nullptr;
     return styleRule->properties().getCustomPropertyCSSValue(propertyName.string());
+}
+
+bool DeclaredStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, const String& value)
+{
+    auto* styleRule = this->styleRule();
+    if (!styleRule)
+        return false;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    bool didFailParsing = false;
+    bool important = false;
+    styleRule->mutableProperties().setProperty(propertyID, value, important, &didFailParsing);
+    return !didFailParsing;
+}
+
+bool DeclaredStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value)
+{
+    auto* styleRule = this->styleRule();
+    if (!styleRule)
+        return false;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    bool didFailParsing = false;
+    bool important = false;
+    styleRule->mutableProperties().setProperty(propertyID, value->cssText(), important, &didFailParsing);
+    return !didFailParsing;
+}
+
+bool DeclaredStylePropertyMap::setCustomProperty(Document&, const AtomString& property, Ref<CSSVariableReferenceValue>&& value)
+{
+    auto* styleRule = this->styleRule();
+    if (!styleRule)
+        return false;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    bool important = false;
+    auto customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTFMove(value));
+    styleRule->mutableProperties().addParsedProperty(CSSProperty(CSSPropertyCustom, WTFMove(customPropertyValue), important));
+    return true;
 }
 
 void DeclaredStylePropertyMap::removeProperty(CSSPropertyID propertyID)

@@ -60,8 +60,8 @@ public:
 
     enum CompositePurpose { ForResize, NotForResize };
     void compositeLayersToContext(CompositePurpose = NotForResize);
+    void paint(HDC);
 
-    void flushAndRenderLayers();
     bool flushPendingLayerChanges();
     bool flushPendingLayerChangesSoon();
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
@@ -93,6 +93,7 @@ private:
         AcceleratedCompositingContext& m_context;
     } m_layerFlushTimer;
 
+    void flushAndRenderLayers();
     void layerFlushTimerFired();
     void stopAnyPendingLayerFlush();
     bool prepareForRendering();

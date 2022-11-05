@@ -92,6 +92,12 @@ bool MessagePort::isExistingMessagePortLocallyReachable(const MessagePortIdentif
     return port && port->isLocallyReachable();
 }
 
+bool MessagePort::isMessagePortAliveForTesting(const MessagePortIdentifier& identifier)
+{
+    Locker locker { allMessagePortsLock };
+    return allMessagePorts().contains(identifier);
+}
+
 void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier)
 {
     ASSERT(isMainThread());
@@ -350,12 +356,15 @@ bool MessagePort::virtualHasPendingActivity() const
     if (!context || m_isDetached)
         return false;
 
-    // If this object has been idle since the remote port declared itself elgibile for GC, we can GC.
-    if (!m_hasHadLocalActivitySinceLastCheck && m_isRemoteEligibleForGC)
-        return false;
-
     // If this MessagePort has no message event handler then the existence of remote activity cannot keep it alive.
     if (!m_hasMessageEventListener)
+        return false;
+
+    if (m_entangled)
+        return true;
+
+    // If this object has been idle since the remote port declared itself eligible for GC, we can GC.
+    if (!m_hasHadLocalActivitySinceLastCheck && m_isRemoteEligibleForGC)
         return false;
 
     // If we're not in the middle of asking the remote port about collectability, do so now.

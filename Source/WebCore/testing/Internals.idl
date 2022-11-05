@@ -977,6 +977,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     DOMString documentIdentifier(Document document);
     boolean isDocumentAlive(DOMString documentIdentifier);
 
+    unsigned long long messagePortIdentifier(MessagePort port);
+    boolean isMessagePortAlive(unsigned long long messagePortIdentifier);
+
     readonly attribute unsigned long long storageAreaMapCount;
 
     unsigned long long elementIdentifier(Element element);

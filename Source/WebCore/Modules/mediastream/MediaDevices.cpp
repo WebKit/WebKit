@@ -408,7 +408,7 @@ void MediaDevices::listenForDeviceChanges()
         if (!weakThis || isContextStopped() || m_scheduledEventTimer.isActive())
             return;
 
-        m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
+        m_scheduledEventTimer.startOneShot(Seconds(cryptographicallyRandomUnitInterval() / 2));
     });
 }
 

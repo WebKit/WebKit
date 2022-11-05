@@ -107,4 +107,14 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes) };
 }
 
+RefPtr<CSSValue> CSSSkewX::toCSSValue() const
+{
+    auto ax = m_ax->toCSSValue();
+    if (!ax)
+        return nullptr;
+    auto result = CSSFunctionValue::create(CSSValueSkewX);
+    result->append(ax.releaseNonNull());
+    return result;
+}
+
 } // namespace WebCore

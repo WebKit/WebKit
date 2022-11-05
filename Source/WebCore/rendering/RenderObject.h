@@ -277,7 +277,7 @@ public:
     virtual bool isRenderScrollbarPart() const { return false; }
     virtual bool isRenderVTTCue() const { return false; }
 
-    bool isDocumentElementRenderer() const { return document().documentElement() == &m_node; }
+    bool isDocumentElementRenderer() const { return document().documentElement() == m_node; }
     bool isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }
     bool isHR() const { return node() && node()->hasTagName(HTMLNames::hrTag); }
     bool isLegend() const;
@@ -497,7 +497,14 @@ public:
     // Returns true if this renderer is rooted.
     bool isRooted() const;
 
-    Node* node() const { return isAnonymous() ? nullptr : &m_node; }
+    Node* node() const
+    { 
+        if (isAnonymous())
+            return nullptr;
+        ASSERT(m_node);
+        return m_node.get(); 
+    }
+
     Node* nonPseudoNode() const { return isPseudoElement() ? nullptr : node(); }
 
     // Returns the styled node that caused the generation of this renderer.
@@ -505,7 +512,7 @@ public:
     // pseudo elements for which their parent node is returned.
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
-    Document& document() const { return m_node.document(); }
+    Document& document() const { ASSERT(m_node); return m_node->document(); }
     Frame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }
@@ -801,7 +808,7 @@ protected:
     void setNextSibling(RenderObject* next) { m_next = next; }
     void setParent(RenderElement*);
     //////////////////////////////////////////
-    Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
+    Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); ASSERT(m_node); return *m_node; }
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
@@ -854,7 +861,7 @@ private:
     void checkBlockPositionedObjectsNeedLayout();
 #endif
 
-    Node& m_node;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 
     RenderElement* m_parent;
     RenderObject* m_previous;

@@ -420,6 +420,11 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const R
     return result;
 }
 
+RefPtr<CSSCalcValue> CSSCalcValue::create(Ref<CSSCalcExpressionNode>&& node, bool allowsNegativePercentage)
+{
+    return adoptRef(*new CSSCalcValue(WTFMove(node), allowsNegativePercentage));
+}
+
 TextStream& operator<<(TextStream& ts, const CSSCalcValue& value)
 {
     value.dump(ts);

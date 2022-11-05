@@ -48,6 +48,9 @@ public:
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::MatrixComponent; }
+
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, Is2D);
     Ref<DOMMatrix> m_matrix;

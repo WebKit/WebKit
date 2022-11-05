@@ -71,7 +71,7 @@ RefPtr<AudioSourceProviderAVFObjC> AudioSourceProviderAVFObjC::create(AVPlayerIt
 
 AudioSourceProviderAVFObjC::AudioSourceProviderAVFObjC(AVPlayerItem *item)
     : m_avPlayerItem(item)
-    , m_ringBufferCreationCallback([] { return makeUniqueRef<CARingBuffer>(); })
+    , m_ringBufferCreationCallback([] { return makeUniqueRef<InProcessCARingBuffer>(); })
 {
 }
 

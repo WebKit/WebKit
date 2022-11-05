@@ -1,150 +1,125 @@
-first blockquote level 1
-second blockquote level 1
-sans-serif black bold text with underline
-
-serif blue italic text
-
-
- checkbox
-
-
-first heading level 1
-
-second heading level 1
-
-heading level 2
-
-heading level 3
-
-heading level 4
-
-heading level 5
-
-heading level 6
-
-landmark
-
-link
-list item
-live region
-
-radio button
-first table heading level 1
-first table body level 1
-second table heading level 1
-second table body level 1
-tree item
-isVisible test start
-
-test button 1
-test test test test
-test test test test
-test test test test
-test test test test
-test test test test
-test test test test
-test test test test
-test test test test
-test test test test
-test button 2
-test button 3
 This tests the ability to search for accessible elements by key or text.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: first block quote level 1'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: second block quote level 1'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: second block quote level 1'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: sans-serif black bold text with underline'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.role === 'AXRole: AXCheckBox'
+PASS: resultElement.role === 'AXRole: AXCheckBox'
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: first block quote level 1'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: serif blue italic text'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: serif blue italic text'
+PASS: resultElement.role === 'AXRole: AXImage'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: first heading level 1'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 2'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 3'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 4'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 5'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 6'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: second heading level 1'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: first heading level 1'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: serif blue italic text'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.subrole === 'AXSubrole: AXLandmarkBanner'
+PASS: resultElement.role === 'AXRole: AXLink'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: link'
+PASS: resultElement.role === 'AXRole: AXList'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.stringAttributeValue('AXARIALive') === 'polite'
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: misspellleedd'
+PASS: resultElement.role === 'AXRole: AXOutline'
+PASS: resultElement.childAtIndex(0).childAtIndex(0).stringValue === 'AXValue: tree item'
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: first block quote level 1'
+PASS: resultElement.role === 'AXRole: AXRadioGroup'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: second block quote level 1'
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: first block quote level 1'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: serif blue italic text'
+PASS: resultElement.role === 'AXRole: AXTable'
+PASS: resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue === 'AXValue: second table heading level 1'
+PASS: resultElement.role === 'AXRole: AXTable'
+PASS: resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue === 'AXValue: first table heading level 1'
+PASS: resultElement.role === 'AXRole: AXTextField'
+PASS: resultElement.role === 'AXRole: AXGroup'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: sans-serif black bold text with underline'
+PASS: resultElement.boolAttributeValue('AXVisited') === false
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: link'
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: sans-serif black bold text with underline'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 2'
+PASS: resultElement.role === 'AXRole: AXLink'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: link'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: heading level 2'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 3'
+PASS: resultElement.role === 'AXRole: AXHeading'
+PASS: resultElement.childAtIndex(0).stringValue === 'AXValue: isVisible test start'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 1'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 2'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 3'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 1'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 3'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 2'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 3'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 2'
 
-
-PASS resultElement.role is 'AXRole: AXStaticText'
-PASS resultElement.stringValue is 'AXValue: first blockquote level 1'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: second blockquote level 1'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: second blockquote level 1'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: sans-serif black bold text with underline'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.role is 'AXRole: AXCheckBox'
-PASS resultElement.role is 'AXRole: AXCheckBox'
-PASS resultElement.role is 'AXRole: AXStaticText'
-PASS resultElement.stringValue is 'AXValue: first blockquote level 1'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: serif blue italic text'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: serif blue italic text'
-PASS resultElement.role is 'AXRole: AXImage'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: first heading level 1'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 2'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 3'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 4'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 5'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 6'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: second heading level 1'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: first heading level 1'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: serif blue italic text'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.subrole is 'AXSubrole: AXLandmarkBanner'
-PASS resultElement.role is 'AXRole: AXLink'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
-PASS resultElement.role is 'AXRole: AXList'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.stringAttributeValue('AXARIALive') is 'polite'
-PASS resultElement.role is 'AXRole: AXOutline'
-PASS resultElement.childAtIndex(0).childAtIndex(0).stringValue is 'AXValue: tree item'
-PASS resultElement.role is 'AXRole: AXStaticText'
-PASS resultElement.stringValue is 'AXValue: first blockquote level 1'
-PASS resultElement.role is 'AXRole: AXRadioGroup'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: second blockquote level 1'
-PASS resultElement.role is 'AXRole: AXStaticText'
-PASS resultElement.stringValue is 'AXValue: first blockquote level 1'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: serif blue italic text'
-PASS resultElement.role is 'AXRole: AXTable'
-PASS resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue is 'AXValue: second table heading level 1'
-PASS resultElement.role is 'AXRole: AXTable'
-PASS resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue is 'AXValue: first table heading level 1'
-PASS resultElement.role is 'AXRole: AXTextField'
-PASS resultElement.role is 'AXRole: AXGroup'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: sans-serif black bold text with underline'
-PASS resultElement.boolAttributeValue('AXVisited') is false
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
-PASS resultElement.role is 'AXRole: AXStaticText'
-PASS resultElement.stringValue is 'AXValue: sans-serif black bold text with underline'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 2'
-PASS resultElement.role is 'AXRole: AXLink'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 2'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 3'
-PASS resultElement.role is 'AXRole: AXHeading'
-PASS resultElement.childAtIndex(0).stringValue is 'AXValue: isVisible test start'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 1'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 2'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 3'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 1'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 3'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 2'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 3'
-PASS resultElement.role is 'AXRole: AXButton'
-PASS resultElement.title is 'AXTitle: test button 2'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

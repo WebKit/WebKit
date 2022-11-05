@@ -141,4 +141,10 @@ CSSColorNumber CSSColorValue::toCSSColorNumber(const RectifiedCSSColorNumber& nu
     });
 }
 
+RefPtr<CSSValue> CSSColorValue::toCSSValue() const
+{
+    // FIXME: Implement this.
+    return nullptr;
+}
+
 } // namespace WebCore

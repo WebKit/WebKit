@@ -44,6 +44,11 @@ static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
 {
     NSString *customDefaultURL = [[self.parent currentURL] absoluteString];
     [[NSUserDefaults standardUserDefaults] setObject:customDefaultURL forKey:DefaultURLPreferenceKey];
+    [self closeModal:sender];
+}
+
+- (IBAction)closeModal:(id)sender
+{
     [self.parent dismissViewControllerAnimated:YES completion:nil];
 }
 

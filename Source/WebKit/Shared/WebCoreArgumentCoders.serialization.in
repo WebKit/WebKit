@@ -1121,3 +1121,26 @@ struct WebCore::ExceptionDetails {
     WebCore::ExceptionDetails::Type type;
     String sourceURL;
 };
+
+header: <WebCore/RectEdges.h>
+[Alias=RectEdges<float>, CustomHeader] alias WebCore::FloatBoxExtent {
+    float top()
+    float right()
+    float bottom()
+    float left()
+};
+
+header: <WebCore/DisplayListItems.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
+    uint8_t colorData().resolved().red
+    uint8_t colorData().resolved().green
+    uint8_t colorData().resolved().blue
+    uint8_t colorData().resolved().alpha
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineStrokeColor {
+    uint8_t colorData().resolved().red
+    uint8_t colorData().resolved().green
+    uint8_t colorData().resolved().blue
+    uint8_t colorData().resolved().alpha
+}

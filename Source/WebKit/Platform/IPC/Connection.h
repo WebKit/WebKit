@@ -99,7 +99,7 @@ enum class WaitForOption {
 #define ADD_QUOTES(x) #x
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (UNLIKELY(!(assertion))) { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ ADD_QUOTES(__LINE__) ": Invalid message dispatched %s", WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT(IPC, __FILE__ " " ADD_QUOTES(__LINE__) ": Invalid message dispatched %s", WTF_PRETTY_FUNCTION); \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
         { completion; } \
         return; \
@@ -108,7 +108,7 @@ enum class WaitForOption {
 
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
     if (UNLIKELY(!(assertion))) { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ ADD_QUOTES(__LINE__) ": Invalid message dispatched %{public}s", WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT(IPC, __FILE__ " " ADD_QUOTES(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
         return (returnValue); \
     } \

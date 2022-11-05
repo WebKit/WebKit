@@ -171,7 +171,7 @@ void RenderTreeBuilder::Inline::attachIgnoringContinuation(RenderInline& parent,
         // inline into continuations. This involves creating an anonymous block box to hold
         // |newChild|. We then make that block box a continuation of this inline. We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Block);
+        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.containingBlock() ? parent.containingBlock()->style() : parent.style(), DisplayType::Block);
 
         // If inside an inline affected by in-flow positioning the block needs to be affected by it too.
         // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.

@@ -29,6 +29,7 @@
 
 #include "WebView.h"
 
+#include <WebCore/BitmapInfo.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -187,6 +188,32 @@ void AcceleratedCompositingContext::compositeLayersToContext(CompositePurpose pu
     m_textureMapper->endPainting();
 
     m_context->swapBuffers();
+}
+
+void AcceleratedCompositingContext::paint(HDC hdc)
+{
+    if (!hdc)
+        return;
+    if (!prepareForRendering())
+        return;
+
+    RECT r;
+    if (!::GetClientRect(m_window, &r))
+        return;
+    IntSize windowSize(r.right, r.bottom);
+    auto target = m_textureMapper->acquireTextureFromPool(windowSize);
+    target->reset(windowSize);
+    m_textureMapper->bindSurface(target.get());
+
+    m_textureMapper->beginPainting();
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().paint(*m_textureMapper);
+    m_textureMapper->endPainting();
+
+    BitmapInfo bmpInfo = BitmapInfo::create(windowSize);
+    Vector<uint8_t> buffer(windowSize.width() * windowSize.height() * 4);
+    glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, buffer.data());
+    SetDIBitsToDevice(hdc, 0, 0, windowSize.width(), windowSize.height(), 0, 0,
+        0, windowSize.height(), buffer.data(), &bmpInfo, DIB_RGB_COLORS);
 }
 
 void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graphicsLayer)

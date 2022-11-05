@@ -42,6 +42,15 @@ if (typeof testWorstCaseCountMap === "undefined")
 if (typeof dumpJSONResults === "undefined")
     var dumpJSONResults = false;
 
+let shouldReport = false;
+let customTestList = [];
+if (typeof(URLSearchParams) !== "undefined") {
+    const urlParameters = new URLSearchParams(window.location.search);
+    shouldReport = urlParameters.has('report') && urlParameters.get('report').toLowerCase() == 'true';
+    if (urlParameters.has('test'))
+        customTestList = urlParameters.getAll("test");
+}
+
 // Used for the promise representing the current benchmark run.
 this.currentResolve = null;
 this.currentReject = null;
@@ -404,7 +413,7 @@ class Driver {
         await this.prefetchResourcesForBrowser();
         await this.fetchResources();
         this.prepareToRun();
-        if (isInBrowser && window.location.search == '?report=true') {
+        if (isInBrowser && shouldReport) {
             setTimeout(() => this.start(), 4000);
         }
     }
@@ -494,7 +503,7 @@ class Driver {
         if (!isInBrowser)
             return;
 
-        if (window.location.search !== '?report=true')
+        if (!shouldReport)
             return;
 
         const content = this.resultsJSON();
@@ -1844,6 +1853,8 @@ if (false) {
 
 if (typeof testList !== "undefined") {
     processTestList(testList);
+} else if (customTestList.length) {
+    processTestList(customTestList);
 } else {
     if (runARES)
         addTestsByGroup(ARESGroup);

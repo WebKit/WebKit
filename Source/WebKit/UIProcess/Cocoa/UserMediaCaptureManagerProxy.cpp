@@ -31,7 +31,7 @@
 #include "Connection.h"
 #include "RemoteCaptureSampleManagerMessages.h"
 #include "RemoteVideoFrameObjectHeap.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -89,7 +89,7 @@ public:
         m_source->removeObserver(*this);
 
         if (m_ringBuffer)
-            static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage()).invalidate();
+            m_ringBuffer->invalidate();
     }
 
     RealtimeMediaSource& source() { return m_source; }
@@ -160,7 +160,7 @@ private:
             // Allocate a ring buffer large enough to contain 2 seconds of audio.
             m_numberOfFrames = m_description.sampleRate() * 2;
             m_ringBuffer.reset();
-            m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+            m_ringBuffer = makeUnique<ProducerSharedCARingBuffer>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
             m_ringBuffer->allocate(m_description.streamDescription(), m_numberOfFrames);
         }
 
@@ -242,7 +242,7 @@ private:
     Ref<IPC::Connection> m_connection;
     ProcessIdentity m_resourceOwner;
     Ref<RealtimeMediaSource> m_source;
-    std::unique_ptr<CARingBuffer> m_ringBuffer;
+    std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     CAAudioStreamDescription m_description { };
     int64_t m_numberOfFrames { 0 };
     bool m_isStopped { false };

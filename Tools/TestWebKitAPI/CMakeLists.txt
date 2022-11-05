@@ -1,4 +1,10 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
+set(TestWebKitAPI_DISABLED_WARNINGS
+    -Wno-dangling-else
+    -Wno-sign-compare
+    -Wno-undef
+    -Wno-unused-parameter
+)
 
 macro(WEBKIT_TEST _target)
     WEBKIT_EXECUTABLE(${_target})
@@ -9,10 +15,7 @@ macro(WEBKIT_TEST _target)
     )
 
     if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(${_target} -Wno-dangling-else
-                                               -Wno-sign-compare
-                                               -Wno-undef
-                                               -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(${_target} ${TestWebKitAPI_DISABLED_WARNINGS})
     endif ()
 endmacro()
 
@@ -345,10 +348,7 @@ if (ENABLE_WEBKIT)
     target_link_libraries(TestWebKitAPIBase PRIVATE WebKit::WebKit WebKit::gtest)
 
     if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase -Wno-dangling-else
-                                                      -Wno-sign-compare
-                                                      -Wno-undef
-                                                      -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase ${TestWebKitAPI_DISABLED_WARNINGS} -Wno-deprecated-declarations)
     endif ()
 
     set(TestWebKitAPIInjectedBundle_SOURCES
@@ -399,10 +399,7 @@ if (ENABLE_WEBKIT)
     target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE WebKit::WebKit WebKit::gtest)
 
     if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle -Wno-dangling-else
-                                                                -Wno-sign-compare
-                                                                -Wno-undef
-                                                                -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle ${TestWebKitAPI_DISABLED_WARNINGS})
     endif ()
 
     WEBKIT_EXECUTABLE_DECLARE(TestWebKit)

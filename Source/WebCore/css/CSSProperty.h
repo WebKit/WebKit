@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class CSSValueList;
+
 struct StylePropertyMetadata {
     StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, bool important, bool implicit, bool inherited)
         : m_propertyID(propertyID)
@@ -89,6 +91,7 @@ public:
     static bool isColorProperty(CSSPropertyID);
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
+    static Ref<CSSValueList> createListForProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
 

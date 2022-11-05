@@ -68,11 +68,7 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, size, nullptr));
     auto offsets = copyBusData(bus, buffer.get(), muted());
-#if GST_CHECK_VERSION(1, 16, 0)
     gst_buffer_add_audio_meta(buffer.get(), &info, numberOfFrames, offsets.data());
-#else
-    UNUSED_VARIABLE(offsets);
-#endif
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     GStreamerAudioData audioBuffer(WTFMove(sample), info);
     GStreamerAudioStreamDescription description(&info);

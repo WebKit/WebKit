@@ -146,6 +146,23 @@ bool ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress() const
     return m_scrollController.isRubberBandInProgress();
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::handleKeyboardScrollRequest(const RequestedKeyboardScrollData& scrollData)
+{
+    switch (scrollData.action) {
+    case KeyboardScrollAction::StartAnimation:
+        m_scrollController.startKeyboardScroll(*scrollData.keyboardScroll);
+        return;
+
+    case KeyboardScrollAction::StopWithAnimation:
+        m_scrollController.finishKeyboardScroll(false);
+        return;
+
+    case KeyboardScrollAction::StopImmediately:
+        m_scrollController.finishKeyboardScroll(true);
+        return;
+    }
+}
+
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (horizontalScrollElasticity()) {

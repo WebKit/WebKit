@@ -3970,7 +3970,7 @@ webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/ext-provoking-vertex.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-provoking-vertex.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
 webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
@@ -4883,11 +4883,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-023.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-024.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-025.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-032.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-033.sub.https.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 # c-v: auto
@@ -4897,7 +4892,6 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-001.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-002.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-003.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-canvas.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002.html [ ImageOnlyFailure ]
@@ -5311,7 +5305,6 @@ imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ Du
 # Display list logging is only available in debug
 [ Release ] fast/text/glyph-display-lists [ Skip ]
 
-webkit.org/b/242498 svg/resource-invalidation/filter-resource-invalidation.html [ ImageOnlyFailure ]
 webkit.org/b/242498 svg/resource-invalidation/mask-resource-invalidation.html [ ImageOnlyFailure ]
 
 # Plugins
@@ -6026,6 +6019,9 @@ svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Skip ]
 # modulepreload is not supported
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]
+
+# Crashes since StylePropertyMap::set() was implemented and this test started running.
+webkit.org/b/247212 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Skip ]
 
 # WPT meta name="variant" is not supported. And iframe 'load' event has a bug.
 imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]

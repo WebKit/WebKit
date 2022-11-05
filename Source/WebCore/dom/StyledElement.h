@@ -50,7 +50,10 @@ public:
     bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
     bool setInlineStyleProperty(CSSPropertyID, CSSPropertyID identifier, bool important = false);
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, bool important = false);
-    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false);
+    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false, bool* didFailParsing = nullptr);
+    bool setInlineStyleCustomProperty(const AtomString& property, const String& value, bool important = false);
+    bool setInlineStyleCustomProperty(Ref<CSSValue>&&, bool important = false);
+    bool setInlineStyleProperty(CSSPropertyID, Ref<CSSValue>&&, bool important = false);
     bool removeInlineStyleProperty(CSSPropertyID);
     bool removeInlineStyleCustomProperty(const AtomString&);
     void removeAllInlineStyleProperties();

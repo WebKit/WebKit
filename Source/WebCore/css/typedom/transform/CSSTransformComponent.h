@@ -59,6 +59,8 @@ public:
     virtual ~CSSTransformComponent() = default;
     virtual CSSTransformType getType() const = 0;
 
+    virtual RefPtr<CSSValue> toCSSValue() const = 0;
+
 private:
     Is2D m_is2D;
 };

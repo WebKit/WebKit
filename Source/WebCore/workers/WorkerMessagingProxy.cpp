@@ -391,13 +391,13 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     // This is always the last task to be performed, so the proxy is not needed for communication
     // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.
     m_askedToTerminate = true;
-    m_workerThread = nullptr;
 
     m_inspectorProxy->workerTerminated();
 
     if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext.get()); workerGlobalScope && m_workerThread)
         workerGlobalScope->thread().removeChildThread(*m_workerThread);
 
+    m_workerThread = nullptr;
     m_scriptExecutionContext = nullptr;
 
     // This balances the original ref in construction.
@@ -415,6 +415,8 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
 
     if (m_workerThread)
         m_workerThread->stop(nullptr);
+    else
+        m_scriptExecutionContext = nullptr;
 }
 
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)

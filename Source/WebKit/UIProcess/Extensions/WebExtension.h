@@ -181,6 +181,7 @@ public:
 
     bool hasBackgroundContent();
     bool backgroundContentIsPersistent();
+    bool backgroundContentUsesModules();
     bool backgroundContentIsServiceWorker();
 
     NSString *backgroundContentPath();
@@ -265,6 +266,7 @@ private:
     RetainPtr<NSString> m_backgroundServiceWorkerPath;
     RetainPtr<NSString> m_generatedBackgroundContent;
     bool m_backgroundContentIsPersistent = false;
+    bool m_backgroundPageUsesModules = false;
 
     bool m_parsedManifest = false;
     bool m_parsedManifestDisplayStrings = false;

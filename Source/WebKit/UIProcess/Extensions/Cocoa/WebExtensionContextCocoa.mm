@@ -1046,7 +1046,7 @@ void WebExtensionContext::loadBackgroundWebView()
         return;
     }
 
-    [m_backgroundWebView _loadServiceWorker:backgroundContentURL() completionHandler:makeBlockPtr([&, protectedThis = Ref { *this }](BOOL success) {
+    [m_backgroundWebView _loadServiceWorker:backgroundContentURL() usingModules:extension().backgroundContentUsesModules() completionHandler:makeBlockPtr([&, protectedThis = Ref { *this }](BOOL success) {
         if (!success) {
             extension().recordError(extension().createError(WebExtension::Error::BackgroundContentFailedToLoad), WebExtension::SuppressNotification::No);
             return;

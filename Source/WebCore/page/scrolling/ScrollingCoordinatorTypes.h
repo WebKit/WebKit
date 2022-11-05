@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatPoint.h"
+#include "KeyboardScroll.h"
 #include "ScrollTypes.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
@@ -130,6 +131,17 @@ struct RequestedScrollData {
             && clamping == other.clamping
             && animated == other.animated;
     }
+};
+
+enum class KeyboardScrollAction : uint8_t {
+    StartAnimation,
+    StopWithAnimation,
+    StopImmediately
+};
+
+struct RequestedKeyboardScrollData {
+    KeyboardScrollAction action;
+    std::optional<KeyboardScroll> keyboardScroll;
 };
 
 enum class ScrollUpdateType : uint8_t {

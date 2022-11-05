@@ -41,7 +41,7 @@ void ViewBackend::initializeAccessibility()
 {
 }
 
-void ViewBackend::updateAccessibilityState(uint32_t previousFlags)
+void ViewBackend::updateAccessibilityState(uint32_t)
 {
 }
 #endif // !ENABLE(ACCESSIBILITY)

@@ -179,6 +179,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->backgroundContentIsPersistent();
 }
 
+- (BOOL)_backgroundContentUsesModules
+{
+    return _webExtension->backgroundContentUsesModules();
+}
+
 - (BOOL)hasInjectedContentForURL:(NSURL *)url
 {
     NSParameterAssert(url);
@@ -296,6 +301,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 }
 
 - (BOOL)backgroundContentIsPersistent
+{
+    return NO;
+}
+
+- (BOOL)_backgroundContentUsesModules
 {
     return NO;
 }

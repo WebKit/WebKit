@@ -39,6 +39,13 @@
 namespace WebKit {
 using namespace WebCore;
 
+#define WP_MESSAGE_CHECK(assertion, ...) { \
+    if (UNLIKELY(!(assertion))) { \
+        RELEASE_LOG_FAULT(IPC, "Exiting: %{public}s is false", #assertion); \
+        CRASH_WITH_INFO(__VA_ARGS__); \
+    } \
+}
+
 WebGamepadProvider& WebGamepadProvider::singleton()
 {
     static NeverDestroyed<WebGamepadProvider> provider;
@@ -55,7 +62,7 @@ WebGamepadProvider::~WebGamepadProvider()
 
 void WebGamepadProvider::setInitialGamepads(const Vector<GamepadData>& gamepadDatas)
 {
-    ASSERT(m_gamepads.isEmpty());
+    WP_MESSAGE_CHECK((m_gamepads.isEmpty()), m_gamepads.size());
 
     m_gamepads.resize(gamepadDatas.size());
     m_rawGamepads.resize(gamepadDatas.size());
@@ -72,12 +79,12 @@ void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData, EventM
 {
     LOG(Gamepad, "WebGamepadProvider::gamepadConnected - Gamepad index %u attached (visibility: %i)\n", gamepadData.index(), (int)eventVisibility);
 
+    auto oldGamepadsSize = m_gamepads.size();
     if (m_gamepads.size() <= gamepadData.index()) {
         m_gamepads.resize(gamepadData.index() + 1);
         m_rawGamepads.resize(gamepadData.index() + 1);
     }
-
-    ASSERT(!m_gamepads[gamepadData.index()]);
+    WP_MESSAGE_CHECK((!m_gamepads[gamepadData.index()]), oldGamepadsSize, gamepadData.index(), m_gamepads.size());
 
     m_gamepads[gamepadData.index()] = makeUnique<WebGamepad>(gamepadData);
     m_rawGamepads[gamepadData.index()] = m_gamepads[gamepadData.index()].get();
@@ -88,7 +95,7 @@ void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData, EventM
 
 void WebGamepadProvider::gamepadDisconnected(unsigned index)
 {
-    ASSERT(m_gamepads.size() > index);
+    WP_MESSAGE_CHECK((m_gamepads.size() > index), index, m_gamepads.size());
 
     std::unique_ptr<WebGamepad> disconnectedGamepad = WTFMove(m_gamepads[index]);
     m_rawGamepads[index] = nullptr;

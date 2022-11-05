@@ -62,7 +62,7 @@ inline bool DiagnosticLoggingClient::shouldLogAfterSampling(ShouldSample shouldS
         return true;
 
     static const double selectionProbability = 0.05;
-    return randomNumber() <= selectionProbability;
+    return cryptographicallyRandomUnitInterval() <= selectionProbability;
 }
 
 } // namespace WebCore

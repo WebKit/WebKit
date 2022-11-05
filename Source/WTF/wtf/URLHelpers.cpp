@@ -116,6 +116,16 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(UC
     }
 }
 
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_THAI>(UChar32 codePoint)
+{
+    switch (codePoint) {
+    case 0x0E01: // THAI CHARACTER KO KAI
+        return true;
+    default:
+        return false;
+    }
+}
+
 template <UScriptCode ScriptType>
 bool isOfScriptType(UChar32 codePoint)
 {
@@ -163,6 +173,20 @@ bool isLookalikeSequence(const std::optional<UChar32>& previousCodePoint, UChar3
         || isLookalikePair(*previousCodePoint, codePoint);
 }
 
+template <>
+bool isLookalikeSequence<USCRIPT_ARABIC>(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
+{
+    auto isArabicDiacritic = [](UChar32 codePoint) {
+        return 0x064B <= codePoint && codePoint <= 0x065F;
+    };
+    auto isArabicCodePoint = [](const std::optional<UChar32>& codePoint) {
+        if (!codePoint)
+            return false;
+        return ublock_getCode(*codePoint) == UBLOCK_ARABIC;
+    };
+    return isArabicDiacritic(codePoint) && !isArabicCodePoint(previousCodePoint);
+}
+
 static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
 {
     // This function treats the following as unsafe, lookalike characters:
@@ -176,9 +200,12 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     // slashes into an ASCII solidus. But one of the two callers uses this
     // on characters that have not been processed by ICU, so they are needed here.
     
-    if (!u_isprint(codePoint) || u_isUWhiteSpace(codePoint) || u_hasBinaryProperty(codePoint, UCHAR_DEFAULT_IGNORABLE_CODE_POINT))
+    if (!u_isprint(codePoint)
+        || u_isUWhiteSpace(codePoint)
+        || u_hasBinaryProperty(codePoint, UCHAR_DEFAULT_IGNORABLE_CODE_POINT)
+        || ublock_getCode(codePoint) == UBLOCK_IPA_EXTENSIONS)
         return true;
-    
+
     switch (codePoint) {
     case 0x00BC: /* VULGAR FRACTION ONE QUARTER */
     case 0x00BD: /* VULGAR FRACTION ONE HALF */
@@ -190,8 +217,6 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     case 0x0237: /* LATIN SMALL LETTER DOTLESS J */
     case 0x0251: /* LATIN SMALL LETTER ALPHA */
     case 0x0261: /* LATIN SMALL LETTER SCRIPT G */
-    case 0x0274: /* LATIN LETTER SMALL CAPITAL N */
-    case 0x027E: /* LATIN SMALL LETTER R WITH FISHHOOK */
     case 0x02D0: /* MODIFIER LETTER TRIANGULAR COLON */
     case 0x0335: /* COMBINING SHORT STROKE OVERLAY */
     case 0x0337: /* COMBINING SHORT SOLIDUS OVERLAY */
@@ -312,7 +337,9 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     default:
         return isLookalikeSequence<USCRIPT_ARMENIAN>(previousCodePoint, codePoint)
             || isLookalikeSequence<USCRIPT_TAMIL>(previousCodePoint, codePoint)
-            || isLookalikeSequence<USCRIPT_CANADIAN_ABORIGINAL>(previousCodePoint, codePoint);
+            || isLookalikeSequence<USCRIPT_CANADIAN_ABORIGINAL>(previousCodePoint, codePoint)
+            || isLookalikeSequence<USCRIPT_THAI>(previousCodePoint, codePoint)
+            || isLookalikeSequence<USCRIPT_ARABIC>(previousCodePoint, codePoint);
     }
 }
 

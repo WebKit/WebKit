@@ -50,6 +50,16 @@
    },
    {
       "emails" : [
+         "abigail_fox@apple.com"
+      ],
+      "name" : "Abigail Fox",
+      "nicks" : [
+         "abigailf",
+         "abigailfox"
+      ]
+   },
+   {
+      "emails" : [
          "adachan@apple.com"
       ],
       "expertise" : "WebKit on Windows",
@@ -952,6 +962,18 @@
       "name" : "Arpita Bahuguna",
       "nicks" : [
          "arpitab"
+      ]
+   },
+   {
+      "emails" : [
+         "arunsundar_kannan@apple.com",
+         "arka6306@colorado.edu",
+         "arunsundar.kannan7@gmail.com"
+      ],
+      "github" : "arunsundarapple",
+      "name" : "Arunsundar Kannan",
+      "nicks" : [
+         "arunsundark"
       ]
    },
    {
@@ -2048,15 +2070,12 @@
    },
    {
       "emails" : [
-         "drousso@apple.com",
-         "dcrousso@apple.com",
-         "webkit@devinrousso.com"
+         "hi@devinrousso.com"
       ],
-      "expertise" : "Web Inspector, Media Controls, Payment Request",
+      "expertise" : "Web Inspector, Media Controls, Payment Request, Web Manifest, CSS Viewport, Pointer Events",
       "github" : "dcrousso",
       "name" : "Devin Rousso",
       "nicks" : [
-         "drousso",
          "dcrousso"
       ],
       "status" : "reviewer"

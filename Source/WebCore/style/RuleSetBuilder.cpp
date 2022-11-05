@@ -224,8 +224,7 @@ void RuleSetBuilder::pushCascadeLayer(const CascadeLayerName& name)
     auto nameResolvingAnonymous = [&] {
         if (name.isEmpty()) {
             // Make unique name for an anonymous layer.
-            unsigned long long random = randomNumber() * std::numeric_limits<unsigned long long>::max();
-            return CascadeLayerName { makeAtomString("anon_"_s, random) };
+            return CascadeLayerName { makeAtomString("anon_"_s, cryptographicallyRandomUint64()) };
         }
         return name;
     };

@@ -140,7 +140,7 @@ Vector<char> generateUniqueBoundaryString()
     Vector<char> randomBytes;
 
     for (unsigned i = 0; i < 4; ++i) {
-        unsigned randomness = static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
+        unsigned randomness = cryptographicallyRandomUint32();
         randomBytes.append(alphaNumericEncodingMap[(randomness >> 24) & 0x3F]);
         randomBytes.append(alphaNumericEncodingMap[(randomness >> 16) & 0x3F]);
         randomBytes.append(alphaNumericEncodingMap[(randomness >> 8) & 0x3F]);

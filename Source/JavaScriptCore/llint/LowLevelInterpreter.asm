@@ -1378,7 +1378,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
 
     if LARGE_TYPED_ARRAYS
         bqbeq index, SmallTypedArrayMaxLength, .smallTypedArray
-        setLargeTypedArray()
+        setLargeTypedArray(t3)
 .smallTypedArray:
     end
 

@@ -114,68 +114,57 @@ ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::extractShorthandCSSValu
     });
 }
 
-ExceptionOr<void> CSSStyleValueFactory::extractCustomCSSValues(Vector<Ref<CSSValue>>& cssValues, const AtomString& customPropertyName, const String& cssText)
+ExceptionOr<Ref<CSSUnparsedValue>> CSSStyleValueFactory::extractCustomCSSValues(const String& cssText)
 {
     if (cssText.isEmpty())
         return Exception { TypeError, "Value cannot be parsed"_s };
 
-    auto styleDeclaration = MutableStyleProperties::create();
-    
-    constexpr bool important = true;
-    CSSParser::ParseResult parseResult = CSSParser::parseCustomPropertyValue(styleDeclaration, customPropertyName, cssText, important, strictCSSParserContext());
-    
-    if (parseResult == CSSParser::ParseResult::Error)
-        return Exception { TypeError, makeString(cssText, " cannot be parsed.")};
-    
-    if (auto customValue = styleDeclaration->getPropertyCSSValue(CSSPropertyCustom))
-        cssValues.append(customValue.releaseNonNull());
-    
-    return { };
+    CSSTokenizer tokenizer(cssText);
+    return { CSSUnparsedValue::create(tokenizer.tokenRange()) };
 }
 
+// https://www.w3.org/TR/css-typed-om-1/#cssstylevalue
 ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(const AtomString& cssProperty, const String& cssText, bool parseMultiple)
 {
-    // https://www.w3.org/TR/css-typed-om-1/#cssstylevalue
-    
-    Vector<Ref<CSSValue>> cssValues;
-    
     // Extract the CSSValue from cssText given cssProperty
     if (isCustomPropertyName(cssProperty)) {
-        auto result = extractCustomCSSValues(cssValues, cssProperty, cssText);
+        auto result = extractCustomCSSValues(cssText);
         if (result.hasException())
             return result.releaseException();
-    } else {
-        auto property = cssProperty.convertToASCIILowercase();
-        
-        auto propertyID = cssPropertyID(property);
+        return Vector { Ref<CSSStyleValue> { result.releaseReturnValue() } };
+    }
 
-        if (propertyID == CSSPropertyInvalid)
-            return Exception { TypeError, "Property String is not a valid CSS property."_s };
-        
-        if (isShorthandCSSProperty(propertyID)) {
-            auto result = extractShorthandCSSValues(propertyID, cssText);
-            if (result.hasException())
-                return result.releaseException();
-            auto cssValue = result.releaseReturnValue();
-            if (!cssValue)
-                return Vector<Ref<CSSStyleValue>> { };
-            return Vector { cssValue.releaseNonNull() };
-        }
+    auto property = cssProperty.convertToASCIILowercase();
+    auto propertyID = cssPropertyID(property);
 
-        auto result = extractCSSValue(propertyID, cssText);
+    if (propertyID == CSSPropertyInvalid)
+        return Exception { TypeError, "Property String is not a valid CSS property."_s };
+
+    if (isShorthandCSSProperty(propertyID)) {
+        auto result = extractShorthandCSSValues(propertyID, cssText);
         if (result.hasException())
             return result.releaseException();
-        if (auto cssValue = result.releaseReturnValue()) {
-            // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
-            if (CSSProperty::isListValuedProperty(propertyID)) {
-                if (auto* valueList = dynamicDowncast<CSSValueList>(*cssValue)) {
-                    for (size_t i = 0, length = valueList->length(); i < length; ++i)
-                        cssValues.append(*valueList->item(i));
-                }
+        auto cssValue = result.releaseReturnValue();
+        if (!cssValue)
+            return Vector<Ref<CSSStyleValue>> { };
+        return Vector { cssValue.releaseNonNull() };
+    }
+
+    auto result = extractCSSValue(propertyID, cssText);
+    if (result.hasException())
+        return result.releaseException();
+
+    Vector<Ref<CSSValue>> cssValues;
+    if (auto cssValue = result.releaseReturnValue()) {
+        // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
+        if (CSSProperty::isListValuedProperty(propertyID)) {
+            if (auto* valueList = dynamicDowncast<CSSValueList>(*cssValue)) {
+                for (size_t i = 0, length = valueList->length(); i < length; ++i)
+                    cssValues.append(*valueList->item(i));
             }
-            if (cssValues.isEmpty())
-                cssValues.append(cssValue.releaseNonNull());
         }
+        if (cssValues.isEmpty())
+            cssValues.append(cssValue.releaseNonNull());
     }
 
     Vector<Ref<CSSStyleValue>> results;
@@ -326,5 +315,24 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
     
     return CSSStyleValue::create(WTFMove(cssValue));
 }
+
+Vector<Ref<CSSStyleValue>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
+{
+    Vector<Ref<CSSStyleValue>> styleValues;
+    for (auto&& value : WTFMove(values)) {
+        switchOn(WTFMove(value), [&](RefPtr<CSSStyleValue>&& styleValue) {
+            ASSERT(styleValue);
+            styleValues.append(styleValue.releaseNonNull());
+        }, [&](String&& string) {
+            constexpr bool parseMultiple = true;
+            auto result = CSSStyleValueFactory::parseStyleValue(property, string, parseMultiple);
+            if (result.hasException())
+                return;
+            styleValues.appendVector(result.releaseReturnValue());
+        });
+    }
+    return styleValues;
+}
+
 
 } // namespace WebCore

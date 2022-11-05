@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathClamp.h"
 
+#include "CSSCalcOperationNode.h"
 #include "CSSNumericValue.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -101,6 +102,18 @@ bool CSSMathClamp::equals(const CSSNumericValue& other) const
     return m_lower->equals(otherClamp->m_lower)
         && m_value->equals(otherClamp->m_value)
         && m_upper->equals(otherClamp->m_upper);
+}
+
+RefPtr<CSSCalcExpressionNode> CSSMathClamp::toCalcExpressionNode() const
+{
+    Vector<Ref<CSSCalcExpressionNode>> values;
+    for (auto& value : { m_lower, m_value, m_upper }) {
+        auto valueNode = value->toCalcExpressionNode();
+        if (!valueNode)
+            return nullptr;
+        values.append(valueNode.releaseNonNull());
+    }
+    return CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Clamp, WTFMove(values), CalculationCategory::Length);
 }
 
 } // namespace WebCore

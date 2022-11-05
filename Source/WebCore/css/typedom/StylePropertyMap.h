@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class CSSVariableReferenceValue;
+
 class StylePropertyMap : public MainThreadStylePropertyMapReadOnly {
 public:
     ExceptionOr<void> set(Document&, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values);
@@ -41,6 +43,12 @@ public:
 protected:
     virtual void removeProperty(CSSPropertyID) = 0;
     virtual void removeCustomProperty(const AtomString&) = 0;
+    virtual bool setShorthandProperty(CSSPropertyID, const String&) = 0;
+    virtual bool setProperty(CSSPropertyID, Ref<CSSValue>&&) = 0;
+    virtual bool setCustomProperty(Document&, const AtomString&, Ref<CSSVariableReferenceValue>&&) = 0;
+
+private:
+    RefPtr<CSSStyleValue> shorthandPropertyValue(Document&, CSSPropertyID) const;
 };
 
 } // namespace WebCore

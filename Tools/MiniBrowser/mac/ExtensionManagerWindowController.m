@@ -67,7 +67,7 @@
 
 - (IBAction)add:(id)sender
 {
-    NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     openPanel.allowedFileTypes = @[ @"public.json" ];
@@ -102,9 +102,8 @@
 
             [mutableInstalledContentExtensions addObject:identifier];
             [defaults setObject:mutableInstalledContentExtensions forKey:@"InstalledContentExtensions"];
-            [mutableInstalledContentExtensions release];
 
-            [arrayController addObject:identifier];
+            [self->arrayController addObject:identifier];
 
             BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
             [appDelegate.userContentContoller addContentRuleList:list];
@@ -132,9 +131,8 @@
         NSMutableArray *installedContentExtensions = [[defaults arrayForKey:@"InstalledContentExtensions"] mutableCopy];
         [installedContentExtensions removeObject:identifierToRemove];
         [defaults setObject:installedContentExtensions forKey:@"InstalledContentExtensions"];
-        [installedContentExtensions release];
 
-        [arrayController removeObjectAtArrangedObjectIndex:index];
+        [self->arrayController removeObjectAtArrangedObjectIndex:index];
         BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
         [appDelegate.userContentContoller _removeUserContentFilter:identifierToRemove];
     }];

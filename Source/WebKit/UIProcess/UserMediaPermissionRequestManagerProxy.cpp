@@ -436,7 +436,7 @@ void UserMediaPermissionRequestManagerProxy::scheduleNextRejection()
 {
     const double mimimumDelayBeforeReplying = .25;
     if (!m_rejectionTimer.isActive())
-        m_rejectionTimer.startOneShot(Seconds(mimimumDelayBeforeReplying + randomNumber()));
+        m_rejectionTimer.startOneShot(Seconds(mimimumDelayBeforeReplying + cryptographicallyRandomUnitInterval()));
 }
 
 #if ENABLE(MEDIA_STREAM)

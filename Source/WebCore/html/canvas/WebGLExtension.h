@@ -63,7 +63,6 @@ public:
         EXTColorBufferHalfFloatName,
         EXTFloatBlendName,
         EXTFragDepthName,
-        EXTProvokingVertexName,
         EXTShaderTextureLODName,
         EXTTextureCompressionBPTCName,
         EXTTextureCompressionRGTCName,
@@ -96,6 +95,7 @@ public:
         WebGLLoseContextName,
         WebGLMultiDrawName,
         WebGLMultiDrawInstancedBaseVertexBaseInstanceName,
+        WebGLProvokingVertexName,
     };
 
     WebGLRenderingContextBase* context() { return m_context; }

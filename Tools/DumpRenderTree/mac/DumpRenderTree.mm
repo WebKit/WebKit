@@ -1305,7 +1305,9 @@ int DumpRenderTreeMain(int argc, const char *argv[])
     WebCoreTestSupport::setLinkedOnOrAfterEverythingForTesting();
 
 #if PLATFORM(IOS_FAMILY)
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
     _UIApplicationLoadWebKit();
+IGNORE_WARNINGS_END
 #endif
 
     @autoreleasepool {

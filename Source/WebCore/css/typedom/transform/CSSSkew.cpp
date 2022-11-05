@@ -133,4 +133,18 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes) };
 }
 
+RefPtr<CSSValue> CSSSkew::toCSSValue() const
+{
+    auto ax = m_ax->toCSSValue();
+    auto ay = m_ay->toCSSValue();
+    if (!ax || !ay)
+        return nullptr;
+
+    auto result = CSSFunctionValue::create(CSSValueSkew);
+    result->append(ax.releaseNonNull());
+    if (!is<CSSUnitValue>(m_ay.get()) || downcast<CSSUnitValue>(m_ay.get()).value())
+        result->append(ay.releaseNonNull());
+    return result;
+}
+
 } // namespace WebCore

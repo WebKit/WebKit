@@ -243,7 +243,7 @@ function testRecDeclaration() {
       (rec (type (func (param i32))) (type (struct)))
       (elem declare funcref (ref.func 0))
       (func (type 0))
-      (func (call_ref (i32.const 42) (ref.func 0)))
+      (func (call_ref 0 (i32.const 42) (ref.func 0)))
       (start 1)
     )
   `);

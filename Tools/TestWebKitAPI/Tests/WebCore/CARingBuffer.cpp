@@ -41,7 +41,7 @@ public:
     virtual void SetUp()
     {
         WTF::initializeMainThread();
-        m_ringBuffer = makeUniqueWithoutFastMallocCheck<CARingBuffer>();
+        m_ringBuffer = makeUniqueWithoutFastMallocCheck<InProcessCARingBuffer>();
     }
 
     // CAAudioStreamDescription(double sampleRate, UInt32 numChannels, PCMFormat format, bool isInterleaved, size_t capacity)
@@ -78,7 +78,7 @@ public:
 private:
 
     std::unique_ptr<AudioBufferList> m_bufferList;
-    std::unique_ptr<CARingBuffer> m_ringBuffer;
+    std::unique_ptr<InProcessCARingBuffer> m_ringBuffer;
     CAAudioStreamDescription m_description = { };
     size_t m_capacity = { 0 };
 };

@@ -568,7 +568,7 @@ public:
     void remoteInspectorInformationDidChange();
 #endif
 
-    void loadServiceWorker(const URL&, CompletionHandler<void(bool success)>&&);
+    void loadServiceWorker(const URL&, bool usingModules, CompletionHandler<void(bool success)>&&);
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();

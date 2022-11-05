@@ -74,7 +74,7 @@ function validateBlackDots(frame, count) {
       y = y -1;
 
     let rgba = ctx.getImageData(x, y, 2, 2).data;
-    const tolerance = 40;
+    const tolerance = 70;
     if ((rgba[0] > tolerance || rgba[1] > tolerance || rgba[2] > tolerance)
       && (rgba[4] > tolerance || rgba[5] > tolerance || rgba[6] > tolerance)
       && (rgba[8] > tolerance || rgba[9] > tolerance || rgba[10] > tolerance)

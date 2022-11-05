@@ -1712,6 +1712,8 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
 
+    websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), 0);
+
     LoadParameters loadParameters;
     loadParameters.navigationID = 0;
     loadParameters.data = htmlData;
@@ -11274,7 +11276,7 @@ void WebPageProxy::setNeedsDOMWindowResizeEvent()
     send(Messages::WebPage::SetNeedsDOMWindowResizeEvent());
 }
 
-void WebPageProxy::loadServiceWorker(const URL& url, CompletionHandler<void(bool success)>&& completionHandler)
+void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
 {
 #if ENABLE(SERVICE_WORKER)
     if (m_isClosed)
@@ -11288,7 +11290,12 @@ void WebPageProxy::loadServiceWorker(const URL& url, CompletionHandler<void(bool
     m_isServiceWorkerPage = true;
     m_serviceWorkerLaunchCompletionHandler = WTFMove(completionHandler);
 
-    CString html = makeString("<script>navigator.serviceWorker.register('", url.string().utf8().data(), "');</script>").utf8();
+    CString html;
+    if (usingModules)
+        html = makeString("<script>navigator.serviceWorker.register('", url.string().utf8().data(), "', { type: 'module' });</script>").utf8();
+    else
+        html = makeString("<script>navigator.serviceWorker.register('", url.string().utf8().data(), "');</script>").utf8();
+
     loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
 #else
     UNUSED_PARAM(url);

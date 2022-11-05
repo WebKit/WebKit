@@ -103,6 +103,7 @@
            (global-name "com.apple.coremedia.customurlloader.xpc") ; Needed for custom media loading
            (global-name "com.apple.coremedia.figcpecryptor")
            (global-name "com.apple.coremedia.formatreader.xpc")
+           (global-name "com.apple.coremedia.mediaparserd.fairplaypsshatomparser.xpc")
            (global-name "com.apple.coremedia.mediaparserd.formatreader.xpc")
 #if USE(MEDIAPARSERD)
            (global-name "com.apple.coremedia.mediaparserd.manifold.xpc")

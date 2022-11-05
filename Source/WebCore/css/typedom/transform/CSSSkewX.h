@@ -49,6 +49,8 @@ public:
 
     CSSTransformType getType() const final { return CSSTransformType::SkewX; }
 
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     CSSSkewX(Ref<CSSNumericValue> ax);
     

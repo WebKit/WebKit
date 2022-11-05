@@ -1041,9 +1041,6 @@ void RenderElement::willBeDestroyed()
     if (hasCounterNodeMap())
         RenderCounter::destroyCounterNodes(*this);
 
-    if (style().hasOutline())
-        view().decrementRendersWithOutline();
-
     RenderObject::willBeDestroyed();
 
     clearSubtreeLayoutRootIfNeeded();
@@ -1066,6 +1063,9 @@ void RenderElement::willBeDestroyed()
 
     if (hasInitializedStyle()) {
         unregisterImages(m_style);
+
+        if (style().hasOutline())
+            view().decrementRendersWithOutline();
 
         if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
             unregisterImages(*firstLineStyle);

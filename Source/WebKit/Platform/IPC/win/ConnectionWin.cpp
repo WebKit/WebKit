@@ -44,7 +44,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     String pipeName;
 
     do {
-        unsigned uniqueID = randomNumber() * std::numeric_limits<unsigned>::max();
+        unsigned uniqueID = cryptographicallyRandomUint32();
         pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit.", hex(uniqueID));
 
         serverIdentifier = ::CreateNamedPipe(pipeName.wideCharacters().data(),

@@ -407,7 +407,7 @@ std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) c
     if (!alignmentInterval)
         return std::nullopt;
     
-    static const double randomizedProportion = randomNumber();
+    static const double randomizedProportion = cryptographicallyRandomUnitInterval();
 
     // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
     // if alignmentInterval is 10_ms and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...

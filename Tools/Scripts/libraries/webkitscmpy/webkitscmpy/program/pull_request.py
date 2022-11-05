@@ -199,7 +199,13 @@ class PullRequest(Command):
                     if remote in bp_remotes:
                         source_remote = remote
                         break
-            if source_remote and source_remote != 'origin':
+            if source_remote != repository.default_remote:
+                print("Making pull request against '{}' because that is where the branch point is from".format(source_remote))
+                if branch_point.branch in repository.DEFAULT_BRANCHES:
+                    sys.stderr.write('Branch point is on the default branch\n')
+                    sys.stderr.write("Local record of '{}' may be out of date\n".format(repository.default_remote))
+                    sys.stderr.write("Update with 'git fetch {}'\n".format(repository.default_remote))
+            if source_remote and source_remote != repository.default_remote:
                 args.remote = source_remote
         if not source_remote:
             source_remote = repository.default_remote

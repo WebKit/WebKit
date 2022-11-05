@@ -38,6 +38,7 @@
 #include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/ReturnRefClass.h>
+#include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <wtf/CreateUsingClass.h>
@@ -92,6 +93,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "CreateUsingClass"_s, {
             "double"_s,
+        } },
+        { "WebCore::FloatBoxExtent"_s, {
+            "float"_s,
+            "float"_s,
+            "float"_s,
+            "float"_s,
         } },
     };
 }

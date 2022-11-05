@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathProduct.h"
 
+#include "CSSCalcOperationNode.h"
 #include "CSSMathInvert.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
@@ -112,6 +113,19 @@ auto CSSMathProduct::toSumValue() const -> std::optional<SumValue>
         values = WTFMove(temp);
     }
     return { WTFMove(values) };
+}
+
+RefPtr<CSSCalcExpressionNode> CSSMathProduct::toCalcExpressionNode() const
+{
+    Vector<Ref<CSSCalcExpressionNode>> values;
+    values.reserveInitialCapacity(m_values->length());
+    for (auto& item : m_values->array()) {
+        auto value = item->toCalcExpressionNode();
+        if (!value)
+            return nullptr;
+        values.uncheckedAppend(value.releaseNonNull());
+    }
+    return CSSCalcOperationNode::createProduct(WTFMove(values));
 }
 
 } // namespace WebCore

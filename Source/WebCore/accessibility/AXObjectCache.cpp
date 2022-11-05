@@ -589,7 +589,7 @@ static bool isSimpleImage(const RenderObject& renderer)
     return true;
 }
 
-static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
+Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
     Node* node = renderer->node();
@@ -623,10 +623,10 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 #endif
 
     if (renderer->isSVGRootOrLegacySVGRoot())
-        return AccessibilitySVGRoot::create(renderer);
-    
+        return AccessibilitySVGRoot::create(renderer, this);
+
     if (is<SVGElement>(node))
-        return AccessibilitySVGElement::create(renderer);
+        return AccessibilitySVGElement::create(renderer, this);
 
     if (isSimpleImage(*renderer))
         return AXImage::create(downcast<RenderImage>(renderer));
@@ -789,26 +789,27 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     if (!renderer)
         return nullptr;
 
-    if (AccessibilityObject* obj = get(renderer))
-        return obj;
+    if (auto* object = get(renderer))
+        return object;
 
     // Don't create an object for this renderer if it's being destroyed.
     if (renderer->beingDestroyed())
         return nullptr;
-    RefPtr<AccessibilityObject> newObj = createFromRenderer(renderer);
+
+    RefPtr object = createObjectFromRenderer(renderer);
 
     // Will crash later if we have two objects for the same renderer.
     ASSERT(!get(renderer));
 
-    cacheAndInitializeWrapper(newObj.get(), renderer);
+    cacheAndInitializeWrapper(object.get(), renderer);
     // Compute the object's initial ignored status.
-    newObj->recomputeIsIgnored();
+    object->recomputeIsIgnored();
     // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
-    if (newObj->isDetached())
+    if (object->isDetached())
         return nullptr;
-    
-    return newObj.get();
+
+    return object.get();
 }
 
 AXCoreObject* AXObjectCache::rootObject()
@@ -827,6 +828,10 @@ AXCoreObject* AXObjectCache::rootObject()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
 {
+    AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    if (!m_pageID)
+        return nullptr;
+
     RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID);
     if (!tree) {
         tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
@@ -1878,18 +1883,26 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
 void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (!document().frame()->selection().isFocusedAndActive() || document().focusedElement() != &element)
+    if (!document().frame()->selection().isFocusedAndActive())
         return;
 
     auto* object = getOrCreate(&element);
     if (!object)
         return;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(*object, AXNotification::AXActiveDescendantChanged);
+#endif
+
+    // Notify active descendant changes only for the focused element.
+    if (document().focusedElement() != &element)
+        return;
+
     auto* activeDescendant = object->activeDescendant();
     // We want to notify that the combo box has changed its active descendant,
     // but we do not want to change the focus, because focus should remain with the combo box.
     if (activeDescendant && (object->isComboBox() || object->shouldFocusActiveDescendant())) {
-        auto target = object;
+        auto* target = object;
 
 #if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
@@ -1901,7 +1914,12 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
         }
 #endif
 
-        postNotification(target, &document(), AXActiveDescendantChanged);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (target != object)
+            updateIsolatedTree(target, AXNotification::AXActiveDescendantChanged);
+#endif
+
+        postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
     }
 }
 
@@ -1991,7 +2009,8 @@ bool AXObjectCache::shouldProcessAttributeChange(Element* element, const Qualifi
 void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName& attrName, const AtomString& oldValue, const AtomString& newValue)
 {
     AXTRACE(makeString("AXObjectCache::handleAttributeChange 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-    AXLOG(makeString("attribute ", attrName.localName().string(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
+    AXLOG(makeString("attribute ", attrName.localName(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
+    AXLOG(makeString("old value: ", oldValue, " new value: ", newValue));
 
     if (!shouldProcessAttributeChange(element, attrName))
         return;
@@ -4040,12 +4059,9 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::updateRelationsIfNeeded()
 {
-    AXTRACE(makeString("AXObjectCache::updateRelationsIfNeeded 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-
     if (!m_relationsNeedUpdate)
         return;
     relationsNeedUpdate(false);
-    AXLOG("Updating relations.");
     m_relations.clear();
     m_relationTargets.clear();
     updateRelationsForTree(m_document.rootNode());

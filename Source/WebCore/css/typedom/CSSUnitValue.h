@@ -51,6 +51,9 @@ public:
     RefPtr<CSSUnitValue> convertTo(CSSUnitType) const;
     static CSSUnitType parseUnit(const String& unit);
 
+    RefPtr<CSSValue> toCSSValue() const final;
+    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+
 private:
     CSSUnitValue(double, CSSUnitType);
 

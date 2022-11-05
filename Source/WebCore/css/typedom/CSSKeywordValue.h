@@ -47,6 +47,8 @@ public:
     
     static Ref<CSSKeywordValue> rectifyKeywordish(CSSKeywordish&&);
 
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
