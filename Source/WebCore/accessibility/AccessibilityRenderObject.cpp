@@ -399,13 +399,6 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
         // Case 5b: continuation is an inline - in this case the inline's first child is the next sibling
         else
             nextSibling = firstChildConsideringContinuation(continuation);
-        
-        // After case 4, there are chances that nextSibling has the same node as the current renderer,
-        // which might lead to adding the same child repeatedly.
-        if (nextSibling && nextSibling->node() == m_renderer->node()) {
-            if (AccessibilityObject* nextObj = axObjectCache()->getOrCreate(nextSibling))
-                return nextObj->nextSibling();
-        }
     }
 
     if (!nextSibling)
@@ -414,6 +407,13 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     auto* objectCache = axObjectCache();
     if (!objectCache)
         return nullptr;
+
+    // After case 4, there are chances that nextSibling has the same node as the current renderer,
+    // which might lead to adding the same child repeatedly.
+    if (nextSibling->node() && nextSibling->node() == m_renderer->node()) {
+        if (auto* nextObject = objectCache->getOrCreate(nextSibling))
+            return nextObject->nextSibling();
+    }
 
     auto* nextObject = objectCache->getOrCreate(nextSibling);
     auto* nextObjectParent = nextObject ? nextObject->parentObject() : nullptr;
