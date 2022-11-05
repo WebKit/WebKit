@@ -992,6 +992,11 @@ webkit.org/b/217617 imported/w3c/web-platform-tests/service-workers/service-work
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Slow ]
 
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Slow ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Slow ]
+
 # This test is slow in debug due to assertions.
 [ Debug ] compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Slow ]
 

@@ -3705,11 +3705,6 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/upgrade/websocket.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/websocket.https.html [ Pass Failure ]
 
-webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Pass Failure ]
-webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Pass Failure ]
-webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
-webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
-
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
 
