@@ -47,6 +47,7 @@
 #include <wtf/Scope.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 WebFoundTextRangeController::WebFoundTextRangeController(WebPage& webPage)
     : m_webPage(webPage)
