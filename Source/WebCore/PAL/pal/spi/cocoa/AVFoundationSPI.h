@@ -256,7 +256,7 @@ typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
 @end
 #endif
 
-#if !HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVContentKeyRequest (AVContentKeyRequest_WebKitCompatibilityMode)
 + (instancetype)contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:(AVContentKeySystem)keySystem storageDirectoryAtURL:(NSURL *)storageURL;
