@@ -433,6 +433,20 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         if (constraints.right)
             constraints.right->move(-adjustingDelta);
     }
+
+    if (floatingState.isLeftToRightDirection() != root().style().isLeftToRightDirection()) {
+        // FIXME: Move it under coordinateMappingIsRequired when the integration codepath starts initiating the floating state with the
+        // correct containing block (i.e. when the float comes from the parent BFC).
+
+        // Flip to logical in inline direction.
+        auto logicalConstraints = Constraints { };
+        auto borderBoxWidth = formattingContext().geometryForBox(root(), FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot).borderBoxWidth();
+        if (constraints.left)
+            logicalConstraints.right = PointInContextRoot { borderBoxWidth - constraints.left->x, constraints.left->y };
+        if (constraints.right)
+            logicalConstraints.left = PointInContextRoot { borderBoxWidth - constraints.right->x, constraints.right->y };
+        constraints = logicalConstraints;
+    }
     return constraints;
 }
 
