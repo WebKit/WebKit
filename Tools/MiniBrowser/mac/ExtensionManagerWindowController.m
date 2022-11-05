@@ -26,6 +26,7 @@
 #import "ExtensionManagerWindowController.h"
 
 #import "AppDelegate.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 
 @implementation ExtensionManagerWindowController
@@ -67,10 +68,7 @@
 - (IBAction)add:(id)sender
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    openPanel.allowedFileTypes = @[ @"public.json" ];
-#pragma clang diagnostic pop
+    openPanel.allowedContentTypes = @[ UTTypeJSON ];
     
     [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result != NSModalResponseOK)
