@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class CSSFontStyleValue;
 class CSSFontStyleRangeValue;
 class CSSPrimitiveValue;
 class CSSValue;
@@ -58,7 +57,7 @@ public:
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
 RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);

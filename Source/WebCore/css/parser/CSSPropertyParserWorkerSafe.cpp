@@ -34,7 +34,7 @@
 
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSImageValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
@@ -304,7 +304,7 @@ RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range,
 
 #endif
 
-RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
 {
     auto keyword = CSSPropertyParserHelpers::consumeIdentWorkerSafe<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range, pool);
     if (!keyword)
@@ -313,13 +313,13 @@ RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParser
 #if ENABLE(VARIATION_FONTS)
     if (keyword->valueID() == CSSValueOblique && !range.atEnd()) {
         if (auto angle = consumeFontStyleAngle(range, mode, pool))
-            return CSSFontStyleValue::create(keyword.releaseNonNull(), angle.releaseNonNull());
+            return CSSFontStyleWithAngleValue::create(angle.releaseNonNull());
     }
 #else
     UNUSED_PARAM(mode);
 #endif
 
-    return CSSFontStyleValue::create(keyword.releaseNonNull());
+    return keyword;
 }
 
 static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range, CSSValuePool& pool)

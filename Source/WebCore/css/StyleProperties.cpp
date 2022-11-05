@@ -575,6 +575,8 @@ static std::optional<CSSValueID> fontStretchKeyword(double value)
 
 String StyleProperties::fontValue() const
 {
+    // FIXME: This should check more font subproperties aand return empty string when they do not have their initial values. https://bugs.webkit.org/show_bug.cgi?id=247498
+
     int fontSizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
     int fontFamilyPropertyIndex = findPropertyIndex(CSSPropertyFontFamily);
     if (fontSizePropertyIndex == -1 || fontFamilyPropertyIndex == -1)
@@ -1417,7 +1419,13 @@ RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) 
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
         return nullptr;
-    return propertyAt(foundPropertyIndex).value();
+    auto property = propertyAt(foundPropertyIndex);
+    auto value = property.value();
+    // System fonts are represented as CSSPrimitiveValue for various font subproperties, but these must serialize as the empty string.
+    // It might be better to implement this as a special CSSValue type instead of turning them into null here.
+    if (property.id() != CSSPropertyFont && is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(*value).valueID()))
+        return nullptr;
+    return value;
 }
 
 RefPtr<CSSValue> StyleProperties::getCustomPropertyCSSValue(const String& propertyName) const
@@ -1817,12 +1825,28 @@ StringBuilder StyleProperties::asTextInternal() const
                 shorthands.append(CSSPropertyWebkitBorderImage);
                 break;
             case CSSPropertyFontFamily:
-            case CSSPropertyLineHeight:
+            case CSSPropertyFontFeatureSettings:
+            case CSSPropertyFontKerning:
+#if ENABLE(VARIATION_FONTS)
+            case CSSPropertyFontOpticalSizing:
+#endif
+            case CSSPropertyFontPalette:
             case CSSPropertyFontSize:
+            case CSSPropertyFontSizeAdjust:
+            case CSSPropertyFontStretch:
             case CSSPropertyFontStyle:
+            case CSSPropertyFontVariantAlternates:
             case CSSPropertyFontVariantCaps:
+            case CSSPropertyFontVariantEastAsian:
+            case CSSPropertyFontVariantLigatures:
+            case CSSPropertyFontVariantNumeric:
+            case CSSPropertyFontVariantPosition:
+#if ENABLE(VARIATION_FONTS)
+            case CSSPropertyFontVariationSettings:
+#endif
             case CSSPropertyFontWeight:
-                // Don't use CSSPropertyFont because old UAs can't recognize them but are important for editing.
+            case CSSPropertyLineHeight:
+                // We are not yet adding the CSSPropertyFont shorthand here because our editing code is currently incompatble.
                 break;
             case CSSPropertyTop:
             case CSSPropertyRight:
@@ -1941,7 +1965,6 @@ StringBuilder StyleProperties::asTextInternal() const
                 break;
             case CSSPropertyWebkitMaskClip:
             case CSSPropertyWebkitMaskPosition:
-                // TODO: A lot of the above properties can be both prefixed and unprefixed?
                 shorthands.append(CSSPropertyWebkitMask);
                 break;
             case CSSPropertyPerspectiveOriginX:

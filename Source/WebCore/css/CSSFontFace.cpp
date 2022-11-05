@@ -246,7 +246,7 @@ void CSSFontFace::setStretch(CSSValue& style)
 
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
-    if (value.isFontStyleValue())
+    if (!is<CSSFontStyleRangeValue>(value))
         return FontSelectionRange { Style::BuilderConverter::convertFontStyleFromValue(value).value_or(normalItalicValue()) };
 
     auto& rangeValue = downcast<CSSFontStyleRangeValue>(value);

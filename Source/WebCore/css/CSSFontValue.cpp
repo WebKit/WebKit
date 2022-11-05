@@ -21,7 +21,7 @@
 #include "config.h"
 #include "CSSFontValue.h"
 
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSValueList.h"
 #include <wtf/text/StringBuilder.h>
 

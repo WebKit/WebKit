@@ -107,7 +107,6 @@ private:
     bool consumeTextDecorationSkip(bool important);
     bool consumeFontVariantShorthand(bool important);
     bool consumeFontSynthesis(bool important);
-    bool consumeSystemFont(bool important);
 
     bool consumeBorderSpacing(bool important);
 

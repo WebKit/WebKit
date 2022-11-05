@@ -30,7 +30,7 @@
 #include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
@@ -1338,7 +1338,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
     ASSERT(primitiveValue.isValueID());
     if (auto value = fontStretchValue(primitiveValue.valueID()))
         return value.value();
-    ASSERT_NOT_REACHED();
+    ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
     return normalStretchValue();
 }
 
@@ -1350,16 +1350,13 @@ inline FontSelectionValue BuilderConverter::convertFontStyleAngle(const CSSValue
 // The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
 inline std::optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(const CSSValue& value)
 {
-    const auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
+    if (auto* fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value))
+        return convertFontStyleAngle(fontStyleValue->obliqueAngle());
 
-    auto valueID = fontStyleValue.fontStyleValue->valueID();
+    auto valueID = downcast<CSSPrimitiveValue>(value).valueID();
     if (valueID == CSSValueNormal)
         return std::nullopt;
-    if (valueID == CSSValueItalic)
-        return italicValue();
-    ASSERT(valueID == CSSValueOblique);
-    if (auto* obliqueValue = fontStyleValue.obliqueValue.get())
-        return convertFontStyleAngle(*obliqueValue);
+    ASSERT(valueID == CSSValueItalic || valueID == CSSValueOblique);
     return italicValue();
 }
 

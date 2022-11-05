@@ -161,7 +161,7 @@ rect: style.getPropertyCSSValue(font-optical-sizing) : [object CSSPrimitiveValue
 rect: style.getPropertyValue(font-size) : 16px
 rect: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-style) : normal
-rect: style.getPropertyCSSValue(font-style) : [object CSSValue]
+rect: style.getPropertyCSSValue(font-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-synthesis-small-caps) : auto
 rect: style.getPropertyCSSValue(font-synthesis-small-caps) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-synthesis-style) : auto
@@ -671,7 +671,7 @@ g: style.getPropertyCSSValue(font-optical-sizing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-size) : 16px
 g: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-style) : normal
-g: style.getPropertyCSSValue(font-style) : [object CSSValue]
+g: style.getPropertyCSSValue(font-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-synthesis-small-caps) : auto
 g: style.getPropertyCSSValue(font-synthesis-small-caps) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-synthesis-style) : auto

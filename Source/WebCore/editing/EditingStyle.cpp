@@ -30,7 +30,7 @@
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSFontFamily.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSRuleList.h"
@@ -148,18 +148,25 @@ static RefPtr<CSSValue> extractPropertyValue(ComputedStyleExtractor& computedSty
     return computedStyle.propertyValue(propertyID);
 }
 
-template<typename T>
-int identifierForStyleProperty(T& style, CSSPropertyID propertyID)
+// This synthesizes CSSValueBold and CSSValueItalic when appropriate, and never returns CSSValueOblique.
+template<typename T> CSSValueID identifierForStyleProperty(T& style, CSSPropertyID propertyID)
 {
-    RefPtr<CSSValue> value = extractPropertyValue(style, propertyID);
-    if (propertyID == CSSPropertyFontStyle && is<CSSFontStyleValue>(value) && downcast<CSSFontStyleValue>(value.get())->isItalicOrOblique())
-        return CSSValueItalic;
-    if (!is<CSSPrimitiveValue>(value))
-        return 0;
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (propertyID == CSSPropertyFontWeight && primitiveValue.isNumber() && primitiveValue.doubleValue(CSSUnitType::CSS_NUMBER) >= boldThreshold())
-        return CSSValueBold;
-    return primitiveValue.valueID();
+    auto value = extractPropertyValue(style, propertyID);
+    if (auto fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value.get())) {
+        ASSERT(propertyID == CSSPropertyFontStyle);
+        return fontStyleValue->obliqueAngle().doubleValue(CSSUnitType::CSS_DEG) >= italicThreshold() ? CSSValueItalic : CSSValueNormal;
+    }
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
+        if (propertyID == CSSPropertyFontWeight && primitiveValue->doubleValue(CSSUnitType::CSS_NUMBER) >= boldThreshold())
+            return CSSValueBold;
+        auto identifier = primitiveValue->valueID();
+        if (identifier == CSSValueOblique) {
+            ASSERT(propertyID == CSSPropertyFontStyle);
+            return CSSValueItalic;
+        }
+        return identifier;
+    }
+    return CSSValueInvalid;
 }
 
 template<typename T> Ref<MutableStyleProperties> getPropertiesNotIn(StyleProperties& styleWithRedundantProperties, T& baseStyle);
@@ -1811,7 +1818,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     }
 
     int fontStyle = identifierForStyleProperty(style, CSSPropertyFontStyle);
-    if (fontStyle == CSSValueItalic || fontStyle == CSSValueOblique) {
+    if (fontStyle == CSSValueItalic) {
         style.removeProperty(CSSPropertyFontStyle);
         m_applyItalic = true;
     }

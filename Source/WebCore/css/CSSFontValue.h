@@ -24,8 +24,8 @@
 
 namespace WebCore {
 
-class CSSFontStyleValue;
 class CSSPrimitiveValue;
+class CSSValue;
 class CSSValueList;
 
 class CSSFontValue final : public CSSValue {
@@ -39,7 +39,7 @@ public:
 
     bool equals(const CSSFontValue&) const;
 
-    RefPtr<CSSFontStyleValue> style;
+    RefPtr<CSSValue> style;
     RefPtr<CSSPrimitiveValue> variant;
     RefPtr<CSSPrimitiveValue> weight;
     RefPtr<CSSPrimitiveValue> stretch;

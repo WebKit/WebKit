@@ -116,6 +116,7 @@ my %nameToAliases;
 my %synonyms;
 my %namesToSynonyms;
 my %relatedProperty;
+my %notEnabledProperty;
 
 for my $name (@allNames) {
     my $value = $propertiesHashRef->{$name};
@@ -125,6 +126,8 @@ for my $name (@allNames) {
         removeInactiveCodegenProperties($name, \%$value);
         if (isPropertyEnabled($name, $value)) {
             addProperty($name, $value);
+        } else {
+            $notEnabledProperty{$name} = 1;
         }
     } else {
         die "$name does not have a supported value type. Only dictionary types are supported.";
@@ -1723,7 +1726,7 @@ foreach my $name (@names) {
             push(@{$longhandToShorthands{$propname}}, $name);
             print SHORTHANDS_CPP "        CSSProperty" . $nameToId{$propname} . ",\n";
         }
-    } else {
+    } elsif (!exists $notEnabledProperty{$_}) {
         die "Unknown CSS property used in longhands: $_" if !exists($nameToId{$_});
         push(@{$longhandToShorthands{$_}}, $name);
         print SHORTHANDS_CPP "        CSSProperty" . $nameToId{$_} . ",\n";

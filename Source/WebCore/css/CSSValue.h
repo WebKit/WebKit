@@ -69,8 +69,8 @@ public:
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
     bool isFontPaletteValuesOverrideColorsValue() const { return m_classType == FontPaletteValuesOverrideColorsClass; }
     bool isFontValue() const { return m_classType == FontClass; }
-    bool isFontStyleValue() const { return m_classType == FontStyleClass; }
     bool isFontStyleRangeValue() const { return m_classType == FontStyleRangeClass; }
+    bool isFontStyleWithAngleValue() const { return m_classType == FontStyleWithAngleClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= PrefixedRadialGradientClass; }
     bool isGradientValue() const { return m_classType >= LinearGradientClass && m_classType <= PrefixedRadialGradientClass; }
     bool isNamedImageValue() const { return m_classType == NamedImageClass; }
@@ -184,8 +184,8 @@ protected:
         FontVariationClass,
         FontVariantAlternatesClass,
         FontClass,
-        FontStyleClass,
         FontStyleRangeClass,
+        FontStyleWithAngleClass,
         FontFaceSrcClass,
         FontPaletteValuesOverrideColorsClass,
         FunctionClass,

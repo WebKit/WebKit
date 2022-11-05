@@ -44,7 +44,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontStyleRangeValue.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariationValue.h"
@@ -129,8 +129,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFeatureValue>(*this));
     case FontPaletteValuesOverrideColorsClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontPaletteValuesOverrideColorsValue>(*this));
-    case FontStyleClass:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleValue>(*this));
+    case FontStyleWithAngleClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleWithAngleValue>(*this));
     case FontStyleRangeClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleRangeValue>(*this));
     case FontVariantAlternatesClass:
