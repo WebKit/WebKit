@@ -687,9 +687,9 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (void)updateLockButtonIcon:(BOOL)hasOnlySecureContent
 {
     if (hasOnlySecureContent)
-        [lockButton setImage:[NSImage imageNamed:NSImageNameLockLockedTemplate]];
+        [lockButton setImage:[NSImage imageWithSystemSymbolName:@"lock" accessibilityDescription:nil]];
     else
-        [lockButton setImage:[NSImage imageNamed:NSImageNameLockUnlockedTemplate]];
+        [lockButton setImage:[NSImage imageWithSystemSymbolName:@"lock.open" accessibilityDescription:nil]];
 }
 
 - (void)loadURLString:(NSString *)urlString

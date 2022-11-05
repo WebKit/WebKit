@@ -43,18 +43,10 @@
 
 - (void)windowDidLoad
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     // FIXME: We should probably adopt the default unified style, but we'd need
     // somewhere to put the window/page title.
     self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
 
-    reloadButton.image = [NSImage imageWithSystemSymbolName:@"arrow.clockwise" accessibilityDescription:@"Reload"];
-    // FIXME: Should these be localized?
-    backButton.image = [NSImage imageWithSystemSymbolName:@"chevron.left" accessibilityDescription:@"Go back"];
-    forwardButton.image = [NSImage imageWithSystemSymbolName:@"chevron.right" accessibilityDescription:@"Go forward"];
-    share.image = [NSImage imageWithSystemSymbolName:@"square.and.arrow.up" accessibilityDescription:@"Share"];
-    toggleUseShrinkToFitButton.image = [NSImage imageWithSystemSymbolName:@"arrow.up.left.and.arrow.down.right" accessibilityDescription:@"Use Shrink to fit"];
-#endif
     [share sendActionOn:NSEventMaskLeftMouseDown];
     [super windowDidLoad];
 }
