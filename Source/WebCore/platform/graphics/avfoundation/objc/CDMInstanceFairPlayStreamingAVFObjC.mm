@@ -33,6 +33,7 @@
 #import "CDMMediaCapability.h"
 #import "InitDataRegistry.h"
 #import "Logging.h"
+#import "MediaSessionManagerCocoa.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "TextDecoder.h"
@@ -254,6 +255,17 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
 #endif
 
     auto storageURL = this->storageURL();
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
+    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
+        if (!persistentStateAllowed() || !storageURL)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+            m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:nil];
+#pragma clang diagnostic pop
+        else
+            m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
+    } else
+#endif
     if (!persistentStateAllowed() || !storageURL)
         m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming];
     else
@@ -1603,6 +1615,17 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()
 #endif
 
     auto storageURL = m_instance->storageURL();
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
+    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
+        if (!m_instance->persistentStateAllowed() || !storageURL)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+            m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:nil];
+#pragma clang diagnostic pop
+        else
+            m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
+    } else
+#endif
     if (!m_instance->persistentStateAllowed() || !storageURL)
         m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming];
     else
