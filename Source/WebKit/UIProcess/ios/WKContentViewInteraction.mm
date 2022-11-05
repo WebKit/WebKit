@@ -8519,6 +8519,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
         if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
             return YES;
+        
+        if (gestureRecognizer == _highlightLongPressGestureRecognizer)
+            return YES;
 
         if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
             UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
