@@ -1802,7 +1802,7 @@ struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_re
         Vector<DestinationItemType> result;
         // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
-        for (auto& item : source)
+        for (auto&& item : source)
             result.uncheckedAppend(mapFunction(WTFMove(item)));
         return result;
     }
@@ -1863,7 +1863,7 @@ struct CompactMapper<MapFunction, SourceType, typename std::enable_if<std::is_rv
     static Vector<DestinationItemType> compactMap(SourceType source, const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
-        for (auto& item : source) {
+        for (auto&& item : source) {
             auto itemResult = mapFunction(WTFMove(item));
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
                 result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));

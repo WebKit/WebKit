@@ -4368,14 +4368,12 @@ Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CS
 
 Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties()
 {
-    Vector<CSSProperty> list;
-    list.reserveInitialCapacity(numCSSPropertyLonghands);
-    for (auto propertyID : allLonghandCSSProperties()) {
-        if (auto value = propertyValue(propertyID))
-            list.append(CSSProperty(propertyID, WTFMove(value)));
-    }
-    list.shrinkToFit();
-    return MutableStyleProperties::create(WTFMove(list));
+    return MutableStyleProperties::create(WTF::compactMap(allLonghandCSSProperties(), [this] (auto property) -> std::optional<CSSProperty> {
+        auto value = propertyValue(property);
+        if (!value)
+            return std::nullopt;
+        return { { property, WTFMove(value) } };
+    }));
 }
 
 size_t ComputedStyleExtractor::getLayerCount(CSSPropertyID property)

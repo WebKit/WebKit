@@ -61,6 +61,11 @@ public:
         }
     }
 
+    template<typename InputIterator> FixedVector(InputIterator begin, InputIterator end)
+        : m_storage(begin == end ? nullptr : Storage::create(begin, end).moveToUniquePtr())
+    {
+    }
+
     FixedVector& operator=(const FixedVector& other)
     {
         FixedVector tmp(other);

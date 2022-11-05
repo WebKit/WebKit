@@ -8955,14 +8955,11 @@ const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
 {
     if (!m_exposedComputedCSSPropertyIDs.has_value()) {
         std::remove_const_t<decltype(computedPropertyIDs)> exposed;
-        auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(),
-            [&](CSSPropertyID property) {
-                return isExposed(property, m_settings.ptr());
-            });
-        m_exposedComputedCSSPropertyIDs.emplace(end - exposed.begin());
-        std::copy(exposed.begin(), end, m_exposedComputedCSSPropertyIDs->begin());
+        auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(), [&](auto property) {
+            return isExposed(property, m_settings.ptr());
+        });
+        m_exposedComputedCSSPropertyIDs.emplace(exposed.begin(), end);
     }
-
     return m_exposedComputedCSSPropertyIDs.value();
 }
 
