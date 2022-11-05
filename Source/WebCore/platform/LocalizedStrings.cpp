@@ -479,6 +479,16 @@ String contextMenuItemTagMediaMute()
     return WEB_UI_STRING_WITH_MNEMONIC("Mute", "_Mute", "Media Mute context menu item");
 }
 
+String contextMenuItemTagPlayAllAnimations()
+{
+    return WEB_UI_STRING("Play All Animations", "Play All Animations context menu item");
+}
+
+String contextMenuItemTagPauseAllAnimations()
+{
+    return WEB_UI_STRING("Pause All Animations", "Pause All Animations context menu item");
+}
+
 String contextMenuItemTagInspectElement()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Inspect Element", "Inspect _Element", "Inspect Element context menu item");

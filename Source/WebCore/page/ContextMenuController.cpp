@@ -315,6 +315,16 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             openNewWindow(loader->url(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         break;
     }
+    case ContextMenuItemTagPlayAllAnimations: {
+        if (auto* page = frame->page())
+            page->setImageAnimationEnabled(true);
+        break;
+    }
+    case ContextMenuItemTagPauseAllAnimations: {
+        if (auto* page = frame->page())
+            page->setImageAnimationEnabled(false);
+        break;
+    }
     case ContextMenuItemTagCopy:
         frame->editor().copy();
         break;
@@ -831,6 +841,8 @@ void ContextMenuController::populate()
         contextMenuItemTagMediaPlay());
     ContextMenuItem MediaMute(ActionType, ContextMenuItemTagMediaMute, 
         contextMenuItemTagMediaMute());
+    ContextMenuItem PlayAllAnimations(ActionType, ContextMenuItemTagPlayAllAnimations, contextMenuItemTagPlayAllAnimations());
+    ContextMenuItem PauseAllAnimations(ActionType, ContextMenuItemTagPauseAllAnimations, contextMenuItemTagPauseAllAnimations());
 #if SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS
     ContextMenuItem ToggleMediaControls(ActionType, ContextMenuItemTagToggleMediaControls,
         contextMenuItemTagHideMediaControls());
@@ -989,6 +1001,13 @@ void ContextMenuController::populate()
 #if PLATFORM(GTK)
             appendItem(CopyImageUrlItem, m_contextMenu.get());
 #endif
+        }
+
+        if (frame->page() && frame->page()->settings().imageAnimationControlEnabled()) {
+            if (frame->page()->imageAnimationEnabled())
+                appendItem(PauseAllAnimations, m_contextMenu.get());
+            else
+                appendItem(PlayAllAnimations, m_contextMenu.get());
         }
 
         URL mediaURL = m_context.hitTestResult().absoluteMediaURL();
@@ -1530,6 +1549,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagCopyVideoLinkToClipboard());
             else
                 item.setTitle(contextMenuItemTagCopyAudioLinkToClipboard());
+            break;
+        case ContextMenuItemTagPlayAllAnimations:
+            item.setTitle(contextMenuItemTagPlayAllAnimations());
+            break;
+        case ContextMenuItemTagPauseAllAnimations:
+            item.setTitle(contextMenuItemTagPauseAllAnimations());
             break;
         case ContextMenuItemTagToggleMediaControls:
 #if SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS

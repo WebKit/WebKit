@@ -64,6 +64,8 @@ UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier = @
 static UIActionIdentifier const WKElementActionTypeImageExtractionIdentifier = @"WKElementActionTypeImageExtraction";
 static UIActionIdentifier const WKElementActionTypeRevealImageIdentifier = @"WKElementActionTypeRevealImage";
 static UIActionIdentifier const WKElementActionTypeCopySubjectIdentifier = @"WKElementActionTypeCopySubject";
+static UIActionIdentifier const WKElementActionPlayAllAnimationsIdentifier = @"WKElementActionPlayAllAnimations";
+static UIActionIdentifier const WKElementActionPauseAllAnimationsIdentifier = @"WKElementActionPauseAllAnimations";
 
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";

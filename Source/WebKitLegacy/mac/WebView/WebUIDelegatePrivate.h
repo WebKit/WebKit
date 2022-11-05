@@ -114,6 +114,8 @@ enum {
     WebMenuItemTagAddHighlightToNewQuickNote,
     WebMenuItemTagRevealImage,
     WebMenuItemTagTranslate,
+    WebMenuItemTagPlayAllAnimations,
+    WebMenuItemTagPauseAllAnimations,
 };
 
 // Deprecated; remove when there are no more clients.
