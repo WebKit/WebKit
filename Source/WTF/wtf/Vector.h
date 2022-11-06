@@ -1781,7 +1781,7 @@ struct Mapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
 
-    static Vector<DestinationItemType> map(SourceType source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> map(const SourceType& source, const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
         // FIXME: Use std::size when available on all compilers.
@@ -1841,7 +1841,7 @@ struct CompactMapper {
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
 
-    static Vector<DestinationItemType> compactMap(SourceType source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> compactMap(const SourceType& source, const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
         for (auto& item : source) {
@@ -1860,7 +1860,7 @@ struct CompactMapper<MapFunction, SourceType, typename std::enable_if<std::is_rv
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
 
-    static Vector<DestinationItemType> compactMap(SourceType source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> compactMap(SourceType&& source, const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
         for (auto& item : source) {
