@@ -1286,6 +1286,106 @@ TEST(WTF_Vector, CompactMapLambdaReturnOptionalRefPtr)
     EXPECT_EQ(nullptr, mapped[4]);
 }
 
+struct CopyCountingObject {
+    constexpr CopyCountingObject(int identifier)
+        : identifier { identifier }
+    {
+    }
+
+    CopyCountingObject(const CopyCountingObject& other)
+        : identifier { other.identifier }
+    {
+        ++copyCount;
+    }
+    CopyCountingObject(CopyCountingObject&& other)
+        : identifier { other.identifier }
+    {
+    }
+    CopyCountingObject& operator=(const CopyCountingObject& other)
+    {
+        identifier = other.identifier;
+        ++copyCount;
+        return *this;
+    }
+    CopyCountingObject& operator=(CopyCountingObject&& other)
+    {
+        identifier = other.identifier;
+        return *this;
+    }
+
+    int identifier { 0 };
+    static int copyCount;
+};
+
+constexpr bool operator==(const CopyCountingObject& a, int b) { return a.identifier == b; }
+constexpr bool operator==(int a, const CopyCountingObject& b) { return a == b.identifier; }
+
+int CopyCountingObject::copyCount;
+
+TEST(WTF_Vector, MapMinimalCopy)
+{
+    std::array<CopyCountingObject, 5> array { 1, 2, 3, 4, 5 };
+    Vector<CopyCountingObject> vector { 1, 2, 3, 4, 5 };
+
+    CopyCountingObject::copyCount = 0;
+    auto allCopiedFromVector = vector.map([](const auto& object) -> CopyCountingObject {
+        return object;
+    });
+    EXPECT_EQ(5U, allCopiedFromVector.size());
+    EXPECT_EQ(1, allCopiedFromVector[0]);
+    EXPECT_EQ(2, allCopiedFromVector[1]);
+    EXPECT_EQ(3, allCopiedFromVector[2]);
+    EXPECT_EQ(4, allCopiedFromVector[3]);
+    EXPECT_EQ(5, allCopiedFromVector[4]);
+    EXPECT_EQ(5, CopyCountingObject::copyCount);
+
+    CopyCountingObject::copyCount = 0;
+    auto allCopied = WTF::map(array, [](const auto& object) -> CopyCountingObject {
+        return object;
+    });
+    EXPECT_EQ(5U, allCopied.size());
+    EXPECT_EQ(1, allCopied[0]);
+    EXPECT_EQ(2, allCopied[1]);
+    EXPECT_EQ(3, allCopied[2]);
+    EXPECT_EQ(4, allCopied[3]);
+    EXPECT_EQ(5, allCopied[4]);
+    EXPECT_EQ(5, CopyCountingObject::copyCount);
+
+    CopyCountingObject::copyCount = 0;
+    auto allMoved = WTF::map(WTFMove(array), [](auto&& object) -> CopyCountingObject {
+        return WTFMove(object);
+    });
+    EXPECT_EQ(5U, allMoved.size());
+    EXPECT_EQ(1, allMoved[0]);
+    EXPECT_EQ(2, allMoved[1]);
+    EXPECT_EQ(3, allMoved[2]);
+    EXPECT_EQ(4, allMoved[3]);
+    EXPECT_EQ(5, allMoved[4]);
+    EXPECT_EQ(0, CopyCountingObject::copyCount);
+
+    CopyCountingObject::copyCount = 0;
+    auto evensCopied = WTF::compactMap(array, [](const auto& object) -> std::optional<CopyCountingObject> {
+        if (object.identifier % 2)
+            return std::nullopt;
+        return object;
+    });
+    EXPECT_EQ(2U, evensCopied.size());
+    EXPECT_EQ(2, evensCopied[0]);
+    EXPECT_EQ(4, evensCopied[1]);
+    EXPECT_EQ(2, CopyCountingObject::copyCount);
+
+    CopyCountingObject::copyCount = 0;
+    auto evensMoved = WTF::compactMap(WTFMove(array), [](auto&& object) -> std::optional<CopyCountingObject> {
+        if (object.identifier % 2)
+            return std::nullopt;
+        return WTFMove(object);
+    });
+    EXPECT_EQ(2U, evensMoved.size());
+    EXPECT_EQ(2, evensMoved[0]);
+    EXPECT_EQ(4, evensMoved[1]);
+    EXPECT_EQ(0, CopyCountingObject::copyCount);
+}
+
 TEST(WTF_Vector, CopyToVector)
 {
     HashSet<int> intSet { 1, 2, 3 };
