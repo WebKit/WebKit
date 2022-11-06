@@ -275,7 +275,7 @@ def check_type_members(type):
     for member in type.members:
         if member.condition is not None:
             result.append('#if ' + member.condition)
-        result.append('    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.' + member.name + ')>>, ' + member.type + '>);')
+        result.append('    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.' + member.name + ')>, ' + member.type + '>);')
         if member.condition is not None:
             result.append('#endif')
     return result

@@ -216,20 +216,20 @@ template<typename... Types> struct CrossThreadCopierBase<false, false, std::vari
     static std::variant<Types...> copy(const Type& source)
     {
         return std::visit([] (auto& type) -> std::variant<Types...> {
-            return CrossThreadCopier<std::remove_const_t<std::remove_reference_t<decltype(type)>>>::copy(type);
+            return CrossThreadCopier<std::remove_cvref_t<decltype(type)>>::copy(type);
         }, source);
     }
     static std::variant<Types...> copy(Type&& source)
     {
         return std::visit([] (auto&& type) -> std::variant<Types...> {
-            return CrossThreadCopier<std::remove_const_t<std::remove_reference_t<decltype(type)>>>::copy(std::forward<decltype(type)>(type));
+            return CrossThreadCopier<std::remove_cvref_t<decltype(type)>>::copy(std::forward<decltype(type)>(type));
         }, WTFMove(source));
     }
 };
 
 template<typename T> auto crossThreadCopy(T&& source)
 {
-    return CrossThreadCopier<std::remove_cv_t<std::remove_reference_t<T>>>::copy(std::forward<T>(source));
+    return CrossThreadCopier<std::remove_cvref_t<T>>::copy(std::forward<T>(source));
 }
     
 } // namespace WTF

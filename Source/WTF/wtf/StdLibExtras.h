@@ -457,11 +457,6 @@ struct IsBaseOfTemplate : public std::integral_constant<bool, Detail::IsBaseOfTe
 template<typename, typename = void> inline constexpr bool IsTypeComplete = false;
 template<typename T> inline constexpr bool IsTypeComplete<T, std::void_t<decltype(sizeof(T))>> = true;
 
-template <class T>
-struct RemoveCVAndReference  {
-    typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
-};
-
 template<typename IteratorTypeLeft, typename IteratorTypeRight, typename IteratorTypeDst>
 IteratorTypeDst mergeDeduplicatedSorted(IteratorTypeLeft leftBegin, IteratorTypeLeft leftEnd, IteratorTypeRight rightBegin, IteratorTypeRight rightEnd, IteratorTypeDst dstBegin)
 {

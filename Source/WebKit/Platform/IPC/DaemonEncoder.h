@@ -35,7 +35,7 @@ public:
     template<typename T>
     Encoder& operator<<(T&& t)
     {
-        Coder<std::remove_const_t<std::remove_reference_t<T>>>::encode(*this, std::forward<T>(t));
+        Coder<std::remove_cvref_t<T>>::encode(*this, std::forward<T>(t));
         return *this;
     }
 

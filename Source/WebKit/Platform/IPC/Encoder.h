@@ -69,7 +69,7 @@ public:
     template<typename T>
     Encoder& operator<<(T&& t)
     {
-        ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>::encode(*this, std::forward<T>(t));
+        ArgumentCoder<std::remove_cvref_t<T>, void>::encode(*this, std::forward<T>(t));
         return *this;
     }
 

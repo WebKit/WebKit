@@ -1430,7 +1430,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendSlow
     static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     ASSERT(size() == capacity());
 
-    auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
+    auto ptr = const_cast<std::remove_cvref_t<U>*>(std::addressof(value));
     ptr = expandCapacity<action>(size() + 1, ptr);
     if constexpr (action == FailureAction::Report) {
         if (UNLIKELY(!ptr))
@@ -1535,7 +1535,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::ins
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
 
-    auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
+    auto ptr = const_cast<std::remove_cvref_t<U>*>(std::addressof(value));
     if (size() == capacity()) {
         ptr = expandCapacity<FailureAction::Crash>(size() + 1, ptr);
         ASSERT(begin());

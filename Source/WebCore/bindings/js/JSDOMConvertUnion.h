@@ -196,7 +196,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 if (returnValue)
                     return;
                 
-                using Type = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
+                using Type = typename std::remove_cvref_t<decltype(type)>::type;
                 using ImplementationType = typename Type::ImplementationType;
                 using RawType = typename Type::RawType;
 
@@ -269,7 +269,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 if (returnValue)
                     return;
 
-                using Type = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
+                using Type = typename std::remove_cvref_t<decltype(type)>::type;
                 using ImplementationType = typename Type::ImplementationType;
                 using WrapperType = typename Converter<Type>::WrapperType;
 
@@ -393,7 +393,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
 
         std::optional<JSC::JSValue> returnValue;
         brigand::for_each<Sequence>([&](auto&& type) {
-            using I = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
+            using I = typename std::remove_cvref_t<decltype(type)>::type;
             if (I::value == index) {
                 ASSERT(!returnValue);
                 returnValue = toJS<brigand::at<TypeList, I>>(lexicalGlobalObject, globalObject, std::get<I::value>(variant));
