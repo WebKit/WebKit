@@ -28,8 +28,9 @@
 #include "ArgumentCoders.h"
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _GVariant GVariant;
 typedef struct _GTlsCertificate GTlsCertificate;
+typedef struct _GUnixFDList GUnixFDList;
+typedef struct _GVariant GVariant;
 
 namespace IPC {
 
@@ -43,6 +44,11 @@ template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
     static void encode(Encoder&, GRefPtr<GTlsCertificate>);
     template<typename Decoder>
     static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
+    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
+    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
 };
 
 } // namespace IPC

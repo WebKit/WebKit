@@ -27,7 +27,9 @@
 #include "ArgumentCodersGLib.h"
 
 #include "DataReference.h"
+#include "WebCoreArgumentCoders.h"
 #include <gio/gio.h>
+#include <gio/gunixfdlist.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -161,5 +163,43 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     return certificate;
 }
 template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<Decoder>(Decoder&);
+
+void ArgumentCoder<GRefPtr<GUnixFDList>>::encode(Encoder& encoder, const GRefPtr<GUnixFDList>& fdList)
+{
+    if (!fdList) {
+        encoder << false;
+        return;
+    }
+
+    Vector<UnixFileDescriptor> attachments;
+    unsigned length = std::max(0, g_unix_fd_list_get_length(fdList.get()));
+    if (!!length) {
+        attachments.reserveInitialCapacity(length);
+        for (unsigned i = 0; i < length; ++i)
+            attachments.uncheckedAppend(UnixFileDescriptor { g_unix_fd_list_get(fdList.get(), i, nullptr), UnixFileDescriptor::Adopt });
+    }
+    encoder << true << WTFMove(attachments);
+}
+
+std::optional<GRefPtr<GUnixFDList>> ArgumentCoder<GRefPtr<GUnixFDList>>::decode(Decoder& decoder)
+{
+    auto hasObject = decoder.decode<bool>();
+    if (!hasObject)
+        return std::nullopt;
+    if (!*hasObject)
+        return GRefPtr<GUnixFDList> { };
+
+    auto attachments = decoder.decode<Vector<UnixFileDescriptor>>();
+    if (!attachments)
+        return std::nullopt;
+
+    GRefPtr<GUnixFDList> fdList = adoptGRef(g_unix_fd_list_new());
+    for (auto& attachment : *attachments) {
+        int ret = g_unix_fd_list_append(fdList.get(), attachment.value(), nullptr);
+        if (ret == -1)
+            return std::nullopt;
+    }
+    return fdList;
+}
 
 } // namespace IPC
