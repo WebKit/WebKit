@@ -188,10 +188,10 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
 
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(listMarker);
     if (layoutBox.isListMarkerOutside()) {
-        auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox());
         auto& listMarkerGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
         auto horizontalMargin = listMarkerGeometry.horizontalMargin();
-        auto outsideOffset = rootGeometry.paddingStart().value_or(0_lu) + rootGeometry.borderStart();
+        ASSERT(m_inlineContentConstraints);
+        auto outsideOffset = m_inlineContentConstraints->horizontal().logicalLeft;
         listMarkerGeometry.setHorizontalMargin({ horizontalMargin.start - outsideOffset, horizontalMargin.end + outsideOffset });  
     }
 }
@@ -438,13 +438,8 @@ void LineLayout::layout()
 
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
-
-    auto& rootGeometry = layoutState().geometryForBox(rootLayoutBox);
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
-
-    auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
-    auto visualLeft = rootLayoutBox.style().isLeftToRightDirection() ? rootGeometry.contentBoxLeft() : rootGeometry.borderEnd() + rootGeometry.horizontalSpaceForScrollbar() + rootGeometry.paddingEnd().value_or(0_lu);
-    inlineFormattingContext.layoutInFlowContentForIntegration({ horizontalConstraints, rootGeometry.contentBoxTop(), visualLeft });
+    ASSERT(m_inlineContentConstraints);
+    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints);
 
     constructContent();
 
@@ -457,7 +452,6 @@ void LineLayout::constructContent()
     inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
     ASSERT(m_inlineContent);
 
-    auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox());
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();
     auto isLeftToRightFloatingStateInlineDirection = m_inlineFormattingState.floatingState().isLeftToRightDirection();
@@ -492,7 +486,9 @@ void LineLayout::constructContent()
         if (layoutBox.isFloatingPositioned()) {
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
 
-            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightFloatingStateInlineDirection, rootGeometry.borderBoxWidth());
+            ASSERT(m_inlineContentConstraints);
+            auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightFloatingStateInlineDirection, rootBorderBoxWidth);
             auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
             floatingObject.setFrameRect(visualMarginBoxRect);
 
@@ -512,32 +508,36 @@ void LineLayout::constructContent()
     m_inlineFormattingState.shrinkToFit();
 }
 
-void LineLayout::updateFormattingRootGeometryAndInvalidate()
+void LineLayout::updateInlineContentConstraints()
 {
     auto& flow = this->flow();
+    auto isLeftToRightInlineDirection = flow.style().isLeftToRightDirection();
+    auto writingMode = flow.style().writingMode();
 
-    auto updateGeometry = [&](auto& root) {
-        auto isLeftToRightInlineDirection = flow.style().isLeftToRightDirection();
-        auto writingMode = flow.style().writingMode();
-        auto scrollbarSize = scrollbarLogicalSize(flow);
+    auto padding = logicalPadding(flow, isLeftToRightInlineDirection, writingMode);
+    auto border = logicalBorder(flow, isLeftToRightInlineDirection, writingMode);
+    auto scrollbarSize = scrollbarLogicalSize(flow);
 
-        root.setContentBoxWidth(WebCore::isHorizontalWritingMode(writingMode) ? flow.contentWidth() : flow.contentHeight());
-        root.setPadding(logicalPadding(flow, isLeftToRightInlineDirection, writingMode));
-        root.setBorder(logicalBorder(flow, isLeftToRightInlineDirection, writingMode));
-        root.setHorizontalSpaceForScrollbar(scrollbarSize.width());
-        root.setVerticalSpaceForScrollbar(scrollbarSize.height());
-        root.setHorizontalMargin({ });
-        root.setVerticalMargin({ });
+    auto contentBoxWidth = WebCore::isHorizontalWritingMode(writingMode) ? flow.contentWidth() : flow.contentHeight();
+    auto contentBoxLeft = border.horizontal.left + padding.horizontal.left;
+    auto contentBoxTop = border.vertical.top + padding.vertical.top;
+
+    auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLeft, contentBoxWidth };
+    auto visualLeft = rootLayoutBox().style().isLeftToRightDirection() ? contentBoxLeft : border.horizontal.right + scrollbarSize.width() + padding.horizontal.right;
+    m_inlineContentConstraints = { horizontalConstraints, contentBoxTop, visualLeft };
+
+    auto createRootGeometryIfNeeded = [&] {
+        // FIXME: BFC should be responsible for creating the box geometry for this block box (IFC root) as part of the block layout.
+        auto& rootGeometry = layoutState().ensureGeometryForBox(rootLayoutBox());
+        rootGeometry.setContentBoxWidth(contentBoxWidth);
+        rootGeometry.setPadding(padding);
+        rootGeometry.setBorder(border);
+        rootGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
+        rootGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
+        rootGeometry.setHorizontalMargin({ });
+        rootGeometry.setVerticalMargin({ });
     };
-    auto& rootLayoutBox = this->rootLayoutBox();
-    if (!layoutState().hasBoxGeometry(rootLayoutBox))
-        return updateGeometry(layoutState().ensureGeometryForBox(rootLayoutBox));
-
-    auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox);
-    auto newLogicalWidth = flow.contentLogicalWidth();
-    if (newLogicalWidth != rootGeometry.contentBoxWidth())
-        Layout::InlineInvalidation(ensureLineDamage()).horizontalConstraintChanged();
-    updateGeometry(rootGeometry);
+    createRootGeometryIfNeeded();
 }
 
 void LineLayout::prepareLayoutState()
@@ -552,7 +552,6 @@ void LineLayout::prepareFloatingState()
     if (!flow().containsFloats())
         return;
 
-    auto& rootGeometry = m_inlineFormattingState.boxGeometry(rootLayoutBox());
     auto isHorizontalWritingMode = flow().containingBlock() ? flow().containingBlock()->style().isHorizontalWritingMode() : true;
     auto floatingStateIsLeftToRightInlineDirection = flow().containingBlock() ? flow().containingBlock()->style().isLeftToRightDirection() : true;
     floatingState.setIsLeftToRightDirection(floatingStateIsLeftToRightInlineDirection);
@@ -589,8 +588,10 @@ void LineLayout::prepareFloatingState()
             auto logicalLeft = isHorizontalWritingMode ? visualRect.x() : LayoutUnit(visualRect.y().floor());
             auto logicalHeight = (isHorizontalWritingMode ? LayoutUnit(visualRect.maxY().floor()) : visualRect.maxX()) - logicalTop;
             auto logicalWidth = (isHorizontalWritingMode ? visualRect.maxX() : LayoutUnit(visualRect.maxY().floor())) - logicalLeft;
-            if (!floatingStateIsLeftToRightInlineDirection)
-                logicalLeft = rootGeometry.borderBoxWidth() - (logicalLeft + logicalWidth);
+            if (!floatingStateIsLeftToRightInlineDirection) {
+                auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+                logicalLeft = rootBorderBoxWidth - (logicalLeft + logicalWidth);
+            }
             return LayoutRect { logicalLeft, logicalTop, logicalWidth, logicalHeight };
         }();
 
