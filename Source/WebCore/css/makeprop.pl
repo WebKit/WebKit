@@ -469,7 +469,7 @@ my $computedPropertyIDsArray = "";
 my $numComputedPropertyIDs = 0;
 foreach my $name (sort sortWithPrefixedPropertiesLast @names) {
     next if skippedFromComputedStyle($name);
-    $computedPropertyIDsArray .= "    CSSProperty$nameToId{$name},\n";
+    $computedPropertyIDsArray .= "    CSSPropertyID::CSSProperty$nameToId{$name},\n";
     $numComputedPropertyIDs += 1;
 }
 print GPERF "const std::array<CSSPropertyID, $numComputedPropertyIDs> computedPropertyIDs {\n";
@@ -500,7 +500,7 @@ struct CSSPropertyHashTableEntry {
 EOF
 
 foreach my $name (@names) {
-    print GPERF $name . ", CSSProperty$nameToId{$name}\n";
+    print GPERF $name . ", CSSPropertyID::CSSProperty$nameToId{$name}\n";
 }
 
 for my $name (@names) {
@@ -508,7 +508,7 @@ for my $name (@names) {
         next;
     }
     for my $alias (@{$nameToAliases{$name}}) {
-        print GPERF $alias . ", CSSProperty$nameToId{$name}\n";
+        print GPERF $alias . ", CSSPropertyID::CSSProperty$nameToId{$name}\n";
     }
 }
 
@@ -518,67 +518,7 @@ print GPERF << "EOF";
 CSSPropertyID findCSSProperty(const char* characters, unsigned length)
 {
     auto* value = CSSPropertyNamesHash::in_word_set(characters, length);
-    return value ? static_cast<CSSPropertyID>(value->id) : CSSPropertyInvalid;
-}
-
-bool isInternal(CSSPropertyID id)
-{
-    switch (id) {
-EOF
-
-foreach my $name (sort @internalProperties) {
-    print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
-}
-
-print GPERF << "EOF";
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool isExposed(CSSPropertyID property, const Settings* settings)
-{
-    if (property == CSSPropertyInvalid || isInternal(property))
-        return false;
-
-    if (!settings)
-        return true;
-
-    switch (property) {
-EOF
-
-foreach my $name (sort keys %settingsFlags) {
-    print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
-    print GPERF "        return settings->$settingsFlags{$name}();\n";
-}
-
-print GPERF << "EOF";
-    default:
-        return true;
-    }
-}
-
-bool isExposed(CSSPropertyID property, const CSSPropertySettings* settings)
-{
-    if (property == CSSPropertyInvalid || isInternal(property))
-        return false;
-
-    if (!settings)
-        return true;
-
-    switch (property) {
-EOF
-
-foreach my $name (sort keys %settingsFlags) {
-    print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
-    print GPERF "        return settings->$settingsFlags{$name};\n";
-}
-
-print GPERF << "EOF";
-    default:
-        return true;
-    }
+    return value ? static_cast<CSSPropertyID>(value->id) : CSSPropertyID::CSSPropertyInvalid;
 }
 
 ASCIILiteral nameLiteral(CSSPropertyID id)
@@ -628,15 +568,75 @@ String nameForIDL(CSSPropertyID id)
     return { characters, length };
 }
 
+bool isInternal(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+
+foreach my $name (sort @internalProperties) {
+    print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool isExposed(CSSPropertyID id, const Settings* settings)
+{
+    if (id == CSSPropertyID::CSSPropertyInvalid || isInternal(id))
+        return false;
+
+    if (!settings)
+        return true;
+
+    switch (id) {
+EOF
+
+foreach my $name (sort keys %settingsFlags) {
+    print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
+    print GPERF "        return settings->$settingsFlags{$name}();\n";
+}
+
+print GPERF << "EOF";
+    default:
+        return true;
+    }
+}
+
+bool isExposed(CSSPropertyID id, const CSSPropertySettings* settings)
+{
+    if (id == CSSPropertyID::CSSPropertyInvalid || isInternal(id))
+        return false;
+
+    if (!settings)
+        return true;
+
+    switch (id) {
+EOF
+
+foreach my $name (sort keys %settingsFlags) {
+    print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
+    print GPERF "        return settings->$settingsFlags{$name};\n";
+}
+
+print GPERF << "EOF";
+    default:
+        return true;
+    }
+}
+
 constexpr bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
-    false, // CSSPropertyInvalid
-    true, // CSSPropertyCustom
+    false, // CSSPropertyID::CSSPropertyInvalid
+    true , // CSSPropertyID::CSSPropertyCustom
 EOF
 
 foreach my $name (@names) {
   my $id = $nameToId{$name};
   my $value = $nameIsInherited{$name} ? "true " : "false";
-  print GPERF "    $value, // CSSProperty$id\n";
+  print GPERF "    $value, // CSSPropertyID::CSSProperty$id\n";
 }
 
 print GPERF<< "EOF";
@@ -645,7 +645,7 @@ print GPERF<< "EOF";
 bool CSSProperty::isInheritedProperty(CSSPropertyID id)
 {
     ASSERT(id < firstCSSProperty + numCSSProperties);
-    ASSERT(id != CSSPropertyInvalid);
+    ASSERT(id != CSSPropertyID::CSSPropertyInvalid);
     return isInheritedPropertyTable[id];
 }
 
@@ -812,10 +812,10 @@ print GPERF << "EOF";
     }
 }
 
-CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
+CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID id, TextDirection direction, WritingMode writingMode)
 {
     auto textflow = makeTextFlow(writingMode, direction);
-    switch (propertyID) {
+    switch (id) {
 EOF
 
 for my $groupName (sort keys %logicalPropertyGroups) {
@@ -826,7 +826,7 @@ for my $groupName (sort keys %logicalPropertyGroups) {
         my $kindId = nameToId($kind);
         my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
         my $physicals = $logicalPropertyGroupResolvers{"physical"}->{$kind};
-        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @{ $physicals };
+        my @properties = map { "CSSPropertyID::CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @{ $physicals };
         print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}: {\n";
         print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
         print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
@@ -836,14 +836,14 @@ for my $groupName (sort keys %logicalPropertyGroups) {
 
 print GPERF << "EOF";
     default:
-        return propertyID;
+        return id;
     }
 }
 
-CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
+CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID id, TextDirection direction, WritingMode writingMode)
 {
     auto textflow = makeTextFlow(writingMode, direction);
-    switch (propertyID) {
+    switch (id) {
 EOF
 
 for my $groupName (sort keys %logicalPropertyGroups) {
@@ -854,7 +854,7 @@ for my $groupName (sort keys %logicalPropertyGroups) {
         my $kindId = nameToId($kind);
         my $resolverEnum = "Box" . $kindId . "::" . nameToId($resolver);
         my $logicals = $logicalPropertyGroupResolvers{"logical"}->{$kind};
-        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"logical"}{$_}} } @{ $logicals };
+        my @properties = map { "CSSPropertyID::CSSProperty" . $nameToId{$logicalPropertyGroup->{"logical"}{$_}} } @{ $logicals };
         print GPERF "    case CSSPropertyID::CSSProperty$nameToId{$name}: {\n";
         print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
         print GPERF "        return properties[static_cast<size_t>(mapPhysical" . $kindId . "ToLogical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
@@ -864,7 +864,7 @@ for my $groupName (sort keys %logicalPropertyGroups) {
 
 print GPERF << "EOF";
     default:
-        return propertyID;
+        return id;
     }
 }
 
@@ -1004,16 +1004,16 @@ print HEADER "};\n\n";
 print HEADER "constexpr uint16_t firstCSSProperty = $first;\n";
 print HEADER "constexpr uint16_t numCSSProperties = $num;\n";
 print HEADER "constexpr unsigned maxCSSPropertyNameLength = $maxLen;\n";
-print HEADER "constexpr auto firstTopPriorityProperty = CSSProperty" . $nameToId{$firstTopPriorityPropertyName} . ";\n";
-print HEADER "constexpr auto lastTopPriorityProperty = CSSProperty" . $nameToId{$lastTopPriorityPropertyName} . ";\n";
-print HEADER "constexpr auto firstHighPriorityProperty = CSSProperty" . $nameToId{$firstHighPriorityPropertyName} . ";\n";
-print HEADER "constexpr auto lastHighPriorityProperty = CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n";
-print HEADER "constexpr auto firstLowPriorityProperty = CSSProperty" . $nameToId{$firstLowPriorityPropertyName} . ";\n";
-print HEADER "constexpr auto lastLowPriorityProperty = CSSProperty" . $nameToId{$lastLowPriorityPropertyName} . ";\n";
-print HEADER "constexpr auto firstDeferredProperty = CSSProperty" . $nameToId{$firstDeferredPropertyName} . ";\n";
-print HEADER "constexpr auto lastDeferredProperty = CSSProperty" . $nameToId{$lastDeferredPropertyName} . ";\n";
-print HEADER "constexpr auto firstShorthandProperty = CSSProperty" . $nameToId{$firstShorthandPropertyName} . ";\n";
-print HEADER "constexpr auto lastShorthandProperty = CSSProperty" . $nameToId{$lastShorthandPropertyName} . ";\n";
+print HEADER "constexpr auto firstTopPriorityProperty = CSSPropertyID::CSSProperty" . $nameToId{$firstTopPriorityPropertyName} . ";\n";
+print HEADER "constexpr auto lastTopPriorityProperty = CSSPropertyID::CSSProperty" . $nameToId{$lastTopPriorityPropertyName} . ";\n";
+print HEADER "constexpr auto firstHighPriorityProperty = CSSPropertyID::CSSProperty" . $nameToId{$firstHighPriorityPropertyName} . ";\n";
+print HEADER "constexpr auto lastHighPriorityProperty = CSSPropertyID::CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n";
+print HEADER "constexpr auto firstLowPriorityProperty = CSSPropertyID::CSSProperty" . $nameToId{$firstLowPriorityPropertyName} . ";\n";
+print HEADER "constexpr auto lastLowPriorityProperty = CSSPropertyID::CSSProperty" . $nameToId{$lastLowPriorityPropertyName} . ";\n";
+print HEADER "constexpr auto firstDeferredProperty = CSSPropertyID::CSSProperty" . $nameToId{$firstDeferredPropertyName} . ";\n";
+print HEADER "constexpr auto lastDeferredProperty = CSSPropertyID::CSSProperty" . $nameToId{$lastDeferredPropertyName} . ";\n";
+print HEADER "constexpr auto firstShorthandProperty = CSSPropertyID::CSSProperty" . $nameToId{$firstShorthandPropertyName} . ";\n";
+print HEADER "constexpr auto lastShorthandProperty = CSSPropertyID::CSSProperty" . $nameToId{$lastShorthandPropertyName} . ";\n";
 print HEADER "constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;\n\n";
 
 print HEADER "extern const std::array<CSSPropertyID, $numComputedPropertyIDs> computedPropertyIDs;\n";
@@ -1405,12 +1405,12 @@ sub generateFillLayerPropertyValueSetter {
   $setterContent .= $indent . "            previousChild->setNext(FillLayer::create(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "            child = previousChild->next();\n";
   $setterContent .= $indent . "        }\n";
-  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(propertyID, *child, item);\n";
+  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(id, *child, item);\n";
   $setterContent .= $indent . "        previousChild = child;\n";
   $setterContent .= $indent . "        child = child->next();\n";
   $setterContent .= $indent . "    }\n";
   $setterContent .= $indent . "} else {\n";
-  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(propertyID, *child, value);\n";
+  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(id, *child, value);\n";
   $setterContent .= $indent . "    child = child->next();\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= $indent . "for (; child; child = child->next())\n";
@@ -1518,7 +1518,7 @@ sub generateValueSetter {
 
   my $valueApplierFirstArgument = "";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
-    $valueApplierFirstArgument = "CSSPropertyID propertyID, ";
+    $valueApplierFirstArgument = "CSSPropertyID id, ";
   }
 
   my $setterContent = "";
@@ -1620,12 +1620,12 @@ foreach my $name (@names) {
 print STYLEBUILDER << "EOF";
 };
 
-void BuilderGenerated::applyProperty(CSSPropertyID property, BuilderState& builderState, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
+void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
 {
-    switch (property) {
-    case CSSPropertyInvalid:
+    switch (id) {
+    case CSSPropertyID::CSSPropertyInvalid:
         break;
-    case CSSPropertyCustom: {
+    case CSSPropertyID::CSSPropertyCustom: {
         auto& customProperty = downcast<CSSCustomPropertyValue>(value);
         if (isInitial)
             BuilderCustom::applyInitialCustomProperty(builderState, registered, customProperty.name());
@@ -1640,18 +1640,18 @@ EOF
 foreach my $name (@names) {
   next if (exists $synonyms{$name});
 
-  print STYLEBUILDER "    case CSSProperty$nameToId{$name}:\n";
+  print STYLEBUILDER "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
 
   my $valueApplierFirstArgument = "";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
-    $valueApplierFirstArgument = "property, ";
+    $valueApplierFirstArgument = "id, ";
   }
   foreach my $synonym (@{$namesToSynonyms{$name}}) {
-    print STYLEBUILDER "    case CSSProperty" . $nameToId{$synonym} . ":\n";
+    print STYLEBUILDER "    case CSSPropertyID::CSSProperty" . $nameToId{$synonym} . ":\n";
   }
 
   if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"}) {
-    print STYLEBUILDER "        ASSERT(isShorthandCSSProperty(property));\n";
+    print STYLEBUILDER "        ASSERT(isShorthandCSSProperty(id));\n";
     print STYLEBUILDER "        ASSERT_NOT_REACHED();\n";
   } elsif (!exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"}) {
     print STYLEBUILDER "        if (isInitial)\n";
@@ -1733,30 +1733,30 @@ foreach my $name (@names) {
             next if ($propname eq "direction" || $propname eq "unicode-bidi");
             die "Unknown CSS property used in all shorthand: $propname" if !exists($nameToId{$propname});
             push(@{$longhandToShorthands{$propname}}, $name);
-            print SHORTHANDS_CPP "        CSSProperty" . $nameToId{$propname} . ",\n";
+            print SHORTHANDS_CPP "        CSSPropertyID::CSSProperty" . $nameToId{$propname} . ",\n";
         }
     } elsif (!exists $notEnabledProperty{$_}) {
         die "Unknown CSS property used in longhands: $_" if !exists($nameToId{$_});
         push(@{$longhandToShorthands{$_}}, $name);
-        print SHORTHANDS_CPP "        CSSProperty" . $nameToId{$_} . ",\n";
+        print SHORTHANDS_CPP "        CSSPropertyID::CSSProperty" . $nameToId{$_} . ",\n";
     }
   }
   print SHORTHANDS_CPP "    };\n";
-  print SHORTHANDS_CPP "    return StylePropertyShorthand(CSSProperty$nameToId{$name}, " . $lowercaseId . "Properties);\n";
+  print SHORTHANDS_CPP "    return StylePropertyShorthand(CSSPropertyID::CSSProperty$nameToId{$name}, " . $lowercaseId . "Properties);\n";
   print SHORTHANDS_CPP "}\n\n";
 }
 
 print SHORTHANDS_CPP << "EOF";
-StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
+StylePropertyShorthand shorthandForProperty(CSSPropertyID id)
 {
-    switch (propertyID) {
+    switch (id) {
 EOF
 
 foreach my $name (@names) {
   # Skip non-Shorthand properties.
   next if (!exists $propertiesWithStyleBuilderOptions{$name}{"longhands"});
 
-  print SHORTHANDS_CPP "    case CSSProperty$nameToId{$name}:\n";
+  print SHORTHANDS_CPP "    case CSSPropertyID::CSSProperty$nameToId{$name}:\n";
   print SHORTHANDS_CPP "        return " . lcfirst($nameToId{$name}) . "Shorthand();\n";
 }
 
@@ -1768,9 +1768,9 @@ print SHORTHANDS_CPP << "EOF";
 EOF
 
 print SHORTHANDS_CPP << "EOF";
-StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID propertyID)
+StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
 {
-    switch (propertyID) {
+    switch (id) {
 EOF
 
 sub constructShorthandsVector {
@@ -1793,7 +1793,7 @@ for my $longhand (sort keys %longhandToShorthands) {
 
 for my $vector (sort keys %vectorToLonghands) {
   foreach (@{$vectorToLonghands{$vector}}) {
-    print SHORTHANDS_CPP "    case CSSProperty" . $nameToId{$_} . ":\n";
+    print SHORTHANDS_CPP "    case CSSPropertyID::CSSProperty" . $nameToId{$_} . ":\n";
   }
   print SHORTHANDS_CPP "        return " . $vector . ";\n";
 }
