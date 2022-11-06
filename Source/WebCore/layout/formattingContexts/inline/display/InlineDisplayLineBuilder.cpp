@@ -90,7 +90,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, scrollableOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const ConstraintsForInFlowContent& constraints) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const ConstraintsForInlineContent& constraints) const
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto isLeftToRightDirection = lineContent.inlineBaseDirection == TextDirection::LTR;

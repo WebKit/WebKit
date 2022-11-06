@@ -524,7 +524,7 @@ void LineLayout::updateInlineContentConstraints()
 
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLeft, contentBoxWidth };
     auto visualLeft = rootLayoutBox().style().isLeftToRightDirection() ? contentBoxLeft : border.horizontal.right + scrollbarSize.width() + padding.horizontal.right;
-    m_inlineContentConstraints = { horizontalConstraints, contentBoxTop, visualLeft };
+    m_inlineContentConstraints = { { horizontalConstraints, contentBoxTop }, visualLeft };
 
     auto createRootGeometryIfNeeded = [&] {
         // FIXME: BFC should be responsible for creating the box geometry for this block box (IFC root) as part of the block layout.

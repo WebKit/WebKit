@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,23 +30,23 @@
 namespace WebCore {
 namespace Layout {
 
-struct ConstraintsForTableContent : public ConstraintsForInFlowContent {
-    ConstraintsForTableContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> availableVerticalSpaceForContent);
+struct ConstraintsForInlineContent : public ConstraintsForInFlowContent {
+    ConstraintsForInlineContent(const ConstraintsForInFlowContent&, LayoutUnit visualLeft);
 
-    std::optional<LayoutUnit> availableVerticalSpaceForContent() const { return m_availableVerticalSpaceForContent; }
+    LayoutUnit visualLeft() const { return m_visualLeft; }
 
 private:
-    std::optional<LayoutUnit> m_availableVerticalSpaceForContent;
+    LayoutUnit m_visualLeft;
 };
 
-inline ConstraintsForTableContent::ConstraintsForTableContent(const ConstraintsForInFlowContent& inFlowContraints, std::optional<LayoutUnit> availableVerticalSpaceForContent)
-    : ConstraintsForInFlowContent(inFlowContraints.horizontal(), inFlowContraints.logicalTop(), TableContent)
-    , m_availableVerticalSpaceForContent(availableVerticalSpaceForContent)
+inline ConstraintsForInlineContent::ConstraintsForInlineContent(const ConstraintsForInFlowContent& genericContraints, LayoutUnit visualLeft)
+    : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), InlineContent)
+    , m_visualLeft(visualLeft)
 {
 }
 
 }
 }
 
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ConstraintsForTableContent, isConstraintsForTableContent())
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ConstraintsForInlineContent, isConstraintsForInlineContent())
 

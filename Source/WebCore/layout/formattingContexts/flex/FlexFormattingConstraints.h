@@ -42,7 +42,7 @@ private:
 };
 
 inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace)
-    : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), { }, FlexContent)
+    : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), FlexContent)
     , m_availableVerticalSpace(availableVerticalSpace)
     , m_minimumVerticalSpace(minimumVerticalSpace)
 {

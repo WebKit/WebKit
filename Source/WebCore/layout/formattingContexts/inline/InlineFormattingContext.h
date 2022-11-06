@@ -27,6 +27,7 @@
 
 #include "FormattingContext.h"
 #include "FormattingState.h"
+#include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
 #include "InlineLineBuilder.h"
@@ -59,7 +60,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    void lineLayout(InlineItems&, const LineBuilder::InlineItemRange&, const ConstraintsForInFlowContent&);
+    void lineLayout(InlineItems&, const LineBuilder::InlineItemRange&, const ConstraintsForInlineContent&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, LayoutPoint contentBoxTopLeft);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
@@ -70,7 +71,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const ConstraintsForInFlowContent&);
+    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const ConstraintsForInlineContent&);
     void invalidateFormattingState();
 
     const InlineDamage* m_lineDamage { nullptr };
