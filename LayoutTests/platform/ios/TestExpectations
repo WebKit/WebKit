@@ -3708,7 +3708,6 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/243961 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-z-order-008.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
 # These tests have similar image failures, rounded edges issues. See webkit.org/b/244046
