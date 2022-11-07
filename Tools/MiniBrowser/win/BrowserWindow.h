@@ -67,4 +67,7 @@ public:
     virtual void resetZoom() = 0;
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
+
+    virtual void clearCookies() = 0;
+    virtual void clearWebsiteData() = 0;
 };

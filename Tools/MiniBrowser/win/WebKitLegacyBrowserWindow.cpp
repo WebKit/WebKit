@@ -547,6 +547,14 @@ void WebKitLegacyBrowserWindow::zoomOut()
     webActions->zoomPageOut(nullptr);
 }
 
+void WebKitLegacyBrowserWindow::clearCookies()
+{
+}
+
+void WebKitLegacyBrowserWindow::clearWebsiteData()
+{
+}
+
 void WebKitLegacyBrowserWindow::showLayerTree()
 {
     IWebViewPrivate3Ptr webViewPrivate(m_webView);
