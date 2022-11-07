@@ -113,64 +113,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
         }
         configuration.width = GST_VIDEO_INFO_WIDTH(&info);
         configuration.height = GST_VIDEO_INFO_HEIGHT(&info);
-
-#ifndef GST_DISABLE_GST_DEBUG
-        GUniquePtr<char> colorimetry(gst_video_colorimetry_to_string(&GST_VIDEO_INFO_COLORIMETRY(&info)));
-#endif
-        PlatformVideoColorSpace colorSpace;
-        switch (GST_VIDEO_INFO_COLORIMETRY(&info).matrix) {
-        case GST_VIDEO_COLOR_MATRIX_RGB:
-            colorSpace.matrix = PlatformVideoMatrixCoefficients::Rgb;
-            break;
-        case GST_VIDEO_COLOR_MATRIX_BT709:
-            colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
-            break;
-        case GST_VIDEO_COLOR_MATRIX_BT601:
-            colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt470bg;
-            break;
-        default:
-#ifndef GST_DISABLE_GST_DEBUG
-            GST_DEBUG("Unhandled colorspace matrix from %s", colorimetry.get());
-#endif
-            break;
-        }
-
-        switch (GST_VIDEO_INFO_COLORIMETRY(&info).transfer) {
-        case GST_VIDEO_TRANSFER_SRGB:
-            colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
-            break;
-        case GST_VIDEO_TRANSFER_BT709:
-            colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
-            break;
-#if GST_CHECK_VERSION(1, 18, 0)
-        case GST_VIDEO_TRANSFER_BT601:
-            colorSpace.transfer = PlatformVideoTransferCharacteristics::Smpte170m;
-            break;
-#endif
-        default:
-#ifndef GST_DISABLE_GST_DEBUG
-            GST_DEBUG("Unhandled colorspace transfer from %s", colorimetry.get());
-#endif
-            break;
-        }
-
-        switch (GST_VIDEO_INFO_COLORIMETRY(&info).primaries) {
-        case GST_VIDEO_COLOR_PRIMARIES_BT709:
-            colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
-            break;
-        case GST_VIDEO_COLOR_PRIMARIES_BT470BG:
-            colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
-            break;
-        case GST_VIDEO_COLOR_PRIMARIES_SMPTE170M:
-            colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
-            break;
-        default:
-#ifndef GST_DISABLE_GST_DEBUG
-            GST_DEBUG("Unhandled colorspace primaries from %s", colorimetry.get());
-#endif
-            break;
-        }
-        configuration.colorSpace = WTFMove(colorSpace);
+        configuration.colorSpace = videoColorSpaceFromInfo(info);
     }
 
 #if GST_CHECK_VERSION(1, 20, 0)
