@@ -60,6 +60,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebResourceLoadManager.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewInternal.h"
 #include "WebKitWebViewPrivate.h"
@@ -215,8 +216,6 @@ enum {
 
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
-typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
-
 class PageLoadStateObserver;
 
 #if PLATFORM(WPE)
@@ -292,7 +291,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitFindController> findController;
 
     GRefPtr<WebKitWebResource> mainResource;
-    LoadingResourcesMap loadingResourcesMap;
+    std::unique_ptr<WebKitWebResourceLoadManager> resourceLoadManager;
 
     WebKitScriptDialog* currentScriptDialog;
 
@@ -493,6 +492,11 @@ void WebKitWebViewClient::didChangePageID(WKWPE::View&)
 void WebKitWebViewClient::didReceiveUserMessage(WKWPE::View&, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     webkitWebViewDidReceiveUserMessage(m_webView, WTFMove(message), WTFMove(completionHandler));
+}
+
+WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
+{
+    return webkitWebViewGetWebResourceLoadManager(m_webView);
 }
 #endif
 
@@ -744,6 +748,8 @@ static void webkitWebViewConstructed(GObject* object)
 
     priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
+
+    priv->resourceLoadManager = makeUnique<WebKitWebResourceLoadManager>(webView);
 
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
@@ -2461,7 +2467,6 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webkitWebViewWatchForChangesInFavicon(webView);
 #endif
         webkitWebViewCompleteAuthenticationRequest(webView);
-        priv->loadingResourcesMap.clear();
         priv->mainResource = nullptr;
         webView->priv->isActiveURIChangeBlocked = false;
         break;
@@ -2751,27 +2756,17 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 }
 #endif
 
-void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy& frame, uint64_t resourceIdentifier, const ResourceRequest& request)
+WebKitWebResourceLoadManager* webkitWebViewGetWebResourceLoadManager(WebKitWebView* webView)
 {
-    GRefPtr<WebKitWebResource> resource = adoptGRef(webkitWebResourceCreate(frame, request));
-    if (webkitWebResourceIsMainResource(resource.get()))
+    return webView->priv->resourceLoadManager.get();
+}
+
+void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebKitWebResource* resource, ResourceRequest&& request)
+{
+    if (webkitWebResourceIsMainResource(resource))
         webView->priv->mainResource = resource;
-    webView->priv->loadingResourcesMap.set(resourceIdentifier, resource);
     GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
-    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource.get(), uriRequest.get());
-}
-
-WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
-{
-    GRefPtr<WebKitWebResource> resource = webView->priv->loadingResourcesMap.get(resourceIdentifier);
-    return resource.get();
-}
-
-void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    ASSERT(priv->loadingResourcesMap.contains(resourceIdentifier));
-    priv->loadingResourcesMap.remove(resourceIdentifier);
+    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, uriRequest.get());
 }
 
 void webkitWebViewEnterFullScreen(WebKitWebView* webView)

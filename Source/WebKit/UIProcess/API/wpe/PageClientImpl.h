@@ -167,6 +167,8 @@ private:
 
     void selectionDidChange() override;
 
+    WebKitWebResourceLoadManager* webResourceLoadManager() override;
+
     WKWPE::View& m_view;
 };
 

@@ -198,6 +198,10 @@
 #include "ModelIdentifier.h"
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <WebCore/ResourceLoaderIdentifier.h>
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -2309,6 +2313,11 @@ private:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void sendMessageToWebView(UserMessage&&);
     void sendMessageToWebViewWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
+
+    void didInitiateLoadForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceRequest&&);
+    void didSendRequestForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceRequest&&, WebCore::ResourceResponse&&);
+    void didReceiveResponseForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceResponse&&);
+    void didFinishLoadForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceError&&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

@@ -632,4 +632,9 @@ WebCore::Color PageClientImpl::accentColor()
     return SRGBA<uint8_t> { 52, 132, 228 };
 }
 
+WebKitWebResourceLoadManager* PageClientImpl::webResourceLoadManager()
+{
+    return WEBKIT_IS_WEB_VIEW(m_viewWidget) ? webkitWebViewGetWebResourceLoadManager(WEBKIT_WEB_VIEW(m_viewWidget)) : nullptr;
+}
+
 } // namespace WebKit

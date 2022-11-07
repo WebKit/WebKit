@@ -43,6 +43,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>
 
+namespace WebKit {
+class WebKitWebResourceLoadManager;
+}
+
 void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewWillStartLoad(WebKitWebView*);
@@ -73,13 +77,12 @@ void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, W
 void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>);
 void webkitWebViewHandleDownloadRequest(WebKitWebView*, WebKit::DownloadProxy*);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
-void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy&, uint64_t resourceIdentifier, const WebCore::ResourceRequest&);
+WebKit::WebKitWebResourceLoadManager* webkitWebViewGetWebResourceLoadManager(WebKitWebView*);
+void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKitWebResource*, WebCore::ResourceRequest&&);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
-WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 #if PLATFORM(GTK)
 void webKitWebViewDidReceiveSnapshot(WebKitWebView*, uint64_t callbackID, WebKit::WebImage*);
 #endif
-void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 void webkitWebViewMaximizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewMinimizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&&);

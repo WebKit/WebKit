@@ -482,6 +482,11 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::CreateInspectorTarget::name()
         || decoder.messageName() == Messages::WebPageProxy::DestroyInspectorTarget::name()
         || decoder.messageName() == Messages::WebPageProxy::SendMessageToInspectorFrontend::name()
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        || decoder.messageName() == Messages::WebPageProxy::DidInitiateLoadForResource::name()
+        || decoder.messageName() == Messages::WebPageProxy::DidSendRequestForResource::name()
+        || decoder.messageName() == Messages::WebPageProxy::DidReceiveResponseForResource::name()
+#endif
         )
     {
         m_page.didReceiveMessage(connection, decoder);

@@ -359,6 +359,11 @@ void View::didReceiveUserMessage(UserMessage&& message, CompletionHandler<void(U
     m_client->didReceiveUserMessage(*this, WTFMove(message), WTFMove(completionHandler));
 }
 
+WebKitWebResourceLoadManager* View::webResourceLoadManager()
+{
+    return m_client->webResourceLoadManager();
+}
+
 void View::setInputMethodContext(WebKitInputMethodContext* context)
 {
     m_inputMethodFilter.setContext(context);
