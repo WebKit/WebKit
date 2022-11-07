@@ -732,8 +732,14 @@
                     "font-variant-east-asian",
                     "font-variant-position",
                     "font-feature-settings",
-                    "font-optical-sizing",
-                    "font-variation-settings",
+                    {
+                        "value": "font-optical-sizing",
+                        "enable-if": "ENABLE_VARIATION_FONTS"
+                    },
+                    {
+                        "value": "font-variation-settings",
+                        "enable-if": "ENABLE_VARIATION_FONTS"
+                    },
                     "font-palette"
                 ]
             },

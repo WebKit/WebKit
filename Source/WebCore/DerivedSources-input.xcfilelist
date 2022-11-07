@@ -998,11 +998,11 @@ $(PROJECT_DIR)/css/legacyFormControlsIOS.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
 $(PROJECT_DIR)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
 $(PROJECT_DIR)/css/makeSelectorPseudoElementsMap.py
-$(PROJECT_DIR)/css/makeprop.pl
 $(PROJECT_DIR)/css/makevalues.pl
 $(PROJECT_DIR)/css/mathml.css
 $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
+$(PROJECT_DIR)/css/process-css-properties.py
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/svg.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
