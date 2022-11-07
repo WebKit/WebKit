@@ -3221,12 +3221,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     }
 #if ENABLE(VARIATION_FONTS)
     case CSSPropertyFontVariationSettings: {
-        const FontVariationSettings& variationSettings = style.fontDescription().variationSettings();
+        auto& variationSettings = style.fontDescription().variationSettings();
         if (variationSettings.isEmpty())
             return cssValuePool.createIdentifierValue(CSSValueNormal);
-        auto list = CSSValueList::createCommaSeparated();
+        HashCountedSet<FontTag, FourCharacterTagHash, FourCharacterTagHashTraits> duplicateTagChecker;
         for (auto& feature : variationSettings)
-            list->append(CSSFontVariationValue::create(feature.tag(), feature.value()));
+            duplicateTagChecker.add(feature.tag());
+        auto list = CSSValueList::createCommaSeparated();
+        for (auto& feature : variationSettings) {
+            if (duplicateTagChecker.remove(feature.tag()))
+                list->append(CSSFontVariationValue::create(feature.tag(), feature.value()));
+        }
         return list;
     }
     case CSSPropertyFontOpticalSizing:

@@ -2,7 +2,7 @@
 PASS Property font-variation-settings value 'normal'
 PASS Property font-variation-settings value '"wght" 700'
 PASS Property font-variation-settings value '"AB@D" 0.5'
-FAIL Property font-variation-settings value '"wght" 700, "wght" 500' duplicate values should be removed, keeping the rightmost occurrence. assert_equals: expected "\"wght\" 500" but got "\"wght\" 700, \"wght\" 500"
+PASS Property font-variation-settings value '"wght" 700, "wght" 500' duplicate values should be removed, keeping the rightmost occurrence.
 PASS Property font-variation-settings value '"wght" 700, "XHGT" 0.7'
 PASS Property font-variation-settings value '"XHGT" calc(0.4 + 0.3)'
 
