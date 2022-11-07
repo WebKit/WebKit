@@ -259,6 +259,20 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
     RenderElement* currentRenderer = previousInPreOrderRespectingContainment(counterOwner);
     RefPtr<CounterNode> previousSibling;
 
+    // Establish counter nodes previous to currentRenderer in order that calling
+    // makeCounterNode on currentRenderer does not recurse into this function.
+    if (currentRenderer && !currentRenderer->hasCounterNodeMap()) {
+        Vector<RenderElement*> previousRenderers;
+        RenderElement* current = currentRenderer;
+        while (current && !current->hasCounterNodeMap()) {
+            if (current->style().counterDirectives())
+                previousRenderers.append(current);
+            current = previousInPreOrderRespectingContainment(*current);
+        }
+        while (!previousRenderers.isEmpty())
+            makeCounterNode(*previousRenderers.takeLast(), identifier, false);
+    }
+
     while (currentRenderer) {
         auto currentCounter = makeCounterNode(*currentRenderer, identifier, false);
         if (searchEndRenderer == currentRenderer) {
