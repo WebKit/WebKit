@@ -173,6 +173,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit(AudioMediaStr
             return;
         }
         size_t tenMsSampleSize = description->sampleRate() * 10 / 1000;
+        m_description = *description;
         m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, tenMsSampleSize);
         callback(*description, m_frameChunkSize);
     });
@@ -210,7 +211,8 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(Consume
 {
     if (m_isPlaying)
         stop();
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
+    ASSERT_UNUSED(description, m_description == description); // FIXME: This parameter will be removed.
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(m_description, numberOfFrames, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_readOffset = 0;
@@ -218,7 +220,6 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(Consume
     m_isPlaying = true;
     m_canReset = true;
     m_renderSemaphore = WTFMove(semaphore);
-    m_description = description;
 
     if (m_shouldRegisterAsSpeakerSamplesProducer) {
         WebCore::CoreAudioCaptureSourceFactory::singleton().registerSpeakerSamplesProducer(*this);
