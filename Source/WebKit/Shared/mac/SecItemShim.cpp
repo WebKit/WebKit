@@ -95,7 +95,7 @@ static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData:
 
 static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
-    auto response = sendSecItemRequest(SecItemRequestData::CopyMatching, query);
+    auto response = sendSecItemRequest(SecItemRequestData::Type::CopyMatching, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
@@ -112,7 +112,7 @@ static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* unusedResult)
         return errSecParam;
     }
 
-    auto response = sendSecItemRequest(SecItemRequestData::Add, query);
+    auto response = sendSecItemRequest(SecItemRequestData::Type::Add, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
@@ -121,7 +121,7 @@ static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* unusedResult)
 
 static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
 {
-    auto response = sendSecItemRequest(SecItemRequestData::Update, query, attributesToUpdate);
+    auto response = sendSecItemRequest(SecItemRequestData::Type::Update, query, attributesToUpdate);
     if (!response)
         return errSecInteractionNotAllowed;
     
@@ -130,7 +130,7 @@ static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attribut
 
 static OSStatus webSecItemDelete(CFDictionaryRef query)
 {
-    auto response = sendSecItemRequest(SecItemRequestData::Delete, query);
+    auto response = sendSecItemRequest(SecItemRequestData::Type::Delete, query);
     if (!response)
         return errSecInteractionNotAllowed;
     
