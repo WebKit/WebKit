@@ -532,3 +532,20 @@ fast/dom/HTMLLinkElement/link-preload-load-once.html [ Failure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Failure ]
 webgl/webgl-draft-extensions-flag-on.html [ Failure ]
+
+compositing/tiling/crash-huge-layer.html [ Skip ] # Timeout
+compositing/tiling/huge-layer-with-opacity.html [ Skip ] # Timeout
+compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
+compositing/repaint/become-overlay-composited-layer.html [ Failure ]
+
+compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ Pass ]
+compositing/clipping/cached-cliprect-with-compositing-boundary.html [ Pass ]
+compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ]
+compositing/transforms/perspective-with-scrolling.html [ Pass ]
+
+compositing/iframes/display-none-subframe.html [ Pass Failure ]
+
+css3/filters/reference-filter-change-repaint.html [ Failure ]
+css3/filters/should-not-have-compositing-layer.html [ Failure ]
+css3/filters/reference-filter-outsets.html [ ImageOnlyFailure ]
+css3/filters/reference-filter-set-filter-regions.html [ ImageOnlyFailure ]
