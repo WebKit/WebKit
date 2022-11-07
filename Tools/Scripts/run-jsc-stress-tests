@@ -1902,6 +1902,10 @@ def runWebAssemblyFunctionReferenceSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "funcref-spec-harness", "--useWebAssemblyTypedFunctionReferences=true")
 end
 
+def runWebAssemblyGCSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "gc-spec-harness", "--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+end
+
 def runWebAssemblySIMDSpecTest(mode)
     return if !$isSIMDPlatform
     runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true")
