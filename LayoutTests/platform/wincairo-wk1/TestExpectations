@@ -78,7 +78,6 @@ webkit.org/b/140798 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-group-members.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-title-label.html [ Failure ]
 webkit.org/b/140798 accessibility/secure-textfield-title-ui.html [ Failure ]
-webkit.org/b/140798 accessibility/select-element-at-index.html [ Failure ]
 webkit.org/b/140798 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/140798 accessibility/svg-group-element-with-title.html [ Failure ]
 webkit.org/b/140798 accessibility/tabindex-elements-are-accessible.html [ Failure ]
@@ -104,7 +103,6 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-false-works-in-subtrees.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-slider-value.html [ Skip ] # Timeout
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
-webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/140832 accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
@@ -294,7 +292,6 @@ http/tests/resourceLoadStatistics [ Skip ]
 
 webkit.org/b/220579 fast/events/currentTarget-gc-crash.html [ Skip ]
 
-fast/css/sticky/sticky-in-rtl-overflow.html [ ImageOnlyFailure ]
 http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 
 [ Release ] http/tests/misc/redirect-to-external-url.html [ Failure ]
@@ -361,11 +358,6 @@ http/tests/workers/service/self_registration_update.html [ Timeout ]
 http/tests/workers/service/service-worker-registration-gc-event.html [ Timeout ]
 js/weakref-finalizationregistry.html [ Timeout ]
 
-animations/additive-transform-animations.html [ ImageOnlyFailure ]
-animations/needs-layout.html [ ImageOnlyFailure ]
-animations/z-index-in-keyframe.html [ ImageOnlyFailure ]
-css3/masking/clip-path-filter.html [ ImageOnlyFailure ]
-
 editing/execCommand/enabling-and-selection-2.html [ Failure ]
 editing/selection/5354455-1.html [ Failure ]
 editing/selection/context-menu-on-text.html [ Failure ]
@@ -389,9 +381,6 @@ fast/events/event-handler-detached-document.html [ Failure ]
 fast/events/mouse-cursor-image-set.html [ Failure ]
 fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
-fast/gradients/conic-gradient-extended-stops.html [ ImageOnlyFailure ]
-fast/gradients/conic-gradient.html [ ImageOnlyFailure ]
-fast/gradients/conic-repeating-last-stop.html [ ImageOnlyFailure ]
 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
@@ -502,8 +491,6 @@ fast/text/whitespace/pre-wrap-line-test.html [ Failure ]
 fast/text/whitespace/pre-wrap-spaces-after-newline.html [ Failure ]
 
 webkit.org/b/240820 editing/pasteboard/files-during-page-drags.html [ Skip ] # Crash Pass
-
-animations/3d/full-rotation-animation.html [ ImageOnlyFailure ]
 
 http/tests/websocket/tests/hybi/inspector [ Skip ] # Timeout
 
