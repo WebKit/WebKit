@@ -29,4 +29,3 @@ typedef USVString CSSOMString;
     // Like Gecko, we don't expose the children at-rules @styleset,...etc
     // https://searchfox.org/mozilla-central/source/dom/webidl/CSSFontFeatureValuesRule.webidl
 };
-

@@ -46,6 +46,7 @@
     [ImplementedAs=Namespace] const unsigned short NAMESPACE_RULE = 10;
     [ImplementedAs=CounterStyle, EnabledBySetting=CSSCounterStyleAtRulesEnabled] const unsigned short COUNTER_STYLE_RULE = 11;
     [ImplementedAs=Supports] const unsigned short SUPPORTS_RULE = 12;
+    [ImplementedAs=FontFeatureValues] const unsigned short FONT_FEATURE_VALUES_RULE = 14;
 
     // Legacy synonyms for the above, kept to avoid breaking existing content.
     [ImplementedAs=Keyframes] const unsigned short WEBKIT_KEYFRAMES_RULE = 7;
