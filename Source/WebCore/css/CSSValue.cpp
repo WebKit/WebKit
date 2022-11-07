@@ -123,8 +123,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFilterImageValue>(*this));
     case FontClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontValue>(*this));
-    case FontFaceSrcClass:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcValue>(*this));
+    case FontFaceSrcLocalClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcLocalValue>(*this));
+    case FontFaceSrcResourceClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcResourceValue>(*this));
     case FontFeatureClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFeatureValue>(*this));
     case FontPaletteValuesOverrideColorsClass:

@@ -40,9 +40,9 @@ Ref<SVGFontFaceNameElement> SVGFontFaceNameElement::create(const QualifiedName& 
     return adoptRef(*new SVGFontFaceNameElement(tagName, document));
 }
 
-Ref<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const
+Ref<CSSFontFaceSrcLocalValue> SVGFontFaceNameElement::createSrcValue() const
 {
-    return CSSFontFaceSrcValue::createLocal(attributeWithoutSynchronization(SVGNames::nameAttr));
+    return CSSFontFaceSrcLocalValue::create(attributeWithoutSynchronization(SVGNames::nameAttr));
 }
 
 }

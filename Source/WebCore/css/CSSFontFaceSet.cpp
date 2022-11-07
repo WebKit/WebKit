@@ -109,7 +109,7 @@ void CSSFontFaceSet::updateStyleIfNeeded()
         m_owningFontSelector->updateStyleIfNeeded();
 }
 
-void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& familyName)
+void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& familyName)
 {
     ASSERT(m_owningFontSelector);
     if (m_locallyInstalledFacesLookupTable.contains(familyName))
@@ -117,8 +117,8 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
 
     if (!m_owningFontSelector->scriptExecutionContext())
         return;
-    AllowUserInstalledFonts allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
-    Vector<FontSelectionCapabilities> capabilities = FontCache::forCurrentThread().getFontSelectionCapabilitiesInFamily(AtomString { familyName }, allowUserInstalledFonts);
+    auto allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
+    auto capabilities = FontCache::forCurrentThread().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;
 
@@ -177,7 +177,7 @@ void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
     }
 
     for (auto& item : *families) {
-        String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item.get()));
+        auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item.get())) };
         if (familyName.isEmpty())
             continue;
 

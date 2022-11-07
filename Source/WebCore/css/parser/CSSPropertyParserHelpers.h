@@ -120,8 +120,8 @@ template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdentWork
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
-StringView consumeUrlAsStringView(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange&);
+StringView consumeURLRaw(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeURL(CSSParserTokenRange&);
 
 Color consumeColorWorkerSafe(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });

@@ -53,11 +53,11 @@ public:
     void beginLoadIfNeeded(CachedResourceLoader&);
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
-    virtual bool ensureCustomFontData(const AtomString& remoteURI);
+    virtual bool ensureCustomFontData();
     static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, const String& itemInCollection, bool& wrapping);
     static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
-    virtual RefPtr<Font> createFont(const FontDescription&, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontCreationContext&);
+    virtual RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&);
 
 protected:
     FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);

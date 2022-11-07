@@ -274,11 +274,11 @@ void SVGFontFaceElement::rebuildFontFace()
         m_fontElement = downcast<SVGFontElement>(parentNode());
 
         list = CSSValueList::createCommaSeparated();
-        list->append(CSSFontFaceSrcValue::createLocal(fontFamily()));
+        list->append(CSSFontFaceSrcLocalValue::create(AtomString { fontFamily() }));
     } else {
         m_fontElement = nullptr;
         if (srcElement)
-            list = srcElement->srcValue();
+            list = srcElement->createSrcValue();
     }
 
     if (!list || !list->length())
@@ -288,14 +288,10 @@ void SVGFontFaceElement::rebuildFontFace()
     m_fontFaceRule->mutableProperties().addParsedProperty(CSSProperty(CSSPropertySrc, list));
 
     if (describesParentFont) {    
-        // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.
-        RefPtr<CSSValue> src = m_fontFaceRule->properties().getPropertyCSSValue(CSSPropertySrc);
-        CSSValueList* srcList = downcast<CSSValueList>(src.get());
-
-        unsigned srcLength = srcList ? srcList->length() : 0;
-        for (unsigned i = 0; i < srcLength; ++i) {
-            if (RefPtr item = downcast<CSSFontFaceSrcValue>(srcList->itemWithoutBoundsCheck(i)))
-                item->setSVGFontFaceElement(this);
+        // Traverse parsed CSS values and associate CSSFontFaceSrcLocalValue elements with ourselves.
+        if (auto* srcList = downcast<CSSValueList>(m_fontFaceRule->properties().getPropertyCSSValue(CSSPropertySrc).get())) {
+            for (auto& item : *srcList)
+                downcast<CSSFontFaceSrcLocalValue>(item.get()).setSVGFontFaceElement(*this);
         }
     }
 

@@ -1750,7 +1750,7 @@ private:
 
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final { return m_fontSelector.ptr(); }
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource) final;
+    std::unique_ptr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     // FontSelectorClient

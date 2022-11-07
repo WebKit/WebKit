@@ -52,8 +52,8 @@ public:
     virtual bool isLoading() const = 0;
     virtual bool errorOccurred() const = 0;
 
-    virtual bool ensureCustomFontData(const AtomString& remoteURI) = 0;
-    virtual RefPtr<Font> createFont(const FontDescription&, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) = 0;
+    virtual bool ensureCustomFontData() = 0;
+    virtual RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) = 0;
 
     virtual void setClient(FontLoadRequestClient*) = 0;
 

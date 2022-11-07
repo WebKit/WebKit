@@ -2265,7 +2265,7 @@ static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, const CSS
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    RefPtr<CSSPrimitiveValue> url = consumeUrl(range);
+    auto url = consumeURL(range);
     if (url) {
         RefPtr<CSSValue> parsedValue;
         if (range.peek().id() == CSSValueNone)
@@ -2348,7 +2348,7 @@ static RefPtr<CSSValue> consumeNoneOrURI(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    return consumeUrl(range);
+    return consumeURL(range);
 }
 
 static bool isFlexBasisIdent(const WebCore::CSSValueID id, const CSSParserContext& context)
@@ -2915,7 +2915,7 @@ static RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const C
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    if (RefPtr<CSSPrimitiveValue> url = consumeUrl(range))
+    if (auto url = consumeURL(range))
         return url;
 
     if (consumeRay == ConsumeRay::Include) {
@@ -3808,10 +3808,10 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
     else {
         // We clamp the repetitions to a multiple of the repeat() track list's size, while staying below the max grid size.
         repetitions = std::min(repetitions, GridPosition::max() / numberOfTracks);
-        RefPtr<CSSValueList> integerRepeatedValues = CSSGridIntegerRepeatValue::create(repetitions);
-        for (size_t i = 0; i < repeatedValues->length(); ++i)
-            integerRepeatedValues->append(*repeatedValues->itemWithoutBoundsCheck(i));
-        list.append(integerRepeatedValues.releaseNonNull());
+        auto integerRepeatedValues = CSSGridIntegerRepeatValue::create(repetitions);
+        for (auto& item : *repeatedValues)
+            integerRepeatedValues->append(item.get());
+        list.append(WTFMove(integerRepeatedValues));
     }
     return true;
 }

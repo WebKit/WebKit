@@ -23,14 +23,14 @@
 
 namespace WebCore {
 
-class CSSFontFaceSrcValue;
+class CSSFontFaceSrcLocalValue;
 
 class SVGFontFaceNameElement final : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFontFaceNameElement);
 public:
     static Ref<SVGFontFaceNameElement> create(const QualifiedName&, Document&);
     
-    Ref<CSSFontFaceSrcValue> srcValue() const;
+    Ref<CSSFontFaceSrcLocalValue> createSrcValue() const;
 
 private:
     SVGFontFaceNameElement(const QualifiedName&, Document&);

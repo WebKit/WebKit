@@ -1,3 +1,3 @@
 
-FAIL font-family-src-quoted assert_not_equals: got disallowed value -1
+PASS font-family-src-quoted
 

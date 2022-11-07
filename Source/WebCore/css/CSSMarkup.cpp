@@ -145,7 +145,11 @@ String serializeString(const String& string)
 
 String serializeURL(const String& string)
 {
-    return "url(" + serializeString(string) + ")";
+    StringBuilder builder;
+    builder.append("url(");
+    serializeString(string, builder);
+    builder.append(')');
+    return builder.toString();
 }
 
 String serializeFontFamily(const String& string)
