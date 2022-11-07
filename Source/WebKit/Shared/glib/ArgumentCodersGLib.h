@@ -35,14 +35,12 @@ typedef struct _GVariant GVariant;
 namespace IPC {
 
 template<> struct ArgumentCoder<GRefPtr<GVariant>> {
-    static void encode(Encoder&, GRefPtr<GVariant>);
+    static void encode(Encoder&, const GRefPtr<GVariant>&);
     static std::optional<GRefPtr<GVariant>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
-    template<typename Encoder>
-    static void encode(Encoder&, GRefPtr<GTlsCertificate>);
-    template<typename Decoder>
+    static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
     static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
 };
 
