@@ -95,6 +95,19 @@ void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& s
     videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), size(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
 }
 
+const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()
+{
+    m_stats.reset(gst_structure_new_empty("incoming-video-stats"));
+    forEachVideoFrameObserver([&](auto& observer) {
+        if (gst_structure_has_field(m_stats.get(), "frames-decoded"))
+            return;
+
+        if (auto decodedFrames = observer.queryDecodedVideoFramesCount())
+            gst_structure_set(m_stats.get(), "frames-decoded", G_TYPE_UINT64, *decodedFrames, nullptr);
+    });
+    return m_stats.get();
+}
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

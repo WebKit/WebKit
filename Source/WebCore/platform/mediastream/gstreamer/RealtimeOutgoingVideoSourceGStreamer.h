@@ -21,6 +21,7 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "GUniquePtrGStreamer.h"
 #include "RealtimeOutgoingMediaSourceGStreamer.h"
 
 namespace WebCore {
@@ -33,6 +34,8 @@ public:
 
     bool setPayloadType(const GRefPtr<GstCaps>&) final;
 
+    const GstStructure* stats() const { return m_stats.get(); }
+
 protected:
     explicit RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
 
@@ -42,8 +45,11 @@ private:
     void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
     RTCRtpCapabilities rtpCapabilities() const final;
 
+    void updateStats(GstBuffer*);
+
     GRefPtr<GstElement> m_videoConvert;
     GRefPtr<GstElement> m_videoFlip;
+    GUniquePtr<GstStructure> m_stats;
 };
 
 } // namespace WebCore

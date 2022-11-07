@@ -2894,6 +2894,28 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
         g_object_set(decoder, "output-corrupt", FALSE, nullptr);
     if (decoderHasProperty("max-errors"))
         g_object_set(decoder, "max-errors", -1, nullptr);
+
+
+    auto pad = adoptGRef(gst_element_get_static_pad(decoder, "src"));
+    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        auto* player = static_cast<MediaPlayerPrivateGStreamer*>(userData);
+        if (GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_BUFFER) {
+            player->incrementDecodedVideoFramesCount();
+            return GST_PAD_PROBE_OK;
+        }
+
+        if (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_CUSTOM) {
+            auto* query = GST_QUERY_CAST(GST_PAD_PROBE_INFO_DATA(info));
+            auto* structure = gst_query_writable_structure(query);
+            if (gst_structure_has_name(structure, "webkit-video-decoder-stats")) {
+                gst_structure_set(structure, "decoded-frames", G_TYPE_UINT64, player->decodedVideoFramesCount(), nullptr);
+                GST_PAD_PROBE_INFO_DATA(info) = query;
+                return GST_PAD_PROBE_HANDLED;
+            }
+        }
+
+        return GST_PAD_PROBE_OK;
+    }, this, nullptr);
 }
 
 bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
