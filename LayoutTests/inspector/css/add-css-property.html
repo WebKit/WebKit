@@ -110,6 +110,52 @@ function test() {
         }
     });
 
+    function addTestCaseForCommentingOutAndAppendingProperty({subtestName, description, ruleSelector, newPropertyName, newPropertyValue})
+    {
+        suite.addTestCase({
+            name: `AddCSSProperty.CommentOutAndThenAppendAfterCommentedOutProperty.${subtestName}`,
+            description,
+            async test() {
+                let styleDeclaration = getMatchedStyle(ruleSelector);
+
+                const commentOut = true;
+                styleDeclaration.properties[1].commentOut(commentOut);
+
+                const expectedAfterCommentOut = `\n    font-size: 14px;\n    /* color: red; */\n`;
+                InspectorTest.expectEqual(styleDeclaration.text, expectedAfterCommentOut, "'color: red' property should be commented out.");
+
+                let newProperty = styleDeclaration.newBlankProperty(2);
+                styleDeclaration.locked = true;
+                newProperty.name = newPropertyName;
+                const expectedAfterAddingName = `\n    font-size: 14px;\n    /* color: red; */\n    ${newPropertyName}: ;\n`;
+                InspectorTest.expectEqual(styleDeclaration.text, expectedAfterAddingName, `'${newPropertyName}:' part of new property should be appended.`);
+
+
+                newProperty.rawValue = newPropertyValue;
+                const expectedafterAddingValue = `\n    font-size: 14px;\n    /* color: red; */\n    ${newPropertyName}: ${newPropertyValue};\n`;
+                InspectorTest.expectEqual(styleDeclaration.text, expectedafterAddingValue, `'${newPropertyName}: ${newPropertyValue}' property should be fully appended.`);
+
+                styleDeclaration.locked = false;
+            },
+        });
+    }
+
+    addTestCaseForCommentingOutAndAppendingProperty({
+        subtestName: "DifferentPropertyName",
+        description: "Ensure that commenting out a property and then appending a new property below it behaves as intended.",
+        ruleSelector: ".rule-f",
+        newPropertyName: "display",
+        newPropertyValue: "flex",
+    });
+
+    addTestCaseForCommentingOutAndAppendingProperty({
+        subtestName: "ExistingPropertyName",
+        description: "Ensure that commenting out a property and then appending a new property with the same name below it behaves as intended.",
+        ruleSelector: ".rule-g",
+        newPropertyName: "color",
+        newPropertyValue: "rebeccapurple",
+    });
+
     WI.domManager.requestDocument((documentNode) => {
         documentNode.querySelector("#x", (contentNodeId) => {
             if (contentNodeId) {
@@ -151,7 +197,15 @@ function test() {
     font-size: 14px;
     /* color: red */
 }
+.rule-f {
+    font-size: 14px;
+    color: red;
+}
+.rule-g {
+    font-size: 14px;
+    color: red;
+}
 </style>
-<div id="x" class="rule-a rule-b rule-c rule-d rule-e" style="width: 100px"></div>
+<div id="x" class="rule-a rule-b rule-c rule-d rule-e rule-f rule-g" style="width: 100px"></div>
 </body>
 </html>

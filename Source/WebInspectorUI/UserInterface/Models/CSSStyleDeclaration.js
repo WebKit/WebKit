@@ -167,7 +167,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         }
 
         for (let oldProperty of oldProperties) {
-            if (this.enabledProperties.includes(oldProperty))
+            if (this._properties.includes(oldProperty))
                 continue;
 
             // Clear the index, since it is no longer valid.

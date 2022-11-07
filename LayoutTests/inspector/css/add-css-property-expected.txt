@@ -18,3 +18,13 @@ PASS: `display: inline` property should be appended.
 -- Running test case: AddCSSProperty.AppendAfterCommentedOutPropertyWithoutSemicolon
 PASS: `display: inline` property should be appended.
 
+-- Running test case: AddCSSProperty.CommentOutAndThenAppendAfterCommentedOutProperty.DifferentPropertyName
+PASS: 'color: red' property should be commented out.
+PASS: 'display:' part of new property should be appended.
+PASS: 'display: flex' property should be fully appended.
+
+-- Running test case: AddCSSProperty.CommentOutAndThenAppendAfterCommentedOutProperty.ExistingPropertyName
+PASS: 'color: red' property should be commented out.
+PASS: 'color:' part of new property should be appended.
+PASS: 'color: rebeccapurple' property should be fully appended.
+
