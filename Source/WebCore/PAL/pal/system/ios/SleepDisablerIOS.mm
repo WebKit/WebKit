@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "SleepDisablerCocoa.h"
 
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS_FAMILY)
+#import <wtf/NeverDestroyed.h>
 
-#include <pal/system/SleepDisabler.h>
-#include <wtf/RefCounter.h>
+#import <pal/ios/UIKitSoftLink.h>
 
 namespace PAL {
 
-#if PLATFORM(IOS_FAMILY)
-enum ScreenSleepDisablerCounterType { };
-typedef RefCounter<ScreenSleepDisablerCounterType> ScreenSleepDisablerCounter;
-typedef ScreenSleepDisablerCounter::Token ScreenSleepDisablerCounterToken;
-#endif
-
-class SleepDisablerCocoa : public SleepDisabler {
+class ScreenSleepDisabler {
 public:
-    explicit SleepDisablerCocoa(const String&, Type);
-    virtual ~SleepDisablerCocoa();
+    static ScreenSleepDisabler& shared()
+    {
+        static MainThreadNeverDestroyed<ScreenSleepDisabler> screenSleepDisabler;
+        return screenSleepDisabler;
+    }
+
+    ScreenSleepDisablerCounterToken takeAssertion()
+    {
+        return m_screenSleepDisablerCount.count();
+    }
 
 private:
-    void takeScreenSleepDisablingAssertion(const String& reason);
-    void takeSystemSleepDisablingAssertion(const String& reason);
+    friend NeverDestroyed<ScreenSleepDisabler, WTF::MainThreadAccessTraits>;
 
-    uint32_t m_sleepAssertion { 0 };
-#if PLATFORM(IOS_FAMILY)
-    ScreenSleepDisablerCounterToken m_screenSleepDisablerToken;
-#endif
+    ScreenSleepDisabler()
+        : m_screenSleepDisablerCount([this](RefCounterEvent) { updateState(); })
+    { }
+
+    void updateState()
+    {
+        if (!m_screenSleepDisablerCount.value())
+            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = NO;
+        else if (m_screenSleepDisablerCount.value() == 1)
+            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = YES;
+    }
+
+    ScreenSleepDisablerCounter m_screenSleepDisablerCount;
 };
+
+void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String&)
+{
+    m_screenSleepDisablerToken = ScreenSleepDisabler::shared().takeAssertion();
+}
 
 } // namespace PAL
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(IOS_FAMILY)

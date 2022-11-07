@@ -27,7 +27,6 @@
 #include "SleepDisablerCocoa.h"
 
 #if PLATFORM(COCOA)
-
 #include <pal/spi/cocoa/IOPMLibSPI.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -42,27 +41,38 @@ std::unique_ptr<SleepDisabler> SleepDisabler::create(const String& reason, Type 
 SleepDisablerCocoa::SleepDisablerCocoa(const String& reason, Type type)
     : SleepDisabler(reason, type)
 {
-    auto reasonCF = reason.createCFString();
-
-    CFStringRef assertionType;
     switch (type) {
     case Type::Display:
-        assertionType = kIOPMAssertionTypePreventUserIdleDisplaySleep;
+        takeScreenSleepDisablingAssertion(reason);
         break;
     case Type::System:
-        assertionType = kIOPMAssertionTypePreventUserIdleSystemSleep;
+        takeSystemSleepDisablingAssertion(reason);
         break;
     default:
         ASSERT_NOT_REACHED();
-        assertionType = nullptr;
         break;
     }
-    IOPMAssertionCreateWithDescription(assertionType, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
 }
 
 SleepDisablerCocoa::~SleepDisablerCocoa()
 {
-    IOPMAssertionRelease(m_sleepAssertion);
+#if PLATFORM(IOS_FAMILY)
+    m_screenSleepDisablerToken = nullptr;
+#endif
+    if (m_sleepAssertion)
+        IOPMAssertionRelease(m_sleepAssertion);
+}
+
+#if PLATFORM(MAC)
+void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String& reason)
+{
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reason.createCFString().get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
+}
+#endif
+
+void SleepDisablerCocoa::takeSystemSleepDisablingAssertion(const String& reason)
+{
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleSystemSleep, reason.createCFString().get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
 }
 
 } // namespace PAL
