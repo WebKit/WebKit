@@ -24,6 +24,7 @@ depends:
 - sdk/gst-libav.bst
 - sdk/gst-plugin-closedcaption.bst
 - sdk/gst-plugin-dav1d.bst
+- sdk/gst-plugin-rtp.bst
 - sdk/gst-plugins-bad.bst
 - sdk/gst-plugins-base.bst
 - sdk/gst-plugins-good.bst
