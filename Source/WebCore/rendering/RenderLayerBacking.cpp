@@ -540,6 +540,21 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateContentsScalingFilters(style);
 }
 
+bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
+{
+    if (!renderer().isCanvas())
+        return false;
+
+    if (canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
+        return false;
+
+#if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
+    return true;
+#else
+    return renderer().settings().webGPU();
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 void RenderLayerBacking::layerWillBeDestroyed()
 {
@@ -1081,15 +1096,13 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         updateContentsRects();
     }
 #endif
-#if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
-    else if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
-        const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
+    else if (shouldSetContentsDisplayDelegate()) {
+        auto* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())
             m_graphicsLayer->setContentsDisplayDelegate(context->layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 
         layerConfigChanged = true;
     }
-#endif
 #if ENABLE(MODEL_ELEMENT)
     else if (is<RenderModel>(renderer())) {
         auto element = downcast<HTMLModelElement>(renderer().element());

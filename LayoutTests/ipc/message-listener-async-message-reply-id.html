@@ -1,0 +1,37 @@
+
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that intercepting an async message has access to the listener id.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const testerID = 447;
+    const processTarget = 'UI'; // Currently only UI is supported for addTesterReceiver.
+    IPC.addTesterReceiver(processTarget);
+    try {
+        let messages = [];
+        IPC.addIncomingMessageListener(processTarget, (message) => {
+            if (message.name != IPC.messages.IPCTesterReceiver_AsyncMessage.name)
+                return;
+            messages.push(message);
+        });
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_SendAsyncMessageToReceiver.name, [
+            { type: 'uint32_t', value: 89 },
+        ]);
+        await t.step_wait(() => { return messages.length > 0 }, "Waiting until async message is intercepted");
+        assert_equals(messages.length, 1, `for ${ processTarget }`);
+        assert_equals(messages[0].arguments.length, 1, `for ${ processTarget }`)
+        assert_equals(messages[0].arguments[0].type, "uint32_t", `for ${ processTarget }`);
+        assert_equals(messages[0].arguments[0].value, 90, `for ${ processTarget }`);
+        assert_equals(typeof messages[0].listenerID, "number", `for ${ processTarget }`);
+        assert_greater_than(messages[0].listenerID, 0, `for ${ processTarget }`);
+    } finally {
+        IPC.removeTesterReceiver(processTarget);
+    }
+}, "Intercepting async messages contains all the expected data.");
+</script>
+</body>

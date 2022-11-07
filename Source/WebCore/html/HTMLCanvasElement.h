@@ -46,17 +46,21 @@ class CanvasRenderingContext;
 class CanvasRenderingContext2D;
 class GraphicsContext;
 class Image;
+class ImageBitmapRenderingContext;
 class ImageBuffer;
 class ImageData;
 class MediaStream;
 class OffscreenCanvas;
 class VideoFrame;
 class WebGLRenderingContextBase;
-class GPUCanvasContext;
 class WebCoreOpaqueRoot;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
+
+#if ENABLE(WEBGPU)
+class GPUCanvasContext;
+#endif
 
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
@@ -90,6 +94,12 @@ public:
     static bool isBitmapRendererType(const String&);
     ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
     ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
+
+    static bool isWebGPUType(const String&);
+#if ENABLE(WEBGPU)
+    GPUCanvasContext* createContextWebGPU(const String&);
+    GPUCanvasContext* getContextWebGPU(const String&);
+#endif // ENABLE(WEBGPU)
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);

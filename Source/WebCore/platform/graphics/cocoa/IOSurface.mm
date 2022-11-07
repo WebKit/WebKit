@@ -78,6 +78,9 @@ std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight&& 
 
 std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpace)
 {
+    if (!surface)
+        return nullptr;
+
     return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
 }
 

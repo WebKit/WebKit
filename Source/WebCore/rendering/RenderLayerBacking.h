@@ -399,6 +399,8 @@ private:
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;
     LayoutRect computePrimaryGraphicsLayerRect(const RenderLayer* compositedAncestor, const LayoutRect& parentGraphicsLayerRect) const;
 
+    bool shouldSetContentsDisplayDelegate() const;
+
 #if USE(OWNING_LAYER_BEAR_TRAP)
     uintptr_t m_owningLayerBearTrap { BEAR_TRAP_VALUE }; // webkit.org/b.206915
 #endif

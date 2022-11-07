@@ -30,6 +30,14 @@
 #import "Device.h"
 #import "PipelineLayout.h"
 
+#if ENABLE(WEBGPU_BY_DEFAULT) && __has_include("ShaderModuleSource.msl")
+#define TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP 1
+#include "ShaderModuleSource.msl"
+#else
+#define TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP 0
+#define WEBGPU_SHADER_SOURCE ""
+#endif
+
 namespace WebGPU {
 
 struct ShaderModuleParameters {
@@ -93,8 +101,14 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
         auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.hint.layout));
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
+
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-    auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
+#if TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP
+    auto prepareResultMSL = prepareResult.msl.length() ? prepareResult.msl : String::fromUTF8(WEBGPU_SHADER_SOURCE);
+#else
+    auto prepareResultMSL = prepareResult.msl;
+#endif
+    auto library = ShaderModule::createLibrary(device.device(), prepareResultMSL, WTFMove(label));
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, device);
@@ -231,6 +245,11 @@ void ShaderModule::setLabel(String&& label)
 {
     if (m_library)
         m_library.label = label;
+}
+
+id<MTLFunction> ShaderModule::getNamedFunction(const String& name) const
+{
+    return [m_library newFunctionWithName:name];
 }
 
 WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)

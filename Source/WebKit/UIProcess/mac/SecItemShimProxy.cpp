@@ -64,19 +64,19 @@ void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
 void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)
 {
     switch (request.type()) {
-    case SecItemRequestData::Invalid:
+    case SecItemRequestData::Type::Invalid:
         LOG_ERROR("SecItemShimProxy::secItemRequest received an invalid data request. Please file a bug if you know how you caused this.");
         response(SecItemResponseData { errSecParam, nullptr });
         break;
 
-    case SecItemRequestData::CopyMatching: {
+    case SecItemRequestData::Type::CopyMatching: {
         CFTypeRef resultObject = nullptr;
         OSStatus resultCode = SecItemCopyMatching(request.query(), &resultObject);
         response(SecItemResponseData { resultCode, adoptCF(resultObject) });
         break;
     }
 
-    case SecItemRequestData::Add: {
+    case SecItemRequestData::Type::Add: {
         // Return value of SecItemAdd is often ignored. Even if it isn't, we don't have the ability to
         // serialize SecKeychainItemRef.
         OSStatus resultCode = SecItemAdd(request.query(), nullptr);
@@ -84,13 +84,13 @@ void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, Complet
         break;
     }
 
-    case SecItemRequestData::Update: {
+    case SecItemRequestData::Type::Update: {
         OSStatus resultCode = SecItemUpdate(request.query(), request.attributesToMatch());
         response(SecItemResponseData { resultCode, nullptr });
         break;
     }
 
-    case SecItemRequestData::Delete: {
+    case SecItemRequestData::Type::Delete: {
         OSStatus resultCode = SecItemDelete(request.query());
         response(SecItemResponseData { resultCode, nullptr });
         break;

@@ -40,7 +40,7 @@ namespace WebKit::WebGPU {
 struct RenderPassDescriptor : public ObjectDescriptorBase {
     Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
-    WebGPUIdentifier occlusionQuerySet;
+    std::optional<WebGPUIdentifier> occlusionQuerySet;
     RenderPassTimestampWrites timestampWrites;
 };
 

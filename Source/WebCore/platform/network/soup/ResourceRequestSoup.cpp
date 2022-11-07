@@ -75,7 +75,7 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 #if SOUP_CHECK_VERSION(2, 69, 90)
     if (!isSameSiteUnspecified()) {
         if (isSameSite()) {
-            auto siteForCookies = urlToSoupURI(m_url);
+            auto siteForCookies = urlToSoupURI(m_requestData.m_url);
             soup_message_set_site_for_cookies(soupMessage.get(), siteForCookies.get());
         }
         soup_message_set_is_top_level_navigation(soupMessage.get(), isTopSite());
@@ -152,13 +152,13 @@ void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) 
 
 void ResourceRequest::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeaders)
 {
-    m_httpHeaderFields.clear();
+    m_requestData.m_httpHeaderFields.clear();
     SoupMessageHeadersIter headersIter;
     soup_message_headers_iter_init(&headersIter, soupHeaders);
     const char* headerName;
     const char* headerValue;
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        m_httpHeaderFields.set(String::fromLatin1(headerName), String::fromLatin1(headerValue));
+        m_requestData.m_httpHeaderFields.set(String::fromLatin1(headerName), String::fromLatin1(headerValue));
 }
 
 unsigned initializeMaximumHTTPConnectionCountPerHost()
@@ -176,19 +176,19 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
     // Before passing the URL to soup, we should make sure to urlencode any '#'
     // characters, so that soup does not interpret them as fragment identifiers.
     // See http://wkbug.com/68089
-    if (m_url.protocolIsData()) {
-        String urlString = makeStringByReplacingAll(m_url.string(), '#', "%23"_s);
+    if (m_requestData.m_url.protocolIsData()) {
+        String urlString = makeStringByReplacingAll(m_requestData.m_url.string(), '#', "%23"_s);
         return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
     }
 
-    GUniquePtr<SoupURI> soupURI = urlToSoupURI(m_url);
+    GUniquePtr<SoupURI> soupURI = urlToSoupURI(m_requestData.m_url);
 
     // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
     // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active
     // when both the username and password are non-null. When we have credentials, empty usernames and passwords
     // should be empty strings instead of null.
-    String urlUser = m_url.user();
-    String urlPass = m_url.password();
+    String urlUser = m_requestData.m_url.user();
+    String urlPass = m_requestData.m_url.password();
     if (!urlUser.isEmpty() || !urlPass.isEmpty()) {
         soup_uri_set_user(soupURI.get(), urlUser.utf8().data());
         soup_uri_set_password(soupURI.get(), urlPass.utf8().data());
@@ -199,9 +199,30 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
 #else
 GRefPtr<GUri> ResourceRequest::createSoupURI() const
 {
-    return m_url.createGUri();
+    return m_requestData.m_url.createGUri();
 }
 #endif
+
+ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() const
+{
+    if (m_httpBody)
+        return ResourceRequestPlatformData { m_requestData, m_httpBody->flattenToString(), m_acceptEncoding, m_redirectCount };
+    return ResourceRequestPlatformData { m_requestData, std::nullopt, m_acceptEncoding, m_redirectCount };
+}
+
+ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData requestData)
+{
+    if (std::holds_alternative<ResourceRequestBase::RequestData>(requestData)) 
+        return ResourceRequest(WTFMove(std::get<ResourceRequestBase::RequestData>(requestData)));
+    return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)));
+}
+
+ResourceRequestData ResourceRequest::getRequestDataToSerialize() const
+{
+    if (encodingRequiresPlatformData())
+        return getResourceRequestPlatformData();
+    return m_requestData;
+}
 
 } // namespace WebCore
 

@@ -540,6 +540,9 @@ static BOOL areEssentiallyEqual(double a, double b)
         title = url.lastPathComponent ?: url._web_userVisibleString;
     }
 
+    if (!title.length)
+        title = @"MiniBrowser";
+
     self.window.title = title;
 
     NSMutableString *subtitle = [@"[WK2" mutableCopy];

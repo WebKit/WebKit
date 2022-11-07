@@ -22,32 +22,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+#if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
 
-#include "config.h"
-#include "GPUCanvasContext.h"
+// https://gpuweb.github.io/gpuweb/#gpucanvascontext
 
-#include "GPUAdapter.h"
-#include "GPUCanvasConfiguration.h"
+[
+    ActiveDOMObject,
+    EnabledBySetting=WebGPU,
+    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
+    SecureContext
+]
+interface GPUCanvasContext {
+    readonly attribute (HTMLCanvasElement
+#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
+        or OffscreenCanvas
+#endif
+    ) canvas;
 
-namespace WebCore {
+    undefined configure(GPUCanvasConfiguration configuration);
+    undefined unconfigure();
 
-GPUCanvasContext::CanvasType GPUCanvasContext::canvas()
-{
-    return { };
-}
-
-void GPUCanvasContext::configure(const GPUCanvasConfiguration&)
-{
-
-}
-
-void GPUCanvasContext::unconfigure()
-{
-}
-
-RefPtr<GPUTexture> GPUCanvasContext::getCurrentTexture()
-{
-    return nullptr;
-}
-
-}
+    GPUTexture getCurrentTexture();
+};
+#else
+interface GPUCanvasContext {
+};
+#endif // ENABLE_WEBGPU

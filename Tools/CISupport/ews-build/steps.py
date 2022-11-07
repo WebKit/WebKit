@@ -1106,6 +1106,7 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/Scripts/libraries', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/commit-log-editor', re.IGNORECASE),
         re.compile(rb'Source/WebKit/Scripts', re.IGNORECASE),
+        re.compile(rb'metadata/contributors.json', re.IGNORECASE),
     ]
 
     group_to_paths_mapping = {

@@ -148,7 +148,6 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class FullscreenManager;
-class GPUCanvasContext;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
 class HTMLBodyElement;
@@ -255,6 +254,10 @@ class ContentChangeObserver;
 class DOMTimerHoldingTank;
 #endif
 
+#if ENABLE(WEBGPU)
+class GPUCanvasContext;
+#endif
+
 struct ApplicationManifest;
 struct BoundaryPoint;
 struct HighlightRangeData;
@@ -331,6 +334,9 @@ using RenderingContext = std::variant<
 #endif
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
+#endif
+#if ENABLE(WEBGPU)
+    RefPtr<GPUCanvasContext>,
 #endif
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<CanvasRenderingContext2D>

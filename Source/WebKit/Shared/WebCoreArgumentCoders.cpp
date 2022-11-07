@@ -742,64 +742,6 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
     return true;
 }
 
-void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequest& resourceRequest)
-{
-    if (resourceRequest.encodingRequiresPlatformData()) {
-        encoder << true;
-        encodePlatformData(encoder, resourceRequest);
-    } else {
-        encoder << false;
-        resourceRequest.encodeWithoutPlatformData(encoder);
-    }
-
-    encoder << resourceRequest.cachePartition();
-    encoder << resourceRequest.hiddenFromInspector();
-
-#if USE(SYSTEM_PREVIEW)
-    if (resourceRequest.isSystemPreview()) {
-        encoder << true;
-        encoder << resourceRequest.systemPreviewInfo();
-    } else
-        encoder << false;
-#endif
-}
-
-bool ArgumentCoder<ResourceRequest>::decode(Decoder& decoder, ResourceRequest& resourceRequest)
-{
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
-        return false;
-
-    bool decodeSuccess = hasPlatformData ? decodePlatformData(decoder, resourceRequest) : resourceRequest.decodeWithoutPlatformData(decoder);
-    if (!decodeSuccess)
-        return false;
-
-    String cachePartition;
-    if (!decoder.decode(cachePartition))
-        return false;
-    resourceRequest.setCachePartition(cachePartition);
-
-    bool isHiddenFromInspector;
-    if (!decoder.decode(isHiddenFromInspector))
-        return false;
-    resourceRequest.setHiddenFromInspector(isHiddenFromInspector);
-
-#if USE(SYSTEM_PREVIEW)
-    bool isSystemPreview;
-    if (!decoder.decode(isSystemPreview))
-        return false;
-
-    if (isSystemPreview) {
-        SystemPreviewInfo systemPreviewInfo;
-        if (!decoder.decode(systemPreviewInfo))
-            return false;
-        resourceRequest.setSystemPreviewInfo(systemPreviewInfo);
-    }
-#endif
-
-    return true;
-}
-
 void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)
 {
     encoder << resourceError.type();

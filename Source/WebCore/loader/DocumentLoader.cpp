@@ -2109,7 +2109,7 @@ void DocumentLoader::startLoadingMainResource()
     ASSERT(timing().startTime());
 
     willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
-        request.setRequester(ResourceRequest::Requester::Main);
+        request.setRequester(ResourceRequestRequester::Main);
 
         m_request = request;
         // FIXME: Implement local URL interception by getting the service worker of the parent.

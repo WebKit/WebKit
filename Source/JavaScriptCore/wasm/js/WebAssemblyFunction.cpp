@@ -191,7 +191,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     JIT_COMMENT(jit, "jsCallEntrypointSlow");
 
-    const auto& typeDefinition = Wasm::TypeInformation::get(typeIndex());
+    const auto& typeDefinition = Wasm::TypeInformation::get(typeIndex()).expand();
     const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
     const auto& pinnedRegs = Wasm::PinnedRegisterInfo::get();
     RegisterAtOffsetList registersToSpill = usedCalleeSaveRegisters();

@@ -154,37 +154,7 @@ struct SystemPreviewInfo {
 
     IntRect previewRect;
     bool isPreview { false };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SystemPreviewInfo> decode(Decoder&);
 };
-
-template<class Encoder>
-void SystemPreviewInfo::encode(Encoder& encoder) const
-{
-    encoder << element << previewRect << isPreview;
-}
-
-template<class Decoder>
-std::optional<SystemPreviewInfo> SystemPreviewInfo::decode(Decoder& decoder)
-{
-    std::optional<ElementContext> element;
-    decoder >> element;
-    if (!element)
-        return std::nullopt;
-
-    std::optional<IntRect> previewRect;
-    decoder >> previewRect;
-    if (!previewRect)
-        return std::nullopt;
-
-    std::optional<bool> isPreview;
-    decoder >> isPreview;
-    if (!isPreview)
-        return std::nullopt;
-
-    return { { WTFMove(*element), WTFMove(*previewRect), WTFMove(*isPreview) } };
-}
 
 enum class LoadCompletionType : bool {
     Finish,

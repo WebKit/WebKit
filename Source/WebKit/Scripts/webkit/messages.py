@@ -255,6 +255,7 @@ def serialized_identifiers():
         'WebCore::BroadcastChannelIdentifier',
         'WebCore::DOMCacheIdentifier',
         'WebCore::DisplayList::ItemBufferIdentifier',
+        'WebCore::ElementIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',

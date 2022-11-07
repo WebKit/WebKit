@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpucanvascontext
+#include "config.h"
+#include "IPCTesterReceiver.h"
 
-[
-    EnabledBySetting=WebGPU,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUCanvasContext {
-    readonly attribute (HTMLCanvasElement
-#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
-        or OffscreenCanvas
+#if ENABLE(IPC_TESTING_API)
+
+namespace WebKit {
+
+void IPCTesterReceiver::asyncMessage(uint32_t arg0, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(arg0 + 1u);
+}
+
+}
+
 #endif
-    ) canvas;
-
-    undefined configure(GPUCanvasConfiguration configuration);
-    undefined unconfigure();
-
-    GPUTexture getCurrentTexture();
-};

@@ -115,7 +115,7 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext* context, std::optional
     , m_referrer(WTFMove(referrer))
     , m_signal(AbortSignal::create(context))
 {
-    m_request.setRequester(ResourceRequest::Requester::Fetch);
+    m_request.setRequester(ResourceRequestRequester::Fetch);
     updateContentType();
 }
 

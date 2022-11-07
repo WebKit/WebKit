@@ -284,11 +284,11 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(const
 {
     if (cachedResource.type() == CachedResource::Type::RawResource) {
         switch (cachedResource.resourceRequest().requester()) {
-        case ResourceRequest::Requester::Fetch:
+        case ResourceRequestRequester::Fetch:
             return InspectorPageAgent::FetchResource;
-        case ResourceRequest::Requester::Main:
+        case ResourceRequestRequester::Main:
             return InspectorPageAgent::DocumentResource;
-        case ResourceRequest::Requester::EventSource:
+        case ResourceRequestRequester::EventSource:
             return InspectorPageAgent::EventSourceResource;
         default:
             return InspectorPageAgent::XHRResource;

@@ -33,6 +33,7 @@
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
+#import "GraphicsLayerContentsDisplayDelegate.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
 #import "PixelBuffer.h"

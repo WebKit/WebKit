@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
+#include "ArgumentCoders.h"
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
@@ -37,7 +37,7 @@ namespace WebKit {
     
 class SecItemRequestData {
 public:
-    enum Type {
+    enum class Type : uint8_t {
         Invalid,
         CopyMatching,
         Add,
@@ -48,9 +48,7 @@ public:
     SecItemRequestData() = default;
     SecItemRequestData(Type, CFDictionaryRef query);
     SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, SecItemRequestData&);
+    SecItemRequestData(Type, RetainPtr<CFDictionaryRef>&& query, RetainPtr<CFDictionaryRef>&& attributesToMatch);
 
     Type type() const { return m_type; }
 
@@ -58,24 +56,11 @@ public:
     CFDictionaryRef attributesToMatch() const { return m_attributesToMatch.get(); }
 
 private:
-    Type m_type { Invalid };
+    friend struct IPC::ArgumentCoder<WebKit::SecItemRequestData, void>;
+
+    Type m_type { Type::Invalid };
     RetainPtr<CFDictionaryRef> m_queryDictionary;
     RetainPtr<CFDictionaryRef> m_attributesToMatch;
 };
     
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::SecItemRequestData::Type> {
-    using values = EnumValues<
-        WebKit::SecItemRequestData::Type,
-        WebKit::SecItemRequestData::Type::Invalid,
-        WebKit::SecItemRequestData::Type::CopyMatching,
-        WebKit::SecItemRequestData::Type::Add,
-        WebKit::SecItemRequestData::Type::Update,
-        WebKit::SecItemRequestData::Type::Delete
-    >;
-};
-
-} // namespace WTF

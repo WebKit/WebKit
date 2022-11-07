@@ -184,7 +184,7 @@ gboolean webkit_response_policy_decision_is_main_frame_main_resource(WebKitRespo
     if (!decision->priv->navigationResponse->frame().isMainFrame())
         return FALSE;
 
-    return decision->priv->navigationResponse->request().requester() == ResourceRequest::Requester::Main;
+    return decision->priv->navigationResponse->request().requester() == ResourceRequestRequester::Main;
 }
 
 WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(Ref<API::NavigationResponse>&& response, Ref<WebKit::WebFramePolicyListenerProxy>&& listener)

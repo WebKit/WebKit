@@ -109,7 +109,7 @@ public:
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
 
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
-    void setAsyncFrameOrOverflowScrollingEnabled(bool);
+    WEBCORE_EXPORT void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
     bool scrollingPerformanceTestingEnabled() const { return m_scrollingPerformanceTestingEnabled; }
     WEBCORE_EXPORT void setScrollingPerformanceTestingEnabled(bool);

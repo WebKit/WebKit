@@ -33,6 +33,8 @@
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "IPCStreamTesterMessages.h"
+#include "IPCTesterReceiver.h"
+#include "IPCTesterReceiverMessages.h"
 #include "JSIPCBinding.h"
 #include "MessageArgumentDescriptions.h"
 #include "MessageObserver.h"
@@ -346,6 +348,8 @@ private:
     static JSValueRef createStreamClientConnection(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef createSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef createSharedMemory(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef addTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef removeTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     static JSValueRef vmPageSize(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef visitedLinkStoreID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
@@ -364,6 +368,7 @@ private:
     WeakPtr<WebPage> m_webPage;
     WeakPtr<WebFrame> m_webFrame;
     Vector<UniqueRef<JSMessageListener>> m_messageListeners;
+    IPCTesterReceiver m_testerProxy;
 };
 
 static JSValueRef createTypeError(JSContextRef context, const String& message)
@@ -1623,6 +1628,8 @@ const JSStaticFunction* JSIPC::staticFunctions()
         { "createStreamClientConnection", createStreamClientConnection, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "createSemaphore", createSemaphore, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "createSharedMemory", createSharedMemory, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "addTesterReceiver", addTesterReceiver, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "removeTesterReceiver", removeTesterReceiver, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
     };
     return functions;
@@ -2334,6 +2341,38 @@ JSValueRef JSIPC::createSharedMemory(JSContextRef context, JSObjectRef, JSObject
     return JSSharedMemory::create(*size)->createJSWrapper(context);
 }
 
+JSValueRef JSIPC::addTesterReceiver(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto* impl = toWrapped(context, thisObject);
+    if (!impl) {
+        *exception = toRef(JSC::createTypeError(toJS(context), "Wrong type"_s));
+        return JSValueMakeUndefined(context);
+    }
+    // Currently supports only UI process, as there's no uniform way to add message receivers.
+    WebProcess::singleton().addMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName(), impl->m_testerProxy);
+    return JSValueMakeUndefined(context);
+}
+
+
+JSValueRef JSIPC::removeTesterReceiver(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto* impl = toWrapped(context, thisObject);
+    if (!impl) {
+        *exception = toRef(JSC::createTypeError(toJS(context), "Wrong type"_s));
+        return JSValueMakeUndefined(context);
+    }
+
+    WebProcess::singleton().removeMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName());
+    return JSValueMakeUndefined(context);
+}
+
 JSValueRef JSIPC::serializedTypeInfo(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
     auto* globalObject = toJS(context);
@@ -2373,7 +2412,7 @@ JSValueRef JSIPC::serializedEnumInfo(JSContextRef context, JSObjectRef thisObjec
     for (auto& enumeration : allSerializedEnums()) {
         JSC::JSObject* enumObject = constructEmptyObject(globalObject, globalObject->objectPrototype());
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
-        
+
         JSObjectRef jsEnumObject = JSValueToObject(context, toRef(vm, enumObject), exception);
         if (*exception)
             return JSValueMakeUndefined(context);
@@ -2568,16 +2607,16 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
         auto argumentDescriptions = createJSArrayForArgumentDescriptions(globalObject, IPC::messageArgumentDescriptions(name));
         if (argumentDescriptions.isEmpty())
             return JSValueMakeUndefined(context);
-        dictionary->putDirect(vm, vm.propertyNames->arguments, argumentDescriptions);            
+        dictionary->putDirect(vm, vm.propertyNames->arguments, argumentDescriptions);
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         auto replyArgumentDescriptions = createJSArrayForArgumentDescriptions(globalObject, IPC::messageReplyArgumentDescriptions(name));
         if (replyArgumentDescriptions.isEmpty())
             return JSValueMakeUndefined(context);
-        dictionary->putDirect(vm, replyArgumentsIdent, replyArgumentDescriptions);            
+        dictionary->putDirect(vm, replyArgumentsIdent, replyArgumentDescriptions);
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
-        dictionary->putDirect(vm, isSyncIdent, JSC::jsBoolean(messageIsSync(name)));            
+        dictionary->putDirect(vm, isSyncIdent, JSC::jsBoolean(messageIsSync(name)));
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         messagesObject->putDirect(vm, JSC::Identifier::fromLatin1(vm, description(name)), dictionary);
@@ -2691,7 +2730,6 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
-
     auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer(), decoder.length());
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {
         if (auto* jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer))) {
@@ -2706,6 +2744,12 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
+    if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
+        if (uint64_t asyncReplyID = 0; decoder.decode(asyncReplyID)) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
+    }
     return jsResult;
 }
 

@@ -601,7 +601,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         m_uploadListenerFlag = true;
 
     ResourceRequest request(m_url);
-    request.setRequester(ResourceRequest::Requester::XHR);
+    request.setRequester(ResourceRequestRequester::XHR);
     request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
     request.setHTTPMethod(m_method);
 

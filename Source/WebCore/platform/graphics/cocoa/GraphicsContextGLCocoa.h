@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class GraphicsLayerContentsDisplayDelegate;
 class ProcessIdentity;
 
 #if ENABLE(VIDEO)

@@ -134,9 +134,8 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     };
 
     auto label = fromAPI(descriptor.label);
-    instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), capabilities = WTFMove(capabilities), callback = WTFMove(callback)]() mutable {
-        callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), WTFMove(capabilities), strongThis), { });
-    });
+    // FIXME: this should be asynchronous
+    callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this), { });
 }
 
 void Adapter::requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&& callback)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,29 @@
 
 #pragma once
 
-#include "GPUTexture.h"
-#include "HTMLCanvasElement.h"
-#include "OffscreenCanvas.h"
-#include <variant>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#if ENABLE(IPC_TESTING_API)
 
-namespace WebCore {
+#include "MessageReceiver.h"
 
-class GPUAdapter;
-struct GPUCanvasConfiguration;
+namespace IPC {
+class Connection;
+}
 
-class GPUCanvasContext : public RefCounted<GPUCanvasContext> {
+namespace WebKit {
+
+// Proxy interface to test IPC activities related to receiving messages.
+class IPCTesterReceiver final : public IPC::MessageReceiver {
 public:
-#if ENABLE(OFFSCREEN_CANVAS)
-    using CanvasType = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
-#else
-    using CanvasType = std::variant<RefPtr<HTMLCanvasElement>>;
-#endif
+    IPCTesterReceiver() = default;
+    ~IPCTesterReceiver() = default;
 
-    static Ref<GPUCanvasContext> create()
-    {
-        return adoptRef(*new GPUCanvasContext());
-    }
-
-    CanvasType canvas();
-
-    void configure(const GPUCanvasConfiguration&);
-    void unconfigure();
-
-    RefPtr<GPUTexture> getCurrentTexture();
-
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 private:
-    GPUCanvasContext() = default;
+    // Messages
+    void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
 };
 
 }
+
+#endif

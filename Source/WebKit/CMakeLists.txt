@@ -220,6 +220,7 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/IPCStreamTester
     Shared/IPCStreamTesterProxy
     Shared/IPCTester
+    Shared/IPCTesterReceiver
     Shared/WebConnection
 
     Shared/Authentication/AuthenticationManager

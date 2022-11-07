@@ -33,6 +33,8 @@ messages -> IPCTester NotRefCounted {
 
     SendSameSemaphoreBack(IPC::Semaphore semaphore) WantsConnection
     SendSemaphoreBackAndSignalProtocol(IPC::Semaphore semaphore) WantsConnection
+
+    SendAsyncMessageToReceiver(uint32_t arg0) WantsConnection
 }
 
 #endif

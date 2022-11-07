@@ -38,6 +38,10 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(IOSURFACE)
+#include <IOSurface/IOSurfaceRef.h>
+#endif
+
 namespace PAL::WebGPU {
 
 class BindGroup;

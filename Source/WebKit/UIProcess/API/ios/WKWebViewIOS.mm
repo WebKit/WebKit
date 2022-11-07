@@ -1092,7 +1092,7 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
 
     auto& layerTreeProxy = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea());
     auto& layerTreeHost = layerTreeProxy.remoteLayerTreeHost();
-    auto* scrollingCoordinatorProxy = _page->scrollingCoordinatorProxy();
+    auto* scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
     if (!scrollingCoordinatorProxy)
         return;
 

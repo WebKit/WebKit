@@ -58,6 +58,8 @@ public:
     void getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
     void setLabel(String&&);
 
+    id<MTLFunction> getNamedFunction(const String& name) const;
+
     bool isValid() const { return !std::holds_alternative<std::monostate>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);

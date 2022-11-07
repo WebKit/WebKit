@@ -594,67 +594,6 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
-void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encoder, const WebCore::ResourceRequest& resourceRequest)
-{
-    auto requestToSerialize = retainPtr(resourceRequest.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
-
-    if (Class requestClass = [requestToSerialize class]; UNLIKELY(requestClass != [NSURLRequest class] && requestClass != [NSMutableURLRequest class])) {
-        WebCore::ResourceRequest request(requestToSerialize.get());
-        request.replacePlatformRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
-        requestToSerialize = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
-    }
-    ASSERT([requestToSerialize class] == [NSURLRequest class] || [requestToSerialize class] == [NSMutableURLRequest class]);
-
-    bool requestIsPresent = requestToSerialize;
-    encoder << requestIsPresent;
-
-    if (!requestIsPresent)
-        return;
-
-    // We don't send HTTP body over IPC for better performance.
-    // Also, it's not always possible to do, as streams can only be created in process that does networking.
-    if ([requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream]) {
-        auto mutableRequest = adoptNS([requestToSerialize mutableCopy]);
-        [mutableRequest setHTTPBody:nil];
-        [mutableRequest setHTTPBodyStream:nil];
-        requestToSerialize = WTFMove(mutableRequest);
-    }
-
-    IPC::encode(encoder, requestToSerialize.get());
-
-    encoder << resourceRequest.requester();
-    encoder << resourceRequest.isAppInitiated();
-}
-
-bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decoder, WebCore::ResourceRequest& resourceRequest)
-{
-    bool requestIsPresent;
-    if (!decoder.decode(requestIsPresent))
-        return false;
-
-    if (!requestIsPresent) {
-        resourceRequest = WebCore::ResourceRequest();
-        return true;
-    }
-
-    auto request = IPC::decode<NSURLRequest>(decoder, NSURLRequest.class);
-    if (!request)
-        return false;
-    
-    WebCore::ResourceRequest::Requester requester;
-    if (!decoder.decode(requester))
-        return false;
-
-    bool isAppInitiated;
-    if (!decoder.decode(isAppInitiated))
-        return false;
-
-    resourceRequest = WebCore::ResourceRequest(request->get());
-    resourceRequest.setRequester(requester);
-    resourceRequest.setIsAppInitiated(isAppInitiated);
-
-    return true;
-}
 
 #if ENABLE(DATA_DETECTION)
 

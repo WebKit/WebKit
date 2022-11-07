@@ -28,3 +28,12 @@ header: <WebCore/DictionaryPopupInfo.h>
     RetainPtr<NSDictionary> options;
     RetainPtr<NSAttributedString> attributedString;
 };
+
+#if PLATFORM(COCOA)
+header: <WebCore/ResourceRequest.h>
+[CustomHeader=True] struct WebCore::ResourceRequestPlatformData {
+    RetainPtr<NSURLRequest> m_urlRequest;
+    std::optional<bool> m_isAppInitiated;
+    std::optional<WebCore::ResourceRequestRequester> m_requester
+};
+#endif

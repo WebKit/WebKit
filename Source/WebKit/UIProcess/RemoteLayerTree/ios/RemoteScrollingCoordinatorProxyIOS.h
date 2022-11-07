@@ -50,6 +50,11 @@ public:
     bool hasActiveSnapPoint() const;
     CGPoint nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint&) const;
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    void removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&);
+    const HashSet<WebCore::GraphicsLayer::PlatformLayerID>& fixedScrollingNodeLayerIDs() const { return m_fixedScrollingNodeLayerIDs; }
+#endif
+
 private:
     bool propagatesMainFrameScrolls() const override { return false; }
 
@@ -64,11 +69,6 @@ private:
 
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
     std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, WebCore::FloatPoint scrollDestination, float velocity) const;
-
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    void removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&);
-    const HashSet<WebCore::GraphicsLayer::PlatformLayerID>& fixedScrollingNodeLayerIDs() const { return m_fixedScrollingNodeLayerIDs; }
-#endif
 
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
 

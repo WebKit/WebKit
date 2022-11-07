@@ -26,7 +26,6 @@ Modules/WebGPU/GPUAdapter.cpp
 Modules/WebGPU/GPUBindGroup.cpp
 Modules/WebGPU/GPUBindGroupLayout.cpp
 Modules/WebGPU/GPUBuffer.cpp
-Modules/WebGPU/GPUCanvasContext.cpp
 Modules/WebGPU/GPUCommandBuffer.cpp
 Modules/WebGPU/GPUCommandEncoder.cpp
 Modules/WebGPU/GPUCompilationInfo.cpp
@@ -1418,6 +1417,7 @@ html/canvas/EXTTextureFilterAnisotropic.cpp
 html/canvas/EXTTextureNorm16.cpp
 html/canvas/EXTsRGB.cpp
 html/canvas/GPUBasedCanvasRenderingContext.cpp
+html/canvas/GPUCanvasContext.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
 html/canvas/KHRParallelShaderCompile.cpp
 html/canvas/OESDrawBuffersIndexed.cpp

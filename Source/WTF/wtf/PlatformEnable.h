@@ -500,6 +500,10 @@
 #define ENABLE_WEBGL 0
 #endif
 
+#if !defined(ENABLE_WEBGPU)
+#define ENABLE_WEBGPU 0
+#endif
+
 #if !defined(ENABLE_WEB_ARCHIVE)
 #define ENABLE_WEB_ARCHIVE 0
 #endif

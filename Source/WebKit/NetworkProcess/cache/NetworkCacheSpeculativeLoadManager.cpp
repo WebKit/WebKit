@@ -354,7 +354,7 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
     if (!shouldRegisterLoad(request))
         return;
 
-    auto isMainResource = request.requester() == ResourceRequest::Requester::Main;
+    auto isMainResource = request.requester() == ResourceRequestRequester::Main;
     if (isMainResource) {
         // Mark previous load in this frame as completed if necessary.
         if (auto* pendingFrameLoad = m_pendingFrameLoads.get(frameID))

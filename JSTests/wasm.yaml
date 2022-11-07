@@ -148,6 +148,15 @@
 - path: wasm/function-references-spec-tests/call-null-ref.wast.js
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 
+- path: wasm/gc-spec-tests/type-canon.wast.js
+  cmd: runWebAssemblyGCSpecTest :normal
+- path: wasm/gc-spec-tests/type-equivalence.wast.js
+  cmd: runWebAssemblyGCSpecTest :normal
+- path: wasm/gc-spec-tests/type-rec.wast.js
+  cmd: runWebAssemblyGCSpecTest :normal
+- path: wasm/gc-spec-tests/type-subtyping.wast.js
+  cmd: runWebAssemblyGCSpecTest :normal
+
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/align.wast.js
