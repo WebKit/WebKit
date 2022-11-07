@@ -27,7 +27,7 @@ PASS XHTML Basic parsing &Amacr;
 PASS XHTML Basic parsing &amacr;
 PASS XHTML Basic parsing &amalg;
 PASS XHTML Basic parsing &amp;
-FAIL XHTML Basic parsing &AMP; assert_true: expected true got false
+PASS XHTML Basic parsing &AMP;
 PASS XHTML Basic parsing &andand;
 PASS XHTML Basic parsing &And;
 PASS XHTML Basic parsing &and;
@@ -1007,7 +1007,7 @@ PASS XHTML Basic parsing &lstrok;
 PASS XHTML Basic parsing &ltcc;
 PASS XHTML Basic parsing &ltcir;
 PASS XHTML Basic parsing &lt;
-FAIL XHTML Basic parsing &LT; assert_true: expected true got false
+PASS XHTML Basic parsing &LT;
 PASS XHTML Basic parsing &Lt;
 PASS XHTML Basic parsing &ltdot;
 PASS XHTML Basic parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS XHTML Basic parsing &nvHarr;
 PASS XHTML Basic parsing &nvinfin;
 PASS XHTML Basic parsing &nvlArr;
 PASS XHTML Basic parsing &nvle;
-FAIL XHTML Basic parsing &nvlt; assert_equals: XHTML Basic parsing the entity reference caused a parse error; expected 3 but got 1
+PASS XHTML Basic parsing &nvlt;
 PASS XHTML Basic parsing &nvltrie;
 PASS XHTML Basic parsing &nvrArr;
 PASS XHTML Basic parsing &nvrtrie;

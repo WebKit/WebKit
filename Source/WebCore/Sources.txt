@@ -761,7 +761,7 @@ css/CSSFontPaletteValuesOverrideColorsValue.cpp
 css/CSSFontPaletteValuesRule.cpp
 css/CSSFontSelector.cpp
 css/CSSFontStyleRangeValue.cpp
-css/CSSFontStyleValue.cpp
+css/CSSFontStyleWithAngleValue.cpp
 css/CSSFontValue.cpp
 css/CSSFontVariantAlternatesValue.cpp
 css/CSSFontVariationValue.cpp

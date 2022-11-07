@@ -21,6 +21,7 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "GUniquePtrGStreamer.h"
 #include "RealtimeIncomingSourceGStreamer.h"
 
 namespace WebCore {
@@ -30,6 +31,11 @@ public:
     static Ref<RealtimeIncomingVideoSourceGStreamer> create(AtomString&& videoTrackId) { return adoptRef(*new RealtimeIncomingVideoSourceGStreamer(WTFMove(videoTrackId))); }
     ~RealtimeIncomingVideoSourceGStreamer() = default;
 
+    // RealtimeMediaSource API
+    bool isIncomingVideoSource() const final { return true; }
+
+    const GstStructure* stats();
+
 protected:
     RealtimeIncomingVideoSourceGStreamer(AtomString&&);
 
@@ -37,12 +43,12 @@ private:
     // RealtimeMediaSource API
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     const RealtimeMediaSourceSettings& settings() final;
-    bool isIncomingVideoSource() const final { return true; }
 
     // RealtimeIncomingSourceGStreamer API
     void dispatchSample(GRefPtr<GstSample>&&) final;
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    GUniquePtr<GstStructure> m_stats;
 };
 
 } // namespace WebCore

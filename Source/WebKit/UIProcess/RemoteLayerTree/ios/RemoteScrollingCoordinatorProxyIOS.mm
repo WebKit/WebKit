@@ -24,10 +24,9 @@
  */
 
 #import "config.h"
-#import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteScrollingCoordinatorProxyIOS.h"
 
-#if PLATFORM(IOS_FAMILY)
-#if ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
@@ -51,9 +50,32 @@
 namespace WebKit {
 using namespace WebCore;
 
-UIScrollView *RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID(ScrollingNodeID nodeID) const
+RemoteScrollingCoordinatorProxyIOS::RemoteScrollingCoordinatorProxyIOS(WebPageProxy& webPageProxy)
+    : RemoteScrollingCoordinatorProxy(webPageProxy)
 {
-    auto* treeNode = m_scrollingTree->nodeForID(nodeID);
+}
+
+OptionSet<TouchAction> RemoteScrollingCoordinatorProxyIOS::activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const
+{
+    auto iterator = m_touchActionsByTouchIdentifier.find(touchIdentifier);
+    if (iterator == m_touchActionsByTouchIdentifier.end())
+        return { };
+    return iterator->value;
+}
+
+void RemoteScrollingCoordinatorProxyIOS::setTouchActionsForTouchIdentifier(OptionSet<TouchAction> touchActions, unsigned touchIdentifier)
+{
+    m_touchActionsByTouchIdentifier.set(touchIdentifier, touchActions);
+}
+
+void RemoteScrollingCoordinatorProxyIOS::clearTouchActionsForTouchIdentifier(unsigned touchIdentifier)
+{
+    m_touchActionsByTouchIdentifier.remove(touchIdentifier);
+}
+
+UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(ScrollingNodeID nodeID) const
+{
+    auto* treeNode = scrollingTree()->nodeForID(nodeID);
 
     if (is<ScrollingTreeOverflowScrollingNode>(treeNode)) {
         auto* overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(treeNode);
@@ -73,14 +95,14 @@ UIScrollView *RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID(Scro
 }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-void RemoteScrollingCoordinatorProxy::removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>& destroyedLayers)
+void RemoteScrollingCoordinatorProxyIOS::removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>& destroyedLayers)
 {
     for (auto layerID : destroyedLayers)
         m_fixedScrollingNodeLayerIDs.remove(layerID);
 }
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
-void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
+void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     using PlatformLayerID = GraphicsLayer::PlatformLayerID;
 
@@ -136,37 +158,37 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
     }
 }
 
-FloatRect RemoteScrollingCoordinatorProxy::currentLayoutViewport() const
+FloatRect RemoteScrollingCoordinatorProxyIOS::currentLayoutViewport() const
 {
     // FIXME: does this give a different value to the last value pushed onto us?
-    return m_webPageProxy.computeLayoutViewportRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.unobscuredContentRectRespectingInputViewBounds(), m_webPageProxy.layoutViewportRect(),
-        m_webPageProxy.displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
+    return webPageProxy().computeLayoutViewportRect(webPageProxy().unobscuredContentRect(), webPageProxy().unobscuredContentRectRespectingInputViewBounds(), webPageProxy().layoutViewportRect(),
+        webPageProxy().displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
 }
 
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture(ScrollingNodeID nodeID)
+void RemoteScrollingCoordinatorProxyIOS::scrollingTreeNodeWillStartPanGesture(ScrollingNodeID nodeID)
 {
-    m_webPageProxy.scrollingNodeScrollViewWillStartPanGesture(nodeID);
+    webPageProxy().scrollingNodeScrollViewWillStartPanGesture(nodeID);
 }
 
 // This is not called for the main scroll view.
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
+void RemoteScrollingCoordinatorProxyIOS::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
 {
-    m_webPageProxy.scrollingNodeScrollWillStartScroll(nodeID);
+    webPageProxy().scrollingNodeScrollWillStartScroll(nodeID);
 
     m_uiState.addNodeWithActiveUserScroll(nodeID);
     sendUIStateChangedIfNecessary();
 }
 
 // This is not called for the main scroll view.
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
+void RemoteScrollingCoordinatorProxyIOS::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
 {
-    m_webPageProxy.scrollingNodeScrollDidEndScroll(nodeID);
+    webPageProxy().scrollingNodeScrollDidEndScroll(nodeID);
 
     m_uiState.removeNodeWithActiveUserScroll(nodeID);
     sendUIStateChangedIfNecessary();
 }
 
-void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost& remoteLayerTreeHost)
+void RemoteScrollingCoordinatorProxyIOS::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost& remoteLayerTreeHost)
 {
     for (auto layerID : m_layersWithScrollingRelations) {
         if (auto* layerNode = remoteLayerTreeHost.nodeForID(layerID)) {
@@ -179,11 +201,11 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
     // Usually a scroll view scrolls its descendant layers. In some positioning cases it also controls non-descendants, or doesn't control a descendant.
     // To do overlap hit testing correctly we tell layers about such relations.
     
-    for (auto& positionedNode : m_scrollingTree->activePositionedNodes()) {
+    for (auto& positionedNode : scrollingTree()->activePositionedNodes()) {
         Vector<GraphicsLayer::PlatformLayerID> stationaryScrollContainerIDs;
 
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
-            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
+            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(overflowNodeID));
             if (!overflowNode)
                 continue;
             stationaryScrollContainerIDs.append(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
@@ -195,8 +217,8 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
         }
     }
 
-    for (auto& scrollProxyNode : m_scrollingTree->activeOverflowScrollProxyNodes()) {
-        auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(scrollProxyNode->overflowScrollingNodeID()));
+    for (auto& scrollProxyNode : scrollingTree()->activeOverflowScrollProxyNodes()) {
+        auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(scrollProxyNode->overflowScrollingNodeID()));
         if (!overflowNode)
             continue;
         if (auto* layerNode = RemoteLayerTreeNode::forCALayer(scrollProxyNode->layer())) {
@@ -206,7 +228,7 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
     }
 }
 
-void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSize maxScrollOffsets, CGPoint velocity, CGFloat topInset, CGPoint currentContentOffset, CGPoint* targetContentOffset)
+void RemoteScrollingCoordinatorProxyIOS::adjustTargetContentOffsetForSnapping(CGSize maxScrollOffsets, CGPoint velocity, CGFloat topInset, CGPoint currentContentOffset, CGPoint* targetContentOffset)
 {
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal)) {
@@ -227,60 +249,53 @@ void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSiz
     }
 }
 
-bool RemoteScrollingCoordinatorProxy::shouldSetScrollViewDecelerationRateFast() const
+bool RemoteScrollingCoordinatorProxyIOS::shouldSetScrollViewDecelerationRateFast() const
 {
     return shouldSnapForMainFrameScrolling(ScrollEventAxis::Horizontal) || shouldSnapForMainFrameScrolling(ScrollEventAxis::Vertical);
 }
 
-void RemoteScrollingCoordinatorProxy::setRootNodeIsInUserScroll(bool value)
+void RemoteScrollingCoordinatorProxyIOS::setRootNodeIsInUserScroll(bool value)
 {
-    ScrollingTreeNode* root = m_scrollingTree->rootNode();
-    if (!root || !root->isFrameScrollingNode())
+    auto* rootNode = scrollingTree()->rootNode();
+    if (!rootNode)
         return;
 
     if (value)
-        m_uiState.addNodeWithActiveUserScroll(root->scrollingNodeID());
+        m_uiState.addNodeWithActiveUserScroll(rootNode->scrollingNodeID());
     else
-        m_uiState.removeNodeWithActiveUserScroll(root->scrollingNodeID());
+        m_uiState.removeNodeWithActiveUserScroll(rootNode->scrollingNodeID());
 
     sendUIStateChangedIfNecessary();
 }
 
-bool RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling(ScrollEventAxis axis) const
+bool RemoteScrollingCoordinatorProxyIOS::shouldSnapForMainFrameScrolling(ScrollEventAxis axis) const
 {
-    ScrollingTreeNode* root = m_scrollingTree->rootNode();
-    if (root && root->isFrameScrollingNode()) {
-        ScrollingTreeFrameScrollingNode* rootScrollingNode = static_cast<ScrollingTreeFrameScrollingNode*>(root);
-        return rootScrollingNode->snapOffsetsInfo().offsetsForAxis(axis).size();
-    }
+    auto* rootNode = scrollingTree()->rootNode();
+    if (rootNode)
+        return rootNode->snapOffsetsInfo().offsetsForAxis(axis).size();
+
     return false;
 }
 
-std::pair<float, std::optional<unsigned>> RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float currentScrollOffset, FloatPoint scrollDestination, float velocity) const
+std::pair<float, std::optional<unsigned>> RemoteScrollingCoordinatorProxyIOS::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float currentScrollOffset, FloatPoint scrollDestination, float velocity) const
 {
-    ScrollingTreeNode* root = m_scrollingTree->rootNode();
-    ASSERT(root && root->isFrameScrollingNode());
-    ScrollingTreeFrameScrollingNode* rootScrollingNode = static_cast<ScrollingTreeFrameScrollingNode*>(root);
-    const auto& snapOffsetsInfo = rootScrollingNode->snapOffsetsInfo();
+    auto* rootNode = scrollingTree()->rootNode();
+    const auto& snapOffsetsInfo = rootNode->snapOffsetsInfo();
 
-    scrollDestination.scale(1.0 / m_webPageProxy.displayedContentScale());
-    float scaledCurrentScrollOffset = currentScrollOffset / m_webPageProxy.displayedContentScale();
-    auto [rawClosestSnapOffset, newIndex] = snapOffsetsInfo.closestSnapOffset(axis, rootScrollingNode->layoutViewport().size(), scrollDestination, velocity, scaledCurrentScrollOffset);
-    return std::make_pair(rawClosestSnapOffset * m_webPageProxy.displayedContentScale(), newIndex);
+    scrollDestination.scale(1.0 / webPageProxy().displayedContentScale());
+    float scaledCurrentScrollOffset = currentScrollOffset / webPageProxy().displayedContentScale();
+    auto [rawClosestSnapOffset, newIndex] = snapOffsetsInfo.closestSnapOffset(axis, rootNode->layoutViewport().size(), scrollDestination, velocity, scaledCurrentScrollOffset);
+    return std::make_pair(rawClosestSnapOffset * webPageProxy().displayedContentScale(), newIndex);
 }
 
-bool RemoteScrollingCoordinatorProxy::hasActiveSnapPoint() const
+bool RemoteScrollingCoordinatorProxyIOS::hasActiveSnapPoint() const
 {
-    ScrollingTreeNode* root = m_scrollingTree->rootNode();
-    if (!root)
+    auto* rootNode = scrollingTree()->rootNode();
+    if (!rootNode)
         return false;
 
-    if (!is<ScrollingTreeFrameScrollingNode>(root))
-        return false;
-
-    ScrollingTreeFrameScrollingNode& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
-    const auto& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
-    const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
+    const auto& horizontal = rootNode->snapOffsetsInfo().horizontalSnapOffsets;
+    const auto& vertical = rootNode->snapOffsetsInfo().verticalSnapOffsets;
 
     if (horizontal.isEmpty() && vertical.isEmpty())
         return false;
@@ -293,22 +308,23 @@ bool RemoteScrollingCoordinatorProxy::hasActiveSnapPoint() const
     return true;
 }
     
-CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint& currentPoint) const
+CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint& currentPoint) const
 {
     CGPoint activePoint = currentPoint;
 
-    ScrollingTreeNode* root = m_scrollingTree->rootNode();
-    ASSERT(root && is<ScrollingTreeFrameScrollingNode>(root));
-    ScrollingTreeFrameScrollingNode& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
-    const auto& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
-    const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
+    auto* rootNode = scrollingTree()->rootNode();
+    if (!rootNode)
+        return CGPointZero;
+
+    const auto& horizontal = rootNode->snapOffsetsInfo().horizontalSnapOffsets;
+    const auto& vertical = rootNode->snapOffsetsInfo().verticalSnapOffsets;
 
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex && *m_currentHorizontalSnapPointIndex < horizontal.size())
-        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * m_webPageProxy.displayedContentScale();
+        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * webPageProxy().displayedContentScale();
 
     if (!vertical.isEmpty() && m_currentVerticalSnapPointIndex && *m_currentVerticalSnapPointIndex < vertical.size()) {
-        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * m_webPageProxy.displayedContentScale();
+        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * webPageProxy().displayedContentScale();
         potentialSnapPosition -= topInset;
         activePoint.y = potentialSnapPosition;
     }
@@ -318,6 +334,4 @@ CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOf
 
 } // namespace WebKit
 
-
-#endif // ENABLE(ASYNC_SCROLLING)
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)

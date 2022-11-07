@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "Test.h"  // NOLINT
 
 #include "ArgumentCoders.h"
 #include "StreamClientConnection.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
+#include "Test.h"
 #include "Utilities.h"
 #include <optional>
 #include <wtf/Lock.h>

@@ -27,7 +27,7 @@
 
 #if USE(CURL)
 
-#include "WTFStringUtilities.h"
+#include "Test.h"
 #include <WebKit/WKCertificateInfo.h>
 #include <WebKit/WKCertificateInfoCurl.h>
 #include <WebKit/WKRetainPtr.h>

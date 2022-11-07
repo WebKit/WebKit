@@ -70,7 +70,8 @@ API_INCLUDE_PREFIX = {
 
 
 def expand_ifdefs(line):
-    return re.sub(r"(PLATFORM|USE)\(([A-Z]+[0-9]*)\)", r"WTF_\1_\2", line)
+    s = re.sub(r"(ENABLE|USE)\(([A-Z0-9_]+)\)", r"(defined(\1_\2) && \1_\2)", line)
+    return re.sub(r"(PLATFORM)\(([A-Z0-9_]+)\)", r"(defined(WTF_\1_\2) && WTF_\1_\2)", s)
 
 
 def main(args):
@@ -78,9 +79,9 @@ def main(args):
     input = args[1]
     output = args[2]
     unifdef = args[3]
-    unifdef_args = [expand_ifdefs(arg) for arg in args[4:]]
+    unifdef_args = args[4:]
 
-    if port == "gtk" and "-DWTF_USE_GTK4=1" in unifdef_args:
+    if port == "gtk" and "-DUSE_GTK4=1" in unifdef_args:
         port = "gtk4"
 
     input_data = ""

@@ -385,6 +385,13 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
         m_videoElementInPictureInPicture = nullptr;
 
     auto contextId = m_videoElements.get(&videoElement);
+    if (!contextId.isValid()) {
+        // We have somehow managed to be asked to exit video fullscreen
+        // for a video element which was either never in fullscreen or
+        // has already been removed. Bail.
+        ASSERT_NOT_REACHED();
+        return;
+    }
     auto& interface = ensureInterface(contextId);
 
     setCurrentlyInFullscreen(interface, false);

@@ -595,6 +595,12 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagCheckGrammarWithSpelling:
         return _WKMenuItemIdentifierCheckGrammarWithSpelling;
 
+    case ContextMenuItemTagPlayAllAnimations:
+        return _WKMenuItemIdentifierPlayAllAnimations;
+
+    case ContextMenuItemTagPauseAllAnimations:
+        return _WKMenuItemIdentifierPauseAllAnimations;
+
     default:
         return nil;
     }

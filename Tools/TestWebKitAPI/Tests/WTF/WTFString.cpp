@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
+#include "Test.h"
 #include <limits>
 #include <sstream>
 #include <wtf/MathExtras.h>

@@ -32,36 +32,31 @@
 
 namespace WGSL::AST {
 
-class Statement : public ASTNode {
+class Statement : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    enum class Kind : uint8_t {
-        Compound,
-        Return,
-        Assignment,
-        Variable,
-    };
-
     using List = UniqueRefVector<Statement>;
 
     Statement(SourceSpan span)
-        : ASTNode(span)
+        : Node(span)
     {
     }
-
-    virtual ~Statement() { }
-
-    virtual Kind kind() const = 0;
-    bool isCompound() const { return kind() == Kind::Compound; }
-    bool isReturn() const { return kind() == Kind::Return; }
-    bool isAssignment() const { return kind() == Kind::Assignment; }
-    bool isVariable() const { return kind() == Kind::Variable; }
 };
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::Statement& statement) { return statement.predicate; } \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Statement)
+static bool isType(const WGSL::AST::Node& node)
+{
+    switch (node.kind()) {
+    case WGSL::AST::Node::Kind::AssignmentStatement:
+    case WGSL::AST::Node::Kind::CompoundStatement:
+    case WGSL::AST::Node::Kind::ReturnStatement:
+    case WGSL::AST::Node::Kind::VariableStatement:
+        return true;
+    default:
+        return false;
+    }
+}
 SPECIALIZE_TYPE_TRAITS_END()

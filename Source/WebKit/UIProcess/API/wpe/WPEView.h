@@ -55,6 +55,7 @@ struct CompositionUnderline;
 namespace WebKit {
 class DownloadProxy;
 class TouchGestureController;
+class WebKitWebResourceLoadManager;
 class WebPageGroup;
 class WebProcessPool;
 struct EditingRange;
@@ -79,6 +80,7 @@ public:
     void willStartLoad();
     void didChangePageID();
     void didReceiveUserMessage(WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);
+    WebKit::WebKitWebResourceLoadManager* webResourceLoadManager();
 
     void setInputMethodContext(WebKitInputMethodContext*);
     WebKitInputMethodContext* inputMethodContext() const;

@@ -24,13 +24,13 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
 #import "NSFontPanelTesting.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestFontOptions.h"
 #import "TestInspectorBar.h"
 #import "TestWKWebView.h"

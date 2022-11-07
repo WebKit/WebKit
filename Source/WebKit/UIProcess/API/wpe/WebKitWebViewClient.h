@@ -35,6 +35,7 @@ class IntRect;
 namespace WebKit {
 class DownloadProxy;
 class WebKitPopupMenu;
+class WebKitWebResourceLoadManager;
 struct WebPopupItem;
 struct UserMessage;
 }
@@ -54,6 +55,7 @@ private:
     void willStartLoad(WKWPE::View&) override;
     void didChangePageID(WKWPE::View&) override;
     void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&) override;
+    WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() override;
 
     WebKitWebView* m_webView;
 };

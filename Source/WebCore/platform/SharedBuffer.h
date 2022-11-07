@@ -273,7 +273,7 @@ public:
             && (std::is_same_v<Args, Ref<const DataSegment>> &&...))
             return adoptRef(*new SharedBuffer(std::forward<Args>(args)...));
         else if constexpr (sizeof...(Args) == 1
-            && (std::is_same_v<std::remove_const_t<std::remove_reference_t<Args>>, DataSegment> &&...))
+            && (std::is_same_v<std::remove_cvref_t<Args>, DataSegment> &&...))
             return adoptRef(*new SharedBuffer(std::forward<Args>(args)...));
         else {
             auto buffer = FragmentedSharedBuffer::create(std::forward<Args>(args)...);

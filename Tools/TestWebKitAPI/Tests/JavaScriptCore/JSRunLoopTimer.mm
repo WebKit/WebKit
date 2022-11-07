@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "WTFStringUtilities.h"
+#import "Test.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>

@@ -28,9 +28,8 @@
 #if WK_HAVE_C_SPI && PLATFORM(MAC)
 
 #import "JavaScriptTest.h"
-#import "Test.h"
-
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
 #import <WebKit/WKBrowsingContextGroupPrivate.h>

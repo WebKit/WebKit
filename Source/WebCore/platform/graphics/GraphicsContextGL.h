@@ -65,6 +65,35 @@ struct GraphicsContextGLActiveInfo {
     GCGLint size;
 };
 
+class GraphicsContextGL;
+
+struct GCGLOwned {
+    GCGLOwned() = default;
+    GCGLOwned(const GCGLOwned&) = delete;
+    GCGLOwned(GCGLOwned&&) = delete;
+    ~GCGLOwned();
+
+    GCGLOwned& operator=(const GCGLOwned&) const = delete;
+    GCGLOwned& operator=(GCGLOwned&&) = delete;
+
+    operator PlatformGLObject() const { return m_object; }
+
+protected:
+    PlatformGLObject m_object = 0;
+};
+
+#define DECLARE_GCGL_OWNED(ClassName) \
+struct GCGLOwned##ClassName : public GCGLOwned { \
+    void ensure(GraphicsContextGL& gl); \
+    void release(GraphicsContextGL& gl); \
+}
+
+DECLARE_GCGL_OWNED(Framebuffer);
+DECLARE_GCGL_OWNED(Renderbuffer);
+DECLARE_GCGL_OWNED(Texture);
+
+#undef DECLARE_GCGL_OWNED
+
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
@@ -1613,6 +1642,31 @@ inline GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum i
     getInternalformativ(target, internalformat, pname, value);
     return value[0];
 }
+
+inline GCGLOwned::~GCGLOwned()
+{
+    ASSERT(!m_object, "Have you explicitly deleted this object? If so, call release().");
+}
+
+#define IMPLEMENT_GCGL_OWNED(ClassName) \
+inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
+{ \
+    if (!m_object) \
+        m_object = gl.create##ClassName(); \
+} \
+\
+inline void GCGLOwned##ClassName::release(GraphicsContextGL& gl) \
+{ \
+    if (m_object) \
+        gl.delete##ClassName(m_object); \
+    m_object = 0; \
+}
+
+IMPLEMENT_GCGL_OWNED(Framebuffer)
+IMPLEMENT_GCGL_OWNED(Renderbuffer)
+IMPLEMENT_GCGL_OWNED(Texture)
+
+#undef IMPLEMENT_GCGL_OWNED
 
 } // namespace WebCore
 

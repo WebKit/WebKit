@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+
 #import "JavaScriptTest.h"
 #import "Test.h"
 #import "WebKitAgnosticTest.h"

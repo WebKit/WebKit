@@ -240,12 +240,12 @@ struct CompletionHandlerValidation::ValidCompletionHandlerType<CompletionHandler
 
 template<typename T>
 struct CodingType {
-    typedef std::remove_const_t<std::remove_reference_t<T>> Type;
+    using Type = std::remove_cvref_t<T>;
 };
 
 template<typename... Ts>
 struct CodingType<std::tuple<Ts...>> {
-    typedef std::tuple<typename CodingType<Ts>::Type...> Type;
+    using Type = std::tuple<typename CodingType<Ts>::Type...>;
 };
 
 template<typename T, typename C, typename MF>

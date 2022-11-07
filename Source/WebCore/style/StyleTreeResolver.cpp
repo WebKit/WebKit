@@ -97,7 +97,7 @@ TreeResolver::Scope::~Scope()
 
 TreeResolver::Parent::Parent(Document& document)
     : element(nullptr)
-    , style(*document.renderStyle())
+    , style(*document.initialContainingBlockStyle())
 {
 }
 
@@ -141,8 +141,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& st
 
     if (resolutionType == ResolutionType::FastPathInherit) {
         // If the only reason we are computing the style is that some parent inherited properties changed, we can just copy them.
-        auto& existingStyle = *element.renderOrDisplayContentsStyle();
-        auto style = RenderStyle::clonePtr(existingStyle);
+        auto style = RenderStyle::clonePtr(*existingStyle(element));
         style->fastPathInheritFrom(parent().style);
         return style;
     }
@@ -210,7 +209,7 @@ auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity,
     return DescendantsToResolve::None;
 };
 
-auto TreeResolver::resolveElement(Element& element, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
+auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingStyle, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
     if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
@@ -228,8 +227,6 @@ auto TreeResolver::resolveElement(Element& element, ResolutionType resolutionTyp
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
 
-    auto* existingStyle = element.renderOrDisplayContentsStyle();
-
     if (m_didSeePendingStylesheet && (!existingStyle || existingStyle->isNotFinal())) {
         newStyle->setIsNotFinal();
         m_document.setHasNodesWithNonFinalStyle();
@@ -239,8 +236,6 @@ auto TreeResolver::resolveElement(Element& element, ResolutionType resolutionTyp
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {
-        m_documentElementStyle = RenderStyle::clonePtr(*update.style);
-
         if (!existingStyle || existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             scope().resolver->invalidateMatchedDeclarationsCache();
@@ -688,7 +683,7 @@ static bool shouldResolvePseudoElement(const PseudoElement* pseudoElement)
     return pseudoElement->needsStyleRecalc();
 }
 
-auto TreeResolver::determineResolutionType(const Element& element, DescendantsToResolve parentDescendantsToResolve, Change parentChange) -> std::optional<ResolutionType>
+auto TreeResolver::determineResolutionType(const Element& element, const RenderStyle* existingStyle, DescendantsToResolve parentDescendantsToResolve, Change parentChange) -> std::optional<ResolutionType>
 {
     if (element.styleValidity() != Validity::Valid)
         return ResolutionType::Full;
@@ -702,7 +697,6 @@ auto TreeResolver::determineResolutionType(const Element& element, DescendantsTo
         return { };
     case DescendantsToResolve::Children:
         if (parentChange == Change::FastPathInherited) {
-            auto* existingStyle = element.renderOrDisplayContentsStyle();
             if (existingStyle && !existingStyle->disallowsFastPathInheritance())
                 return ResolutionType::FastPathInherit;
         }
@@ -710,7 +704,6 @@ auto TreeResolver::determineResolutionType(const Element& element, DescendantsTo
     case DescendantsToResolve::All:
         return ResolutionType::Full;
     case DescendantsToResolve::ChildrenWithExplicitInherit:
-        auto* existingStyle = element.renderOrDisplayContentsStyle();
         if (existingStyle && existingStyle->hasExplicitlyInheritedProperties())
             return ResolutionType::Full;
         return { };
@@ -815,12 +808,13 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        auto* style = element.renderOrDisplayContentsStyle();
+        auto* style = existingStyle(element);
+
         auto change = Change::None;
         auto descendantsToResolve = DescendantsToResolve::None;
         auto previousContainerType = style ? style->containerType() : ContainerType::Normal;
 
-        auto resolutionType = determineResolutionType(element, parent.descendantsToResolve, parent.change);
+        auto resolutionType = determineResolutionType(element, style, parent.descendantsToResolve, parent.change);
         if (resolutionType) {
             if (!element.hasDisplayContents())
                 element.resetComputedStyle();
@@ -829,7 +823,7 @@ void TreeResolver::resolveComposedTree()
             if (element.hasCustomStyleResolveCallbacks())
                 element.willRecalcStyle(parent.change);
 
-            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element, *resolutionType);
+            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element, style, *resolutionType);
 
             if (element.hasCustomStyleResolveCallbacks())
                 element.didRecalcStyle(elementUpdate.change);
@@ -838,9 +832,12 @@ void TreeResolver::resolveComposedTree()
             change = elementUpdate.change;
             descendantsToResolve = elementDescendantsToResolve;
 
-            if (elementUpdate.style)
+            if (style) {
                 m_update->addElement(element, parent.element, WTFMove(elementUpdate));
 
+                if (&element == m_document.documentElement())
+                    m_documentElementStyle = RenderStyle::clonePtr(*style);
+            }
             clearNeedsStyleResolution(element);
         }
 
@@ -881,6 +878,19 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
+const RenderStyle* TreeResolver::existingStyle(const Element& element)
+{
+    auto* style = element.renderOrDisplayContentsStyle();
+
+    if (style && &element == m_document.documentElement()) {
+        // Document element style may have got adjusted based on body style but we don't want to inherit those adjustments.
+        m_documentElementStyle = Adjuster::restoreUsedDocumentElementStyleToComputed(*style);
+        if (m_documentElementStyle)
+            style = m_documentElementStyle.get();
+    }
+
+    return style;
+}
 
 auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderStyle* style, ContainerType previousContainerType, Change& change, DescendantsToResolve& descendantsToResolve) -> QueryContainerAction
 {
@@ -946,6 +956,8 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
     if (m_update->roots().isEmpty())
         return { };
+
+    Adjuster::propagateToDocumentElementAndInitialContainingBlock(*m_update, m_document);
 
     return WTFMove(m_update);
 }

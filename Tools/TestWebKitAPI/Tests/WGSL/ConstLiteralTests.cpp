@@ -56,7 +56,7 @@ TEST(WGSLConstLiteralTests, BoolLiteral)
         EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        EXPECT_TRUE(expr->isBoolLiteral());
+        EXPECT_TRUE(is<WGSL::AST::BoolLiteral>(expr));
 
         const auto& intLiteral = downcast<WGSL::AST::BoolLiteral>(expr.get());
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
@@ -78,7 +78,7 @@ TEST(WGSLConstLiteralTests, AbstractIntLiteralDecimal)
         EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        EXPECT_TRUE(expr->isAbstractIntLiteral());
+        EXPECT_TRUE(is<WGSL::AST::AbstractIntLiteral>(expr));
 
         const auto& intLiteral = downcast<WGSL::AST::AbstractIntLiteral>(expr.get());
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
@@ -100,7 +100,7 @@ TEST(WGSLConstLiteralTests, AbstractIntLiteralHex)
         EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        EXPECT_TRUE(expr->isAbstractIntLiteral());
+        EXPECT_TRUE(is<WGSL::AST::AbstractIntLiteral>(expr));
 
         const auto& intLiteral = downcast<WGSL::AST::AbstractIntLiteral>(expr.get());
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
@@ -127,7 +127,7 @@ TEST(WGSLConstLiteralTests, AbstractFloatLiteralDec)
         EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        EXPECT_TRUE(expr->isAbstractFloatLiteral());
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(expr));
 
         const auto& floatLiteral = downcast<WGSL::AST::AbstractFloatLiteral>(expr.get());
         EXPECT_EQ(floatLiteral.value(), testCase.expectedValue);

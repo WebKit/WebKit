@@ -1,0 +1,78 @@
+layer at (0,0) size 785x680
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (0,0) size 785x600 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (21,21) size 202x202 [border: (1px solid #000000)]
+      RenderText {#text} at (243,228) size 4x19
+        text run at (243,228) width 4: " "
+      RenderBlock {DIV} at (267,21) size 202x202 [border: (1px solid #000000)]
+      RenderText {#text} at (489,228) size 4x19
+        text run at (489,228) width 4: " "
+      RenderBR {BR} at (493,228) size 0x19
+      RenderBlock {DIV} at (21,268) size 202x202 [border: (1px solid #000000)]
+      RenderText {#text} at (243,475) size 4x19
+        text run at (243,475) width 4: " "
+      RenderBlock {DIV} at (267,268) size 202x202 [border: (1px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (30,500) size 484x180
+  RenderBlock (positioned) {DIV} at (30,500) size 484x180
+    RenderInline {SPAN} at (0,0) size 289x19 [color=#008000]
+      RenderText {#text} at (0,0) size 289x19
+        text run at (0,0) width 289: "PASS: event at (48, 48) hit box1 at offset (6, 6)"
+    RenderBR {BR} at (289,0) size 0x19
+    RenderInline {SPAN} at (0,0) size 289x19 [color=#008000]
+      RenderText {#text} at (0,20) size 289x19
+        text run at (0,20) width 289: "PASS: event at (70, 41) hit box2 at offset (3, 3)"
+    RenderBR {BR} at (289,20) size 0x19
+    RenderInline {SPAN} at (0,0) size 321x19 [color=#008000]
+      RenderText {#text} at (0,40) size 321x19
+        text run at (0,40) width 321: "PASS: event at (185, 164) hit box2 at offset (97, 97)"
+    RenderBR {BR} at (321,40) size 0x19
+    RenderInline {SPAN} at (0,0) size 297x19 [color=#008000]
+      RenderText {#text} at (0,60) size 297x19
+        text run at (0,60) width 297: "PASS: event at (338, 64) hit box7 at offset (3, 3)"
+    RenderBR {BR} at (297,60) size 0x19
+    RenderInline {SPAN} at (0,0) size 476x19 [color=#FF0000]
+      RenderText {#text} at (0,80) size 476x19
+        text run at (0,80) width 476: "FAIL: event at (92, 310) expected to hit box10 at (3, 3) but hit box10 at (3, 2)"
+    RenderBR {BR} at (476,80) size 0x19
+    RenderInline {SPAN} at (0,0) size 329x19 [color=#008000]
+      RenderText {#text} at (0,100) size 329x19
+        text run at (0,100) width 329: "PASS: event at (217, 444) hit box10 at offset (96, 96)"
+    RenderBR {BR} at (329,100) size 0x19
+    RenderInline {SPAN} at (0,0) size 313x19 [color=#008000]
+      RenderText {#text} at (0,120) size 313x19
+        text run at (0,120) width 313: "PASS: event at (337, 309) hit box13 at offset (2, 2)"
+    RenderBR {BR} at (313,120) size 0x19
+    RenderInline {SPAN} at (0,0) size 484x19 [color=#FF0000]
+      RenderText {#text} at (0,140) size 484x19
+        text run at (0,140) width 484: "FAIL: event at (360, 334) expected to hit box14 at (2, 2) but hit box14 at (2, 1)"
+    RenderBR {BR} at (484,140) size 0x19
+    RenderInline {SPAN} at (0,0) size 329x19 [color=#008000]
+      RenderText {#text} at (0,160) size 329x19
+        text run at (0,160) width 329: "PASS: event at (500, 484) hit box14 at offset (96, 96)"
+    RenderBR {BR} at (329,160) size 0x19
+layer at (42,42) size 140x140
+  RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+layer at (63,63) size 100x100
+  RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
+layer at (288,42) size 140x140
+  RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+layer at (309,63) size 100x100
+  RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (21,21) size 100x100 [bgcolor=#0000FF] [border: (1px solid #000000)]
+layer at (42,289) size 140x140
+  RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+layer at (63,310) size 100x100
+  RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
+layer at (84,331) size 100x100
+  RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#0000FF] [border: (1px solid #000000)]
+layer at (288,289) size 140x140
+  RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+layer at (309,310) size 100x100
+  RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (21,21) size 100x100 [bgcolor=#C0D69E] [border: (1px solid #000000)]
+layer at (351,352) size 100x100
+  RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#0000FF] [border: (1px solid #000000)]

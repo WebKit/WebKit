@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "Test.h"
-#include "WTFStringUtilities.h"
 #include <WebCore/StringWithDirection.h>
 
 using namespace WebCore;

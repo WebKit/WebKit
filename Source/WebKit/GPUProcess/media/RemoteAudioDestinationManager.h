@@ -30,12 +30,13 @@
 #include "Connection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
-#include "SharedCARingBuffer.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 
 #if PLATFORM(COCOA)
+#include "SharedCARingBuffer.h"
+
 namespace WebCore {
 class CAAudioStreamDescription;
 }

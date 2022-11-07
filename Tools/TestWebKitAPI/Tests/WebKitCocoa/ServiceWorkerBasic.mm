@@ -58,6 +58,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -2710,6 +2711,71 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     webView = nil;
     while (webViewConfiguration.processPool._serviceWorkerProcessCount)
         TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
+{
+    using namespace TestWebKitAPI;
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    bool madeHTTPGetRequest = false;
+    bool madeHTTPOptionsRequest = false;
+    String filenameRequestedOverHTTP;
+    HTTPServer server([&] (Connection connection) {
+        connection.receiveHTTPRequest([&, connection](Vector<char>&& bytes) mutable {
+            String requestString(bytes.data(), bytes.size());
+            if (requestString.startsWithIgnoringASCIICase("OPTIONS"_s)) {
+                madeHTTPOptionsRequest = true;
+                connection.send(
+                    "HTTP/1.1 204 No Content\r\n"
+                    "Allow: OPTIONS, GET, HEAD, POST\r\n\r\n"_s
+                );
+                return;
+            }
+            if (requestString.startsWithIgnoringASCIICase("GET"_s)) {
+                auto requestParts = requestString.split(' ');
+                if (requestParts.size() > 2)
+                    filenameRequestedOverHTTP = requestParts[1];
+                madeHTTPGetRequest = true;
+                done = true;
+            }
+        });
+    });
+
+    auto testJS = makeString("fetch('http://127.0.0.1:"_s, server.port(), "/bar.xml', { headers: { 'Custom-Header': 'CustomHeaderValue' } });"_s);
+
+    auto schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:testJS.utf8().data()];
+
+    WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+    [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
+    webViewConfiguration._corsDisablingPatterns = @[@"*://*/*"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    // The service worker script should get loaded over the custom scheme handler.
+    done = false;
+    didStartURLSchemeTask = false;
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] usingModules:NO completionHandler:^(BOOL success) {
+        EXPECT_TRUE(success);
+        EXPECT_TRUE(didStartURLSchemeTask);
+        done = true;
+    }];
+    Util::run(&done);
+
+    // It should load bar.xml.
+    Util::run(&madeHTTPGetRequest);
+    EXPECT_STREQ(filenameRequestedOverHTTP.utf8().data(), "/bar.xml");
+
+    // It shouldn't have done a CORS preflight.
+    EXPECT_FALSE(madeHTTPOptionsRequest);
 }
 
 TEST(ServiceWorker, ExtensionServiceWorkerWithModules)

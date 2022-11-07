@@ -32,20 +32,21 @@
 
 namespace WGSL::AST {
 
-class StructMember final : public ASTNode {
+class StructMember final : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     using List = UniqueRefVector<StructMember>;
 
     StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
-        : ASTNode(span)
+        : Node(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
         , m_type(WTFMove(type))
     {
     }
 
+    Kind kind() const override;
     const StringView& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
     Attribute::List& attributes() { return m_attributes; }
@@ -70,7 +71,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Struct; }
+    Kind kind() const override;
     const StringView& name() const { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     StructMember::List& members() { return m_members; }
@@ -83,4 +84,5 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(StructDecl, isStruct())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructMember)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructDecl)

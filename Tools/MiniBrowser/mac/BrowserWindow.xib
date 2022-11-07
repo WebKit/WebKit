@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <deployment identifier="macosx"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -39,14 +40,14 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="994A0CB1-7575-4F39-A65B-7165AB1E8015" displayMode="iconOnly" sizeMode="regular" id="48">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="73DE9F4B-73E2-4036-A134-2D9E029DA980" label="Go Back" paletteLabel="Go Back" image="NSGoLeftTemplate" id="56" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="73DE9F4B-73E2-4036-A134-2D9E029DA980" label="Go Back" paletteLabel="Go Back" image="chevron.left" catalog="system" id="56" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="32" height="25"/>
                         <size key="maxSize" width="32" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="40">
                             <rect key="frame" x="10" y="14" width="32" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSGoLeftTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="41">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="chevron.left" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="41">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -55,14 +56,14 @@
                             <action selector="goBack:" target="-2" id="61"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="E1A9D32A-59E3-467B-9ABA-A95780416E69" label="Go Forward" paletteLabel="Go Forward" image="NSGoRightTemplate" id="57" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="E1A9D32A-59E3-467B-9ABA-A95780416E69" label="Go Forward" paletteLabel="Go Forward" image="chevron.right" catalog="system" id="57" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="32" height="25"/>
                         <size key="maxSize" width="32" height="27"/>
                         <button key="view" verticalHuggingPriority="750" id="42">
                             <rect key="frame" x="18" y="14" width="32" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSGoRightTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="43">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="chevron.right" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="43">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -71,14 +72,14 @@
                             <action selector="goForward:" target="-2" id="62"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="88C16109-D40F-4682-BCE4-CBEE2EDE32D2" label="Refresh" paletteLabel="Refresh" image="NSRefreshTemplate" id="58" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="88C16109-D40F-4682-BCE4-CBEE2EDE32D2" label="Refresh" paletteLabel="Refresh" image="arrow.clockwise" catalog="system" id="58" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
                         <size key="maxSize" width="29" height="27"/>
                         <button key="view" verticalHuggingPriority="750" id="23">
                             <rect key="frame" x="10" y="14" width="29" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="24">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.clockwise" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="24">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -87,14 +88,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F9C3B2C4-B22D-4E12-92BC-EA326711BBC1" label="Lock" paletteLabel="Lock" image="NSLockUnlockedTemplate" id="Ky3-6Y-3U1" userLabel="Lock" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="F9C3B2C4-B22D-4E12-92BC-EA326711BBC1" label="Lock" paletteLabel="Lock" image="lock.open" catalog="system" id="Ky3-6Y-3U1" userLabel="Lock" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
                         <size key="maxSize" width="29" height="27"/>
                         <button key="view" verticalHuggingPriority="750" id="mWN-r5-XQb">
                             <rect key="frame" x="2" y="14" width="29" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSLockUnlockedTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iRv-ey-QZe">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="lock.open" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iRv-ey-QZe">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -103,14 +104,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="76DCF2B0-1DDE-47D2-9212-705E6E310CCE" label="Use Shrink To Fit" paletteLabel="Use Shrink To Fit" image="NSEnterFullScreenTemplate" id="81" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="76DCF2B0-1DDE-47D2-9212-705E6E310CCE" label="Use Shrink To Fit" paletteLabel="Use Shrink To Fit" image="arrow.up.backward.and.arrow.down.forward" catalog="system" id="81" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
                         <size key="maxSize" width="29" height="27"/>
                         <button key="view" verticalHuggingPriority="750" id="82">
                             <rect key="frame" x="34" y="14" width="29" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSEnterFullScreenTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="83">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.up.backward.and.arrow.down.forward" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="83">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -119,14 +120,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F1738B7F-895C-48F7-955D-0915E150BE1B" label="Share" paletteLabel="Share" image="NSShareTemplate" id="dJx-dw-gcC" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="F1738B7F-895C-48F7-955D-0915E150BE1B" label="Share" paletteLabel="Share" image="square.and.arrow.up" catalog="system" id="dJx-dw-gcC" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
                         <size key="maxSize" width="29" height="27"/>
                         <button key="view" verticalHuggingPriority="750" id="1hB-AH-eUl">
                             <rect key="frame" x="5" y="14" width="29" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSShareTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="S1v-UD-QhI">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="square.and.arrow.up" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="S1v-UD-QhI">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                                 <connections>
@@ -177,11 +178,11 @@
         </window>
     </objects>
     <resources>
-        <image name="NSEnterFullScreenTemplate" width="15" height="15"/>
-        <image name="NSGoLeftTemplate" width="9" height="12"/>
-        <image name="NSGoRightTemplate" width="9" height="12"/>
-        <image name="NSLockUnlockedTemplate" width="10" height="14"/>
-        <image name="NSRefreshTemplate" width="11" height="15"/>
-        <image name="NSShareTemplate" width="11" height="16"/>
+        <image name="arrow.clockwise" catalog="system" width="14" height="16"/>
+        <image name="arrow.up.backward.and.arrow.down.forward" catalog="system" width="16" height="15"/>
+        <image name="chevron.left" catalog="system" width="10" height="14"/>
+        <image name="chevron.right" catalog="system" width="10" height="14"/>
+        <image name="lock.open" catalog="system" width="17" height="15"/>
+        <image name="square.and.arrow.up" catalog="system" width="15" height="17"/>
     </resources>
 </document>

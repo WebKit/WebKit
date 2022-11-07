@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'canplay');
+        run('track = video.addTextTrack("subtitles")');
+        run('track.mode = "showing"');
+        run('cue = new VTTCue(0, video.duration, "cue text")');
+        run('track.addCue(cue)');
+        await testExpectedEventually('internals.shadowRoot(video).querySelector(".media-controls-container").innerText', 'cue text');
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video muted></video>
+</body>
+</html>

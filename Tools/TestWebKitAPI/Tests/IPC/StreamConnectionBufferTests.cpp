@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "Test.h"  // NOLINT
 #include "StreamConnectionBuffer.h"
+#include "Test.h"
 
 namespace TestWebKitAPI {
 

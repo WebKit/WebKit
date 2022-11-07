@@ -100,7 +100,7 @@ public:
             if (m_isPlaying)
                 return;
         }
-        m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+        m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
         if (!m_ringBuffer)
             return;
         start();

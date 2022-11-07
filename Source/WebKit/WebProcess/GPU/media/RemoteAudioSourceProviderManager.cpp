@@ -123,7 +123,7 @@ void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(ConsumerSharedCAR
 {
     m_buffer = nullptr;
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;

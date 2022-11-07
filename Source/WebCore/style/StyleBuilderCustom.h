@@ -1814,40 +1814,38 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
     return 0.25f;
 }
 
-inline void BuilderCustom::applyInitialFontStyle(BuilderState& builderState)
+static inline void applyFontStyle(BuilderState& state, std::optional<FontSelectionValue> slope, FontStyleAxis axis)
 {
-    auto fontDescription = builderState.fontDescription();
-    fontDescription.setItalic(FontCascadeDescription::initialItalic());
-    fontDescription.setFontStyleAxis(FontCascadeDescription::initialFontStyleAxis());
-    builderState.setFontDescription(WTFMove(fontDescription));
-}
-
-inline void BuilderCustom::applyInheritFontStyle(BuilderState& builderState)
-{
-    auto fontDescription = builderState.fontDescription();
-    fontDescription.setItalic(builderState.parentFontDescription().italic());
-    fontDescription.setFontStyleAxis(builderState.parentFontDescription().fontStyleAxis());
-    builderState.setFontDescription(WTFMove(fontDescription));
-}
-
-inline void BuilderCustom::applyValueFontStyle(BuilderState& builderState, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        auto valueID = downcast<CSSPrimitiveValue>(value).valueID();
-        ASSERT_UNUSED(valueID, CSSPropertyParserHelpers::isSystemFontShorthand(valueID));
-
-        auto fontDescription = builderState.fontDescription();
-        fontDescription.setItalic(std::nullopt);
-        fontDescription.setFontStyleAxis(FontStyleAxis::slnt);
-        builderState.setFontDescription(WTFMove(fontDescription));
+    auto& description = state.fontDescription();
+    if (description.italic() == slope && description.fontStyleAxis() == axis)
         return;
-    }
 
-    auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
-    auto fontDescription = builderState.fontDescription();
-    fontDescription.setItalic(BuilderConverter::convertFontStyleFromValue(fontStyleValue));
-    fontDescription.setFontStyleAxis(fontStyleValue.fontStyleValue->valueID() == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
-    builderState.setFontDescription(WTFMove(fontDescription));
+    auto copy = description;
+    copy.setItalic(slope);
+    copy.setFontStyleAxis(axis);
+    state.setFontDescription(WTFMove(copy));
+}
+
+inline void BuilderCustom::applyInitialFontStyle(BuilderState& state)
+{
+    applyFontStyle(state, FontCascadeDescription::initialItalic(), FontCascadeDescription::initialFontStyleAxis());
+}
+
+inline void BuilderCustom::applyInheritFontStyle(BuilderState& state)
+{
+    applyFontStyle(state, state.parentFontDescription().italic(), state.parentFontDescription().fontStyleAxis());
+}
+
+inline void BuilderCustom::applyValueFontStyle(BuilderState& state, CSSValue& value)
+{
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    auto keyword = primitiveValue ? primitiveValue->valueID() : CSSValueOblique;
+
+    std::optional<FontSelectionValue> slope;
+    if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
+        slope = BuilderConverter::convertFontStyleFromValue(value);
+
+    applyFontStyle(state, slope, keyword == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
 }
 
 inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSValue& value)

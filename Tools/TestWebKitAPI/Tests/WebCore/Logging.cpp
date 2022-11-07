@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "WTFStringUtilities.h"
+
+#include "Test.h"
 #include <wtf/Assertions.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>

@@ -75,21 +75,23 @@ void Visitor::visit(GlobalDirective&)
 void Visitor::visit(Attribute& attribute)
 {
     switch (attribute.kind()) {
-    case Attribute::Kind::Binding:
+    case Node::Kind::BindingAttribute:
         checkErrorAndVisit(downcast<BindingAttribute>(attribute));
         break;
-    case Attribute::Kind::Builtin:
+    case Node::Kind::BuiltinAttribute:
         checkErrorAndVisit(downcast<BuiltinAttribute>(attribute));
         break;
-    case Attribute::Kind::Group:
+    case Node::Kind::GroupAttribute:
         checkErrorAndVisit(downcast<GroupAttribute>(attribute));
         break;
-    case Attribute::Kind::Location:
+    case Node::Kind::LocationAttribute:
         checkErrorAndVisit(downcast<LocationAttribute>(attribute));
         break;
-    case Attribute::Kind::Stage:
+    case Node::Kind::StageAttribute:
         checkErrorAndVisit(downcast<StageAttribute>(attribute));
         break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled attribute kind");
     }
 }
 
@@ -118,15 +120,17 @@ void Visitor::visit(StageAttribute&)
 void Visitor::visit(Decl& declaration)
 {
     switch (declaration.kind()) {
-    case Decl::Kind::Function:
+    case Node::Kind::FunctionDecl:
         checkErrorAndVisit(downcast<FunctionDecl>(declaration));
         break;
-    case Decl::Kind::Struct:
+    case Node::Kind::StructDecl:
         checkErrorAndVisit(downcast<StructDecl>(declaration));
         break;
-    case Decl::Kind::Variable:
+    case Node::Kind::VariableDecl:
         checkErrorAndVisit(downcast<VariableDecl>(declaration));
         break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled declaration kind");
     }
 }
 
@@ -182,7 +186,7 @@ void Visitor::visit(Expression& expression)
     case Expression::Kind::Float32Literal:
         checkErrorAndVisit(downcast<Float32Literal>(expression));
         break;
-    case Expression::Kind::Identifier:
+    case Expression::Kind::IdentifierExpression:
         checkErrorAndVisit(downcast<IdentifierExpression>(expression));
         break;
     case Expression::Kind::Int32Literal:
@@ -197,6 +201,8 @@ void Visitor::visit(Expression& expression)
     case Expression::Kind::UnaryExpression:
         checkErrorAndVisit(downcast<UnaryExpression>(expression));
         break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled expression kind");
     }
 }
 
@@ -256,18 +262,20 @@ void Visitor::visit(UnaryExpression& unaryExpression)
 void Visitor::visit(Statement& statement)
 {
     switch (statement.kind()) {
-    case Statement::Kind::Assignment:
+    case Node::Kind::AssignmentStatement:
         checkErrorAndVisit(downcast<AssignmentStatement>(statement));
         break;
-    case Statement::Kind::Compound:
+    case Node::Kind::CompoundStatement:
         checkErrorAndVisit(downcast<CompoundStatement>(statement));
         break;
-    case Statement::Kind::Return:
+    case Node::Kind::ReturnStatement:
         checkErrorAndVisit(downcast<ReturnStatement>(statement));
         break;
-    case Statement::Kind::Variable:
+    case Node::Kind::VariableStatement:
         checkErrorAndVisit(downcast<VariableStatement>(statement));
         break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled statement kind");
     }
 }
 
@@ -298,15 +306,17 @@ void Visitor::visit(VariableStatement& varStatement)
 void Visitor::visit(TypeDecl& typeDecl)
 {
     switch (typeDecl.kind()) {
-    case TypeDecl::Kind::Array:
+    case Node::Kind::ArrayType:
         checkErrorAndVisit(downcast<ArrayType>(typeDecl));
         break;
-    case TypeDecl::Kind::Named:
+    case Node::Kind::NamedType:
         checkErrorAndVisit(downcast<NamedType>(typeDecl));
         break;
-    case TypeDecl::Kind::Parameterized:
+    case Node::Kind::ParameterizedType:
         checkErrorAndVisit(downcast<ParameterizedType>(typeDecl));
         break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled type declaration kind");
     }
 }
 

@@ -158,7 +158,6 @@ public:
 
     bool allowsAnimation() const;
     WEBCORE_EXPORT void setAllowsAnimation(bool);
-    WEBCORE_EXPORT void resetAllowsAnimation();
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);

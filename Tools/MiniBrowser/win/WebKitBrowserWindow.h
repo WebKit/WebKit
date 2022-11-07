@@ -63,6 +63,9 @@ private:
     void zoomIn() override;
     void zoomOut() override;
 
+    void clearCookies() override;
+    void clearWebsiteData() override;
+
     void updateProxySettings();
 
     bool canTrustServerCertificate(WKProtectionSpaceRef);

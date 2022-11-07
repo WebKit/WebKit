@@ -27,7 +27,7 @@ PASS XHTML1.0 Transitional parsing &Amacr;
 PASS XHTML1.0 Transitional parsing &amacr;
 PASS XHTML1.0 Transitional parsing &amalg;
 PASS XHTML1.0 Transitional parsing &amp;
-FAIL XHTML1.0 Transitional parsing &AMP; assert_true: expected true got false
+PASS XHTML1.0 Transitional parsing &AMP;
 PASS XHTML1.0 Transitional parsing &andand;
 PASS XHTML1.0 Transitional parsing &And;
 PASS XHTML1.0 Transitional parsing &and;
@@ -1007,7 +1007,7 @@ PASS XHTML1.0 Transitional parsing &lstrok;
 PASS XHTML1.0 Transitional parsing &ltcc;
 PASS XHTML1.0 Transitional parsing &ltcir;
 PASS XHTML1.0 Transitional parsing &lt;
-FAIL XHTML1.0 Transitional parsing &LT; assert_true: expected true got false
+PASS XHTML1.0 Transitional parsing &LT;
 PASS XHTML1.0 Transitional parsing &Lt;
 PASS XHTML1.0 Transitional parsing &ltdot;
 PASS XHTML1.0 Transitional parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS XHTML1.0 Transitional parsing &nvHarr;
 PASS XHTML1.0 Transitional parsing &nvinfin;
 PASS XHTML1.0 Transitional parsing &nvlArr;
 PASS XHTML1.0 Transitional parsing &nvle;
-FAIL XHTML1.0 Transitional parsing &nvlt; assert_equals: XHTML1.0 Transitional parsing the entity reference caused a parse error; expected 3 but got 1
+PASS XHTML1.0 Transitional parsing &nvlt;
 PASS XHTML1.0 Transitional parsing &nvltrie;
 PASS XHTML1.0 Transitional parsing &nvrArr;
 PASS XHTML1.0 Transitional parsing &nvrtrie;

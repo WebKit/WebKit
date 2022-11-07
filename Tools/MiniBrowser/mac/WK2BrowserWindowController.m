@@ -28,6 +28,7 @@
 #import "AppDelegate.h"
 #import "SettingsController.h"
 #import <SecurityInterface/SFCertificateTrustPanel.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
@@ -539,16 +540,28 @@ static BOOL areEssentiallyEqual(double a, double b)
         title = url.lastPathComponent ?: url._web_userVisibleString;
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     self.window.title = title;
-    pid_t gpuProcessIdentifier = _webView._gpuProcessIdentifier;
-    if (gpuProcessIdentifier)
-        self.window.subtitle = [NSString stringWithFormat:@"[WK2 wp %d gpup %d]%@%@", _webView._webProcessIdentifier, gpuProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
-    else
-        self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
-#else
-    self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]%@", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier, _webView._editable ? @" [Editable]" : @""];
-#endif
+
+    NSMutableString *subtitle = [@"[WK2" mutableCopy];
+    __auto_type appendProcessIdentifier = ^(NSString *name, pid_t processIdentifier) {
+        if (!processIdentifier)
+            return;
+        [subtitle appendFormat:@" %@:%d", name, processIdentifier];
+    };
+
+    appendProcessIdentifier(@"web", _webView._webProcessIdentifier);
+    appendProcessIdentifier(@"net", _webView.configuration.websiteDataStore._networkProcessIdentifier);
+    appendProcessIdentifier(@"gpu", _webView._gpuProcessIdentifier);
+
+    [subtitle appendString:@"]"];
+
+    if (_isPrivateBrowsingWindow)
+        [subtitle appendString:@" 🙈"];
+
+    if (_webView._editable)
+        [subtitle appendString:@" ✏️"];
+
+    self.window.subtitle = subtitle;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -623,11 +636,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     }];
 }
 
-#if __has_feature(objc_generics)
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * URLs))completionHandler
-#else
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray *URLs))completionHandler
-#endif
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 
@@ -679,9 +688,9 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (void)updateLockButtonIcon:(BOOL)hasOnlySecureContent
 {
     if (hasOnlySecureContent)
-        [lockButton setImage:[NSImage imageNamed:NSImageNameLockLockedTemplate]];
+        [lockButton setImage:[NSImage imageWithSystemSymbolName:@"lock" accessibilityDescription:nil]];
     else
-        [lockButton setImage:[NSImage imageNamed:NSImageNameLockUnlockedTemplate]];
+        [lockButton setImage:[NSImage imageWithSystemSymbolName:@"lock.open" accessibilityDescription:nil]];
 }
 
 - (void)loadURLString:(NSString *)urlString
@@ -902,10 +911,8 @@ static BOOL isJavaScriptURL(NSURL *url)
 - (IBAction)saveAsPDF:(id)sender
 {
     NSSavePanel *panel = [NSSavePanel savePanel];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    panel.allowedFileTypes = @[ @"pdf" ];
-#pragma clang diagnostic pop
+    panel.allowedContentTypes = @[ UTTypePDF ];
+
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result == NSModalResponseOK) {
             [self->_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
@@ -918,11 +925,8 @@ static BOOL isJavaScriptURL(NSURL *url)
 - (IBAction)saveAsWebArchive:(id)sender
 {
     NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.allowedContentTypes = @[ UTTypeWebArchive ];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    panel.allowedFileTypes = @[ @"webarchive" ];
-#pragma clang diagnostic pop
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result == NSModalResponseOK) {
             [self->_webView createWebArchiveDataWithCompletionHandler:^(NSData *archiveData, NSError *error) {

@@ -281,6 +281,7 @@ class BaseGenerator(object):
             input_lines = self._replacePrefix(input_lines, "JavaScriptCore/",               "$(PROJECT_DIR)/")
             input_lines = self._replacePrefix(input_lines, "JavaScriptCorePrivateHeaders/", "$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/")
             input_lines = self._replacePrefix(input_lines, "WebCore/",                      "$(PROJECT_DIR)/")
+            input_lines = self._replacePrefix(input_lines, "WebCorePrivateHeaders/",        "$(WEBCORE_PRIVATE_HEADERS_DIR)/")
             input_lines = self._replacePrefix(input_lines, "WebKit2PrivateHeaders/",        "$(WEBKIT2_PRIVATE_HEADERS_DIR)/")
 
             input_lines = self._unexpand(input_lines, "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR")

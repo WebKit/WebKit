@@ -63,11 +63,6 @@ public:
         test->resourceReceivedResponse(resource);
     }
 
-    static void resourceReceivedDataCallback(WebKitWebResource* resource, guint64 bytesReceived, ResourcesTest* test)
-    {
-        test->resourceReceivedData(resource, bytesReceived);
-    }
-
     static void resourceFinishedCallback(WebKitWebResource* resource, ResourcesTest* test)
     {
         test->resourceFinished(resource);
@@ -91,7 +86,6 @@ public:
         test->resourceLoadStarted(resource, request);
         g_signal_connect(resource, "sent-request", G_CALLBACK(resourceSentRequestCallback), test);
         g_signal_connect(resource, "notify::response", G_CALLBACK(resourceReceivedResponseCallback), test);
-        g_signal_connect(resource, "received-data", G_CALLBACK(resourceReceivedDataCallback), test);
         g_signal_connect(resource, "finished", G_CALLBACK(resourceFinishedCallback), test);
         g_signal_connect(resource, "failed", G_CALLBACK(resourceFailedCallback), test);
     }
@@ -126,10 +120,6 @@ public:
     }
 
     virtual void resourceReceivedResponse(WebKitWebResource* resource)
-    {
-    }
-
-    virtual void resourceReceivedData(WebKitWebResource* resource, guint64 bytesReceived)
     {
     }
 
@@ -256,14 +246,12 @@ public:
         SentRequest,
         Redirected,
         ReceivedResponse,
-        ReceivedData,
         Finished,
         Failed
     };
 
     SingleResourceLoadTest()
         : ResourcesTest()
-        , m_resourceDataReceived(0)
     {
         m_resourcesToLoad = 2;
     }
@@ -273,7 +261,6 @@ public:
         if (resource == webkit_web_view_get_main_resource(m_webView))
             return;
 
-        m_resourceDataReceived = 0;
         m_resource = resource;
         m_loadEvents.append(Started);
     }
@@ -297,16 +284,6 @@ public:
         m_loadEvents.append(ReceivedResponse);
     }
 
-    void resourceReceivedData(WebKitWebResource* resource, guint64 bytesReceived)
-    {
-        if (resource != m_resource)
-            return;
-
-        m_resourceDataReceived += bytesReceived;
-        if (!m_loadEvents.contains(ReceivedData))
-            m_loadEvents.append(ReceivedData);
-    }
-
     void resourceFinished(WebKitWebResource* resource)
     {
         if (resource != m_resource) {
@@ -314,11 +291,6 @@ public:
             return;
         }
 
-        if (!m_loadEvents.contains(Failed)) {
-            WebKitURIResponse* response = webkit_web_resource_get_response(m_resource.get());
-            g_assert_nonnull(response);
-            g_assert_cmpint(webkit_uri_response_get_content_length(response), ==, m_resourceDataReceived);
-        }
         m_loadEvents.append(Finished);
         ResourcesTest::resourceFinished(resource);
     }
@@ -345,7 +317,6 @@ public:
 
     GRefPtr<WebKitWebResource> m_resource;
     Vector<LoadEvents> m_loadEvents;
-    guint64 m_resourceDataReceived;
 };
 
 static void testWebResourceLoading(SingleResourceLoadTest* test, gconstpointer)
@@ -354,24 +325,22 @@ static void testWebResourceLoading(SingleResourceLoadTest* test, gconstpointer)
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
     Vector<SingleResourceLoadTest::LoadEvents>& events = test->m_loadEvents;
-    g_assert_cmpint(events.size(), ==, 5);
+    g_assert_cmpint(events.size(), ==, 4);
     g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
     g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
     g_assert_cmpint(events[2], ==, SingleResourceLoadTest::ReceivedResponse);
-    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::ReceivedData);
-    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::Finished);
+    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::Finished);
     events.clear();
 
     test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
-    g_assert_cmpint(events.size(), ==, 6);
+    g_assert_cmpint(events.size(), ==, 5);
     g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
     g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
     g_assert_cmpint(events[2], ==, SingleResourceLoadTest::Redirected);
     g_assert_cmpint(events[3], ==, SingleResourceLoadTest::ReceivedResponse);
-    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::ReceivedData);
-    g_assert_cmpint(events[5], ==, SingleResourceLoadTest::Finished);
+    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::Finished);
     events.clear();
 
     test->loadURI(kServer->getURIForPath("/invalid-css.html").data());
@@ -494,10 +463,6 @@ public:
             return;
 
         checkActiveURI("/simple-style.css");
-    }
-
-    void resourceReceivedData(WebKitWebResource* resource, guint64 bytesReceived)
-    {
     }
 
     void resourceFinished(WebKitWebResource* resource)
@@ -680,12 +645,11 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
     g_assert_nonnull(test->m_resource);
 
     Vector<SingleResourceLoadTest::LoadEvents>& events = test->m_loadEvents;
-    g_assert_cmpint(events.size(), ==, 5);
+    g_assert_cmpint(events.size(), ==, 4);
     g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
     g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
     g_assert_cmpint(events[2], ==, SingleResourceLoadTest::ReceivedResponse);
-    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::ReceivedData);
-    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::Finished);
+    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::Finished);
     events.clear();
 
     // Cancel request.
@@ -707,13 +671,12 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
     test->waitUntilResourceLoadFinished();
     g_assert_nonnull(test->m_resource);
 
-    g_assert_cmpint(events.size(), ==, 6);
+    g_assert_cmpint(events.size(), ==, 5);
     g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
     g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
     g_assert_cmpint(events[2], ==, SingleResourceLoadTest::Redirected);
     g_assert_cmpint(events[3], ==, SingleResourceLoadTest::ReceivedResponse);
-    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::ReceivedData);
-    g_assert_cmpint(events[5], ==, SingleResourceLoadTest::Finished);
+    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::Finished);
     events.clear();
 
     // Cancel after a redirect.

@@ -97,7 +97,8 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
         // Heap allocations are forbidden on the audio thread for performance reasons so we need to
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-        m_ringBuffer.allocate(format, static_cast<size_t>(m_maximumSampleCount));
+        m_ringBuffer = InProcessCARingBuffer::allocate(format, static_cast<size_t>(m_maximumSampleCount));
+        RELEASE_ASSERT(m_ringBuffer);
         m_scratchBuffer = AudioSampleBufferList::create(m_outputDescription->streamDescription(), m_maximumSampleCount);
         m_converterInputOffset = 0;
     }
@@ -170,7 +171,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
         });
     }
 
-    m_ringBuffer.store(sampleBufferList, sampleCount, ringBufferIndexToWrite);
+    m_ringBuffer->store(sampleBufferList, sampleCount, ringBufferIndexToWrite);
 
     m_converterInputOffset += offset;
     m_lastPushedSampleCount = sampleCount;
@@ -194,8 +195,8 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 {
     size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
 
-    ASSERT(buffer.mNumberBuffers == m_ringBuffer.channelCount());
-    if (buffer.mNumberBuffers != m_ringBuffer.channelCount()) {
+    ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
+    if (buffer.mNumberBuffers != m_ringBuffer->channelCount()) {
         if (mode != AudioSampleDataSource::Mix)
             AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
@@ -209,7 +210,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 
     uint64_t startFrame = 0;
     uint64_t endFrame = 0;
-    m_ringBuffer.getCurrentFrameBounds(startFrame, endFrame);
+    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
 
     ASSERT(m_waitToStartForPushCount);
 
@@ -249,18 +250,18 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
 {
     if (mode == Copy) {
-        m_ringBuffer.fetch(&buffer, sampleCount, timeStamp, CARingBuffer::Copy);
+        m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, CARingBuffer::Copy);
         if (m_volume < EquivalentToMaxVolume)
             AudioSampleBufferList::applyGain(buffer, m_volume, m_outputDescription->format());
         return true;
     }
 
     if (m_volume >= EquivalentToMaxVolume) {
-        m_ringBuffer.fetch(&buffer, sampleCount, timeStamp, CARingBuffer::Mix);
+        m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, CARingBuffer::fetchModeForMixing(m_outputDescription->format()));
         return true;
     }
 
-    if (m_scratchBuffer->copyFrom(m_ringBuffer, sampleCount, timeStamp, CARingBuffer::Copy))
+    if (m_scratchBuffer->copyFrom(*m_ringBuffer, sampleCount, timeStamp, CARingBuffer::Copy))
         return false;
 
     m_scratchBuffer->applyGain(m_volume);
@@ -273,8 +274,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
 bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
 {
-    ASSERT(buffer.mNumberBuffers == m_ringBuffer.channelCount());
-    if (buffer.mNumberBuffers != m_ringBuffer.channelCount())
+    ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
+    if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
 
     if (m_muted || !m_inputSampleOffset)
@@ -292,13 +293,13 @@ bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, si
 
 bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, Function<void()>&& consumeFilledBuffer)
 {
-    ASSERT(buffer.mNumberBuffers == m_ringBuffer.channelCount());
-    if (buffer.mNumberBuffers != m_ringBuffer.channelCount())
+    ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
+    if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
 
     uint64_t startFrame = 0;
     uint64_t endFrame = 0;
-    m_ringBuffer.getCurrentFrameBounds(startFrame, endFrame);
+    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
     if (m_shouldComputeOutputSampleOffset) {
         m_outputSampleOffset = timeStamp + (endFrame - sampleCountPerChunk);
         m_shouldComputeOutputSampleOffset = false;
@@ -325,7 +326,7 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
     }
 
     while (endFrame - startFrame >= sampleCountPerChunk) {
-        m_ringBuffer.fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy);
+        m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy);
         consumeFilledBuffer();
         startFrame += sampleCountPerChunk;
     }

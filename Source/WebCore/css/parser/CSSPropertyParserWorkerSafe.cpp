@@ -34,7 +34,7 @@
 
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSImageValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
@@ -200,44 +200,45 @@ RefPtr<CSSPrimitiveValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(cons
 
 namespace CSSPropertyParserHelpersWorkerSafe {
 
-static RefPtr<CSSFontFaceSrcValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto location = context.completeURL(CSSPropertyParserHelpers::consumeUrlAsStringView(range).toString()).resolvedURL.string();
-    if (location.isNull())
+    auto location = context.completeURL(CSSPropertyParserHelpers::consumeURLRaw(range).toString());
+    if (location.resolvedURL.isNull())
         return nullptr;
 
     String format;
     if (range.peek().functionId() == CSSValueFormat) {
         // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
-        // FIXME: The format should be a comma-separated list; at this time we support only one.
-        // FIXME: We allow any identifier here and convert all to strings; specification calls for only certain identifiers.
+        // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
         auto args = CSSPropertyParserHelpers::consumeFunction(range);
         auto& arg = args.consumeIncludingWhitespace();
-        if ((arg.type() != StringToken && arg.type() != IdentToken) || !args.atEnd())
+        if (!args.atEnd())
+            return nullptr;
+        if (arg.type() == IdentToken) {
+            if (!identMatches<CSSValueCollection, CSSValueEmbeddedOpentype, CSSValueOpentype, CSSValueSvg, CSSValueTruetype, CSSValueWoff, CSSValueWoff2>(arg.id()))
+                return nullptr;
+        } else if (arg.type() != StringToken)
             return nullptr;
         format = arg.value().toString();
     }
 
-    // FIXME: Change CSSFontFaceSrcValue::create to take format so we don't need a separate setFormat call.
-    auto srcValue = CSSFontFaceSrcValue::create(location, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
-    srcValue->setFormat(format);
-    return srcValue;
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)
 {
     CSSParserTokenRange args = CSSPropertyParserHelpers::consumeFunction(range);
     if (args.peek().type() == StringToken) {
-        const CSSParserToken& arg = args.consumeIncludingWhitespace();
+        auto& arg = args.consumeIncludingWhitespace();
         if (!args.atEnd())
             return nullptr;
-        return CSSFontFaceSrcValue::createLocal(arg.value().toString());
+        return CSSFontFaceSrcLocalValue::create(arg.value().toAtomString());
     }
     if (args.peek().type() == IdentToken) {
-        String familyName = CSSPropertyParserHelpers::concatenateFamilyName(args);
+        AtomString familyName = CSSPropertyParserHelpers::concatenateFamilyName(args);
         if (!args.atEnd())
             return nullptr;
-        return CSSFontFaceSrcValue::createLocal(familyName);
+        return CSSFontFaceSrcLocalValue::create(WTFMove(familyName));
     }
     return nullptr;
 }
@@ -304,7 +305,7 @@ RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range,
 
 #endif
 
-RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode, CSSValuePool& pool)
 {
     auto keyword = CSSPropertyParserHelpers::consumeIdentWorkerSafe<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range, pool);
     if (!keyword)
@@ -313,13 +314,13 @@ RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParser
 #if ENABLE(VARIATION_FONTS)
     if (keyword->valueID() == CSSValueOblique && !range.atEnd()) {
         if (auto angle = consumeFontStyleAngle(range, mode, pool))
-            return CSSFontStyleValue::create(keyword.releaseNonNull(), angle.releaseNonNull());
+            return CSSFontStyleWithAngleValue::create(angle.releaseNonNull());
     }
 #else
     UNUSED_PARAM(mode);
 #endif
 
-    return CSSFontStyleValue::create(keyword.releaseNonNull());
+    return keyword;
 }
 
 static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range, CSSValuePool& pool)

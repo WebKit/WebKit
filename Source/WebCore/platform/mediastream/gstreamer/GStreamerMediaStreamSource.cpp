@@ -410,6 +410,19 @@ public:
         return m_eosPending;
     }
 
+    std::optional<uint64_t> queryDecodedVideoFramesCount()
+    {
+        auto query = adoptGRef(gst_query_new_custom(GST_QUERY_CUSTOM, gst_structure_new_empty("webkit-video-decoder-stats")));
+        auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+        if (gst_pad_peer_query(pad.get(), query.get())) {
+            uint64_t decodedFramesCount;
+            if (gst_structure_get_uint64(gst_query_get_structure(query.get()), "decoded-frames", &decodedFramesCount))
+                return decodedFramesCount;
+        }
+
+        return { };
+    }
+
 private:
     void flush()
     {

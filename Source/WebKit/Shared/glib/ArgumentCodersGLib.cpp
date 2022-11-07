@@ -27,13 +27,15 @@
 #include "ArgumentCodersGLib.h"
 
 #include "DataReference.h"
+#include "WebCoreArgumentCoders.h"
 #include <gio/gio.h>
+#include <gio/gunixfdlist.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace IPC {
 
-void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, GRefPtr<GVariant> variant)
+void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, const GRefPtr<GVariant>& variant)
 {
     if (!variant) {
         encoder << CString();
@@ -65,8 +67,7 @@ std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decode
     return std::optional<GRefPtr<GVariant> >(g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE));
 }
 
-template<typename Encoder>
-void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<GTlsCertificate> certificate)
+void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRefPtr<GTlsCertificate>& certificate)
 {
     if (!certificate) {
         encoder << 0;
@@ -104,9 +105,7 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<G
         encoder << IPC::DataReference(certificateData->data, certificateData->len);
     }
 }
-template void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode<Encoder>(Encoder&, GRefPtr<GTlsCertificate>);
 
-template<typename Decoder>
 std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
 {
     std::optional<uint32_t> chainLength;
@@ -160,6 +159,43 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
 
     return certificate;
 }
-template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<Decoder>(Decoder&);
+
+void ArgumentCoder<GRefPtr<GUnixFDList>>::encode(Encoder& encoder, const GRefPtr<GUnixFDList>& fdList)
+{
+    if (!fdList) {
+        encoder << false;
+        return;
+    }
+
+    Vector<UnixFileDescriptor> attachments;
+    unsigned length = std::max(0, g_unix_fd_list_get_length(fdList.get()));
+    if (!!length) {
+        attachments.reserveInitialCapacity(length);
+        for (unsigned i = 0; i < length; ++i)
+            attachments.uncheckedAppend(UnixFileDescriptor { g_unix_fd_list_get(fdList.get(), i, nullptr), UnixFileDescriptor::Adopt });
+    }
+    encoder << true << WTFMove(attachments);
+}
+
+std::optional<GRefPtr<GUnixFDList>> ArgumentCoder<GRefPtr<GUnixFDList>>::decode(Decoder& decoder)
+{
+    auto hasObject = decoder.decode<bool>();
+    if (!hasObject)
+        return std::nullopt;
+    if (!*hasObject)
+        return GRefPtr<GUnixFDList> { };
+
+    auto attachments = decoder.decode<Vector<UnixFileDescriptor>>();
+    if (!attachments)
+        return std::nullopt;
+
+    GRefPtr<GUnixFDList> fdList = adoptGRef(g_unix_fd_list_new());
+    for (auto& attachment : *attachments) {
+        int ret = g_unix_fd_list_append(fdList.get(), attachment.value(), nullptr);
+        if (ret == -1)
+            return std::nullopt;
+    }
+    return fdList;
+}
 
 } // namespace IPC

@@ -60,7 +60,6 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 #if PLATFORM(COCOA)
     : WebCore::AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate, false)
     , m_numberOfFrames(hardwareSampleRate() * ringBufferSizeInSecond)
-    , m_ringBuffer(makeUnique<ProducerSharedCARingBuffer>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
     , m_sampleRate(hardwareSampleRate())
 #else
     : WebCore::AudioDestinationGStreamer(callback, numberOfOutputChannels, sampleRate)
@@ -116,7 +115,9 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         m_currentFrame = 0;
         AudioStreamBasicDescription streamFormat;
         getAudioStreamBasicDescription(streamFormat);
-        m_ringBuffer->allocate(streamFormat, m_numberOfFrames);
+        auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(streamFormat, m_numberOfFrames);
+        m_ringBuffer = WTFMove(ringBuffer);
+        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle), streamFormat, m_numberOfFrames }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
         m_audioBufferList->setSampleCount(WebCore::AudioUtilities::renderQuantumSize);
 #endif
@@ -177,20 +178,6 @@ void RemoteAudioDestinationProxy::renderQuantum()
     m_currentFrame += WebCore::AudioUtilities::renderQuantumSize;
 #endif
 }
-
-#if PLATFORM(COCOA)
-void RemoteAudioDestinationProxy::storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
-{
-    auto* connection = existingConnection();
-    if (!connection)
-        return;
-
-    SharedMemory::Handle handle;
-    if (storage)
-        storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle), format, frameCount }, 0);
-}
-#endif
 
 void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnection& oldConnection)
 {

@@ -41,7 +41,7 @@
 #import "PageClient.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
-#import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "RevealItem.h"
 #import "SmartMagnificationController.h"
 #import "TextChecker.h"
@@ -258,7 +258,6 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
 
 namespace WebKit {
 using namespace WebCore;
-using namespace WebKit;
 
 WKSelectionDrawingInfo::WKSelectionDrawingInfo()
     : type(SelectionType::None)
@@ -1835,7 +1834,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 #if ENABLE(TOUCH_EVENTS)
 - (void)_handleTouchActionsForTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent
 {
-    auto* scrollingCoordinator = _page->scrollingCoordinatorProxy();
+    auto* scrollingCoordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
     if (!scrollingCoordinator)
         return;
 
@@ -2320,7 +2319,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     [_textInteractionAssistant didEndScrollingOverflow];
 
     UIScrollView *targetScrollView = nil;
-    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+    if (auto* scrollingCoordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy()))
         targetScrollView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
 
     [_webView _didFinishScrolling:targetScrollView];
@@ -8439,7 +8438,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 - (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
 {
     if (scrollingNodeID) {
-        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy()) {
+        if (auto* scrollingCoordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
             if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID))
                 _scrollViewForTargetedPreview = scrollViewForScrollingNode;
         }
@@ -8573,6 +8572,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 
         if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
+            return YES;
+        
+        if (gestureRecognizer == _highlightLongPressGestureRecognizer)
             return YES;
 
         if (auto *tapGesture = dynamic_objc_cast<UITapGestureRecognizer>(gestureRecognizer))

@@ -135,6 +135,8 @@
 #define IDM_SET_DEFAULT_URL             32782
 #define IDM_EXPERIMENTAL_FEATURES_RESET_ALL_TO_DEFAULTS 32783
 #define IDM_INTERNAL_DEBUG_FEATURES_RESET_ALL_TO_DEFAULTS 32784
+#define IDM_CLEAR_COOKIES 32785
+#define IDM_CLEAR_WEBSITE_DATA 32786
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -143,7 +145,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        182
-#define _APS_NEXT_COMMAND_VALUE         32785
+#define _APS_NEXT_COMMAND_VALUE         32787
 #define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

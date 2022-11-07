@@ -56,12 +56,14 @@ SVGFontFaceUriElement::~SVGFontFaceUriElement()
         m_cachedFont->removeClient(*this);
 }
 
-Ref<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
+Ref<CSSFontFaceSrcResourceValue> SVGFontFaceUriElement::createSrcValue() const
 {
-    auto src = CSSFontFaceSrcValue::create(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), LoadedFromOpaqueSource::No);
-    AtomString value(attributeWithoutSynchronization(formatAttr));
-    src.get().setFormat(value.isEmpty() ? "svg"_s : value); // Default format
-    return src;
+    ResolvedURL location;
+    location.specifiedURLString = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
+    if (!location.specifiedURLString.isNull())
+        location.resolvedURL = document().completeURL(location.specifiedURLString);
+    auto& format = attributeWithoutSynchronization(formatAttr);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), format.isEmpty() ? "svg"_s : format.string(), LoadedFromOpaqueSource::No);
 }
 
 void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -92,8 +94,8 @@ Node::InsertedIntoAncestorResult SVGFontFaceUriElement::insertedIntoAncestor(Ins
 
 static bool isSVGFontTarget(const SVGFontFaceUriElement& element)
 {
-    Ref<CSSFontFaceSrcValue> srcValue(element.srcValue());
-    return srcValue->isSVGFontTarget();
+    auto& format = element.attributeWithoutSynchronization(formatAttr);
+    return format.isEmpty() || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
 void SVGFontFaceUriElement::loadFont()

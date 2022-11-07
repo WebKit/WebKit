@@ -70,7 +70,7 @@ private:
     CSSParserToken consumeIdentLikeToken();
     CSSParserToken consumeNumber();
     CSSParserToken consumeStringTokenUntil(UChar);
-    CSSParserToken consumeUrlToken();
+    CSSParserToken consumeURLToken();
 
     void consumeBadUrlRemnants();
     void consumeSingleWhitespaceIfNext();

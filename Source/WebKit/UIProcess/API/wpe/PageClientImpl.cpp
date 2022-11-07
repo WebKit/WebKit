@@ -447,4 +447,9 @@ void PageClientImpl::selectionDidChange()
     m_view.selectionDidChange();
 }
 
+WebKitWebResourceLoadManager* PageClientImpl::webResourceLoadManager()
+{
+    return m_view.webResourceLoadManager();
+}
+
 } // namespace WebKit

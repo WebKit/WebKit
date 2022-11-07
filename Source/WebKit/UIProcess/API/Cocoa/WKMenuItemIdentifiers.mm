@@ -65,3 +65,5 @@ NSString * const _WKMenuItemIdentifierShowSpellingPanel = @"WKMenuItemIdentifier
 NSString * const _WKMenuItemIdentifierCheckSpelling = @"WKMenuItemIdentifierCheckSpelling";
 NSString * const _WKMenuItemIdentifierCheckSpellingWhileTyping = @"WKMenuItemIdentifierCheckSpellingWhileTyping";
 NSString * const _WKMenuItemIdentifierCheckGrammarWithSpelling = @"WKMenuItemIdentifierCheckGrammarWithSpelling";
+NSString * const _WKMenuItemIdentifierPlayAllAnimations = @"WKMenuItemIdentifierPlayAllAnimations";
+NSString * const _WKMenuItemIdentifierPauseAllAnimations = @"WKMenuItemIdentifierPauseAllAnimations";

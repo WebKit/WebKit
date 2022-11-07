@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "GraphicsContextGL.h"
 #include "GraphicsTypesGL.h"
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
@@ -72,15 +73,17 @@ private:
     Attributes m_attributes;
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
-    OwnedGLObject m_depthStencilBuffer;
-    OwnedGLObject m_stencilBuffer;
-    OwnedGLObject m_multisampleColorBuffer;
-    OwnedGLObject m_resolvedFBO;
+    GCGLOwnedRenderbuffer m_depthStencilBuffer;
+    GCGLOwnedRenderbuffer m_stencilBuffer;
+    GCGLOwnedRenderbuffer m_multisampleColorBuffer;
+    GCGLOwnedFramebuffer m_resolvedFBO;
     GCGLint m_sampleCount { 0 };
-    OwnedGLObject m_opaqueTexture;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    GCGLOwnedTexture m_opaqueTexture;
     void* m_ioSurfaceTextureHandle { nullptr };
     bool m_ioSurfaceTextureHandleIsShared { false };
+#else
+    PlatformGLObject m_opaqueTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
     RetainPtr<id> m_completionEvent { nullptr };

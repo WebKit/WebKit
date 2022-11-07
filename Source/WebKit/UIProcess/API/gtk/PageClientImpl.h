@@ -181,6 +181,8 @@ private:
 
     WebCore::Color accentColor() override;
 
+    WebKitWebResourceLoadManager* webResourceLoadManager() override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

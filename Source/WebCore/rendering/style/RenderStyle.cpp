@@ -2033,7 +2033,7 @@ void RenderStyle::setWordSpacing(Length&& value)
         fontWordSpacing = value.value();
         break;
     case LengthType::Calculated:
-        fontWordSpacing = value.nonNanCalculatedValue(maxValueForCssLength);
+        fontWordSpacing = value.nonNanCalculatedValue(static_cast<float>(maxValueForCssLength));
         break;
     default:
         ASSERT_NOT_REACHED();

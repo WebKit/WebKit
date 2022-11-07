@@ -92,7 +92,7 @@ public:
     template<typename T>
     WARN_UNUSED_RETURN bool decode(T& t)
     {
-        using Impl = ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>;
+        using Impl = ArgumentCoder<std::remove_cvref_t<T>, void>;
         if constexpr(HasLegacyDecoder<T, Impl>::value) {
             if (UNLIKELY(!Impl::decode(*this, t))) {
                 markInvalid();
@@ -121,7 +121,7 @@ public:
     template<typename T>
     std::optional<T> decode()
     {
-        using Impl = ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>;
+        using Impl = ArgumentCoder<std::remove_cvref_t<T>, void>;
         if constexpr(HasModernDecoder<T, Impl>::value) {
             std::optional<T> t { Impl::decode(*this) };
             if (UNLIKELY(!t))

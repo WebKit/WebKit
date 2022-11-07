@@ -219,30 +219,32 @@ IOSurface::IOSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpa
 
 IOSurface::~IOSurface() = default;
 
-static constexpr IntSize maxSurfaceDimensionCA()
+static constexpr IntSize fallbackMaxSurfaceDimension()
 {
     // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
-#if PLATFORM(IOS_FAMILY)
-    constexpr int maxSurfaceDimension = 8 * 1024;
-#else
-    // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
+#if PLATFORM(WATCHOS)
+    constexpr int maxSurfaceDimension = 4 * 1024;
+#elif PLATFORM(MAC)
     constexpr int maxSurfaceDimension = 32 * 1024;
+#else
+    constexpr int maxSurfaceDimension = 8 * 1024;
 #endif
     return { maxSurfaceDimension, maxSurfaceDimension };
 }
 
 static IntSize computeMaximumSurfaceSize()
 {
-#if PLATFORM(IOS)
-    return maxSurfaceDimensionCA();
-#else
-    IntSize maxSize(clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)));
+    auto maxSize = IntSize { clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)) };
 
-    // Protect against maxSize being { 0, 0 }.
-    constexpr int maxSurfaceDimensionLowerBound = 1024;
-
-    return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, maxSurfaceDimensionCA() );
+#if PLATFORM(IOS_FAMILY)
+    // On iOS, there's an additional 8K clamp in CA (rdar://101936907).
+    maxSize.clampToMaximumSize(fallbackMaxSurfaceDimension());
 #endif
+
+    if (maxSize.isZero())
+        maxSize = fallbackMaxSurfaceDimension();
+
+    return maxSize;
 }
 
 static WTF::Atomic<IntSize>& surfaceMaximumSize()

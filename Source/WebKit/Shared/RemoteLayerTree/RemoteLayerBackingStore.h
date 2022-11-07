@@ -114,6 +114,8 @@ public:
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
+    bool usesDeepColorBackingStore() const;
+    WebCore::DestinationColorSpace colorSpace() const;
     WebCore::PixelFormat pixelFormat() const;
     Type type() const { return m_parameters.type; }
     bool isOpaque() const { return m_parameters.isOpaque; }

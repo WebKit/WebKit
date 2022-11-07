@@ -356,45 +356,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     bool isDocElementRenderer = isDocumentElementRenderer();
 
     if (isDocElementRenderer || isBodyRenderer) {
-        auto* documentElementRenderer = document().documentElement()->renderer();
-        auto& viewStyle = view().mutableStyle();
-        bool rootStyleChanged = false;
-        bool viewDirectionOrWritingModeChanged = false;
-        auto* rootRenderer = isBodyRenderer ? documentElementRenderer : nullptr;
-
-        auto propagateWritingModeToRenderViewIfApplicable = [&] {
-            // Propagate the new writing mode and direction up to the RenderView.
-            if (!documentElementRenderer)
-                return;
-            if (!isBodyRenderer || !(shouldApplyAnyContainment() || documentElementRenderer->shouldApplyAnyContainment())) {
-                if (viewStyle.direction() != newStyle.direction() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetDirection())) {
-                    viewStyle.setDirection(newStyle.direction());
-                    viewDirectionOrWritingModeChanged = true;
-                    if (isBodyRenderer) {
-                        rootRenderer->mutableStyle().setDirection(newStyle.direction());
-                        rootStyleChanged = true;
-                    }
-                    setNeedsLayoutAndPrefWidthsRecalc();
-
-                    view().frameView().topContentDirectionDidChange();
-                }
-
-                if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetWritingMode())) {
-                    viewStyle.setWritingMode(newStyle.writingMode());
-                    viewDirectionOrWritingModeChanged = true;
-                    view().setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
-                    view().markAllDescendantsWithFloatsForLayout();
-                    if (isBodyRenderer) {
-                        rootStyleChanged = true;
-                        rootRenderer->mutableStyle().setWritingMode(newStyle.writingMode());
-                        rootRenderer->setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
-                    }
-                    setNeedsLayoutAndPrefWidthsRecalc();
-                }
-            }
-        };
-        propagateWritingModeToRenderViewIfApplicable();
-
 #if ENABLE(DARK_MODE_CSS)
         view().frameView().recalculateBaseBackgroundColor();
 #endif
@@ -402,18 +363,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         view().frameView().recalculateScrollbarOverlayStyle();
         
         const Pagination& pagination = view().frameView().pagination();
-        if (viewDirectionOrWritingModeChanged && pagination.mode != Pagination::Unpaginated) {
-            viewStyle.setColumnStylesFromPaginationMode(pagination.mode);
-            if (view().multiColumnFlow())
-                view().updateColumnProgressionFromStyle(viewStyle);
-        }
-        
-        if (viewDirectionOrWritingModeChanged && view().multiColumnFlow())
-            view().updateStylesForColumnChildren();
-        
-        if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlow())
-            downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
-        
         if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && page().paginationLineGridEnabled()) {
             // Propagate the body font back up to the RenderView and use it as
             // the basis of the grid.

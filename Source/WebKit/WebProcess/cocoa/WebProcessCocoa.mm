@@ -453,11 +453,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
-    
-    if (!parameters.maximumIOSurfaceSize.isEmpty())
-        WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
 
+#if HAVE(IOSURFACE)
+    WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
     WebCore::IOSurface::setBytesPerRowAlignment(parameters.bytesPerRowIOSurfaceAlignment);
+#endif
 
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
 #if PLATFORM(IOS_FAMILY)

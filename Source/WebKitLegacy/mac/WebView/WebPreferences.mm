@@ -1044,6 +1044,15 @@ public:
 #endif
 }
 
+- (BOOL)isJavaEnabled
+{
+    return NO;
+}
+
+- (void)setJavaEnabled:(BOOL)flag
+{
+}
+
 @end
 
 @implementation WebPreferences (WebPrivate)
@@ -1792,15 +1801,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setShowDebugBorders:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitShowDebugBordersPreferenceKey];
-}
-
-- (BOOL)subpixelAntialiasedLayerTextEnabled
-{
-    return NO;
-}
-
-- (void)setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
-{
 }
 
 - (BOOL)legacyLineLayoutVisualCoverageEnabled
@@ -3267,7 +3267,7 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 @end
 
-@implementation WebPreferences (WebPrivateObsolete)
+@implementation WebPreferences (WebPrivateDeprecated)
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
@@ -3421,12 +3421,12 @@ static RetainPtr<NSString>& classIBCreatorID()
 {
 }
 
-- (BOOL)isJavaEnabled
+- (BOOL)subpixelAntialiasedLayerTextEnabled
 {
     return NO;
 }
 
-- (void)setJavaEnabled:(BOOL)flag
+- (void)setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
 {
 }
 

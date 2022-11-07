@@ -443,7 +443,7 @@ void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Se
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
 {
     if (auto cachedImageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(imageBuffer.renderingResourceIdentifier())) {
-        ASSERT(cachedImageBuffer == &imageBuffer);
+        ASSERT_UNUSED(cachedImageBuffer, cachedImageBuffer == &imageBuffer);
         return true;
     }
     return false;

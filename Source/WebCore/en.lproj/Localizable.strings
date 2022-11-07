@@ -892,6 +892,9 @@
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
+/* Pause All Animations context menu item */
+"Pause All Animations" = "Pause All Animations";
+
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";
 
@@ -900,6 +903,9 @@
 
 /* Media Play context menu item */
 "Play" = "Play";
+
+/* Play All Animations context menu item */
+"Play All Animations" = "Play All Animations";
 
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";

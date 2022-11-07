@@ -73,11 +73,6 @@ std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemo
     return WTFMove(m_remoteLayerTreeHost);
 }
 
-std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy::createScrollingCoordinatorProxy() const
-{
-    return makeUnique<RemoteScrollingCoordinatorProxy>(m_webPageProxy);
-}
-
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
     if (!m_webPageProxy.hasRunningProcess())

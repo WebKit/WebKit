@@ -1638,7 +1638,7 @@ RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().value().toString(), CSSUnitType::CSS_STRING);
 }
 
-StringView consumeUrlAsStringView(CSSParserTokenRange& range)
+StringView consumeURLRaw(CSSParserTokenRange& range)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == UrlToken) {
@@ -1660,9 +1660,9 @@ StringView consumeUrlAsStringView(CSSParserTokenRange& range)
     return { };
 }
 
-RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeURL(CSSParserTokenRange& range)
 {
-    StringView url = consumeUrlAsStringView(range);
+    StringView url = consumeURLRaw(range);
     if (url.isNull())
         return nullptr;
     return CSSValuePool::singleton().createValue(url.toString(), CSSUnitType::CSS_URI);
@@ -4481,7 +4481,7 @@ RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContex
     bool referenceFiltersAllowed = allowedFunctions == AllowedFilterFunctions::PixelFilters;
     auto list = CSSValueList::createSpaceSeparated();
     do {
-        RefPtr<CSSValue> filterValue = referenceFiltersAllowed ? consumeUrl(range) : nullptr;
+        RefPtr<CSSValue> filterValue = referenceFiltersAllowed ? consumeURL(range) : nullptr;
         if (!filterValue) {
             filterValue = consumeFilterFunction(range, context, allowedFunctions);
             if (!filterValue)
@@ -4578,7 +4578,7 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext
     }
 
     if (allowedImageTypes.contains(AllowedImageType::URLFunction)) {
-        if (auto string = consumeUrlAsStringView(range); !string.isNull()) {
+        if (auto string = consumeURLRaw(range); !string.isNull()) {
             return CSSImageValue::create(context.completeURL(string.toAtomString().string()),
                 context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
         }

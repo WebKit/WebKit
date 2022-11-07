@@ -367,6 +367,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagDownloadImageToDisk;
     case WebCore::ContextMenuItemTagCopyImageToClipboard:
         return kWKContextMenuItemTagCopyImageToClipboard;
+    case WebCore::ContextMenuItemTagPlayAllAnimations:
+        return kWKContextMenuItemTagPlayAllAnimations;
+    case WebCore::ContextMenuItemTagPauseAllAnimations:
+        return kWKContextMenuItemTagPauseAllAnimations;
 #if PLATFORM(GTK)
     case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
         return kWKContextMenuItemTagCopyImageUrlToClipboard;
@@ -571,6 +575,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagDownloadImageToDisk;
     case kWKContextMenuItemTagCopyImageToClipboard:
         return WebCore::ContextMenuItemTagCopyImageToClipboard;
+    case kWKContextMenuItemTagPlayAllAnimations:
+        return WebCore::ContextMenuItemTagPlayAllAnimations;
+    case kWKContextMenuItemTagPauseAllAnimations:
+        return WebCore::ContextMenuItemTagPauseAllAnimations;
     case kWKContextMenuItemTagOpenFrameInNewWindow:
 #if PLATFORM(GTK)
     case kWKContextMenuItemTagCopyImageUrlToClipboard:

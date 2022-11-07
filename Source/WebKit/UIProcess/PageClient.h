@@ -199,6 +199,10 @@ class InstallMissingMediaPluginsPermissionRequest;
 using LayerHostingContextID = uint32_t;
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+class WebKitWebResourceLoadManager;
+#endif
+
 class PageClient : public CanMakeWeakPtr<PageClient> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -664,6 +668,10 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     virtual void didEnterFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    virtual WebKitWebResourceLoadManager* webResourceLoadManager() = 0;
 #endif
 };
 

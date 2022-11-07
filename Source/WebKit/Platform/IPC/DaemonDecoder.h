@@ -45,7 +45,7 @@ public:
     template<typename T>
     std::optional<T> decode()
     {
-        return Coder<std::remove_const_t<std::remove_reference_t<T>>>::decode(*this);
+        return Coder<std::remove_cvref_t<T>>::decode(*this);
     }
 
     template<typename T>

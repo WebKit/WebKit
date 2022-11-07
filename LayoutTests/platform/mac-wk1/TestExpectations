@@ -2084,16 +2084,6 @@ webkit.org/b/244277 http/tests/webgpu/webgpu/api/validation/createTexture.html [
 
 webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/244312 http/tests/media/fairplay/fps-mse-unmuxed-same-key.html [ Pass Failure ]
-webkit.org/b/244312 http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
-webkit.org/b/244312 http/tests/media/fairplay/fps-hls.html [ Pass Failure ]
-
-webkit.org/b/244601 http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Failure ]
-
-webkit.org/b/245036 http/tests/media/fairplay/fps-hls-key-rotation.html [ Failure ]
-
-webkit.org/b/245037 [ Monterey ] http/tests/media/fairplay/fps-hls-update-reject.html [ Pass Failure ]
-
 webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass Timeout ]
 
 webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]

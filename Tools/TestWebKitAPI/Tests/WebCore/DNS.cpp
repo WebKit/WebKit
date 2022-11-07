@@ -25,9 +25,8 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include "Utilities.h"
-#include "WTFStringUtilities.h"
-
 #include <WebCore/DNS.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>

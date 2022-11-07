@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
+#include "Test.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
 

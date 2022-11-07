@@ -75,7 +75,7 @@ void SpeechRecognitionRemoteRealtimeMediaSource::stopProducingData()
 void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     m_buffer = nullptr;
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;

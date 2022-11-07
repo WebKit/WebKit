@@ -27,7 +27,7 @@ PASS XHTML1.0 Strict parsing &Amacr;
 PASS XHTML1.0 Strict parsing &amacr;
 PASS XHTML1.0 Strict parsing &amalg;
 PASS XHTML1.0 Strict parsing &amp;
-FAIL XHTML1.0 Strict parsing &AMP; assert_true: expected true got false
+PASS XHTML1.0 Strict parsing &AMP;
 PASS XHTML1.0 Strict parsing &andand;
 PASS XHTML1.0 Strict parsing &And;
 PASS XHTML1.0 Strict parsing &and;
@@ -1007,7 +1007,7 @@ PASS XHTML1.0 Strict parsing &lstrok;
 PASS XHTML1.0 Strict parsing &ltcc;
 PASS XHTML1.0 Strict parsing &ltcir;
 PASS XHTML1.0 Strict parsing &lt;
-FAIL XHTML1.0 Strict parsing &LT; assert_true: expected true got false
+PASS XHTML1.0 Strict parsing &LT;
 PASS XHTML1.0 Strict parsing &Lt;
 PASS XHTML1.0 Strict parsing &ltdot;
 PASS XHTML1.0 Strict parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS XHTML1.0 Strict parsing &nvHarr;
 PASS XHTML1.0 Strict parsing &nvinfin;
 PASS XHTML1.0 Strict parsing &nvlArr;
 PASS XHTML1.0 Strict parsing &nvle;
-FAIL XHTML1.0 Strict parsing &nvlt; assert_equals: XHTML1.0 Strict parsing the entity reference caused a parse error; expected 3 but got 1
+PASS XHTML1.0 Strict parsing &nvlt;
 PASS XHTML1.0 Strict parsing &nvltrie;
 PASS XHTML1.0 Strict parsing &nvrArr;
 PASS XHTML1.0 Strict parsing &nvrtrie;

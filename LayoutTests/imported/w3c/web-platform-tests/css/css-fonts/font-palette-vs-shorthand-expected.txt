@@ -5,8 +5,8 @@ A
 A
 A
 
-FAIL CSS Fonts Module Level 4: interaction of font-palette and font shorthand assert_equals: expected "" but got "50px colr"
-FAIL CSS Fonts Module Level 4: interaction of font-palette and font shorthand 1 assert_equals: expected "normal" but got "dark"
-FAIL CSS Fonts Module Level 4: interaction of font-palette and font shorthand 2 assert_equals: expected "" but got "50px colr"
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand 1
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand 2
 PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand 3
 

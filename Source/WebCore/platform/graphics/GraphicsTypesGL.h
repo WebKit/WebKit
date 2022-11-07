@@ -68,38 +68,6 @@ using GCGLContext = void*;
 typedef unsigned GLuint;
 #endif
 
-struct OwnedGLObject {
-    OwnedGLObject()
-        : OwnedGLObject(0)
-    { }
-    OwnedGLObject(PlatformGLObject object)
-        : m_object(object)
-    { }
-    OwnedGLObject(const OwnedGLObject&) = delete;
-    OwnedGLObject(OwnedGLObject&&) = delete;
-    ~OwnedGLObject()
-    {
-        ASSERT(!m_object, "Have you explicitly deleted this object? If so, call release().");
-    }
-
-    OwnedGLObject& operator=(const OwnedGLObject&) const = delete;
-    OwnedGLObject& operator=(OwnedGLObject&&) = delete;
-
-    operator PlatformGLObject() const { return m_object; }
-
-    [[nodiscard]] PlatformGLObject reset(PlatformGLObject newObject) {
-        std::swap(m_object, newObject);
-        return newObject;
-    }
-
-    [[nodiscard]] PlatformGLObject release() {
-        return reset(0);
-    }
-
-private:
-    PlatformGLObject m_object = 0;
-};
-
 inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
 
 template<typename T, size_t Extent = gcGLSpanDynamicExtent>

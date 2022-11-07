@@ -725,6 +725,127 @@ GstClockTime webkitGstElementGetCurrentRunningTime(GstElement* element)
 }
 #endif
 
+PlatformVideoColorSpace videoColorSpaceFromCaps(const GstCaps* caps)
+{
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, caps))
+        return { };
+
+    return videoColorSpaceFromInfo(info);
 }
+
+PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo& info)
+{
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> colorimetry(gst_video_colorimetry_to_string(&GST_VIDEO_INFO_COLORIMETRY(&info)));
+#endif
+    PlatformVideoColorSpace colorSpace;
+    switch (GST_VIDEO_INFO_COLORIMETRY(&info).matrix) {
+    case GST_VIDEO_COLOR_MATRIX_RGB:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Rgb;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_BT709:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_BT601:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt470bg;
+        break;
+    default:
+#ifndef GST_DISABLE_GST_DEBUG
+        GST_WARNING("Unhandled colorspace matrix from %s", colorimetry.get());
+#endif
+        break;
+    }
+
+    switch (GST_VIDEO_INFO_COLORIMETRY(&info).transfer) {
+    case GST_VIDEO_TRANSFER_SRGB:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
+        break;
+    case GST_VIDEO_TRANSFER_BT709:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
+        break;
+#if GST_CHECK_VERSION(1, 18, 0)
+    case GST_VIDEO_TRANSFER_BT601:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Smpte170m;
+        break;
+#endif
+    default:
+#ifndef GST_DISABLE_GST_DEBUG
+        GST_WARNING("Unhandled colorspace transfer from %s", colorimetry.get());
+#endif
+        break;
+    }
+
+    switch (GST_VIDEO_INFO_COLORIMETRY(&info).primaries) {
+    case GST_VIDEO_COLOR_PRIMARIES_BT709:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_BT470BG:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_SMPTE170M:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
+        break;
+    default:
+#ifndef GST_DISABLE_GST_DEBUG
+        GST_WARNING("Unhandled colorspace primaries from %s", colorimetry.get());
+#endif
+        break;
+    }
+    return colorSpace;
+}
+
+void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVideoColorSpace& colorSpace)
+{
+    if (colorSpace.matrix) {
+        switch (*colorSpace.matrix) {
+        case PlatformVideoMatrixCoefficients::Rgb:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_RGB;
+            break;
+        case PlatformVideoMatrixCoefficients::Bt709:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT709;
+            break;
+        case PlatformVideoMatrixCoefficients::Bt470bg:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT601;
+            break;
+        default:
+            break;
+        };
+    }
+
+    if (colorSpace.transfer) {
+        switch (*colorSpace.transfer) {
+        case PlatformVideoTransferCharacteristics::Iec6196621:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SRGB;
+            break;
+        case PlatformVideoTransferCharacteristics::Bt709:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT709;
+            break;
+        case PlatformVideoTransferCharacteristics::Smpte170m:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT601;
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (colorSpace.primaries) {
+        switch (*colorSpace.primaries) {
+        case PlatformVideoColorPrimaries::Bt709:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT709;
+            break;
+        case PlatformVideoColorPrimaries::Bt470bg:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470BG;
+            break;
+        case PlatformVideoColorPrimaries::Smpte170m:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE170M;
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+} // namespace WebCore
 
 #endif // USE(GSTREAMER)

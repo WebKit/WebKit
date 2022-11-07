@@ -218,7 +218,7 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(ConsumerSharedCARingBuf
 {
     stopThread();
     m_buffer = nullptr;
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_semaphore = WTFMove(semaphore);

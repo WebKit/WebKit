@@ -27,7 +27,7 @@ PASS XHTML1.0 Frameset parsing &Amacr;
 PASS XHTML1.0 Frameset parsing &amacr;
 PASS XHTML1.0 Frameset parsing &amalg;
 PASS XHTML1.0 Frameset parsing &amp;
-FAIL XHTML1.0 Frameset parsing &AMP; assert_true: expected true got false
+PASS XHTML1.0 Frameset parsing &AMP;
 PASS XHTML1.0 Frameset parsing &andand;
 PASS XHTML1.0 Frameset parsing &And;
 PASS XHTML1.0 Frameset parsing &and;
@@ -1007,7 +1007,7 @@ PASS XHTML1.0 Frameset parsing &lstrok;
 PASS XHTML1.0 Frameset parsing &ltcc;
 PASS XHTML1.0 Frameset parsing &ltcir;
 PASS XHTML1.0 Frameset parsing &lt;
-FAIL XHTML1.0 Frameset parsing &LT; assert_true: expected true got false
+PASS XHTML1.0 Frameset parsing &LT;
 PASS XHTML1.0 Frameset parsing &Lt;
 PASS XHTML1.0 Frameset parsing &ltdot;
 PASS XHTML1.0 Frameset parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS XHTML1.0 Frameset parsing &nvHarr;
 PASS XHTML1.0 Frameset parsing &nvinfin;
 PASS XHTML1.0 Frameset parsing &nvlArr;
 PASS XHTML1.0 Frameset parsing &nvle;
-FAIL XHTML1.0 Frameset parsing &nvlt; assert_equals: XHTML1.0 Frameset parsing the entity reference caused a parse error; expected 3 but got 1
+PASS XHTML1.0 Frameset parsing &nvlt;
 PASS XHTML1.0 Frameset parsing &nvltrie;
 PASS XHTML1.0 Frameset parsing &nvrArr;
 PASS XHTML1.0 Frameset parsing &nvrtrie;

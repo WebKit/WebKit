@@ -39,7 +39,7 @@ set(TestWTF_SOURCES
     Tests/WTF/CompletionHandlerTests.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
     Tests/WTF/Condition.cpp
-    Tests/WTF/CrossThreadCopier.cpp
+    Tests/WTF/CrossThreadCopierTests.cpp
     Tests/WTF/CrossThreadTask.cpp
     Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp

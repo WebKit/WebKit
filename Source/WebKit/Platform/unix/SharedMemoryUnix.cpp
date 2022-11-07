@@ -52,17 +52,6 @@
 
 namespace WebKit {
 
-SharedMemory::Handle::Handle()
-{
-}
-
-SharedMemory::Handle::~Handle()
-{
-}
-
-SharedMemory::Handle::Handle(Handle&&) = default;
-SharedMemory::Handle& SharedMemory::Handle::operator=(Handle&& other) = default;
-
 void SharedMemory::Handle::clear()
 {
     *this = { };

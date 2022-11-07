@@ -109,6 +109,9 @@ private:
     void zoomIn();
     void zoomOut();
 
+    void clearCookies();
+    void clearWebsiteData();
+
     void showLayerTree();
 
     HWND hwnd() { return m_viewWnd; }

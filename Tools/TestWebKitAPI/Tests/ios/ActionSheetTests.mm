@@ -24,12 +24,12 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "TestWKWebViewController.h"

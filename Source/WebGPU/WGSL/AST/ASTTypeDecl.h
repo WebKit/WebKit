@@ -32,31 +32,19 @@
 
 namespace WGSL::AST {
 
-class TypeDecl : public ASTNode {
+class TypeDecl : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    enum class Kind : uint8_t {
-        Array,
-        Named,
-        Parameterized,
-    };
-
     TypeDecl(SourceSpan span)
-        : ASTNode(span)
+        : Node(span)
     {
     }
-
-    virtual ~TypeDecl() { }
-
-    virtual Kind kind() const = 0;
-    bool isArray() const { return kind() == Kind::Array; }
-    bool isNamed() const { return kind() == Kind::Named; }
-    bool isParameterized() const { return kind() == Kind::Parameterized; }
 };
 
 class ArrayType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     ArrayType(SourceSpan span, std::unique_ptr<TypeDecl>&& elementType, std::unique_ptr<Expression>&& elementCount)
         : TypeDecl(span)
@@ -65,7 +53,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Array; }
+    Kind kind() const override;
     TypeDecl* maybeElementType() const { return m_elementType.get(); }
     Expression* maybeElementCount() const { return m_elementCount.get(); }
 
@@ -76,6 +64,7 @@ private:
 
 class NamedType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     NamedType(SourceSpan span, StringView&& name)
         : TypeDecl(span)
@@ -83,7 +72,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Named; }
+    Kind kind() const override;
     const StringView& name() const { return m_name; }
 
 private:
@@ -92,6 +81,7 @@ private:
 
 class ParameterizedType : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     enum class Base {
         Vec2,
@@ -144,7 +134,7 @@ public:
         return std::nullopt;
     }
 
-    Kind kind() const override { return Kind::Parameterized; }
+    Kind kind() const override;
     Base base() const { return m_base; }
     TypeDecl& elementType() { return m_elementType; }
 
@@ -160,6 +150,20 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
     static bool isType(const WGSL::AST::TypeDecl& type) { return type.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ArrayType, isArray())
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(NamedType, isNamed())
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ParameterizedType, isParameterized())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::TypeDecl)
+static bool isType(const WGSL::AST::Node& node)
+{
+    switch (node.kind()) {
+    case WGSL::AST::Node::Kind::ArrayType:
+    case WGSL::AST::Node::Kind::NamedType:
+    case WGSL::AST::Node::Kind::ParameterizedType:
+        return true;
+    default:
+        return false;
+    }
+}
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayType)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(NamedType)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ParameterizedType)

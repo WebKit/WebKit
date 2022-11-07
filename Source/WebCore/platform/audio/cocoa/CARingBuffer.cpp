@@ -32,78 +32,44 @@
 #include "Logging.h"
 #include <Accelerate/Accelerate.h>
 #include <CoreAudio/CoreAudioTypes.h>
-#include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 const uint32_t kGeneralRingTimeBoundsQueueSize = 32;
 const uint32_t kGeneralRingTimeBoundsQueueMask = kGeneralRingTimeBoundsQueueSize - 1;
 
 namespace WebCore {
 
-CARingBuffer::CARingBuffer() = default;
+CARingBuffer::CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams)
+    : m_pointers(numChannelStreams)
+    , m_channelCount(numChannelStreams)
+    , m_bytesPerFrame(bytesPerFrame)
+    , m_frameCount(frameCount)
+    , m_capacityBytes(computeCapacityBytes(bytesPerFrame, frameCount))
+{
+    ASSERT(WTF::isPowerOfTwo(frameCount));
+}
 
 CARingBuffer::~CARingBuffer() = default;
 
-CheckedSize CARingBuffer::computeCapacityBytes(const CAAudioStreamDescription& format, size_t frameCount)
+CheckedSize CARingBuffer::computeCapacityBytes(size_t bytesPerFrame, size_t frameCount)
 {
-    CheckedSize capacityBytes = format.bytesPerFrame();
-    capacityBytes *= frameCount;
-    return capacityBytes;
+    return CheckedSize { bytesPerFrame } * frameCount;
 }
 
-CheckedSize CARingBuffer::computeSizeForBuffers(const CAAudioStreamDescription& format, size_t frameCount)
+CheckedSize CARingBuffer::computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams)
 {
-    auto sizeForBuffers = computeCapacityBytes(format, frameCount);
-    sizeForBuffers *= format.numberOfChannelStreams();
-    return sizeForBuffers;
+    return computeCapacityBytes(bytesPerFrame, frameCount) * numChannelStreams;
 }
 
-void CARingBuffer::initializeAfterAllocation(const CAAudioStreamDescription& format, size_t frameCount)
+void CARingBuffer::initialize()
 {
-    m_description = format;
-    m_channelCount = format.numberOfChannelStreams();
-    m_bytesPerFrame = format.bytesPerFrame();
-    m_frameCount = frameCount;
-    m_capacityBytes = computeCapacityBytes(format, frameCount);
-
-    m_pointers.resize(m_channelCount);
     Byte* channelData = static_cast<Byte*>(data());
-
     for (auto& pointer : m_pointers) {
         pointer = channelData;
         channelData += m_capacityBytes;
     }
-
     flush();
-}
-
-bool CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frameCount)
-{
-    deallocate();
-    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
-
-    auto sizeForBuffers = computeSizeForBuffers(format, frameCount);
-    if (sizeForBuffers.hasOverflowed()) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Overflowed when trying to compute the storage size");
-        return false;
-    }
-
-    if (UNLIKELY(!allocateBuffers(sizeForBuffers, format, frameCount))) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers.value());
-        return false;
-    }
-
-    initializeAfterAllocation(format, frameCount);
-    return true;
-}
-
-void CARingBuffer::deallocate()
-{
-    deallocateBuffers();
-    m_pointers.clear();
-    m_channelCount = 0;
-    m_capacityBytes = 0;
-    m_frameCount = 0;
 }
 
 static void ZeroRange(Vector<Byte*>& pointers, size_t offset, size_t nbytes)
@@ -124,7 +90,7 @@ static void StoreABL(Vector<Byte*>& pointers, size_t destOffset, const AudioBuff
     }
 }
 
-static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytes, AudioStreamDescription::PCMFormat format, CARingBuffer::FetchMode mode)
+static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytes, CARingBuffer::FetchMode mode)
 {
     ASSERT(list->mNumberBuffers == pointers.size());
     auto bufferCount = std::min<size_t>(list->mNumberBuffers, pointers.size());
@@ -138,36 +104,32 @@ static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& po
         auto* destinationData = static_cast<Byte*>(dest.mData) + destOffset;
         auto* sourceData = pointer + srcOffset;
         nbytes = std::min<size_t>(nbytes, dest.mDataByteSize - destOffset);
-        if (mode == CARingBuffer::Copy)
+        switch (mode) {
+        case CARingBuffer::Copy:
             memcpy(destinationData, sourceData, nbytes);
-        else {
-            switch (format) {
-            case AudioStreamDescription::Int16: {
-                auto* destination = reinterpret_cast<int16_t*>(destinationData);
-                auto* source = reinterpret_cast<int16_t*>(sourceData);
-                for (size_t i = 0; i < nbytes / sizeof(int16_t); i++)
-                    destination[i] += source[i];
-                break;
-            }
-            case AudioStreamDescription::Int32: {
-                auto* destination = reinterpret_cast<int32_t*>(destinationData);
-                vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceData), 1, destination, 1, nbytes / sizeof(int32_t));
-                break;
-            }
-            case AudioStreamDescription::Float32: {
-                auto* destination = reinterpret_cast<float*>(destinationData);
-                vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceData), 1, destination, 1, nbytes / sizeof(float));
-                break;
-            }
-            case AudioStreamDescription::Float64: {
-                auto* destination = reinterpret_cast<double*>(destinationData);
-                vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceData), 1, destination, 1, nbytes / sizeof(double));
-                break;
-            }
-            case AudioStreamDescription::None:
-                ASSERT_NOT_REACHED();
-                break;
-            }
+            break;
+        case CARingBuffer::MixInt16: {
+            auto* destination = reinterpret_cast<int16_t*>(destinationData);
+            auto* source = reinterpret_cast<int16_t*>(sourceData);
+            for (size_t i = 0; i < nbytes / sizeof(int16_t); i++)
+                destination[i] += source[i];
+            break;
+        }
+        case CARingBuffer::MixInt32: {
+            auto* destination = reinterpret_cast<int32_t*>(destinationData);
+            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceData), 1, destination, 1, nbytes / sizeof(int32_t));
+            break;
+        }
+        case CARingBuffer::MixFloat32: {
+            auto* destination = reinterpret_cast<float*>(destinationData);
+            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceData), 1, destination, 1, nbytes / sizeof(float));
+            break;
+        }
+        case CARingBuffer::MixFloat64: {
+            auto* destination = reinterpret_cast<double*>(destinationData);
+            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceData), 1, destination, 1, nbytes / sizeof(double));
+            break;
+        }
         }
     }
 }
@@ -320,12 +282,12 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
     
     if (offset0 < offset1) {
         nbytes = offset1 - offset0;
-        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, m_description.format(), mode);
+        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode);
     } else {
         nbytes = m_capacityBytes - offset0;
-        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, m_description.format(), mode);
+        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode);
         if (offset1)
-            FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, m_description.format(), mode);
+            FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, mode);
         nbytes += offset1;
     }
     
@@ -337,8 +299,33 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
     }
 }
 
-InProcessCARingBuffer::InProcessCARingBuffer()
-    : m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
+std::unique_ptr<InProcessCARingBuffer> InProcessCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+{
+    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
+    auto bytesPerFrame = format.bytesPerFrame();
+    auto numChannelStreams = format.numberOfChannelStreams();
+
+    auto checkedSizeForBuffers = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams);
+    if (checkedSizeForBuffers.hasOverflowed()) {
+        RELEASE_LOG_FAULT(Media, "InProcessCARingBuffer::allocate: Overflowed when trying to compute the storage size");
+        return nullptr;
+    }
+    auto sizeForBuffers = checkedSizeForBuffers.value();
+    Vector<uint8_t> buffer;
+    if (!buffer.tryReserveCapacity(sizeForBuffers)) {
+        RELEASE_LOG_FAULT(Media, "InProcessCARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers);
+        return nullptr;
+    }
+    buffer.grow(sizeForBuffers);
+    std::unique_ptr<InProcessCARingBuffer> result { new InProcessCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, WTFMove(buffer) } };
+    result->initialize();
+    return result;
+}
+
+InProcessCARingBuffer::InProcessCARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams, Vector<uint8_t>&& buffer)
+    : CARingBuffer(bytesPerFrame, frameCount, numChannelStreams)
+    , m_buffer(WTFMove(buffer))
+    , m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
 {
 }
 
@@ -353,15 +340,6 @@ void InProcessCARingBuffer::flush()
         timeBounds.m_updateCounter = 0;
     }
     m_timeBoundsQueuePtr = 0;
-}
-
-bool InProcessCARingBuffer::allocateBuffers(size_t byteCount, const CAAudioStreamDescription&, size_t)
-{
-    if (!m_buffer.tryReserveCapacity(byteCount))
-        return false;
-
-    m_buffer.grow(byteCount);
-    return true;
 }
 
 void InProcessCARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)

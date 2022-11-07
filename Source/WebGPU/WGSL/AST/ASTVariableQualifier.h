@@ -43,16 +43,18 @@ enum class AccessMode : uint8_t {
     ReadWrite
 };
 
-class VariableQualifier final : public ASTNode {
+class VariableQualifier final : public Node {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     VariableQualifier(SourceSpan span, StorageClass storageClass, AccessMode accessMode)
-        : ASTNode(span)
+        : Node(span)
         , m_storageClass(storageClass)
         , m_accessMode(accessMode)
     {
     }
 
+    Kind kind() const override;
     StorageClass storageClass() const { return m_storageClass; }
     AccessMode accessMode() const { return m_accessMode; }
 
@@ -62,3 +64,5 @@ private:
 };
 
 } // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(VariableQualifier)

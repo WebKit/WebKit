@@ -41,7 +41,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::StructureAccess; }
+    Kind kind() const override;
     Expression& base() { return m_base.get(); }
     const StringView& fieldName() const { return m_fieldName; }
 
@@ -52,4 +52,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(StructureAccess, isStructureAccess())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructureAccess)

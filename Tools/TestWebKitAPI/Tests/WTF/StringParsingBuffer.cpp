@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
-
+#include "Test.h"
+#include "WTFTestUtilities.h"
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 

@@ -87,9 +87,6 @@ public:
             break;
         }
         m_source->removeObserver(*this);
-
-        if (m_ringBuffer)
-            m_ringBuffer->invalidate();
     }
 
     RealtimeMediaSource& source() { return m_source; }
@@ -159,9 +156,10 @@ private:
 
             // Allocate a ring buffer large enough to contain 2 seconds of audio.
             m_numberOfFrames = m_description.sampleRate() * 2;
-            m_ringBuffer.reset();
-            m_ringBuffer = makeUnique<ProducerSharedCARingBuffer>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-            m_ringBuffer->allocate(m_description.streamDescription(), m_numberOfFrames);
+            auto& format = m_description.streamDescription();
+            auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+            m_ringBuffer = WTFMove(ringBuffer);
+            m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, WTFMove(handle), format, m_numberOfFrames, *m_captureSemaphore, m_startTime, m_frameChunkSize), 0);
         }
 
         ASSERT(is<WebAudioBufferList>(audioData));
@@ -221,14 +219,6 @@ private:
             break;
         }
         return m_rotationSession->rotate(videoFrame, rotation, ImageRotationSessionVT::IsCGImageCompatible::No);
-    }
-
-    void storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
-    {
-        SharedMemory::Handle handle;
-        if (storage)
-            storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, WTFMove(handle), format, frameCount, *m_captureSemaphore, m_startTime, m_frameChunkSize), 0);
     }
 
     bool preventSourceFromStopping()

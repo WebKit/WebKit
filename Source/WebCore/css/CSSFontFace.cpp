@@ -60,28 +60,20 @@ template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients,
 
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
 {
+    bool allowDownloading = context && context->settingsValues().downloadableBinaryFontsEnabled;
     for (auto& src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
-        CSSFontFaceSrcValue& item = downcast<CSSFontFaceSrcValue>(src.get());
-        std::unique_ptr<CSSFontFaceSource> source;
-        SVGFontFaceElement* fontFaceElement = nullptr;
-        bool foundSVGFont = false;
-
-        foundSVGFont = item.isSVGFontFaceSrc() || item.svgFontFaceElement();
-        fontFaceElement = item.svgFontFaceElement();
-        bool allowDownloading = context && context->settingsValues().downloadableBinaryFontsEnabled;
-        if (!item.isLocal()) {
-            if (allowDownloading && item.isSupportedFormat()) {
-                if (auto fontRequest = item.fontLoadRequest(context, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
-                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(fontRequest)));
+        if (auto local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src.get())) {
+            if (!local->svgFontFaceElement())
+                fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName()));
+            else if (allowDownloading)
+                fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName(), *local->svgFontFaceElement()));
+        } else {
+            if (allowDownloading) {
+                if (auto request = downcast<CSSFontFaceSrcResourceValue>(src.get()).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
+                    fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request))));
             }
-        } else if (allowDownloading && fontFaceElement)
-            source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *fontFaceElement);
-        else if (!fontFaceElement)
-            source = makeUnique<CSSFontFaceSource>(fontFace, item.resource());
-
-        if (source)
-            fontFace.adoptSource(WTFMove(source));
+        }
     }
     fontFace.sourcesPopulated();
 }
@@ -246,7 +238,7 @@ void CSSFontFace::setStretch(CSSValue& style)
 
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
-    if (value.isFontStyleValue())
+    if (!is<CSSFontStyleRangeValue>(value))
         return FontSelectionRange { Style::BuilderConverter::convertFontStyleFromValue(value).value_or(normalItalicValue()) };
 
     auto& rangeValue = downcast<CSSFontStyleRangeValue>(value);

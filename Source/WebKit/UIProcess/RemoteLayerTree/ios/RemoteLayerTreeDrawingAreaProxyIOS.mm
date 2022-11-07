@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
 
 @interface WKDisplayLinkHandler : NSObject {
@@ -157,6 +158,11 @@ RemoteLayerTreeDrawingAreaProxyIOS::RemoteLayerTreeDrawingAreaProxyIOS(WebPagePr
 RemoteLayerTreeDrawingAreaProxyIOS::~RemoteLayerTreeDrawingAreaProxyIOS()
 {
     [m_displayLinkHandler invalidate];
+}
+
+std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyIOS::createScrollingCoordinatorProxy() const
+{
+    return makeUnique<RemoteScrollingCoordinatorProxyIOS>(m_webPageProxy);
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyIOS::delegatedScrollingMode() const

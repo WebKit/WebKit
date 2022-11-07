@@ -803,12 +803,6 @@ void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
         return image->setAllowsAnimation(allowsAnimation);
 }
 
-void HTMLImageElement::resetAllowsAnimation()
-{
-    if (auto* image = this->image())
-        return image->setAllowsAnimation(std::nullopt);
-}
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void HTMLImageElement::didUpdateAttachmentIdentifier()

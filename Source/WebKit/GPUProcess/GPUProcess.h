@@ -160,7 +160,6 @@ private:
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockMicrophoneConfigurationChange();
-    bool setCaptureAttributionString(const String&);
 #endif
 #if HAVE(SC_CONTENT_SHARING_SESSION)
     void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);

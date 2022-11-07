@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
+#include "IPCTestUtilities.h"
 
-#include "WTFStringUtilities.h" // NOLINT
-#include "IPCTestUtilities.h" // NOLINT
-#include <wtf/threads/BinarySemaphore.h> // NOLINT
+#include "Test.h"
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
 

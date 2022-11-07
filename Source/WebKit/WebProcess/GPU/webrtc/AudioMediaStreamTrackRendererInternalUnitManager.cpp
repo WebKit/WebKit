@@ -183,25 +183,15 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
     m_isPlaying = true;
 
     m_numberOfFrames = m_description->sampleRate() * 2;
-    m_ringBuffer.reset();
-    m_ringBuffer = makeUnique<ProducerSharedCARingBuffer>(std::bind(&AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-    m_ringBuffer->allocate(m_description->streamDescription(), m_numberOfFrames);
+    auto& format = m_description->streamDescription();
+    auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+    m_ringBuffer = WTFMove(ringBuffer);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), format, m_numberOfFrames, *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
 
     startThread();
-}
-
-void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged(SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
-{
-    if (!frameCount)
-        return;
-
-    SharedMemory::Handle handle;
-    if (memory)
-        memory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), format, frameCount, *m_semaphore }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stop()

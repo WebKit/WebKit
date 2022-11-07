@@ -975,6 +975,7 @@ void GPUConnectionToWebProcess::processIsStartingToCaptureAudio(GPUConnectionToW
 #if !PLATFORM(COCOA)
 bool GPUConnectionToWebProcess::setCaptureAttributionString()
 {
+    return false;
 }
 #endif
 #endif // ENABLE(MEDIA_STREAM)

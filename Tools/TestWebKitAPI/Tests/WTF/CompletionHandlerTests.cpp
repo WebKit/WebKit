@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include <wtf/CompletionHandler.h>
 
-#include "Utilities.h"
+#include "Test.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 

@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
@@ -32,6 +31,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
