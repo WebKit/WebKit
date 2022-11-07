@@ -213,7 +213,12 @@ static RefPtr<CSSFontFaceSrcValue> consumeFontFaceSrcURI(CSSParserTokenRange& ra
         // FIXME: We allow any identifier here and convert all to strings; specification calls for only certain identifiers.
         auto args = CSSPropertyParserHelpers::consumeFunction(range);
         auto& arg = args.consumeIncludingWhitespace();
-        if ((arg.type() != StringToken && arg.type() != IdentToken) || !args.atEnd())
+        if (!args.atEnd())
+            return nullptr;
+        if (arg.type() == IdentToken) {
+            if (!identMatches<CSSValueCollection, CSSValueEmbeddedOpentype, CSSValueOpentype, CSSValueSvg, CSSValueTruetype, CSSValueWoff, CSSValueWoff2>(arg.id()))
+                return nullptr;
+        } else if (arg.type() != StringToken)
             return nullptr;
         format = arg.value().toString();
     }
