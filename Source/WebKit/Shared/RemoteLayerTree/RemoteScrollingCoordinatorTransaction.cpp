@@ -243,8 +243,8 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::FooterHeight, footerHeight)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::TopContentInset, topContentInset)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame, fixedElementsLayoutRelativeToFrame)
+    SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled, asyncFrameOrOverflowScrollingEnabled)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport, visualViewportIsSmallerThanLayoutViewport)
-    // AsyncFrameOrOverflowScrollingEnabled is not relevant for UI-side compositing.
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking, wheelEventGesturesBecomeNonBlocking)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled, scrollingPerformanceTestingEnabled)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::LayoutViewport, layoutViewport)
@@ -357,8 +357,8 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::FooterHeight, int, setFooterHeight);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::TopContentInset, float, setTopContentInset);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame, bool, setFixedElementsLayoutRelativeToFrame);
+    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled, bool, setAsyncFrameOrOverflowScrollingEnabled);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport, bool, setVisualViewportIsSmallerThanLayoutViewport);
-    // AsyncFrameOrOverflowScrollingEnabled is not encoded.
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking, bool, setWheelEventGesturesBecomeNonBlocking)
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled, bool, setScrollingPerformanceTestingEnabled)
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::LayoutViewport, FloatRect, setLayoutViewport)
