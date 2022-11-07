@@ -1590,7 +1590,7 @@ inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& b
             length = primitiveValue.computeLength<Length>(conversionData);
         else {
             auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(builderState.style().computedFontSize());
-            length = { clampTo<float>(value, minValueForCssLength, maxValueForCssLength), LengthType::Fixed };
+            length = { clampTo<float>(value, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed };
         }
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, LengthType::Fixed);
