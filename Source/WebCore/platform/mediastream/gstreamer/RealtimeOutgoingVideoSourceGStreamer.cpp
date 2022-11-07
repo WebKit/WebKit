@@ -25,11 +25,18 @@
 #include "GStreamerRegistryScanner.h"
 #include "GStreamerVideoCaptureSource.h"
 #include "GStreamerVideoEncoder.h"
+#include <wtf/glib/WTFGType.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
 
 namespace WebCore {
+
+struct RealtimeOutgoingVideoSourceHolder {
+    RefPtr<RealtimeOutgoingVideoSourceGStreamer> source;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(RealtimeOutgoingVideoSourceHolder)
+
 
 RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
     : RealtimeOutgoingMediaSourceGStreamer(mediaStreamId, track)
@@ -38,6 +45,17 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const
 
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
+
+    m_stats.reset(gst_structure_new_empty("webrtc-outgoing-video-stats"));
+    auto holder = createRealtimeOutgoingVideoSourceHolder();
+    holder->source = this;
+    auto pad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
+    gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        auto* holder = static_cast<RealtimeOutgoingVideoSourceHolder*>(userData);
+        auto* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
+        holder->source->updateStats(buffer);
+        return GST_PAD_PROBE_OK;
+    }, holder, reinterpret_cast<GDestroyNotify>(destroyRealtimeOutgoingVideoSourceHolder));
 
     m_videoConvert = makeGStreamerElement("videoconvert", nullptr);
 
@@ -52,6 +70,14 @@ RTCRtpCapabilities RealtimeOutgoingVideoSourceGStreamer::rtpCapabilities() const
 {
     auto& registryScanner = GStreamerRegistryScanner::singleton();
     return registryScanner.videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
+}
+
+void RealtimeOutgoingVideoSourceGStreamer::updateStats(GstBuffer*)
+{
+    uint64_t framesSent = 0;
+    gst_structure_get_uint64(m_stats.get(), "frames-sent", &framesSent);
+    framesSent++;
+    gst_structure_set(m_stats.get(), "frames-sent", G_TYPE_UINT64, framesSent, "frames-encoded", G_TYPE_UINT64, framesSent, nullptr);
 }
 
 bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>& caps)

@@ -147,6 +147,13 @@ void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply
     m_observers.forEach(apply);
 }
 
+void RealtimeMediaSource::forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>& apply)
+{
+    Locker locker { m_videoFrameObserversLock };
+    for (auto* observer : m_videoFrameObservers)
+        apply(*observer);
+}
+
 void RealtimeMediaSource::notifyMutedObservers()
 {
     forEachObserver([](auto& observer) {

@@ -705,7 +705,7 @@ void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions
     }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
 }
 
-void GStreamerMediaEndpoint::getStats(GstPad* pad, Ref<DeferredPromise>&& promise)
+void GStreamerMediaEndpoint::getStats(GstPad* pad, const GstStructure* additionalStats, Ref<DeferredPromise>&& promise)
 {
     m_statsCollector->getStats([promise = WTFMove(promise), protectedThis = Ref(*this)](auto&& report) mutable {
         ASSERT(isMainThread());
@@ -715,7 +715,7 @@ void GStreamerMediaEndpoint::getStats(GstPad* pad, Ref<DeferredPromise>&& promis
         }
 
         promise->resolve<IDLInterface<RTCStatsReport>>(report.releaseNonNull());
-    }, pad);
+    }, pad, additionalStats);
 }
 
 MediaStream& GStreamerMediaEndpoint::mediaStreamFromRTCStream(String mediaStreamId)

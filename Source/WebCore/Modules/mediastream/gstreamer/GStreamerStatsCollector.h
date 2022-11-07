@@ -37,7 +37,7 @@ public:
     static Ref<GStreamerStatsCollector> create() { return adoptRef(*new GStreamerStatsCollector()); }
 
     void setElement(GstElement* element) { m_webrtcBin = element; }
-    void getStats(CollectorCallback&&, GstPad*);
+    void getStats(CollectorCallback&&, GstPad*, const GstStructure*);
 
 private:
     GRefPtr<GstElement> m_webrtcBin;

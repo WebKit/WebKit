@@ -62,7 +62,7 @@ public:
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
 
-    void getStats(GstPad*, Ref<DeferredPromise>&&);
+    void getStats(GstPad*, const GstStructure*, Ref<DeferredPromise>&&);
 
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
 

@@ -114,6 +114,10 @@ public:
 
         // May be called on a background thread.
         virtual void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) = 0;
+
+#if USE(GSTREAMER_WEBRTC)
+        virtual std::optional<uint64_t> queryDecodedVideoFramesCount() { return std::nullopt; }
+#endif
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -264,6 +268,7 @@ protected:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);
+    void forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>&);
 
     void end(Observer* = nullptr);
 
