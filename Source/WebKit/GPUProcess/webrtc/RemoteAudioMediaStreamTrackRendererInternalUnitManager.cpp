@@ -210,7 +210,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(Consume
 {
     if (m_isPlaying)
         stop();
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_readOffset = 0;

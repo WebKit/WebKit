@@ -88,10 +88,6 @@ private:
     unsigned numberOfOutputChannels() const { return m_numberOfOutputChannels; }
 #endif
 
-#if PLATFORM(COCOA)
-    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
-#endif
-
     RemoteAudioDestinationIdentifier m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;

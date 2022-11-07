@@ -68,7 +68,7 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer:
 {
     MESSAGE_CHECK(m_recordAudio);
     m_audioBufferList = nullptr;
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(WTFMove(handle), description, numberOfFrames);
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;

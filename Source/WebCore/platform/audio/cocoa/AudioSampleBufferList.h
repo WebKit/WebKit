@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CAAudioStreamDescription.h"
 #include "CARingBuffer.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>

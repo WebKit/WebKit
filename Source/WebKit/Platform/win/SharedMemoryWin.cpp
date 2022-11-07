@@ -32,14 +32,6 @@
 
 namespace WebKit {
 
-SharedMemory::Handle::Handle() = default;
-
-SharedMemory::Handle::Handle(Handle&&) = default;
-
-SharedMemory::Handle& SharedMemory::Handle::operator=(Handle&&) = default;
-
-SharedMemory::Handle::~Handle() = default;
-
 bool SharedMemory::Handle::isNull() const
 {
     return !m_handle;

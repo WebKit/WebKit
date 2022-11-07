@@ -73,14 +73,6 @@ static inline std::optional<size_t> safeRoundPage(size_t size)
     return roundedSize;
 }
 
-SharedMemory::Handle::Handle() = default;
-
-SharedMemory::Handle::Handle(Handle&&) = default;
-
-auto SharedMemory::Handle::operator=(Handle&& other) -> Handle& = default;
-
-SharedMemory::Handle::~Handle() = default;
-
 void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
 #if HAVE(MACH_MEMORY_ENTRY)

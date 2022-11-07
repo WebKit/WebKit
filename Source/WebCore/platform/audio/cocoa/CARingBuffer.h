@@ -28,8 +28,9 @@
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #include "AudioStreamDescription.h"
-#include "CAAudioStreamDescription.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <optional>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Lock.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -48,12 +49,10 @@ public:
         TooMuch, // fetch start time is earlier than buffer start time and fetch end time is later than buffer end time
     };
 
-    WEBCORE_EXPORT bool allocate(const CAAudioStreamDescription&, size_t frameCount);
-    WEBCORE_EXPORT void deallocate();
-
     WEBCORE_EXPORT Error store(const AudioBufferList*, size_t frameCount, uint64_t startFrame);
 
-    enum FetchMode { Copy, Mix };
+    enum FetchMode { Copy, MixInt16, MixInt32, MixFloat32, MixFloat64 };
+    static FetchMode fetchModeForMixing(AudioStreamDescription::PCMFormat);
     WEBCORE_EXPORT bool fetchIfHasEnoughData(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode = Copy);
 
     // Fills buffer with silence if there is not enough data.
@@ -66,14 +65,12 @@ public:
     uint32_t channelCount() const { return m_channelCount; }
 
 protected:
-    WEBCORE_EXPORT CARingBuffer();
-    WEBCORE_EXPORT void initializeAfterAllocation(const CAAudioStreamDescription& format, size_t frameCount);
+    WEBCORE_EXPORT CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
+    WEBCORE_EXPORT void initialize();
 
-    WEBCORE_EXPORT static CheckedSize computeCapacityBytes(const CAAudioStreamDescription& format, size_t frameCount);
-    WEBCORE_EXPORT static CheckedSize computeSizeForBuffers(const CAAudioStreamDescription& format, size_t frameCount);
+    WEBCORE_EXPORT static CheckedSize computeCapacityBytes(size_t bytesPerFrame, size_t frameCount);
+    WEBCORE_EXPORT static CheckedSize computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
 
-    virtual bool allocateBuffers(size_t, const CAAudioStreamDescription& format, size_t frameCount) = 0;
-    virtual void deallocateBuffers() = 0;
     virtual void* data() = 0;
     virtual void getCurrentFrameBoundsWithoutUpdate(uint64_t& startTime, uint64_t& endTime) = 0;
     virtual void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) = 0;
@@ -88,22 +85,38 @@ private:
     void fetchInternal(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode);
 
     Vector<Byte*> m_pointers;
-    uint32_t m_channelCount { 0 };
-    size_t m_bytesPerFrame { 0 };
-    uint32_t m_frameCount { 0 };
-    size_t m_capacityBytes { 0 };
-    CAAudioStreamDescription m_description;
+    const uint32_t m_channelCount;
+    const size_t m_bytesPerFrame;
+    const uint32_t m_frameCount;
+    const size_t m_capacityBytes;
 };
+
+inline CARingBuffer::FetchMode CARingBuffer::fetchModeForMixing(AudioStreamDescription::PCMFormat format)
+{
+    switch (format) {
+    case AudioStreamDescription::None:
+        ASSERT_NOT_REACHED();
+        return MixInt32;
+    case AudioStreamDescription::Int16:
+        return MixInt16;
+    case AudioStreamDescription::Int32:
+        return MixInt32;
+    case AudioStreamDescription::Float32:
+        return MixFloat32;
+    case AudioStreamDescription::Float64:
+        return MixFloat64;
+    }
+}
+
 
 class InProcessCARingBuffer final : public CARingBuffer {
 public:
-    WEBCORE_EXPORT InProcessCARingBuffer();
+    WEBCORE_EXPORT static std::unique_ptr<InProcessCARingBuffer> allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
     WEBCORE_EXPORT ~InProcessCARingBuffer();
     WEBCORE_EXPORT void flush() final;
 
 protected:
-    bool allocateBuffers(size_t byteCount, const CAAudioStreamDescription&, size_t) final;
-    void deallocateBuffers() final { m_buffer.clear(); }
+    WEBCORE_EXPORT InProcessCARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams, Vector<uint8_t>&& buffer);
     void* data() final { return m_buffer.data(); }
     void getCurrentFrameBoundsWithoutUpdate(uint64_t& startTime, uint64_t& endTime) final;
     void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final;
