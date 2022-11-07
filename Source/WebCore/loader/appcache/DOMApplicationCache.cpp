@@ -87,10 +87,10 @@ void DOMApplicationCache::abort()
 
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 {
-    auto* frame = this->frame();
-    if (!frame)
+    auto* window = this->window();
+    if (!window)
         return nullptr;
-    return frame->document();
+    return window->document();
 }
 
 } // namespace WebCore
