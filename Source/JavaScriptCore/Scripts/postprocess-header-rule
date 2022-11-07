@@ -50,9 +50,17 @@ function rewrite_headers () {
 
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
-        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
         [[ -n ${OSX_VERSION_NUMBER} ]] || OSX_VERSION_NUMBER=${TARGET_MAC_OS_X_VERSION_MAJOR}
-        [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER="0"
+
+        if [[ "${WK_PLATFORM_NAME}" == "maccatalyst" && "${LLVM_TARGET_TRIPLE_OS_VERSION}" == ios* ]]; then
+            # On Mac Catalyst `LLVM_TARGET_TRIPLE_OS_VERSION` will be in the format `ios{major}.{minor}`.
+            local ALIGNED_IOS_VERSION="${LLVM_TARGET_TRIPLE_OS_VERSION#ios}"
+            [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${ALIGNED_IOS_VERSION}
+            [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER=${ALIGNED_IOS_VERSION%%.*}
+        else
+            [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
+            [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER="0"
+        fi
     elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
