@@ -36,11 +36,6 @@ public:
 protected:
     RealtimeIncomingSourceGStreamer(Type, AtomString&& name);
 
-    void closeValve() const;
-    void openValve() const;
-
-    GRefPtr<GstElement> m_valve;
-
 private:
     // RealtimeMediaSource API
     void startProducingData() final;
@@ -51,6 +46,7 @@ private:
     void handleDownstreamEvent(GRefPtr<GstEvent>&&);
 
     GRefPtr<GstElement> m_bin;
+    GRefPtr<GstElement> m_valve;
     GRefPtr<GstElement> m_tee;
 };
 

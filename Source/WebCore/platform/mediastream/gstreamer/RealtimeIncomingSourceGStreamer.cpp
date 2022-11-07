@@ -39,10 +39,8 @@ RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(Type type, Atom
     m_tee = gst_element_factory_make("tee", nullptr);
     g_object_set(m_tee.get(), "allow-not-linked", true, nullptr);
 
-    auto* queue = gst_element_factory_make("queue", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_valve.get(), queue, m_tee.get(), nullptr);
-
-    gst_element_link_many(m_valve.get(), queue, m_tee.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_valve.get(), m_tee.get(), nullptr);
+    gst_element_link(m_valve.get(), m_tee.get());
 
     auto sinkPad = adoptGRef(gst_element_get_static_pad(m_valve.get(), "sink"));
     gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("sink", sinkPad.get()));
@@ -51,32 +49,20 @@ RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(Type type, Atom
 void RealtimeIncomingSourceGStreamer::startProducingData()
 {
     GST_DEBUG_OBJECT(bin(), "Starting data flow");
-    openValve();
+    if (m_valve)
+        g_object_set(m_valve.get(), "drop", FALSE, nullptr);
 }
 
 void RealtimeIncomingSourceGStreamer::stopProducingData()
 {
     GST_DEBUG_OBJECT(bin(), "Stopping data flow");
-    closeValve();
+    if (m_valve)
+        g_object_set(m_valve.get(), "drop", TRUE, nullptr);
 }
 
 const RealtimeMediaSourceCapabilities& RealtimeIncomingSourceGStreamer::capabilities()
 {
     return RealtimeMediaSourceCapabilities::emptyCapabilities();
-}
-
-void RealtimeIncomingSourceGStreamer::closeValve() const
-{
-    GST_DEBUG_OBJECT(m_bin.get(), "Closing valve");
-    if (m_valve)
-        g_object_set(m_valve.get(), "drop", true, nullptr);
-}
-
-void RealtimeIncomingSourceGStreamer::openValve() const
-{
-    GST_DEBUG_OBJECT(m_bin.get(), "Opening valve");
-    if (m_valve)
-        g_object_set(m_valve.get(), "drop", false, nullptr);
 }
 
 void RealtimeIncomingSourceGStreamer::registerClient()
