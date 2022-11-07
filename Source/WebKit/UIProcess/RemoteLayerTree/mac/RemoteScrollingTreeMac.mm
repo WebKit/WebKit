@@ -23,14 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteScrollingTreeMac.h"
+#import "config.h"
+#import "RemoteScrollingTreeMac.h"
 
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
-#include "RemoteScrollingCoordinatorProxy.h"
-#include "ScrollingTreeFrameScrollingNodeRemoteMac.h"
-#include "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
+#import "RemoteScrollingCoordinatorProxy.h"
+#import "ScrollingTreeFrameScrollingNodeRemoteMac.h"
+#import "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
+#import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;

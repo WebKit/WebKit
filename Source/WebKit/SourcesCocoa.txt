@@ -550,7 +550,7 @@ UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm
 
 UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
-UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.cpp
+UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollerMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp
