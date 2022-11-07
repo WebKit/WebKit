@@ -20,6 +20,7 @@
       // Next line because some browsers include the partial parsed result in the parser error returned document.
       parent.assert_equals(root.firstChild.nodeType, 3/*Text*/, friendlyMime + " parsing the entity reference caused a parse error;");
       var text = root.firstChild.data;
+      parent.assert_equals(text.length,expectedString.length);
       for (var i = 0, len = expectedString.length; i < len; i++) {
         parent.assert_equals(text.charCodeAt(i),expectedString.charCodeAt(i));
       }

@@ -1207,11 +1207,43 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
     if (!numberOfCodeUnits)
         return 0;
 
-    ASSERT(numberOfCodeUnits <= 4);
-    size_t entityLengthInUTF8 = convertUTF16EntityToUTF8(utf16DecodedEntity, numberOfCodeUnits,
-        reinterpret_cast<char*>(sharedXHTMLEntityResult), WTF_ARRAY_LENGTH(sharedXHTMLEntityResult));
-    if (!entityLengthInUTF8)
-        return 0;
+    constexpr size_t kSharedXhtmlEntityResultLength = WTF_ARRAY_LENGTH(sharedXHTMLEntityResult);
+    size_t entityLengthInUTF8;
+    // Unlike HTML parser, XML parser parses the content of named
+    // entities. So we need to escape '&' and '<'.
+    if (numberOfCodeUnits == 1 && utf16DecodedEntity[0] == '&') {
+        sharedXHTMLEntityResult[0] = '&';
+        sharedXHTMLEntityResult[1] = '#';
+        sharedXHTMLEntityResult[2] = '3';
+        sharedXHTMLEntityResult[3] = '8';
+        sharedXHTMLEntityResult[4] = ';';
+        entityLengthInUTF8 = 5;
+    } else if (numberOfCodeUnits == 1 && utf16DecodedEntity[0] == '<') {
+        sharedXHTMLEntityResult[0] = '&';
+        sharedXHTMLEntityResult[1] = '#';
+        sharedXHTMLEntityResult[2] = 'x';
+        sharedXHTMLEntityResult[3] = '3';
+        sharedXHTMLEntityResult[4] = 'C';
+        sharedXHTMLEntityResult[5] = ';';
+        entityLengthInUTF8 = 6;
+    } else if (numberOfCodeUnits == 2 && utf16DecodedEntity[0] == '<' && utf16DecodedEntity[1] == 0x20D2) {
+        sharedXHTMLEntityResult[0] = '&';
+        sharedXHTMLEntityResult[1] = '#';
+        sharedXHTMLEntityResult[2] = '6';
+        sharedXHTMLEntityResult[3] = '0';
+        sharedXHTMLEntityResult[4] = ';';
+        sharedXHTMLEntityResult[5] = 0xE2;
+        sharedXHTMLEntityResult[6] = 0x83;
+        sharedXHTMLEntityResult[7] = 0x92;
+        entityLengthInUTF8 = 8;
+    } else {
+        ASSERT(numberOfCodeUnits <= 4);
+        entityLengthInUTF8 = convertUTF16EntityToUTF8(utf16DecodedEntity, numberOfCodeUnits,
+            reinterpret_cast<char*>(sharedXHTMLEntityResult), kSharedXhtmlEntityResultLength);
+        if (!entityLengthInUTF8)
+            return 0;
+    }
+    ASSERT(entityLengthInUTF8 <= kSharedXhtmlEntityResultLength);
 
     xmlEntityPtr entity = sharedXHTMLEntity();
     entity->length = entityLengthInUTF8;
