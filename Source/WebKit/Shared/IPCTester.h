@@ -70,6 +70,7 @@ private:
     void releaseConnectionTester(IPCConnectionTesterIdentifier, CompletionHandler<void()>&&);
     void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
     void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
+    void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
 
     void stopIfNeeded();
 

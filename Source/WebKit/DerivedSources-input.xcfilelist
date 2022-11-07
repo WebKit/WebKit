@@ -32,10 +32,12 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/GPUProcess/GPUConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcess.messages.in
+$(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteDisplayListRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGL.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackend.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteAdapter.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteBindGroup.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.messages.in
@@ -58,12 +60,9 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSampler.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteShaderModule.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
-$(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
-$(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/InitializationSegmentInfo.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/MediaDescriptionInfo.serialization.in
-$(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
-$(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioDestinationManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxyManager.messages.in
@@ -86,6 +85,7 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteSourceBufferProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteTextTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoTrackProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
@@ -157,6 +157,7 @@ $(PROJECT_DIR)/Shared/IPCConnectionTester.messages.in
 $(PROJECT_DIR)/Shared/IPCStreamTester.messages.in
 $(PROJECT_DIR)/Shared/IPCStreamTesterProxy.messages.in
 $(PROJECT_DIR)/Shared/IPCTester.messages.in
+$(PROJECT_DIR)/Shared/IPCTesterReceiver.messages.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in

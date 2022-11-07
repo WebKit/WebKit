@@ -152,6 +152,7 @@ MESSAGE_RECEIVERS = \
 	Shared/IPCStreamTester \
 	Shared/IPCStreamTesterProxy \
 	Shared/IPCTester \
+	Shared/IPCTesterReceiver \
 	UIProcess/WebFullScreenManagerProxy \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \

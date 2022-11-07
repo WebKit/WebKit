@@ -5881,6 +5881,8 @@
 		7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyFunctionsGenerated.cpp; sourceTree = "<group>"; };
 		7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLCocoa.cpp; sourceTree = "<group>"; };
 		7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiverMatcher.h; sourceTree = "<group>"; };
+		7BF19B5F290FC5B400EF322A /* IPCTesterReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCTesterReceiver.h; sourceTree = "<group>"; };
+		7BF19B60290FC5B400EF322A /* IPCTesterReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCTesterReceiver.cpp; sourceTree = "<group>"; };
 		7BFCCD2528B4D180009FC707 /* XPCConnectionTerminationWatchdog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCConnectionTerminationWatchdog.h; sourceTree = "<group>"; };
 		7BFCCD2628B4D180009FC707 /* XPCConnectionTerminationWatchdog.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCConnectionTerminationWatchdog.mm; sourceTree = "<group>"; };
 		7C065F291C8CD95F00C2D950 /* WebUserContentControllerDataTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserContentControllerDataTypes.cpp; sourceTree = "<group>"; };
@@ -8315,6 +8317,8 @@
 				7B2DDD5E27CCD9710060ABAB /* IPCStreamTesterProxy.h */,
 				7B50E97F2771F6CE003DAAC4 /* IPCTester.cpp */,
 				7B50E9802771F6CF003DAAC4 /* IPCTester.h */,
+				7BF19B60290FC5B400EF322A /* IPCTesterReceiver.cpp */,
+				7BF19B5F290FC5B400EF322A /* IPCTesterReceiver.h */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContext.cpp */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				F476894628D2B5CD00073641 /* LayerTreeContext.serialization.in */,

@@ -201,6 +201,7 @@ Shared/InspectorExtensionTypes.cpp
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
+Shared/IPCTesterReceiver.cpp
 Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
 Shared/NavigationActionData.cpp
@@ -846,6 +847,7 @@ IPCConnectionTesterMessageReceiver.cpp
 IPCStreamTesterMessageReceiver.cpp
 IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
+IPCTesterReceiverMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
