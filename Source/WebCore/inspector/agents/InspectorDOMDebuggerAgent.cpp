@@ -362,7 +362,7 @@ void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
 
 void InspectorDOMDebuggerAgent::willSendRequest(ResourceRequest& request)
 {
-    if (request.requester() == ResourceRequest::Requester::XHR || request.requester() == ResourceRequest::Requester::Fetch)
+    if (request.requester() == ResourceRequestRequester::XHR || request.requester() == ResourceRequestRequester::Fetch)
         return;
 
     breakOnURLIfNeeded(request.url().string());

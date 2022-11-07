@@ -319,13 +319,6 @@ template<> struct ArgumentCoder<WebCore::DecomposedGlyphs> {
     static std::optional<Ref<WebCore::DecomposedGlyphs>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::ResourceRequest> {
-    static void encode(Encoder&, const WebCore::ResourceRequest&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ResourceRequest&);
-    static void encodePlatformData(Encoder&, const WebCore::ResourceRequest&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ResourceRequest&);
-};
-
 template<> struct ArgumentCoder<WebCore::ResourceError> {
     static void encode(Encoder&, const WebCore::ResourceError&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ResourceError&);

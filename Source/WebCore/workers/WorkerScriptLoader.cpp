@@ -105,7 +105,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
 
     // Only used for importScripts that prescribes NoCors mode.
     ASSERT(mode == FetchOptions::Mode::NoCors);
-    request->setRequester(ResourceRequest::Requester::ImportScripts);
+    request->setRequester(ResourceRequestRequester::ImportScripts);
 
     ThreadableLoaderOptions options;
     options.credentials = FetchOptions::Credentials::Include;

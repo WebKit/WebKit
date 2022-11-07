@@ -1144,3 +1144,91 @@ header: <WebCore/DisplayListItems.h>
     uint8_t colorData().resolved().blue
     uint8_t colorData().resolved().alpha
 }
+
+header: <WebCore/HTTPHeaderMap.h>
+[Nested, CustomHeader] struct WebCore::HTTPHeaderMap::CommonHeader {
+    WebCore::HTTPHeaderName key;
+    String value;
+};
+
+header: <WebCore/HTTPHeaderMap.h>
+[Nested, CustomHeader] struct WebCore::HTTPHeaderMap::UncommonHeader {
+    String key;
+    String value;
+};
+
+class WebCore::HTTPHeaderMap {
+    Vector<WebCore::HTTPHeaderMap::CommonHeader, 0, CrashOnOverflow, 6> commonHeaders();
+    Vector<WebCore::HTTPHeaderMap::UncommonHeader, 0, CrashOnOverflow, 0> uncommonHeaders();
+}
+
+struct WebCore::ElementContext {
+    WebCore::FloatRect boundingRect;
+    WebCore::PageIdentifier webPageIdentifier;
+    WebCore::ScriptExecutionContextIdentifier documentIdentifier;
+    WebCore::ElementIdentifier elementIdentifier;
+};
+
+header: <WebCore/FrameLoaderTypes.h>
+[CustomHeader] struct WebCore::SystemPreviewInfo {
+    WebCore::ElementContext element;
+    WebCore::IntRect previewRect;
+    bool isPreview;
+};
+
+header: <WebCore/ResourceRequest.h>
+[CustomHeader, Nested] class WebCore::ResourceRequest::RequestData {
+    URL m_url;
+    double m_timeoutInterval;
+    URL m_firstPartyForCookies;
+    String m_httpMethod;
+    WebCore::HTTPHeaderMap m_httpHeaderFields;
+    Vector<String> m_responseContentDispositionEncodingFallbackArray;
+    WebCore::ResourceRequestCachePolicy m_cachePolicy;
+    WebCore::ResourceRequestBase::SameSiteDisposition m_sameSiteDisposition;
+    WebCore::ResourceLoadPriority m_priority;
+    WebCore::ResourceRequestRequester m_requester;
+    bool m_allowCookies;
+    bool m_isTopSite;
+    bool m_isAppInitiated;
+};
+
+#if USE(SOUP)
+header: <WebCore/ResourceRequest.h>
+[CustomHeader=True] struct WebCore::ResourceRequestPlatformData {
+    WebCore::ResourceRequest::RequestData requestData;
+    std::optional<String> flattenedHTTPBody;
+    bool acceptEncoding;
+    uint16_t redirectCount;
+};
+#endif
+
+#if PLATFORM(COCOA) && USE(SYSTEM_PREVIEW)
+[CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
+    std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
+    String cachePartition();
+    bool hiddenFromInspector();
+    std::optional<WebCore::SystemPreviewInfo> systemPreviewInfo();
+};
+#endif
+
+#if PLATFORM(COCOA) && !USE(SYSTEM_PREVIEW)
+[CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
+    std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
+    String cachePartition();
+    bool hiddenFromInspector();
+};
+#endif
+
+#if USE(CURL)
+[CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
+    WebCore::ResourceRequest::RequestData getRequestDataToSerialize();
+};
+#endif
+
+#if !USE(CURL) && !PLATFORM(COCOA)
+header: <WebCore/ResourceRequest.h>
+[CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
+    std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
+};
+#endif

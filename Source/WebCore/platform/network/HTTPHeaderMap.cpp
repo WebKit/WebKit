@@ -42,6 +42,12 @@ HTTPHeaderMap::HTTPHeaderMap()
 {
 }
 
+HTTPHeaderMap::HTTPHeaderMap(CommonHeadersVector&& commonHeaders, UncommonHeadersVector&& uncommonHeaders)
+    : m_commonHeaders(WTFMove(commonHeaders))
+    , m_uncommonHeaders(WTFMove(uncommonHeaders))
+{
+}
+
 HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const &
 {
     HTTPHeaderMap map;

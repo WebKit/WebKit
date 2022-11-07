@@ -636,7 +636,7 @@ static bool shouldClearReferrerOnHTTPSToHTTPRedirect(Frame* frame)
 WebLoaderStrategy::SyncLoadResult WebLoaderStrategy::loadDataURLSynchronously(const ResourceRequest& request)
 {
     auto mode = DataURLDecoder::Mode::Legacy;
-    if (request.requester() == ResourceRequest::Requester::Fetch)
+    if (request.requester() == ResourceRequestRequester::Fetch)
         mode = DataURLDecoder::Mode::ForgivingBase64;
 
     SyncLoadResult result;

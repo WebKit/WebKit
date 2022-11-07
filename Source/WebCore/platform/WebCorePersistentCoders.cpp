@@ -35,6 +35,7 @@
 #include "HTTPHeaderMap.h"
 #include "NavigationPreloadState.h"
 #include "RegistrationDatabase.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/persistence/PersistentCoders.h>
 
@@ -176,6 +177,109 @@ std::optional<WebCore::ImportedScriptAttributes> Coder<WebCore::ImportedScriptAt
     } };
 }
 #endif
+
+void Coder<WebCore::ResourceRequest>::encode(Encoder& encoder, const WebCore::ResourceRequest& instance)
+{
+    ASSERT(!instance.httpBody());
+    ASSERT(!instance.platformRequestUpdated());
+    encoder << instance.url();
+    encoder << instance.timeoutInterval();
+    encoder << instance.firstPartyForCookies().string();
+    encoder << instance.httpMethod();
+    encoder << instance.httpHeaderFields();
+    encoder << instance.responseContentDispositionEncodingFallbackArray();
+    encoder << instance.cachePolicy();
+    encoder << instance.allowCookies();
+    encoder << instance.sameSiteDisposition();
+    encoder << instance.isTopSite();
+    encoder << instance.priority();
+    encoder << instance.requester();
+    encoder << instance.isAppInitiated();
+}
+
+std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decode(Decoder& decoder)
+{
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+
+    std::optional<double> timeoutInterval;
+    decoder >> timeoutInterval;
+    if (!timeoutInterval)
+        return std::nullopt;
+
+    std::optional<String> firstPartyForCookies;
+    decoder >> firstPartyForCookies;
+    if (!firstPartyForCookies)
+        return std::nullopt;
+
+    std::optional<String> httpMethod;
+    decoder >> httpMethod;
+    if (!httpMethod)
+        return std::nullopt;
+
+    std::optional<WebCore::HTTPHeaderMap> fields;
+    decoder >> fields;
+    if (!fields)
+        return std::nullopt;
+
+    std::optional<Vector<String>> array;
+    decoder >> array;
+    if (!array)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceRequestCachePolicy> cachePolicy;
+    decoder >> cachePolicy;
+    if (!cachePolicy)
+        return std::nullopt;
+
+    std::optional<bool> allowCookies;
+    decoder >> allowCookies;
+    if (!allowCookies)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceRequestBase::SameSiteDisposition> sameSiteDisposition;
+    decoder >> sameSiteDisposition;
+    if (!sameSiteDisposition)
+        return std::nullopt;
+
+    std::optional<bool> isTopSite;
+    decoder >> isTopSite;
+    if (!isTopSite)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceLoadPriority> priority;
+    decoder >> priority;
+    if (!priority)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceRequestRequester> requester;
+    decoder >> requester;
+    if (!requester)
+        return std::nullopt;
+
+    std::optional<bool> isAppInitiated;
+    decoder >> isAppInitiated;
+    if (!isAppInitiated)
+        return std::nullopt;
+
+    WebCore::ResourceRequest request;
+    request.setURL(WTFMove(*url));
+    request.setTimeoutInterval(WTFMove(*timeoutInterval));
+    request.setFirstPartyForCookies(URL({ }, *firstPartyForCookies));
+    request.setHTTPMethod(WTFMove(*httpMethod));
+    request.setHTTPHeaderFields(WTFMove(*fields));
+    request.setResponseContentDispositionEncodingFallbackArray(WTFMove(*array));
+    request.setCachePolicy(*cachePolicy);
+    request.setAllowCookies(*allowCookies);
+    request.setSameSiteDisposition(*sameSiteDisposition);
+    request.setIsTopSite(*isTopSite);
+    request.setPriority(*priority);
+    request.setRequester(*requester);
+    request.setIsAppInitiated(*isAppInitiated);
+    return { request };
+}
 
 #if PLATFORM(COCOA)
 

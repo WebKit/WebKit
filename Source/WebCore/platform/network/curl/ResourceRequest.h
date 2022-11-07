@@ -61,6 +61,14 @@ public:
     {
     }
 
+    ResourceRequest(ResourceRequestBase&& base)
+        : ResourceRequestBase(WTFMove(base))
+    {
+    }
+
+    WEBCORE_EXPORT static ResourceRequest fromResourceRequestData(ResourceRequestBase::RequestData&&);
+    WEBCORE_EXPORT ResourceRequestBase::RequestData getRequestDataToSerialize() const;
+
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
     // Needed for compatibility.
@@ -69,9 +77,6 @@ public:
     // The following two stubs are for compatibility with CFNetwork, and are not used.
     static bool httpPipeliningEnabled() { return false; }
     static void setHTTPPipeliningEnabled(bool) { }
-
-    template<class Encoder> void encodeWithPlatformData(Encoder&) const;
-    template<class Decoder> WARN_UNUSED_RETURN bool decodeWithPlatformData(Decoder&);
 
 private:
     friend class ResourceRequestBase;
@@ -85,20 +90,5 @@ private:
 
     static bool s_httpPipeliningEnabled;
 };
-
-template<class Encoder>
-void ResourceRequest::encodeWithPlatformData(Encoder& encoder) const
-{
-    encodeBase(encoder);
-}
-
-template<class Decoder>
-bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
-{
-    if (!decodeBase(decoder))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

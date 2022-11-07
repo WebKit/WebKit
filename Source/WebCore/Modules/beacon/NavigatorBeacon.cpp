@@ -123,7 +123,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
 
     ResourceRequest request(parsedUrl);
     request.setHTTPMethod("POST"_s);
-    request.setRequester(ResourceRequest::Requester::Beacon);
+    request.setRequester(ResourceRequestRequester::Beacon);
     if (auto* documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 

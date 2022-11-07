@@ -125,7 +125,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         return;
 
     ResourceRequest request(pingURL);
-    request.setRequester(ResourceRequest::Requester::Ping);
+    request.setRequester(ResourceRequestRequester::Ping);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Ping))

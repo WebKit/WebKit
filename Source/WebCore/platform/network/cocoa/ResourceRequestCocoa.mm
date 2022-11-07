@@ -50,11 +50,85 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 #endif
 }
 
+ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, const String& cachePartition, bool hiddenFromInspector
+#if USE(SYSTEM_PREVIEW)
+    , const std::optional<SystemPreviewInfo>& systemPreviewInfo
+#endif
+    )
+{
+    if (platformData.m_urlRequest) {
+        setRequester(*platformData.m_requester);
+        m_nsRequest = platformData.m_urlRequest;
+        setIsAppInitiated(*platformData.m_isAppInitiated);
+    }
+
+    setCachePartition(cachePartition);
+    setHiddenFromInspector(hiddenFromInspector);
+#if USE(SYSTEM_PREVIEW)
+    m_systemPreviewInfo = systemPreviewInfo;
+#endif
+}
+
+ResourceRequestData ResourceRequest::getRequestDataToSerialize() const
+{
+    if (encodingRequiresPlatformData())
+        return getResourceRequestPlatformData();
+    return m_requestData;
+}
+
+ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData requestData, const String& cachePartition, bool hiddenFromInspector
+#if USE(SYSTEM_PREVIEW)
+    , const std::optional<SystemPreviewInfo>& systemPreviewInfo
+#endif
+    )
+{
+    if (std::holds_alternative<RequestData>(requestData)) {
+        
+#if USE(SYSTEM_PREVIEW)
+        return ResourceRequest(WTFMove(std::get<RequestData>(requestData)), cachePartition, hiddenFromInspector, systemPreviewInfo);
+#else
+        return ResourceRequest(WTFMove(std::get<RequestData>(requestData)), cachePartition, hiddenFromInspector);
+#endif
+    }
+#if USE(SYSTEM_PREVIEW)
+    return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)), cachePartition, hiddenFromInspector, systemPreviewInfo);
+#else
+    return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)), cachePartition, hiddenFromInspector);
+#endif
+}
+
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
     updatePlatformRequest(bodyPolicy);
     auto requestCopy = m_nsRequest;
     return requestCopy.autorelease();
+}
+
+ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() const
+{
+    RELEASE_ASSERT(m_httpBody || m_nsRequest);
+    
+    auto requestToSerialize = retainPtr(this->nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
+
+    if (Class requestClass = [requestToSerialize class]; UNLIKELY(requestClass != [NSURLRequest class] && requestClass != [NSMutableURLRequest class])) {
+        WebCore::ResourceRequest request(requestToSerialize.get());
+        request.replacePlatformRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+        requestToSerialize = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
+    }
+    ASSERT([requestToSerialize class] == [NSURLRequest class] || [requestToSerialize class] == [NSMutableURLRequest class]);
+
+    if (!requestToSerialize)
+        return ResourceRequestPlatformData { NULL, std::nullopt, std::nullopt };
+
+    // We don't send HTTP body over IPC for better performance.
+    // Also, it's not always possible to do, as streams can only be created in process that does networking.
+    if ([requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream]) {
+        auto mutableRequest = adoptNS([requestToSerialize mutableCopy]);
+        [mutableRequest setHTTPBody:nil];
+        [mutableRequest setHTTPBodyStream:nil];
+        requestToSerialize = WTFMove(mutableRequest);
+    }
+    return ResourceRequestPlatformData { WTFMove(requestToSerialize), isAppInitiated(), requester() };
 }
 
 CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
@@ -92,37 +166,37 @@ static inline NSURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceReque
 
 void ResourceRequest::doUpdateResourceRequest()
 {
-    m_url = [m_nsRequest URL];
+    m_requestData.m_url = [m_nsRequest URL];
 
-    if (m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
-        m_cachePolicy = fromPlatformRequestCachePolicy([m_nsRequest cachePolicy]);
-    m_timeoutInterval = [m_nsRequest timeoutInterval];
-    m_firstPartyForCookies = [m_nsRequest mainDocumentURL];
+    if (m_requestData.m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
+        m_requestData.m_cachePolicy = fromPlatformRequestCachePolicy([m_nsRequest cachePolicy]);
+    m_requestData.m_timeoutInterval = [m_nsRequest timeoutInterval];
+    m_requestData.m_firstPartyForCookies = [m_nsRequest mainDocumentURL];
 
     URL siteForCookies { [m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
-    m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
+    m_requestData.m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_requestData.m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
-    m_isTopSite = static_cast<NSNumber*>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
+    m_requestData.m_isTopSite = static_cast<NSNumber*>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
 
     if (NSString* method = [m_nsRequest HTTPMethod])
-        m_httpMethod = method;
-    m_allowCookies = [m_nsRequest HTTPShouldHandleCookies];
+        m_requestData.m_httpMethod = method;
+    m_requestData.m_allowCookies = [m_nsRequest HTTPShouldHandleCookies];
 
     if (resourcePrioritiesEnabled())
-        m_priority = toResourceLoadPriority(m_nsRequest ? CFURLRequestGetRequestPriority([m_nsRequest _CFURLRequest]) : 0);
+        m_requestData.m_priority = toResourceLoadPriority(m_nsRequest ? CFURLRequestGetRequestPriority([m_nsRequest _CFURLRequest]) : 0);
 
-    m_httpHeaderFields.clear();
+    m_requestData.m_httpHeaderFields.clear();
     [[m_nsRequest allHTTPHeaderFields] enumerateKeysAndObjectsUsingBlock: ^(NSString *name, NSString *value, BOOL *) {
-        m_httpHeaderFields.set(name, value);
+        m_requestData.m_httpHeaderFields.set(name, value);
     }];
 
-    m_responseContentDispositionEncodingFallbackArray.clear();
+    m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
     NSArray *encodingFallbacks = [m_nsRequest contentDispositionEncodingFallbackArray];
-    m_responseContentDispositionEncodingFallbackArray.reserveCapacity([encodingFallbacks count]);
+    m_requestData.m_responseContentDispositionEncodingFallbackArray.reserveCapacity([encodingFallbacks count]);
     for (NSNumber *encodingFallback in [m_nsRequest contentDispositionEncodingFallbackArray]) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
         if (encoding != kCFStringEncodingInvalidId)
-            m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(CFStringConvertEncodingToIANACharSetName(encoding));
+            m_requestData.m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(CFStringConvertEncodingToIANACharSetName(encoding));
     }
 
     if (m_nsRequest) {
@@ -182,7 +256,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
 
 #if ENABLE(APP_PRIVACY_REPORT)
-    nsRequest.get().attribution = m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+    nsRequest.get().attribution = m_requestData.m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
     if (ResourceRequest::httpPipeliningEnabled())
@@ -209,8 +283,8 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
 
-    [nsRequest _setProperty:siteForCookies(m_sameSiteDisposition, [nsRequest URL]) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
-    [nsRequest _setProperty:m_isTopSite ? @YES : @NO forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
+    [nsRequest _setProperty:siteForCookies(m_requestData.m_sameSiteDisposition, [nsRequest URL]) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
+    [nsRequest _setProperty:m_requestData.m_isTopSite ? @YES : @NO forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
 
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
     for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
@@ -220,7 +294,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setValue:(__bridge NSString *)encodedValue.get() forHTTPHeaderField:header.key];
     }
 
-    [nsRequest setContentDispositionEncodingFallbackArray:createNSArray(m_responseContentDispositionEncodingFallbackArray, [] (auto& name) -> NSNumber * {
+    [nsRequest setContentDispositionEncodingFallbackArray:createNSArray(m_requestData.m_responseContentDispositionEncodingFallbackArray, [] (auto& name) -> NSNumber * {
         auto encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(name.createCFString().get()));
         if (encoding == kCFStringEncodingInvalidId)
             return nil;
@@ -234,8 +308,8 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
 
 #if PLATFORM(MAC)
-    if (m_url.isLocalFile()) {
-        auto filePath = m_url.fileSystemPath();
+    if (m_requestData.m_url.isLocalFile()) {
+        auto filePath = m_requestData.m_url.fileSystemPath();
         if (!filePath.isNull()) {
             auto fileDevice = FileSystem::getFileDeviceId(filePath);
             if (fileDevice && fileDevice.value())
@@ -262,7 +336,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
 
 #if ENABLE(APP_PRIVACY_REPORT)
-    nsRequest.get().attribution = m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+    nsRequest.get().attribution = m_requestData.m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
     FormData* formData = httpBody();
@@ -276,7 +350,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
             [nsRequest setValue:lengthString forHTTPHeaderField:@"Content-Length"];
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
-            m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString);
+            m_requestData.m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString);
         }
     }
 

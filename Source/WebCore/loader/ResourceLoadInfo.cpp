@@ -42,7 +42,7 @@ static_assert(!(LoadContextMask & ActionConditionMask), "LoadContextMask and Act
 static_assert(!(LoadTypeMask & ActionConditionMask), "LoadTypeMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
 static_assert(static_cast<uint64_t>(AllResourceFlags) << 32 == ActionFlagMask, "ActionFlagMask should cover all the action flags");
 
-OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceRequestBase::Requester requester)
+OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceRequestRequester requester)
 {
     switch (type) {
     case CachedResource::Type::LinkPrefetch:
@@ -69,8 +69,8 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
         return { ResourceType::Media };
 
     case CachedResource::Type::RawResource:
-        if (requester == ResourceRequestBase::Requester::XHR
-            || requester == ResourceRequestBase::Requester::Fetch)
+        if (requester == ResourceRequestRequester::XHR
+            || requester == ResourceRequestRequester::Fetch)
             return { ResourceType::Fetch };
         FALLTHROUGH;
     case CachedResource::Type::Beacon:

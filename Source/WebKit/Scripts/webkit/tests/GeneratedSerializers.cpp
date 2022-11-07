@@ -115,11 +115,11 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 
     return {
         Namespace::Subnamespace::StructName {
-            WTFMove(*firstMemberName),
+            WTFMove(*firstMemberName)
 #if ENABLE(SECOND_MEMBER)
-            WTFMove(*secondMemberName),
+            , WTFMove(*secondMemberName)
 #endif
-            WTFMove(*nullableTestMember)
+            , WTFMove(*nullableTestMember)
         }
     };
 }
@@ -167,10 +167,10 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 
     return {
         Namespace::OtherClass {
-            WTFMove(*isNull),
-            WTFMove(*a),
-            WTFMove(*b),
-            WTFMove(*dataDetectorResults)
+            WTFMove(*isNull)
+            , WTFMove(*a)
+            , WTFMove(*b)
+            , WTFMove(*dataDetectorResults)
         }
     };
 }
@@ -216,9 +216,9 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
 
     return {
         Namespace::ReturnRefClass::create(
-            WTFMove(*functionCallmember1),
-            WTFMove(*functionCallmember2),
-            WTFMove(*uniqueMember)
+            WTFMove(*functionCallmember1)
+            , WTFMove(*functionCallmember2)
+            , WTFMove(*uniqueMember)
         )
     };
 }
@@ -379,8 +379,8 @@ std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decod
             WithoutNamespace {
                 WTFMove(*a)
             }
-            ,
-            WTFMove(*b)
+            
+            , WTFMove(*b)
         }
     };
 }
@@ -419,11 +419,11 @@ std::optional<WebCore::InheritanceGrandchild> ArgumentCoder<WebCore::Inheritance
                 WithoutNamespace {
                     WTFMove(*a)
                 }
-                ,
-                WTFMove(*b)
+                
+                , WTFMove(*b)
             }
-            ,
-            WTFMove(*c)
+            
+            , WTFMove(*c)
         }
     };
 }

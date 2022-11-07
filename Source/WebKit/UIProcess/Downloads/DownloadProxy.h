@@ -96,7 +96,7 @@ public:
 
 #if USE(SYSTEM_PREVIEW)
     bool isSystemPreviewDownload() const { return request().isSystemPreview(); }
-    WebCore::SystemPreviewInfo systemPreviewDownloadInfo() const { return request().systemPreviewInfo(); }
+    WebCore::SystemPreviewInfo systemPreviewDownloadInfo() const { RELEASE_ASSERT(request().systemPreviewInfo().has_value()); return *request().systemPreviewInfo(); }
 #endif
 
 #if PLATFORM(COCOA)

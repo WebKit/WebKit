@@ -244,7 +244,7 @@ WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->frame = &frame;
     resource->priv->uri = request.url().string().utf8();
-    resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequest::Requester::Main;
+    resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequestRequester::Main;
     return resource;
 }
 

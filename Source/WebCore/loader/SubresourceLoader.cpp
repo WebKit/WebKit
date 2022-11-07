@@ -209,7 +209,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         return completionHandler(WTFMove(newRequest));
     }
 
-    if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
+    if (newRequest.requester() != ResourceRequestRequester::Main) {
         ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse,
             (isScriptLikeDestination(options().destination) ? ResourceLoadObserver::FetchDestinationIsScriptLike::Yes : ResourceLoadObserver::FetchDestinationIsScriptLike::No));
     }

@@ -406,15 +406,15 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         return false;
     };
 
-    auto resourceType = [] (WebCore::ResourceRequestBase::Requester requester, WebCore::FetchOptions::Destination destination) {
+    auto resourceType = [] (WebCore::ResourceRequestRequester requester, WebCore::FetchOptions::Destination destination) {
         switch (requester) {
-        case WebCore::ResourceRequestBase::Requester::XHR:
+        case WebCore::ResourceRequestRequester::XHR:
             return ResourceLoadInfo::Type::XMLHTTPRequest;
-        case WebCore::ResourceRequestBase::Requester::Fetch:
+        case WebCore::ResourceRequestRequester::Fetch:
             return ResourceLoadInfo::Type::Fetch;
-        case WebCore::ResourceRequestBase::Requester::Ping:
+        case WebCore::ResourceRequestRequester::Ping:
             return ResourceLoadInfo::Type::Ping;
-        case WebCore::ResourceRequestBase::Requester::Beacon:
+        case WebCore::ResourceRequestRequester::Beacon:
             return ResourceLoadInfo::Type::Beacon;
         default:
             break;
