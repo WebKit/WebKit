@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
-
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 

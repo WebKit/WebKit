@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "Test.h"
 
 #if HAVE(RSA_BSSA)
 
 #include "ASN1Utilities.h"
 #include "CoreCryptoSPI.h"
+#include "Test.h"
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 

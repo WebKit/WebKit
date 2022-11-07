@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"  // NOLINT
+#include "Test.h"
 
 namespace TestWebKitAPI {
 

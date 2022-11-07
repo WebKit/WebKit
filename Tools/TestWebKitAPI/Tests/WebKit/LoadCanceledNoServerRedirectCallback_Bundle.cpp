@@ -30,7 +30,6 @@
 #include "InjectedBundleTest.h"
 #include "PlatformUtilities.h"
 #include "Test.h"
-
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKRetainPtr.h>

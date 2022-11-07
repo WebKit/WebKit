@@ -27,7 +27,6 @@
 
 #include "Test.h"
 #include "Utilities.h"
-#include "WTFStringUtilities.h"
 #include <WebCore/FileMonitor.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>

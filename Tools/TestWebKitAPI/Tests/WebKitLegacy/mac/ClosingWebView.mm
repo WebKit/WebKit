@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
-#import "WTFStringUtilities.h"
+#import "Test.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSExport.h>

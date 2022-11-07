@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include <wtf/SuspendableWorkQueue.h>
-#include <wtf/RunLoop.h>
 
 #include "Test.h"
 #include "Utilities.h"
 #include <wtf/Lock.h>
+#include <wtf/RunLoop.h>
+#include <wtf/SuspendableWorkQueue.h>
 
 namespace TestWebKitAPI {
 

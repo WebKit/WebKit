@@ -25,7 +25,8 @@
  */
 
 #include "config.h"
-#include "WTFStringUtilities.h"
+
+#include "Test.h"
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>

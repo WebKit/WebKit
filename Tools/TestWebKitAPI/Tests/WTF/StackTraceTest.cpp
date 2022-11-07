@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include <wtf/StackTrace.h>
 
-#include "Utilities.h"
-#include "WTFStringUtilities.h"
+#include "Test.h"
+#include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ((PLATFORM(GTK) || PLATFORM(WPE)) && defined(NDEBUG)) || (PLATFORM(WIN) && !defined(NDEBUG))

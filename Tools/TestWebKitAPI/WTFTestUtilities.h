@@ -30,26 +30,20 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-namespace WTF {
-
-inline std::ostream& operator<<(std::ostream& os, const String& string)
-{
-    return os << string.utf8().data();
-}
-
-}
+namespace TestWebKitAPI {
 
 template<size_t length>
-static String utf16String(const char16_t (&url)[length])
+String utf16String(const char16_t (&url)[length])
 {
     StringBuilder builder;
     builder.reserveCapacity(length - 1);
     for (size_t i = 0; i < length - 1; ++i)
         builder.append(static_cast<UChar>(url[i]));
     return builder.toString();
+}
+
 }

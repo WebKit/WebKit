@@ -27,7 +27,7 @@
 
 #if PLATFORM(COCOA)
 
-#include "WTFStringUtilities.h"
+#include "Utilities.h"
 #include <WebKit/WKWebViewPrivate.h>
 #include <wtf/DebugUtilities.h>
 

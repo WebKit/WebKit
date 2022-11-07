@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if HAVE(APP_SSO)
 
@@ -32,6 +31,7 @@
 #import "HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>

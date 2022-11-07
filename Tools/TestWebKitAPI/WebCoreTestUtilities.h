@@ -26,16 +26,31 @@
 #pragma once
 
 #include "Test.h"
-#include "WTFStringUtilities.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
 
 // Caller should initialize lastFootprint with memoryFootprint() for the initial call.
 ::testing::AssertionResult memoryFootprintChangedBy(size_t& lastFootprint, double expectedChange, double error);
+
+class ScopedSetAuxiliaryProcessTypeForTesting {
+public:
+    explicit ScopedSetAuxiliaryProcessTypeForTesting(WebCore::AuxiliaryProcessType type)
+        : m_oldType(WebCore::processType())
+    {
+        setAuxiliaryProcessTypeForTesting(type);
+    }
+    ~ScopedSetAuxiliaryProcessTypeForTesting()
+    {
+        setAuxiliaryProcessTypeForTesting(m_oldType);
+    }
+private:
+    std::optional<WebCore::AuxiliaryProcessType> m_oldType;
+};
 
 }
 

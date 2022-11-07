@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TestNotificationProvider.h"
 
-#include "WTFStringUtilities.h"
 #include <WebKit/WKArray.h>
 #include <WebKit/WKContext.h>
 #include <WebKit/WKMutableDictionary.h>

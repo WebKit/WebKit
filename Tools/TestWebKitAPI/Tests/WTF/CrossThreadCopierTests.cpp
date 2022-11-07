@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include <wtf/CrossThreadCopier.h>
 
 #include "Test.h"
 #include <variant>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

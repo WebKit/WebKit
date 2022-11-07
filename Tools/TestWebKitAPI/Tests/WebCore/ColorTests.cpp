@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "Test.h"
-#include "WTFStringUtilities.h"
 #include <WebCore/Color.h>
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorSerialization.h>

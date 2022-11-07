@@ -24,12 +24,12 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
 
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestURLSchemeHandler.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>

@@ -25,8 +25,8 @@
  */
 
 #include "config.h"
-#include "Test.h"
 
+#include "Test.h"
 #include <WebKit/EnvironmentUtilities.h>
 #include <wtf/text/WTFString.h>
 

@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#import "PlatformUtilities.h"
-#import "WTFStringUtilities.h"
 
+#import "PlatformUtilities.h"
+#import "Test.h"
 #import <wtf/RetainPtr.h>
 
 static bool testFinished;

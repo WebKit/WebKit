@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>

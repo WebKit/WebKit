@@ -23,25 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebCoreTestUtilities.h"
 
-#include <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/MemoryFootprint.h>
 
 namespace TestWebKitAPI {
 
-class ScopedSetAuxiliaryProcessTypeForTesting {
-public:
-    explicit ScopedSetAuxiliaryProcessTypeForTesting(WebCore::AuxiliaryProcessType type)
-        : m_oldType(WebCore::processType())
-    {
-        setAuxiliaryProcessTypeForTesting(type);
-    }
-    ~ScopedSetAuxiliaryProcessTypeForTesting()
-    {
-        setAuxiliaryProcessTypeForTesting(m_oldType);
-    }
-private:
-    std::optional<WebCore::AuxiliaryProcessType> m_oldType;
-};
+::testing::AssertionResult memoryFootprintChangedBy(size_t& lastFootprint, double expectedChange, double error)
+{
+    WTF::releaseFastMallocFreeMemory();
+    size_t newFootprint = memoryFootprint();
+    size_t oldFootprint = std::exchange(lastFootprint, newFootprint);
+    double change = static_cast<double>(newFootprint) - oldFootprint;
+    if (change - expectedChange > error)
+        return ::testing::AssertionFailure() << "Footprint changed by " << change << ". Expected at most " << expectedChange << "+-" << error;
+    return ::testing::AssertionSuccess();
+}
 
-} // namespace TestWebKitAPI
+}

@@ -26,7 +26,7 @@
 #import "config.h"
 
 #import "Test.h"
-#import "WTFStringUtilities.h"
+#import "WTFTestUtilities.h"
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/NSURLExtras.h>

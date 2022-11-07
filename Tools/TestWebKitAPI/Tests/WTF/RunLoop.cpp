@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include "Utilities.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>

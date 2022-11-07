@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "Connection.h"
 
 #include "IPCTestUtilities.h"
 #include "Test.h"
