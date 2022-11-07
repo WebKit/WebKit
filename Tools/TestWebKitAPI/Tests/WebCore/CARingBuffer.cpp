@@ -147,6 +147,29 @@ TEST_F(CARingBufferTest, Basics)
     EXPECT_EQ(0, (int)endTime);
 }
 
+TEST_F(CARingBufferTest, SmallBufferListForFetch)
+{
+    const int capacity = 32;
+    const int halfCapacity = capacity / 2;
+    setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
+
+    float sourceBuffer[capacity];
+    for (int i = 0; i < capacity; i++)
+        sourceBuffer[i] = i + 0.5;
+    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    CARingBuffer::Error err = ringBuffer().store(&bufferList(), capacity, 0);
+    EXPECT_EQ(err, CARingBuffer::Error::Ok);
+
+    float destinationBuffer[halfCapacity];
+    setListDataBuffer(reinterpret_cast<uint8_t*>(destinationBuffer), halfCapacity);
+    int bufferCount = bufferList().mNumberBuffers;
+    EXPECT_GE(bufferCount, 1);
+    size_t listDataByteSizeBeforeFetch = bufferList().mBuffers[0].mDataByteSize;
+
+    ringBuffer().fetch(&bufferList(), capacity, 0);
+    EXPECT_LE(bufferList().mBuffers[0].mDataByteSize, listDataByteSizeBeforeFetch);
+}
+
 template <typename type>
 class MixingTest {
 public:
