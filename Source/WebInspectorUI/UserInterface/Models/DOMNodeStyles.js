@@ -549,7 +549,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         if (styleDeclaration) {
             // Use propertyForName when the index is NaN since propertyForName is fast in that case.
-            var property = isNaN(index) ? styleDeclaration.propertyForName(name) : styleDeclaration.enabledProperties[index];
+            var property = isNaN(index) ? styleDeclaration.propertyForName(name) : styleDeclaration.properties[index];
 
             // Reuse a property if the index and name matches. Otherwise it is a different property
             // and should be created from scratch. This works in the simple cases where only existing
