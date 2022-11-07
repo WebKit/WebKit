@@ -45,7 +45,7 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
     m_currentSettings = RealtimeMediaSourceSettings { };
     m_currentSettings->setSupportedConstraints(WTFMove(constraints));
 
-    auto sinkPad = adoptGRef(gst_element_get_static_pad(m_valve.get(), "sink"));
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(bin(), "sink"));
     gst_pad_add_probe(sinkPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
         auto videoFrameTimeMetadata = std::make_optional<VideoFrameTimeMetadata>({ });
         videoFrameTimeMetadata->receiveTime = MonotonicTime::now().secondsSinceEpoch();
