@@ -77,6 +77,11 @@
 		3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1337E528FBD56300F29B73 /* ASTVisitor.cpp */; };
 		3A1337E828FBD56400F29B73 /* ASTVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1337E628FBD56400F29B73 /* ASTVisitor.h */; };
 		3A1337EA28FBD56E00F29B73 /* ASTForward.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1337E928FBD56E00F29B73 /* ASTForward.h */; };
+		3A2479DD290629CE0012B3E6 /* ASTGroupAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */; };
+		3A2479DE290629CE0012B3E6 /* ASTLocationAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */; };
+		3A2479DF290629CE0012B3E6 /* ASTStageAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */; };
+		3A2479E0290629CE0012B3E6 /* ASTBindingAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */; };
+		3A2479E1290629CE0012B3E6 /* ASTBuiltinAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */; };
 		3A7E164C28C57BB8003F49C9 /* ASTArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */; };
 		3AAE4EB428C56E9A00DA484B /* ASTUnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */; };
 		3ACCE80628FE1872004A0914 /* AST.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ACCE80528FE1872004A0914 /* AST.h */; };
@@ -328,6 +333,11 @@
 		3A1337E528FBD56300F29B73 /* ASTVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTVisitor.cpp; sourceTree = "<group>"; };
 		3A1337E628FBD56400F29B73 /* ASTVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVisitor.h; sourceTree = "<group>"; };
 		3A1337E928FBD56E00F29B73 /* ASTForward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTForward.h; sourceTree = "<group>"; };
+		3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTGroupAttribute.h; sourceTree = "<group>"; };
+		3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTLocationAttribute.h; sourceTree = "<group>"; };
+		3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStageAttribute.h; sourceTree = "<group>"; };
+		3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBindingAttribute.h; sourceTree = "<group>"; };
+		3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuiltinAttribute.h; sourceTree = "<group>"; };
 		3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayAccess.h; sourceTree = "<group>"; };
 		3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTUnaryExpression.h; sourceTree = "<group>"; };
 		3ACCE80528FE1872004A0914 /* AST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AST.h; sourceTree = "<group>"; };
@@ -674,6 +684,8 @@
 				3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */,
 				33EA187F27BC24E200A1DD52 /* ASTAssignmentStatement.h */,
 				33EA186927BC1BE600A1DD52 /* ASTAttribute.h */,
+				3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */,
+				3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */,
 				33EA188527BC26DF00A1DD52 /* ASTCallableExpression.h */,
 				33EA187A27BC230E00A1DD52 /* ASTCompoundStatement.h */,
 				33EA186127BC19C100A1DD52 /* ASTDecl.h */,
@@ -681,11 +693,14 @@
 				3A1337E928FBD56E00F29B73 /* ASTForward.h */,
 				33EA187527BC216B00A1DD52 /* ASTFunctionDecl.h */,
 				33EA185F27BC198100A1DD52 /* ASTGlobalDirective.h */,
+				3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */,
 				33EA188127BC25D000A1DD52 /* ASTIdentifierExpression.h */,
 				33EA188727BC361E00A1DD52 /* ASTLiteralExpressions.h */,
+				3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
 				33EA186F27BC1E8A00A1DD52 /* ASTShaderModule.h */,
+				3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */,
 				33EA187827BC22AA00A1DD52 /* ASTStatement.h */,
 				3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */,
 				3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */,
@@ -727,6 +742,8 @@
 				3A7E164C28C57BB8003F49C9 /* ASTArrayAccess.h in Headers */,
 				33EA188027BC24E200A1DD52 /* ASTAssignmentStatement.h in Headers */,
 				33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */,
+				3A2479E0290629CE0012B3E6 /* ASTBindingAttribute.h in Headers */,
+				3A2479E1290629CE0012B3E6 /* ASTBuiltinAttribute.h in Headers */,
 				33EA188627BC26DF00A1DD52 /* ASTCallableExpression.h in Headers */,
 				33EA187B27BC230E00A1DD52 /* ASTCompoundStatement.h in Headers */,
 				33EA186227BC19C100A1DD52 /* ASTDecl.h in Headers */,
@@ -734,11 +751,14 @@
 				3A1337EA28FBD56E00F29B73 /* ASTForward.h in Headers */,
 				33EA187627BC216B00A1DD52 /* ASTFunctionDecl.h in Headers */,
 				33EA186027BC198100A1DD52 /* ASTGlobalDirective.h in Headers */,
+				3A2479DD290629CE0012B3E6 /* ASTGroupAttribute.h in Headers */,
 				33EA188227BC25D000A1DD52 /* ASTIdentifierExpression.h in Headers */,
 				33EA188827BC361E00A1DD52 /* ASTLiteralExpressions.h in Headers */,
+				3A2479DE290629CE0012B3E6 /* ASTLocationAttribute.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
 				33EA187027BC1E8A00A1DD52 /* ASTShaderModule.h in Headers */,
+				3A2479DF290629CE0012B3E6 /* ASTStageAttribute.h in Headers */,
 				33EA187927BC22AA00A1DD52 /* ASTStatement.h in Headers */,
 				3ADB94452900F7D700CFFDC2 /* ASTStringDumper.h in Headers */,
 				33EA188427BC268600A1DD52 /* ASTStructureAccess.h in Headers */,

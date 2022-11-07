@@ -32,34 +32,30 @@
 
 namespace WGSL::AST {
 
-class Decl : public ASTNode {
+class Decl : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    enum class Kind {
-        Variable,
-        Struct,
-        Function,
-    };
-
     using List = UniqueRefVector<Decl>;
 
     Decl(SourceSpan span)
-        : ASTNode(span)
+        : Node(span)
     {
     }
-
-    virtual ~Decl() { }
-
-    virtual Kind kind() const = 0;
-    bool isVariable() const { return kind() == Kind::Variable; }
-    bool isStruct() const { return kind() == Kind::Struct; }
-    bool isFunction() const { return kind() == Kind::Function; }
 };
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::Decl& decl) { return decl.predicate; } \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Decl)
+static bool isType(const WGSL::AST::Node& node)
+{
+    switch (node.kind()) {
+    case WGSL::AST::Node::Kind::FunctionDecl:
+    case WGSL::AST::Node::Kind::StructDecl:
+    case WGSL::AST::Node::Kind::VariableDecl:
+        return true;
+    default:
+        return false;
+    }
+}
 SPECIALIZE_TYPE_TRAITS_END()

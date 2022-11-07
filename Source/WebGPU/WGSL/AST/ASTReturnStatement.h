@@ -34,6 +34,7 @@ namespace WGSL::AST {
 
 class ReturnStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     ReturnStatement(SourceSpan span, std::unique_ptr<Expression>&& expression)
         : Statement(span)
@@ -41,7 +42,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Return; }
+    Kind kind() const override;
     Expression* maybeExpression() { return m_expression.get(); }
 
 private:
@@ -50,4 +51,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(ReturnStatement, isReturn())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ReturnStatement)

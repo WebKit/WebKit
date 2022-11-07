@@ -26,17 +26,69 @@
 #pragma once
 
 #include "SourceSpan.h"
+
 #include <wtf/FastMalloc.h>
+#include <wtf/TypeCasts.h>
 
 namespace WGSL::AST {
 
-class ASTNode {
+class Node {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    ASTNode(SourceSpan span)
+    enum class Kind : uint8_t {
+        // Attribute
+        BindingAttribute,
+        BuiltinAttribute,
+        GroupAttribute,
+        LocationAttribute,
+        StageAttribute,
+
+        // Decl
+        FunctionDecl,
+        StructDecl,
+        VariableDecl,
+
+        GlobalDirective,
+
+        // Expression
+        AbstractFloatLiteral,
+        AbstractIntLiteral,
+        ArrayAccess,
+        BoolLiteral,
+        CallableExpression,
+        Float32Literal,
+        IdentifierExpression,
+        Int32Literal,
+        StructureAccess,
+        Uint32Literal,
+        UnaryExpression,
+
+        ShaderModule,
+
+        // Statement
+        AssignmentStatement,
+        CompoundStatement,
+        ReturnStatement,
+        VariableStatement,
+
+        // TypeDecl
+        ArrayType,
+        NamedType,
+        ParameterizedType,
+
+        Parameter,
+        StructMember,
+        VariableQualifier,
+    };
+
+    Node(SourceSpan span)
         : m_span(span)
     {
     }
+    virtual ~Node() = default;
+
+    virtual Kind kind() const = 0;
 
     const SourceSpan& span() const { return m_span; }
 
@@ -45,3 +97,9 @@ private:
 };
 
 } // namespace WGSL::AST
+
+#define SPECIALIZE_TYPE_TRAITS_WGSL_AST(NodeKind) \
+inline WGSL::AST::Node::Kind WGSL::AST::NodeKind::kind() const { return Kind::NodeKind; } \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::NodeKind) \
+static bool isType(const WGSL::AST::Node& node) { return node.kind() == WGSL::AST::Node::Kind::NodeKind; } \
+SPECIALIZE_TYPE_TRAITS_END()

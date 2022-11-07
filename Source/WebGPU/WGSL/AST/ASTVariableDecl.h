@@ -53,7 +53,7 @@ public:
         ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override { return Kind::Variable; }
+    Kind kind() const override;
     const StringView& name() const { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
@@ -72,4 +72,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(VariableDecl, isVariable())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(VariableDecl)

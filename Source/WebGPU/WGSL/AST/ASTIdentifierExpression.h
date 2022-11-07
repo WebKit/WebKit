@@ -33,6 +33,7 @@ namespace WGSL::AST {
 
 class IdentifierExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     IdentifierExpression(SourceSpan span, StringView identifier)
         : Expression(span)
@@ -40,7 +41,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Identifier; }
+    Kind kind() const override;
     const StringView& identifier() const { return m_identifier; }
 
 private:
@@ -49,4 +50,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(IdentifierExpression, isIdentifier())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(IdentifierExpression)

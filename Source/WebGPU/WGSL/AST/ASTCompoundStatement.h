@@ -39,7 +39,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Compound; }
+    Kind kind() const override;
     Statement::List& statements() { return m_statements; }
 
 private:
@@ -48,4 +48,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(CompoundStatement, isCompound())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(CompoundStatement)

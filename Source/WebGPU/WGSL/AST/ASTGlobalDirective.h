@@ -30,18 +30,19 @@
 
 namespace WGSL::AST {
 
-class GlobalDirective : public ASTNode {
+class GlobalDirective : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     using List = UniqueRefVector<GlobalDirective>;
 
     GlobalDirective(SourceSpan span, StringView name)
-        : ASTNode(span)
+        : Node(span)
         , m_name(name)
     {
     }
 
+    Kind kind() const override { return Kind::GlobalDirective; }
     const StringView& name() const { return m_name; }
 
 private:

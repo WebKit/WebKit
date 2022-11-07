@@ -28,7 +28,6 @@
 #include "ASTAttribute.h"
 #include "ASTCompoundStatement.h"
 #include "ASTDecl.h"
-#include "ASTNode.h"
 #include "ASTTypeDecl.h"
 #include "CompilationMessage.h"
 
@@ -36,20 +35,21 @@
 
 namespace WGSL::AST {
 
-class Parameter final : public ASTNode {
+class Parameter final : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     using List = UniqueRefVector<Parameter>;
 
     Parameter(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
-        : ASTNode(span)
+        : Node(span)
         , m_name(WTFMove(name))
         , m_type(WTFMove(type))
         , m_attributes(WTFMove(attributes))
     {
     }
 
+    Kind kind() const override;
     const StringView& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
     Attribute::List& attributes() { return m_attributes; }
@@ -77,7 +77,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Function; }
+    Kind kind() const override;
     const StringView& name() const { return m_name; }
     Parameter::List& parameters() { return m_parameters; }
     Attribute::List& attributes() { return m_attributes; }
@@ -96,4 +96,5 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(FunctionDecl, isFunction())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Parameter)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(FunctionDecl)

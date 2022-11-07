@@ -25,33 +25,33 @@
 
 #pragma once
 
-#include "ASTExpression.h"
+#include "ASTAttribute.h"
 
 namespace WGSL::AST {
 
-enum class UnaryOperation : uint8_t {
-    Negate
-};
-    
-class UnaryExpression final : public Expression {
+class StageAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    UnaryExpression(SourceSpan span, UniqueRef<Expression>&& expression, UnaryOperation operation)
-        : Expression(span)
-        , m_expression(WTFMove(expression))
-        , m_operation(operation)
+    enum class Stage : uint8_t {
+        Compute,
+        Vertex,
+        Fragment
+    };
+
+    StageAttribute(SourceSpan span, Stage stage)
+        : Attribute(span)
+        , m_stage(stage)
     {
     }
 
     Kind kind() const override;
-    UnaryOperation operation() const { return m_operation; }
-    Expression& expression() { return m_expression.get(); }
+    Stage stage() const { return m_stage; }
 
 private:
-    UniqueRef<Expression> m_expression;
-    UnaryOperation m_operation;
+    Stage m_stage;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(UnaryExpression)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(StageAttribute)
