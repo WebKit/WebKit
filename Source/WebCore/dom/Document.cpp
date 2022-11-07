@@ -90,6 +90,7 @@
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCReachableRef.h"
+#include "GPUCanvasContext.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
@@ -6658,6 +6659,11 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
 
     if (is<ImageBitmapRenderingContext>(*context))
         return RenderingContext { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*context) } };
+
+#if ENABLE(WEBGPU)
+    if (is<GPUCanvasContext>(*context))
+        return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
+#endif
 
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }

@@ -2553,10 +2553,13 @@ WebGPU:
   type: bool
   defaultValue:
     WebKitLegacy:
+      "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
     WebKit:
+      "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
     WebCore:
+      "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
 
 WebMFormatReaderEnabled:

@@ -78,7 +78,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasConfiguration.idl \
-    $(WebCore)/Modules/WebGPU/GPUCanvasContext.idl \
     $(WebCore)/Modules/WebGPU/GPUColorDict.idl \
     $(WebCore)/Modules/WebGPU/GPUColorTargetState.idl \
     $(WebCore)/Modules/WebGPU/GPUColorWrite.idl \
@@ -1195,6 +1194,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
     $(WebCore)/html/canvas/EXTTextureNorm16.idl \
     $(WebCore)/html/canvas/EXTsRGB.idl \
+    $(WebCore)/html/canvas/GPUCanvasContext.idl \
     $(WebCore)/html/canvas/ImageBitmapRenderingContext.idl \
     $(WebCore)/html/canvas/ImageBitmapRenderingContextSettings.idl \
     $(WebCore)/html/canvas/ImageSmoothingQuality.idl \

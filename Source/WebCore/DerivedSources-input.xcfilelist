@@ -55,7 +55,6 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasContext.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorWrite.idl
@@ -1351,6 +1350,7 @@ $(PROJECT_DIR)/html/canvas/EXTTextureCompressionRGTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureFilterAnisotropic.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureNorm16.idl
 $(PROJECT_DIR)/html/canvas/EXTsRGB.idl
+$(PROJECT_DIR)/html/canvas/GPUCanvasContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContextSettings.idl
 $(PROJECT_DIR)/html/canvas/ImageSmoothingQuality.idl

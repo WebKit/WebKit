@@ -1588,7 +1588,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferUsage.idl
     Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
     Modules/WebGPU/GPUCanvasConfiguration.idl
-    Modules/WebGPU/GPUCanvasContext.idl
     Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
     Modules/WebGPU/GPUColorWrite.idl
@@ -1926,6 +1925,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTTextureFilterAnisotropic.idl
     html/canvas/EXTTextureNorm16.idl
     html/canvas/EXTsRGB.idl
+    html/canvas/GPUCanvasContext.idl
     html/canvas/KHRParallelShaderCompile.idl
     html/canvas/OESDrawBuffersIndexed.idl
     html/canvas/OESElementIndexUint.idl

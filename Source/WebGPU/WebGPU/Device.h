@@ -121,6 +121,8 @@ private:
     bool validateCreateTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
     bool validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing);
 
+    bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
+
     void makeInvalid() { m_device = nil; }
 
     void loseTheDevice(WGPUDeviceLostReason);

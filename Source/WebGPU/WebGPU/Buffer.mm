@@ -360,6 +360,11 @@ void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
     return WebGPU::fromAPI(buffer).getMappedRange(offset, size);
 }
 
+uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
+{
+    return WebGPU::fromAPI(buffer).size();
+}
+
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
     WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback, userdata](WGPUBufferMapAsyncStatus status) {

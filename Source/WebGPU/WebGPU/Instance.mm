@@ -195,9 +195,8 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
         return;
     }
 
-    scheduleWork([strongThis = Ref { *this }, device = sortedDevices[0], deviceCapabilities = WTFMove(*deviceCapabilities), callback = WTFMove(callback)]() mutable {
-        callback(WGPURequestAdapterStatus_Success, Adapter::create(device, strongThis, WTFMove(deviceCapabilities)), { });
-    });
+    // FIXME: this should be asynchronous
+    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this, WTFMove(*deviceCapabilities)), { });
 }
 
 } // namespace WebGPU

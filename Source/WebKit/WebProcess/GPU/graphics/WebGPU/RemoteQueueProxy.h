@@ -47,7 +47,7 @@ public:
     virtual ~RemoteQueueProxy();
 
     RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& root() { return m_parent.root(); }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -103,7 +103,7 @@ private:
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteDeviceProxy> m_parent;
+    RemoteDeviceProxy& m_parent;
 };
 
 } // namespace WebKit::WebGPU

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLCocoa.h" // NOLINT
+#import "GraphicsLayerContentsDisplayDelegate.h"
 #import "PlatformCALayer.h"
 #import "ProcessIdentity.h"
 

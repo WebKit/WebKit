@@ -40,7 +40,7 @@ namespace WebKit::WebGPU {
 
 struct RenderPassColorAttachment {
     WebGPUIdentifier view;
-    WebGPUIdentifier resolveTarget;
+    std::optional<WebGPUIdentifier> resolveTarget;
 
     std::optional<Color> clearValue;
     PAL::WebGPU::LoadOp loadOp { PAL::WebGPU::LoadOp::Load };

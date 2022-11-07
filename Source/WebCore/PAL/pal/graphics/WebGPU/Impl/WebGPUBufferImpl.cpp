@@ -59,7 +59,7 @@ void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optiona
 
 auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange
 {
-    auto usedSize = size.value_or(WGPU_WHOLE_MAP_SIZE);
+    auto usedSize = size.value_or(wgpuBufferGetSize(m_backing));
     // FIXME: Check the casts.
     auto* pointer = wgpuBufferGetMappedRange(m_backing, static_cast<size_t>(offset), static_cast<size_t>(usedSize));
     // FIXME: Check the type narrowing.
