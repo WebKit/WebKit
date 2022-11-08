@@ -139,8 +139,9 @@ void* URLContext = &URLContext;
 
 - (IBAction)showSettings:(id)sender
 {
+    UIPopoverPresentationController *presentationController = [self.settingsViewController popoverPresentationController];
+    presentationController.barButtonItem = self.settingsButton;
     [self presentViewController:self.settingsViewController animated:YES completion:nil];
-    self.settingsViewController.popoverPresentationController.barButtonItem = self.settingsButton;
 }
 
 #pragma mark Public methods
