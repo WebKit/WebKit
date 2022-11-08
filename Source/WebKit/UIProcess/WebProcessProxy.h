@@ -207,6 +207,10 @@ public:
 
     bool isDummyProcessProxy() const;
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+    bool isCrashyProcess() const { return m_isWebContentCrashyProcess; }
+#endif
+
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
@@ -474,7 +478,6 @@ protected:
     void validateFreezerStatus();
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
-    bool isCrashyProcess() { return m_isWebContentCrashyProcess; }
     void setIsCrashyProcess() { m_isWebContentCrashyProcess = true; }
 #endif
 
