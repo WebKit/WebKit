@@ -304,10 +304,10 @@ void HTMLObjectElement::didFinishInsertingNode()
     resetFormOwner();
 }
 
-void HTMLObjectElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+void HTMLObjectElement::removedFromAncestor(RemovalType removalType, InsertionType insertionType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLPlugInImageElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    FormAssociatedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormAssociatedElement::removedFromAncestor(removalType, insertionType, oldParentOfRemovedTree);
 }
 
 void HTMLObjectElement::childrenChanged(const ChildChange& change)

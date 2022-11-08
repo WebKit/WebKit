@@ -68,7 +68,7 @@ private:
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
-    void removedFromAncestor(RemovalType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, InsertionType, ContainerNode&) final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 

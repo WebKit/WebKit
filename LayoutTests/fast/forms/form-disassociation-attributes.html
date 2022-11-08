@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("This test checks the form attribute of the form-associated elements.");
+
+            var container = document.createElement('div');
+            document.body.appendChild(container);
+
+
+            debug('');
+            debug('- Check if a form and a control are disassociated when they are removed from the document together.');
+            container.innerHTML = '<div><input form=owner><form id=owner></form></div>';
+            owner = document.getElementById('owner');
+            shouldBe('owner.elements.length', '1');
+            container.firstChild.remove();
+            shouldBe('owner.elements.length', '0');
+
+            container.remove();
+        </script>
+    </body>
+</html>
