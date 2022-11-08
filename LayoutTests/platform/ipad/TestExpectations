@@ -120,11 +120,3 @@ webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass T
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Pass Failure ]
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Pass Failure ]
 
-# webkit.org/b/246701 Constant failure only on iPad
-imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/lock-basic.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Failure ]
-imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Failure ]
