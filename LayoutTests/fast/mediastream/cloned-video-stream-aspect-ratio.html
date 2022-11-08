@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>'aspectRatio' correct with cloned media stream</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id=video-1 autoplay playsinline controls></video>
+        <video id=video-2 autoplay playsinline controls></video>
+
+        <script>
+            const validateStream = async (video, message) => {
+
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { aspectRatio: 1 }});
+
+                const settings = stream.getVideoTracks()[0].getSettings();
+                assert_equals(settings.width, settings.height, `settings.width === setting.height for ${message}`);
+
+                video.srcObject = stream;
+                await new Promise((resolve, reject) => { 
+                    video.oncanplay = resolve;
+                    setTimeout(() => reject(`timeout waiting for video to load for ${message}`), 5000);
+                });
+
+                assert_equals(settings.width, video.videoWidth, `settings.width === video.videoWidth for ${message}`);
+                assert_equals(settings.height, video.videoHeight, `settings.height === video.videoHeight for ${message}`);
+            }
+            
+            promise_test(async (test) => {
+
+                await validateStream(document.getElementById('video-1'), 'first stream');
+
+            }, 'First gUM stream');
+
+            promise_test(async (test) => {
+
+                await validateStream(document.getElementById('video-2'), 'second stream');
+
+            }, 'Second gUM stream');
+
+        </script>
+    </body>
+</html>
