@@ -5542,6 +5542,8 @@
         "web-platform-tests/web-animations/timing-model/animations/sync-start-times-ref.html",
         "web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast-ref.html",
         "web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero-ref.html",
+        "web-platform-tests/webidl/ecmascript-binding/support/constructors-support.html",
+        "web-platform-tests/webidl/ecmascript-binding/support/dummy-iframe.html",
         "web-platform-tests/webmessaging/message-channels/004-1.html",
         "web-platform-tests/webmessaging/message-channels/004-2.html",
         "web-platform-tests/webmessaging/multi-globals/support/current-document-domain.sub.html",

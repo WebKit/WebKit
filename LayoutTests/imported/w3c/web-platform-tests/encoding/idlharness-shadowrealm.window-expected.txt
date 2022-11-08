@@ -1,5 +1,4 @@
 
-PASS setup
 PASS TextDecoder includes TextDecoderCommon: member names are unique
 PASS TextEncoder includes TextEncoderCommon: member names are unique
 PASS TextDecoderStream includes TextDecoderCommon: member names are unique

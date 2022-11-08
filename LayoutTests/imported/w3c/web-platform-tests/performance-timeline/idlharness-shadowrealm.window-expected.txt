@@ -1,5 +1,4 @@
 
-PASS setup
 PASS Partial interface Performance: original interface defined
 PASS Partial interface Performance: member names are unique
 PASS PerformanceEntry interface: existence and properties of interface object
