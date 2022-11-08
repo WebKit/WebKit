@@ -190,7 +190,7 @@ void WebIDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnect
     send(Messages::NetworkStorageManager::DatabaseConnectionClosed(databaseConnectionIdentifier));
 }
 
-void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     send(Messages::NetworkStorageManager::AbortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier));
 }

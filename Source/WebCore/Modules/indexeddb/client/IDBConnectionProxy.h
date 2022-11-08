@@ -106,7 +106,7 @@ public:
 
     void connectionToServerLost(const IDBError&);
 
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier);
 
     void completeOperation(const IDBResultData&);
 
