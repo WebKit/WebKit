@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (200,100) size 250x250
       RenderSVGContainer {g} at (200,100) size 250x250
-        RenderSVGRect {rect} at (200,100) size 250x250 [fill={[type=SOLID] [color=#00FF00]}] [x=120.00] [y=60.00] [width=150.00] [height=150.00]
+        RenderSVGRect {rect} at (200,100) size 250x250 [fill={[type=SOLID] [color=#FF0000]}] [x=120.00] [y=60.00] [width=150.00] [height=150.00]
     RenderSVGContainer {g} at (16,516) size 385x64
       RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x38

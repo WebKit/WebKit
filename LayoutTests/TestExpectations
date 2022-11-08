@@ -6017,10 +6017,6 @@ imported/w3c/web-platform-tests/css/css-typed-om/width-by-clamp-px-em.html [ Ima
 imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em.html [ ImageOnlyFailure ]
 
-# Old SVG+currentcolor tests are incorrect https://bugs.webkit.org/show_bug.cgi?id=245400
-imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual.svg [ Skip ]
-svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Skip ]
-
 # modulepreload is not supported
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]

@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (9,9) size 82x82
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="MyPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
-        RenderSVGEllipse {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [cx=5.00] [cy=5.00] [r=5.00]
+        RenderSVGEllipse {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#32CD32]}] [cx=5.00] [cy=5.00] [r=5.00]
     RenderSVGEllipse {circle} at (9,9) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="MyPattern"]}] [cx=50.00] [cy=50.00] [r=40.00]
