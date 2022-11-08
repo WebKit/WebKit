@@ -27,12 +27,14 @@
 #include "InteractionRegion.h"
 
 #include "Document.h"
+#include "ElementAncestorIterator.h"
 #include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HitTestResult.h"
@@ -86,6 +88,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         element = regionRenderer.node()->parentElement();
     if (auto* linkElement = element->enclosingLinkEventParentOrSelf())
         element = linkElement;
+    if (auto* buttonElement = ancestorsOfType<HTMLButtonElement>(*element).first())
+        element = buttonElement;
 
     if (!element || !element->renderer())
         return std::nullopt;
