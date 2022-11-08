@@ -1,0 +1,6 @@
+Ping sent successfully
+CONTENT_TYPE: text/ping
+HTTP_HOST: localhost:8000
+HTTP_PING_TO: https://127.0.0.1:8443/navigation/resources/check-ping.py?test=secure-anchor-cross-origin
+REQUEST_METHOD: POST
+REQUEST_URI: /navigation/resources/save-ping.py?test=secure-anchor-cross-origin
