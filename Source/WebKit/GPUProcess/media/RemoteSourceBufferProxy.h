@@ -100,7 +100,7 @@ private:
     using RemoveCodedFramesAsyncReply = Messages::RemoteSourceBufferProxy::RemoveCodedFramesAsyncReply;
     using EvictCodedFramesDelayedReply= Messages::RemoteSourceBufferProxy::EvictCodedFramesDelayedReply;
     void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, RemoveCodedFramesAsyncReply&&);
-    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded, EvictCodedFramesDelayedReply&&);
+    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, EvictCodedFramesDelayedReply&&);
     void addTrackBuffer(TrackPrivateRemoteIdentifier);
     void resetTrackBuffers();
     void clearTrackBuffers();

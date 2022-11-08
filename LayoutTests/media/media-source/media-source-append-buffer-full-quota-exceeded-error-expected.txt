@@ -117,7 +117,7 @@ Appending PTS=41
 EVENT(updateend)
 Appending PTS=42
 EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
-EXPECTED (1 == '1') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
 EVENT(updateend)
 Appending PTS=0.002
 EVENT(updateend)
@@ -141,70 +141,10 @@ Appending PTS=9.002
 EVENT(updateend)
 Appending PTS=10.002
 EVENT(updateend)
-Appending PTS=11.002
-EVENT(updateend)
-Appending PTS=12.002
-EVENT(updateend)
-Appending PTS=13.002
-EVENT(updateend)
-Appending PTS=14.002
-EVENT(updateend)
-Appending PTS=15.002
-EVENT(updateend)
-Appending PTS=16.002
-EVENT(updateend)
-Appending PTS=17.002
-EVENT(updateend)
-Appending PTS=18.002
-EVENT(updateend)
-Appending PTS=19.002
-EVENT(updateend)
-Appending PTS=20.002
-EVENT(updateend)
-Appending PTS=21.002
-EVENT(updateend)
-Appending PTS=22.002
-EVENT(updateend)
-Appending PTS=23.002
-EVENT(updateend)
-Appending PTS=24.002
-EVENT(updateend)
-Appending PTS=25.002
-EVENT(updateend)
-Appending PTS=26.002
-EVENT(updateend)
-Appending PTS=27.002
-EVENT(updateend)
-Appending PTS=28.002
-EVENT(updateend)
-Appending PTS=29.002
-EVENT(updateend)
-Appending PTS=30.002
-EVENT(updateend)
-Appending PTS=31.002
-EVENT(updateend)
-Appending PTS=32.002
-EVENT(updateend)
-Appending PTS=33.002
-EVENT(updateend)
-Appending PTS=34.002
-EVENT(updateend)
-Appending PTS=35.002
-EVENT(updateend)
-Appending PTS=36.002
-EVENT(updateend)
-Appending PTS=37.002
-EVENT(updateend)
-Appending PTS=38.002
-EVENT(updateend)
-Appending PTS=39.002
-EVENT(updateend)
-Appending PTS=40.002
-EVENT(updateend)
-Appending PTS=41.002
-EVENT(updateend)
-Appending PTS=42.002
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+Appending PTS=11002-60002
 EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
 EVENT(updateend)
 Appending PTS=0
 EVENT(updateend)
@@ -316,16 +256,11 @@ EVENT(updateend)
 Appending PTS=31.916666666666668
 EVENT(updateend)
 EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
-EXPECTED (1 == '1') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+Create a small 2000/24000 gap in the data at 31s.
 EVENT(updateend)
-EXPECTED (2 == '2') OK
-Appending PTS=32
-EVENT(updateend)
-Appending PTS=33
-EVENT(updateend)
-Appending PTS=34
-EVENT(updateend)
-Appending PTS=35
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+Appending PTS=32-100
 EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
 END OF TEST
 

@@ -137,6 +137,14 @@ MediaTime PlatformTimeRanges::maximumBufferedTime() const
     return m_ranges[length() - 1].m_end;
 }
 
+MediaTime PlatformTimeRanges::minimumBufferedTime() const
+{
+    if (!length())
+        return MediaTime::invalidTime();
+
+    return m_ranges[0].m_start;
+}
+
 void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
 {
 #if !PLATFORM(MAC) // https://bugs.webkit.org/show_bug.cgi?id=180253

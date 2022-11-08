@@ -50,6 +50,7 @@ public:
     MediaTime end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
     MediaTime maximumBufferedTime() const;
+    MediaTime minimumBufferedTime() const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);

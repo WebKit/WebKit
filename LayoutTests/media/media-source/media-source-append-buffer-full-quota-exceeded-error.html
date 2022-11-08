@@ -28,11 +28,13 @@
         return resultException;
     }
 
-    async function appendConcatenateSamples(start, end) {
+    async function appendConcatenateSamples(start, end, timescale = 1, gap = 0, step = null) {
         var resultException = null;
+        if (step == null)
+            step = timescale;
         const samples = [];
-        for (let time = start; time <= end; time++)
-            samples.push(makeASample(time, time, 1, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+        for (let time = start; time <= end; time += step)
+            samples.push(makeASample(time, time, step - gap, timescale, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE, 1));
 
         try {
             consoleWrite('Appending PTS='+start+'-'+end );
@@ -82,13 +84,17 @@
         exception = await appendPtsRange(0, 60000, 1000, 2);
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
         // Check that appendBuffer removed all the small gaps in the data less than the threshold.
-        testExpected(sourceBuffer.buffered.length, '1', '==');
+        testExpected('sourceBuffer.buffered.length', '1', '==');
 
+        internals.settings.setMaximumSourceBufferSize(1500);
         // Ensure that if current time is close enough to the buffered data that the nearest range isn't evicted.
         sourceBuffer.remove(0, Infinity);
         await waitFor(sourceBuffer, 'updateend');
-        exception = await appendPtsRange(2, 60002, 1000);
+        exception = await appendPtsRange(2, 10002, 1000);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+        exception = await appendConcatenateSamples(11002, 60002, 1000);
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+        testExpected('sourceBuffer.buffered.length', '1', '==');
 
         internals.settings.setMaximumSourceBufferSize(4000);
         // Ensure that small gaps that would be ignored during playback are also ignored by eviction.
@@ -101,12 +107,12 @@
         // Add 30 to 32s in smaller granularity.
         exception = await appendPtsRange(720000, 768000 - 1, 24000, 0, 2000);
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
-        testExpected(sourceBuffer.buffered.length, '1', '==');
-        // Create a small 2000/24000 gap in the data at 31s.
+        testExpected('sourceBuffer.buffered.length', '1', '==');
+        consoleWrite("Create a small 2000/24000 gap in the data at 31s.");
         sourceBuffer.remove(744000 / 24000, (744000 + 2000) / 24000);
         await waitFor(sourceBuffer, 'updateend');
-        testExpected(sourceBuffer.buffered.length, '2', '==');
-        exception = await appendPtsRange(32, 60);
+        testExpected('sourceBuffer.buffered.length', '2', '==');
+        exception = await appendConcatenateSamples(32, 100);
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
 
         endTest();
