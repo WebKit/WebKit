@@ -105,7 +105,6 @@ private:
     void setOnLineState(bool isOnLine);
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
-    void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>&&);
     void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
 
 #if ENABLE(SHAREABLE_RESOURCE)

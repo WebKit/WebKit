@@ -32,16 +32,7 @@
 
 namespace WebCore {
 
-static inline MessagePortChannelRegistry::CheckProcessLocalPortForActivityCallback checkActivityCallback()
-{
-    return [](auto& messagePortIdentifier, auto, auto&& callback) {
-        ASSERT(isMainThread());
-        callback(MessagePort::isExistingMessagePortLocallyReachable(messagePortIdentifier) ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
-    };
-}
-
 MessagePortChannelProviderImpl::MessagePortChannelProviderImpl()
-    : m_registry(checkActivityCallback())
 {
 }
 
@@ -96,18 +87,6 @@ void MessagePortChannelProviderImpl::takeAllMessagesForPort(const MessagePortIde
 
     ensureOnMainThread([registry = &m_registry, port, callback = WTFMove(callback)]() mutable {
         registry->takeAllMessagesForPort(port, WTFMove(callback));
-    });
-}
-
-void MessagePortChannelProviderImpl::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& outerCallback)
-{
-    auto callback = Function<void(HasActivity)> { [outerCallback = WTFMove(outerCallback)](HasActivity hasActivity) mutable {
-        ASSERT(isMainThread());
-        outerCallback(hasActivity);
-    } };
-
-    ensureOnMainThread([registry = &m_registry, remoteTarget, callback = WTFMove(callback)]() mutable {
-        registry->checkRemotePortForActivity(remoteTarget, WTFMove(callback));
     });
 }
 

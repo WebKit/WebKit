@@ -42,7 +42,6 @@ private:
     void messagePortClosed(const MessagePortIdentifier& local) final;
     void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) final;
     void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&) final;
-    void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
 
     MessagePortChannelRegistry m_registry;
 };
