@@ -270,9 +270,9 @@ void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const Me
     });
 }
 
-void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded, EvictCodedFramesDelayedReply&& completionHandler)
+void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, EvictCodedFramesDelayedReply&& completionHandler)
 {
-    m_sourceBufferPrivate->evictCodedFrames(newDataSize, maximumBufferSize, currentTime, duration, isEnded);
+    m_sourceBufferPrivate->evictCodedFrames(newDataSize, maximumBufferSize, currentTime, isEnded);
     completionHandler(m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 

@@ -127,6 +127,6 @@ EVENT(updateend)
 Appending PTS=118
 EVENT(updateend)
 EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
-EXPECTED (bufferedRanges() == '[ 115...119, 120...170 ]') OK
+EXPECTED (bufferedRanges() == '[ 115...119, 120...146 ]') OK
 END OF TEST
 

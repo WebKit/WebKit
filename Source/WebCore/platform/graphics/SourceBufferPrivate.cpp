@@ -54,6 +54,8 @@ namespace WebCore {
 // new current time without triggering this early return.
 // FIXME(135867): Make this gap detection logic less arbitrary.
 static const MediaTime discontinuityTolerance = MediaTime(1, 1);
+static const unsigned evictionAlgorithmInitialTimeChunk = 30000;
+static const unsigned evictionAlgorithmTimeChunkLowThreshold = 3000;
 
 SourceBufferPrivate::SourceBufferPrivate()
     : m_buffered(TimeRanges::create())
@@ -401,7 +403,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
     completionHandler();
 }
 
-void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
+void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)
 {
     // 3.5.13 Coded Frame Eviction Algorithm
     // http://www.w3.org/TR/media-source/#sourcebuffer-coded-frame-eviction
@@ -412,98 +414,98 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     // This algorithm is run to free up space in this source buffer when new data is appended.
     // 1. Let new data equal the data that is about to be appended to this SourceBuffer.
     // 2. If the buffer full flag equals false, then abort these steps.
-    if (!isBufferFullFor(newDataSize, maximumBufferSize))
+    bool isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
+    if (!isBufferFull)
         return;
 
     // 3. Let removal ranges equal a list of presentation time ranges that can be evicted from
     // the presentation to make room for the new data.
 
-    // NOTE: begin by removing data from the beginning of the buffered ranges, 30 seconds at
-    // a time, up to 30 seconds before currentTime.
-    MediaTime thirtySeconds = MediaTime(30, 1);
-    MediaTime maximumRangeEnd = currentTime - thirtySeconds;
+    // NOTE: begin by removing data from the beginning of the buffered ranges, timeChunk seconds at
+    // a time, up to timeChunk seconds before currentTime.
 
 #if !RELEASE_LOG_DISABLED
     uint64_t initialBufferedSize = totalTrackBufferSizeInBytes();
     DEBUG_LOG(LOGIDENTIFIER, "currentTime = ", currentTime, ", require ", initialBufferedSize + newDataSize, " bytes, maximum buffer size is ", maximumBufferSize);
 #endif
 
-    MediaTime rangeStart = MediaTime::invalidTime();
+    const auto& buffered = m_buffered->ranges();
 
-    for (auto& trackBuffer : m_trackBufferMap.values()) {
-        auto iter = trackBuffer->samples().presentationOrder().findSampleContainingOrAfterPresentationTime(MediaTime::zeroTime());
-        if (iter != trackBuffer->samples().presentationOrder().end()) {
-            MediaTime startTime = iter->first;
-            if (rangeStart.isInvalid() || startTime < rangeStart)
-                rangeStart = startTime;
-        }
-    }
+    unsigned timeChunkAsMilliseconds = evictionAlgorithmInitialTimeChunk;
+    do {
+        const MediaTime timeChunk = MediaTime(timeChunkAsMilliseconds, 1000);
+        const MediaTime maximumRangeEnd = currentTime - timeChunk;
 
-    if (rangeStart.isInvalid())
-        rangeStart = MediaTime::zeroTime();
+        do {
+            MediaTime rangeStart = buffered.minimumBufferedTime();
+            MediaTime rangeEnd = std::min(rangeStart + timeChunk, maximumRangeEnd);
 
-    MediaTime rangeEnd = rangeStart + thirtySeconds;
-    while (rangeStart < maximumRangeEnd) {
-        // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
-        // end equal to the removal range start and end timestamp respectively.
-        removeCodedFrames(rangeStart, std::min(rangeEnd, maximumRangeEnd), currentTime, isEnded);
-        if (!isBufferFullFor(newDataSize, maximumBufferSize)) {
-            break;
-        }
+            if (rangeStart >= rangeEnd)
+                break;
 
-        rangeStart += thirtySeconds;
-        rangeEnd += thirtySeconds;
-    }
+            // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
+            // end equal to the removal range start and end timestamp respectively.
+            removeCodedFrames(rangeStart, rangeEnd, currentTime, isEnded);
+            MediaTime newRangeStart = buffered.minimumBufferedTime();
+            if (newRangeStart == rangeStart)
+                break;
 
-    if (!isBufferFullFor(newDataSize, maximumBufferSize)) {
+            isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
+        } while (isBufferFull);
+
+        timeChunkAsMilliseconds /= 2;
+    } while (isBufferFull && timeChunkAsMilliseconds >= evictionAlgorithmTimeChunkLowThreshold);
+
+    if (!isBufferFull) {
 #if !RELEASE_LOG_DISABLED
         DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
         return;
     }
 
-    // If there still isn't enough free space and there buffers in time ranges after the current range (ie. there is a gap after
-    // the current buffered range), delete 30 seconds at a time from duration back to the current time range or 30 seconds after
-    // currenTime whichever we hit first.
-    auto buffered = m_buffered->ranges().copyWithEpsilon(timeFudgeFactor());
-    uint64_t currentTimeRange = buffered.findWithEpsilon(currentTime, timeFudgeFactor());
-    if (!buffered.length() || currentTimeRange == buffered.length() - 1) {
+    timeChunkAsMilliseconds = evictionAlgorithmInitialTimeChunk;
+    do {
+        const MediaTime timeChunk = MediaTime(timeChunkAsMilliseconds, 1000);
+        const MediaTime minimumRangeStart = currentTime + timeChunk;
+
+        do {
+            MediaTime rangeEnd = buffered.maximumBufferedTime();
+            MediaTime rangeStart = std::max(minimumRangeStart, rangeEnd - timeChunk);
+
+            if (rangeStart >= rangeEnd)
+                break;
+
+            // Do not evict data from the time range that contains currentTime.
+            size_t currentTimeRange = buffered.find(currentTime);
+            size_t startTimeRange = buffered.find(rangeStart);
+            if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
+                size_t endTimeRange = buffered.find(rangeEnd);
+                if (endTimeRange == currentTimeRange)
+                    break;
+            }
+
+            // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
+            // end equal to the removal range start and end timestamp respectively.
+            removeCodedFrames(rangeStart, rangeEnd, currentTime, isEnded);
+            MediaTime newRangeEnd = buffered.maximumBufferedTime();
+            if (newRangeEnd == rangeEnd)
+                break;
+
+            isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
+        } while (isBufferFull);
+
+        timeChunkAsMilliseconds /= 2;
+    } while (isBufferFull && timeChunkAsMilliseconds >= evictionAlgorithmTimeChunkLowThreshold);
+
+    if (!isBufferFull) {
 #if !RELEASE_LOG_DISABLED
-        ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
+        DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
         return;
     }
 
-    MediaTime minimumRangeStart =
-        currentTimeRange == notFound ? currentTime + thirtySeconds : std::max(currentTime + thirtySeconds, buffered.end(currentTimeRange));
-
-    rangeEnd = duration;
-    if (!rangeEnd.isFinite()) {
-        rangeEnd = buffered.maximumBufferedTime();
 #if !RELEASE_LOG_DISABLED
-        DEBUG_LOG(LOGIDENTIFIER, "MediaSource duration is not a finite value, using maximum buffered time: ", rangeEnd);
-#endif
-    }
-
-    rangeStart = rangeEnd - thirtySeconds;
-    while (rangeEnd > minimumRangeStart) {
-        // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
-        // end equal to the removal range start and end timestamp respectively.
-        removeCodedFrames(std::max(minimumRangeStart, rangeStart), rangeEnd, currentTime, isEnded);
-
-        if (!isBufferFullFor(newDataSize, maximumBufferSize)) {
-            break;
-        }
-
-        rangeStart -= thirtySeconds;
-        rangeEnd -= thirtySeconds;
-    }
-
-#if !RELEASE_LOG_DISABLED
-    if (isBufferFullFor(newDataSize, maximumBufferSize))
-        ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
-    else
-        DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
+    ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
 }
 
