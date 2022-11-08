@@ -85,7 +85,7 @@ private:
 
     static bool borderWillArcInnerEdge(const FloatSize& firstRadius, const FloatSize& secondRadius)
     {
-        return !firstRadius.isZero() || !secondRadius.isZero();
+        return !firstRadius.isEmpty() || !secondRadius.isEmpty();
     }
 
     static bool borderStyleHasUnmatchedColorsAtCorner(BorderStyle, BoxSide, BoxSide adjacentSide);

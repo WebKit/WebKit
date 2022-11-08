@@ -536,7 +536,7 @@ void BorderPainter::paintTranslucentBorderSides(const RoundedRect& outerBorder, 
 
 static bool borderWillArcInnerEdge(const LayoutSize& firstRadius, const LayoutSize& secondRadius)
 {
-    return !firstRadius.isZero() || !secondRadius.isZero();
+    return !firstRadius.isEmpty() || !secondRadius.isEmpty();
 }
 
 inline bool styleRequiresClipPolygon(BorderStyle style)

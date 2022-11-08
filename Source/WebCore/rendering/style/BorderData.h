@@ -59,10 +59,10 @@ public:
 
     bool hasBorderRadius() const
     {
-        return !m_radii.topLeft.width.isZero()
-            || !m_radii.topRight.width.isZero()
-            || !m_radii.bottomLeft.width.isZero()
-            || !m_radii.bottomRight.width.isZero();
+        return !m_radii.topLeft.isEmpty()
+            || !m_radii.topRight.isEmpty()
+            || !m_radii.bottomLeft.isEmpty()
+            || !m_radii.bottomRight.isEmpty();
     }
 
     float borderLeftWidth() const
