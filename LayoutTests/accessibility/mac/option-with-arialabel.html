@@ -25,13 +25,11 @@
     if (window.accessibilityController) {
 
         // Test the value of the popup.
-        document.getElementById("deg1").focus();
-        var popup = accessibilityController.focusedElement;
+        var popup = accessibilityController.accessibleElementById("deg1");
         shouldBe("popup.stringValue", "'AXValue: Fahrenheit'");
 
         // Test the values in a multi-select list box.
-        document.getElementById("deg2").focus();
-        var selectbox = accessibilityController.focusedElement;
+        var selectbox = accessibilityController.accessibleElementById("deg2");
         shouldBe("selectbox.childAtIndex(0).stringValue", "'AXValue: Fahrenheit'");
         shouldBe("selectbox.childAtIndex(1).stringValue", "'AXValue: Celsius'");
     }

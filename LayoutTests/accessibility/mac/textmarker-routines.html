@@ -17,8 +17,7 @@ text
     description("This verifies usage of isTextMarkerValid, indexForTextMarker and textMarkerForIndex.");
 
     if (window.accessibilityController) {
-        document.getElementById("text1").focus();
-        var item1 = accessibilityController.focusedElement;
+        var item1 = accessibilityController.accessibleElementById("text1");
         var markerRange = item1.textMarkerRangeForElement(item1);
         var firstTextMarker = item1.startTextMarkerForTextMarkerRange(markerRange);
 
@@ -30,8 +29,7 @@ text
 
         shouldBeFalse("item1.isTextMarkerValid(firstTextMarker)");
 
-        document.getElementById("text2").focus();
-        var item2 = accessibilityController.focusedElement;
+        var item2 = accessibilityController.accessibleElementById("text2");
         markerRange = item2.textMarkerRangeForElement(item2);
         var secondTextMarker = item2.startTextMarkerForTextMarkerRange(markerRange);
 

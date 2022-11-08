@@ -1,39 +1,27 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
-<input type="image" role="checkbox" aria-checked="true" id="check1">check1<BR>
-<input type="image" role="checkbox" aria-checked="mixed" id="check2">check2<BR>
-<input type="image" role="checkbox" id="check3">check2<BR>
-
-
-<p id="description"></p>
-<div id="console"></div>
+<input type="image" role="checkbox" aria-checked="true" id="aria-checked-true-checkbox">check1<BR>
+<input type="image" role="checkbox" aria-checked="false" id="aria-checked-false-checkbox">check2<BR>
+<input type="image" role="checkbox" aria-checked="mixed" id="aria-checked-mixed-checkbox">check3<BR>
+<input type="image" role="checkbox" id="aria-checked-missing-checkbox">check4<BR>
 
 <script>
-
-    description("This tests that input types masquerading as checkboxes will use the aria-checked values for its value.");
+    var testOutput = "This tests that input types masquerading as checkboxes will use the aria-checked values for its value.\n\n";
 
     if (window.accessibilityController) {
-
-          // aria-state=true
-          document.getElementById("check1").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "1");
-
-          // aria-state=false
-          document.getElementById("check3").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "0");
-
-          // aria-state=mixed
-          document.getElementById("check2").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "2");
+        testOutput += expect("accessibilityController.accessibleElementById('aria-checked-true-checkbox').intValue", "1");
+        testOutput += expect("accessibilityController.accessibleElementById('aria-checked-false-checkbox').intValue", "0");
+        testOutput += expect("accessibilityController.accessibleElementById('aria-checked-mixed-checkbox').intValue", "2");
+        testOutput += expect("accessibilityController.accessibleElementById('aria-checked-missing-checkbox').intValue", "0");
+        debug(testOutput);
     }
-
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+
