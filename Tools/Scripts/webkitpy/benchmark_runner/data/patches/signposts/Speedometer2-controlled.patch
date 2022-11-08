@@ -1,0 +1,208 @@
+Index: PerformanceTests/Speedometer/resources/benchmark-runner.js
+===================================================================
+--- a/resources/benchmark-runner.js    (revision 293992)
++++ b/resources/benchmark-runner.js    (working copy)
+@@ -125,21 +125,27 @@ BenchmarkRunner.prototype._runTest = fun
+ 
+     var contentWindow = self._frame.contentWindow;
+     var contentDocument = self._frame.contentDocument;
++    let syncName = suite.name + '.' + test.name + '-sync';
++    let asyncName = suite.name + '.' + test.name + '-async';
+ 
+     self._writeMark(suite.name + '.' + test.name + '-start');
++    __signpostStart(syncName);
+     var startTime = now();
+     test.run(prepareReturnValue, contentWindow, contentDocument);
+     var endTime = now();
++    __signpostStop(syncName);
+     self._writeMark(suite.name + '.' + test.name + '-sync-end');
+ 
+     var syncTime = endTime - startTime;
+ 
++    __signpostStart(asyncName);
+     var startTime = now();
+     setTimeout(function () {
+         // Some browsers don't immediately update the layout for paint.
+         // Force the layout here to ensure we're measuring the layout time.
+         var height = self._frame.contentDocument.body.getBoundingClientRect().height;
+         var endTime = now();
++        __signpostStop(asyncName);
+         self._frame.contentWindow._unusedHeightValue = height; // Prevent dead code elimination.
+         self._writeMark(suite.name + '.' + test.name + '-async-end');
+         callback(syncTime, endTime - startTime, height);
+Index: PerformanceTests/Speedometer/resources/tests.js
+===================================================================
+--- a/resources/tests.js    (revision 293992)
++++ b/resources/tests.js    (working copy)
+@@ -11,6 +11,7 @@ var triggerEnter = function (element, ty
+     element.dispatchEvent(event);
+ }
+ 
++for (let i = 0; i < 8; ++i) {
+ Suites.push({
+     name: 'VanillaJS-TodoMVC',
+     url: 'todomvc/vanilla-examples/vanillajs/index.html',
+@@ -40,7 +41,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 6; ++i) {
+ Suites.push({
+     name: 'Vanilla-ES2015-TodoMVC',
+     url: 'todomvc/vanilla-examples/es2015/index.html',
+@@ -70,7 +73,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 7; ++i) {
+ Suites.push({
+     name: 'Vanilla-ES2015-Babel-Webpack-TodoMVC',
+     url: 'todomvc/vanilla-examples/es2015-babel-webpack/dist/index.html',
+@@ -100,7 +105,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 5; ++i) {
+ Suites.push({
+     name: 'React-TodoMVC',
+     url: 'todomvc/architecture-examples/react/index.html',
+@@ -134,7 +141,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 3; ++i) {
+ Suites.push({
+     name: 'React-Redux-TodoMVC',
+     url: 'todomvc/architecture-examples/react-redux/dist/index.html',
+@@ -163,7 +172,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 3; ++i) {
+ Suites.push({
+     name: 'EmberJS-TodoMVC',
+     url: 'todomvc/architecture-examples/emberjs/dist/index.html',
+@@ -192,7 +203,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 1; ++i) {
+ Suites.push({
+     name: 'EmberJS-Debug-TodoMVC',
+     url: 'todomvc/architecture-examples/emberjs-debug/index.html',
+@@ -221,7 +234,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 7; ++i) {
+ Suites.push({
+     name: 'BackboneJS-TodoMVC',
+     url: 'todomvc/architecture-examples/backbone/index.html',
+@@ -252,7 +267,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 3; ++i) {
+ Suites.push({
+     name: 'AngularJS-TodoMVC',
+     url: 'todomvc/architecture-examples/angularjs/index.html',
+@@ -285,7 +302,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 9; ++i) {
+ Suites.push({
+     name: 'Angular2-TypeScript-TodoMVC',
+     url: 'todomvc/architecture-examples/angular/dist/index.html',
+@@ -318,7 +337,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 12; ++i) {
+ Suites.push({
+     name: 'VueJS-TodoMVC',
+     url: 'todomvc/architecture-examples/vuejs-cli/dist/index.html',
+@@ -351,7 +372,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 2; ++i) {
+ Suites.push({
+     name: 'jQuery-TodoMVC',
+     url: 'todomvc/architecture-examples/jquery/index.html',
+@@ -380,7 +403,9 @@ Suites.push({
+         }),
+     ]
+ })
++}
+ 
++for (let i = 0; i < 22; ++i) {
+ Suites.push({
+     name: 'Preact-TodoMVC',
+     url: 'todomvc/architecture-examples/preact/dist/index.html',
+@@ -409,7 +434,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 6; ++i) {
+ Suites.push({
+     name: 'Inferno-TodoMVC',
+     url: 'todomvc/architecture-examples/inferno/index.html',
+@@ -442,6 +469,7 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
+ function processElmWorkQueue(contentWindow)
+ {
+@@ -455,6 +483,7 @@ function processElmWorkQueue(contentWind
+     contentWindow.rAFCallbackList = [];
+ }
+ 
++for (let i = 0; i < 3; ++i) {
+ Suites.push({
+     name: 'Elm-TodoMVC',
+     url: 'todomvc/functional-prog-examples/elm/index.html',
+@@ -492,7 +521,9 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
++for (let i = 0; i < 6; ++i) {
+ Suites.push({
+     name: 'Flight-TodoMVC',
+     url: 'todomvc/dependency-examples/flight/flight/index.html',
+@@ -522,6 +553,7 @@ Suites.push({
+         }),
+     ]
+ });
++}
+ 
+ var actionCount = 50;
+ Suites.push({
