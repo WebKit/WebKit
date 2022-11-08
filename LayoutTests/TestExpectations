@@ -178,6 +178,8 @@ http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.
 # rdar://problem/61793884 : making this test WK1 specific as, for WK2 its timing out.
 fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Skip ]
 
+webkit.org/b/247625 [ Debug ] fast/block/float/intrusive-floats-with-reverted-inline-content.html [ Skip ]
+
 # Only iOS supports QuickLook
 quicklook [ Skip ]
 http/tests/quicklook [ Skip ]

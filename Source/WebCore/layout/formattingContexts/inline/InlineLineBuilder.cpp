@@ -1126,6 +1126,8 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
 {
     ASSERT(!m_wrapOpportunityList.isEmpty());
     size_t numberOfInlineItemsOnLine = 0;
+    // FIXME: Remove floats that are outside of this "rebuild" range to ensure we don't add them twice.
+    size_t numberOfFloatsInRange = 0;
     // We might already have added floats. They shrink the available horizontal space for the line.
     // Let's just reuse what the line has at this point.
     m_line.initialize(m_lineSpanningInlineBoxes);
@@ -1133,19 +1135,21 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
         m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), inlineItemWidth(*m_partialLeadingTextItem, { }));
         ++numberOfInlineItemsOnLine;
         if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
-            return numberOfInlineItemsOnLine + m_placedFloats.size();
+            return 1;
     }
     for (size_t index = layoutRange.start + numberOfInlineItemsOnLine; index < layoutRange.end; ++index) {
         auto& inlineItem = m_inlineItems[index];
-        if (inlineItem.isFloat())
+        if (inlineItem.isFloat()) {
+            ++numberOfFloatsInRange;
             continue;
+        }
         auto& style = isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
         m_line.append(inlineItem, style, inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
         ++numberOfInlineItemsOnLine;
         if (&inlineItem == &lastInlineItemToAdd)
             break;
     }
-    return numberOfInlineItemsOnLine + m_placedFloats.size();
+    return numberOfInlineItemsOnLine + numberOfFloatsInRange;
 }
 
 size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange)
