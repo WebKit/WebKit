@@ -284,7 +284,12 @@ static const AtomString& legacyType(const Event& event)
 // https://dom.spec.whatwg.org/#concept-event-listener-invoke
 void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isEventAllowedInMainThread());
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    if (auto* node = dynamicDowncast<Node>(*this))
+        ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(*node));
+    else
+        ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isEventAllowedInMainThread());
+#endif
     ASSERT(event.isInitialized());
 
     auto* data = eventTargetData();
