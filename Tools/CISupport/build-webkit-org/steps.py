@@ -310,12 +310,6 @@ class CompileWebKit(shell.Compile):
     descriptionDone = ["compiled"]
     warningPattern = ".*arning: .*"
 
-    def __init__(self, **kwargs):
-        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
-        # work around log output delays on slower machines.
-        kwargs.setdefault('timeout', 60 * 30)
-        super().__init__(**kwargs)
-
     def start(self):
         platform = self.getProperty('platform')
         buildOnly = self.getProperty('buildOnly')
@@ -351,6 +345,17 @@ class CompileWebKit(shell.Compile):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
+
+    def buildCommandKwargs(self, warnings):
+        kwargs = super(CompileWebKit, self).buildCommandKwargs(warnings)
+        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
+        # work around log output delays on slower machines.
+        # https://bugs.webkit.org/show_bug.cgi?id=247506: Only applies to Xcode 12.x.
+        if self.getProperty('fullPlatform') == 'mac-bigsur':
+            kwargs['timeout'] = 60 * 60
+        else:
+            kwargs['timeout'] = 60 * 30
+        return kwargs
 
     def parseOutputLine(self, line):
         if "arning:" in line:
