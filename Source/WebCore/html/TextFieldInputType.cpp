@@ -485,7 +485,7 @@ void TextFieldInputType::createDataListDropdownIndicator()
 {
     ASSERT(!m_dataListDropdownIndicator);
     if (!m_container)
-        createContainer(PreserveSelectionRange::Yes);
+        createContainer();
 
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
@@ -821,7 +821,7 @@ void TextFieldInputType::autoFillButtonElementWasClicked()
     page->chrome().client().handleAutoFillButtonClick(*element());
 }
 
-void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelection)
+void TextFieldInputType::createContainer()
 {
     ASSERT(!m_container);
     ASSERT(element());
@@ -830,11 +830,6 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
 
     ScriptDisallowedScope::EventAllowedScope allowedScope(*element()->userAgentShadowRoot());
 
-    // FIXME: <https://webkit.org/b/245977> Suppress selectionchange events during subtree modification.
-    std::optional<std::tuple<unsigned, unsigned, TextFieldSelectionDirection>> selectionState;
-    if (preserveSelection == PreserveSelectionRange::Yes && enclosingTextFormControl(element()->document().selection().selection().start()) == element())
-        selectionState = { element()->selectionStart(), element()->selectionEnd(), element()->computeSelectionDirection() };
-
     m_container = TextControlInnerContainer::create(element()->document());
     element()->userAgentShadowRoot()->appendChild(*m_container);
     m_container->setPseudo(ShadowPseudoIds::webkitTextfieldDecorationContainer());
@@ -842,11 +837,6 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
     m_innerBlock = TextControlInnerElement::create(element()->document());
     m_container->appendChild(*m_innerBlock);
     m_innerBlock->appendChild(*m_innerText);
-
-    if (selectionState) {
-        auto [selectionStart, selectionEnd, selectionDirection] = *selectionState;
-        element()->setSelectionRange(selectionStart, selectionEnd, selectionDirection);
-    }
 }
 
 void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonType)
@@ -876,7 +866,7 @@ void TextFieldInputType::updateAutoFillButton()
 
     if (shouldDrawAutoFillButton()) {
         if (!m_container)
-            createContainer(PreserveSelectionRange::Yes);
+            createContainer();
 
         AutoFillButtonType autoFillButtonType = element()->autoFillButtonType();
         if (!m_autoFillButton)
