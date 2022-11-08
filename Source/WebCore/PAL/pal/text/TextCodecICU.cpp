@@ -115,42 +115,19 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
     for (auto& encodingName : encodingNames) {
         const char* name = encodingName.name;
 
-        // These encodings currently don't have standard names, so we need to register encoders manually.
-        // http://demo.icu-project.org/icu-bin/convexp
-        if (!strcmp(name, "windows-949")) {
-            registrar(name, [name] {
-                return makeUnique<TextCodecICU>(name, "windows-949-2000");
-            });
-            continue;
-        }
-        if (!strcmp(name, "x-mac-cyrillic")) {
-            registrar(name, [name] {
-                return makeUnique<TextCodecICU>(name, "macos-7_3-10.2");
-            });
-            continue;
-        }
-        if (!strcmp(name, "x-mac-greek")) {
-            registrar(name, [name] {
-                return makeUnique<TextCodecICU>(name, "macos-6_2-10.4");
-            });
-            continue;
-        }
-        if (!strcmp(name, "x-mac-centraleurroman")) {
-            registrar(name, [name] {
-                return makeUnique<TextCodecICU>(name, "macos-29-10.2");
-            });
-            continue;
-        }
-        if (!strcmp(name, "x-mac-turkish")) {
-            registrar(name, [name] {
-                return makeUnique<TextCodecICU>(name, "macos-35-10.2");
-            });
-            continue;
-        }
-
         UErrorCode error = U_ZERO_ERROR;
         const char* canonicalConverterName = ucnv_getCanonicalName(name, "IANA", &error);
         ASSERT(U_SUCCESS(error));
+        if (!canonicalConverterName) {
+            auto converter = ICUConverterPtr { ucnv_open(name, &error) };
+            ASSERT(U_SUCCESS(error));
+            canonicalConverterName = ucnv_getName(converter.get(), &error);
+            ASSERT(U_SUCCESS(error));
+            if (!canonicalConverterName) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+        }
         registrar(name, [name, canonicalConverterName] {
             return makeUnique<TextCodecICU>(name, canonicalConverterName);
         });
@@ -161,6 +138,7 @@ TextCodecICU::TextCodecICU(const char* encoding, const char* canonicalConverterN
     : m_encodingName(encoding)
     , m_canonicalConverterName(canonicalConverterName)
 {
+    ASSERT(m_canonicalConverterName);
 }
 
 TextCodecICU::~TextCodecICU()
