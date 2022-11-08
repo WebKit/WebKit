@@ -357,7 +357,6 @@ void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBi
 @implementation WKWindowVisibilityObserver {
     NSView *_view;
     WebKit::WebViewImpl *_impl;
-    __weak NSWindow *_observedWindow;
 
     BOOL _didRegisterForLookupPopoverCloseNotifications;
     BOOL _shouldObserveFontPanel;
@@ -420,15 +419,14 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [self startObservingFontPanel];
 
-    [self _observeWindow:window];
+    [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
+    [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
 }
 
 - (void)stopObserving:(NSWindow *)window
 {
     if (!window)
         return;
-
-    ASSERT_IMPLIES(_observedWindow, _observedWindow == window);
 
     NSNotificationCenter *defaultNotificationCenter = [NSNotificationCenter defaultCenter];
 
@@ -451,25 +449,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
 
-    [self _observeWindow:nil];
-}
-
-- (void)_observeWindow:(NSWindow *)window
-{
-    if (_observedWindow == window)
-        return;
-
-    if (_observedWindow) {
-        [_observedWindow removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
-        [_observedWindow removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
-    }
-
-    _observedWindow = window;
-
-    if (window) {
-        [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-        [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-    }
+    [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
+    [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
 }
 
 - (void)startObservingFontPanel
@@ -2615,9 +2596,11 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 
     clearAllEditCommands();
 
-    NSWindow *stopObservingWindow = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
-    [m_windowVisibilityObserver stopObserving:stopObservingWindow];
-    [m_windowVisibilityObserver startObserving:window];
+    if (!m_isPreparingToUnparentView) {
+        NSWindow *stopObservingWindow = m_targetWindowForMovePreparation.get() ?: [m_view window];
+        [m_windowVisibilityObserver stopObserving:stopObservingWindow];
+        [m_windowVisibilityObserver startObserving:window];
+    }
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
     if (m_isRegisteredScrollViewSeparatorTrackingAdapter) {
@@ -2630,6 +2613,7 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 {
     viewWillMoveToWindowImpl(window);
+    m_isPreparingToUnparentView = false;
     m_targetWindowForMovePreparation = nil;
 }
 
@@ -2887,6 +2871,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
 {
     m_shouldDeferViewInWindowChanges = true;
     viewWillMoveToWindowImpl(targetWindow);
+    m_isPreparingToUnparentView = !targetWindow;
     m_targetWindowForMovePreparation = targetWindow;
     viewDidMoveToWindow();
 
