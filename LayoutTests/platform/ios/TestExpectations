@@ -3762,6 +3762,3 @@ http/tests/images/avif-partial-load-crash.html [ Pass ]
 
 # Screen Orientation API doesn't support nested frames yet
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
-
-webkit.org/b/247499 [ Debug ] storage/indexeddb/crash-on-getdatabases.html [ Pass Crash ]
-

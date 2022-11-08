@@ -55,7 +55,7 @@
     EstablishTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBTransactionInfo info)
     DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)
-    AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
+    AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, std::optional<WebCore::IDBResourceIdentifier> transactionIdentifier)
     DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
     DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
     AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)
