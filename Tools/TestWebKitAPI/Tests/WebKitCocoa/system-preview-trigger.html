@@ -2,19 +2,25 @@
 <body>
 <a rel="ar"></a>
 <script>
-window.addEventListener("load", function () {
-    const a = document.querySelector("a");
-
-    const elementID = internals.elementIdentifier(a);
+function runTest(element, message, loadedMessage) {
+    const elementID = internals.elementIdentifier(element);
     const pageID = internals.pageIdentifier(document);
     const documentID = internals.documentIdentifier(document);
 
-    a.addEventListener("message", function (event) {
-        window.webkit.messageHandlers.testSystemPreview.postMessage({ message: "triggered", action: event.data });
+    element.addEventListener("message", function (event) {
+        window.webkit.messageHandlers.testSystemPreview.postMessage({ message: message, action: event.data });
     });
 
-    const msg = { message: "loaded", elementID, pageID, documentID };
+    const msg = { message: loadedMessage, elementID, pageID, documentID };
     window.webkit.messageHandlers.testSystemPreview.postMessage(msg);
+}
+
+window.addEventListener("load", function () {
+    const attachedElement = document.querySelector("a");
+    runTest(attachedElement, "triggered", "loaded_triggered");
+
+    const detachedElement = document.createElement("a");
+    runTest(detachedElement, "triggered_detached", "loaded_triggered_detached");
 });
 
 

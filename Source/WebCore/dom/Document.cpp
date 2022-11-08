@@ -9120,7 +9120,7 @@ void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemP
     if (!is<HTMLAnchorElement>(element))
         return;
 
-    if (!element->isConnected() || &element->document() != this)
+    if (&element->document() != this)
         return;
 
     auto event = MessageEvent::create(message, securityOrigin().toString());
