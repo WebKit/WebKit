@@ -106,6 +106,20 @@ class TestRelationship(TestCase):
             ))
         )
 
+    def test_double_revert(self):
+        self.assertEqual(
+            ('original', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Reverts "Revert 1230@main (0123456789ab)"',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['1230@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Revert "Revert 1230@main, it broke the build"',
+            ))
+        )
+
 
 class TestCommitsStory(TestCase):
     def test_cherry_pick(self):
