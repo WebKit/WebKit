@@ -329,7 +329,7 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(const Vector<AXID>& subtr
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::collectNodeChangesForSubtree"_s);
-    AXLOG(axObject);
+    AXLOG(&axObject);
     ASSERT(isMainThread());
 
     if (axObject.isDetached()) {
