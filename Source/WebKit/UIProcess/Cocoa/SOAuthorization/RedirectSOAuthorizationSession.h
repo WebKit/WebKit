@@ -35,10 +35,10 @@ class RedirectSOAuthorizationSession final : public NavigationSOAuthorizationSes
 public:
     using Callback = CompletionHandler<void(bool)>;
 
-    static Ref<SOAuthorizationSession> create(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&& completionHandler);
+    static Ref<SOAuthorizationSession> create(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&& completionHandler);
 
 private:
-    RedirectSOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&);
+    RedirectSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&);
 
     // SOAuthorizationSession
     void fallBackToWebPathInternal() final;

@@ -45,13 +45,13 @@ public:
     using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
     using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;
 
-    static Ref<SOAuthorizationSession> create(WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
+    static Ref<SOAuthorizationSession> create(RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
     ~PopUpSOAuthorizationSession();
 
     void close(WKWebView *);
 
 private:
-    PopUpSOAuthorizationSession(WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
+    PopUpSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
 
     void shouldStartInternal() final;
     void fallBackToWebPathInternal() final;
