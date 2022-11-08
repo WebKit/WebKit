@@ -94,13 +94,13 @@
 
 namespace WebKit {
 
-Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
-    return adoptRef(*new PopUpSOAuthorizationSession(page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback)));
+    return adoptRef(*new PopUpSOAuthorizationSession(delegate, page, WTFMove(navigationAction), WTFMove(newPageCallback), WTFMove(uiClientCallback)));
 }
 
-PopUpSOAuthorizationSession::PopUpSOAuthorizationSession(WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
-    : SOAuthorizationSession(WTFMove(navigationAction), page, InitiatingAction::PopUp)
+PopUpSOAuthorizationSession::PopUpSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+    : SOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::PopUp)
     , m_newPageCallback(WTFMove(newPageCallback))
     , m_uiClientCallback(WTFMove(uiClientCallback))
 {
