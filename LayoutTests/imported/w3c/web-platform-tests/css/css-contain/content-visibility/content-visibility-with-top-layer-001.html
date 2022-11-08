@@ -1,7 +1,7 @@
 <!doctype html>
 <html class="reftest-wait">
 <meta charset="utf8">
-<title>CSS Content Visibility: dialog doesn't show when hidden</title>
+<title>CSS Content Visibility: dialog doesn't show when hidden after render</title>
 <link rel="author" title="Vladimir Levin" href="mailto:vmpstr@chromium.org">
 <link rel="help" href="https://drafts.csswg.org/css-contain/#content-visibility">
 <link rel="match" href="container-ref.html">
@@ -14,13 +14,14 @@
 .hidden { content-visibility: hidden }
 </style>
 
-<div class="box hidden">
-content
-<dialog id=dialog>dialog<div id=inner></div></dialog>
+<div id=container class=box>
+Fail
+<dialog id=dialog>Fail<div id=inner></div></dialog>
 </div>
 
 <script>
 function runTest() {
+  container.classList.add("hidden");
   dialog.showModal();
   takeScreenshot();
 }

@@ -1,8 +1,8 @@
 <!doctype html>
 <html class="reftest-wait">
 <meta charset="utf8">
-<title>CSS Content Visibility: dialog doesn't show when hidden after render</title>
-<link rel="author" title="Vladimir Levin" href="mailto:vmpstr@chromium.org">
+<title>CSS Content Visibility: dialog doesn't show when hidden after showModal()</title>
+<link rel="author" title="Martin Robinson" href="mailto:mrobinson@igalia.com">
 <link rel="help" href="https://drafts.csswg.org/css-contain/#content-visibility">
 <link rel="match" href="container-ref.html">
 <meta name="assert" content="top layer dialogs don't render when in skipped subtrees">
@@ -15,14 +15,17 @@
 </style>
 
 <div id=container class=box>
-content
-<dialog id=dialog>dialog<div id=inner></div></dialog>
+FAIL
+<dialog id=dialog>FAIL<div id=inner></div></dialog>
 </div>
 
 <script>
 function runTest() {
-  container.classList.add("hidden");
   dialog.showModal();
+  inner.getBoundingClientRect();
+
+  container.classList.add("hidden");
+
   takeScreenshot();
 }
 
