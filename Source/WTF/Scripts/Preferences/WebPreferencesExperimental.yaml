@@ -738,11 +738,11 @@ FetchMetadataEnabled:
   humanReadableDescription: "Enable Fetch Metadata headers"
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
 
 FileSystemAccessEnabled:
   type: bool
