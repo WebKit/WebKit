@@ -161,6 +161,9 @@ typedef void (*WKWebsiteDataStoreRemoveFetchCacheRemovalFunction)(void* function
 WK_EXPORT void WKWebsiteDataStoreRemoveFetchCacheForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKSecurityOriginRef origin, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback);
 WK_EXPORT void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback);
 
+typedef void (*WKWebsiteDataStoreRemoveNetworkCacheCallback)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreRemoveNetworkCache(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveNetworkCacheCallback callback);
+
 typedef void (*WKWebsiteDataStoreRemoveMemoryCachesRemovalFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreRemoveMemoryCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveMemoryCachesRemovalFunction callback);
 

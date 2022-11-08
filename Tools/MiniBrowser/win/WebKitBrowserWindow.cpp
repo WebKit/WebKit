@@ -421,15 +421,19 @@ void WebKitBrowserWindow::clearCookies()
         WKHTTPCookieStoreDeleteAllCookies(cookieStore, this, deleteAllCookiesCallback);
 }
 
-static void removeAllFetchCaches(void*)
+static void removeAllFetchCachesCallback(void*)
 {
 }
 
-static void removeMemoryCaches(void*)
+static void removeNetworkCacheCallback(void*)
 {
 }
 
-static void removeAllServiceWorkerRegistrations(void*)
+static void removeMemoryCachesCallback(void*)
+{
+}
+
+static void removeAllServiceWorkerRegistrationsCallback(void*)
 {
 }
 
@@ -446,9 +450,10 @@ void WebKitBrowserWindow::clearWebsiteData()
     auto page = WKViewGetPage(m_view.get());
     auto websiteDataStore = WKPageGetWebsiteDataStore(page);
 
-    WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore, this, removeAllFetchCaches);
-    WKWebsiteDataStoreRemoveMemoryCaches(websiteDataStore, this, removeMemoryCaches);
-    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore, this, removeAllServiceWorkerRegistrations);
+    WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore, this, removeAllFetchCachesCallback);
+    WKWebsiteDataStoreRemoveNetworkCache(websiteDataStore, this, removeNetworkCacheCallback);
+    WKWebsiteDataStoreRemoveMemoryCaches(websiteDataStore, this, removeMemoryCachesCallback);
+    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore, this, removeAllServiceWorkerRegistrationsCallback);
     WKWebsiteDataStoreRemoveAllIndexedDatabases(websiteDataStore, this, removeAllIndexedDatabasesCallback);
     WKWebsiteDataStoreRemoveLocalStorage(websiteDataStore, this, removeLocalStorageCallback);
 }
