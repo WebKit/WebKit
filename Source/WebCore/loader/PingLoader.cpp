@@ -146,9 +146,12 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     FrameLoader::addHTTPOriginIfNeeded(request, SecurityPolicy::generateOriginHeader(document.referrerPolicy(), request.url(), sourceOrigin));
 
     frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
-    request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL.string());
-    if (!SecurityPolicy::shouldHideReferrer(pingURL, frame.loader().outgoingReferrer()))
+
+    // https://html.spec.whatwg.org/multipage/links.html#hyperlink-auditing
+    if (document.securityOrigin().isSameOriginAs(SecurityOrigin::create(pingURL).get())
+        || !document.url().protocolIs("https"_s))
         request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document.url().string());
+    request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL.string());
 
     startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::Yes, ContentSecurityPolicyImposition::DoPolicyCheck, ReferrerPolicy::NoReferrer);
 }
