@@ -803,7 +803,7 @@
                     { "type": "PlatformSpecificScheduler", "platform": "watchos-9", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-watchOS-9-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-8", "branch": "main", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-9", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-watchOS-Simulator-9-Release-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "main", "treeStableTimer": 45.0,
