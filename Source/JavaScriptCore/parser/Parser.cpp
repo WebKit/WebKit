@@ -4890,6 +4890,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClassExpression(TreeBuilder& context)
 {
     ASSERT(match(CLASSTOKEN));
+    SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
     ParserClassInfo<TreeBuilder> info;
     info.className = &m_vm.propertyNames->nullIdentifier;
     return parseClass(context, FunctionNameRequirements::None, info);
@@ -4899,6 +4900,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseFunctionExpression(TreeBuilder& context)
 {
     ASSERT(match(FUNCTION));
+    SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
     JSTokenLocation location(tokenLocation());
     unsigned functionKeywordStart = tokenStart();
     next();
@@ -4954,6 +4956,7 @@ template <typename LexerType>
 template <class TreeBuilder> typename TreeBuilder::TemplateLiteral Parser<LexerType>::parseTemplateLiteral(TreeBuilder& context, typename LexerType::RawStringsBuildMode rawStringsBuildMode)
 {
     ASSERT(match(BACKQUOTE));
+    SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
     JSTokenLocation location(tokenLocation());
     bool elementIsTail = false;
 
