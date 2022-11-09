@@ -37,6 +37,7 @@
 #include "HTMLButtonElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
+#include "HTMLInputElement.h"
 #include "HitTestResult.h"
 #include "Page.h"
 #include "PathUtilities.h"
@@ -45,6 +46,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "SimpleRange.h"
+#include "SliderThumbElement.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -61,6 +63,35 @@ static CursorType cursorTypeForElement(Element& element)
         cursorType = CursorType::Pointer;
 
     return cursorType;
+}
+
+static bool shouldAllowElement(const Element& element)
+{
+    if (is<HTMLFieldSetElement>(element))
+        return false;
+
+    if (auto* input = dynamicDowncast<HTMLInputElement>(element)) {
+        // Do not allow regions for the <input type='range'>, because we make one for the thumb.
+        if (input->isRangeControl())
+            return false;
+
+        // Do not allow regions for the <input type='file'>, because we make one for the button.
+        if (input->isFileUpload())
+            return false;
+    }
+
+    return true;
+}
+
+static bool shouldAllowNonPointerCursorForElement(const Element& element)
+{
+    if (is<HTMLFormControlElement>(element))
+        return true;
+
+    if (is<SliderThumbElement>(element))
+        return true;
+
+    return false;
 }
 
 std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const Region& region)
@@ -93,6 +124,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     if (!element || !element->renderer())
         return std::nullopt;
+
+    if (!shouldAllowElement(*element))
+        return std::nullopt;
+
     auto& renderer = *element->renderer();
 
     // FIXME: Consider also allowing elements that only receive touch events.
@@ -100,7 +135,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
 
     auto cursor = cursorTypeForElement(*element);
-    if (cursor != CursorType::Pointer && (!is<HTMLFormControlElement>(element) || is<HTMLFieldSetElement>(element)))
+    if (cursor != CursorType::Pointer && !shouldAllowNonPointerCursorForElement(*element))
         return std::nullopt;
 
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
