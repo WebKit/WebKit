@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #if ENABLE(WEBGPU)
 
-#include "config.h"
 #include "GPUCanvasContext.h"
 
 #include "GPUAdapter.h"

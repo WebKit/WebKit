@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "NicosiaPlatformLayer.h"
 #include "ScrollingTreeOverflowScrollProxyNode.h"
 
 namespace WebCore {

@@ -26,12 +26,14 @@
 #include "config.h"
 #include "StylePropertyMap.h"
 
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnparsedValue.h"
 #include "CSSVariableReferenceValue.h"
 #include "Document.h"
+#include "StylePropertyShorthand.h"
 #include <wtf/FixedVector.h>
 
 namespace WebCore {
