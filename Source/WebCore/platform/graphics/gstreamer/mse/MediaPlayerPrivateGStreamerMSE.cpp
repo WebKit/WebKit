@@ -477,9 +477,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
     result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
 
-    auto finalResult = extendedSupportsType(parameters, result);
-    GST_DEBUG("Supported: %s", convertEnumerationToString(finalResult).utf8().data());
-    return finalResult;
+    GST_DEBUG("Supported: %s", convertEnumerationToString(result).utf8().data());
+    return result;
 }
 
 MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
