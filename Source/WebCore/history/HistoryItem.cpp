@@ -66,7 +66,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title)
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle)
-    : HistoryItem(urlString, title, alternateTitle, { Process::identifier(), ObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>::generate() })
+    : HistoryItem(urlString, title, alternateTitle, BackForwardItemIdentifier::generate())
 {
 }
 
@@ -507,7 +507,7 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
 #if !LOG_DISABLED
 const char* HistoryItem::logString() const
 {
-    return debugString("HistoryItem current URL ", urlString(), ", identifier ", m_identifier.logString());
+    return debugString("HistoryItem current URL ", urlString(), ", identifier ", m_identifier.toString());
 }
 #endif
 

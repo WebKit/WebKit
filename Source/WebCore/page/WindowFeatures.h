@@ -56,7 +56,7 @@ struct WindowFeatures {
     bool noopener { false };
     bool noreferrer { false };
 
-    Vector<String> additionalFeatures;
+    Vector<String> additionalFeatures { };
 };
 
 WindowFeatures parseWindowFeatures(StringView windowFeaturesString);

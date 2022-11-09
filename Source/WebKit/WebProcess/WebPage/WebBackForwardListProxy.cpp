@@ -99,7 +99,7 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
     auto result = idToHistoryItemMap().add(item->identifier(), item.ptr());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->identifier().logString(), item->urlString().utf8().data());
+    LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->identifier().toString().utf8().data(), item->urlString().utf8().data());
     clearCachedListCounts();
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(toBackForwardListItemState(item.get())));
 }

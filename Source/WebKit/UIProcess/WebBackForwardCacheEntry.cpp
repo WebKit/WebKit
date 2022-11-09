@@ -72,7 +72,7 @@ WebProcessProxy& WebBackForwardCacheEntry::process() const
 
 void WebBackForwardCacheEntry::expirationTimerFired()
 {
-    RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID.string().utf8().data(), !!m_suspendedPage);
+    RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID.toString().utf8().data(), !!m_suspendedPage);
     ASSERT(m_backForwardItemID);
     auto* item = WebBackForwardListItem::itemForID(m_backForwardItemID);
     ASSERT(item);

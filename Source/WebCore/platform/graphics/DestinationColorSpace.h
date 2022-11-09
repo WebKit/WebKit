@@ -43,11 +43,9 @@ public:
 
     WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace.get(); }
+    PlatformColorSpace serializableColorSpace() const { return m_platformColorSpace; }
 
     WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DestinationColorSpace> decode(Decoder&);
 
 private:
     PlatformColorSpace m_platformColorSpace;
@@ -57,20 +55,4 @@ WEBCORE_EXPORT bool operator==(const DestinationColorSpace&, const DestinationCo
 WEBCORE_EXPORT bool operator!=(const DestinationColorSpace&, const DestinationColorSpace&);
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DestinationColorSpace&);
-
-template<class Encoder> void DestinationColorSpace::encode(Encoder& encoder) const
-{
-    encoder << m_platformColorSpace;
-}
-
-template<class Decoder> std::optional<DestinationColorSpace> DestinationColorSpace::decode(Decoder& decoder)
-{
-    std::optional<PlatformColorSpace> platformColorSpace;
-    decoder >> platformColorSpace;
-    if (!platformColorSpace)
-        return std::nullopt;
-
-    return DestinationColorSpace { WTFMove(*platformColorSpace) };
-}
-
 }

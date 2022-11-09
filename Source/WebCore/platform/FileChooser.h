@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-enum MediaCaptureType {
+enum class MediaCaptureType : uint8_t {
     MediaCaptureTypeNone,
     MediaCaptureTypeUser,
     MediaCaptureTypeEnvironment
@@ -61,7 +61,7 @@ struct FileChooserSettings {
     Vector<String> acceptFileExtensions;
     Vector<String> selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
-    MediaCaptureType mediaCaptureType { MediaCaptureTypeNone };
+    MediaCaptureType mediaCaptureType { MediaCaptureType::MediaCaptureTypeNone };
 #endif
 };
 
@@ -103,16 +103,3 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaCaptureType> {
-    using values = EnumValues<
-        WebCore::MediaCaptureType,
-        WebCore::MediaCaptureType::MediaCaptureTypeNone,
-        WebCore::MediaCaptureType::MediaCaptureTypeUser,
-        WebCore::MediaCaptureType::MediaCaptureTypeEnvironment
-    >;
-};
-
-} // namespace WTF

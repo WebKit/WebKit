@@ -76,11 +76,11 @@ using namespace WebCore;
 static WebMediaCaptureType webMediaCaptureType(MediaCaptureType type)
 {
     switch (type) {
-    case MediaCaptureTypeNone:
+    case MediaCaptureType::MediaCaptureTypeNone:
         return WebMediaCaptureTypeNone;
-    case MediaCaptureTypeUser:
+    case MediaCaptureType::MediaCaptureTypeUser:
         return WebMediaCaptureTypeUser;
-    case MediaCaptureTypeEnvironment:
+    case MediaCaptureType::MediaCaptureTypeEnvironment:
         return WebMediaCaptureTypeEnvironment;
     }
 

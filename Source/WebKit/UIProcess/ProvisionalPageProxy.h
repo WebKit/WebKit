@@ -49,7 +49,6 @@ class FormDataReference;
 
 namespace WebCore {
 class ResourceRequest;
-struct BackForwardItemIdentifier;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 }
 

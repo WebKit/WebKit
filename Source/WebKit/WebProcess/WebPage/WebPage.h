@@ -249,7 +249,6 @@ enum class ViolationReportType : uint8_t;
 using PlatformDisplayID = uint32_t;
 
 struct AttributedString;
-struct BackForwardItemIdentifier;
 struct CompositionHighlight;
 struct CompositionUnderline;
 struct ContactInfo;

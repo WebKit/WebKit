@@ -88,24 +88,3 @@ template<class Decoder> std::optional<PlatformColorSpace> PlatformColorSpace::de
 #endif
 
 }
-
-#if !USE(CG)
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformColorSpace::Name> {
-    using values = EnumValues<
-        WebCore::PlatformColorSpace::Name,
-        WebCore::PlatformColorSpace::Name::SRGB
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        , WebCore::PlatformColorSpace::Name::LinearSRGB
-#endif
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        , WebCore::PlatformColorSpace::Name::DisplayP3
-#endif
-    >;
-};
-
-} // namespace WTF
-
-#endif // !USE(CG)
