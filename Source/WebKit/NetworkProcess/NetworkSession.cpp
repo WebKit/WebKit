@@ -662,7 +662,7 @@ SWServer& NetworkSession::ensureSWServer()
                 completionHandler();
             }, 0);
         }, WTFMove(appBoundDomainsCallback), [this](auto webProcessIdentifier, auto&& firstPartyForCookies) {
-            m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies));
+            m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), [] { });
         });
     }
     return *m_swServer;

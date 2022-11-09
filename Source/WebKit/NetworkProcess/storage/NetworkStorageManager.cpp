@@ -1025,10 +1025,12 @@ void NetworkStorageManager::databaseConnectionClosed(uint64_t databaseConnection
         connection->connectionClosedFromClient();
 }
 
-void NetworkStorageManager::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void NetworkStorageManager::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
 {
-    if (auto transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
-        transaction->abortWithoutCallback();
+    if (transactionIdentifier) {
+        if (auto transaction = m_idbStorageRegistry->transaction(*transactionIdentifier))
+            transaction->abortWithoutCallback();
+    }
 
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->connectionClosedFromClient();

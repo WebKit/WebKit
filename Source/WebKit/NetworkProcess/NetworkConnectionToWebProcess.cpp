@@ -102,7 +102,7 @@
 #define NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
     ASSERT(assertion); \
     if (UNLIKELY(!(assertion))) { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " ADD_QUOTES(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
+        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0); \
         { completion; } \
         return; \
@@ -1381,18 +1381,6 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
                 connectionToWebProcess->connection().send(Messages::NetworkProcessConnection::MessagesAvailableForPort(port), 0);
         }
     }
-}
-
-void NetworkConnectionToWebProcess::checkRemotePortForActivity(const WebCore::MessagePortIdentifier port, CompletionHandler<void(bool)>&& callback)
-{
-    networkProcess().messagePortChannelRegistry().checkRemotePortForActivity(port, [callback = WTFMove(callback)](auto hasActivity) mutable {
-        callback(hasActivity == MessagePortChannelProvider::HasActivity::Yes);
-    });
-}
-
-void NetworkConnectionToWebProcess::checkProcessLocalPortForActivity(const MessagePortIdentifier& port, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
-{
-    connection().sendWithAsyncReply(Messages::NetworkProcessConnection::CheckProcessLocalPortForActivity { port }, WTFMove(callback), 0);
 }
 
 void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message)

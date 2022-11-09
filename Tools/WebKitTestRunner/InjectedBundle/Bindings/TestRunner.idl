@@ -80,6 +80,7 @@ interface TestRunner {
     undefined setAcceptsEditing(boolean value);
     undefined preventPopupWindows();
     undefined setCustomPolicyDelegate(boolean enabled, boolean permissive);
+    undefined skipPolicyDelegateNotifyDone();
     undefined addOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined setUserStyleSheetEnabled(boolean value);

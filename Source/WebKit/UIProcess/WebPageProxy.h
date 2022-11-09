@@ -292,7 +292,6 @@ enum class WritingDirection : uint8_t;
 struct AppHighlight;
 struct ApplicationManifest;
 struct AttributedString;
-struct BackForwardItemIdentifier;
 struct CompositionHighlight;
 struct ContactInfo;
 struct ContactsRequestData;

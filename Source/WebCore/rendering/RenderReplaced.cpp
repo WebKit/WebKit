@@ -387,8 +387,10 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 
 static bool isVideoWithDefaultObjectSize(const RenderReplaced* maybeVideo)
 {
+#if ENABLE(VIDEO)
     if (auto* video = dynamicDowncast<RenderVideo>(maybeVideo))
         return video->hasDefaultObjectSize();
+#endif
     return false;
 } 
 

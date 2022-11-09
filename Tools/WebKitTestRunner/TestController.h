@@ -161,6 +161,7 @@ public:
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
+    void skipPolicyDelegateNotifyDone() { m_skipPolicyDelegateNotifyDone = true; }
 
     // Page Visibility.
     void setHidden(bool);
@@ -192,6 +193,8 @@ public:
 
     void setBlockAllPlugins(bool shouldBlock);
     void setPluginSupportedMode(const String&);
+
+    void dumpPolicyDelegateCallbacks() { m_dumpPolicyDelegateCallbacks = true; }
 
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
     void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
@@ -543,7 +546,7 @@ private:
     void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef);
 
     static void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
-    void decidePolicyForNavigationAction(WKNavigationActionRef, WKFramePolicyListenerRef);
+    void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef);
 
     static void decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForNavigationResponse(WKNavigationResponseRef, WKFramePolicyListenerRef);
@@ -648,6 +651,7 @@ private:
 
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };
+    bool m_skipPolicyDelegateNotifyDone { false };
     bool m_shouldDownloadUndisplayableMIMETypes { false };
     bool m_shouldAllowDeviceOrientationAndMotionAccess { false };
 
@@ -710,6 +714,7 @@ private:
 
     std::optional<long long> m_downloadTotalBytesWritten;
     bool m_shouldLogDownloadSize { false };
+    bool m_dumpPolicyDelegateCallbacks { false };
 };
 
 } // namespace WTR

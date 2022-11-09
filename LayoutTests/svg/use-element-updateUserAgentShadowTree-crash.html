@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function subtreeModifiedEventhandler() {
+}
+
+onload = () => {
+    useElement.setAttribute("attributeType", "CSS");
+    useElement.lastElementChild.textContent = "foo";
+    menuItemElement.addEventListener("DOMSubtreeModified", subtreeModifiedEventhandler);
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>
+<p>This test passes if it doesn't crash.</p>
+<svg skewX(0)">
+<use id="useElement">
+<animate onend="" />
+</use>
+<use xlink:href="#useElement" />
+<menuitem id="menuItemElement" ismap="ismap">
+</body>
+</html>

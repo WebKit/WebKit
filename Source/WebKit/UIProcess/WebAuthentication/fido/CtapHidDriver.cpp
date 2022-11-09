@@ -29,9 +29,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/FidoConstants.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRandomNumber.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -177,7 +177,7 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
     size_t steps = kHidInitNonceLength / sizeof(uint32_t);
     ASSERT(!(kHidInitNonceLength % sizeof(uint32_t)) && steps >= 1);
     for (size_t i = 0; i < steps; ++i) {
-        uint32_t weakRandom = weakRandomUint32();
+        uint32_t weakRandom = weakRandomNumber<uint32_t>();
         memcpy(m_nonce.data() + i * sizeof(uint32_t), &weakRandom, sizeof(uint32_t));
     }
 

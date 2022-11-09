@@ -81,7 +81,7 @@ void appendWebCorePathToCairoContext(cairo_t* context, const Path& path);
 void appendRegionToCairoContext(cairo_t*, const cairo_region_t*);
 cairo_operator_t toCairoOperator(CompositeOperator, BlendMode = BlendMode::Normal);
 void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t, InterpolationQuality, const FloatRect& destRect);
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, cairo_operator_t, InterpolationQuality, const FloatRect& destRect);
 RefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t*);
 
 void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const IntSize& offset, const IntRect&);

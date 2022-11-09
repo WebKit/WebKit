@@ -35,13 +35,22 @@ CHERRY_PICK_RE = [
     re.compile(r'\S* ?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'\S* ?[Cc]herry[- ][Pp]icked {}'.format(COMPOUND_COMMIT_REF)),
 ]
-REVERT_RE = [
-    re.compile(r'Reverts? {}'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'Reverts? \[{}\]'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'Reverts? \({}\)'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'Reverts? "{}"'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'Reverts? "?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
+REVERT_BASES = [
+    r'Reverts? {}',
+    r'Reverts? \[{}\]',
+    r'Reverts? \({}\)',
+    r'Reverts? "{}"',
+    r'Reverts? "?[Cc]herry[- ][Pp]ick {}',
 ]
+REVERT_RE = [
+    re.compile(base.format(COMPOUND_COMMIT_REF)) for base in REVERT_BASES
+]
+DOUBLE_REVERT = [
+    re.compile(r'Reverts? \"{}\.'.format(base.format(COMPOUND_COMMIT_REF))) for base in REVERT_BASES
+] + [
+    re.compile(r'Reverts? \"{}'.format(base.format(COMPOUND_COMMIT_REF))) for base in REVERT_BASES
+]
+
 FOLLOW_UP_FIXES_RE = [
     re.compile(r'Fix following {}'.format(COMPOUND_COMMIT_REF)),
     re.compile(r'Follow-? ?up fix to {}'.format(COMPOUND_COMMIT_REF)),
@@ -92,7 +101,7 @@ class Relationship(object):
         lines = commit.message.splitlines()
 
         for type, regexes in {
-            cls.ORIGINAL: CHERRY_PICK_RE,
+            cls.ORIGINAL: CHERRY_PICK_RE + DOUBLE_REVERT,
             cls.REVERTS: REVERT_RE,
             cls.FOLLOW_UP: FOLLOW_UP_FIXES_RE,
         }.items():

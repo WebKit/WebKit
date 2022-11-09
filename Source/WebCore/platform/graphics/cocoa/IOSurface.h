@@ -162,13 +162,13 @@ public:
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&);
     WEBCORE_EXPORT static void setOwnershipIdentity(IOSurfaceRef, const ProcessIdentity&);
 
-    void migrateColorSpaceToProperties();
-
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
 private:
     IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
     IOSurface(IOSurfaceRef, const DestinationColorSpace&);
+
+    void setColorSpaceProperty();
 
     struct BitmapConfiguration {
         CGBitmapInfo bitmapInfo;

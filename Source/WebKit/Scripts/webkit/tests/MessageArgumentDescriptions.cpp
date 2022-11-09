@@ -70,6 +70,7 @@
 #include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/DOMCacheIdentifier.h>
+#include <WebCore/DictationContext.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/FetchIdentifier.h>
@@ -371,6 +372,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
 {
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DOMCacheIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::DictationContext));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DisplayList::ItemBufferIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ElementIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FetchIdentifier));
@@ -443,6 +445,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     return {
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DOMCacheIdentifier"_s,
+        "WebCore::DictationContext"_s,
         "WebCore::DisplayList::ItemBufferIdentifier"_s,
         "WebCore::ElementIdentifier"_s,
         "WebCore::FetchIdentifier"_s,

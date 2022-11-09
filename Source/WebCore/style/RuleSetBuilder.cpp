@@ -35,6 +35,7 @@
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -224,7 +225,7 @@ void RuleSetBuilder::pushCascadeLayer(const CascadeLayerName& name)
     auto nameResolvingAnonymous = [&] {
         if (name.isEmpty()) {
             // Make unique name for an anonymous layer.
-            return CascadeLayerName { makeAtomString("anon_"_s, cryptographicallyRandomUint64()) };
+            return CascadeLayerName { makeAtomString("anon_"_s, cryptographicallyRandomNumber<uint64_t>()) };
         }
         return name;
     };

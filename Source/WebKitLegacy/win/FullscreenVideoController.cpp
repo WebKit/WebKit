@@ -252,7 +252,7 @@ FullscreenVideoController::FullscreenVideoController()
     , m_rootChild(PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
 #endif
 #if ENABLE(FULLSCREEN_API)
-    , m_fullscreenWindow(makeUnique<MediaPlayerPrivateFullscreenWindow>(static_cast<MediaPlayerPrivateFullscreenClient*>(this)))
+    , m_fullscreenWindow(makeUnique<FullScreenWindow>(static_cast<FullScreenClient*>(this)))
 #endif
 {
 }

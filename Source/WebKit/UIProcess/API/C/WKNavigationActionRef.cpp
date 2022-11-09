@@ -29,14 +29,33 @@
 #include "APINavigationAction.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKNavigationActionGetTypeID()
 {
-    return toAPI(API::NavigationAction::APIType);
+    return WebKit::toAPI(API::NavigationAction::APIType);
 }
 
 bool WKNavigationActionShouldPerformDownload(WKNavigationActionRef action)
 {
-    return toImpl(action)->shouldPerformDownload();
+    return WebKit::toImpl(action)->shouldPerformDownload();
+}
+
+WKURLRequestRef WKNavigationActionCopyRequest(WKNavigationActionRef action)
+{
+    return WebKit::toAPI(&API::URLRequest::create(WebKit::toImpl(action)->request()).leakRef());
+}
+
+bool WKNavigationActionGetShouldOpenExternalSchemes(WKNavigationActionRef action)
+{
+    return WebKit::toImpl(action)->shouldOpenExternalSchemes();
+}
+
+WKFrameInfoRef WKNavigationActionCopyTargetFrameInfo(WKNavigationActionRef action)
+{
+    RefPtr targetFrame = WebKit::toImpl(action)->targetFrame();
+    return targetFrame ? WebKit::toAPI(targetFrame.leakRef()) : nullptr;
+}
+
+WKFrameNavigationType WKNavigationActionGetNavigationType(WKNavigationActionRef action)
+{
+    return WebKit::toAPI(WebKit::toImpl(action)->navigationType());
 }

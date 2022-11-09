@@ -37,6 +37,7 @@
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Seconds.h>
@@ -47,7 +48,7 @@ namespace WebCore {
 
 static const void* nextCoordinatorLogIdentifier()
 {
-    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    static uint64_t logIdentifier = cryptographicallyRandomNumber<uint32_t>();
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 

@@ -53,6 +53,7 @@
 #include "SharedBuffer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
 

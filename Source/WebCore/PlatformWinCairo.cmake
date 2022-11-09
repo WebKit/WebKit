@@ -46,37 +46,35 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_LIBRARIES
-    comctl32
     crypt32
-    delayimp
     iphlpapi
-    rpcrt4
-    shlwapi
     usp10
-    version
-    winmm
-    ws2_32
 )
 
-# Define a INTERFACE library for MediaFoundation and link it
-# explicitly with direct WebCore consumers because /DELAYLOAD causes
-# linker warnings for modules not using MediaFoundation.
-#  LINK : warning LNK4199: /DELAYLOAD:mf.dll ignored; no imports found from mf.dll
-add_library(MediaFoundation INTERFACE)
-target_link_libraries(MediaFoundation INTERFACE
-    d3d9
-    dxva2
-    evr
-    mf
-    mfplat
-)
-target_link_options(MediaFoundation INTERFACE
-    /DELAYLOAD:d3d9.dll
-    /DELAYLOAD:dxva2.dll
-    /DELAYLOAD:evr.dll
-    /DELAYLOAD:mf.dll
-    /DELAYLOAD:mfplat.dll
-)
+if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
+    # Define a INTERFACE library for MediaFoundation and link it
+    # explicitly with direct WebCore consumers because /DELAYLOAD causes
+    # linker warnings for modules not using MediaFoundation.
+    #  LINK : warning LNK4199: /DELAYLOAD:mf.dll ignored; no imports found from mf.dll
+    add_library(MediaFoundation INTERFACE)
+    target_link_libraries(MediaFoundation INTERFACE
+        d3d9
+        delayimp
+        dxva2
+        evr
+        mf
+        mfplat
+        mfuuid
+        strmiids
+    )
+    target_link_options(MediaFoundation INTERFACE
+        /DELAYLOAD:d3d9.dll
+        /DELAYLOAD:dxva2.dll
+        /DELAYLOAD:evr.dll
+        /DELAYLOAD:mf.dll
+        /DELAYLOAD:mfplat.dll
+    )
+endif ()
 
 if (USE_WOFF2)
     # The WOFF2 libraries don't compile as DLLs on Windows, so add in

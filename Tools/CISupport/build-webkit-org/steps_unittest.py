@@ -410,6 +410,21 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='compiled')
         return self.runStep()
 
+    def test_bigsur_timeout(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('fullPlatform', 'mac-bigsur')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=3600,
+                logEnviron=True,
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        return self.runStep()
+
     def test_success_gtk(self):
         self.setupStep(CompileWebKit())
         self.setProperty('platform', 'gtk')

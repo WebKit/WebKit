@@ -71,8 +71,6 @@ private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
     void workerGlobalScopeDestroyed() final { };
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { };
-    void confirmMessageFromWorkerObject(bool) final { };
-    void reportPendingActivity(bool) final { };
 };
 
 // FIXME: Use a valid WorkerReportingProxy
@@ -145,7 +143,6 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
     auto ports = MessagePort::entanglePorts(scope, WTFMove(message.transferredPorts));
     auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message.message), SecurityOriginData::fromURL(sourceURL).toString(), { }, source);
     scope.dispatchEvent(messageEvent);
-    scope.thread().workerObjectProxy().confirmMessageFromWorkerObject(scope.hasPendingActivity());
     scope.updateExtendedEventsSet(messageEvent.ptr());
 }
 

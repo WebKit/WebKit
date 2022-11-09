@@ -532,6 +532,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameInfoData.serialization.in
     Shared/FrameTreeNodeData.serialization.in
     Shared/LayerTreeContext.serialization.in
+    Shared/Model.serialization.in
     Shared/Pasteboard.serialization.in
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in

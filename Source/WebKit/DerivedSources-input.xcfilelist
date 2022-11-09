@@ -159,6 +159,7 @@ $(PROJECT_DIR)/Shared/IPCStreamTesterProxy.messages.in
 $(PROJECT_DIR)/Shared/IPCTester.messages.in
 $(PROJECT_DIR)/Shared/IPCTesterReceiver.messages.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
+$(PROJECT_DIR)/Shared/Model.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/Pasteboard.serialization.in

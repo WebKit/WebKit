@@ -2311,17 +2311,14 @@ fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
 
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Pass Timeout ]
 
-webkit.org/b/243515 [ Debug ] svg/z-index/shapes-with-zindex.svg [ Pass Crash ]
-webkit.org/b/243515 [ Debug ] svg/z-index/group-with-zindex.svg [ Pass Crash ]
-webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding-margin.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border-overflow-visible.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-shape-child.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-group-child.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 [ Debug ] svg/compositing/outermost-svg-directly-composited-group-child-overflow-hidden.html [ Pass Crash ]
+webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding-margin.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-overflow-visible.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-shape-child.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-group-child.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/243589 [ Debug ] http/wpt/service-workers/update-with-importScripts.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Pass Crash ]
@@ -2372,8 +2369,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createIma
 webkit.org/b/245588 mathml/presentation/mathvariant-inheritance.html [ ImageOnlyFailure ]
 webkit.org/b/245588 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
-webkit.org/b/245592 imported/w3c/web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-138.html [ ImageOnlyFailure ]
-
 webkit.org/b/245595 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 
 webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure ]
@@ -2402,8 +2397,6 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ Release ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
-
-webkit.org/b/246427 imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
 
 # webkit.org/b/243681  Newly imported tests that fail on iOS16
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]

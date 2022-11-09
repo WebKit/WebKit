@@ -30,7 +30,7 @@ function orphanAllWorkers(callback)
 {
     var i;
     for (i = 0; i < numberOfWorkers; i++) {
-        workers[i].onmessage = 0;
+        workers[i].terminate();
         workers[i] = 0;
     }
     workers = [ ];

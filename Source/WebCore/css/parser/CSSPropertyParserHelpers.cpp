@@ -3671,29 +3671,27 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
         extentKeyword = consumeIdentUsingMapping(range, extentMap);
         if (!shapeKeyword)
             shapeKeyword = consumeIdentUsingMapping(range, shapeMap);
+        if (shapeKeyword || extentKeyword) {
+            if (!consumeCommaIncludingWhitespace(range))
+                return nullptr;
+        }
     }
 
     CSSPrefixedRadialGradientValue::GradientBox gradientBox = std::monostate { };
 
     if (shapeKeyword && extentKeyword) {
-        consumeCommaIncludingWhitespace(range);
-
         gradientBox = CSSPrefixedRadialGradientValue::ShapeAndExtent { *shapeKeyword, *extentKeyword };
     } else if (shapeKeyword) {
-        consumeCommaIncludingWhitespace(range);
-
         gradientBox = *shapeKeyword;
     } else if (extentKeyword) {
-        consumeCommaIncludingWhitespace(range);
-
         gradientBox = *extentKeyword;
     } else {
         if (auto length1 = consumeLengthOrPercent(range, context.mode, ValueRange::NonNegative)) {
             auto length2 = consumeLengthOrPercent(range, context.mode, ValueRange::NonNegative);
             if (!length2)
                 return nullptr;
-            consumeCommaIncludingWhitespace(range);
-
+            if (!consumeCommaIncludingWhitespace(range))
+                return nullptr;
             gradientBox = CSSPrefixedRadialGradientValue::MeasuredSize { { length1.releaseNonNull(), length2.releaseNonNull() } };
         }
     }
@@ -3703,14 +3701,8 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
         return nullptr;
 
     auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
-    return CSSPrefixedRadialGradientValue::create({
-            WTFMove(gradientBox),
-            WTFMove(position)
-        },
-        repeating,
-        colorInterpolationMethod,
-        WTFMove(*stops)
-    );
+    return CSSPrefixedRadialGradientValue::create({ WTFMove(gradientBox), WTFMove(position) },
+        repeating, colorInterpolationMethod, WTFMove(*stops));
 }
 
 static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(const CSSParserContext& context, std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)

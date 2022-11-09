@@ -2542,10 +2542,7 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
     return hasEventListeners(eventNames.mouseupEvent)
         || hasEventListeners(eventNames.mousedownEvent)
         || hasEventListeners(eventNames.clickEvent)
-#if !PLATFORM(IOS_FAMILY)
-        || hasEventListeners(eventNames.DOMActivateEvent)
-#endif
-    ;
+        || hasEventListeners(eventNames.DOMActivateEvent);
 }
 
 bool Node::willRespondToMouseWheelEvents() const

@@ -31,8 +31,7 @@ if (window.testRunner)
         window.location.hash = 'name1';
         var body = accessibilityController.rootElement.childAtIndex(0);
         shouldBeTrue("body.url.indexOf('#name1') > -1"); 
-        document.getElementById("name1link").focus();
-        var link = accessibilityController.focusedElement;
+        var link = accessibilityController.accessibleElementById("name1link");
         var linkedElement = link.linkedUIElementAtIndex(0);
         shouldBe("linkedElement.stringValue", "'AXValue: Linked Element 1'");
     }

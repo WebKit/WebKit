@@ -19,10 +19,6 @@ function terminateWorker3FromWorker() {
     worker3.postMessage("close");
 }
 
-function terminateWorker1ViaCollection() {
-    worker1 = null;
-}
-
 function test()
 {
     let workers = [];
@@ -178,25 +174,6 @@ function test()
 
             await Promise.all([
                 checkInternalProperties(`worker1`, {name: "Worker 1", terminated: false}),
-                checkInternalProperties(`worker2`, {name: "Worker 2", terminated: true}),
-            ]);
-        }
-    });
-
-    suite.addTestCase({
-        name: "Worker.workerTerminated.GC",
-        description: "Should receive a Worker.workerTerminated event when terminating a Worker via Garbage Collection.",
-        async test() {
-            let workerTerminatedPromise = waitForWorkerTerminatedEvent();
-            await ProtocolTest.evaluateInPage("terminateWorker1ViaCollection()");
-            await InspectorProtocol.awaitCommand({method: "Runtime.releaseObjectGroup", params: {objectGroup: "test"}});
-            await InspectorProtocol.awaitCommand({method: "Heap.gc", params: {}});
-            await workerTerminatedPromise;
-
-            ProtocolTest.pass("Worker.workerTerminated");
-            dumpWorkers();
-
-            await Promise.all([
                 checkInternalProperties(`worker2`, {name: "Worker 2", terminated: true}),
             ]);
         }

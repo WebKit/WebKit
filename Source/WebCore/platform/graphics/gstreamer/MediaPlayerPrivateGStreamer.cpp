@@ -2642,9 +2642,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
     auto& gstRegistryScanner = GStreamerRegistryScanner::singleton();
     result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
 
-    auto finalResult = extendedSupportsType(parameters, result);
-    GST_DEBUG("Supported: %s", convertEnumerationToString(finalResult).utf8().data());
-    return finalResult;
+    GST_DEBUG("Supported: %s", convertEnumerationToString(result).utf8().data());
+    return result;
 }
 
 bool isMediaDiskCacheDisabled()
@@ -4187,12 +4186,6 @@ bool MediaPlayerPrivateGStreamer::supportsKeySystem(const String& keySystem, con
 #endif
 
     GST_DEBUG("checking for KeySystem support with %s and type %s: %s", keySystem.utf8().data(), mimeType.utf8().data(), boolForPrinting(result));
-    return result;
-}
-
-MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::extendedSupportsType(const MediaEngineSupportParameters& parameters, MediaPlayer::SupportsType result)
-{
-    UNUSED_PARAM(parameters);
     return result;
 }
 

@@ -32,30 +32,11 @@
 
 namespace TestWebKitAPI {
 
-static WKBundlePagePolicyAction decidePolicyForNavigationAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKTypeRef*, const void*)
-{
-    return WKBundlePagePolicyActionPassThrough;
-}
-
 class CustomProtocolInvalidSchemeTest : public InjectedBundleTest {
 public:
     CustomProtocolInvalidSchemeTest(const std::string& identifier)
         : InjectedBundleTest(identifier)
     {
-    }
-
-private:
-    void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) override
-    {
-        WKBundlePagePolicyClientV0 policyClient;
-        memset(&policyClient, 0, sizeof(policyClient));
-
-        policyClient.base.version = 0;
-        policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
-        
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        WKBundlePageSetPolicyClient(bundlePage, &policyClient.base);
-ALLOW_DEPRECATED_DECLARATIONS_END
     }
 };
 

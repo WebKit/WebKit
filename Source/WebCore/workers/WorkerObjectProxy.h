@@ -44,10 +44,7 @@ class Worker;
 class WorkerObjectProxy : public WorkerReportingProxy {
 public:
     virtual void postMessageToWorkerObject(MessageWithMessagePorts&&) = 0;
-    virtual void postTaskToWorkerObject(Function<void(Worker&)>&&) { };
-
-    virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
-    virtual void reportPendingActivity(bool hasPendingActivity) = 0;
+    virtual void postTaskToWorkerObject(Function<void(Worker&)>&&) { }
 
     // No need to notify the parent page context when dedicated workers are closing.
     void workerGlobalScopeClosed() override { }

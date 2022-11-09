@@ -1141,11 +1141,11 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileWebKit())
-        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('fullPlatform', 'mac-bigsur')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=3600,  # only Big Sur uses an 3600 timeout
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )
@@ -1189,11 +1189,11 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_failure(self):
         self.setupStep(CompileWebKitWithoutChange())
-        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('fullPlatform', 'mac-bigsur')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=3600,  # only Big Sur uses an 3600 timeout
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )

@@ -6,6 +6,7 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.setCustomPolicyDelegate(true);
+            if (testRunner.skipPolicyDelegateNotifyDone) { testRunner.skipPolicyDelegateNotifyDone() }
         }
 
         window.onload = function() {
@@ -15,6 +16,7 @@
                 return;
             }
             result.innerText = "PASSED";
+            if (window.testRunner) { testRunner.notifyDone() }
         };
     </script>
 </head>

@@ -1704,9 +1704,9 @@ CSS_VALUE_KEYWORD_FILES = \
 CSS_VALUE_KEYWORD_FILES_PATTERNS = $(subst .,%,$(CSS_VALUE_KEYWORD_FILES))
 
 all : $(CSS_VALUE_KEYWORD_FILES)
-$(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl $(WebCore)/bindings/scripts/preprocessor.pm $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/process-css-values.py $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) -pe '' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
-	$(PERL) "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
+	$(PYTHON) "$(WebCore)/css/process-css-values.py" --gperf-executable gperf --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
 
 # --------
 

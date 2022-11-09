@@ -1,4 +1,4 @@
-Policy delegate: attempt to load about:blank with navigation type 'link clicked' originating from #text > A > BODY > HTML > #document
+Policy delegate: attempt to load about:blank with navigation type 'link clicked'
 This is a test for rdar://problem/6755137 Action dictionary for policy decision is missing keys when full-page zoom is used.
 
 Link

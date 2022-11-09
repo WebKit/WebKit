@@ -51,6 +51,7 @@ private:
     void stopProducingData() final;
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate) final;
     void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate) final;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     Ref<RealtimeMediaSource> clone() final;
     void endProducingData() final;
     void stopBeingObserved() final;

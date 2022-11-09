@@ -493,10 +493,12 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (is<RenderListItem>(flow) && (flow.isPositioned() || flow.isFloating()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+#if ENABLE(VIDEO)
     if (is<RenderVTTCue>(flow) || is<RenderVTTCue>(flow.parent())) {
         // First child of the RenderVTTCue is the backdropBox.
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsVTTCue, reasons, includeReasons);
     }
+#endif
 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())

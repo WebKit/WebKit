@@ -87,12 +87,13 @@ static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore:
 
 } // namespace
 
-SOAuthorizationSession::SOAuthorizationSession(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
+SOAuthorizationSession::SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
     : m_soAuthorization(adoptNS([PAL::allocSOAuthorizationInstance() init]))
     , m_navigationAction(WTFMove(navigationAction))
     , m_page(page)
     , m_action(action)
 {
+    m_soAuthorization.get().delegate = delegate.get();
 }
 
 SOAuthorizationSession::~SOAuthorizationSession()
@@ -108,11 +109,6 @@ SOAuthorizationSession::~SOAuthorizationSession()
         becomeCompleted();
     else
         dismissViewController();
-}
-
-void SOAuthorizationSession::setSOAuthorizationDelegate(WKSOAuthorizationDelegate *delegate)
-{
-    [m_soAuthorization setDelegate:delegate];
 }
 
 const char* SOAuthorizationSession::initiatingActionString() const

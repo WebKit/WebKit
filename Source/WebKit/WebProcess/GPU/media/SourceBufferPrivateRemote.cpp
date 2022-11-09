@@ -205,12 +205,12 @@ void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const 
         m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
+void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)
 {
     if (!m_gpuProcessConnection)
         return;
 
-    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime, duration, isEnded), m_remoteSourceBufferIdentifier);
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime, isEnded), m_remoteSourceBufferIdentifier);
     if (sendResult)
         std::tie(m_totalTrackBufferSizeInBytes) = sendResult.takeReply();
 }

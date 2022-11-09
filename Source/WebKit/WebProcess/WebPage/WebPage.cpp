@@ -1200,11 +1200,6 @@ void WebPage::setInjectedBundlePageLoaderClient(std::unique_ptr<API::InjectedBun
         listenForLayoutMilestones(milestones);
 }
 
-void WebPage::initializeInjectedBundlePolicyClient(WKBundlePagePolicyClientBase* client)
-{
-    m_policyClient.initialize(client);
-}
-
 void WebPage::setInjectedBundleResourceLoadClient(std::unique_ptr<API::InjectedBundle::ResourceLoadClient>&& client)
 {
     if (!m_resourceLoadClient)
@@ -1622,7 +1617,6 @@ void WebPage::close()
     m_editorClient = makeUnique<API::InjectedBundle::EditorClient>();
     m_formClient = makeUnique<API::InjectedBundle::FormClient>();
     m_loaderClient = makeUnique<API::InjectedBundle::PageLoaderClient>();
-    m_policyClient.initialize(0);
     m_resourceLoadClient = makeUnique<API::InjectedBundle::ResourceLoadClient>();
     m_uiClient = makeUnique<API::InjectedBundle::PageUIClient>();
 #if ENABLE(FULLSCREEN_API)
@@ -1927,7 +1921,7 @@ void WebPage::reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> rel
 
 void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemIdentifier& backForwardItemID, FrameLoadType backForwardType, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&& websitePolicies, bool lastNavigationWasAppInitiated, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume)
 {
-    WEBPAGE_RELEASE_LOG(Loading, "goToBackForwardItem: navigationID=%" PRIu64 ", backForwardItemID=%s, shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, navigationID, backForwardItemID.string().utf8().data(), static_cast<unsigned>(shouldTreatAsContinuingLoad), lastNavigationWasAppInitiated, valueOrDefault(existingNetworkResourceLoadIdentifierToResume).toUInt64());
+    WEBPAGE_RELEASE_LOG(Loading, "goToBackForwardItem: navigationID=%" PRIu64 ", backForwardItemID=%s, shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, navigationID, backForwardItemID.toString().utf8().data(), static_cast<unsigned>(shouldTreatAsContinuingLoad), lastNavigationWasAppInitiated, valueOrDefault(existingNetworkResourceLoadIdentifierToResume).toUInt64());
     SendStopResponsivenessTimer stopper;
 
     m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated;
@@ -6838,6 +6832,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     
     bool viewportChanged = false;
 
+    m_viewportConfiguration.setCanIgnoreViewportArgumentsToAvoidExcessiveZoom(shouldIgnoreMetaViewport());
     m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(shouldEnableViewportBehaviorsForResizableWindows());
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " didCommitLoad setting content size to " << coreFrame->view()->contentsSize());
@@ -7069,6 +7064,10 @@ void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
     
 #if ENABLE(VIDEO)
     m_page->updateMediaElementRateChangeRestrictions();
+#endif
+
+#if ENABLE(META_VIEWPORT)
+    m_viewportConfiguration.setCanIgnoreViewportArgumentsToAvoidExcessiveZoom(shouldIgnoreMetaViewport());
 #endif
 }
 

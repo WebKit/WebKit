@@ -632,8 +632,10 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
 
     UErrorCode status = U_ZERO_ERROR;
     auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(m_localeID.data(), &status));
-    if (U_FAILURE(status))
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
         return nullptr;
+    }
 
     // Use "j" skeleton and parse pattern to retrieve the configured hour-cycle information.
     constexpr const UChar skeleton[] = { 'j', 0 };

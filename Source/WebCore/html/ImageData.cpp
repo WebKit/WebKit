@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ImageData.h"
 
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/text/TextStream.h>
 

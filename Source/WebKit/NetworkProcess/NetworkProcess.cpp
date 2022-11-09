@@ -142,19 +142,6 @@ static void callExitSoon(IPC::Connection*)
     });
 }
 
-static inline MessagePortChannelRegistry createMessagePortChannelRegistry(NetworkProcess& networkProcess)
-{
-    return MessagePortChannelRegistry { [&networkProcess](auto& messagePortIdentifier, auto processIdentifier, auto&& completionHandler) {
-        auto* connection = networkProcess.webProcessConnection(processIdentifier);
-        if (!connection) {
-            completionHandler(MessagePortChannelProvider::HasActivity::No);
-            return;
-        }
-
-        connection->checkProcessLocalPortForActivity(messagePortIdentifier, WTFMove(completionHandler));
-    } };
-}
-
 NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parameters)
     : m_downloadManager(*this)
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -163,7 +150,6 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if PLATFORM(IOS_FAMILY)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { setIsHoldingLockedFiles(isHoldingLockedFiles); })
 #endif
-    , m_messagePortChannelRegistry(createMessagePortChannelRegistry(*this))
 {
     NetworkProcessPlatformStrategies::initialize();
 
@@ -342,7 +328,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_ftpEnabled = parameters.ftpEnabled;
 
     for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies)
-        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain));
+        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), [] { });
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -400,11 +386,12 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         session->storageManager().startReceivingMessageFromConnection(connection.connection());
 }
 
-void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies)
+void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, CompletionHandler<void()>&& completionHandler)
 {
     m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
         return HashSet<RegistrableDomain> { };
     }).iterator->value.add(WTFMove(firstPartyForCookies));
+    completionHandler();
 }
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
@@ -2753,11 +2740,10 @@ void NetworkProcess::resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<
     completionHandler();
 }
 
-static constexpr auto delayMax = 100_ms;
-static constexpr auto delayMin = 10_ms;
 Seconds NetworkProcess::randomClosedPortDelay()
 {
-    return delayMin + Seconds::fromMilliseconds(static_cast<double>(cryptographicallyRandomNumber())) % delayMax;
+    // Random delay in the range [10ms, 110ms).
+    return 10_ms + Seconds { cryptographicallyRandomUnitInterval() * (100_ms).value() };
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
+
 #include "COMPtr.h"
 #include "MediaPlayerPrivate.h"
 
@@ -465,4 +467,6 @@ private:
     COMPtr<CustomVideoPresenter> m_presenter;
 };
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)

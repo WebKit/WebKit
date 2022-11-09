@@ -846,11 +846,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
         return;
     }
 
+    // FIXME: Remove this.
     RefPtr<API::Object> userData;
-
-    // Notify the bundle client.
-    WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForResponse(webPage, m_frame.ptr(), response, request, userData);
-    RELEASE_ASSERT(policy == WKBundlePagePolicyActionPassThrough);
 
     bool canShowResponse = webPage->canShowResponse(response);
 
@@ -890,13 +887,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
         return;
     }
 
+    // FIXME: Remove this.
     RefPtr<API::Object> userData;
 
     auto action = InjectedBundleNavigationAction::create(m_frame.ptr(), navigationAction, formState);
-
-    // Notify the bundle client.
-    WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame.ptr(), action.ptr(), request, frameName, userData);
-    RELEASE_ASSERT(policy == WKBundlePagePolicyActionPassThrough);
 
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
 
@@ -962,13 +956,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
+    // FIXME: Remove this.
     RefPtr<API::Object> userData;
 
+    // FIXME: This probably isn't necessary.
     Ref<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame.ptr(), navigationAction, formState);
-
-    // Notify the bundle client.
-    WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame.ptr(), action.ptr(), request, userData);
-    RELEASE_ASSERT(policy == WKBundlePagePolicyActionPassThrough);
 
     uint64_t listenerID = m_frame->setUpPolicyListener(requestIdentifier, WTFMove(function), WebFrame::ForNavigationAction::Yes);
 
@@ -1075,10 +1067,8 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& 
     if (!webPage)
         return;
 
+    // FIXME: Remove this.
     RefPtr<API::Object> userData;
-
-    // Notify the bundle client.
-    webPage->injectedBundlePolicyClient().unableToImplementPolicy(webPage, m_frame.ptr(), error, userData);
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::UnableToImplementPolicy(m_frame->frameID(), error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));

@@ -122,6 +122,14 @@ void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::opt
     RealtimeMediaSource::setSizeAndFrameRate(width, height, frameRate);
 }
 
+void RealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
+{
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
+        auto size = this->size();
+        setSizeAndFrameRate(size.width(), size.height(), { });
+    }
+}
+
 void RealtimeVideoSource::sourceMutedChanged()
 {
     notifyMutedChange(m_source->muted());

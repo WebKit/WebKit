@@ -35,8 +35,7 @@ namespace WebCore {
 
 class MessagePortChannelRegistry {
 public:
-    using CheckProcessLocalPortForActivityCallback = Function<void(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&&)>;
-    WEBCORE_EXPORT explicit MessagePortChannelRegistry(CheckProcessLocalPortForActivityCallback&&);
+    WEBCORE_EXPORT MessagePortChannelRegistry();
 
     WEBCORE_EXPORT ~MessagePortChannelRegistry();
     
@@ -46,18 +45,14 @@ public:
     WEBCORE_EXPORT void didCloseMessagePort(const MessagePortIdentifier& local);
     WEBCORE_EXPORT bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
     WEBCORE_EXPORT void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&);
-    WEBCORE_EXPORT void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback);
 
     WEBCORE_EXPORT MessagePortChannel* existingChannelContainingPort(const MessagePortIdentifier&);
 
     WEBCORE_EXPORT void messagePortChannelCreated(MessagePortChannel&);
     WEBCORE_EXPORT void messagePortChannelDestroyed(MessagePortChannel&);
 
-    void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&&);
-
 private:
     HashMap<MessagePortIdentifier, MessagePortChannel*> m_openChannels;
-    CheckProcessLocalPortForActivityCallback m_checkProcessLocalPortForActivityCallback;
 };
 
 } // namespace WebCore

@@ -42,8 +42,10 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/text/StringToIntegerConversion.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/mac/ScreenCaptureKitSoftLink.h>
@@ -468,7 +470,38 @@ IntSize ScreenCaptureKitCaptureSource::intrinsicSize() const
 
         return { static_cast<int>(frame.size.width), static_cast<int>(frame.size.height) };
     }
-
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    IntSize size;
+    BinarySemaphore semaphore;
+    [PAL::getSCShareableContentClass() getShareableContentWithCompletionHandler:makeBlockPtr([&size, &semaphore, deviceID = m_deviceID, deviceType = m_captureDevice.type()] (SCShareableContent *shareableContent, NSError *error) mutable {
+        auto scope = makeScopeExit([&semaphore] {
+            semaphore.signal();
+        });
+        if (error) {
+            RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::intrinsicSize getShareableContentWithCompletionHandler failed with error %s", [[error localizedDescription] UTF8String]);
+            return;
+        }
+        if (deviceType == CaptureDevice::DeviceType::Screen) {
+            [[shareableContent displays] enumerateObjectsUsingBlock:makeBlockPtr([&] (SCDisplay *display, NSUInteger, BOOL *stop) {
+                if (display.displayID == deviceID) {
+                    size = { static_cast<int>(display.width), static_cast<int>(display.height) };
+                    *stop = YES;
+                }
+            }).get()];
+            return;
+        }
+        if (deviceType == CaptureDevice::DeviceType::Window) {
+            [[shareableContent windows] enumerateObjectsUsingBlock:makeBlockPtr([&] (SCWindow *window, NSUInteger, BOOL *stop) {
+                if (window.windowID == deviceID) {
+                    size = { static_cast<int>(window.frame.size.width), static_cast<int>(window.frame.size.height) };
+                    *stop = YES;
+                }
+            }).get()];
+        }
+    }).get()];
+    semaphore.wait();
+    return size;
+#else
     if (m_captureDevice.type() == CaptureDevice::DeviceType::Screen) {
         auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_deviceID));
         auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
@@ -491,6 +524,7 @@ IntSize ScreenCaptureKitCaptureSource::intrinsicSize() const
     });
 
     return { static_cast<int>(bounds.size.width), static_cast<int>(bounds.size.height) };
+#endif
 }
 
 void ScreenCaptureKitCaptureSource::updateStreamConfiguration()

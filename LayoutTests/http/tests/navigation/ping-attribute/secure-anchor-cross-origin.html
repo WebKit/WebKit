@@ -1,0 +1,12 @@
+<script>
+    if (window.testRunner && window.internals) {
+        testRunner.setStatisticsShouldDowngradeReferrer(false, function () { });
+        testRunner.dumpAsText();
+        internals.settings.setHyperlinkAuditingEnabled(true);
+        testRunner.waitUntilDone();
+    }
+    let destination = new URL('resources/secure-anchor-cross-origin.html', window.location);
+    destination.protocol = 'https';
+    destination.port = 8443;
+    window.location = destination;
+</script>

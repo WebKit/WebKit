@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilitySVGRoot.h"
 
+#include "AXObjectCache.h"
 #include "ElementInlines.h"
 #include "RenderObject.h"
 #include "SVGDescElement.h"

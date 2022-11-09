@@ -76,7 +76,7 @@
         exception = await appendPtsRange(115, 118);
 
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
-        testExpected('bufferedRanges()', '[ 115...119, 120...170 ]', '==');
+        testExpected('bufferedRanges()', '[ 115...119, 120...146 ]', '==');
 
         endTest();
     });

@@ -38,13 +38,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
 {
-    return adoptRef(*new RedirectSOAuthorizationSession(WTFMove(navigationAction), page, WTFMove(completionHandler)));
+    return adoptRef(*new RedirectSOAuthorizationSession(delegate, WTFMove(navigationAction), page, WTFMove(completionHandler)));
 }
 
-RedirectSOAuthorizationSession::RedirectSOAuthorizationSession(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
-    : NavigationSOAuthorizationSession(WTFMove(navigationAction), page, InitiatingAction::Redirect, WTFMove(completionHandler))
+RedirectSOAuthorizationSession::RedirectSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+    : NavigationSOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::Redirect, WTFMove(completionHandler))
 {
 }
 

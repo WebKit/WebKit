@@ -106,16 +106,6 @@ private:
     void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef);
     bool shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier);
 
-    // WKBundlePagePolicyClient
-    static WKBundlePagePolicyAction decidePolicyForNavigationAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKTypeRef*, const void*);
-    static WKBundlePagePolicyAction decidePolicyForNewWindowAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKStringRef frameName, WKTypeRef*, const void*);
-    static WKBundlePagePolicyAction decidePolicyForResponse(WKBundlePageRef, WKBundleFrameRef, WKURLResponseRef, WKURLRequestRef, WKTypeRef*, const void*);
-    static void unableToImplementPolicy(WKBundlePageRef, WKBundleFrameRef, WKErrorRef, WKTypeRef*, const void*);
-    WKBundlePagePolicyAction decidePolicyForNavigationAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKTypeRef*);
-    WKBundlePagePolicyAction decidePolicyForNewWindowAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKStringRef frameName, WKTypeRef*);
-    WKBundlePagePolicyAction decidePolicyForResponse(WKBundlePageRef, WKBundleFrameRef, WKURLResponseRef, WKURLRequestRef, WKTypeRef*);
-    void unableToImplementPolicy(WKBundlePageRef, WKBundleFrameRef, WKErrorRef, WKTypeRef*);
-
     // UI Client
     static void willAddMessageToConsole(WKBundlePageRef, WKStringRef message, uint32_t lineNumber, const void* clientInfo);
     static void willSetStatusbarText(WKBundlePageRef, WKStringRef statusbarText, const void* clientInfo);

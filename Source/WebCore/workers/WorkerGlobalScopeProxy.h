@@ -56,7 +56,7 @@ public:
     virtual void terminateWorkerGlobalScope() = 0;
     virtual void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) = 0;
     virtual void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) = 0;
-    virtual bool hasPendingActivity() const = 0;
+    virtual bool askedToTerminate() const = 0;
     virtual void workerObjectDestroyed() = 0;
     virtual void notifyNetworkStateChange(bool isOnline) = 0;
 

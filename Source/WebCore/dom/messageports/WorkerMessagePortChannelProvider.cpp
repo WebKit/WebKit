@@ -46,11 +46,6 @@ WorkerMessagePortChannelProvider::~WorkerMessagePortChannelProvider()
         first->value({ }, [] { });
         m_takeAllMessagesCallbacks.remove(first);
     }
-    while (!m_activityCallbacks.isEmpty()) {
-        auto first = m_activityCallbacks.begin();
-        first->value(HasActivity::No);
-        m_activityCallbacks.remove(first);
-    }
 }
 
 void WorkerMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
@@ -121,20 +116,6 @@ void WorkerMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortI
                 m_takeAllMessagesCallbacks.take(callbackIdentifier)(WTFMove(messages), [completionHandler = WTFMove(completionHandler)]() mutable {
                     completionHandler.complete();
                 });
-            }, WorkerRunLoop::defaultMode());
-        });
-    });
-}
-
-void WorkerMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback)
-{
-    uint64_t callbackIdentifier = ++m_lastCallbackIdentifier;
-    m_activityCallbacks.add(callbackIdentifier, WTFMove(callback));
-
-    callOnMainThread([this, workerThread = RefPtr { m_scope.workerOrWorkletThread() }, callbackIdentifier, remoteTarget]() mutable {
-        MessagePortChannelProvider::singleton().checkRemotePortForActivity(remoteTarget, [this, workerThread = WTFMove(workerThread), callbackIdentifier](auto hasActivity) {
-            workerThread->runLoop().postTaskForMode([this, callbackIdentifier, hasActivity](auto&) mutable {
-                m_activityCallbacks.take(callbackIdentifier)(hasActivity);
             }, WorkerRunLoop::defaultMode());
         });
     });

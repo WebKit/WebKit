@@ -757,6 +757,14 @@ void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, 
     });
 }
 
+void WKWebsiteDataStoreRemoveNetworkCache(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveNetworkCacheCallback callback)
+{
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DiskCache;
+    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
+        callback(context);
+    });
+}
+
 void WKWebsiteDataStoreRemoveMemoryCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveMemoryCachesRemovalFunction callback)
 {
     OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::MemoryCache;

@@ -600,7 +600,6 @@ bool GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking()
         return false;
     if (m_resourceOwner)
         backing->setOwnershipIdentity(m_resourceOwner);
-    backing->migrateColorSpaceToProperties();
 
     const bool usingAlpha = contextAttributes().alpha;
     const auto size = getInternalFramebufferSize();

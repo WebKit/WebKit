@@ -645,18 +645,17 @@ ExceptionOr<RefPtr<Element>> DOMWindow::matchingElementInFlatTree(Node& scope, c
     return RefPtr<Element> { nullptr };
 }
 
-#if ENABLE(ORIENTATION_EVENTS)
-
 int DOMWindow::orientation() const
 {
+#if !ENABLE(ORIENTATION_EVENTS)
+    return 0;
+#else
     auto* frame = this->frame();
     if (!frame)
         return 0;
-
     return frame->orientation();
-}
-
 #endif
+}
 
 Screen& DOMWindow::screen()
 {

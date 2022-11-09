@@ -845,6 +845,10 @@ template<typename T>
 void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID)
 {
     for (auto& process : m_processes) {
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+        if (process->isCrashyProcess())
+            continue;
+#endif
         if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
             process->send(T(message), 0);
     }

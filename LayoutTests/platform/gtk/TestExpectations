@@ -953,8 +953,6 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
-webkit.org/b/246858 http/tests/security/cookies/cookie-theft-with-javascript-doc.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1518,8 +1516,6 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
-webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
-webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]

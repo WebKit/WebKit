@@ -353,6 +353,7 @@ public:
         // We want to track if callee is captured, but we don't want to act like it's a 'var'
         // because that would cause the BytecodeGenerator to emit bad code.
         addResult.iterator->value.clearIsVar();
+        addResult.iterator->value.setIsFunction();
 
         DeclarationResultMask result = DeclarationResult::Valid;
         if (isEvalOrArgumentsIdentifier(m_vm, ident))
@@ -569,7 +570,7 @@ public:
             result |= DeclarationResult::InvalidStrictMode;
         if (isArgumentsIdent)
             m_shadowsArguments = true;
-        if (!addResult.isNewEntry)
+        if (!addResult.isNewEntry && !addResult.iterator->value.isFunction())
             result |= DeclarationResult::InvalidDuplicateDeclaration;
 
         return result;

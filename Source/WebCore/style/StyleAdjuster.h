@@ -42,6 +42,8 @@ enum class AnimationImpact;
 
 namespace Style {
 
+class Update;
+
 class Adjuster {
 public:
     Adjuster(const Document&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);

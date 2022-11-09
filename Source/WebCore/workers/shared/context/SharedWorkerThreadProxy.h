@@ -67,8 +67,6 @@ private:
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
     void workerGlobalScopeDestroyed() final { }
     void workerGlobalScopeClosed() final;
-    void confirmMessageFromWorkerObject(bool) final { }
-    void reportPendingActivity(bool) final { }
 
     // WorkerLoaderProxy.
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;

@@ -23,16 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FullscreenVideoController_h
-#define FullscreenVideoController_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
+#include <WebCore/FullScreenWindow.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Image.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/MediaPlayerPrivateFullscreenWindow.h>
 #include <wtf/RefPtr.h>
 #include <wtf/win/GDIObject.h>
 
@@ -101,7 +100,7 @@ private:
     int m_dragStartOffset;
 };
 
-class FullscreenVideoController : WebCore::MediaPlayerPrivateFullscreenClient {
+class FullscreenVideoController : WebCore::FullScreenClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FullscreenVideoController);
 public:
@@ -115,7 +114,7 @@ public:
     void exitFullscreen();
 
 private:
-    // MediaPlayerPrivateFullscreenWindowClient
+    // FullscreenWindowClient
     virtual LRESULT fullscreenClientWndProc(HWND, UINT message, WPARAM, LPARAM);
     
     void ensureWindow();
@@ -157,7 +156,7 @@ private:
     WebCore::IntSize m_fullscreenSize;
     WebCore::IntPoint m_hudPosition;
 #if ENABLE(FULLSCREEN_API)
-    std::unique_ptr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
+    std::unique_ptr<WebCore::FullScreenWindow> m_fullscreenWindow;
 #endif
 
 #if USE(CA)
@@ -182,6 +181,4 @@ private:
     WebCore::Timer m_timer;
 };
 
-#endif
-
-#endif // FullscreenVideoController_h
+#endif // ENABLE(VIDEO)

@@ -396,8 +396,7 @@ void GraphicsContextCairo::drawPattern(NativeImage& nativeImage, const FloatRect
     if (!patternTransform.isInvertible())
         return;
 
-    UNUSED_PARAM(spacing);
-    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, options);
+    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 RenderingMode GraphicsContextCairo::renderingMode() const

@@ -135,7 +135,7 @@ public:
 
     // To be used when an IDBOpenDBRequest gets a new database connection, optionally with a
     // versionchange transaction, but the page is already torn down.
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier);
 
     void getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&);
     WEBCORE_EXPORT void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, Vector<IDBDatabaseNameAndVersion>&&);

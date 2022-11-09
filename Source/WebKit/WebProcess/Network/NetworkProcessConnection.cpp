@@ -333,11 +333,6 @@ void NetworkProcessConnection::messagesAvailableForPort(const WebCore::MessagePo
     WebProcess::singleton().messagesAvailableForPort(messagePortIdentifier);
 }
 
-void NetworkProcessConnection::checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier& messagePortIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
-{
-    callback(WebCore::MessagePort::isExistingMessagePortLocallyReachable(messagePortIdentifier) ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
-}
-
 void NetworkProcessConnection::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
 {
     WebProcess::singleton().deleteWebsiteDataForOrigins(dataTypes, origins, WTFMove(completionHandler));

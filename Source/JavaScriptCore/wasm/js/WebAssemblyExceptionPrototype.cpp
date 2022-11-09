@@ -31,6 +31,7 @@
 #include "AuxiliaryBarrierInlines.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyException.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyTag.h"
 
 namespace JSC {

@@ -967,7 +967,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Ref
     mainFrame->frameLoadState().didSuspend();
     auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, m_process.copyRef(), mainFrame.releaseNonNull(), shouldDelayClosingUntilFirstLayerFlush);
 
-    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, identifier().toUInt64(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
+    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, identifier().toUInt64(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().toString().utf8().data() : "0"_s);
 
     m_lastSuspendedPage = *suspendedPage;
 
@@ -1707,8 +1707,6 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
 
-    websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), 0);
-
     LoadParameters loadParameters;
     loadParameters.navigationID = 0;
     loadParameters.data = htmlData;
@@ -1720,11 +1718,13 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(process(), loadParameters);
 
-    m_process->markProcessAsRecentlyUsed();
-    m_process->assumeReadAccessToBaseURL(*this, baseURL.string());
-    m_process->assumeReadAccessToBaseURL(*this, unreachableURL.string());
-    send(Messages::WebPage::LoadAlternateHTML(loadParameters));
-    m_process->startResponsivenessTimer();
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), [this, protectedThis = Ref { *this }, process = m_process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL] {
+        process->markProcessAsRecentlyUsed();
+        process->assumeReadAccessToBaseURL(*this, baseURL.string());
+        process->assumeReadAccessToBaseURL(*this, unreachableURL.string());
+        send(Messages::WebPage::LoadAlternateHTML(loadParameters));
+        process->startResponsivenessTimer();
+    });
 }
 
 void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
@@ -3560,9 +3560,6 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         navigation->websitePolicies()->setContentBlockersEnabled(false);
     }
 
-    if (policyAction == PolicyAction::Use && navigation && frame.isMainFrame())
-        websiteDataStore->networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process().coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
-
 #if ENABLE(DEVICE_ORIENTATION)
     if (navigation && (!navigation->websitePolicies() || navigation->websitePolicies()->deviceOrientationAndMotionAccessState() == WebCore::DeviceOrientationOrMotionPermissionState::Prompt)) {
         auto deviceOrientationPermission = websiteDataStore->deviceOrientationAndMotionAccessController().cachedDeviceOrientationPermission(SecurityOriginData::fromURL(navigation->currentRequest().url()));
@@ -4704,14 +4701,6 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
     });
 }
 
-static OptionSet<IPC::SendOption> printingSendOptions(bool isPerformingDOMPrintOperation)
-{
-    if (isPerformingDOMPrintOperation)
-        return IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply;
-
-    return { };
-}
-
 void WebPageProxy::preferencesDidChange()
 {
     if (!hasRunningProcess())
@@ -4727,7 +4716,10 @@ void WebPageProxy::preferencesDidChange()
     // even if nothing changed in UI process, so that overrides get removed.
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
-    send(Messages::WebPage::PreferencesDidChange(preferencesStore()), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        send(Messages::WebPage::PreferencesDidChangeDuringDOMPrintOperation(preferencesStore()), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        send(Messages::WebPage::PreferencesDidChange(preferencesStore()));
 }
 
 void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
@@ -6023,13 +6015,14 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
     else
         processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), responseDomain, m_process->lockdownMode());
 
-    websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processForNavigation->coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
-
-    // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
-    if (!m_provisionalPage)
-        send(Messages::WebPage::StopLoadingDueToProcessSwap());
-    continueNavigationInNewProcess(*navigation, *m_mainFrame, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume);
-    completionHandler(true);
+    auto processIdentifier = processForNavigation->coreProcessIdentifier();
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), existingNetworkResourceLoadIdentifierToResume, navigation] () mutable {
+        // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
+        if (!m_provisionalPage)
+            send(Messages::WebPage::StopLoadingDueToProcessSwap());
+        continueNavigationInNewProcess(*navigation, *m_mainFrame, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume);
+        completionHandler(true);
+    });
 }
 
 void WebPageProxy::unableToImplementPolicy(FrameIdentifier frameID, const ResourceError& error, const UserData& userData)
@@ -9428,7 +9421,10 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
         return;
 
     m_isInPrintingMode = true;
-    send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        send(Messages::WebPage::BeginPrintingDuringDOMPrintOperation(frame->frameID(), printInfo), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo));
 }
 
 void WebPageProxy::endPrinting()
@@ -9437,30 +9433,43 @@ void WebPageProxy::endPrinting()
         return;
 
     m_isInPrintingMode = false;
-    send(Messages::WebPage::EndPrinting(), printingSendOptions(m_isPerformingDOMPrintOperation));
+
+    if (m_isPerformingDOMPrintOperation)
+        send(Messages::WebPage::EndPrintingDuringDOMPrintOperation(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        send(Messages::WebPage::EndPrinting());
 }
 
 uint64_t WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
 {
     m_isInPrintingMode = true;
-    return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTFMove(callback));
 }
 
 #if PLATFORM(COCOA)
 uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& callback)
 {
-    return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        return sendWithAsyncReply(Messages::WebPage::DrawRectToImageDuringDOMPrintOperation(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback));
 }
 
 uint64_t WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&& callback)
 {
-    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDFDuringDOMPrintOperation(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)));
 }
 #elif PLATFORM(GTK)
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
     m_isInPrintingMode = true;
-    sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        sendWithAsyncReply(Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frame->frameID(), printInfo), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callback));
 }
 #endif
 

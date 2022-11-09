@@ -189,7 +189,7 @@ cairo_operator_t toCairoOperator(CompositeOperator op, BlendMode blendOp)
 }
 
 void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, InterpolationQuality imageInterpolationQuality, const FloatRect& destRect)
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, cairo_operator_t op, InterpolationQuality imageInterpolationQuality, const FloatRect& destRect)
 {
     // Avoid NaN
     if (!std::isfinite(phase.x()) || !std::isfinite(phase.y()))
@@ -205,6 +205,19 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
         cairo_set_source_surface(clippedImageContext.get(), image, -tileRect.x(), -tileRect.y());
         cairo_paint(clippedImageContext.get());
         image = clippedImageSurface.get();
+    }
+
+    RefPtr<cairo_surface_t> imageWithSpacingSurface;
+    if (spacing.width() || spacing.height()) {
+        IntSize imageWithSpacingSize = IntSize(
+            tileRect.width() + spacing.width() / patternTransform.a(),
+            tileRect.height() + spacing.height() / patternTransform.d()
+        );
+        imageWithSpacingSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, imageWithSpacingSize.width(), imageWithSpacingSize.height()));
+        RefPtr<cairo_t> imageWithSpacingContext = adoptRef(cairo_create(imageWithSpacingSurface.get()));
+        cairo_set_source_surface(imageWithSpacingContext.get(), image, 0, 0);
+        cairo_paint(imageWithSpacingContext.get());
+        image = imageWithSpacingSurface.get();
     }
 
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
@@ -261,8 +274,8 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     double phaseOffsetX = phase.x() + tileRect.x() * patternTransform.a() + dx;
     double phaseOffsetY = phase.y() + tileRect.y() * patternTransform.d() + dy;
     // this is where we perform the (x mod w, y mod h) metioned above, but with floats instead of integers.
-    phaseOffsetX -= std::trunc(phaseOffsetX / (tileRect.width() * patternTransform.a())) * tileRect.width() * patternTransform.a();
-    phaseOffsetY -= std::trunc(phaseOffsetY / (tileRect.height() * patternTransform.d())) * tileRect.height() * patternTransform.d();
+    phaseOffsetX -= std::trunc(phaseOffsetX / (tileRect.width() * patternTransform.a() + spacing.width())) * (tileRect.width() * patternTransform.a() + spacing.width());
+    phaseOffsetY -= std::trunc(phaseOffsetY / (tileRect.height() * patternTransform.d() + spacing.height())) * (tileRect.height() * patternTransform.d() + spacing.height());
     cairo_matrix_t phaseMatrix = {1, 0, 0, 1, phaseOffsetX, phaseOffsetY};
     cairo_matrix_t combined;
     cairo_matrix_multiply(&combined, &patternMatrix, &phaseMatrix);

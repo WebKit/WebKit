@@ -289,7 +289,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'watchOS-8-Build-EWS': [
+        'watchOS-9-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -303,7 +303,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'watchOS-8-Simulator-Build-EWS': [
+        'watchOS-9-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',

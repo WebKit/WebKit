@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ping</title>
+<script src="utilities.js"></script>
+<script>
+function test() { clickElement(document.getElementById("a")); }
+</script>
+</head>
+<body>
+<img src="../../resources/delete-ping.py?test=secure-anchor-cross-origin" onload="test();" onerror="test();"></img>
+<a id="a" href="../../resources/check-ping.py?test=secure-anchor-cross-origin" ping="http://localhost:8000/navigation/resources/save-ping.py?test=secure-anchor-cross-origin">Navigate and send ping</a>
+</body></html>

@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (240,1) size 239x358
+  RenderSVGHiddenContainer {defs} at (240,1) size 239x358
+layer at (240,1) size 239x358
+  RenderSVGRect {rect} at (0,0) size 239x358 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=1.00] [width=239.00] [height=358.00]
+layer at (240,1) size 239x358
+  RenderSVGTransformableContainer {use} at (240,1) size 239x358
+layer at (240,1) size 239x358
+  RenderSVGRect {rect} at (0,0) size 239x358 [fill={[type=SOLID] [color=#808080]}] [x=240.00] [y=1.00] [width=239.00] [height=358.00]
+layer at (0,-14) size 78x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,-14) size 79x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 79x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 78.20: "Test passed."
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

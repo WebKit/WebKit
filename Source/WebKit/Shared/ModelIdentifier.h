@@ -41,36 +41,7 @@ struct ModelIdentifier {
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     WebCore::GraphicsLayer::PlatformLayerID layerIdentifier;
 #endif
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ModelIdentifier> decode(Decoder&);
 };
-
-template<class Encoder> void ModelIdentifier::encode(Encoder& encoder) const
-{
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    encoder << uuid;
-#elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    encoder << layerIdentifier;
-#endif
-}
-
-template<class Decoder> std::optional<ModelIdentifier> ModelIdentifier::decode(Decoder& decoder)
-{
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    std::optional<String> uuid;
-    decoder >> uuid;
-    if (!uuid)
-        return std::nullopt;
-    return { { WTFMove(*uuid) } };
-#elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    std::optional<WebCore::GraphicsLayer::PlatformLayerID> layerIdentifier;
-    decoder >> layerIdentifier;
-    if (!layerIdentifier)
-        return std::nullopt;
-    return { { *layerIdentifier } };
-#endif
-}
 
 #endif
 

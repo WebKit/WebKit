@@ -198,7 +198,7 @@ class GitHubMixin(object):
                     return pr_json
             except Exception as e:
                 self._addToLog('stdio', 'Failed to get pull request data from {}, error: {}'.format(pr_url, e))
-            
+
             self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
             if attempt > retry:
                 return None
@@ -2435,9 +2435,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
-        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to work
-        # around log output delays on slower machines.
-        kwargs.setdefault('timeout', 60 * 30)
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
@@ -2481,6 +2478,17 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
+
+    def buildCommandKwargs(self, warnings):
+        kwargs = super(CompileWebKit, self).buildCommandKwargs(warnings)
+        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
+        # work around log output delays on slower machines.
+        # https://bugs.webkit.org/show_bug.cgi?id=247506: Only applies to Xcode 12.x.
+        if self.getProperty('fullPlatform') == 'mac-bigsur':
+            kwargs['timeout'] = 60 * 60
+        else:
+            kwargs['timeout'] = 60 * 30
+        return kwargs
 
     def errorReceived(self, error):
         self._addToLog('errors', error + '\n')

@@ -1232,3 +1232,98 @@ header: <WebCore/ResourceRequest.h>
     std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
 };
 #endif
+
+enum class WebCore::DiagnosticLoggingDomain : uint8_t {
+    Media
+};
+
+#if !USE(CG)
+[Nested] enum class WebCore::PlatformColorSpace::Name : uint8_t {
+        SRGB
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+        , LinearSRGB
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        , DisplayP3
+#endif
+};
+    
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::PlatformColorSpace {
+    WebCore::PlatformColorSpace::Name get();
+};
+#endif
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::DestinationColorSpace {
+        WebCore::PlatformColorSpace serializableColorSpace();
+};
+
+struct WebCore::WindowFeatures {
+    std::optional<float> x;
+    std::optional<float> y;
+    std::optional<float> width;
+    std::optional<float> height;
+
+    bool menuBarVisible;
+    bool statusBarVisible;
+    bool toolBarVisible;
+    bool locationBarVisible;
+    bool scrollbarsVisible;
+    bool resizable;
+
+    bool fullscreen;
+    bool dialog;
+};
+
+[Nested] enum class WebCore::CompositionUnderlineColor : bool
+
+struct WebCore::CompositionUnderline {
+    unsigned startOffset;
+    unsigned endOffset;
+    WebCore::CompositionUnderlineColor compositionUnderlineColor;
+    WebCore::Color color;
+    bool thick;
+};
+
+enum class WebCore::MediaCaptureType : uint8_t {
+    MediaCaptureTypeNone,
+    MediaCaptureTypeUser,
+    MediaCaptureTypeEnvironment
+};
+
+header: <WebCore/FileChooser.h>
+[CustomHeader] struct WebCore::FileChooserSettings {
+    bool allowsDirectories;
+    bool allowsMultipleFiles;
+    Vector<String> acceptMIMETypes;
+    Vector<String> acceptFileExtensions;
+    Vector<String> selectedFiles;
+#if ENABLE(MEDIA_CAPTURE)
+    WebCore::MediaCaptureType mediaCaptureType;
+#endif
+};
+
+header: <WebCore/TextChecking.h>
+[CustomHeader] struct WebCore::GrammarDetail {
+    WebCore::CharacterRange range;
+    Vector<String> guesses;
+    String userDescription;
+};
+
+header: <WebCore/TextChecking.h>
+[CustomHeader] struct WebCore::TextCheckingResult {
+    WebCore::TextCheckingType type;
+    WebCore::CharacterRange range;
+    Vector<WebCore::GrammarDetail> details;
+    String replacement;
+};
+
+header: <WebCore/TextChecking.h>
+[CustomHeader] enum class WebCore::TextCheckingProcessType : bool
+
+header: <WebCore/TextChecking.h>
+[CustomHeader] class WebCore::TextCheckingRequestData {
+    std::optional<WebCore::TextCheckingRequestIdentifier> identifier();
+    String text();
+    OptionSet<WebCore::TextCheckingType> checkingTypes();
+    WebCore::TextCheckingProcessType processType();
+};

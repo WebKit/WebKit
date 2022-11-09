@@ -1,0 +1,25 @@
+
+inner
+button
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (region
+            (rect (2,1) width=46 height=31)
+)
+        (borderRadius 0.00)])
+      )
+    )
+  )
+)
+

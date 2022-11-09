@@ -116,16 +116,4 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
     networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
 }
 
-void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& completionHandler)
-{
-    networkProcessConnection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CheckRemotePortForActivity { remoteTarget }, [completionHandler = WTFMove(completionHandler), remoteTarget](bool hasActivity) mutable {
-        if (!hasActivity) {
-            auto& inProcessPorts = WebMessagePortChannelProvider::singleton().m_inProcessPortMessages;
-            auto iterator = inProcessPorts.find(remoteTarget);
-            hasActivity = iterator != inProcessPorts.end() && iterator->value.size();
-        }
-        completionHandler(hasActivity ? HasActivity::Yes : HasActivity::No);
-    }, 0);
-}
-
 } // namespace WebKit

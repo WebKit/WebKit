@@ -48,8 +48,8 @@
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/RandomNumber.h>
 
 namespace WebCore {
 

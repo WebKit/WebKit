@@ -173,7 +173,7 @@ void IPCTester::sendSemaphoreBackAndSignalProtocol(IPC::Connection& connection, 
 void IPCTester::sendAsyncMessageToReceiver(IPC::Connection& connection, uint32_t arg0)
 {
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::AsyncMessage(arg0 + 1), [arg0](uint32_t newArg0) {
-        ASSERT(newArg0 == arg0 + 2);
+        ASSERT_UNUSED(arg0, newArg0 == arg0 + 2);
     }, 0);
 }
 

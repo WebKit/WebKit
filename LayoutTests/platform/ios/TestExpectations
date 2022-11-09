@@ -3705,6 +3705,11 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/upgrade/websocket.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/websocket.https.html [ Pass Failure ]
 
+webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Pass Failure ]
+webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Pass Failure ]
+webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
+webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
+
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
 
@@ -3741,8 +3746,6 @@ webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Pass Timeout ]
 
-webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url-workers.window.html [ Pass Failure ]
-
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
@@ -3757,6 +3760,3 @@ http/tests/images/avif-partial-load-crash.html [ Pass ]
 
 # Screen Orientation API doesn't support nested frames yet
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
-
-webkit.org/b/247499 [ Debug ] storage/indexeddb/crash-on-getdatabases.html [ Pass Crash ]
-

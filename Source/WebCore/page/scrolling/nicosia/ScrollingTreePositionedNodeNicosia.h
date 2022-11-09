@@ -30,11 +30,8 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "NicosiaPlatformLayer.h"
 #include "ScrollingTreePositionedNode.h"
-
-namespace Nicosia {
-class CompositionLayer;
-}
 
 namespace WebCore {
 

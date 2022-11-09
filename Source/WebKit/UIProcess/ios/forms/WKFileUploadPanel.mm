@@ -80,7 +80,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 static inline UIImagePickerControllerCameraDevice cameraDeviceForMediaCaptureType(WebCore::MediaCaptureType mediaCaptureType)
 {
-    return mediaCaptureType == WebCore::MediaCaptureTypeUser ? UIImagePickerControllerCameraDeviceFront : UIImagePickerControllerCameraDeviceRear;
+    return mediaCaptureType == WebCore::MediaCaptureType::MediaCaptureTypeUser ? UIImagePickerControllerCameraDeviceFront : UIImagePickerControllerCameraDeviceRear;
 }
 
 static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTType *conformToUTType)
@@ -507,7 +507,7 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
             _allowedImagePickerTypes.add({ WKFileUploadPanelImagePickerType::Video });
     }
 
-    _mediaCaptureType = WebCore::MediaCaptureTypeNone;
+    _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeNone;
 #if ENABLE(MEDIA_CAPTURE)
     _mediaCaptureType = parameters->mediaCaptureType();
 #endif
@@ -815,20 +815,20 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront] || [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
         if (![UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
-            _mediaCaptureType = WebCore::MediaCaptureTypeEnvironment;
+            _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeEnvironment;
 
         if (![UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear])
-            _mediaCaptureType = WebCore::MediaCaptureTypeUser;
+            _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeUser;
 
         return;
     }
 
-    _mediaCaptureType = WebCore::MediaCaptureTypeNone;
+    _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeNone;
 }
 
 - (BOOL)_shouldMediaCaptureOpenMediaDevice
 {
-    if (_mediaCaptureType == WebCore::MediaCaptureTypeNone || ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    if (_mediaCaptureType == WebCore::MediaCaptureType::MediaCaptureTypeNone || ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
         return NO;
 
     return YES;
@@ -848,7 +848,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     [_cameraPicker _setRequiresPickingConfirmation:YES];
     [_cameraPicker _setShowsFileSizePicker:YES];
 
-    if (_mediaCaptureType != WebCore::MediaCaptureTypeNone)
+    if (_mediaCaptureType != WebCore::MediaCaptureType::MediaCaptureTypeNone)
         [_cameraPicker setCameraDevice:cameraDeviceForMediaCaptureType(_mediaCaptureType)];
 
     [self _presentFullscreenViewController:_cameraPicker.get() animated:YES];

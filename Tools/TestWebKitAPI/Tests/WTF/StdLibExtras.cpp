@@ -26,8 +26,8 @@
 #include "config.h"
 #include <wtf/StdLibExtras.h>
 
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RandomNumber.h>
 
 namespace TestWebKitAPI {
 

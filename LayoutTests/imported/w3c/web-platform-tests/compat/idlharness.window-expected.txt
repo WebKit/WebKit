@@ -22,10 +22,10 @@ PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
-FAIL HTMLBodyElement interface: attribute onorientationchange assert_true: The prototype object must have a property "onorientationchange" expected true got false
-FAIL HTMLBodyElement interface: document.body must inherit property "onorientationchange" with the proper type assert_inherits: property "onorientationchange" not found in prototype chain
-FAIL Window interface: attribute orientation assert_own_property: The global object must have a property "orientation" expected property "orientation" missing
-FAIL Window interface: attribute onorientationchange assert_own_property: The global object must have a property "onorientationchange" expected property "onorientationchange" missing
-FAIL Window interface: window must inherit property "orientation" with the proper type assert_own_property: expected property "orientation" missing
-FAIL Window interface: window must inherit property "onorientationchange" with the proper type assert_own_property: expected property "onorientationchange" missing
+PASS HTMLBodyElement interface: attribute onorientationchange
+PASS HTMLBodyElement interface: document.body must inherit property "onorientationchange" with the proper type
+PASS Window interface: attribute orientation
+PASS Window interface: attribute onorientationchange
+PASS Window interface: window must inherit property "orientation" with the proper type
+PASS Window interface: window must inherit property "onorientationchange" with the proper type
 

@@ -126,6 +126,7 @@
                     </view>
                     <connections>
                         <outlet property="progressView" destination="2bJ-bG-4SW" id="epj-Uv-45U"/>
+                        <outlet property="settingsButton" destination="yi7-p4-xpL" id="qEx-EB-V7c"/>
                         <outlet property="tabButton" destination="riZ-ip-Qee" id="c25-vk-MxM"/>
                         <outlet property="urlField" destination="n4f-v4-gO4" id="6y7-b7-P81"/>
                         <outlet property="webViewContainer" destination="719-Zt-fvZ" id="UaF-fa-bAe"/>
@@ -178,30 +179,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rVm-uk-liS" userLabel="Default URL Button">
-                                <rect key="frame" x="62" y="154" width="267" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Set Current URL As Default URL"/>
-                                <connections>
-                                    <action selector="setDefaultURLToCurrentURL:" destination="aJ5-0L-JDf" eventType="touchUpInside" id="6ge-wG-0Vi"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ua5-lh-IpN">
-                                <rect key="frame" x="16" y="55" width="40" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonConfiguration key="configuration" style="plain"/>
-                                <connections>
-                                    <action selector="closeModal:" destination="aJ5-0L-JDf" eventType="touchUpInside" id="h5A-RA-TNO"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="UK0-Lb-N0g">
+                                <rect key="frame" x="55" y="341" width="280" height="170.33333333333337"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Eu-Zz-uaZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="280" height="128"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ua5-lh-IpN">
+                                                <rect key="frame" x="0.0" y="0.0" width="40" height="128"/>
+                                                <buttonConfiguration key="configuration" style="plain"/>
+                                                <connections>
+                                                    <action selector="closeModal:" destination="aJ5-0L-JDf" eventType="touchUpInside" id="h5A-RA-TNO"/>
+                                                </connections>
+                                            </button>
+                                            <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="V0B-v2-13O">
+                                                <rect key="frame" x="40" y="0.0" width="240" height="128"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rVm-uk-liS" userLabel="Default URL Button">
+                                        <rect key="frame" x="0.0" y="136" width="280" height="34.333333333333343"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Set Current URL As Default URL"/>
+                                        <connections>
+                                            <action selector="setDefaultURLToCurrentURL:" destination="aJ5-0L-JDf" eventType="touchUpInside" id="6ge-wG-0Vi"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="UK0-Lb-N0g" firstAttribute="centerX" secondItem="EDp-dN-mqp" secondAttribute="centerX" id="PGf-NI-Zxi"/>
+                            <constraint firstItem="UK0-Lb-N0g" firstAttribute="top" secondItem="OVt-56-WEs" secondAttribute="bottom" constant="50" id="vSb-Yl-4Ei"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jS8-Pw-4A3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1451" y="293"/>
+            <point key="canvasLocation" x="1451" y="319"/>
         </scene>
     </scenes>
     <resources>

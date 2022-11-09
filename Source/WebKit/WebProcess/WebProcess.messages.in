@@ -150,7 +150,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearCurrentModifierStateForTesting()
 
     SetBackForwardCacheCapacity(unsigned capacity);
-    ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
+    ClearCachedPage(WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebExtension(struct WebKit::UserMessage userMessage)

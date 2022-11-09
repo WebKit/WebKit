@@ -269,7 +269,7 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
     operation->transitionToComplete(resultData, WTFMove(operation));
 }
 
-void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::abortOpenAndUpgradeNeeded, databaseConnectionIdentifier, transactionIdentifier);
 }

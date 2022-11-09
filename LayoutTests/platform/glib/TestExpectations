@@ -2387,7 +2387,6 @@ webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
-webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.

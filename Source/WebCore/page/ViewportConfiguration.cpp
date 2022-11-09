@@ -38,6 +38,22 @@
 
 namespace WebCore {
 
+static inline bool viewportArgumentValueIsValid(float value)
+{
+    return value > 0;
+}
+
+static inline void adjustViewportArgumentsToAvoidExcessiveZooming(ViewportArguments& arguments)
+{
+    if (!viewportArgumentValueIsValid(arguments.zoom) || !viewportArgumentValueIsValid(arguments.width))
+        return;
+
+    constexpr float maximumInitialZoomScale = 1.2;
+    auto zoomedWidthFromArguments = arguments.zoom * arguments.width;
+    arguments.zoom = std::min(arguments.zoom, maximumInitialZoomScale);
+    arguments.width = zoomedWidthFromArguments / arguments.zoom;
+}
+
 constexpr double defaultDesktopViewportWidth = 980;
 
 #if ASSERT_ENABLED
@@ -174,6 +190,9 @@ bool ViewportConfiguration::setViewportArguments(const ViewportArguments& viewpo
 
     LOG_WITH_STREAM(Viewports, stream << "ViewportConfiguration::setViewportArguments " << viewportArguments);
     m_viewportArguments = viewportArguments;
+
+    if (m_canIgnoreViewportArgumentsToAvoidExcessiveZoom)
+        adjustViewportArgumentsToAvoidExcessiveZooming(m_viewportArguments);
 
     updateDefaultConfiguration();
     updateMinimumLayoutSize();
@@ -454,11 +473,6 @@ ViewportConfiguration::Parameters ViewportConfiguration::testingParameters()
     return parameters;
 }
 
-static inline bool viewportArgumentValueIsValid(float value)
-{
-    return value > 0;
-}
-
 template<typename ValueType, typename ViewportArgumentsType>
 static inline void applyViewportArgument(ValueType& value, ViewportArgumentsType viewportArgumentValue, ValueType minimum, ValueType maximum)
 {
@@ -731,6 +745,7 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("minimum effective device width (for shrink-to-fit)", m_minimumEffectiveDeviceWidthForShrinkToFit);
     ts.dumpProperty("known to lay out wider than viewport", m_isKnownToLayOutWiderThanViewport ? "true" : "false");
     ts.dumpProperty("prefers horizontal scrolling", m_prefersHorizontalScrollingBelowDesktopViewportWidths ? "true" : "false");
+    ts.dumpProperty("can ignore viewport width and zoom", m_canIgnoreViewportArgumentsToAvoidExcessiveZoom ? "true" : "false");
     
     ts.endGroup();
 
