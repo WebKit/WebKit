@@ -328,7 +328,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_ftpEnabled = parameters.ftpEnabled;
 
     for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies)
-        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain));
+        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), [] { });
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -386,11 +386,12 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         session->storageManager().startReceivingMessageFromConnection(connection.connection());
 }
 
-void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies)
+void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, CompletionHandler<void()>&& completionHandler)
 {
     m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
         return HashSet<RegistrableDomain> { };
     }).iterator->value.add(WTFMove(firstPartyForCookies));
+    completionHandler();
 }
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
