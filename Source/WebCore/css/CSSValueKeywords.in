@@ -37,25 +37,23 @@ small-caption
 -webkit-small-control
 -webkit-control
 
-#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
--apple-system-headline
--apple-system-body
--apple-system-subheadline
--apple-system-footnote
--apple-system-caption1
--apple-system-caption2
--apple-system-short-headline
--apple-system-short-body
--apple-system-short-subheadline
--apple-system-short-footnote
--apple-system-short-caption1
--apple-system-tall-body
--apple-system-title0
--apple-system-title1
--apple-system-title2
--apple-system-title3
--apple-system-title4
-#endif
+-apple-system-headline enable-if=WTF_PLATFORM_COCOA
+-apple-system-body enable-if=WTF_PLATFORM_COCOA
+-apple-system-subheadline enable-if=WTF_PLATFORM_COCOA
+-apple-system-footnote enable-if=WTF_PLATFORM_COCOA
+-apple-system-caption1 enable-if=WTF_PLATFORM_COCOA
+-apple-system-caption2 enable-if=WTF_PLATFORM_COCOA
+-apple-system-short-headline enable-if=WTF_PLATFORM_COCOA
+-apple-system-short-body enable-if=WTF_PLATFORM_COCOA
+-apple-system-short-subheadline enable-if=WTF_PLATFORM_COCOA
+-apple-system-short-footnote enable-if=WTF_PLATFORM_COCOA
+-apple-system-short-caption1 enable-if=WTF_PLATFORM_COCOA
+-apple-system-tall-body enable-if=WTF_PLATFORM_COCOA
+-apple-system-title0 enable-if=WTF_PLATFORM_COCOA
+-apple-system-title1 enable-if=WTF_PLATFORM_COCOA
+-apple-system-title2 enable-if=WTF_PLATFORM_COCOA
+-apple-system-title3 enable-if=WTF_PLATFORM_COCOA
+-apple-system-title4 enable-if=WTF_PLATFORM_COCOA
 
 // This has to go after the -apple-system versions.
 status-bar
@@ -259,61 +257,53 @@ accentcolor
 accentcolortext
 
 // Non-standard system colors
-#if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC) || (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
--apple-system-header-text
--apple-system-text-background
--apple-system-control-background
--apple-system-placeholder-text
--apple-system-label
--apple-system-secondary-label
--apple-system-tertiary-label
--apple-system-quaternary-label
--apple-system-grid
--apple-system-separator
--apple-system-container-border
--apple-system-background
--apple-system-secondary-background
--apple-system-tertiary-background
--apple-system-grouped-background
--apple-system-secondary-grouped-background
--apple-system-tertiary-grouped-background
--apple-system-selected-content-background
--apple-system-unemphasized-selected-content-background
--apple-wireless-playback-target-active
--apple-system-blue
--apple-system-brown
--apple-system-gray
--apple-system-green
--apple-system-orange
--apple-system-pink
--apple-system-purple
--apple-system-red
--apple-system-yellow
--apple-system-app-highlight-background
-#endif
-#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
--apple-system-alternate-selected-text
--apple-system-control-accent
--apple-system-even-alternating-content-background
--apple-system-odd-alternating-content-background
--apple-system-selected-text
--apple-system-unemphasized-selected-text
--apple-system-selected-text-background
--apple-system-unemphasized-selected-text-background
--apple-system-find-highlight-background
-#endif
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
--apple-system-indigo
--apple-system-teal
--apple-system-opaque-fill
--apple-system-opaque-secondary-fill
--apple-system-opaque-secondary-fill-disabled
--apple-system-opaque-tertiary-fill
--apple-system-opaque-separator
-#endif
-#if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC) || (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)
--webkit-control-background
-#endif
+-apple-system-header-text enable-if=WTF_PLATFORM_COCOA
+-apple-system-text-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-control-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-placeholder-text enable-if=WTF_PLATFORM_COCOA
+-apple-system-label enable-if=WTF_PLATFORM_COCOA
+-apple-system-secondary-label enable-if=WTF_PLATFORM_COCOA
+-apple-system-tertiary-label enable-if=WTF_PLATFORM_COCOA
+-apple-system-quaternary-label enable-if=WTF_PLATFORM_COCOA
+-apple-system-grid enable-if=WTF_PLATFORM_COCOA
+-apple-system-separator enable-if=WTF_PLATFORM_COCOA
+-apple-system-container-border enable-if=WTF_PLATFORM_COCOA
+-apple-system-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-secondary-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-tertiary-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-grouped-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-secondary-grouped-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-tertiary-grouped-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-selected-content-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-unemphasized-selected-content-background enable-if=WTF_PLATFORM_COCOA
+-apple-wireless-playback-target-active enable-if=WTF_PLATFORM_COCOA
+-apple-system-blue enable-if=WTF_PLATFORM_COCOA
+-apple-system-brown enable-if=WTF_PLATFORM_COCOA
+-apple-system-gray enable-if=WTF_PLATFORM_COCOA
+-apple-system-green enable-if=WTF_PLATFORM_COCOA
+-apple-system-orange enable-if=WTF_PLATFORM_COCOA
+-apple-system-pink enable-if=WTF_PLATFORM_COCOA
+-apple-system-purple enable-if=WTF_PLATFORM_COCOA
+-apple-system-red enable-if=WTF_PLATFORM_COCOA
+-apple-system-yellow enable-if=WTF_PLATFORM_COCOA
+-apple-system-app-highlight-background enable-if=WTF_PLATFORM_COCOA
+-apple-system-alternate-selected-text enable-if=WTF_PLATFORM_MAC
+-apple-system-control-accent enable-if=WTF_PLATFORM_MAC
+-apple-system-even-alternating-content-background enable-if=WTF_PLATFORM_MAC
+-apple-system-odd-alternating-content-background enable-if=WTF_PLATFORM_MAC
+-apple-system-selected-text enable-if=WTF_PLATFORM_MAC
+-apple-system-unemphasized-selected-text enable-if=WTF_PLATFORM_MAC
+-apple-system-selected-text-background enable-if=WTF_PLATFORM_MAC
+-apple-system-unemphasized-selected-text-background enable-if=WTF_PLATFORM_MAC
+-apple-system-find-highlight-background enable-if=WTF_PLATFORM_MAC
+-apple-system-indigo enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-teal enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-opaque-fill enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-opaque-secondary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-opaque-secondary-fill-disabled enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-opaque-tertiary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-opaque-separator enable-if=WTF_PLATFORM_IOS_FAMILY
+-webkit-control-background enable-if=WTF_PLATFORM_COCOA|HAVE_OS_DARK_MODE_SUPPORT
 activebuttontext
 -webkit-activelink
 -webkit-link
@@ -661,11 +651,9 @@ end
 //center
 //baseline
 
-#if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
 // CSS_PROP_BOX_DECORATION_BREAK
-clone
-slice
-#endif
+clone enable-if=ENABLE_CSS_BOX_DECORATION_BREAK
+slice enable-if=ENABLE_CSS_BOX_DECORATION_BREAK
 
 // CSS_PROP_BOX_DIRECTION
 // normal
@@ -877,13 +865,9 @@ progress-bar
 slider-horizontal
 slider-vertical
 searchfield
-#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
--apple-pay-button
-#endif
-#if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
-attachment
-borderless-attachment
-#endif
+-apple-pay-button enable-if=ENABLE_APPLE_PAY
+attachment enable-if=ENABLE_ATTACHMENT_ELEMENT
+borderless-attachment enable-if=ENABLE_ATTACHMENT_ELEMENT
 textarea
 textfield
 
@@ -993,9 +977,7 @@ paused
 //
 flat
 preserve-3d
-#if defined(ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D) && ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D
-optimized-3d
-#endif
+optimized-3d enable-if=ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D
 
 //
 // CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
@@ -1076,11 +1058,9 @@ no-limit
 manual
 // auto
 
-#if defined(ENABLE_OVERFLOW_SCROLLING_TOUCH) && ENABLE_OVERFLOW_SCROLLING_TOUCH
 // -webkit-overflow-scrolling
 // auto
-touch
-#endif
+touch enable-if=ENABLE_OVERFLOW_SCROLLING_TOUCH
 
 // -webkit-writing-mode
 // SVG compatibility
@@ -1257,9 +1237,7 @@ repeating-conic-gradient
 -webkit-named-image
 filter
 -webkit-filter
-#if defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API
-paint
-#endif
+paint enable-if=ENABLE_CSS_PAINTING_API
 
 // deprecated gradients
 from
@@ -1394,14 +1372,12 @@ rem
 to-zero
 nearest
 infinity
--infinity
+-infinity id=NegativeInfinity
 NaN
 
 from-image
 
-#if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
-snap
-#endif
+snap enable-if=ENABLE_CSS_IMAGE_RESOLUTION
 
 // overflow
 -webkit-paged-x
@@ -1432,29 +1408,25 @@ each-line
 // -webkit-column-fill
 balance
 
-#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 // -apple-pay-button-style
-white-outline
+white-outline enable-if=ENABLE_APPLE_PAY
 
 // -apple-pay-button-type
-plain
-buy
-set-up
-donate
-check-out
-book
-subscribe
-#if defined(ENABLE_APPLE_PAY_NEW_BUTTON_TYPES) && ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
-reload
-add-money
-top-up
-order
-rent
-support
-contribute
-tip
-#endif
-#endif
+plain enable-if=ENABLE_APPLE_PAY
+buy enable-if=ENABLE_APPLE_PAY
+set-up enable-if=ENABLE_APPLE_PAY
+donate enable-if=ENABLE_APPLE_PAY
+check-out enable-if=ENABLE_APPLE_PAY
+book enable-if=ENABLE_APPLE_PAY
+subscribe enable-if=ENABLE_APPLE_PAY
+reload enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+add-money enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+top-up enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+order enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+rent enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+support enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+contribute enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+tip enable-if=ENABLE_APPLE_PAY&ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
 
 // font-synthesis
 weight
@@ -1549,13 +1521,11 @@ less
 light
 dark
 
-#if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
-// color-scheme
-// normal
-// only
-// light
-// dark
-#endif
+// color-scheme enable-if=ENABLE_DARK_MODE_CSS
+// normal enable-if=ENABLE_DARK_MODE_CSS
+// only enable-if=ENABLE_DARK_MODE_CSS
+// light enable-if=ENABLE_DARK_MODE_CSS
+// dark enable-if=ENABLE_DARK_MODE_CSS
 
 // auto-repeat
 auto-fill
@@ -1568,12 +1538,10 @@ swap
 fallback
 optional
 
-#if defined(ENABLE_APPLICATION_MANIFEST) && ENABLE_APPLICATION_MANIFEST
-fullscreen
-standalone
-minimal-ui
-browser
-#endif
+fullscreen enable-if=ENABLE_APPLICATION_MANIFEST
+standalone enable-if=ENABLE_APPLICATION_MANIFEST
+minimal-ui enable-if=ENABLE_APPLICATION_MANIFEST
+browser enable-if=ENABLE_APPLICATION_MANIFEST
 
 // text-decoration-thickness, text-underline-offset
 from-font
@@ -1624,9 +1592,7 @@ z
 // content
 size
 layout
-#if !(defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API)
-paint
-#endif
+paint enable-if=!ENABLE_CSS_PAINTING_API
 
 // container-type
 // normal
