@@ -30,14 +30,6 @@
 #import "Device.h"
 #import "PipelineLayout.h"
 
-#if ENABLE(WEBGPU_BY_DEFAULT) && __has_include("ShaderModuleSource.msl")
-#define TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP 1
-#include "ShaderModuleSource.msl"
-#else
-#define TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP 0
-#define WEBGPU_SHADER_SOURCE ""
-#endif
-
 namespace WebGPU {
 
 struct ShaderModuleParameters {
@@ -88,7 +80,7 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     return library;
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label, const char* code)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout> wgslHints;
@@ -103,11 +95,8 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     }
 
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-#if TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP
-    auto prepareResultMSL = prepareResult.msl.length() ? prepareResult.msl : String::fromUTF8(WEBGPU_SHADER_SOURCE);
-#else
-    auto prepareResultMSL = prepareResult.msl;
-#endif
+    // FIXME: remove the ternary when the shader compiler is more functional
+    auto prepareResultMSL = prepareResult.msl.length() ? prepareResult.msl : String::fromUTF8(code);
     auto library = ShaderModule::createLibrary(device.device(), prepareResultMSL, WTFMove(label));
     if (!library)
         return nullptr;
@@ -126,7 +115,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt);
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
-        if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
+        if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label), shaderModuleParameters->wgsl.code))
             return result.releaseNonNull();
     }
 
