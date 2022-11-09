@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <g style="will-change: transform" transform="scale(2)">
+        <g transform="scale(2)">
+            <rect style="will-change: transform" x="25" y="25" width="50" height="50" fill="green" fill-opacity="0.3"/>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <rect style="will-change: transform" x="100" y="100" width="200" height="200" fill="green" fill-opacity="0.3"/>
+    </g>
+</svg>
