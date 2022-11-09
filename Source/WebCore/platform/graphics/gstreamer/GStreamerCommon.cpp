@@ -856,9 +856,11 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
         case PlatformVideoTransferCharacteristics::Bt709:
             GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT709;
             break;
+#if GST_CHECK_VERSION(1, 18, 0)
         case PlatformVideoTransferCharacteristics::Smpte170m:
             GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT601;
             break;
+#endif
         default:
             break;
         }
