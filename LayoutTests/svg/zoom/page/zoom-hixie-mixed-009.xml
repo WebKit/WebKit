@@ -12,7 +12,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" width="400" height="120" class="test">
    <rect x="0" y="0" width="60" height="12" transform="scale(10)"/>
    <foreignObject x="0" y="0" width="60" height="10" transform="scale(10)">
-    <div xmlns="http://www.w3.org/1999/xhtml"> TEST </div>
+    <div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0;"> TEST </div>
    </foreignObject>
   </svg>
   <div class="control">TEST</div>

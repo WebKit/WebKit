@@ -1,0 +1,94 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,-38.63) size 178x50 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-38.63) size 177.48x49.34
+layer at (0,-38.63) size 178x50 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 177.48x49.34
+layer at (0,-38.63) size 177x49 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 178x50 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 10x16
+      RenderSVGInlineText {#text} at (0,26) size 10x16
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 9.62: "A"
+    RenderSVGInlineText {#text} at (9,26) size 4x16
+      chunk 1 text run 1 at (9.62,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 13x19
+      RenderSVGInlineText {#text} at (12,24) size 12x19
+        chunk 1 text run 1 at (12.95,0.00) startOffset 0 endOffset 1 width 11.44: "A"
+    RenderSVGInlineText {#text} at (24,26) size 4x16
+      chunk 1 text run 1 at (24.39,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 15x23
+      RenderSVGInlineText {#text} at (27,21) size 14x22
+        chunk 1 text run 1 at (27.72,0.00) startOffset 0 endOffset 1 width 13.52: "A"
+    RenderSVGInlineText {#text} at (41,26) size 4x16
+      chunk 1 text run 1 at (41.24,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 18x29
+      RenderSVGInlineText {#text} at (44,16) size 18x28
+        chunk 1 text run 1 at (44.57,0.00) startOffset 0 endOffset 1 width 17.42: "A"
+    RenderSVGInlineText {#text} at (61,26) size 4x16
+      chunk 1 text run 1 at (61.99,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 22x34
+      RenderSVGInlineText {#text} at (65,12) size 22x34
+        chunk 1 text run 1 at (65.32,0.00) startOffset 0 endOffset 1 width 21.06: "A"
+    RenderSVGInlineText {#text} at (86,26) size 4x16
+      chunk 1 text run 1 at (86.37,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 24x38
+      RenderSVGInlineText {#text} at (89,9) size 24x37
+        chunk 1 text run 1 at (89.70,0.00) startOffset 0 endOffset 1 width 23.14: "A"
+    RenderSVGInlineText {#text} at (112,26) size 4x16
+      chunk 1 text run 1 at (112.84,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 28x44
+      RenderSVGInlineText {#text} at (116,4) size 28x44
+        chunk 1 text run 1 at (116.17,0.00) startOffset 0 endOffset 1 width 27.04: "A"
+    RenderSVGInlineText {#text} at (143,26) size 4x16
+      chunk 1 text run 1 at (143.21,0.00) startOffset 0 endOffset 1 width 3.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 32x50
+      RenderSVGInlineText {#text} at (146,0) size 31x50
+        chunk 1 text run 1 at (146.54,0.00) startOffset 0 endOffset 1 width 30.94: "A"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (0,-3.88) size 18x6 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,34.75) size 17.75x4.95
+layer at (0,-3.88) size 18x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 18x5 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 1x3
+      RenderSVGInlineText {#text} at (0,2) size 1x2
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 0.96: "A"
+    RenderSVGInlineText {#text} at (0,2) size 1x2
+      chunk 1 text run 1 at (0.96,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 2x3
+      RenderSVGInlineText {#text} at (1,2) size 2x2
+        chunk 1 text run 1 at (1.29,0.00) startOffset 0 endOffset 1 width 1.14: "A"
+    RenderSVGInlineText {#text} at (2,2) size 1x2
+      chunk 1 text run 1 at (2.44,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 3x3
+      RenderSVGInlineText {#text} at (2,2) size 2x3
+        chunk 1 text run 1 at (2.77,0.00) startOffset 0 endOffset 1 width 1.35: "A"
+    RenderSVGInlineText {#text} at (4,2) size 1x2
+      chunk 1 text run 1 at (4.12,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 3x4
+      RenderSVGInlineText {#text} at (4,1) size 2x3
+        chunk 1 text run 1 at (4.46,0.00) startOffset 0 endOffset 1 width 1.74: "A"
+    RenderSVGInlineText {#text} at (6,2) size 1x2
+      chunk 1 text run 1 at (6.20,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 3x4
+      RenderSVGInlineText {#text} at (6,1) size 3x4
+        chunk 1 text run 1 at (6.53,0.00) startOffset 0 endOffset 1 width 2.11: "A"
+    RenderSVGInlineText {#text} at (8,2) size 1x2
+      chunk 1 text run 1 at (8.64,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 4x5
+      RenderSVGInlineText {#text} at (8,0) size 3x4
+        chunk 1 text run 1 at (8.97,0.00) startOffset 0 endOffset 1 width 2.31: "A"
+    RenderSVGInlineText {#text} at (11,2) size 1x2
+      chunk 1 text run 1 at (11.28,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 4x5
+      RenderSVGInlineText {#text} at (11,0) size 3x5
+        chunk 1 text run 1 at (11.62,0.00) startOffset 0 endOffset 1 width 2.70: "A"
+    RenderSVGInlineText {#text} at (14,2) size 1x2
+      chunk 1 text run 1 at (14.32,0.00) startOffset 0 endOffset 1 width 0.33: " "
+    RenderSVGTSpan {tspan} at (0,0) size 4x5
+      RenderSVGInlineText {#text} at (14,0) size 4x5
+        chunk 1 text run 1 at (14.65,0.00) startOffset 0 endOffset 1 width 3.09: "A"
+    RenderSVGInlineText {#text} at (0,0) size 0x0

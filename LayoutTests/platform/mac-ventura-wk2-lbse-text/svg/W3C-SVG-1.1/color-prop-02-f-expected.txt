@@ -1,0 +1,104 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGViewportContainer at (0,0) size 480x360
+layer at (55,20) size 330x270
+  RenderSVGTransformableContainer {g} at (55,20) size 330x270
+layer at (55,20) size 80x80
+  RenderSVGTransformableContainer {g} at (0,0) size 80x80
+layer at (55,20) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#DC143C]}] [cx=75.00] [cy=40.00] [r=20.00]
+layer at (95,20) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#DC143C]}] [cx=115.00] [cy=40.00] [r=20.00]
+layer at (55,60) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#DC143C]}] [cx=75.00] [cy=80.00] [r=20.00]
+layer at (95,60) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#DC143C]}] [cx=115.00] [cy=80.00] [r=20.00]
+layer at (180,20) size 80x80
+  RenderSVGTransformableContainer {g} at (125,0) size 80x80
+layer at (180,20) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#98FB98]}] [cx=200.00] [cy=40.00] [r=20.00]
+layer at (220,20) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#98FB98]}] [cx=240.00] [cy=40.00] [r=20.00]
+layer at (180,60) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#98FB98]}] [cx=200.00] [cy=80.00] [r=20.00]
+layer at (220,60) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#98FB98]}] [cx=240.00] [cy=80.00] [r=20.00]
+layer at (305,20) size 80x80
+  RenderSVGTransformableContainer {g} at (250,0) size 80x80
+layer at (305,20) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#4169E1]}] [cx=325.00] [cy=40.00] [r=20.00]
+layer at (345,20) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#4169E1]}] [cx=365.00] [cy=40.00] [r=20.00]
+layer at (305,60) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#4169E1]}] [cx=325.00] [cy=80.00] [r=20.00]
+layer at (345,60) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#4169E1]}] [cx=365.00] [cy=80.00] [r=20.00]
+layer at (55,115) size 80x80
+  RenderSVGTransformableContainer {g} at (0,95) size 80x80
+layer at (55,115) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#B22222]}] [cx=75.00] [cy=135.00] [r=20.00]
+layer at (95,115) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#B22222]}] [cx=115.00] [cy=135.00] [r=20.00]
+layer at (55,155) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#B22222]}] [cx=75.00] [cy=175.00] [r=20.00]
+layer at (95,155) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#B22222]}] [cx=115.00] [cy=175.00] [r=20.00]
+layer at (180,115) size 80x80
+  RenderSVGTransformableContainer {g} at (125,95) size 80x80
+layer at (180,115) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#2E8B57]}] [cx=200.00] [cy=135.00] [r=20.00]
+layer at (220,115) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#2E8B57]}] [cx=240.00] [cy=135.00] [r=20.00]
+layer at (180,155) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#2E8B57]}] [cx=200.00] [cy=175.00] [r=20.00]
+layer at (220,155) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#2E8B57]}] [cx=240.00] [cy=175.00] [r=20.00]
+layer at (305,115) size 80x80
+  RenderSVGTransformableContainer {g} at (250,95) size 80x80
+layer at (305,115) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#0000CD]}] [cx=325.00] [cy=135.00] [r=20.00]
+layer at (345,115) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#0000CD]}] [cx=365.00] [cy=135.00] [r=20.00]
+layer at (305,155) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#0000CD]}] [cx=325.00] [cy=175.00] [r=20.00]
+layer at (345,155) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#0000CD]}] [cx=365.00] [cy=175.00] [r=20.00]
+layer at (55,210) size 80x80
+  RenderSVGTransformableContainer {g} at (0,190) size 80x80
+layer at (55,210) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#CD5C5C]}] [cx=75.00] [cy=230.00] [r=20.00]
+layer at (95,210) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#CD5C5C]}] [cx=115.00] [cy=230.00] [r=20.00]
+layer at (55,250) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#CD5C5C]}] [cx=75.00] [cy=270.00] [r=20.00]
+layer at (95,250) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#CD5C5C]}] [cx=115.00] [cy=270.00] [r=20.00]
+layer at (180,210) size 80x80
+  RenderSVGTransformableContainer {g} at (125,190) size 80x80
+layer at (180,210) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#7CFC00]}] [cx=200.00] [cy=230.00] [r=20.00]
+layer at (220,210) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#7CFC00]}] [cx=240.00] [cy=230.00] [r=20.00]
+layer at (180,250) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#7CFC00]}] [cx=200.00] [cy=270.00] [r=20.00]
+layer at (220,250) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#7CFC00]}] [cx=240.00] [cy=270.00] [r=20.00]
+layer at (305,210) size 80x80
+  RenderSVGTransformableContainer {g} at (250,190) size 80x80
+layer at (305,210) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#48D1CC]}] [cx=325.00] [cy=230.00] [r=20.00]
+layer at (345,210) size 40x40
+  RenderSVGEllipse {circle} at (40,0) size 40x40 [fill={[type=SOLID] [color=#48D1CC]}] [cx=365.00] [cy=230.00] [r=20.00]
+layer at (305,250) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#48D1CC]}] [cx=325.00] [cy=270.00] [r=20.00]
+layer at (345,250) size 40x40
+  RenderSVGEllipse {circle} at (40,40) size 40x40 [fill={[type=SOLID] [color=#48D1CC]}] [cx=365.00] [cy=270.00] [r=20.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
