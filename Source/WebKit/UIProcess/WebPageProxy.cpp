@@ -4701,14 +4701,6 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
     });
 }
 
-static OptionSet<IPC::SendOption> printingSendOptions(bool isPerformingDOMPrintOperation)
-{
-    if (isPerformingDOMPrintOperation)
-        return IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply;
-
-    return { };
-}
-
 void WebPageProxy::preferencesDidChange()
 {
     if (!hasRunningProcess())
@@ -4724,7 +4716,10 @@ void WebPageProxy::preferencesDidChange()
     // even if nothing changed in UI process, so that overrides get removed.
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
-    send(Messages::WebPage::PreferencesDidChange(preferencesStore()), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        send(Messages::WebPage::PreferencesDidChangeDuringDOMPrintOperation(preferencesStore()), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        send(Messages::WebPage::PreferencesDidChange(preferencesStore()));
 }
 
 void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
@@ -9426,7 +9421,10 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
         return;
 
     m_isInPrintingMode = true;
-    send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        send(Messages::WebPage::BeginPrintingDuringDOMPrintOperation(frame->frameID(), printInfo), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo));
 }
 
 void WebPageProxy::endPrinting()
@@ -9435,30 +9433,43 @@ void WebPageProxy::endPrinting()
         return;
 
     m_isInPrintingMode = false;
-    send(Messages::WebPage::EndPrinting(), printingSendOptions(m_isPerformingDOMPrintOperation));
+
+    if (m_isPerformingDOMPrintOperation)
+        send(Messages::WebPage::EndPrintingDuringDOMPrintOperation(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        send(Messages::WebPage::EndPrinting());
 }
 
 uint64_t WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
 {
     m_isInPrintingMode = true;
-    return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    return sendWithAsyncReply(Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTFMove(callback));
 }
 
 #if PLATFORM(COCOA)
 uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& callback)
 {
-    return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        return sendWithAsyncReply(Messages::WebPage::DrawRectToImageDuringDOMPrintOperation(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback));
 }
 
 uint64_t WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&& callback)
 {
-    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDFDuringDOMPrintOperation(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)));
 }
 #elif PLATFORM(GTK)
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
     m_isInPrintingMode = true;
-    sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
+    if (m_isPerformingDOMPrintOperation)
+        sendWithAsyncReply(Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frame->frameID(), printInfo), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callback));
 }
 #endif
 
