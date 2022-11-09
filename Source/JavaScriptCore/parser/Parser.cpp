@@ -1184,7 +1184,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
 {
     failIfStackOverflow();
     m_parserState.assignmentCount++;
-    int nonLHSCount = m_parserState.nonLHSCount;
+    SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
     TreeDestructuringPattern pattern;
     switch (m_token.m_type) {
     case OPENBRACKET: {
@@ -1364,7 +1364,6 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
         break;
     }
     }
-    m_parserState.nonLHSCount = nonLHSCount;
     return pattern;
 }
 
@@ -4666,8 +4665,8 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLiteral(TreeBuilder& context)
 {
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of an object literal");
-    
-    int oldNonLHSCount = m_parserState.nonLHSCount;
+
+    SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
 
     JSTokenLocation location(tokenLocation());
     if (match(CLOSEBRACE)) {
@@ -4700,8 +4699,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     location = tokenLocation();
     handleProductionOrFail2(CLOSEBRACE, "}", "end", "object literal");
 
-    m_parserState.nonLHSCount = oldNonLHSCount;
-
     return context.createObjectLiteral(location, propertyList);
 }
 
@@ -4709,9 +4706,9 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral(TreeBuilder& context)
 {
     consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings, "Expected an opening '[' at the beginning of an array literal");
-    
-    int oldNonLHSCount = m_parserState.nonLHSCount;
-    
+
+    SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
+
     int elisions = 0;
     while (match(COMMA)) {
         next(TreeBuilder::DontBuildStrings);
@@ -4773,9 +4770,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
         failIfFalse(match(DOTDOTDOT), "Expected either a closing ']' or a ',' following an array element");
         semanticFail("The '...' operator should come before a target expression");
     }
-    
-    m_parserState.nonLHSCount = oldNonLHSCount;
-    
+
     return context.createArray(location, elementList);
 }
 
@@ -4911,9 +4906,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         return parseArrayLiteral(context);
     case OPENPAREN: {
         next();
-        int oldNonLHSCount = m_parserState.nonLHSCount;
+        SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
         TreeExpression result = parseExpression(context);
-        m_parserState.nonLHSCount = oldNonLHSCount;
         handleProductionOrFail(CLOSEPAREN, ")", "end", "compound expression");
         return result;
     }
@@ -5265,7 +5259,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 m_parserState.nonTrivialExpressionCount++;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
                 next();
-                int nonLHSCount = m_parserState.nonLHSCount;
+                SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
                 int initialAssignments = m_parserState.assignmentCount;
                 TreeExpression property = parseExpression(context);
                 failIfFalse(property, "Cannot parse subscript expression");
@@ -5275,14 +5269,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
 
                 handleProductionOrFail(CLOSEBRACKET, "]", "end", "subscript expression");
-                m_parserState.nonLHSCount = nonLHSCount;
                 break;
             }
             case OPENPAREN: {
                 if (baseIsSuper)
                     failIfTrue(m_parserState.isParsingClassFieldInitializer, "super call is not valid in class field initializer context");
                 m_parserState.nonTrivialExpressionCount++;
-                int nonLHSCount = m_parserState.nonLHSCount;
+                SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
                 if (newCount) {
                     newCount--;
                     semanticFailIfTrue(baseIsSuper, "Cannot use new with super call");
@@ -5330,7 +5323,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     if (isOptionalCall)
                         optionalChainBase = base;
                 }
-                m_parserState.nonLHSCount = nonLHSCount;
                 break;
             }
             case DOT: {
@@ -5361,11 +5353,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 semanticFailIfTrue(optionalChainBase, "Cannot use tagged templates in an optional chain");
                 semanticFailIfTrue(baseIsSuper, "Cannot use super as tag for tagged templates");
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                int nonLHSCount = m_parserState.nonLHSCount;
+                SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
                 typename TreeBuilder::TemplateLiteral templateLiteral = parseTemplateLiteral(context, LexerType::RawStringsBuildMode::BuildRawStrings);
                 failIfFalse(templateLiteral, "Cannot parse template literal");
                 base = context.createTaggedTemplate(startLocation, base, templateLiteral, expressionStart, expressionEnd, lastTokenEndPosition());
-                m_parserState.nonLHSCount = nonLHSCount;
                 m_seenTaggedTemplateInNonReparsingFunctionMode = true;
                 break;
             }
