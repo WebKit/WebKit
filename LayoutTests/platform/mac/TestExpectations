@@ -1601,8 +1601,6 @@ webkit.org/b/206285 inspector/worker/debugger-pause.html [ Pass Failure ]
 
 webkit.org/b/207142 requestidlecallback/requestidlecallback-is-called.html [ Pass Failure ]
 
-webkit.org/b/207225 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Pass Failure ]
-
 webkit.org/b/207226 http/tests/misc/image-blocked-src-change.html [ Pass Failure ]
 
 webkit.org/b/206908 imported/w3c/web-platform-tests/hr-time/basic.any.html [ Pass Failure ]
@@ -2275,8 +2273,6 @@ webkit.org/b/238917 [ Monterey ] fast/text/khmer-lao-font.html [ Failure ]
 webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
 webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
-
-webkit.org/b/237680 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-matchAll.tentative.https.html [ Pass Failure ]
 
 # Plugins
 # FIXME: Remove these tests.
