@@ -1654,11 +1654,6 @@ void RenderObject::destroy()
 
     m_bitfields.setBeingDestroyed(true);
 
-#if PLATFORM(IOS_FAMILY)
-    if (hasLayer())
-        downcast<RenderBoxModelObject>(*this).layer()->willBeDestroyed();
-#endif
-
     willBeDestroyed();
 
     if (is<RenderWidget>(*this)) {
