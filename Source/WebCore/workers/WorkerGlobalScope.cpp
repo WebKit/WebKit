@@ -176,7 +176,9 @@ void WorkerGlobalScope::removeAllEventListeners()
     WorkerOrWorkletGlobalScope::removeAllEventListeners();
     m_performance->removeAllEventListeners();
     m_performance->removeAllObservers();
+    m_reportingScope->removeAllObservers();
 }
+
 
 bool WorkerGlobalScope::isSecureContext() const
 {
