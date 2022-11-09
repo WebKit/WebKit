@@ -281,6 +281,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
 #include <ctime>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -460,7 +461,7 @@ uint64_t Document::s_globalTreeVersion = 0;
 
 static const void* sharedLoggerOwner()
 {
-    static uint64_t owner = cryptographicallyRandomNumber();
+    static uint64_t owner = cryptographicallyRandomNumber<uint32_t>();
     return reinterpret_cast<const void*>(owner);
 }
 

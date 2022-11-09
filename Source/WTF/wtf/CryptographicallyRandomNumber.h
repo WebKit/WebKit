@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +30,21 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE uint32_t cryptographicallyRandomNumber();
+template<typename IntegerType> IntegerType cryptographicallyRandomNumber() = delete;
+
+// Returns a cryptographically secure pseudo-random number in the range [0, UINT_MAX].
+template<> WTF_EXPORT_PRIVATE unsigned cryptographicallyRandomNumber<unsigned>();
+
+// Returns a cryptographically secure pseudo-random number in the range [0, UINT64_MAX].
+template<> WTF_EXPORT_PRIVATE uint64_t cryptographicallyRandomNumber<uint64_t>();
+
 WTF_EXPORT_PRIVATE void cryptographicallyRandomValues(void* buffer, size_t length);
+
+// Returns a cryptographically secure pseudo-random number in the range [0, 1), with 32 bits of randomness.
+WTF_EXPORT_PRIVATE double cryptographicallyRandomUnitInterval();
 
 }
 
 using WTF::cryptographicallyRandomNumber;
+using WTF::cryptographicallyRandomUnitInterval;
 using WTF::cryptographicallyRandomValues;
