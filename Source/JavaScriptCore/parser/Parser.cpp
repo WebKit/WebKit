@@ -5206,6 +5206,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         } else {
             semanticFailIfTrue(newCount, "Cannot use new with import");
             consumeOrFail(OPENPAREN, "import call expects one or two arguments");
+            SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
             TreeExpression expr = parseAssignmentExpression(context);
             failIfFalse(expr, "Cannot parse expression");
             TreeExpression optionExpression = 0;
