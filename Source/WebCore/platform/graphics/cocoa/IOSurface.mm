@@ -206,9 +206,10 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Form
     }
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
     success = !!m_surface;
-    if (success)
+    if (success) {
+        setColorSpaceProperty();
         m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
-    else
+    } else
         RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
@@ -559,7 +560,7 @@ void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity
 #endif
 }
 
-void IOSurface::migrateColorSpaceToProperties()
+void IOSurface::setColorSpaceProperty()
 {
     auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace.platformColorSpace()));
     IOSurfaceSetValue(m_surface.get(), kIOSurfaceColorSpace, colorSpaceProperties.get());
