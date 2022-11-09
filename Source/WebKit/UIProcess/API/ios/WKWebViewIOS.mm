@@ -1087,8 +1087,7 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
 
 - (void)_updateOverlayRegions:(const WebKit::RemoteLayerTreeTransaction::LayerPropertiesMap&)changedLayerPropertiesMap destroyedLayers:(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&)destroyedLayers
 {
-    if (!changedLayerPropertiesMap.size() && !destroyedLayers.size())
-        return;
+    BOOL skipRecursiveRegionUpdate = !changedLayerPropertiesMap.size() && !destroyedLayers.size();
 
     auto& layerTreeProxy = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea());
     auto& layerTreeHost = layerTreeProxy.remoteLayerTreeHost();
@@ -1103,8 +1102,10 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
     for (auto layerID : destroyedLayers)
         overlayRegionIDs.remove(layerID);
 
-    for (auto layerID : fixedIDs)
-        addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionIDs, layerTreeHost);
+    if (!skipRecursiveRegionUpdate) {
+        for (auto layerID : fixedIDs)
+            addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionIDs, layerTreeHost);
+    }
 
     Vector<CGRect> overlayRegions;
     for (const auto layerID : overlayRegionIDs) {

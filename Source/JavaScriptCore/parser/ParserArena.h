@@ -50,7 +50,7 @@ namespace JSC {
         ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(VM&, const UChar* characters, size_t length);
         ALWAYS_INLINE const Identifier& makeIdentifier(VM&, SymbolImpl*);
 
-        const Identifier& makeBigIntDecimalIdentifier(VM&, const Identifier&, uint8_t radix);
+        const Identifier* makeBigIntDecimalIdentifier(VM&, const Identifier&, uint8_t radix);
         const Identifier& makeNumericIdentifier(VM&, double number);
         const Identifier& makePrivateIdentifier(VM&, ASCIILiteral, unsigned);
 
