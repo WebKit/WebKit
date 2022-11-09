@@ -32,7 +32,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
               list(APPEND GSTREAMER_COMPONENTS transcoder)
           endif ()
 
-          if (USE_GSTREAMER_WEB_RTC)
+          if (USE_GSTREAMER_WEBRTC)
               list(APPEND GSTREAMER_COMPONENTS webrtc)
           endif ()
 
