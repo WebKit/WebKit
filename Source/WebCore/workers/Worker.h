@@ -112,6 +112,7 @@ private:
     JSC::RuntimeFlags m_runtimeFlags;
     Deque<RefPtr<Event>> m_pendingEvents;
     bool m_wasTerminated { false };
+    bool m_didStartWorkerGlobalScope { false };
     const ScriptExecutionContextIdentifier m_clientIdentifier;
 };
 

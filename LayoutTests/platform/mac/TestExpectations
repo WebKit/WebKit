@@ -2346,8 +2346,6 @@ webkit.org/b/244012 imported/w3c/web-platform-tests/css/css-transforms/transform
 
 webkit.org/b/244014 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style-load-after-mutate.html  [ Pass Failure ]
 
-webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url-workers.window.html [ Pass Failure ]
-
 # These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]

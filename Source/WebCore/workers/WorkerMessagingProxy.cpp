@@ -201,7 +201,6 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
         m_userGestureForwarder = WTFMove(userGestureForwarder);
 
         context.dispatchEvent(MessageEvent::create(message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports)));
-        context.thread().workerObjectProxy().confirmMessageFromWorkerObject(context.hasPendingActivity());
 
         // Because WorkerUserGestureForwarder is defined as DestructionThread::Main, releasing this Ref
         // on the Worker thread will cause the forwarder to be destroyed on the main thread.
@@ -218,7 +217,6 @@ void WorkerMessagingProxy::postTaskToWorkerGlobalScope(Function<void(ScriptExecu
         m_queuedEarlyTasks.append(makeUnique<ScriptExecutionContext::Task>(WTFMove(task)));
         return;
     }
-    ++m_unconfirmedMessageCount;
     m_workerThread->runLoop().postTask(WTFMove(task));
 }
 
@@ -326,10 +324,6 @@ void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThre
             m_workerThread->suspend();
         }
 
-        ASSERT(!m_unconfirmedMessageCount);
-        m_unconfirmedMessageCount = m_queuedEarlyTasks.size();
-        m_workerThreadHadPendingActivity = true; // Worker initialization means a pending activity.
-
         auto queuedEarlyTasks = WTFMove(m_queuedEarlyTasks);
         for (auto& task : queuedEarlyTasks)
             m_workerThread->runLoop().postTask(WTFMove(*task));
@@ -417,41 +411,6 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
         m_workerThread->stop(nullptr);
     else
         m_scriptExecutionContext = nullptr;
-}
-
-void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
-{
-    if (!m_scriptExecutionContext)
-        return;
-
-    m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
-        reportPendingActivityInternal(true, hasPendingActivity);
-    });
-}
-
-void WorkerMessagingProxy::reportPendingActivity(bool hasPendingActivity)
-{
-    if (!m_scriptExecutionContext)
-        return;
-
-    m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
-        reportPendingActivityInternal(false, hasPendingActivity);
-    });
-}
-
-void WorkerMessagingProxy::reportPendingActivityInternal(bool confirmingMessage, bool hasPendingActivity)
-{
-    if (confirmingMessage && !m_askedToTerminate) {
-        ASSERT(m_unconfirmedMessageCount);
-        --m_unconfirmedMessageCount;
-    }
-
-    m_workerThreadHadPendingActivity = hasPendingActivity;
-}
-
-bool WorkerMessagingProxy::hasPendingActivity() const
-{
-    return (m_unconfirmedMessageCount || m_workerThreadHadPendingActivity) && !m_askedToTerminate;
 }
 
 } // namespace WebCore

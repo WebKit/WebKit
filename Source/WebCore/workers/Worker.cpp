@@ -183,7 +183,7 @@ void Worker::resume()
 
 bool Worker::virtualHasPendingActivity() const
 {
-    return m_contextProxy.hasPendingActivity() || m_scriptLoader;
+    return m_scriptLoader || (m_didStartWorkerGlobalScope && !m_contextProxy.askedToTerminate());
 }
 
 void Worker::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
@@ -218,6 +218,7 @@ void Worker::notifyFinished()
     if (auto policy = parseReferrerPolicy(m_scriptLoader->referrerPolicy(), ReferrerPolicySource::HTTPHeader))
         referrerPolicy = *policy;
 
+    m_didStartWorkerGlobalScope = true;
     WorkerInitializationData initializationData {
 #if ENABLE(SERVICE_WORKER)
         m_scriptLoader->takeServiceWorkerData(),
