@@ -2398,8 +2398,6 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ Release ] http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
 
-webkit.org/b/246427 imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
-
 # webkit.org/b/243681  Newly imported tests that fail on iOS16
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
