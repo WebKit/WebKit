@@ -213,10 +213,12 @@ void TestRunner::setWhatToDump(WhatToDump whatToDump)
 
 void TestRunner::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
-    m_policyDelegateEnabled = enabled;
-    m_policyDelegatePermissive = permissive;
-
     InjectedBundle::singleton().setCustomPolicyDelegate(enabled, permissive);
+}
+
+void TestRunner::skipPolicyDelegateNotifyDone()
+{
+    postMessage("SkipPolicyDelegateNotifyDone");
 }
 
 void TestRunner::waitForPolicyDelegate()
@@ -1349,6 +1351,11 @@ void TestRunner::dumpResourceLoadStatistics()
 {
     InjectedBundle::singleton().clearResourceLoadStatistics();
     postSynchronousPageMessage("dumpResourceLoadStatistics");
+}
+
+void TestRunner::dumpPolicyDelegateCallbacks()
+{
+    postMessage("DumpPolicyDelegateCallbacks");
 }
 
 bool TestRunner::isStatisticsPrevalentResource(JSStringRef hostName)

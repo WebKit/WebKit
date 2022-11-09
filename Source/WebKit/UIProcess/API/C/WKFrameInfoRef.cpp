@@ -31,20 +31,23 @@
 #include "APISecurityOrigin.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKFrameInfoGetTypeID()
 {
-    return toAPI(API::FrameInfo::APIType);
+    return WebKit::toAPI(API::FrameInfo::APIType);
 }
 
-WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfoRef)
+WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfo)
 {
-    return toAPI(&toImpl(frameInfoRef)->handle().leakRef());
+    return WebKit::toAPI(&WebKit::toImpl(frameInfo)->handle().leakRef());
 }
 
-WKSecurityOriginRef WKFrameInfoCopySecurityOrigin(WKFrameInfoRef frameInfoRef)
+WKSecurityOriginRef WKFrameInfoCopySecurityOrigin(WKFrameInfoRef frameInfo)
 {
-    auto origin = toImpl(frameInfoRef)->securityOrigin();
-    return toAPI(&API::SecurityOrigin::create(origin.protocol, origin.host, origin.port).leakRef());
+    auto origin = WebKit::toImpl(frameInfo)->securityOrigin();
+    return WebKit::toAPI(&API::SecurityOrigin::create(origin.protocol, origin.host, origin.port).leakRef());
+}
+
+bool WKFrameInfoGetIsMainFrame(WKFrameInfoRef frameInfo)
+{
+    return WebKit::toImpl(frameInfo)->isMainFrame();
 }

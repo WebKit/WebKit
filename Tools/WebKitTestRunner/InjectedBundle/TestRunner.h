@@ -90,7 +90,7 @@ public:
     void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
     void dumpDOMAsWebArchive() { setWhatToDump(WhatToDump::DOMAsWebArchive); }
-    void dumpPolicyDelegateCallbacks() { m_dumpPolicyCallbacks = true; }
+    void dumpPolicyDelegateCallbacks();
     void dumpResourceLoadStatistics();
 
     void setShouldDumpFrameLoadCallbacks(bool value);
@@ -102,6 +102,7 @@ public:
     void preventPopupWindows();
 
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
+    void skipPolicyDelegateNotifyDone();
     void addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void setUserStyleSheetEnabled(bool);
@@ -202,10 +203,6 @@ public:
     bool shouldDumpApplicationCacheDelegateCallbacks() const { return m_dumpApplicationCacheDelegateCallbacks; }
     bool shouldDumpDatabaseCallbacks() const { return m_dumpDatabaseCallbacks; }
     bool shouldDumpSelectionRect() const { return m_dumpSelectionRect; }
-    bool shouldDumpPolicyCallbacks() const { return m_dumpPolicyCallbacks; }
-
-    bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
-    bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
 
     bool didReceiveServerRedirectForProvisionalNavigation() const;
     void clearDidReceiveServerRedirectForProvisionalNavigation();
@@ -598,7 +595,6 @@ private:
     bool m_dumpWillCacheResponse { false };
     bool m_dumpApplicationCacheDelegateCallbacks { false };
     bool m_dumpDatabaseCallbacks { false };
-    bool m_dumpPolicyCallbacks { false };
 
     bool m_disallowIncreaseForApplicationCacheQuota { false };
     bool m_testRepaint { false };
@@ -608,9 +604,6 @@ private:
     bool m_willSendRequestReturnsNull { false };
     bool m_willSendRequestReturnsNullOnRedirect { false };
     bool m_shouldStopProvisionalFrameLoads { false };
-
-    bool m_policyDelegateEnabled { false };
-    bool m_policyDelegatePermissive { false };
 
     bool m_globalFlag { false };
     bool m_customFullScreenBehavior { false };

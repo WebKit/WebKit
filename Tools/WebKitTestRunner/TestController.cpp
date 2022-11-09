@@ -1180,6 +1180,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
+    m_skipPolicyDelegateNotifyDone = false;
 
     // Reset Content Extensions.
     resetContentExtensions();
@@ -1262,6 +1263,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     }
 
     m_downloadTotalBytesWritten = { };
+    m_dumpPolicyDelegateCallbacks = false;
 
     return m_doneResetting;
 }
@@ -2808,12 +2810,69 @@ void TestController::unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailab
     printf("MISSING PLUGIN BUTTON PRESSED\n");
 }
 
-void TestController::decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(navigationAction, listener);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(page, navigationAction, listener);
 }
 
-void TestController::decidePolicyForNavigationAction(WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener)
+static inline bool isLocalFileScheme(WKStringRef scheme)
+{
+    return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "file");
+}
+
+WTF::String pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
+{
+    if (!fileURL)
+        return "(null)"_s;
+
+    auto schemeString = adoptWK(WKURLCopyScheme(fileURL));
+    if (!isLocalFileScheme(schemeString.get()))
+        return toWTFString(adoptWK(WKURLCopyString(fileURL)));
+
+    WKFrameRef mainFrame = WKPageGetMainFrame(page);
+    auto mainFrameURL = adoptWK(WKFrameCopyURL(mainFrame));
+    if (!mainFrameURL)
+        mainFrameURL = adoptWK(WKFrameCopyProvisionalURL(mainFrame));
+
+    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
+    String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
+    auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind('/') + 1);
+    
+    if (!basePath.isEmpty() && pathString.startsWith(basePath))
+        return pathString.substring(basePath.length());
+    return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
+}
+
+static String string(WKURLRequestRef request, WKPageRef page)
+{
+    auto url = adoptWK(WKURLRequestCopyURL(request));
+    auto firstParty = adoptWK(WKURLRequestCopyFirstPartyForCookies(request));
+    auto httpMethod = adoptWK(WKURLRequestCopyHTTPMethod(request));
+    return makeString("<NSURLRequest URL ", pathSuitableForTestResult(url.get(), page),
+        ", main document URL ", pathSuitableForTestResult(firstParty.get(), page),
+        ", http method ", WKStringIsEmpty(httpMethod.get()) ? "(none)" : "", toWTFString(httpMethod.get()), '>');
+}
+
+static const char* navigationTypeToString(WKFrameNavigationType type)
+{
+    switch (type) {
+    case kWKFrameNavigationTypeLinkClicked:
+        return "link clicked";
+    case kWKFrameNavigationTypeFormSubmitted:
+        return "form submitted";
+    case kWKFrameNavigationTypeBackForward:
+        return "back/forward";
+    case kWKFrameNavigationTypeReload:
+        return "reload";
+    case kWKFrameNavigationTypeFormResubmitted:
+        return "form resubmitted";
+    case kWKFrameNavigationTypeOther:
+        return "other";
+    }
+    return "illegal value";
+}
+
+void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener)
 {
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
     WKRetainPtr<WKNavigationActionRef> retainedNavigationAction { navigationAction };
@@ -2838,6 +2897,30 @@ void TestController::decidePolicyForNavigationAction(WKNavigationActionRef navig
     };
     m_shouldSwapToEphemeralSessionOnNextNavigation = false;
     m_shouldSwapToDefaultSessionOnNextNavigation = false;
+
+    auto request = adoptWK(WKNavigationActionCopyRequest(navigationAction));
+    if (auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction)); targetFrame && m_dumpPolicyDelegateCallbacks) {
+        m_currentInvocation->outputText(makeString(" - decidePolicyForNavigationAction\n", string(request.get(), page),
+            " is main frame - ", targetFrame && WKFrameInfoGetIsMainFrame(targetFrame.get()) ? "yes" : "no",
+            " should open URLs externally - ", WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes" : "no", '\n'));
+    }
+
+    if (m_policyDelegateEnabled) {
+        auto url = adoptWK(WKURLRequestCopyURL(request.get()));
+        auto urlScheme = adoptWK(WKURLCopyScheme(url.get()));
+
+        StringBuilder stringBuilder;
+        stringBuilder.append("Policy delegate: attempt to load ");
+        if (isLocalFileScheme(urlScheme.get()))
+            stringBuilder.append(toWTFString(adoptWK(WKURLCopyLastPathComponent(url.get())).get()));
+        else
+            stringBuilder.append(toWTFString(adoptWK(WKURLCopyString(url.get())).get()));
+        stringBuilder.append(" with navigation type \'", navigationTypeToString(WKNavigationActionGetNavigationType(navigationAction)), '\'');
+        stringBuilder.append('\n');
+        m_currentInvocation->outputText(stringBuilder.toString());
+        if (!m_skipPolicyDelegateNotifyDone)
+            WKPagePostMessageToInjectedBundle(mainWebView()->page(), toWK("NotifyDone").get(), nullptr);
+    }
 
     if (m_shouldDecideNavigationPolicyAfterDelay)
         RunLoop::main().dispatch(WTFMove(decisionFunction));
@@ -2869,6 +2952,12 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
         else
             WKFramePolicyListenerIgnore(retainedListener.get());
     };
+
+    auto response = adoptWK(WKNavigationResponseCopyResponse(navigationResponse));
+    if (m_policyDelegateEnabled) {
+        if (WKURLResponseIsAttachment(response.get()))
+            m_currentInvocation->outputText(makeString("Policy delegate: resource is an attachment, suggested file name \'", toWTFString(adoptWK(WKURLResponseCopySuggestedFilename(response.get())).get()), "'\n"));
+    }
 
     if (m_shouldDecideResponsePolicyAfterDelay)
         RunLoop::main().dispatch(WTFMove(decisionFunction));

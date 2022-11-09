@@ -3,7 +3,9 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.setCustomPolicyDelegate(true, true);
+    if (testRunner.skipPolicyDelegateNotifyDone) { testRunner.skipPolicyDelegateNotifyDone() }
 }
+onload = () => { if (window.testRunner) { testRunner.notifyDone() } }
 </script>
 <p>Download file name should be "test file.txt".</p>
 <iframe src="resources/basic-ascii.py"></iframe>
