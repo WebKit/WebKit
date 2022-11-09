@@ -1077,10 +1077,7 @@ Bug(WPE) storage/storageinfo-request-quota.html [ Failure ]
 Bug(WPE) storage/storagequota-query-usage.html [ Failure ]
 Bug(WPE) storage/storagequota-request-quota.html [ Failure ]
 
-Bug(WPE) css3/background/background-repeat-round-auto1.html [ ImageOnlyFailure Pass ]
 Bug(WPE) css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
-Bug(WPE) css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
-Bug(WPE) css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 
 Bug(WPE) css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
