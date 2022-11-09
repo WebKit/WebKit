@@ -930,6 +930,13 @@ void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoa
     if (m_error)
         return;
 
+    // Make sure that didSendData() was called at least one before marking the load as complete
+    // so that a progress events get fired on m_upload.
+    if (m_uploadListenerFlag && m_requestEntityBody && !m_wasDidSendDataCalled) {
+        auto bodyLength = m_requestEntityBody->lengthInBytes();
+        didSendData(bodyLength, bodyLength);
+    }
+
     if (readyState() < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
 
@@ -951,6 +958,8 @@ void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoa
 
 void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
+    m_wasDidSendDataCalled = true;
+
     if (!m_upload)
         return;
 
