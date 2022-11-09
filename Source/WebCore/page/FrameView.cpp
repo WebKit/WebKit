@@ -3647,11 +3647,13 @@ void FrameView::scrollToTextFragmentRange()
     if (!m_pendingTextFragmentIndicatorRange)
         return;
 
-    auto rangeText = plainText(m_pendingTextFragmentIndicatorRange.value());
-    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+    if (needsLayout())
         return;
 
-    auto range = m_pendingTextFragmentIndicatorRange.value();
+    auto range = *m_pendingTextFragmentIndicatorRange;
+    auto rangeText = plainText(range);
+    if (m_pendingTextFragmentIndicatorText != plainText(range))
+        return;
 
     LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToTextFragmentRange() " << range);
 
