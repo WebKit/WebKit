@@ -32,8 +32,8 @@
 
 #include "Element.h"
 #include "FullScreenControllerClient.h"
+#include "FullScreenWindow.h"
 #include "IntRect.h"
-#include "MediaPlayerPrivateFullscreenWindow.h"
 #include "Timer.h"
 #include "WebCoreInstanceHandle.h"
 #include <wtf/RefPtr.h>
@@ -42,7 +42,7 @@ namespace WebCore {
 
 static const int kFullScreenAnimationDuration = 500; // milliseconds 
 
-class FullScreenController::Private : public MediaPlayerPrivateFullscreenClient  {
+class FullScreenController::Private : public FullScreenClient  {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Private(FullScreenController* controller, FullScreenControllerClient* client) 
@@ -60,8 +60,8 @@ public:
     
     FullScreenController* m_controller;
     FullScreenControllerClient* m_client;
-    std::unique_ptr<MediaPlayerPrivateFullscreenWindow> m_fullScreenWindow;
-    std::unique_ptr<MediaPlayerPrivateFullscreenWindow> m_backgroundWindow;
+    std::unique_ptr<FullScreenWindow> m_fullScreenWindow;
+    std::unique_ptr<FullScreenWindow> m_backgroundWindow;
     IntRect m_fullScreenFrame;
     IntRect m_originalFrame;
     HWND m_originalHost;
@@ -132,13 +132,13 @@ void FullScreenController::enterFullScreen()
     m_private->m_originalFrame = originalFrame;
 
     ASSERT(!m_private->m_backgroundWindow);
-    m_private->m_backgroundWindow = makeUnique<MediaPlayerPrivateFullscreenWindow>(m_private.get());
+    m_private->m_backgroundWindow = makeUnique<FullScreenWindow>(m_private.get());
     m_private->m_backgroundWindow->createWindow(0);
     ::AnimateWindow(m_private->m_backgroundWindow->hwnd(), kFullScreenAnimationDuration, AW_BLEND | AW_ACTIVATE);
 
     m_private->m_client->fullScreenClientWillEnterFullScreen();
     ASSERT(!m_private->m_fullScreenWindow);
-    m_private->m_fullScreenWindow = makeUnique<MediaPlayerPrivateFullscreenWindow>(m_private.get());
+    m_private->m_fullScreenWindow = makeUnique<FullScreenWindow>(m_private.get());
     ASSERT(m_private->m_fullScreenWindow);
     m_private->m_fullScreenWindow->createWindow(0);
 

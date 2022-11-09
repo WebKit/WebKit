@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlayerPrivateFullscreenWindow_h
-#define MediaPlayerPrivateFullscreenWindow_h
+#pragma once
+
+#if ENABLE(FULLSCREEN_API)
 
 #include <wtf/RefPtr.h>
 #include <wtf/WindowsExtras.h>
@@ -40,18 +41,18 @@ class CACFLayerTreeHost;
 class PlatformCALayer;
 #endif
 
-class MediaPlayerPrivateFullscreenClient {
+class FullScreenClient {
 public:
     virtual LRESULT fullscreenClientWndProc(HWND, UINT message, WPARAM, LPARAM) = 0;
 protected:
-    virtual ~MediaPlayerPrivateFullscreenClient() = default;
+    virtual ~FullScreenClient() = default;
 };
 
-class MediaPlayerPrivateFullscreenWindow {
+class FullScreenWindow {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MediaPlayerPrivateFullscreenWindow(MediaPlayerPrivateFullscreenClient*);
-    ~MediaPlayerPrivateFullscreenWindow();
+    FullScreenWindow(FullScreenClient*);
+    ~FullScreenWindow();
 
     void createWindow(HWND ownerWindow);
     
@@ -66,7 +67,7 @@ private:
     static LRESULT __stdcall staticWndProc(HWND, UINT message, WPARAM, LPARAM);
     LRESULT wndProc(HWND, UINT message, WPARAM, LPARAM);
 
-    MediaPlayerPrivateFullscreenClient* m_client;
+    FullScreenClient* m_client;
 #if USE(CA)
     RefPtr<CACFLayerTreeHost> m_layerTreeHost;
     RefPtr<PlatformCALayer> m_rootChild;
@@ -74,6 +75,6 @@ private:
     HWND m_hwnd;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(FULLSCREEN_API)

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FullScreenControllerClient_h
-#define FullScreenControllerClient_h
+#pragma once
 
 #if ENABLE(FULLSCREEN_API)
 
@@ -46,8 +45,6 @@ protected:
     virtual ~FullScreenControllerClient() = default;
 };
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(FULLSCREEN_API)

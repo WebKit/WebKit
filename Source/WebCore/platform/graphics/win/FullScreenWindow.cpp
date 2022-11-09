@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
-#include "MediaPlayerPrivateFullscreenWindow.h"
+#include "FullScreenWindow.h"
+
+#if ENABLE(FULLSCREEN_API)
 
 #include "IntRect.h"
 #include "WebCoreInstanceHandle.h"
@@ -41,13 +43,13 @@
 
 namespace WebCore {
 
-MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow(MediaPlayerPrivateFullscreenClient* client)
+FullScreenWindow::FullScreenWindow(FullScreenClient* client)
     : m_client(client)
     , m_hwnd(0)
 {
 }
 
-MediaPlayerPrivateFullscreenWindow::~MediaPlayerPrivateFullscreenWindow()
+FullScreenWindow::~FullScreenWindow()
 {
     if (!m_hwnd)
         return;
@@ -56,10 +58,10 @@ MediaPlayerPrivateFullscreenWindow::~MediaPlayerPrivateFullscreenWindow()
     ASSERT(!m_hwnd);
 }
 
-void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
+void FullScreenWindow::createWindow(HWND parentHwnd)
 {
     static ATOM windowAtom;
-    static LPCWSTR windowClassName = L"MediaPlayerPrivateFullscreenWindowClass";
+    static LPCWSTR windowClassName = L"FullscreenWindowClass";
     if (!windowAtom) {
         WNDCLASSEX wcex { };
         wcex.cbSize = sizeof(wcex);
@@ -93,7 +95,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
 }
 
 #if USE(CA)
-void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(Ref<PlatformCALayer>&& rootChild)
+void FullScreenWindow::setRootChildLayer(Ref<PlatformCALayer>&& rootChild)
 {
     if (m_rootChild == rootChild.ptr())
         return;
@@ -125,7 +127,7 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(Ref<PlatformCALayer>&
 }
 #endif
 
-LRESULT MediaPlayerPrivateFullscreenWindow::staticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT FullScreenWindow::staticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -135,13 +137,13 @@ LRESULT MediaPlayerPrivateFullscreenWindow::staticWndProc(HWND hWnd, UINT messag
         ::SetWindowLongPtr(hWnd, GWLP_USERDATA, longPtr);
     }
 
-    if (MediaPlayerPrivateFullscreenWindow* window = reinterpret_cast<MediaPlayerPrivateFullscreenWindow*>(longPtr))
+    if (FullScreenWindow* window = reinterpret_cast<FullScreenWindow*>(longPtr))
         return window->wndProc(hWnd, message, wParam, lParam);
 
     return ::DefWindowProc(hWnd, message, wParam, lParam);    
 }
 
-LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT FullScreenWindow::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LRESULT lResult = 0;
     switch (message) {
@@ -200,4 +202,6 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
     return lResult;
 }
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(FULLSCREEN_API)
