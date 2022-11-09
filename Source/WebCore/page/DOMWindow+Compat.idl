@@ -24,10 +24,7 @@
  */
 
 // https://compat.spec.whatwg.org/#windoworientation-interface
-[
-    // FIXME: These should enabled unconditionally for compatibility.
-    Conditional=ORIENTATION_EVENTS
-] partial interface DOMWindow {
+partial interface DOMWindow {
     readonly attribute short orientation;
     [WindowEventHandler] attribute EventHandler onorientationchange;
 };

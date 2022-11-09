@@ -25,6 +25,5 @@
 
 // https://compat.spec.whatwg.org/#windoworientation-interface
 partial interface HTMLBodyElement {
-    // FIXME: This should enabled unconditionally for compatibility.
-    [Conditional=ORIENTATION_EVENTS, WindowEventHandler] attribute EventHandler onorientationchange;
+    [WindowEventHandler] attribute EventHandler onorientationchange;
 };
