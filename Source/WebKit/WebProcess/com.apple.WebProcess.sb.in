@@ -341,19 +341,9 @@
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
     ;; CVMS
-    (allow mach-lookup
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (global-name "com.apple.cvmsServ")
-        )
-    )
-    (deny mach-lookup
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.mach"))
-            (global-name "com.apple.cvmsServ")
-        )
-    )
-    (allow file-read*
+    (deny mach-lookup (with telemetry-backtrace)
+        (global-name "com.apple.cvmsServ"))
+    (deny file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
