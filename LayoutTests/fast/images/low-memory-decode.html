@@ -3,12 +3,10 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
     internals.settings.setLargeImageAsyncDecodingEnabled(true);
-	internals.beginSimulatedMemoryPressure();
+    internals.beginSimulatedMemoryPressure();
 }
 function tryFinish() {
     const decodeCount = internals.imageDecodeCount(image);
-    if (decodeCount < 1)
-        return;
     log.innerHTML = `Image decode count: ${internals.imageDecodeCount(image)}`;
     internals.endSimulatedMemoryPressure();
     testRunner.notifyDone()
