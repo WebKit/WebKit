@@ -390,6 +390,8 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
     auto isCandidateEmpty = adjustedCandidateTop == adjustedCandidateBottom;
     auto contains = [&] (auto& floatBoxRect) {
+        if (floatBoxRect.isEmpty())
+            return false;
         if (isCandidateEmpty)
             return floatBoxRect.top() <= adjustedCandidateTop && floatBoxRect.bottom() > adjustedCandidateTop;
         return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
