@@ -56,7 +56,7 @@
 #import <WebKit/_WKWebAuthenticationPanel.h>
 #import <WebKit/_WKWebAuthenticationPanelForTesting.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/WeakRandomNumber.h>
+#import <wtf/RandomNumber.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -190,7 +190,7 @@ static bool laContextRequested = false;
         EXPECT_TRUE([[response.userHandle base64EncodedStringWithOptions:0] isEqual:@"MIIBkzCCATigAwIBAjCCAZMwggE4oAMCAQIwggGTMII="] || !response.userHandle);
     }
 
-    auto index = weakRandomNumber<uint32_t>() % 2;
+    auto index = weakRandomUint32() % 2;
     webAuthenticationPanelNullUserHandle = responses[index].userHandle ? NO : YES;
     completionHandler(responses[index]);
 }

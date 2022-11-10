@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "MacroAssembler.h" // Have to break with style because AbstractMacroAssembler.h is a shady header.
+#pragma once
 
-#if ENABLE(ASSEMBLER)
-
-#include <wtf/PrintStream.h>
-
-namespace JSC {
-
-void AbstractMacroAssemblerBase::initializeRandom()
-{
-    // No strong cryptographic characteristics are necessary.
-    static std::once_flag onceKey;
-    static uint32_t globalCounter;
-    std::call_once(onceKey, [&] {
-        globalCounter = cryptographicallyRandomNumber();
-    });
-    ASSERT(!m_randomSource);
-    m_randomSource.emplace(globalCounter++);
-}
-
-}
+#include <cstdint>
 
 namespace WTF {
 
-void printInternal(PrintStream& out, JSC::AbstractMacroAssemblerBase::StatusCondition condition)
-{
-    switch (condition) {
-    case JSC::AbstractMacroAssemblerBase::Success:
-        out.print("Success");
-        return;
-    case JSC::AbstractMacroAssemblerBase::Failure:
-        out.print("Failure");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+// Returns a cryptographically secure pseudo-random number in the range [0, 1).
+WTF_EXPORT_PRIVATE double cryptographicallyRandomUnitInterval();
+
+// Returns a cryptographically secure pseudo-random number in the range (0, UINT_MAX].
+WTF_EXPORT_PRIVATE unsigned cryptographicallyRandomUint32();
+
+// Returns a cryptographically secure pseudo-random number in the range (0, UINT64_MAX].
+WTF_EXPORT_PRIVATE uint64_t cryptographicallyRandomUint64();
+
+// Returns a cheap pseudo-random number in the range (0, UINT_MAX].
+WTF_EXPORT_PRIVATE unsigned weakRandomUint32();
+
 }
 
-} // namespace WTF
-
-#endif // ENABLE(ASSEMBLER)
+using WTF::cryptographicallyRandomUnitInterval;
+using WTF::cryptographicallyRandomUint32;
+using WTF::cryptographicallyRandomUint64;
+using WTF::weakRandomUint32;

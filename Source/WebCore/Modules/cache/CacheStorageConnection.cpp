@@ -27,10 +27,9 @@
 #include "CacheStorageConnection.h"
 
 #include "FetchResponse.h"
-#include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/RandomNumber.h>
 
 namespace WebCore {
-
 using namespace WebCore::DOMCacheEngine;
 
 static inline uint64_t formDataSize(const FormData& formData)

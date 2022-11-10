@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,33 @@
 
 #pragma once
 
+#include <stdlib.h>
+#include <time.h>
+#include <wtf/CryptographicallyRandomNumber.h>
+
+#if HAVE(SYS_TIME_H)
+#include <sys/time.h>
+#endif
+
+#if OS(UNIX)
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 namespace WTF {
 
-template<typename IntegerType> IntegerType weakRandomNumber() = delete;
-
-// Returns a cheap pseudo-random number in the range [0, UINT_MAX].
-template<> WTF_EXPORT_PRIVATE unsigned weakRandomNumber<unsigned>();
+inline void initializeRandomNumberGenerator()
+{
+#if OS(DARWIN)
+    // On Darwin we use arc4random which initialises itself.
+#elif COMPILER(MSVC) && defined(_CRT_RAND_S)
+    // On Windows we use rand_s which initialises itself
+#elif OS(UNIX)
+    srandom(cryptographicallyRandomNumber());
+#else
+    srand(cryptographicallyRandomNumber());
+#endif
 
 }
 
-using WTF::weakRandomNumber;
+}

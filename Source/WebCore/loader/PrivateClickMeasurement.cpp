@@ -29,8 +29,8 @@
 #include "Logging.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Expected.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>

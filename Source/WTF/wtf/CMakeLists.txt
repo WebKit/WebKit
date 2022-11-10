@@ -216,6 +216,8 @@ set(WTF_PUBLIC_HEADERS
     PtrTag.h
     RAMSize.h
     RandomDevice.h
+    RandomNumber.h
+    RandomNumberSeed.h
     Range.h
     RangeSet.h
     RawHex.h
@@ -330,7 +332,6 @@ set(WTF_PUBLIC_HEADERS
     WeakHashSet.h
     WeakPtr.h
     WeakRandom.h
-    WeakRandomNumber.h
     WindowsExtras.h
     WordLock.h
     WorkQueue.h
@@ -469,6 +470,7 @@ set(WTF_SOURCES
     ProcessPrivilege.cpp
     RAMSize.cpp
     RandomDevice.cpp
+    RandomNumber.cpp
     ReadWriteLock.cpp
     RefCounted.cpp
     RefCountedLeakCounter.cpp
@@ -500,7 +502,6 @@ set(WTF_SOURCES
     WTFAssertions.cpp
     WTFConfig.cpp
     WallTime.cpp
-    WeakRandomNumber.cpp
     WordLock.cpp
     WorkQueue.cpp
     WorkerPool.cpp

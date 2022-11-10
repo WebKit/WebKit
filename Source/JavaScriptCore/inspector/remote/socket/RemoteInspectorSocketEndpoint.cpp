@@ -191,10 +191,12 @@ void RemoteInspectorSocketEndpoint::workerThread()
 ConnectionID RemoteInspectorSocketEndpoint::generateConnectionID()
 {
     ASSERT(m_connectionsLock.isLocked());
+
     ConnectionID id;
     do {
-        id = cryptographicallyRandomNumber<ConnectionID>();
-    } while (!m_clients.isValidKey(id) || m_clients.contains(id) || m_listeners.contains(id));
+        id = cryptographicallyRandomNumber();
+    } while (!id || m_clients.contains(id) || m_listeners.contains(id));
+
     return id;
 }
 

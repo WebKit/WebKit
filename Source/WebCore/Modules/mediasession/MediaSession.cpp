@@ -41,7 +41,6 @@
 #include "Navigator.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SortedArrayMap.h>
 
@@ -49,7 +48,7 @@ namespace WebCore {
 
 static const void* nextLogIdentifier()
 {
-    static uint64_t logIdentifier = cryptographicallyRandomNumber<uint32_t>();
+    static uint64_t logIdentifier = cryptographicallyRandomNumber();
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
