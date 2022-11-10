@@ -354,7 +354,9 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
+        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t byteLength) {
+            ASSERT(!(byteLength % 4));
+            auto pixelCount = byteLength / 4;
             size_t i = 0;
             while (pixelCount-- > 0) {
                 // ARGB -> RGBA.
@@ -373,8 +375,9 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
-            std::memcpy(destination, source, pixelCount * 4);
+
+        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t byteLength) {
+            std::memcpy(destination, source, byteLength);
         });
         callback(WTFMove(planeLayouts));
         return;
