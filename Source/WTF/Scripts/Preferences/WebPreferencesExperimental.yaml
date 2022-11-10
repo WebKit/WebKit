@@ -519,6 +519,18 @@ CanvasFiltersEnabled:
      WebCore:
        default: false
 
+ClearSiteDataHTTPHeaderEnabled:
+   type: bool
+   humanReadableName: "Clear-Site-Data HTTP Header"
+   humanReadableDescription: "Enable Clear-Site-Data HTTP Header support"
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
+
 CompressionStreamEnabled:
   type: bool
   humanReadableName: "Compression Stream API"
