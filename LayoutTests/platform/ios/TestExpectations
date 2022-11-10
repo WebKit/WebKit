@@ -3680,6 +3680,9 @@ webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ P
 # Requires platform support (see rdar://94324932).
 http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
 
+# Crashing in a system framework rdar://102159271
+fast/forms/ios/file-upload-panel-capture.html [ Skip ]
+
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
 webkit.org/b/242840 fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
