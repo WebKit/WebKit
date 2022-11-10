@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
+#include "ImageOrientation.h"
 #include "IntRect.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivate.h"
@@ -609,7 +610,7 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
 #if ENABLE(WEB_CODECS)
 void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
-    frame.paintInContext(*this, destination, shouldDiscardAlpha);
+    frame.paintInContext(*this, destination, ImageOrientation::None, shouldDiscardAlpha);
 }
 #endif
 

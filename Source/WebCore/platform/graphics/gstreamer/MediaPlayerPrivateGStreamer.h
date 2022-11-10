@@ -383,9 +383,6 @@ protected:
 
 #if USE(GSTREAMER_GL)
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
-    GRefPtr<GstGLColorConvert> m_colorConvert;
-    GRefPtr<GstCaps> m_colorConvertInputCaps;
-    GRefPtr<GstCaps> m_colorConvertOutputCaps;
 #endif
 
     ImageOrientation m_videoSourceOrientation;

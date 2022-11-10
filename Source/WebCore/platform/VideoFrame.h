@@ -42,6 +42,7 @@ namespace WebCore {
 
 class FloatRect;
 class GraphicsContext;
+struct ImageOrientation;
 class NativeImage;
 class ProcessIdentity;
 #if USE(AVFOUNDATION) && PLATFORM(COCOA)
@@ -103,7 +104,7 @@ public:
 
     void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
 
-    void paintInContext(GraphicsContext&, const FloatRect&, bool shouldDiscardAlpha);
+    void paintInContext(GraphicsContext&, const FloatRect&, const ImageOrientation&, bool shouldDiscardAlpha);
 
     const PlatformVideoColorSpace& colorSpace() const { return m_colorSpace; }
 
