@@ -594,14 +594,14 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
 
-    testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"type": @"module" };
+    testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"type": @"module", @"persistent": @NO };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
     EXPECT_TRUE(testExtension._backgroundContentUsesModules);
     EXPECT_NULL(testExtension.errors);
 
-    testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test.js", @"test2.js" ], @"type": @"module" };
+    testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test.js", @"test2.js" ], @"type": @"module", @"persistent": @NO };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
