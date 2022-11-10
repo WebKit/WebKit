@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,22 @@
 
 #pragma once
 
-#include "MediaCapabilitiesInfo.h"
-#include "MediaEncodingConfiguration.h"
-
 namespace WebCore {
 
-struct MediaCapabilitiesEncodingInfo : MediaCapabilitiesInfo {
-    // FIXME(C++17): remove the following constructors once all compilers support extended
-    // aggregate initialization:
-    // <http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0017r1.html>
-    MediaCapabilitiesEncodingInfo() = default;
-    MediaCapabilitiesEncodingInfo(MediaEncodingConfiguration&& supportedConfiguration)
-        : MediaCapabilitiesEncodingInfo({ }, WTFMove(supportedConfiguration))
-    {
-    }
-    MediaCapabilitiesEncodingInfo(MediaCapabilitiesInfo&& info, MediaEncodingConfiguration&& supportedConfiguration)
-        : MediaCapabilitiesInfo(WTFMove(info))
-        , supportedConfiguration(WTFMove(supportedConfiguration))
-    {
-    }
-
-    MediaEncodingConfiguration supportedConfiguration;
-
-    MediaCapabilitiesEncodingInfo isolatedCopy() const;
-
+struct ScreenDataOverrides {
+    double width { 0 };
+    double height { 0 };
+    double scale { 1 };
 };
 
-inline MediaCapabilitiesEncodingInfo MediaCapabilitiesEncodingInfo::isolatedCopy() const
+inline bool operator==(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
 {
-    return { MediaCapabilitiesInfo::isolatedCopy(), supportedConfiguration.isolatedCopy() };
+    return a.width == b.width && a.height == b.height && a.scale == b.scale;
 }
 
-} // namespace WebCore
+inline bool operator!=(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
+{
+    return !(a == b);
+}
 
+}

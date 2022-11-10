@@ -1326,3 +1326,50 @@ header: <WebCore/TextChecking.h>
     OptionSet<WebCore::TextCheckingType> checkingTypes();
     WebCore::TextCheckingProcessType processType();
 };
+
+class WebCore::LayoutRect {
+    WebCore::LayoutPoint m_location;
+    WebCore::LayoutSize m_size;
+};
+
+header: <WebCore/VP9Utilities.h>
+[CustomHeader] struct WebCore::ScreenDataOverrides {
+    double width;
+    double height;
+    double scale;
+}
+
+struct WebCore::MediaCapabilitiesInfo {
+    bool supported;
+    bool smooth;
+    bool powerEfficient;
+}
+header: <WebCore/MediaStreamRequest.h>
+[Nested, CustomHeader] enum class WebCore::MediaStreamRequest::Type : uint8_t {
+    UserMedia,
+    DisplayMedia,
+    DisplayMediaWithAudio
+}
+#if ENABLE(MEDIA_STREAM)
+struct WebCore::MediaStreamRequest {
+    WebCore::MediaStreamRequest::Type type;
+    WebCore::MediaConstraints audioConstraints;
+    WebCore::MediaConstraints videoConstraints;
+    bool isUserGesturePriviledged;
+    WebCore::PageIdentifier pageIdentifier;
+}
+#endif
+
+#if ! ENABLE(MEDIA_STREAM)
+struct WebCore::MediaStreamRequest {
+    WebCore::MediaStreamRequest::Type type;
+};
+#endif
+struct WebCore::MediaCapabilitiesDecodingInfo : WebCore::MediaCapabilitiesInfo {
+    WebCore::MediaDecodingConfiguration supportedConfiguration;
+}
+
+struct WebCore::MediaCapabilitiesEncodingInfo : WebCore::MediaCapabilitiesInfo {
+    WebCore::MediaEncodingConfiguration supportedConfiguration;
+}
+
