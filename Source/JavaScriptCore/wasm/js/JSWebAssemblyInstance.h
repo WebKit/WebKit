@@ -78,7 +78,7 @@ public:
         m_memory.set(vm, this, value);
         instance().setMemory(memory()->memory());
     }
-    Wasm::MemoryMode memoryMode() { return memory()->memory().mode(); }
+    MemoryMode memoryMode() { return memory()->memory().mode(); }
 
     JSWebAssemblyTable* table(unsigned i) { return m_tables[i].get(); }
     void setTable(VM& vm, uint32_t index, JSWebAssemblyTable* value)

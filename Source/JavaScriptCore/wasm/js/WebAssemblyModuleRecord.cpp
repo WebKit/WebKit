@@ -404,13 +404,13 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!memory)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "is not an instance of WebAssembly.Memory")));
 
-            Wasm::PageCount declaredInitial = moduleInformation.memory.initial();
-            Wasm::PageCount importedInitial = memory->memory().initial();
+            PageCount declaredInitial = moduleInformation.memory.initial();
+            PageCount importedInitial = memory->memory().initial();
             if (importedInitial < declaredInitial)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided an 'initial' that is smaller than the module's declared 'initial' import memory size")));
 
-            if (Wasm::PageCount declaredMaximum = moduleInformation.memory.maximum()) {
-                Wasm::PageCount importedMaximum = memory->memory().maximum();
+            if (PageCount declaredMaximum = moduleInformation.memory.maximum()) {
+                PageCount importedMaximum = memory->memory().maximum();
                 if (!importedMaximum)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "did not have a 'maximum' but the module requires that it does")));
 
@@ -418,7 +418,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided a 'maximum' that is larger than the module's declared 'maximum' import memory size")));
             }
 
-            if ((memory->memory().sharingMode() == Wasm::MemorySharingMode::Shared) != moduleInformation.memory.isShared())
+            if ((memory->memory().sharingMode() == MemorySharingMode::Shared) != moduleInformation.memory.isShared())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided a 'shared' that is different from the module's declared 'shared' import memory attribute")));
 
             // ii. Append v to memories.

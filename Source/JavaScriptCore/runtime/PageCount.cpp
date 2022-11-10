@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "PageCount.h"
 
-#if ENABLE(WEBASSEMBLY)
+#include <wtf/PrintStream.h>
+#include <wtf/text/WTFString.h>
 
-#include "JSExportMacros.h"
+namespace JSC {
 
-namespace JSC { namespace Wasm {
+void PageCount::dump(PrintStream& out) const
+{
+    out.print(String::number(bytes()), "B");
+}
 
-// FIXME: We should support other modes. see: https://bugs.webkit.org/show_bug.cgi?id=162693
-enum class MemoryMode : uint8_t {
-    BoundsChecking,
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-    Signaling
-#endif
-};
-
-static constexpr size_t NumberOfMemoryModes = 2;
-JS_EXPORT_PRIVATE const char* makeString(MemoryMode);
-
-enum class MemorySharingMode : uint8_t {
-    Default,
-    Shared,
-};
-
-JS_EXPORT_PRIVATE const char* makeString(MemorySharingMode);
-
-} } // namespace JSC::Wasm
-
-namespace WTF {
-
-class PrintStream;
-void printInternal(PrintStream&, JSC::Wasm::MemoryMode);
-void printInternal(PrintStream&, JSC::Wasm::MemorySharingMode);
-
-} // namespace WTF
-
-#endif // ENABLE(WEBASSEMBLY)
+} // namespace JSC

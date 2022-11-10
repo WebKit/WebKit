@@ -81,7 +81,7 @@ inline uint32_t JSValue::toIndex(JSGlobalObject* globalObject, const char* error
     RELEASE_AND_RETURN(scope, JSC::toInt32(d));
 }
 
-inline size_t JSValue::toTypedArrayIndex(JSGlobalObject* globalObject, const char* errorName) const
+inline size_t JSValue::toTypedArrayIndex(JSGlobalObject* globalObject, ASCIILiteral errorName) const
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

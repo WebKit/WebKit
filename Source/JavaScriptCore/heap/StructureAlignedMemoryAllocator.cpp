@@ -128,7 +128,9 @@ public:
     static void commitBlock(void* block)
     {
 #if OS(UNIX) && ASSERT_ENABLED
-        mprotect(block, MarkedBlock::blockSize, PROT_READ | PROT_WRITE);
+        constexpr bool readable = true;
+        constexpr bool writable = true;
+        OSAllocator::protect(block, MarkedBlock::blockSize, readable, writable);
 #else
         constexpr bool writable = true;
         constexpr bool executable = false;
@@ -139,8 +141,9 @@ public:
     static void decommitBlock(void* block)
     {
 #if OS(UNIX) && ASSERT_ENABLED
-        // Release the page so we'll crash in debug if we read out of bounds rather than get a fresh page.
-        mprotect(block, MarkedBlock::blockSize, PROT_NONE);
+        constexpr bool readable = false;
+        constexpr bool writable = false;
+        OSAllocator::protect(block, MarkedBlock::blockSize, readable, writable);
 #else
         OSAllocator::decommit(block, MarkedBlock::blockSize);
 #endif

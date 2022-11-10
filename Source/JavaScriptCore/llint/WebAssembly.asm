@@ -1051,7 +1051,7 @@ end)
 wasmOp(current_memory, WasmCurrentMemory, macro(ctx)
     loadp Wasm::Instance::m_memory[wasmInstance], t0
     loadp Wasm::Memory::m_handle[t0], t0
-    loadp Wasm::MemoryHandle::m_size[t0], t0
+    loadp BufferMemoryHandle::m_size[t0], t0
     urshiftp 16, t0
 if JSVALUE64
     returnq(ctx, t0)

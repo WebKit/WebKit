@@ -28,9 +28,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "GPRInfo.h"
+#include "PageCount.h"
 #include "RegisterSet.h"
 #include "WasmMemory.h"
-#include "WasmPageCount.h"
 
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>

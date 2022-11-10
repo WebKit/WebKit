@@ -13,13 +13,13 @@ flags:
   ShadowRealm: useShadowRealm
   import-assertions: useImportAssertion
   json-modules: useImportAssertion
+  resizable-arraybuffer: useResizableArrayBuffer
 skip:
   features:
     - Atomics.waitAsync
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
     - regexp-v-flag
-    - resizable-arraybuffer
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
