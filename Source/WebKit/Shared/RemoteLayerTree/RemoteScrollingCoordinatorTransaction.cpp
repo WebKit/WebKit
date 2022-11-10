@@ -158,7 +158,8 @@ template<> struct EnumTraits<WebCore::ScrollingStateNode::Property> {
         WebCore::ScrollingStateNode::Property::RelatedOverflowScrollingNodes,
         WebCore::ScrollingStateNode::Property::LayoutConstraintData,
         WebCore::ScrollingStateNode::Property::ViewportConstraints,
-        WebCore::ScrollingStateNode::Property::OverflowScrollingNode
+        WebCore::ScrollingStateNode::Property::OverflowScrollingNode,
+        WebCore::ScrollingStateNode::Property::KeyboardScrollData
     >;
 };
 
