@@ -724,13 +724,12 @@ std::optional<long long> CurlHandle::getContentLength()
     if (!m_handle)
         return std::nullopt;
 
-    double contentLength;
-
-    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
+    curl_off_t contentLength;
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &contentLength);
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    return static_cast<long long>(contentLength);
+    return contentLength;
 }
 
 std::optional<long> CurlHandle::getHttpAuthAvail()
