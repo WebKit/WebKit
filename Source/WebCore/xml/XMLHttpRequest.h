@@ -255,6 +255,7 @@ private:
     RefPtr<UserGestureToken> m_userGestureToken;
     TaskCancellationGroup m_pendingAbortEvent;
     std::atomic<bool> m_hasRelevantEventListener;
+    bool m_wasDidSendDataCalledForTotalBytes { false };
 };
 
 inline auto XMLHttpRequest::responseType() const -> ResponseType
