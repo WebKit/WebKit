@@ -315,8 +315,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     Ref<DocumentThreadableLoader> protectedThis(*this);
     --m_options.maxRedirectCount;
 
-    if (m_client)
-        m_client->redirectReceived(request.url());
+    m_responseURL = request.url();
 
     // FIXME: We restrict this check to Fetch API for the moment, as this might disrupt WorkerScriptLoader.
     // Reassess this check based on https://github.com/whatwg/fetch/issues/393 discussions.
@@ -392,12 +391,18 @@ void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long 
 void DocumentThreadableLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
+    ResourceResponse responseWithCorrectFragmentIdentifier;
+    if (response.source() != ResourceResponse::Source::ServiceWorker && response.url().fragmentIdentifier() != m_responseURL.fragmentIdentifier()) {
+        responseWithCorrectFragmentIdentifier = response;
+        responseWithCorrectFragmentIdentifier.setURL(m_responseURL);
+    }
+
     if (!m_responsesCanBeOpaque) {
-        ResourceResponse responseWithoutTainting = response;
+        ResourceResponse responseWithoutTainting = responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier;
         responseWithoutTainting.setTainting(ResourceResponse::Tainting::Basic);
         didReceiveResponse(m_resource->identifier(), responseWithoutTainting);
     } else
-        didReceiveResponse(m_resource->identifier(), response);
+        didReceiveResponse(m_resource->identifier(), responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier);
 
     if (completionHandler)
         completionHandler();
@@ -563,6 +568,8 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     Ref<DocumentThreadableLoader> protectedThis(*this);
 
     // Any credential should have been removed from the cross-site requests.
+    m_responseURL = request.url();
+
     const URL& requestURL = request.url();
     m_options.securityCheck = securityCheck;
     ASSERT(m_sameOriginRequest || !requestURL.hasCredentials());

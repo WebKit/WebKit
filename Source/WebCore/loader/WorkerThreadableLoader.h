@@ -103,7 +103,6 @@ private:
         void clearClientWrapper();
 
         // All executed on the main thread.
-        void redirectReceived(const URL& redirectURL) override;
         void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
         void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
         void didReceiveData(const SharedBuffer&) override;
