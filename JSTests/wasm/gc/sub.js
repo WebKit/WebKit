@@ -231,7 +231,7 @@ function testSubDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "control flow returns with unexpected type. RefNull is not a RefNull, in function at index 0"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (((()(I32, mutable))(I32, mutable, I64, mutable))(I32, mutable, I64, mutable, F32, mutable)) is not a ((()(I32, mutable))(I32, mutable, F64, mutable)), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   assert.throws(
@@ -245,7 +245,7 @@ function testSubDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "control flow returns with unexpected type. Ref is not a Ref, in function at index 1"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. () -> [] is not a (() -> []() -> []), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   instantiate(`

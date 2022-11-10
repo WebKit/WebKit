@@ -235,7 +235,7 @@ function testRecDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "control flow returns with unexpected type. Ref is not a Ref, in function at index 1"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. ((() -> [Ref], () -> [Ref]).1) is not a ((() -> [Ref], () -> [Ref]).0), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   instantiate(`

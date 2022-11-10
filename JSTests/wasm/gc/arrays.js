@@ -71,7 +71,7 @@ function testArrayDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "control flow returns with unexpected type. RefNull is not a RefNull, in function at index 0"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Arrayref is not a (I32, mutable), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   assert.throws(
@@ -82,7 +82,7 @@ function testArrayDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "control flow returns with unexpected type. RefNull is not a RefNull, in function at index 0"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (I32, mutable) is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 }
 
