@@ -4096,7 +4096,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin, Render
         const UChar space = ' ';
         const FontCascade& font = renderText.style().fontCascade(); // FIXME: This ignores first-line.
         float spaceWidth = font.width(RenderBlock::constructTextRun(&space, 1, renderText.style()));
-        inlineMax -= spaceWidth + font.wordSpacing();
+        inlineMax -= LayoutUnit::fromFloatCeil(spaceWidth + font.wordSpacing());
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
     }
