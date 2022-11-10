@@ -3496,15 +3496,15 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
 {
 #if !PLATFORM(COCOA)
     UNUSED_PARAM(style);
-    return WTFMove(string);
+    return string;
 #else
     if (style.textSecurity() == TextSecurity::None)
-        return WTFMove(string);
+        return string;
     // This PUA character in the system font is used to render password field dots on Cocoa platforms.
     constexpr UChar textSecurityDiscPUACodePoint = 0xF79A;
     auto& font = style.fontCascade().primaryFont();
     if (!(font.platformData().isSystemFont() && font.glyphForCharacter(textSecurityDiscPUACodePoint)))
-        return WTFMove(string);
+        return string;
 
     // See RenderText::setRenderedText()
 #if PLATFORM(IOS_FAMILY)
