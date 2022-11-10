@@ -3590,7 +3590,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.isReadOnly = false;
     }
 
-    if (focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() && isTransparentOrFullyClipped(*focusedElement)) {
+    if (focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() && isTransparentOrFullyClipped(*focusedElement)) {
         information.autocapitalizeType = WebCore::AutocapitalizeType::None;
         information.isAutocorrect = false;
     }

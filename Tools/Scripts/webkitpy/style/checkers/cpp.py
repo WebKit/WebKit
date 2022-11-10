@@ -230,7 +230,7 @@ def _convert_to_lower_with_underscores(text):
     # (This puts an underscore before A in isA but not A in CBA).
     text = sub(r'(?<=[a-z0-9])([A-Z])(?=\b)', r'_\1', text)
 
-    # Next add underscores when you have a captial letter which is followed by a capital letter
+    # Next add underscores when you have a capital letter which is followed by a capital letter
     # but is not proceeded by one. (This puts an underscore before A in 'WordADay').
     text = sub(r'(?<=[a-z0-9])([A-Z][A-Z_])', r'_\1', text)
 

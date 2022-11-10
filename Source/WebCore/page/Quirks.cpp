@@ -337,7 +337,7 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
     return false;
 }
 
-static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(StringView host)
+static bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasForHost(StringView host)
 {
 #if PLATFORM(IOS_FAMILY)
     return equalLettersIgnoringASCIICase(host, "docs.google.com"_s);
@@ -393,12 +393,12 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #endif
 }
 
-bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const
+bool Quirks::shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const
 {
     if (!needsQuirks())
         return false;
 
-    return shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
+    return shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
 #if ENABLE(TOUCH_EVENTS)
