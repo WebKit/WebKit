@@ -534,6 +534,9 @@ void Options::recomputeDependentOptions()
     Options::forceUnlinkedDFG() = false;
 #endif
 
+    if (!Options::allowDoubleShape())
+        Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.
+
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.

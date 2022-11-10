@@ -3,6 +3,9 @@
 //@ defaultNoEagerRun
 "use strict";
 
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 let validInputTestCases = [
     // input as string, expected result as string.
     ["undefined", "32"],

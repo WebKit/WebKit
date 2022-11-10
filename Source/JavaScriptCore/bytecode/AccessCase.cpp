@@ -1414,6 +1414,7 @@ void AccessCase::generateWithGuard(
                 expectedShape = Int32Shape;
                 break;
             case IndexedDoubleLoad:
+                ASSERT(Options::allowDoubleShape());
                 expectedShape = DoubleShape;
                 break;
             case IndexedContiguousLoad:
@@ -1512,6 +1513,7 @@ void AccessCase::generateWithGuard(
                 expectedShape = Int32Shape;
                 break;
             case IndexedDoubleStore:
+                ASSERT(Options::allowDoubleShape());
                 expectedShape = DoubleShape;
                 break;
             case IndexedContiguousStore:

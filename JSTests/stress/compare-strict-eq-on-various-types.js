@@ -2,6 +2,9 @@
 //@ defaultNoEagerRun
 "use strict";
 
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 function opaqueKitString() {
     return "Kit";
 }

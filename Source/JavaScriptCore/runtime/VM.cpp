@@ -249,8 +249,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     symbolTableStructure.set(*this, SymbolTable::createStructure(*this, nullptr, jsNull()));
 
     immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithInt32) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
-    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithDouble) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble));
-    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
+    Structure* copyOnWriteArrayWithContiguousStructure = JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
+    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithDouble) - NumberOfIndexingShapes].set(*this,
+        Options::allowDoubleShape() ? JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
+    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].set(*this, copyOnWriteArrayWithContiguousStructure);
 
     sourceCodeStructure.set(*this, JSSourceCode::createStructure(*this, nullptr, jsNull()));
     scriptFetcherStructure.set(*this, JSScriptFetcher::createStructure(*this, nullptr, jsNull()));
