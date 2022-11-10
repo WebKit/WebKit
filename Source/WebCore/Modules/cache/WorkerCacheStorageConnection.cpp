@@ -245,7 +245,7 @@ void WorkerCacheStorageConnection::batchDeleteOperation(DOMCacheIdentifier cache
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = WTFMove(options).isolatedCopy()]() mutable {
+    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options]() mutable {
         mainThreadConnection->batchDeleteOperation(cacheIdentifier, request, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](RecordIdentifiersOrError&& result) mutable {
             workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().deleteRecordsCompleted(requestIdentifier, WTFMove(result));

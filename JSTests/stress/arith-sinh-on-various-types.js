@@ -3,6 +3,9 @@
 //@ defaultNoEagerRun
 "use strict";
 
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 let sinhOfFour = Math.sinh(4);
 
 let validInputTestCases = [

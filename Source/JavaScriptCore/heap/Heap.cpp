@@ -1345,7 +1345,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
     m_beforeGC = MonotonicTime::now();
 
     if (!Options::seedOfVMRandomForFuzzer())
-        vm().random().setSeed(cryptographicallyRandomNumber<uint32_t>());
+        vm().random().setSeed(cryptographicallyRandomNumber());
 
     if (m_collectionScope) {
         dataLogLn("Collection scope already set during GC: ", *m_collectionScope);

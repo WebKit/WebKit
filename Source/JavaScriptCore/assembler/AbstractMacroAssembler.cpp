@@ -28,7 +28,6 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -39,7 +38,7 @@ void AbstractMacroAssemblerBase::initializeRandom()
     static std::once_flag onceKey;
     static uint32_t globalCounter;
     std::call_once(onceKey, [&] {
-        globalCounter = cryptographicallyRandomNumber<uint32_t>();
+        globalCounter = cryptographicallyRandomNumber();
     });
     ASSERT(!m_randomSource);
     m_randomSource.emplace(globalCounter++);

@@ -2,33 +2,21 @@
 
 source "$(dirname "$0")/../glib/dependencies/dnf"
 
+# NOTE: This appends the list in glib/dependencies/dnf
 PACKAGES+=(
     # These are dependencies necessary for building WebKitWPE.
-    gnutls-devel
-    itstool
     libicu-devel
-    libtool
     libxml2-devel
-    unifdef
+    qt5-qtbase-devel
+    qt5-qtdeclarative-devel
     zlib-devel
 
     # These are dependencies necessary for running tests.
     python-gobject-base
 
     # These are dependencies necessary for building the jhbuild.
-    libmount-devel
-    libsrtp-devel
-    libtheora-devel
-    libv4l-devel
-    libvorbis-devel
-    libvpx-devel
     libxkbcommon-devel
     libXrandr-devel
     luajit
     luajit-devel
-    mesa-libGLES-devel
-    opus-devel
-    pulseaudio-libs-devel
-    wayland-devel
-    woff2-devel
 )

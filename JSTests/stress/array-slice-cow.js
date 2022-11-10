@@ -3,6 +3,8 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
+var allowDoubleShape = $vm.allowDoubleShape();
+
 function testInt32()
 {
     var array = [0, 1, 2, 3];
@@ -17,8 +19,13 @@ function testDouble()
 {
     var array = [0.1, 1.1, 2.1, 3.1];
     var slice = array.slice(1);
-    shouldBe($vm.indexingMode(array), "CopyOnWriteArrayWithDouble");
-    shouldBe($vm.indexingMode(slice), "ArrayWithDouble");
+    if (allowDoubleShape) {
+        shouldBe($vm.indexingMode(array), "CopyOnWriteArrayWithDouble");
+        shouldBe($vm.indexingMode(slice), "ArrayWithDouble");
+    } else {
+        shouldBe($vm.indexingMode(array), "CopyOnWriteArrayWithContiguous");
+        shouldBe($vm.indexingMode(slice), "ArrayWithContiguous");
+    }
     return slice;
 }
 noInline(testDouble);

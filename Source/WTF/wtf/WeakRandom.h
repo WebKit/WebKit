@@ -41,7 +41,7 @@ namespace WTF {
 class WeakRandom final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WeakRandom(unsigned seed = cryptographicallyRandomNumber<unsigned>())
+    WeakRandom(unsigned seed = cryptographicallyRandomNumber())
     {
         setSeed(seed);
     }

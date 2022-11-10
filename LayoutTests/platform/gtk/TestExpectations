@@ -1292,6 +1292,10 @@ webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-do
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html [ Skip ]
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html [ Skip ]
 
+http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Skip ]
+http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Skip ]
+http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Skip ]
+
 webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
 
 # Test is flaky timing out. Also skipped in Mac and iOS.

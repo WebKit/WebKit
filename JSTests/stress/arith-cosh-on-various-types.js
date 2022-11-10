@@ -3,6 +3,9 @@
 //@ defaultNoEagerRun
 "use strict";
 
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 let coshOfFour = Math.cosh(4);
 
 let validInputTestCases = [

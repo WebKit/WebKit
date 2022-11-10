@@ -1,4 +1,7 @@
 //@ skip if not $jitTests
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 function doTest(arr1, arr2) {
     if (arr1.length != arr2.length)
         return []

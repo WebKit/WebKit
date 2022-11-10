@@ -676,6 +676,7 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
                 accessType = AccessCase::IndexedInt32Load;
                 break;
             case DoubleShape:
+                ASSERT(Options::allowDoubleShape());
                 accessType = AccessCase::IndexedDoubleLoad;
                 break;
             case ContiguousShape:
@@ -1115,6 +1116,7 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
                 accessType = AccessCase::IndexedInt32Store;
                 break;
             case DoubleShape:
+                ASSERT(Options::allowDoubleShape());
                 accessType = AccessCase::IndexedDoubleStore;
                 break;
             case ContiguousShape:

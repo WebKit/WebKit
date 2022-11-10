@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<title>Cache Storage: Verify that Window and Workers see same storage</title>
-<link rel="help" href="https://w3c.github.io/ServiceWorker/#cache-storage">
-<meta name="timeout" content="long">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-<script>
+// META: title=Cache Storage: Verify that Window and Workers see same storage
+// META: timeout=long
 
 function wait_for_message(worker) {
     return new Promise(function(resolve) {
@@ -47,5 +42,3 @@ promise_test(function(t) {
                           'Body should match response put by worker');
         });
 }, 'Window sees cache puts by Worker');
-
-</script>

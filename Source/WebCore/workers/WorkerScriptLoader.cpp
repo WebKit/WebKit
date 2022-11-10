@@ -77,7 +77,6 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
 
     m_url = url;
-    m_lastRequestURL = url;
     m_source = source;
     m_destination = FetchOptions::Destination::Script;
     m_isCOEPEnabled = scriptExecutionContext->settingsValues().crossOriginEmbedderPolicyEnabled;
@@ -136,7 +135,6 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 {
     m_client = &client;
     m_url = scriptRequest.url();
-    m_lastRequestURL = scriptRequest.url();
     m_source = source;
     m_destination = fetchOptions.destination;
     m_isCOEPEnabled = scriptExecutionContext.settingsValues().crossOriginEmbedderPolicyEnabled;
@@ -233,11 +231,6 @@ ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse&
     }
 
     return { };
-}
-
-void WorkerScriptLoader::redirectReceived(const URL& redirectURL)
-{
-    m_lastRequestURL = redirectURL;
 }
 
 void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
@@ -360,7 +353,7 @@ WorkerFetchResult WorkerScriptLoader::fetchResult() const
 {
     if (m_failed)
         return workerFetchError(error());
-    return { script(), lastRequestURL(), certificateInfo(), contentSecurityPolicy(), crossOriginEmbedderPolicy(), referrerPolicy(), { } };
+    return { script(), responseURL(), certificateInfo(), contentSecurityPolicy(), crossOriginEmbedderPolicy(), referrerPolicy(), { } };
 }
 
 WorkerScriptLoader* WorkerScriptLoader::fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier identifier)

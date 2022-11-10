@@ -354,7 +354,9 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
+        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t byteLength) {
+            ASSERT(!(byteLength % 4));
+            auto pixelCount = byteLength / 4;
             size_t i = 0;
             while (pixelCount-- > 0) {
                 // ARGB -> RGBA.
@@ -373,8 +375,9 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t pixelCount) {
-            std::memcpy(destination, source, pixelCount * 4);
+
+        auto planeLayouts = copyRGBData(span, planeLayout, this->pixelBuffer(), [](auto* destination, auto* source, size_t byteLength) {
+            std::memcpy(destination, source, byteLength);
         });
         callback(WTFMove(planeLayouts));
         return;
@@ -383,10 +386,13 @@ void VideoFrame::copyTo(Span<uint8_t> span, VideoPixelFormat format, Vector<Comp
     callback({ });
 }
 
-void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, bool shouldDiscardAlpha)
+void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, const ImageOrientation& destinationImageRotation, bool shouldDiscardAlpha)
 {
     // FIXME: Handle alpha discarding.
     UNUSED_PARAM(shouldDiscardAlpha);
+
+    // FIXME: destination image rotation handling.
+    UNUSED_PARAM(destinationImageRotation);
 
     // FIXME: It is not efficient to create a conformer everytime. We might want to make it more efficient, for instance by storing it in GraphicsContext.
     auto conformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });

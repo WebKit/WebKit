@@ -2189,7 +2189,7 @@ bool AccessibilityObject::isModalDescendant(Node* modalNode) const
     
     // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
     // For the decendants of the modal object, they should also be considered as aria-modal=true.
-    return node->isDescendantOf(*modalNode);
+    return node->isDescendantOrShadowDescendantOf(*modalNode);
 }
 
 bool AccessibilityObject::isModalNode() const

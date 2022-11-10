@@ -948,6 +948,8 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     auto intersects = [&] {
         // Float boxes don't get positioned higher than the line.
         auto floatBoxMarginBox = BoxGeometry::marginBoxRect(boxGeometry);
+        if (floatBoxMarginBox.isEmpty())
+            return false;
         if (floatBoxMarginBox.right() <= lineMarginBoxLeft) {
             // Previous floats already constrain the line horizontally more than this one.
             return false;

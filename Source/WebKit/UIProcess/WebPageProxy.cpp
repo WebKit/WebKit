@@ -8546,9 +8546,6 @@ static Span<const ASCIILiteral> gpuMachServices()
 {
     static constexpr std::array services {
         "com.apple.MTLCompilerService"_s,
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        "com.apple.cvmsServ"_s,
-#endif
     };
     return services;
 }

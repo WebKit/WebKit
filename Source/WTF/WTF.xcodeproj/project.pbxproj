@@ -148,7 +148,7 @@
 		A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472D5151A825B004123FF /* NumberOfCores.cpp */; };
 		A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472DA151A825B004123FF /* OSRandomSource.cpp */; };
 		A8A47402151A825B004123FF /* PageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472E3151A825B004123FF /* PageBlock.cpp */; };
-		A8A47414151A825B004123FF /* WeakRandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472FB151A825B004123FF /* WeakRandomNumber.cpp */; };
+		A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472FB151A825B004123FF /* RandomNumber.cpp */; };
 		A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47301151A825B004123FF /* RefCountedLeakCounter.cpp */; };
 		A8A47421151A825B004123FF /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47308151A825B004123FF /* SHA1.cpp */; };
 		A8A47425151A825B004123FF /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4730C151A825B004123FF /* SizeLimits.cpp */; };
@@ -217,7 +217,7 @@
 		DD3DC88727A4BF8E007E5B61 /* CrossThreadTaskHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 517F82D61FD22F2F00DA3DEA /* CrossThreadTaskHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88827A4BF8E007E5B61 /* LoggingHashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30BA8F1E78708E002CA847 /* LoggingHashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB0621D55284200C82EF7 /* LEBDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC88A27A4BF8E007E5B61 /* WeakRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FC151A825B004123FF /* WeakRandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD3DC88A27A4BF8E007E5B61 /* RandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FC151A825B004123FF /* RandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88B27A4BF8E007E5B61 /* SharedTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88C27A4BF8E007E5B61 /* EnumTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88D27A4BF8E007E5B61 /* RobinHoodHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E32561122611B5B600A72CC5 /* RobinHoodHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -472,6 +472,7 @@
 		DD3DC98627A4BF8E007E5B61 /* DebugUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B17841EBA441C007E10EB /* DebugUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98727A4BF8E007E5B61 /* UniqueArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E300E521203D645F00DA79BE /* UniqueArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98827A4BF8E007E5B61 /* LockAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0FCDDD1DD167F900CCAB53 /* LockAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD3DC98927A4BF8E007E5B61 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FD151A825B004123FF /* RandomNumberSeed.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98A27A4BF8E007E5B61 /* NakedRef.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A207323C5902D0034A092 /* NakedRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98B27A4BF8E007E5B61 /* InstanceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98C27A4BF8E007E5B61 /* NoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B317234CB100338210 /* NoLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1345,8 +1346,9 @@
 		A8A472E5151A825B004123FF /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
 		A8A472E6151A825B004123FF /* ParallelJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobs.h; sourceTree = "<group>"; };
 		A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsLibdispatch.h; sourceTree = "<group>"; };
-		A8A472FB151A825B004123FF /* WeakRandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakRandomNumber.cpp; sourceTree = "<group>"; };
-		A8A472FC151A825B004123FF /* WeakRandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakRandomNumber.h; sourceTree = "<group>"; };
+		A8A472FB151A825B004123FF /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
+		A8A472FC151A825B004123FF /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
+		A8A472FD151A825B004123FF /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
 		A8A472FE151A825B004123FF /* RedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedBlackTree.h; sourceTree = "<group>"; };
 		A8A472FF151A825B004123FF /* RefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounted.h; sourceTree = "<group>"; };
 		A8A47301151A825B004123FF /* RefCountedLeakCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedLeakCounter.cpp; sourceTree = "<group>"; };
@@ -2193,6 +2195,9 @@
 				143F611E1565F0F900DB514A /* RAMSize.h */,
 				C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */,
 				24F1B248619F412296D1C19C /* RandomDevice.h */,
+				A8A472FB151A825B004123FF /* RandomNumber.cpp */,
+				A8A472FC151A825B004123FF /* RandomNumber.h */,
+				A8A472FD151A825B004123FF /* RandomNumberSeed.h */,
 				0F2AC5601E89F70C0001EE3F /* Range.h */,
 				0F725CAB1C50461600AD943A /* RangeSet.h */,
 				FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */,
@@ -2338,8 +2343,6 @@
 				83ABB3C020B3823200BA3306 /* WeakObjCPtr.h */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
 				0F3501631BB258C800F0A2A3 /* WeakRandom.h */,
-				A8A472FB151A825B004123FF /* WeakRandomNumber.cpp */,
-				A8A472FC151A825B004123FF /* WeakRandomNumber.h */,
 				DD4901E327B4748A00D7E50D /* WindowsExtras.h */,
 				0FE4479A1B7AAA03009498EB /* WordLock.cpp */,
 				0FE4479B1B7AAA03009498EB /* WordLock.h */,
@@ -3121,6 +3124,8 @@
 				DD3DC8C627A4BF8E007E5B61 /* PtrTag.h in Headers */,
 				DD3DC8E827A4BF8E007E5B61 /* RAMSize.h in Headers */,
 				DD3DC8B327A4BF8E007E5B61 /* RandomDevice.h in Headers */,
+				DD3DC88A27A4BF8E007E5B61 /* RandomNumber.h in Headers */,
+				DD3DC98927A4BF8E007E5B61 /* RandomNumberSeed.h in Headers */,
 				DD3DC92027A4BF8E007E5B61 /* Range.h in Headers */,
 				DD3DC8EB27A4BF8E007E5B61 /* RangeSet.h in Headers */,
 				FE7ACFEF285DC2F9007FC8E9 /* RawHex.h in Headers */,
@@ -3280,7 +3285,6 @@
 				DD3DC95F27A4BF8E007E5B61 /* WeakObjCPtr.h in Headers */,
 				DD3DC95227A4BF8E007E5B61 /* WeakPtr.h in Headers */,
 				DD3DC91927A4BF8E007E5B61 /* WeakRandom.h in Headers */,
-				DD3DC88A27A4BF8E007E5B61 /* WeakRandomNumber.h in Headers */,
 				DDF3073B27C086CD006A526F /* WebCoreThread.h in Headers */,
 				DDF307FE27C08A77006A526F /* WebPreferences.yaml in Headers */,
 				DDF307FF27C08A77006A526F /* WebPreferencesDebug.yaml in Headers */,
@@ -3700,6 +3704,7 @@
 				FE1E2C3B2240C06600F6B729 /* PtrTag.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
 				A3B725EC987446AD93F1A440 /* RandomDevice.cpp in Sources */,
+				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				0FEC3C5E1F368A9700F59B6C /* ReadWriteLock.cpp in Sources */,
 				46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
@@ -3765,7 +3770,6 @@
 				93E4A13728F6B75A006AD994 /* UUIDCocoa.mm in Sources */,
 				E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */,
 				0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */,
-				A8A47414151A825B004123FF /* WeakRandomNumber.cpp in Sources */,
 				1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */,
 				0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */,
 				E388886F20C9095100E632BC /* WorkerPool.cpp in Sources */,

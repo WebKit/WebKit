@@ -1,4 +1,7 @@
 //@ skip if not $jitTests
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 let glob = 0
 
 function doTest(number) {

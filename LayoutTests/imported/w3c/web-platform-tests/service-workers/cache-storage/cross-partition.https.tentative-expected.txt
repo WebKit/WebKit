@@ -1,0 +1,6 @@
+
+PASS CacheStorage caches shouldn't be shared with a cross-partition iframe
+PASS CacheStorage caches shouldn't be shared with a cross-partition dedicated worker
+PASS CacheStorage caches shouldn't be shared with a cross-partition shared worker
+PASS CacheStorage caches shouldn't be shared with a cross-partition service worker
+

@@ -1691,6 +1691,10 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
+    VALIDATORS_FOR = {
+        # FIXME: This should be a bot, for now validation is manual
+        'apple': ['geoffreygaren', 'markcgee', 'rjepstein'],
+    }
 
     def __init__(self, *args, **kwargs):
         super(ValidateCommitterAndReviewer, self).__init__(*args, **kwargs)
@@ -1701,7 +1705,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             return {'step': self.descriptionDone}
         return buildstep.BuildStep.getResultSummary(self)
 
-    def fail_build(self, email_or_username, status):
+    def fail_build_due_to_invalid_status(self, email_or_username, status):
         patch_id = self.getProperty('patch_id', '')
         pr_number = self.getProperty('github.number', '')
 
@@ -1712,6 +1716,28 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         elif pr_number:
             comment += f'\n\nIf you do have {status} permmissions, please ensure that your GitHub username is added to contributors.json.'
             comment += f'\n\nRejecting {self.getProperty("github.head.sha", f"#{pr_number}")} from merge queue.'
+        return self.fail_build(reason, comment)
+
+    def fail_build_due_to_no_validators(self, validators):
+        patch_id = self.getProperty('patch_id', '')
+        pr_number = self.getProperty('github.number', '')
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+
+        user_prefix = "@" if pr_number else ""
+        if len(validators) == 1:
+            validator_list = f'{user_prefix}{validators[0]}'
+        else:
+            validator_list = f'{", ".join(f"{user_prefix}{v}" for v in validators[:-1])} or {user_prefix}{validators[-1]}'
+        reason = f"Landing changes on '{remote}' remote requires validation from {validator_list}"
+        comment = reason
+        if patch_id:
+            comment += f'\n\nRejecting attachment {patch_id} from commit queue.'
+        elif pr_number:
+            comment += f'\n\nRejecting {self.getProperty("github.head.sha", f"#{pr_number}")} from merge queue.'
+
+        return self.fail_build(reason, comment)
+
+    def fail_build(self, reason, comment):
         self.setProperty('comment_text', comment)
 
         self._addToLog('stdio', reason)
@@ -1754,17 +1780,24 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             committer = self.getProperty('patch_committer', '').lower()
 
         if not self.is_committer(committer):
-            self.fail_build(committer, 'committer')
+            self.fail_build_due_to_invalid_status(committer, 'committer')
             return None
         self._addToLog('stdio', f'{committer} is a valid commiter.\n')
 
         if pr_number:
             reviewers = self.get_reviewers(pr_number, self.getProperty('repository', ''))
-            if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
-                reviewers = list(filter(self.is_reviewer, reviewers))
         else:
             reviewer = self.getProperty('reviewer', '').lower()
             reviewers = [reviewer] if reviewer else []
+
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        validators = self.VALIDATORS_FOR.get(remote, [])
+        if validators and not any([validator in reviewers for validator in validators]):
+            self.fail_build_due_to_no_validators(validators)
+            return None
+
+        if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
+            reviewers = list(filter(self.is_reviewer, reviewers))
         reviewers = set(reviewers)
 
         if not reviewers:
@@ -1776,7 +1809,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         for reviewer in reviewers:
             if not self.is_reviewer(reviewer):
-                self.fail_build(reviewer, 'reviewer')
+                self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
                 return None
             self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
         self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])

@@ -35,14 +35,14 @@ namespace WebCore {
 
 struct WorkerFetchResult {
     ScriptBuffer script;
-    URL lastRequestURL; // Last URL in case of redirects.
+    URL responseURL;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     String referrerPolicy;
     ResourceError error;
 
-    WorkerFetchResult isolatedCopy() const { return { script.isolatedCopy(), lastRequestURL.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), error.isolatedCopy() }; }
+    WorkerFetchResult isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), error.isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, WorkerFetchResult&);
@@ -56,7 +56,7 @@ inline WorkerFetchResult workerFetchError(const ResourceError& error)
 template<class Encoder>
 void WorkerFetchResult::encode(Encoder& encoder) const
 {
-    encoder << script << lastRequestURL << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy << error << certificateInfo;
+    encoder << script << responseURL << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy << error << certificateInfo;
 }
 
 template<class Decoder>
@@ -64,7 +64,7 @@ bool WorkerFetchResult::decode(Decoder& decoder, WorkerFetchResult& result)
 {
     if (!decoder.decode(result.script))
         return false;
-    if (!decoder.decode(result.lastRequestURL))
+    if (!decoder.decode(result.responseURL))
         return false;
     if (!decoder.decode(result.contentSecurityPolicy))
         return false;

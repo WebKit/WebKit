@@ -107,8 +107,9 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "RandomNumber.h" => "WeakRandomNumber.h",
-    "RandomNumber.cpp" => "WeakRandomNumber.cpp",
+    "CSSFontStyleValue" => "CSSFontStyleWithAngleValue",
+    "isFontStyleValue" => "isFontStyleWithAngleValue",
+    "FontStyleClass" => "FontStyleWithAngleClass",
 );
 
 my %renamesContemplatedForTheFuture = (

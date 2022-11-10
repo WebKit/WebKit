@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT void setAs(const AtomString&);
     WEBCORE_EXPORT String as() const;
 
-    void dispatchPendingEvent(LinkEventSender*);
+    void dispatchPendingEvent(LinkEventSender*, const AtomString& eventType);
     static void dispatchPendingLoadEvents(Page*);
 
     WEBCORE_EXPORT DOMTokenList& relList();

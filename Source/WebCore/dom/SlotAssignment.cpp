@@ -41,7 +41,7 @@ struct SameSizeAsNamedSlotAssignment {
     uint32_t values[4];
     HashMap<void*, void*> pointer;
 #if ASSERT_ENABLED
-    HashSet<void*> hashSet;
+    WeakHashSet<Element> hashSet;
 #endif
 };
 

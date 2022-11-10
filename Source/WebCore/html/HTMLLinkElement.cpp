@@ -77,14 +77,8 @@ using namespace HTMLNames;
 
 static LinkEventSender& linkLoadEventSender()
 {
-    static NeverDestroyed<LinkEventSender> sharedLoadEventSender(eventNames().loadEvent);
+    static NeverDestroyed<LinkEventSender> sharedLoadEventSender;
     return sharedLoadEventSender;
-}
-
-static LinkEventSender& linkErrorEventSender()
-{
-    static NeverDestroyed<LinkEventSender> sharedErrorEventSender(eventNames().errorEvent);
-    return sharedErrorEventSender;
 }
 
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
@@ -118,7 +112,6 @@ HTMLLinkElement::~HTMLLinkElement()
         m_styleScope->removeStyleSheetCandidateNode(*this);
 
     linkLoadEventSender().cancelEvent(*this);
-    linkErrorEventSender().cancelEvent(*this);
 }
 
 void HTMLLinkElement::setDisabledState(bool disabled)
@@ -529,13 +522,13 @@ void HTMLLinkElement::linkLoaded()
 {
     m_loadedResource = true;
     if (!m_relAttribute.isLinkPrefetch || m_allowPrefetchLoadAndErrorForTesting)
-        linkLoadEventSender().dispatchEventSoon(*this);
+        linkLoadEventSender().dispatchEventSoon(*this, eventNames().loadEvent);
 }
 
 void HTMLLinkElement::linkLoadingErrored()
 {
     if (!m_relAttribute.isLinkPrefetch || m_allowPrefetchLoadAndErrorForTesting)
-        linkErrorEventSender().dispatchEventSoon(*this);
+        linkLoadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
 }
 
 bool HTMLLinkElement::sheetLoaded()
@@ -552,13 +545,10 @@ void HTMLLinkElement::dispatchPendingLoadEvents(Page* page)
     linkLoadEventSender().dispatchPendingEvents(page);
 }
 
-void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
+void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender, const AtomString& eventType)
 {
-    ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSender() || eventSender == &linkErrorEventSender());
-    if (m_loadedResource)
-        dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    else
-        dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSender());
+    dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 DOMTokenList& HTMLLinkElement::relList()
@@ -573,7 +563,7 @@ DOMTokenList& HTMLLinkElement::relList()
 void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred)
 {
     m_loadedResource = !errorOccurred;
-    linkLoadEventSender().dispatchEventSoon(*this);
+    linkLoadEventSender().dispatchEventSoon(*this, m_loadedResource ? eventNames().loadEvent : eventNames().errorEvent);
 }
 
 void HTMLLinkElement::startLoadingDynamicSheet()

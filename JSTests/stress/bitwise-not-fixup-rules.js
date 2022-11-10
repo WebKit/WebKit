@@ -1,4 +1,6 @@
 //@ skip unless $jitTests
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
 
 function assert(a, e) {
     if (a !== e)

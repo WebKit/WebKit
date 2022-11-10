@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -205,6 +205,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
     }
 
     case ArrayWithDouble: {
+        ASSERT(Options::allowDoubleShape());
         if (!value.isNumber()) {
             convertDoubleToContiguous(vm);
             scope.release();

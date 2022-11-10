@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT bool disabled() const;
     WEBCORE_EXPORT void setDisabled(bool);
 
-    void dispatchPendingEvent(StyleEventSender*);
+    void dispatchPendingEvent(StyleEventSender*, const AtomString& eventType);
     static void dispatchPendingLoadEvents(Page*);
 
     void finishParsingChildren() final;

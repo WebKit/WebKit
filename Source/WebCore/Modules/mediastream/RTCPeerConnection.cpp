@@ -66,6 +66,7 @@
 #include "RTCSessionDescription.h"
 #include "RTCSessionDescriptionInit.h"
 #include "Settings.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
@@ -108,7 +109,7 @@ RTCPeerConnection::RTCPeerConnection(Document& document)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
-    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
 #endif
     , m_backend(PeerConnectionBackend::create(*this))
 {

@@ -64,7 +64,7 @@ public:
     bool imageComplete() const { return m_imageComplete; }
 
     CachedImage* image() const { return m_image.get(); }
-    void clearImage(); // Cancels pending beforeload and load events, and doesn't dispatch new ones.
+    void clearImage(); // Cancels pending load events, and doesn't dispatch new ones.
     
     size_t pendingDecodePromisesCountForTesting() const { return m_decodingPromises.size(); }
     void decode(Ref<DeferredPromise>&&);
@@ -75,11 +75,9 @@ public:
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
     bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
 
-    void dispatchPendingEvent(ImageEventSender*);
+    void dispatchPendingEvent(ImageEventSender*, const AtomString& eventType);
 
-    static void dispatchPendingBeforeLoadEvents(Page*);
     static void dispatchPendingLoadEvents(Page*);
-    static void dispatchPendingErrorEvents(Page*);
 
     void loadDeferredImage();
 

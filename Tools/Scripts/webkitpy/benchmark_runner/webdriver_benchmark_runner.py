@@ -14,7 +14,7 @@ class WebDriverBenchmarkRunner(BenchmarkRunner):
         result = driver.execute_script("return window.webdriver_results")
         return result
 
-    def _run_one_test(self, web_root, test_file):
+    def _run_one_test(self, web_root, test_file, iteration):
         from selenium.webdriver.support.ui import WebDriverWait
         try:
             url = 'file://{root}/{plan_name}/{test_file}'.format(root=web_root, plan_name=self._plan_name, test_file=test_file)

@@ -3639,6 +3639,7 @@ JSMessageEvent.cpp
 JSMessagePort.cpp
 JSMouseEvent.cpp
 JSMouseEventInit.cpp
+JSMultiCacheQueryOptions.cpp
 JSMutationCallback.cpp
 JSMutationEvent.cpp
 JSMutationObserver.cpp

@@ -5462,6 +5462,7 @@
         "web-platform-tests/secure-contexts/support/https-subframe-dedicated.html",
         "web-platform-tests/secure-contexts/support/https-subframe-shared.html",
         "web-platform-tests/secure-contexts/support/shared-worker-insecure-popup.html",
+        "web-platform-tests/service-workers/cache-storage/crashtests/cache-response-clone.https.html",
         "web-platform-tests/service-workers/service-worker/fetch-event-is-history-backward-navigation-manual.https.html",
         "web-platform-tests/service-workers/service-worker/fetch-event-is-history-forward-navigation-manual.https.html",
         "web-platform-tests/service-workers/service-worker/fetch-event-is-reload-navigation-manual.https.html",

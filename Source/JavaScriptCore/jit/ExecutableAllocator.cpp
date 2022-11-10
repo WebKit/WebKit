@@ -31,7 +31,6 @@
 #include "ExecutableAllocationFuzz.h"
 #include "JITOperationValidation.h"
 #include "LinkBuffer.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
 #include <wtf/FixedVector.h>
@@ -537,7 +536,7 @@ public:
 
         unsigned start = 0;
         if (UNLIKELY(Options::useRandomizingExecutableIslandAllocation()))
-            start = cryptographicallyRandomNumber<uint32_t>() % m_allocators.size();
+            start = cryptographicallyRandomNumber() % m_allocators.size();
 
         unsigned i = start;
         while (true) {

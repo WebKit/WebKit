@@ -105,7 +105,7 @@ public:
     void connectConditions();
     bool hasConditionsConnected() const { return m_conditionsConnected; }
     
-    void dispatchPendingEvent(SMILEventSender*);
+    void dispatchPendingEvent(SMILEventSender*, const AtomString& eventType);
 
 protected:
     void addBeginTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);

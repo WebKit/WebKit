@@ -574,6 +574,26 @@ template <> void derefGPtr<GstEGLImage>(GstEGLImage* ptr)
         gst_egl_image_unref(ptr);
 }
 
+template<> GRefPtr<GstGLColorConvert> adoptGRef(GstGLColorConvert* ptr)
+{
+    ASSERT(!ptr || !g_object_is_floating(ptr));
+    return GRefPtr<GstGLColorConvert>(ptr, GRefPtrAdopt);
+}
+
+template<> GstGLColorConvert* refGPtr<GstGLColorConvert>(GstGLColorConvert* ptr)
+{
+    if (ptr)
+        gst_object_ref_sink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstGLColorConvert>(GstGLColorConvert* ptr)
+{
+    if (ptr)
+        gst_object_unref(GST_OBJECT(ptr));
+}
+
 #endif // USE(GSTREAMER_GL)
 
 template <>

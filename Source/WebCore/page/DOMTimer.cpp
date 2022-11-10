@@ -34,10 +34,10 @@
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)

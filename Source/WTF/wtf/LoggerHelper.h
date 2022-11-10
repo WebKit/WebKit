@@ -81,9 +81,10 @@ public:
 
     static const void* uniqueLogIdentifier()
     {
-        return reinterpret_cast<const void*>(cryptographicallyRandomNumber<uint64_t>());
+        uint64_t highWord = cryptographicallyRandomNumber();
+        uint64_t lowWord = cryptographicallyRandomNumber();
+        return reinterpret_cast<const void*>((highWord << 32) + lowWord);
     }
-
 #else // RELEASE_LOG_DISABLED
 
 #define LOGIDENTIFIER (std::nullopt)
@@ -116,3 +117,4 @@ public:
 } // namespace WTF
 
 using WTF::LoggerHelper;
+

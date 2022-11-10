@@ -207,7 +207,7 @@ void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOrig
     auto origins = makeString(documentOrigin.toString(), parentOrigin.toString());
     auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(origins, [documentOrigin = WTFMove(documentOrigin), parentOrigin = WTFMove(parentOrigin)] () mutable {
         uint64_t randomData[randomDataSize];
-        cryptographicallyRandomValues(randomData, sizeof(randomData));
+        cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
 
         StringBuilder builder;
         builder.reserveCapacity(hashSaltSize);

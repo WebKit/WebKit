@@ -40,6 +40,7 @@
 #include "MediaDeviceHashSalts.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/CallbackAggregator.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/SHA1.h>
 

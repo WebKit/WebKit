@@ -1,5 +1,8 @@
 //@ if $jitTests then defaultNoEagerRun(*NO_CJIT_OPTIONS) else skip end
 
+if (typeof $vm != "undefined" && !$vm.useJIT())
+    $vm.exit();
+
 function foo(a, inBounds) {
     a[0] = 1;
     if (!inBounds) {

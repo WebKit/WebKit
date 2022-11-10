@@ -6,14 +6,20 @@ function assert(x, y) {
     }
 }
 
+var allowDoubleShape = $vm.allowDoubleShape();
+
+var arrayWithDoubleOrContiguousStr = allowDoubleShape ? "ArrayWithDouble" : "ArrayWithContiguous";
+var nonArrayWithDoubleOrContiguousStr = allowDoubleShape ? "NonArrayWithDouble" : "NonArrayWithContiguous";
+var copyOnWriteArrayWithDoubleOrContiguousStr = allowDoubleShape ? "CopyOnWriteArrayWithDouble" : "CopyOnWriteArrayWithContiguous";
+
 (function() {
     let arr = [1.1, 2.2];
     let arr2 = [1.1, 2.2];
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
-    assert($vm.indexingMode(arr2), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr2), copyOnWriteArrayWithDoubleOrContiguousStr);
 
     let o = $vm.createGlobalObject();
 
@@ -26,7 +32,7 @@ function assert(x, y) {
     arr2.__proto__ = proto;
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "ArrayWithSlowPutArrayStorage");
 })();
@@ -38,9 +44,9 @@ gc();
     let arr2 = [1.1, 2.2];
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
-    assert($vm.indexingMode(arr2), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr2), copyOnWriteArrayWithDoubleOrContiguousStr);
 
     let o = $vm.createGlobalObject();
 
@@ -51,9 +57,9 @@ gc();
     arr2.__proto__ = proto;
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
-    assert($vm.indexingMode(arr2), "ArrayWithDouble");
+    assert($vm.indexingMode(arr2), arrayWithDoubleOrContiguousStr);
 
     $vm.haveABadTime(o);
 
@@ -61,7 +67,7 @@ gc();
     assert($vm.isHavingABadTime(proto), true);
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "ArrayWithSlowPutArrayStorage");
 })();
@@ -73,7 +79,7 @@ gc();
     let arr2 = {};
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "NonArray");
 
@@ -88,14 +94,14 @@ gc();
     arr2.__proto__ = proto;
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "NonArray");
 
     arr2[0] = 1.1;
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "NonArrayWithSlowPutArrayStorage");
 })();
@@ -107,7 +113,7 @@ gc();
     let arr2 = {};
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "NonArray");
 
@@ -120,16 +126,16 @@ gc();
     arr2.__proto__ = proto;
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "NonArray");
 
     arr2[0] = 1.1;
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
-    assert($vm.indexingMode(arr2), "NonArrayWithDouble");
+    assert($vm.indexingMode(arr2), nonArrayWithDoubleOrContiguousStr);
 
     $vm.haveABadTime(o);
 
@@ -137,7 +143,7 @@ gc();
     assert($vm.isHavingABadTime(proto), true);
 
     assert($vm.isHavingABadTime(arr), false);
-    assert($vm.indexingMode(arr), "CopyOnWriteArrayWithDouble");
+    assert($vm.indexingMode(arr), copyOnWriteArrayWithDoubleOrContiguousStr);
     assert($vm.isHavingABadTime(arr2), false);
     assert($vm.indexingMode(arr2), "NonArrayWithSlowPutArrayStorage");
 })();

@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "ScreenDataOverrides.h"
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
 namespace VPConfigurationLevel {
@@ -127,45 +127,5 @@ struct VPCodecConfigurationRecord {
 
 WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
 
-struct ScreenDataOverrides {
-    double width { 0 };
-    double height { 0 };
-    double scale { 1 };
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << width;
-        encoder << height;
-        encoder << scale;
-    }
-
-    template <class Decoder>
-    static std::optional<ScreenDataOverrides> decode(Decoder& decoder)
-    {
-#define DECODE(name, type) \
-        std::optional<type> name; \
-        decoder >> name; \
-        if (!name) \
-            return std::nullopt; \
-
-        DECODE(width, double);
-        DECODE(height, double);
-        DECODE(scale, double);
-#undef DECODE
-
-    return {{ WTFMove(*width), WTFMove(*height), WTFMove(*scale) }};
-    }
-};
-
-inline bool operator==(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
-{
-    return a.width == b.width && a.height == b.height && a.scale == b.scale;
-}
-
-inline bool operator!=(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
-{
-    return !(a == b);
-}
 
 }

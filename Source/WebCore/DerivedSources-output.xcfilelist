@@ -1723,6 +1723,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMultiCacheQueryOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMultiCacheQueryOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationEvent.cpp

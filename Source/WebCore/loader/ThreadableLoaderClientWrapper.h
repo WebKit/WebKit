@@ -54,12 +54,6 @@ public:
         return m_done;
     }
 
-    void redirectReceived(const URL& redirectURL)
-    {
-        if (m_client)
-            m_client->redirectReceived(redirectURL);
-    }
-
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
     {
         if (m_client)

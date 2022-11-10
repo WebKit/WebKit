@@ -19,16 +19,129 @@
 
 
 #include "config.h"
+
 #include "VideoFrameGStreamer.h"
 
 #include "GStreamerCommon.h"
+#include "GraphicsContext.h"
+#include "ImageGStreamer.h"
+#include "ImageOrientation.h"
 #include "PixelBuffer.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 
+#if USE(GSTREAMER_GL)
+#include <gst/gl/gstglcolorconvert.h>
+#include <gst/gl/gstglmemory.h>
+#endif
+
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 namespace WebCore {
+
+class GstSampleColorConverter {
+public:
+    static GstSampleColorConverter& singleton();
+
+    RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>&);
+    GRefPtr<GstSample> convertSample(const GRefPtr<GstSample>&, const GRefPtr<GstCaps>&);
+
+private:
+#if USE(GSTREAMER_GL)
+    GRefPtr<GstGLColorConvert> m_glColorConvert;
+#endif
+    GUniquePtr<GstVideoConverter> m_colorConvert;
+    GRefPtr<GstCaps> m_colorConvertInputCaps;
+    GRefPtr<GstCaps> m_colorConvertOutputCaps;
+};
+
+GstSampleColorConverter& GstSampleColorConverter::singleton()
+{
+    static NeverDestroyed<GstSampleColorConverter> sharedInstance;
+    return sharedInstance;
+}
+
+GRefPtr<GstSample> GstSampleColorConverter::convertSample(const GRefPtr<GstSample>& sample, const GRefPtr<GstCaps>& outputCaps)
+{
+    auto* buffer = gst_sample_get_buffer(sample.get());
+    if (UNLIKELY(!GST_IS_BUFFER(buffer)))
+        return nullptr;
+
+    auto* caps = gst_sample_get_caps(sample.get());
+
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps))
+        return nullptr;
+
+    GRefPtr<GstBuffer> outputBuffer;
+    auto* memory = gst_buffer_peek_memory(buffer, 0);
+#if USE(GSTREAMER_GL)
+    if (gst_is_gl_memory(memory)) {
+        if (!m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), caps)) {
+            m_glColorConvert = adoptGRef(gst_gl_color_convert_new(GST_GL_BASE_MEMORY_CAST(memory)->context));
+            m_colorConvertInputCaps = adoptGRef(gst_caps_copy(caps));
+            m_colorConvertOutputCaps = adoptGRef(gst_caps_copy(outputCaps.get()));
+
+            gst_caps_set_features(m_colorConvertOutputCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+            gst_caps_set_simple(m_colorConvertOutputCaps.get(), "texture-target", G_TYPE_STRING, GST_GL_TEXTURE_TARGET_2D_STR, nullptr);
+            if (!gst_gl_color_convert_set_caps(m_glColorConvert.get(), caps, m_colorConvertOutputCaps.get())) {
+                m_colorConvertInputCaps.clear();
+                m_colorConvertOutputCaps.clear();
+                return nullptr;
+            }
+        }
+
+        outputBuffer = adoptGRef(gst_gl_color_convert_perform(m_glColorConvert.get(), buffer));
+    } else
+#endif
+    {
+        GstVideoInfo outputInfo;
+        gst_video_info_init(&outputInfo);
+        if (!gst_video_info_from_caps(&outputInfo, outputCaps.get()))
+            return nullptr;
+
+        if (!m_colorConvertOutputCaps || !gst_caps_is_equal(m_colorConvertOutputCaps.get(), outputCaps.get())) {
+            m_colorConvert.reset(gst_video_converter_new(&videoInfo, &outputInfo, nullptr));
+            m_colorConvertOutputCaps = outputCaps;
+        }
+
+        outputBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&outputInfo), nullptr));
+        GstMappedFrame inputFrame(buffer, videoInfo, GST_MAP_READ);
+        GstMappedFrame outputFrame(outputBuffer.get(), outputInfo, GST_MAP_WRITE);
+        gst_video_converter_frame(m_colorConvert.get(), inputFrame.get(), outputFrame.get());
+    }
+
+    if (UNLIKELY(!GST_IS_BUFFER(outputBuffer.get())))
+        return nullptr;
+
+    const auto* info = gst_sample_get_info(sample.get());
+    auto convertedSample = adoptGRef(gst_sample_new(outputBuffer.get(), m_colorConvertOutputCaps.get(),
+        gst_sample_get_segment(sample.get()), info ? gst_structure_copy(info) : nullptr));
+    return convertedSample;
+}
+
+RefPtr<ImageGStreamer> GstSampleColorConverter::convertSampleToImage(const GRefPtr<GstSample>& sample)
+{
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, gst_sample_get_caps(sample.get())))
+        return nullptr;
+
+    // These caps must match the internal format of a cairo surface with CAIRO_FORMAT_ARGB32,
+    // so we don't need to perform color conversions when painting the video frame.
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "BGRA" : "BGRx";
+#else
+    const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "ARGB" : "xRGB";
+#endif
+    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatString, "framerate", GST_TYPE_FRACTION, GST_VIDEO_INFO_FPS_N(&videoInfo), GST_VIDEO_INFO_FPS_D(&videoInfo), "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&videoInfo), "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&videoInfo), nullptr));
+    auto convertedSample = convertSample(sample, caps);
+    if (!convertedSample)
+        return nullptr;
+
+    return ImageGStreamer::createImage(WTFMove(convertedSample));
+}
 
 static inline void setBufferFields(GstBuffer* buffer, const MediaTime& presentationTime, double frameRate)
 {
@@ -83,22 +196,16 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuf
         height = destinationSize.height();
         auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width,
             "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
-        GstVideoInfo outputInfo;
-        gst_video_info_from_caps(&outputInfo, outputCaps.get());
 
-        auto outputBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&outputInfo), nullptr));
-        {
-            GUniquePtr<GstVideoConverter> converter(gst_video_converter_new(&inputInfo, &outputInfo, nullptr));
-            GstMappedFrame inputFrame(buffer.get(), inputInfo, GST_MAP_READ);
-            GstMappedFrame outputFrame(outputBuffer.get(), outputInfo, GST_MAP_WRITE);
-            gst_video_converter_frame(converter.get(), inputFrame.get(), outputFrame.get());
+        auto inputSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+        sample = GstSampleColorConverter::singleton().convertSample(inputSample, outputCaps);
+        if (sample) {
+            auto* outputBuffer = gst_sample_get_buffer(sample.get());
+            if (metadata)
+                webkitGstBufferSetVideoFrameTimeMetadata(outputBuffer, *metadata);
+
+            setBufferFields(outputBuffer, presentationTime, frameRate);
         }
-
-        if (metadata)
-            webkitGstBufferSetVideoFrameTimeMetadata(outputBuffer.get(), *metadata);
-
-        setBufferFields(outputBuffer.get(), presentationTime, frameRate);
-        sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
     } else {
         if (metadata)
             buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer.get(), *metadata);
@@ -127,6 +234,18 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
     : VideoFrame(presentationTime, false, videoRotation)
     , m_sample(sample)
 {
+}
+
+void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, const ImageOrientation& destinationImageOrientation, bool shouldDiscardAlpha)
+{
+    auto image = GstSampleColorConverter::singleton().convertSampleToImage(downcast<VideoFrameGStreamer>(*this).sample());
+    if (!image)
+        return;
+
+    auto imageRect = image->rect();
+    auto source = destinationImageOrientation.usesWidthAsHeight() ? FloatRect(imageRect.location(), imageRect.size().transposedSize()) : imageRect;
+    auto compositeOperator = !shouldDiscardAlpha && image->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy;
+    context.drawImage(image->image(), destination, source, { compositeOperator, destinationImageOrientation });
 }
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)

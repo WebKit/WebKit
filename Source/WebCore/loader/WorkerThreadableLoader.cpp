@@ -228,14 +228,6 @@ void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()
     m_workerClientWrapper->clearClient();
 }
 
-void WorkerThreadableLoader::MainThreadBridge::redirectReceived(const URL& redirectURL)
-{
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, redirectURL = redirectURL.isolatedCopy()] (ScriptExecutionContext& context) mutable {
-        ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        protectedWorkerClientWrapper->redirectReceived(redirectURL);
-    }, m_taskMode);
-}
-
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, bytesSent, totalBytesToBeSent] (ScriptExecutionContext& context) mutable {

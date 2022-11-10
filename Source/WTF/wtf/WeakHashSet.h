@@ -92,29 +92,45 @@ public:
 
     WeakHashSet() { }
 
-    const_iterator begin() const { return WeakHashSetConstIterator(m_set, m_set.begin()); }
-    const_iterator end() const { return WeakHashSetConstIterator(m_set, m_set.end()); }
+    const_iterator begin() const
+    {
+        increaseOperationCountSinceLastCleanup();
+        return WeakHashSetConstIterator(m_set, m_set.begin());
+    }
+
+    const_iterator end() const
+    {
+        increaseOperationCountSinceLastCleanup();
+        return WeakHashSetConstIterator(m_set, m_set.end());
+    }
 
     template <typename U>
     AddResult add(const U& value)
     {
+        amortizedCleanupIfNeeded();
         return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
     }
 
     template <typename U>
     bool remove(const U& value)
     {
+        amortizedCleanupIfNeeded();
         auto& weakPtrImpl = value.weakPtrFactory().m_impl;
         if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
             return m_set.remove(*pointer);
         return false;
     }
 
-    void clear() { m_set.clear(); }
+    void clear()
+    {
+        m_set.clear();
+        m_operationCountSinceLastCleanup = 0;
+    }
 
     template <typename U>
     bool contains(const U& value) const
     {
+        increaseOperationCountSinceLastCleanup();
         auto& weakPtrImpl = value.weakPtrFactory().m_impl;
         if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
             return m_set.contains(*pointer);
@@ -132,12 +148,13 @@ public:
 
     unsigned computeSize() const
     {
-        const_cast<WeakPtrImplSet&>(m_set).removeIf([] (auto& value) { return !value.get(); });
+        const_cast<WeakHashSet&>(*this).removeNullReferences();
         return m_set.size();
     }
 
     void forEach(const Function<void(T&)>& callback)
     {
+        increaseOperationCountSinceLastCleanup();
         auto items = map(m_set, [](const Ref<WeakPtrImpl>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());
             return WeakPtr<T, WeakPtrImpl> { pointer };
@@ -155,7 +172,27 @@ public:
 #endif
 
 private:
+    ALWAYS_INLINE void removeNullReferences()
+    {
+        m_set.removeIf([] (auto& value) { return !value.get(); });
+        m_operationCountSinceLastCleanup = 0;
+    }
+
+    ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup() const
+    {
+        unsigned currentCount = m_operationCountSinceLastCleanup++;
+        return currentCount;
+    }
+
+    ALWAYS_INLINE void amortizedCleanupIfNeeded() const
+    {
+        unsigned currentCount = increaseOperationCountSinceLastCleanup();
+        if (currentCount / 2 > m_set.size())
+            const_cast<WeakHashSet&>(*this).removeNullReferences();
+    }
+
     WeakPtrImplSet m_set;
+    mutable unsigned m_operationCountSinceLastCleanup { 0 };
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>

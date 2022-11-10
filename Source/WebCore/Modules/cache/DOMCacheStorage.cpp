@@ -31,6 +31,7 @@
 #include "EventLoop.h"
 #include "JSDOMCache.h"
 #include "JSFetchResponse.h"
+#include "MultiCacheQueryOptions.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
@@ -106,7 +107,7 @@ void DOMCacheStorage::doSequentialMatch(DOMCache::RequestInfo&& info, CacheQuery
     });
 }
 
-void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+void DOMCacheStorage::match(DOMCache::RequestInfo&& info, MultiCacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
     retrieveCaches([this, info = WTFMove(info), options = WTFMove(options), promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {

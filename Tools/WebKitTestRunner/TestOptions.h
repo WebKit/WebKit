@@ -61,6 +61,7 @@ public:
     bool ignoresViewportScaleLimits() const { return boolTestRunnerFeatureValue("ignoresViewportScaleLimits"); }
     bool isAppBoundWebView() const { return boolTestRunnerFeatureValue("isAppBoundWebView"); }
     bool isAppInitiated() const { return boolTestRunnerFeatureValue("isAppInitiated"); }
+    bool networkConnectionIntegrityEnabled() const { return boolTestRunnerFeatureValue("networkConnectionIntegrityEnabled"); }
     bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
     bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
     bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }

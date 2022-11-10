@@ -22,7 +22,7 @@ _log = logging.getLogger(__name__)
 class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None, profile_output_directory=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None, pgo_profile_output_dir=None, profile_output_dir=None):
         try:
             plan_file = self._find_plan_file(plan_file)
             with open(plan_file, 'r') as fp:
@@ -40,12 +40,22 @@ class BenchmarkRunner(object):
                 self._diagnose_dir = os.path.abspath(diagnose_dir) if diagnose_dir else None
                 if self._diagnose_dir:
                     os.makedirs(self._diagnose_dir, exist_ok=True)
+                    _log.info('Collecting diagnostics to {}'.format(self._diagnose_dir))
+                self._pgo_profile_output_dir = os.path.abspath(pgo_profile_output_dir) if pgo_profile_output_dir else None
+                if self._pgo_profile_output_dir:
+                    os.makedirs(self._pgo_profile_output_dir, exist_ok=True)
+                    _log.info('Collecting PGO profiles to {}'.format(self._pgo_profile_output_dir))
+                self._profile_output_dir = os.path.abspath(profile_output_dir) if profile_output_dir else None
+                if self._profile_output_dir:
+                    os.makedirs(self._profile_output_dir, exist_ok=True)
+                    _log.info('Collecting profiles to {}'.format(self._profile_output_dir))
                 self._output_file = output_file
                 self._scale_unit = scale_unit
                 self._show_iteration_values = show_iteration_values
                 self._config = self._plan.get('config', {})
                 if device_id:
                     self._config['device_id'] = device_id
+                self._config['enable_signposts'] = True if self._profile_output_dir else False
         except IOError as error:
             _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))
             raise error
@@ -87,14 +97,14 @@ class BenchmarkRunner(object):
                     self._browser_driver.prepare_env(self._config)
 
                     if 'entry_point' in self._plan:
-                        result = self._run_one_test(web_root, self._plan['entry_point'])
+                        result = self._run_one_test(web_root, self._plan['entry_point'], iteration)
                         debug_outputs.append(result.pop('debugOutput', None))
                         assert(result)
                         results.append(result)
                     elif 'test_files' in self._plan:
                         run_result = {}
                         for test in self._plan['test_files']:
-                            result = self._run_one_test(web_root, test)
+                            result = self._run_one_test(web_root, test, iteration)
                             assert(result)
                             run_result = self._merge(run_result, result)
                             debug_outputs.append(result.pop('debugOutput', None))
@@ -116,7 +126,7 @@ class BenchmarkRunner(object):
         self.show_results(results, self._scale_unit, self._show_iteration_values)
 
     def execute(self):
-        with BenchmarkBuilder(self._plan_name, self._plan, self.name) as web_root:
+        with BenchmarkBuilder(self._plan_name, self._plan, self.name, enable_signposts=self._config['enable_signposts']) as web_root:
             self._run_benchmark(int(self._plan['count']), web_root)
 
     @classmethod
