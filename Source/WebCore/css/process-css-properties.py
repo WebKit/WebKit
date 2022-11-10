@@ -2033,12 +2033,13 @@ class GenerationContext:
             } // namespace WebCore
             """))
 
-    def _generate_style_property_shorthand_functions_accessors(self, *, to, longhand_to_shorthands):
+    def _generate_style_property_shorthand_functions_accessors(self, *, to, longhand_to_shorthands, shorthand_to_longhand_count):
         for property in self.properties.all_shorthands:
             to.write(f"StylePropertyShorthand {property.id_without_prefix_with_lowercase_first_letter}Shorthand()\n")
             to.write(f"{{\n")
             to.write(f"    static const CSSPropertyID {property.id_without_prefix_with_lowercase_first_letter}Properties[] = {{\n")
 
+            shorthand_to_longhand_count[property] = 0
             for longhand in property.codegen_properties.longhands:
                 if longhand.name == "all":
                     for inner_property in self.properties.all_non_shorthands:
@@ -2046,25 +2047,32 @@ class GenerationContext:
                             continue
                         longhand_to_shorthands.setdefault(inner_property, [])
                         longhand_to_shorthands[inner_property].append(property)
+                        shorthand_to_longhand_count[property] += 1
                         to.write(f"        {inner_property.id},\n")
                 else:
                     longhand_to_shorthands.setdefault(longhand, [])
                     longhand_to_shorthands[longhand].append(property)
+                    shorthand_to_longhand_count[property] += 1
                     to.write(f"        {longhand.id},\n")
+
 
             to.write(f"    }};\n")
             to.write(f"    return StylePropertyShorthand({property.id}, {property.id_without_prefix_with_lowercase_first_letter}Properties);\n")
             to.write(f"}}\n\n")
 
-    def _generate_style_property_shorthand_functions_matching_shorthands_for_longhand(self, *, to, longhand_to_shorthands):
+    def _generate_style_property_shorthand_functions_matching_shorthands_for_longhand(self, *, to, longhand_to_shorthands, shorthand_to_longhand_count):
         to.write(f"StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)\n")
         to.write(f"{{\n")
         to.write(f"    switch (id) {{\n")
 
         vector_to_longhands = {}
 
+        # https://drafts.csswg.org/cssom/#concept-shorthands-preferred-order
+        def preferred_order_for_shorthands(x):
+            return (-shorthand_to_longhand_count[x], x.name.startswith("-"), not x.name.startswith("-webkit-"), x.name)
+
         for longhand, shorthands in sorted(list(longhand_to_shorthands.items()), key=lambda item: item[0].name):
-            shorthand_calls = [f"{p.id_without_prefix_with_lowercase_first_letter}Shorthand()" for p in sorted(shorthands, key=lambda x: x.name)]
+            shorthand_calls = [f"{p.id_without_prefix_with_lowercase_first_letter}Shorthand()" for p in sorted(shorthands, key=preferred_order_for_shorthands)]
             vector = f"StylePropertyShorthandVector{{{ ', '.join(shorthand_calls) }}}"
             vector_to_longhands.setdefault(vector, [])
             vector_to_longhands[vector].append(longhand)
@@ -2086,10 +2094,12 @@ class GenerationContext:
             )
 
             longhand_to_shorthands = {}
+            shorthand_to_longhand_count = {}
 
             self._generate_style_property_shorthand_functions_accessors(
                 to=output_file,
-                longhand_to_shorthands=longhand_to_shorthands
+                longhand_to_shorthands=longhand_to_shorthands,
+                shorthand_to_longhand_count=shorthand_to_longhand_count
             )
 
             self._generate_property_id_switch_function(
@@ -2102,7 +2112,8 @@ class GenerationContext:
 
             self._generate_style_property_shorthand_functions_matching_shorthands_for_longhand(
                 to=output_file,
-                longhand_to_shorthands=longhand_to_shorthands
+                longhand_to_shorthands=longhand_to_shorthands,
+                shorthand_to_longhand_count=shorthand_to_longhand_count
             )
 
             self._generate_style_property_shorthand_functions_cpp_footing(
