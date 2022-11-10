@@ -25,20 +25,25 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
-
-#include "ArrayBuffer.h"
-
 #include <limits.h>
 
 namespace WTF {
 class PrintStream;
 }
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+#if USE(LARGE_TYPED_ARRAYS)
+static_assert(sizeof(size_t) == sizeof(uint64_t));
+#define MAX_ARRAY_BUFFER_SIZE (1ull << 32)
+#else
+static_assert(sizeof(size_t) == sizeof(uint32_t));
+// Because we are using a size_t to store the size in bytes of array buffers, we cannot support 4GB on 32-bit platforms.
+// So we are sticking with 2GB. It should in theory be possible to support up to (4GB - 1B) if anyone cares.
+#define MAX_ARRAY_BUFFER_SIZE 0x7fffffffu
+#endif
 
 class PageCount {
-
 public:
     PageCount()
         : m_pageCount(UINT_MAX)
@@ -73,6 +78,11 @@ public:
         return PageCount(numPages);
     }
 
+    static PageCount fromBytesWithRoundUp(uint64_t bytes)
+    {
+        return fromBytes(roundUpToMultipleOf<pageSize>(bytes));
+    }
+
     static PageCount max()
     {
         return PageCount(maxPageCount);
@@ -86,6 +96,8 @@ public:
     bool operator<(const PageCount& other) const { return m_pageCount < other.m_pageCount; }
     bool operator>(const PageCount& other) const { return m_pageCount > other.m_pageCount; }
     bool operator>=(const PageCount& other) const { return m_pageCount >= other.m_pageCount; }
+    bool operator==(const PageCount& other) const { return m_pageCount == other.m_pageCount; }
+    bool operator!=(const PageCount& other) const { return m_pageCount != other.m_pageCount; }
     PageCount operator+(const PageCount& other) const
     {
         if (sumOverflows<uint32_t>(m_pageCount, other.m_pageCount))
@@ -108,6 +120,4 @@ private:
     uint32_t m_pageCount;
 };
 
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
+} // namespace JSC

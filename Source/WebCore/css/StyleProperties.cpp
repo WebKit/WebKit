@@ -1701,6 +1701,74 @@ AtomString StyleProperties::asTextAtom() const
     return asTextInternal().toAtomString();
 }
 
+static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSPropertyID longhandID)
+{
+    ASSERT(isShorthandCSSProperty(shorthandID));
+    ASSERT(isLonghand(longhandID));
+    switch (shorthandID) {
+    // We are not yet using the CSSPropertyFont shorthand here because our editing code is currently incompatible.
+    case CSSPropertyFont:
+        return false;
+
+    // Avoid legacy shorthands according to https://www.w3.org/TR/css-cascade-5/#legacy-shorthand
+    case CSSPropertyPageBreakAfter:
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyPageBreakInside:
+    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitBorderRadius:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitColumnBreakInside:
+    case CSSPropertyWebkitMaskPosition:
+    case CSSPropertyWebkitPerspective:
+    case CSSPropertyWebkitTextDecoration:
+    case CSSPropertyWebkitTextOrientation:
+        return false;
+
+    // FIXME: -webkit-mask is a legacy shorthand but it's used to serialize -webkit-mask-clip,
+    // which should be a legacy shorthand of mask-clip, but it's implemented as a longhand.
+    case CSSPropertyWebkitMask:
+        return longhandID == CSSPropertyWebkitMaskClip;
+
+    // FIXME: more mask nonsense.
+    case CSSPropertyMask:
+        return longhandID != CSSPropertyMaskComposite && longhandID != CSSPropertyMaskMode && longhandID != CSSPropertyMaskSize;
+
+    // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
+    case CSSPropertyBackground:
+    case CSSPropertyBackgroundPosition:
+    case CSSPropertyBorderBlockEnd:
+    case CSSPropertyBorderBlockStart:
+    case CSSPropertyBorderBottom:
+    case CSSPropertyBorderInlineEnd:
+    case CSSPropertyBorderInlineStart:
+    case CSSPropertyBorderLeft:
+    case CSSPropertyBorderRight:
+    case CSSPropertyBorderTop:
+    case CSSPropertyColumnRule:
+    case CSSPropertyColumns:
+    case CSSPropertyContainer:
+    case CSSPropertyFontSynthesis:
+    case CSSPropertyFontVariant:
+    case CSSPropertyGap:
+    case CSSPropertyGridArea:
+    case CSSPropertyGridColumn:
+    case CSSPropertyGridRow:
+    case CSSPropertyMarker:
+    case CSSPropertyMaskPosition:
+    case CSSPropertyOffset:
+    case CSSPropertyPlaceContent:
+    case CSSPropertyPlaceItems:
+    case CSSPropertyPlaceSelf:
+    case CSSPropertyTextDecorationSkip:
+    case CSSPropertyTextEmphasis:
+    case CSSPropertyWebkitTextStroke:
+        return false;
+    default:
+        return true;
+    }
+}
+
 StringBuilder StyleProperties::asTextInternal() const
 {
     StringBuilder result;
@@ -1717,6 +1785,7 @@ StringBuilder StyleProperties::asTextInternal() const
     for (unsigned n = 0; n < size; ++n) {
         PropertyReference property = propertyAt(n);
         CSSPropertyID propertyID = property.id();
+        ASSERT(isLonghand(propertyID) || propertyID == CSSPropertyCustom);
         Vector<CSSPropertyID> shorthands;
         String value;
 
@@ -1725,274 +1794,18 @@ StringBuilder StyleProperties::asTextInternal() const
             shorthands.append(substitutionValue.shorthandPropertyId());
             value = substitutionValue.shorthandValue().cssText();
         } else {
-            // FIXME: could probably use matchingShorthandsForLonghand() instead of populating 'shorthands' manually.
             switch (propertyID) {
-            case CSSPropertyCustom:
-            case CSSPropertyDirection:
-            case CSSPropertyUnicodeBidi:
-                // These are the only longhands not included in the 'all' shorthand.
-                break;
-            default:
-                ASSERT(isLonghand(propertyID));
-                shorthands.append(CSSPropertyAll);
-            }
-
-            switch (propertyID) {
-            case CSSPropertyAnimationName:
-            case CSSPropertyAnimationDuration:
-            case CSSPropertyAnimationTimingFunction:
-            case CSSPropertyAnimationDelay:
-            case CSSPropertyAnimationIterationCount:
-            case CSSPropertyAnimationDirection:
-            case CSSPropertyAnimationFillMode:
-            case CSSPropertyAnimationPlayState:
-                shorthands.append(CSSPropertyAnimation);
-                break;
             case CSSPropertyBackgroundPositionX:
                 positionXPropertyIndex = n;
                 continue;
             case CSSPropertyBackgroundPositionY:
                 positionYPropertyIndex = n;
                 continue;
-            case CSSPropertyBorderTopWidth:
-            case CSSPropertyBorderRightWidth:
-            case CSSPropertyBorderBottomWidth:
-            case CSSPropertyBorderLeftWidth:
-                // FIXME: Deal with cases where only some of border sides are specified.
-                shorthands.append(CSSPropertyBorder);
-                shorthands.append(CSSPropertyBorderWidth);
-                    break;
-            case CSSPropertyBorderTopStyle:
-            case CSSPropertyBorderRightStyle:
-            case CSSPropertyBorderBottomStyle:
-            case CSSPropertyBorderLeftStyle:
-                shorthands.append(CSSPropertyBorder);
-                shorthands.append(CSSPropertyBorderStyle);
-                break;
-            case CSSPropertyBorderTopColor:
-            case CSSPropertyBorderRightColor:
-            case CSSPropertyBorderBottomColor:
-            case CSSPropertyBorderLeftColor:
-                shorthands.append(CSSPropertyBorder);
-                shorthands.append(CSSPropertyBorderColor);
-                break;
-            case CSSPropertyBorderBlockStartWidth:
-            case CSSPropertyBorderBlockEndWidth:
-                shorthands.append(CSSPropertyBorderBlock);
-                shorthands.append(CSSPropertyBorderBlockWidth);
-                break;
-            case CSSPropertyBorderBlockStartStyle:
-            case CSSPropertyBorderBlockEndStyle:
-                shorthands.append(CSSPropertyBorderBlock);
-                shorthands.append(CSSPropertyBorderBlockStyle);
-                break;
-            case CSSPropertyBorderBlockStartColor:
-            case CSSPropertyBorderBlockEndColor:
-                shorthands.append(CSSPropertyBorderBlock);
-                shorthands.append(CSSPropertyBorderBlockColor);
-                break;
-            case CSSPropertyBorderInlineStartWidth:
-            case CSSPropertyBorderInlineEndWidth:
-                shorthands.append(CSSPropertyBorderInline);
-                shorthands.append(CSSPropertyBorderInlineWidth);
-                break;
-            case CSSPropertyBorderInlineStartStyle:
-            case CSSPropertyBorderInlineEndStyle:
-                shorthands.append(CSSPropertyBorderInline);
-                shorthands.append(CSSPropertyBorderInlineStyle);
-                break;
-            case CSSPropertyBorderTopLeftRadius:
-            case CSSPropertyBorderTopRightRadius:
-            case CSSPropertyBorderBottomRightRadius:
-            case CSSPropertyBorderBottomLeftRadius:
-                shorthands.append(CSSPropertyBorderRadius);
-                break;
-            case CSSPropertyBorderInlineStartColor:
-            case CSSPropertyBorderInlineEndColor:
-                shorthands.append(CSSPropertyBorderInline);
-                shorthands.append(CSSPropertyBorderInlineColor);
-                break;
-            case CSSPropertyWebkitBorderHorizontalSpacing:
-            case CSSPropertyWebkitBorderVerticalSpacing:
-                shorthands.append(CSSPropertyBorderSpacing);
-                break;
-            case CSSPropertyBorderImageSource:
-            case CSSPropertyBorderImageSlice:
-            case CSSPropertyBorderImageWidth:
-            case CSSPropertyBorderImageOutset:
-            case CSSPropertyBorderImageRepeat:
-                shorthands.append(CSSPropertyBorderImage);
-                shorthands.append(CSSPropertyWebkitBorderImage);
-                break;
-            case CSSPropertyFontFamily:
-            case CSSPropertyFontFeatureSettings:
-            case CSSPropertyFontKerning:
-#if ENABLE(VARIATION_FONTS)
-            case CSSPropertyFontOpticalSizing:
-#endif
-            case CSSPropertyFontPalette:
-            case CSSPropertyFontSize:
-            case CSSPropertyFontSizeAdjust:
-            case CSSPropertyFontStretch:
-            case CSSPropertyFontStyle:
-            case CSSPropertyFontVariantAlternates:
-            case CSSPropertyFontVariantCaps:
-            case CSSPropertyFontVariantEastAsian:
-            case CSSPropertyFontVariantLigatures:
-            case CSSPropertyFontVariantNumeric:
-            case CSSPropertyFontVariantPosition:
-#if ENABLE(VARIATION_FONTS)
-            case CSSPropertyFontVariationSettings:
-#endif
-            case CSSPropertyFontWeight:
-            case CSSPropertyLineHeight:
-                // We are not yet adding the CSSPropertyFont shorthand here because our editing code is currently incompatble.
-                break;
-            case CSSPropertyTop:
-            case CSSPropertyRight:
-            case CSSPropertyBottom:
-            case CSSPropertyLeft:
-                shorthands.append(CSSPropertyInset);
-                break;
-            case CSSPropertyInsetBlockStart:
-            case CSSPropertyInsetBlockEnd:
-                shorthands.append(CSSPropertyInsetBlock);
-                break;
-            case CSSPropertyInsetInlineStart:
-            case CSSPropertyInsetInlineEnd:
-                shorthands.append(CSSPropertyInsetInline);
-                break;
-            case CSSPropertyListStyleType:
-            case CSSPropertyListStylePosition:
-            case CSSPropertyListStyleImage:
-                shorthands.append(CSSPropertyListStyle);
-                break;
-            case CSSPropertyMarginTop:
-            case CSSPropertyMarginRight:
-            case CSSPropertyMarginBottom:
-            case CSSPropertyMarginLeft:
-                shorthands.append(CSSPropertyMargin);
-                break;
-            case CSSPropertyMarginBlockStart:
-            case CSSPropertyMarginBlockEnd:
-                shorthands.append(CSSPropertyMarginBlock);
-                break;
-            case CSSPropertyMarginInlineStart:
-            case CSSPropertyMarginInlineEnd:
-                shorthands.append(CSSPropertyMarginInline);
-                break;
-            case CSSPropertyOutlineWidth:
-            case CSSPropertyOutlineStyle:
-            case CSSPropertyOutlineColor:
-                shorthands.append(CSSPropertyOutline);
-                break;
-            case CSSPropertyOverflowX:
-            case CSSPropertyOverflowY:
-                shorthands.append(CSSPropertyOverflow);
-                break;
-            case CSSPropertyOverscrollBehaviorX:
-            case CSSPropertyOverscrollBehaviorY:
-                shorthands.append(CSSPropertyOverscrollBehavior);
-                break;
-            case CSSPropertyPaddingTop:
-            case CSSPropertyPaddingRight:
-            case CSSPropertyPaddingBottom:
-            case CSSPropertyPaddingLeft:
-                shorthands.append(CSSPropertyPadding);
-                break;
-            case CSSPropertyPaddingBlockStart:
-            case CSSPropertyPaddingBlockEnd:
-                shorthands.append(CSSPropertyPaddingBlock);
-                break;
-            case CSSPropertyPaddingInlineStart:
-            case CSSPropertyPaddingInlineEnd:
-                shorthands.append(CSSPropertyPaddingInline);
-                break;
-            case CSSPropertyScrollMarginTop:
-            case CSSPropertyScrollMarginRight:
-            case CSSPropertyScrollMarginBottom:
-            case CSSPropertyScrollMarginLeft:
-                shorthands.append(CSSPropertyScrollMargin);
-                break;
-            case CSSPropertyScrollMarginBlockStart:
-            case CSSPropertyScrollMarginBlockEnd:
-                shorthands.append(CSSPropertyScrollMarginBlock);
-                break;
-            case CSSPropertyScrollMarginInlineStart:
-            case CSSPropertyScrollMarginInlineEnd:
-                shorthands.append(CSSPropertyScrollMarginInline);
-                break;
-            case CSSPropertyScrollPaddingTop:
-            case CSSPropertyScrollPaddingRight:
-            case CSSPropertyScrollPaddingBottom:
-            case CSSPropertyScrollPaddingLeft:
-                shorthands.append(CSSPropertyScrollPadding);
-                break;
-            case CSSPropertyScrollPaddingBlockStart:
-            case CSSPropertyScrollPaddingBlockEnd:
-                shorthands.append(CSSPropertyScrollPaddingBlock);
-                break;
-            case CSSPropertyScrollPaddingInlineStart:
-            case CSSPropertyScrollPaddingInlineEnd:
-                shorthands.append(CSSPropertyScrollPaddingInline);
-                break;
-            case CSSPropertyTextDecorationLine:
-                shorthands.append(CSSPropertyTextDecoration);
-                break;
-            case CSSPropertyTransitionProperty:
-            case CSSPropertyTransitionDuration:
-            case CSSPropertyTransitionTimingFunction:
-            case CSSPropertyTransitionDelay:
-                shorthands.append(CSSPropertyTransition);
-                break;
-            case CSSPropertyFlexDirection:
-            case CSSPropertyFlexWrap:
-                shorthands.append(CSSPropertyFlexFlow);
-                break;
-            case CSSPropertyFlexBasis:
-            case CSSPropertyFlexGrow:
-            case CSSPropertyFlexShrink:
-                shorthands.append(CSSPropertyFlex);
-                break;
-            case CSSPropertyWebkitMaskPositionX:
-            case CSSPropertyWebkitMaskPositionY:
-            case CSSPropertyMaskImage:
-            case CSSPropertyMaskRepeat:
-            case CSSPropertyMaskPosition:
-            case CSSPropertyMaskClip:
-            case CSSPropertyMaskOrigin:
-                shorthands.append(CSSPropertyMask);
-                break;
-            case CSSPropertyWebkitMaskClip:
-            case CSSPropertyWebkitMaskPosition:
-                shorthands.append(CSSPropertyWebkitMask);
-                break;
-            case CSSPropertyPerspectiveOriginX:
-            case CSSPropertyPerspectiveOriginY:
-                shorthands.append(CSSPropertyPerspectiveOrigin);
-                break;
-            case CSSPropertyTransformOriginX:
-            case CSSPropertyTransformOriginY:
-            case CSSPropertyTransformOriginZ:
-                shorthands.append(CSSPropertyTransformOrigin);
-                break;
-            case CSSPropertyContainIntrinsicHeight:
-            case CSSPropertyContainIntrinsicWidth:
-                shorthands.append(CSSPropertyContainIntrinsicSize);
-                break;
-            case CSSPropertyGridTemplateRows:
-            case CSSPropertyGridTemplateColumns:
-            case CSSPropertyGridTemplateAreas:
-                shorthands.append(CSSPropertyGrid);
-                shorthands.append(CSSPropertyGridTemplate);
-                break;
-            case CSSPropertyGridAutoFlow:
-            case CSSPropertyGridAutoRows:
-            case CSSPropertyGridAutoColumns:
-                shorthands.append(CSSPropertyGrid);
-                break;
             default:
-                break;
+                for (auto& shorthand : matchingShorthandsForLonghand(propertyID)) {
+                    if (canUseShorthandForLonghand(shorthand.id(), propertyID))
+                        shorthands.append(shorthand.id());
+                }
             }
         }
 

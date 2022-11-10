@@ -661,11 +661,11 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (void* callFrame, Instanc
     auto grown = instance->memory()->grow(instance->vm(), PageCount(delta));
     if (!grown) {
         switch (grown.error()) {
-        case Memory::GrowFailReason::InvalidDelta:
-        case Memory::GrowFailReason::InvalidGrowSize:
-        case Memory::GrowFailReason::WouldExceedMaximum:
-        case Memory::GrowFailReason::OutOfMemory:
-        case Memory::GrowFailReason::GrowSharedUnavailable:
+        case GrowFailReason::InvalidDelta:
+        case GrowFailReason::InvalidGrowSize:
+        case GrowFailReason::WouldExceedMaximum:
+        case GrowFailReason::OutOfMemory:
+        case GrowFailReason::GrowSharedUnavailable:
             return -1;
         }
         RELEASE_ASSERT_NOT_REACHED();

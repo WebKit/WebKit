@@ -40,11 +40,11 @@ const ClassInfo JSArrayBufferView::s_info = {
     "ArrayBufferView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferView)
 };
 
-JSArrayBufferView::ConstructionContext::ConstructionContext(
-    Structure* structure, size_t length, void* vector)
+JSArrayBufferView::ConstructionContext::ConstructionContext(Structure* structure, size_t length, void* vector)
     : m_structure(structure)
-    , m_vector(vector, length)
+    , m_vector(vector, (Checked<size_t>(length) * JSC::elementSize(structure->typeInfo().type())).value())
     , m_length(length)
+    , m_maxByteLength((Checked<size_t>(length) * JSC::elementSize(structure->typeInfo().type())).value())
     , m_mode(FastTypedArray)
     , m_butterfly(nullptr)
 {
@@ -53,11 +53,10 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     RELEASE_ASSERT(length <= fastSizeLimit);
 }
 
-JSArrayBufferView::ConstructionContext::ConstructionContext(
-    VM& vm, Structure* structure, size_t length, unsigned elementSize,
-    InitializationMode mode)
+JSArrayBufferView::ConstructionContext::ConstructionContext(VM& vm, Structure* structure, size_t length, unsigned elementSize, InitializationMode mode)
     : m_structure(nullptr)
     , m_length(length)
+    , m_maxByteLength((Checked<size_t>(length) * elementSize).value())
     , m_butterfly(nullptr)
 {
     if (length <= fastSizeLimit) {
@@ -69,7 +68,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
             return;
 
         m_structure = structure;
-        m_vector = VectorType(temp, length);
+        m_vector = VectorType(temp, m_maxByteLength);
         m_mode = FastTypedArray;
 
         if (mode == ZeroFill) {
@@ -86,7 +85,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     if (size.hasOverflowed() || size > MAX_ARRAY_BUFFER_SIZE)
         return;
 
-    m_vector = VectorType(Gigacage::tryMalloc(Gigacage::Primitive, size.value()), length);
+    m_vector = VectorType(Gigacage::tryMalloc(Gigacage::Primitive, size.value()), m_maxByteLength);
     if (!m_vector)
         return;
     if (mode == ZeroFill)
@@ -98,40 +97,39 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     m_mode = OversizeTypedArray;
 }
 
-JSArrayBufferView::ConstructionContext::ConstructionContext(
-    VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer,
-    size_t byteOffset, size_t length)
+JSArrayBufferView::ConstructionContext::ConstructionContext(VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer, size_t byteOffset, size_t length)
     : m_structure(structure)
     , m_length(length)
+    , m_maxByteLength((Checked<size_t>(length) * JSC::elementSize(structure->typeInfo().type())).value())
     , m_mode(WastefulTypedArray)
 {
     ASSERT(arrayBuffer->data() == removeArrayPtrTag(arrayBuffer->data()));
-    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, length);
+    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, m_maxByteLength);
     IndexingHeader indexingHeader;
     indexingHeader.setArrayBuffer(arrayBuffer.get());
     m_butterfly = Butterfly::create(vm, nullptr, 0, 0, true, indexingHeader, 0);
 }
 
-JSArrayBufferView::ConstructionContext::ConstructionContext(
-    Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer,
-    size_t byteOffset, size_t length, DataViewTag)
+JSArrayBufferView::ConstructionContext::ConstructionContext(Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer, size_t byteOffset, size_t length, DataViewTag)
     : m_structure(structure)
     , m_length(length)
+    , m_maxByteLength(length)
     , m_mode(DataViewMode)
     , m_butterfly(nullptr)
 {
     ASSERT(arrayBuffer->data() == removeArrayPtrTag(arrayBuffer->data()));
-    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, length);
+    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, m_maxByteLength);
 }
 
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     : Base(vm, context.structure(), nullptr)
     , m_length(context.length())
+    , m_maxByteLength(context.maxByteLengthUnsafe())
     , m_mode(context.mode())
 {
     setButterfly(vm, context.butterfly());
     ASSERT(context.vector() == removeArrayPtrTag(context.vector()));
-    m_vector.setWithoutBarrier(context.vector(), m_length);
+    m_vector.setWithoutBarrier(context.vector(), m_maxByteLength);
 }
 
 void JSArrayBufferView::finishCreation(VM& vm)
@@ -145,9 +143,11 @@ void JSArrayBufferView::finishCreation(VM& vm)
         vm.heap.addFinalizer(this, finalize);
         return;
     case WastefulTypedArray:
+    case ResizableWastefulTypedArray:
         vm.heap.addReference(this, butterfly()->indexingHeader()->arrayBuffer());
         return;
     case DataViewMode:
+    case ResizableDataViewMode:
         ASSERT(!butterfly());
         vm.heap.addReference(this, jsCast<JSDataView*>(this)->possiblySharedBuffer());
         return;
@@ -217,6 +217,7 @@ void JSArrayBufferView::detach()
     RELEASE_ASSERT(hasArrayBuffer());
     RELEASE_ASSERT(!isShared());
     m_length = 0;
+    m_maxByteLength = 0;
     m_vector.clear();
 }
 
@@ -292,9 +293,9 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     {
         Locker locker { cellLock() };
         butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-        m_vector.setWithoutBarrier(buffer->data(), m_length);
+        m_vector.setWithoutBarrier(buffer->data(), m_maxByteLength);
         WTF::storeStoreFence();
-        m_mode = WastefulTypedArray;
+        m_mode = WastefulTypedArray; // There is no possibility that FastTypedArray or OversizeTypedArray becomes ResizableWastefulTypedArray since resizable one starts with ResizableWastefulTypedArray.
     }
     heap->addReference(this, buffer.get());
 
@@ -322,6 +323,60 @@ RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
+}
+
+bool isIntegerIndexedObjectOutOfBounds(JSArrayBufferView* typedArray, IdempotentArrayBufferByteLengthGetter& getter)
+{
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-isintegerindexedobjectoutofbounds
+
+    if (typedArray->isDetached())
+        return true;
+
+    if (!isResizable(typedArray->mode()))
+        return false;
+
+    ASSERT(typedArray->mode() == ResizableWastefulTypedArray);
+    RefPtr<ArrayBuffer> buffer = typedArray->possiblySharedBuffer();
+    if (!buffer)
+        return true;
+
+    size_t bufferByteLength = getter(*buffer);
+    size_t byteOffsetStart = typedArray->byteOffset();
+    size_t byteOffsetEnd = bufferByteLength;
+    return byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength;
+}
+
+std::optional<size_t> integerIndexedObjectLength(JSArrayBufferView* typedArray, IdempotentArrayBufferByteLengthGetter& getter)
+{
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-integerindexedobjectlength
+
+    if (isIntegerIndexedObjectOutOfBounds(typedArray, getter))
+        return std::nullopt;
+
+    if (!isResizable(typedArray->mode()))
+        return typedArray->length();
+
+    ASSERT(typedArray->mode() == ResizableWastefulTypedArray);
+    RefPtr<ArrayBuffer> buffer = typedArray->possiblySharedBuffer();
+    if (!buffer)
+        return std::nullopt;
+
+    size_t bufferByteLength = getter(*buffer);
+    size_t byteOffset = typedArray->byteOffset();
+    size_t elementSize = JSC::elementSize(typedArray->type());
+    return (bufferByteLength - byteOffset) / elementSize;
+}
+
+size_t integerIndexedObjectByteLength(JSArrayBufferView* typedArray, IdempotentArrayBufferByteLengthGetter& getter)
+{
+    std::optional<size_t> length = integerIndexedObjectLength(typedArray, getter);
+    if (!length || !length.value())
+        return 0;
+
+    if (!isResizable(typedArray->mode()))
+        return typedArray->byteLength();
+
+    return length.value() * JSC::elementSize(typedArray->type());
 }
 
 JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue typedArrayValue)
@@ -392,8 +447,14 @@ void printInternal(PrintStream& out, TypedArrayMode mode)
     case WastefulTypedArray:
         out.print("WastefulTypedArray");
         return;
+    case ResizableWastefulTypedArray:
+        out.print("ResizableWastefulTypedArray");
+        return;
     case DataViewMode:
         out.print("DataViewMode");
+        return;
+    case ResizableDataViewMode:
+        out.print("ResizableDataViewMode");
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

@@ -3608,6 +3608,8 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 #endif
     }
 
+    // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
+    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableWastefulTypedArray)));
 #if USE(LARGE_TYPED_ARRAYS)
     m_jit.signExtend32ToPtr(indexGPR, scratchGPR);
     return m_jit.branch64(
@@ -3638,10 +3640,12 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds(Node*
         else {
             outOfBounds.link(&m_jit);
 
-            JITCompiler::Jump notWasteful = m_jit.branch32(
-                MacroAssembler::NotEqual,
+            JITCompiler::Jump notWasteful = m_jit.branch8(
+                MacroAssembler::Below,
                 MacroAssembler::Address(base, JSArrayBufferView::offsetOfMode()),
                 TrustedImm32(WastefulTypedArray));
+            // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
+            speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(base), node, m_jit.branch8(CCallHelpers::Equal, CCallHelpers::Address(base, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableWastefulTypedArray)));
 
             JITCompiler::Jump hasNullVector;
 #if CPU(ARM64E)
@@ -8403,7 +8407,7 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg, bo
 {
     auto untagArrayPtr = [&]() {
 #if CPU(ARM64E)
-        m_jit.untagArrayPtrLength64(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
+        m_jit.untagArrayPtrLength64(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfMaxByteLength()), storageReg, validateAuth);
 #else
         UNUSED_PARAM(validateAuth);
         UNUSED_PARAM(baseReg);
@@ -8483,10 +8487,12 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 
     GPRReg arrayBufferGPR = dataGPR;
 
-    JITCompiler::Jump emptyByteOffset = m_jit.branch32(
-        MacroAssembler::NotEqual,
+    JITCompiler::Jump emptyByteOffset = m_jit.branch8(
+        MacroAssembler::Below,
         MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
         TrustedImm32(WastefulTypedArray));
+    // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
+    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableWastefulTypedArray)));
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
 
@@ -8791,6 +8797,8 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRTemporary result(this);
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
+        // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableWastefulTypedArray)));
 #if USE(LARGE_TYPED_ARRAYS)
         m_jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
         speculationCheck(Overflow, JSValueSource(), nullptr, m_jit.branch64(MacroAssembler::Above, resultGPR, TrustedImm64(std::numeric_limits<int32_t>::max())));
@@ -11658,6 +11666,7 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
 #if CPU(ARM64E)
     // sizeGPR is still boxed as a number and there is no 32-bit variant of the PAC instructions.
     m_jit.zeroExtend32ToWord(sizeGPR, scratchGPR);
+    m_jit.lshift64(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
     m_jit.tagArrayPtr(scratchGPR, storageGPR);
 #endif
 
@@ -11684,12 +11693,18 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
     m_jit.store64(
         sizeGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
+    m_jit.zeroExtend32ToWord(sizeGPR, scratchGPR);
+    m_jit.lshift64(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
+    m_jit.store64(scratchGPR, MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMaxByteLength()));
 #else
     m_jit.store32(
         sizeGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
+    m_jit.move(sizeGPR, scratchGPR);
+    m_jit.lshift32(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
+    m_jit.store32(scratchGPR, MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMaxByteLength()));
 #endif
-    m_jit.store32(
+    m_jit.store8(
         TrustedImm32(FastTypedArray),
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMode()));
     

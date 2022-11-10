@@ -24,51 +24,40 @@
  */
 
 #include "config.h"
-#include "WasmMemoryMode.h"
-
-#if ENABLE(WEBASSEMBLY)
+#include "MemoryMode.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
-
-namespace JSC { namespace Wasm {
-
-const char* makeString(MemoryMode mode)
-{
-    switch (mode) {
-    case MemoryMode::BoundsChecking: return "BoundsChecking";
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-    case MemoryMode::Signaling: return "Signaling";
-#endif
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return "";
-}
-
-const char* makeString(MemorySharingMode sharingMode)
-{
-    switch (sharingMode) {
-    case MemorySharingMode::Default: return "Default";
-    case MemorySharingMode::Shared: return "Shared";
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return "";
-}
-
-} } // namespace JSC::Wasm
 
 namespace WTF {
 
-void printInternal(PrintStream& out, JSC::Wasm::MemoryMode mode)
+void printInternal(PrintStream& out, JSC::MemoryMode mode)
 {
-    out.print(JSC::Wasm::makeString(mode));
+    switch (mode) {
+    case JSC::MemoryMode::BoundsChecking:
+        out.print("BoundsChecking");
+        return;
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+    case JSC::MemoryMode::Signaling:
+        out.print("Signaling");
+        return;
+#endif
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-void printInternal(PrintStream& out, JSC::Wasm::MemorySharingMode mode)
+void printInternal(PrintStream& out, JSC::MemorySharingMode mode)
 {
-    out.print(JSC::Wasm::makeString(mode));
+    switch (mode) {
+    case JSC::MemorySharingMode::Default:
+        out.print("Default");
+        return;
+    case JSC::MemorySharingMode::Shared:
+        out.print("Shared");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WTF
-
-#endif // ENABLE(WEBASSEMBLY)

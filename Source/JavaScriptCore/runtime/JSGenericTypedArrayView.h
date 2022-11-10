@@ -174,7 +174,7 @@ public:
         if (isDetached())
             return true;
 
-        if (i >= m_length)
+        if (!inBounds(i))
             return false;
 
         setIndexQuicklyToNativeValue(i, value);
@@ -364,6 +364,7 @@ private:
     template<typename IntegralType>
     void sortFloat()
     {
+        // FIXME: Need to get m_length once.
         ASSERT(sizeof(IntegralType) == sizeof(ElementType));
 
         // Since there might be another view that sets the bits of

@@ -30,7 +30,7 @@
 #include "CallLinkInfo.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
-#include "WasmMemoryMode.h"
+#include "MemoryMode.h"
 #include "WasmOps.h"
 #include <wtf/Bag.h>
 #include <wtf/Expected.h>

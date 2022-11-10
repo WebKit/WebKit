@@ -1237,9 +1237,9 @@ void AccessCase::generateWithGuard(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(addressOfLength, scratchGPR);
+        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
 #else
-        jit.load32(addressOfLength, scratchGPR);
+        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
 #endif
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
@@ -1661,9 +1661,9 @@ void AccessCase::generateWithGuard(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(addressOfLength, scratchGPR);
+        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
 #else
-        jit.load32(addressOfLength, scratchGPR);
+        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
 #endif
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);

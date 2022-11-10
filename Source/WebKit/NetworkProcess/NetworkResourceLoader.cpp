@@ -746,6 +746,9 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
 
 void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
+    if (!m_parameters.isClearSiteDataHeaderEnabled)
+        return completionHandler();
+
     auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
     if (headerValue.isEmpty())
         return completionHandler();

@@ -35,8 +35,10 @@ inline bool JSArrayBufferView::isShared()
 {
     switch (m_mode) {
     case WastefulTypedArray:
+    case ResizableWastefulTypedArray:
         return existingBufferInButterfly()->isShared();
     case DataViewMode:
+    case ResizableDataViewMode:
         return jsCast<JSDataView*>(this)->possiblySharedBuffer()->isShared();
     default:
         return false;
@@ -51,8 +53,10 @@ inline ArrayBuffer* JSArrayBufferView::possiblySharedBufferImpl()
 
     switch (m_mode) {
     case WastefulTypedArray:
+    case ResizableWastefulTypedArray:
         return existingBufferInButterfly();
     case DataViewMode:
+    case ResizableDataViewMode:
         return jsCast<JSDataView*>(this)->possiblySharedBuffer();
     case FastTypedArray:
     case OversizeTypedArray:
@@ -69,7 +73,7 @@ inline ArrayBuffer* JSArrayBufferView::possiblySharedBuffer()
 
 inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
 {
-    ASSERT(m_mode == WastefulTypedArray);
+    ASSERT(m_mode == WastefulTypedArray || m_mode == ResizableWastefulTypedArray);
     return butterfly()->indexingHeader()->arrayBuffer();
 }
 

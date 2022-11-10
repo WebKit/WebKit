@@ -70,7 +70,7 @@ enum class SerializationForStorage : bool { No, Yes };
 using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 #if ENABLE(WEBASSEMBLY)
 using WasmModuleArray = Vector<RefPtr<JSC::Wasm::Module>>;
-using WasmMemoryHandleArray = Vector<RefPtr<JSC::Wasm::MemoryHandle>>;
+using WasmMemoryHandleArray = Vector<RefPtr<JSC::SharedArrayBufferContents>>;
 #endif
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
@@ -236,7 +236,8 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
                 Gigacage::free(Gigacage::Primitive, buffer);
                 return nullptr;
             }
-            arrayBufferContentsArray->append({ buffer, checkedBufferSize, ArrayBuffer::primitiveGigacageDestructor() });
+            JSC::ArrayBufferDestructorFunction destructor = ArrayBuffer::primitiveGigacageDestructor();
+            arrayBufferContentsArray->append({ buffer, checkedBufferSize, std::nullopt, WTFMove(destructor) });
         }
     }
 

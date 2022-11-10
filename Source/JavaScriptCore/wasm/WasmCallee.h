@@ -321,8 +321,8 @@ private:
     FixedVector<JumpTable> m_jumpTables;
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-    RefPtr<OptimizingJITCallee> m_replacements[Wasm::NumberOfMemoryModes];
-    RefPtr<OSREntryCallee> m_osrEntryCallees[Wasm::NumberOfMemoryModes];
+    RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
+    RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
 #endif
     CodePtr<WasmEntryPtrTag> m_entrypoint;
 };

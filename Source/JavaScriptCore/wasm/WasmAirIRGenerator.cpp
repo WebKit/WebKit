@@ -1824,10 +1824,10 @@ auto AirIRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 
     RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfMemory(), Width64));
     RELEASE_ASSERT(Arg::isValidAddrForm(Memory::offsetOfHandle(), Width64));
-    RELEASE_ASSERT(Arg::isValidAddrForm(MemoryHandle::offsetOfSize(), Width64));
+    RELEASE_ASSERT(Arg::isValidAddrForm(BufferMemoryHandle::offsetOfSize(), Width64));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfMemory()), temp1);
     append(Move, Arg::addr(temp1, Memory::offsetOfHandle()), temp1);
-    append(Move, Arg::addr(temp1, MemoryHandle::offsetOfSize()), temp1);
+    append(Move, Arg::addr(temp1, BufferMemoryHandle::offsetOfSize()), temp1);
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
     append(Move, Arg::imm(16), temp2);

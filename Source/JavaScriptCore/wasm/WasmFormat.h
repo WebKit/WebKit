@@ -31,13 +31,13 @@
 #include "Identifier.h"
 #include "JSString.h"
 #include "MacroAssemblerCodeRef.h"
+#include "PageCount.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
 #include "WasmOSREntryData.h"
 #include "WasmOps.h"
-#include "WasmPageCount.h"
 #include "WasmTypeDefinition.h"
 #include <cstdint>
 #include <limits>

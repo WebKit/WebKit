@@ -136,6 +136,8 @@
     macro(go) \
     macro(granularity) \
     macro(groups) \
+    macro(grow) \
+    macro(growable) \
     macro(has) \
     macro(hasIndices) \
     macro(hasOwn) \
@@ -180,6 +182,7 @@
     macro(line) \
     macro(locale) \
     macro(localeMatcher) \
+    macro(maxByteLength) \
     macro(maximumFractionDigits) \
     macro(maximumSignificantDigits) \
     macro(message) \

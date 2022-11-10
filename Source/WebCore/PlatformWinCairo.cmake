@@ -9,7 +9,6 @@ if (USE_DAWN)
 endif ()
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBKIT_LIBRARIES_DIR}/include"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/graphics/wc"
@@ -74,6 +73,8 @@ if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
         /DELAYLOAD:mf.dll
         /DELAYLOAD:mfplat.dll
     )
+
+    list(APPEND WebCore_PRIVATE_LIBRARIES MediaFoundation)
 endif ()
 
 if (USE_WOFF2)

@@ -57,8 +57,8 @@ public:
     JS_EXPORT_PRIVATE void adopt(Ref<Wasm::Memory>&&);
     Wasm::Memory& memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(JSGlobalObject*);
-    Wasm::PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
-    JS_EXPORT_PRIVATE void growSuccessCallback(VM&, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount);
+    PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
+    JS_EXPORT_PRIVATE void growSuccessCallback(VM&, PageCount oldPageCount, PageCount newPageCount);
 
     JSObject* type(JSGlobalObject*);
 
