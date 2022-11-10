@@ -536,8 +536,6 @@ void run(const char* filter)
     addLoadTests(filter, tasks);
     addTupleTests(filter, tasks);
 
-    addCopyTests(filter, tasks);
-
     RUN(testSpillGP());
     RUN(testSpillFP());
 
