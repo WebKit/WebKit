@@ -59,7 +59,6 @@ struct WebCore::CacheQueryOptions {
     bool ignoreSearch;
     bool ignoreMethod;
     bool ignoreVary;
-    String cacheName;
 }
 
 struct WebCore::CharacterRange {

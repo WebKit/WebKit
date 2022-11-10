@@ -316,7 +316,7 @@ void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallba
     if (!records)
         return;
 
-    CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary, { } };
+    CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary };
     for (auto& record : *records) {
         if (DOMCacheEngine::queryCacheMatch(options.request, record.url, record.hasVaryStar, record.varyHeaders, queryOptions))
             retrieveRecord(record, taskCounter.copyRef());

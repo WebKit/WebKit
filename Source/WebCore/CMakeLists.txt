@@ -262,6 +262,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/cache/CacheQueryOptions.idl
     Modules/cache/DOMCache.idl
+    Modules/cache/MultiCacheQueryOptions.idl
     Modules/cache/DOMCacheStorage.idl
     Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
 
