@@ -321,11 +321,12 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (style().visibility() != Visibility::Visible)
         return false;
     
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    LayoutRect paintRect(visualOverflowRect());
+    paintRect.moveBy(paintOffset + location());
 
     // Early exit if the element touches the edges.
-    LayoutUnit top = adjustedPaintOffset.y() + visualOverflowRect().y();
-    LayoutUnit bottom = adjustedPaintOffset.y() + visualOverflowRect().maxY();
+    LayoutUnit top = paintRect.y();
+    LayoutUnit bottom = paintRect.maxY();
     if (isSelected() && m_inlineBoxWrapper) {
         const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
         LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
@@ -335,7 +336,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     }
     
     LayoutRect localRepaintRect = paintInfo.rect;
-    if (adjustedPaintOffset.x() + visualOverflowRect().x() >= localRepaintRect.maxX() || adjustedPaintOffset.x() + visualOverflowRect().maxX() <= localRepaintRect.x())
+    if (paintRect.x() >= localRepaintRect.maxX() || paintRect.maxX() <= localRepaintRect.x())
         return false;
 
     if (top >= localRepaintRect.maxY() || bottom <= localRepaintRect.y())
