@@ -49,7 +49,7 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
     if (!m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host())) {
         auto host = url.host().toString();
         bool subscribeToCookieChangeNotifications = true;
-        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(host, subscribeToCookieChangeNotifications), 0);
+        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url, subscribeToCookieChangeNotifications), 0);
         if (!sendResult)
             return { };
 
