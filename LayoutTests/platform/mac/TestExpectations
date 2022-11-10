@@ -2085,7 +2085,7 @@ webkit.org/b/225523 webrtc/direction-change.html [ Pass Timeout Failure ]
 
 webkit.org/b/225528 [ arm64 ] http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
 
-webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 

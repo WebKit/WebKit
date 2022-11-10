@@ -1461,7 +1461,7 @@ webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure ]
 
-webkit.org/b/225258 js/dom/Promise-reject-large-string.html [ Pass Failure ]
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 

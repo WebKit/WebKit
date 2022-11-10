@@ -2225,7 +2225,7 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 
-webkit.org/b/242812 [ Release arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/241205 [ Release arm64 ] fast/forms/textfield-outline.html [ Pass Failure ]
 
