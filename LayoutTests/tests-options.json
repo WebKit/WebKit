@@ -4910,6 +4910,12 @@
     "imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/sandboxed-iframes.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html": [
         "slow"
     ],

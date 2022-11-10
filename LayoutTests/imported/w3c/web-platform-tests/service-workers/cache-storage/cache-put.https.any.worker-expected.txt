@@ -1,0 +1,29 @@
+
+PASS Cache.put called with simple Request and Response
+PASS Cache.put called with Request and Response from fetch()
+PASS Cache.put with Request without a body
+PASS Cache.put with Response without a body
+PASS Cache.put with a Response containing an empty URL
+PASS Cache.put with an empty response body
+PASS Cache.put with synthetic 206 response
+PASS Cache.put with HTTP 206 response
+PASS Cache.put with opaque-filtered HTTP 206 response
+PASS Cache.put with HTTP 500 response
+PASS Cache.put called twice with matching Requests and different Responses
+PASS Cache.put called twice with request URLs that differ only by a fragment
+PASS Cache.put with a string request
+PASS Cache.put with an invalid response
+PASS Cache.put with a non-HTTP/HTTPS request
+PASS Cache.put with a relative URL
+PASS Cache.put with a non-GET request
+PASS Cache.put with a null response
+PASS Cache.put with a POST request
+PASS Cache.put with a used response body
+PASS getReader() after Cache.put
+PASS Cache.put with a VARY:* Response
+PASS Cache.put with an embedded VARY:* Response
+PASS Cache.put with a VARY:* opaque response should not reject
+PASS Cache.put should store Response.redirect() correctly
+PASS Cache.put called with simple Request and blob Response
+PASS Cache.put called with simple Request and form data Response
+
