@@ -177,6 +177,14 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
     }
 #endif
 
+    auto originalRequest { request };
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+    constexpr auto webArchivePrefix = "webarchive+"_s;
+    auto url = request.url();
+    if (url.protocol().startsWith(webArchivePrefix))
+        request.setURL(URL { url.string().substring(webArchivePrefix.length()) });
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilterUnblockHandler.canHandleRequest(request)) {
         RefPtr<Frame> frame { &m_frame };
@@ -198,7 +206,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
     auto requestIdentifier = PolicyCheckIdentifier::generate();
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    FramePolicyFunction decisionHandler = [this, function = WTFMove(function), request = ResourceRequest(request), requestIsJavaScriptURL, formState = std::exchange(formState, nullptr), suggestedFilename = WTFMove(suggestedFilename),
+    FramePolicyFunction decisionHandler = [this, function = WTFMove(function), request = WTFMove(originalRequest), requestIsJavaScriptURL, formState = std::exchange(formState, nullptr), suggestedFilename = WTFMove(suggestedFilename),
          blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension), requestIdentifier, isInitialEmptyDocumentLoad] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
         if (responseIdentifier != requestIdentifier) {
             POLICYCHECKER_RELEASE_LOG("checkNavigationPolicy: ignoring because response is not valid for request");
