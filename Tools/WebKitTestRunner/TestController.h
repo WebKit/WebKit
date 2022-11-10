@@ -575,7 +575,7 @@ private:
 
 #if PLATFORM(COCOA)
     static void finishCreatingPlatformWebView(PlatformWebView*, const TestOptions&);
-    void configureContentMode(WKWebViewConfiguration *, const TestOptions&);
+    void configureWebpagePreferences(WKWebViewConfiguration *, const TestOptions&);
 #endif
 
     static const char* libraryPathForTesting();

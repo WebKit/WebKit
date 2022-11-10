@@ -5453,8 +5453,8 @@ String Document::referrer()
 
 String Document::referrerForBindings()
 {
-    if (auto* page = this->page(); page
-        && page->usesEphemeralSession()
+    if (auto* loader = topDocument().loader(); loader
+        && loader->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled)
         && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
         return String();
     return referrer();

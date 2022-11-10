@@ -49,6 +49,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
@@ -195,7 +196,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
             [copiedConfiguration _setContentSecurityPolicyModeForExtension:_WKContentSecurityPolicyModeForExtensionManifestV3];
     }
 
-    configureContentMode(copiedConfiguration.get(), options);
+    configureWebpagePreferences(copiedConfiguration.get(), options);
 
     auto applicationManifest = options.applicationManifest();
     if (applicationManifest.length()) {
@@ -552,13 +553,12 @@ static WKContentMode contentMode(const TestOptions& options)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-void TestController::configureContentMode(WKWebViewConfiguration *configuration, const TestOptions& options)
+void TestController::configureWebpagePreferences(WKWebViewConfiguration *configuration, const TestOptions& options)
 {
     auto webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [webpagePreferences _setNetworkConnectionIntegrityEnabled:options.networkConnectionIntegrityEnabled()];
 #if PLATFORM(IOS_FAMILY)
     [webpagePreferences setPreferredContentMode:contentMode(options)];
-#else
-    UNUSED_PARAM(options);
 #endif
     configuration.defaultWebpagePreferences = webpagePreferences.get();
 }
