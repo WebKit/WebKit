@@ -23,10 +23,11 @@ _log = logging.getLogger(__name__)
 class BenchmarkBuilder(object):
     LOCAL_GIT_ARCHIVE_SCHEMA = re.compile(r'\A(?P<path>.+)@(?P<reference>[0-9a-zA-z.\-]+)\Z')
 
-    def __init__(self, name, plan, driver):
+    def __init__(self, name, plan, driver, enable_signposts=False):
         self._name = name
         self._plan = plan
         self._driver = driver
+        self._enable_signposts = enable_signposts
 
     def __enter__(self):
         self._web_root = tempfile.mkdtemp(dir="/tmp")
@@ -51,6 +52,11 @@ class BenchmarkBuilder(object):
             patch_file_key = "{driver}_benchmark_patch".format(driver=self._driver)
             if patch_file_key in self._plan:
                 self._apply_patch(self._plan[patch_file_key])
+            if self._enable_signposts:
+                if 'signpost_patch' in self._plan:
+                    self._apply_patch(self._plan['signpost_patch'])
+                else:
+                    _log.warning('Signposts are enabled but a signpost patch was not found in the test plan. Skipping.')
             return self._web_root
         except Exception:
             self._clean()
