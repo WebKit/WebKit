@@ -7,6 +7,6 @@ FAIL target5 assert_equals: expected "background: var(--prop)  !important;" but 
 FAIL target6 assert_equals: expected "background: green;" but got "background-color: green;"
 PASS target7
 PASS target8
-FAIL target9 assert_equals: expected "margin-right: ; margin-bottom: ; margin-left: ; margin-top: 10px;" but got "margin: var(--prop);"
+PASS target9
 PASS target10
 
