@@ -1526,7 +1526,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         if (match(OPENBRACE) || match(OPENBRACKET)) {
             SavePoint savePoint = createSavePoint(context);
             declsStart = tokenStartPosition();
-            pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::DeclarationStatement);
+            pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
             declsEnd = lastTokenEndPosition();
             if (pattern && (match(INTOKEN) || matchContextualKeyword(m_vm.propertyNames->of)))
                 goto enumerationLoop;
