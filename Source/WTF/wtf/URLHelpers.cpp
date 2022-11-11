@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,8 @@ constexpr unsigned urlBytesBufferLength = 2048;
 //    WebKit was compiled.
 // This is only really important for platforms that load an external IDN allowed script list.
 // Not important for the compiled-in one.
-constexpr auto scriptCodeLimit = static_cast<UScriptCode>(256);
+constexpr auto scriptCodeLimit = static_cast<UScriptCode>(255);
+
 
 static uint32_t allowedIDNScriptBits[(scriptCodeLimit + 31) / 32];
 
