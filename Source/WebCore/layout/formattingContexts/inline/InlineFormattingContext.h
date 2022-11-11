@@ -36,6 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
+class BlockLayoutState;
 class InlineDamage;
 class InlineFormattingState;
 class LineBox;
@@ -56,7 +57,7 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    void layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&);
+    void layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, const BlockLayoutState&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:

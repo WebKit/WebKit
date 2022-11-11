@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineFormattingContext.h"
 
+#include "BlockLayoutState.h"
 #include "FloatingContext.h"
 #include "FontCascade.h"
 #include "InlineDamage.h"
@@ -145,7 +146,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
+void InlineFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints, const BlockLayoutState&)
 {
     invalidateFormattingState();
     collectContentIfNeeded();

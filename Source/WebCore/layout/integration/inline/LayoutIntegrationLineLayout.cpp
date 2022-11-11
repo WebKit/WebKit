@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationLineLayout.h"
 
+#include "BlockLayoutState.h"
 #include "DeprecatedGlobalSettings.h"
 #include "EventRegion.h"
 #include "FloatingState.h"
@@ -439,7 +440,7 @@ void LineLayout::layout()
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
     ASSERT(m_inlineContentConstraints);
-    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints);
+    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, { });
 
     constructContent();
 
