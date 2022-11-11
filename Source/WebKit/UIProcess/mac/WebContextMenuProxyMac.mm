@@ -106,7 +106,7 @@
 @end
 
 @interface WKMenuTarget : NSObject {
-    WebKit::WebContextMenuProxyMac* _menuProxy;
+    WeakPtr<WebKit::WebContextMenuProxyMac> _menuProxy;
 }
 + (WKMenuTarget *)sharedMenuTarget;
 - (WebKit::WebContextMenuProxyMac*)menuProxy;
@@ -124,7 +124,7 @@
 
 - (WebKit::WebContextMenuProxyMac*)menuProxy
 {
-    return _menuProxy;
+    return _menuProxy.get();
 }
 
 - (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy
@@ -134,6 +134,9 @@
 
 - (void)forwardContextMenuAction:(id)sender
 {
+    if (!_menuProxy)
+        return;
+
     id representedObject = [sender representedObject];
 
     // NSMenuItems with a represented selection handler belong solely to the UI process
@@ -156,9 +159,9 @@
 @end
 
 @interface WKMenuDelegate : NSObject <NSMenuDelegate> {
-    WebKit::WebContextMenuProxyMac* _menuProxy;
+    WeakPtr<WebKit::WebContextMenuProxyMac> _menuProxy;
 }
--(instancetype)initWithMenuProxy:(WebKit::WebContextMenuProxyMac&)menuProxy;
+- (instancetype)initWithMenuProxy:(WebKit::WebContextMenuProxyMac&)menuProxy;
 @end
 
 @implementation WKMenuDelegate
