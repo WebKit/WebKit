@@ -113,8 +113,10 @@ public:
 
     void paint(GraphicsContext&, const LayoutRect&);
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> toVideoFrame();
+#endif
+#if ENABLE(MEDIA_STREAM)
     ExceptionOr<Ref<MediaStream>> captureStream(std::optional<double>&& frameRequestRate);
 #endif
 

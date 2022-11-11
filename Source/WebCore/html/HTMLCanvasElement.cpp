@@ -880,7 +880,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
 #endif
 }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 
 RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 {
@@ -917,6 +917,10 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
     return nullptr;
 #endif
 }
+
+#endif // ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+
+#if ENABLE(MEDIA_STREAM)
 
 ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(std::optional<double>&& frameRequestRate)
 {
