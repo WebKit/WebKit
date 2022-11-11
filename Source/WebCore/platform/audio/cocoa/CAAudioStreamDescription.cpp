@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-CAAudioStreamDescription::CAAudioStreamDescription()
-    : m_streamDescription({ })
-{
-}
-
 CAAudioStreamDescription::~CAAudioStreamDescription() = default;
 
 CAAudioStreamDescription::CAAudioStreamDescription(const AudioStreamBasicDescription &desc)

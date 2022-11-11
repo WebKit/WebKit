@@ -1429,7 +1429,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/RegistrableDomain.h
     platform/RemoteCommandListener.h
     platform/RuntimeApplicationChecks.h
-    platform/SSLKeyGenerator.h
     platform/ScreenOrientationManager.h
     platform/ScreenOrientationProvider.h
     platform/ScreenProperties.h

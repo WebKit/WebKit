@@ -154,7 +154,7 @@ void AudioMediaStreamTrackRendererUnit::reset()
     });
 }
 
-void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&& callback)
+void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
 {
     ASSERT(isMainThread());
     m_internalUnit->retrieveFormatDescription(WTFMove(callback));

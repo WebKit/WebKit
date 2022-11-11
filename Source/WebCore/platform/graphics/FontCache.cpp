@@ -44,7 +44,6 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/ThreadSpecific.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringHash.h>
 
@@ -129,37 +128,19 @@ struct FontCache::FontDataCaches {
 #endif
 };
 
-static FontCache*& fontCacheForCurrentThread()
-{
-    static ThreadSpecific<FontCache*>* fontCache;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        fontCache = new ThreadSpecific<FontCache*>;
-    });
-    return **fontCache;
-}
-
 FontCache& FontCache::forCurrentThread()
 {
-    auto& fontCache = fontCacheForCurrentThread();
-    if (UNLIKELY(!fontCache))
-        fontCache = new FontCache;
-    return *fontCache;
+    return threadGlobalData().fontCache();
 }
 
 FontCache* FontCache::forCurrentThreadIfExists()
 {
-    return fontCacheForCurrentThread();
+    return threadGlobalData().fontCacheIfExists();
 }
 
-void FontCache::destroy()
+FontCache* FontCache::forCurrentThreadIfNotDestroyed()
 {
-    if (auto& fontCache = fontCacheForCurrentThread()) {
-        fontCache->invalidate();
-        FontCache* ptr = fontCache;
-        fontCache = nullptr;
-        delete ptr;
-    }
+    return threadGlobalData().fontCacheIfNotDestroyed();
 }
 
 FontCache::FontCache()

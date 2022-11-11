@@ -90,7 +90,6 @@ public:
     }
 
     RealtimeMediaSource& source() { return m_source; }
-    CAAudioStreamDescription& description() { return m_description; }
     int64_t numberOfFrames() { return m_numberOfFrames; }
 
     void audioUnitWillStart() final
@@ -155,8 +154,8 @@ private:
             m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, AudioSession::sharedSession().preferredBufferSize());
 
             // Allocate a ring buffer large enough to contain 2 seconds of audio.
-            m_numberOfFrames = m_description.sampleRate() * 2;
-            auto& format = m_description.streamDescription();
+            m_numberOfFrames = m_description->sampleRate() * 2;
+            auto& format = m_description->streamDescription();
             auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
             m_ringBuffer = WTFMove(ringBuffer);
             m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, WTFMove(handle), format, m_numberOfFrames, *m_captureSemaphore, m_startTime, m_frameChunkSize), 0);
@@ -233,7 +232,7 @@ private:
     ProcessIdentity m_resourceOwner;
     Ref<RealtimeMediaSource> m_source;
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
-    CAAudioStreamDescription m_description { };
+    std::optional<CAAudioStreamDescription> m_description { };
     int64_t m_numberOfFrames { 0 };
     bool m_isStopped { false };
     std::unique_ptr<ImageRotationSessionVT> m_rotationSession;

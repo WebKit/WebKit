@@ -90,7 +90,7 @@ private:
         void startThread();
 
         Ref<RemoteRealtimeAudioSource> m_source;
-        WebCore::CAAudioStreamDescription m_description;
+        std::optional<WebCore::CAAudioStreamDescription> m_description;
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
         std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
         int64_t m_readOffset { 0 };

@@ -208,9 +208,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
         return false;
     }
 
-    uint64_t startFrame = 0;
-    uint64_t endFrame = 0;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    auto [startFrame, endFrame] = m_ringBuffer->getFetchTimeBounds();
 
     ASSERT(m_waitToStartForPushCount);
 
@@ -233,7 +231,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
         if (!m_isInNeedOfMoreData) {
             m_isInNeedOfMoreData = true;
             DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
+            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame = startFrame, endFrame = endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
                 ERROR_LOG(logIdentifier, "need more data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
             });
         }
@@ -297,9 +295,7 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
 
-    uint64_t startFrame = 0;
-    uint64_t endFrame = 0;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    auto [startFrame, endFrame] = m_ringBuffer->getFetchTimeBounds();
     if (m_shouldComputeOutputSampleOffset) {
         m_outputSampleOffset = timeStamp + (endFrame - sampleCountPerChunk);
         m_shouldComputeOutputSampleOffset = false;

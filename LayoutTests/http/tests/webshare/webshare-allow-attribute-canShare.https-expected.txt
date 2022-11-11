@@ -1,8 +1,9 @@
+CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://localhost:8443' and allow attribute ''.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://localhost:8443' and allow attribute 'web-share 'none''.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://127.0.0.1:8443' and allow attribute 'web-share 'none''.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://localhost:8443' and allow attribute 'web-share 'self''.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://127.0.0.1:8443' and allow attribute 'web-share https://localhost:8443'.
-PASS iframe src: "https://localhost:8443/webshare/resources/webshare-postmessage.html" with allow="" is allowed to call canShare().
+PASS iframe src: "https://localhost:8443/webshare/resources/webshare-postmessage.html" with allow="" MUST NOT be allowed to call canShare().
 PASS iframe src: "https://127.0.0.1:8443/webshare/resources/webshare-postmessage.html" with allow="" is allowed to call canShare().
 PASS iframe src: "https://localhost:8443/webshare/resources/webshare-postmessage.html" with allow="web-share" is allowed to call canShare().
 PASS iframe src: "https://127.0.0.1:8443/webshare/resources/webshare-postmessage.html" with allow="web-share" is allowed to call canShare().

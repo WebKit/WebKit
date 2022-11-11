@@ -84,7 +84,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/SSLKeyGenerator.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/UniversalAccessZoom.h>
 #import <WebCore/Widget.h>
@@ -1149,14 +1148,6 @@ void WebChromeClient::mockMediaPlaybackTargetPickerDismissPopup()
     [m_webView _mockMediaPlaybackTargetPickerDismissPopup];
 }
 #endif
-
-String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const
-{
-    SEL selector = @selector(signedPublicKeyAndChallengeStringForWebView:);
-    if ([[m_webView UIDelegate] respondsToSelector:selector])
-        return CallUIDelegate(m_webView, selector);
-    return WebCore::signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
-}
 
 #if PLATFORM(MAC)
 void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)

@@ -125,8 +125,6 @@ private:
 
         RefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
 
-        RefPtr<API::String> signedPublicKeyAndChallengeString(WebPageProxy&, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const URL&) override;
-
         void navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction&, DownloadProxy&) final;
         void navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse&, DownloadProxy&) final;
         void contextMenuDidCreateDownload(WebPageProxy&, DownloadProxy&) final;

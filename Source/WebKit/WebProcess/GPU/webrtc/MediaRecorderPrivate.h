@@ -74,7 +74,7 @@ private:
     Ref<IPC::Connection> m_connection;
 
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
-    WebCore::CAAudioStreamDescription m_description { };
+    std::optional<WebCore::CAAudioStreamDescription> m_description;
     std::unique_ptr<WebCore::WebAudioBufferList> m_silenceAudioBuffer;
     uint64_t m_numberOfFrames { 0 };
     WebCore::MediaRecorderPrivateOptions m_options;

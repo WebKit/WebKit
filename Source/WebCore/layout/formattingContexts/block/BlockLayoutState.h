@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SSLKeyGenerator.h"
-
-#if !PLATFORM(MAC) && !PLATFORM(WIN)
-
-#include "NotImplemented.h"
+#pragma once
 
 namespace WebCore {
+namespace Layout {
 
-void getSupportedKeySizes(Vector<String>&)
-{
-    notImplemented();
+class BlockFormattingContext;
+
+// This class holds block level information shared across child inline formatting contexts. 
+class BlockLayoutState {
+public:
+    struct LineClamp {
+        size_t m_maximumNumberOfLines { 0 };
+        size_t m_numberOfVisibleLines { 0 };
+    };
+    std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
+
+    // FIXME: Move FloatingState here.
+private:
+    friend BlockFormattingContext;
+
+    void setLineClamp(LineClamp lineClamp) { m_lineClamp = lineClamp; }
+
+    std::optional<LineClamp> m_lineClamp;
+};
+
 }
-
-String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&)
-{
-    notImplemented();
-    return String();
 }
-
-} // namespace WebCore
-
-#endif

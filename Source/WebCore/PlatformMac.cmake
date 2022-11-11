@@ -372,7 +372,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/PowerObserverMac.cpp
     platform/mac/PublicSuffixMac.mm
     platform/mac/RevealUtilities.mm
-    platform/mac/SSLKeyGeneratorMac.mm
     platform/mac/ScrollAnimatorMac.mm
     platform/mac/ScrollingEffectsController.mm
     platform/mac/ScrollViewMac.mm

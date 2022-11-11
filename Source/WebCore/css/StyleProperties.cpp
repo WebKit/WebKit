@@ -1787,12 +1787,10 @@ StringBuilder StyleProperties::asTextInternal() const
         CSSPropertyID propertyID = property.id();
         ASSERT(isLonghand(propertyID) || propertyID == CSSPropertyCustom);
         Vector<CSSPropertyID> shorthands;
-        String value;
 
         if (is<CSSPendingSubstitutionValue>(property.value())) {
             auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
             shorthands.append(substitutionValue.shorthandPropertyId());
-            value = substitutionValue.shorthandValue().cssText();
         } else {
             switch (propertyID) {
             case CSSPropertyBackgroundPositionX:
@@ -1809,6 +1807,7 @@ StringBuilder StyleProperties::asTextInternal() const
             }
         }
 
+        String value;
         bool alreadyUsedShorthand = false;
         for (auto& shorthandPropertyID : shorthands) {
             ASSERT(isShorthandCSSProperty(shorthandPropertyID));
@@ -1819,10 +1818,11 @@ StringBuilder StyleProperties::asTextInternal() const
                 alreadyUsedShorthand = true;
                 break;
             }
-            if (!shorthandPropertyAppeared[shorthandPropertyIndex] && value.isNull())
-                value = getPropertyValue(shorthandPropertyID);
+            if (shorthandPropertyAppeared[shorthandPropertyIndex])
+                continue;
             shorthandPropertyAppeared.set(shorthandPropertyIndex);
 
+            value = getPropertyValue(shorthandPropertyID);
             if (!value.isNull()) {
                 propertyID = shorthandPropertyID;
                 shorthandPropertyUsed.set(shorthandPropertyIndex);

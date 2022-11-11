@@ -90,10 +90,10 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSou
             return;
 
         m_outputStreamDescription = outputDescription;
-        m_audioBufferList = makeUnique<WebAudioBufferList>(m_outputStreamDescription);
-        m_sampleCount = m_outputStreamDescription.sampleRate() / 100;
+        m_audioBufferList = makeUnique<WebAudioBufferList>(*m_outputStreamDescription);
+        m_sampleCount = m_outputStreamDescription->sampleRate() / 100;
         m_audioBufferList->setSampleCount(m_sampleCount);
-        m_mixedSource = AudioSampleDataSource::create(m_outputStreamDescription.sampleRate() * 0.5, *this, LibWebRTCAudioModule::PollSamplesCount + 1);
+        m_mixedSource = AudioSampleDataSource::create(m_outputStreamDescription->sampleRate() * 0.5, *this, LibWebRTCAudioModule::PollSamplesCount + 1);
         m_mixedSource->setInputFormat(outputDescription);
         m_mixedSource->setOutputFormat(outputDescription);
         m_writeCount = 0;
@@ -166,7 +166,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::renderAudioChunk(uint64_t curren
 {
     ASSERT(!isMainThread());
 
-    uint64_t timeStamp = currentAudioSampleCount * m_outputStreamDescription.sampleRate() / LibWebRTCAudioFormat::sampleRate;
+    uint64_t timeStamp = currentAudioSampleCount * m_outputStreamDescription->sampleRate() / LibWebRTCAudioFormat::sampleRate;
 
     // Mix all sources.
     bool hasCopiedData = false;
@@ -175,7 +175,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::renderAudioChunk(uint64_t curren
             hasCopiedData = true;
     }
 
-    CMTime startTime = PAL::CMTimeMake(m_writeCount, m_outputStreamDescription.sampleRate());
+    CMTime startTime = PAL::CMTimeMake(m_writeCount, m_outputStreamDescription->sampleRate());
     if (hasCopiedData)
         m_mixedSource->pushSamples(PAL::toMediaTime(startTime), *m_audioBufferList, m_sampleCount);
     m_writeCount += m_sampleCount;

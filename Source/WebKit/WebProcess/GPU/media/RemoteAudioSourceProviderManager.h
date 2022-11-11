@@ -70,7 +70,7 @@ private:
 
     private:
         Ref<RemoteAudioSourceProvider> m_provider;
-        WebCore::CAAudioStreamDescription m_description;
+        std::optional<WebCore::CAAudioStreamDescription> m_description;
         std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
     };

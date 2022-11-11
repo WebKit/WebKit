@@ -1983,7 +1983,6 @@ platform/ProcessIdentity.cpp
 platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
-platform/SSLKeyGenerator.cpp
 platform/ScreenOrientationManager.cpp
 platform/ScreenOrientationProvider.cpp
 platform/ScrollAlignment.cpp
