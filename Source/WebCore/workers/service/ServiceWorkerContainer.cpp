@@ -646,7 +646,6 @@ void ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent()
 void ServiceWorkerContainer::stop()
 {
     m_isStopped = true;
-    removeAllEventListeners();
     m_readyPromise = nullptr;
     auto jobMap = WTFMove(m_jobMap);
     for (auto& ongoingJob : jobMap.values()) {

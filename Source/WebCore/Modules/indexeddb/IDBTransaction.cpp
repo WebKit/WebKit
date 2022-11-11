@@ -334,8 +334,6 @@ void IDBTransaction::stop()
     if (m_isStopped)
         return;
 
-    removeAllEventListeners();
-
     m_isStopped = true;
 
     if (isVersionChange())

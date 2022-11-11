@@ -138,6 +138,7 @@ public:
 
     void prepareForDestruction() override;
 
+    void removeAllEventListenersInContext() final;
     void removeAllEventListeners() final;
 
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);

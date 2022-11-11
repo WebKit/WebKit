@@ -114,7 +114,6 @@ private:
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
-    void stop() final;
     bool virtualHasPendingActivity() const final;
 
     ServiceWorkerRegistrationData m_registrationData;

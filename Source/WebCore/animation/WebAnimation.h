@@ -224,7 +224,6 @@ private:
     const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
-    void stop() final;
     bool virtualHasPendingActivity() const final;
 
     // EventTarget

@@ -147,11 +147,16 @@ public:
 
     virtual bool shouldBypassMainWorldContentSecurityPolicy() const { return false; }
 
+    void addEventTargetWithListener(EventTarget&);
+    void removeEventTargetWithListener(EventTarget&);
+
     PublicURLManager& publicURLManager();
 
     virtual void suspendActiveDOMObjects(ReasonForSuspension);
     virtual void resumeActiveDOMObjects(ReasonForSuspension);
     virtual void stopActiveDOMObjects();
+
+    virtual void removeAllEventListenersInContext();
 
     bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
@@ -402,6 +407,7 @@ private:
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
 
     HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
+    WeakHashSet<EventTarget, WeakPtrImplWithEventTargetData> m_eventTargetsWithListeners;
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);

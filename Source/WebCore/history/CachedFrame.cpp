@@ -271,10 +271,7 @@ void CachedFrame::destroy()
 
     Frame::clearTimers(m_view.get(), m_document.get());
 
-    // FIXME: Why do we need to call removeAllEventListeners here? When the document is in back/forward cache, this method won't work
-    // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).
-    m_document->removeAllEventListeners();
-
+    m_document->removeAllEventListenersInContext();
     m_document->setBackForwardCacheState(Document::NotInBackForwardCache);
     m_document->willBeRemovedFromFrame();
 

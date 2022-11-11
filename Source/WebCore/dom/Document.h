@@ -1180,6 +1180,7 @@ public:
 
     void invalidateEventListenerRegions();
 
+    void removeAllEventListenersInContext() final;
     void removeAllEventListeners() final;
 
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
