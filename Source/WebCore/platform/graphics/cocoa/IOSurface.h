@@ -103,8 +103,9 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Format = Format::BGRA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&, const DestinationColorSpace&);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, const DestinationColorSpace&);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
+    // If the colorSpace argument is non-null, it replaces any colorspace metadata on the surface.
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
 
     WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&, IOSurfacePool*);
 
@@ -141,10 +142,10 @@ public:
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
 
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
+    WEBCORE_EXPORT DestinationColorSpace colorSpace();
     WEBCORE_EXPORT Format format() const;
     WEBCORE_EXPORT IOSurfaceID surfaceID() const;
-    size_t bytesPerRow() const;
+    WEBCORE_EXPORT size_t bytesPerRow() const;
 
     WEBCORE_EXPORT IOSurfaceSeed seed() const;
 
@@ -166,9 +167,11 @@ public:
 
 private:
     IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
-    IOSurface(IOSurfaceRef, const DestinationColorSpace&);
+    IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
 
     void setColorSpaceProperty();
+    void ensureColorSpace();
+    std::optional<DestinationColorSpace> surfaceColorSpace() const;
 
     struct BitmapConfiguration {
         CGBitmapInfo bitmapInfo;
@@ -177,7 +180,7 @@ private:
 
     BitmapConfiguration bitmapConfiguration() const;
 
-    DestinationColorSpace m_colorSpace;
+    std::optional<DestinationColorSpace> m_colorSpace;
     IntSize m_size;
     size_t m_totalBytes;
 

@@ -566,7 +566,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
                 ASSERT(m_parameters.type == Type::IOSurface);
                 switch (contentsType) {
                 case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
-                    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), DestinationColorSpace::SRGB());
+                    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
                     contents = surface ? surface->asLayerContents() : nil;
                     break;
                 }

@@ -68,20 +68,20 @@ std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, 
     return surface;
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight&& sendRight, const DestinationColorSpace& colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight&& sendRight)
 {
     ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
 
     auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
-    return IOSurface::createFromSurface(surface.get(), colorSpace);
+    return IOSurface::createFromSurface(surface.get(), { });
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, std::optional<DestinationColorSpace>&& colorSpace)
 {
     if (!surface)
         return nullptr;
 
-    return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
+    return std::unique_ptr<IOSurface>(new IOSurface(surface, WTFMove(colorSpace)));
 }
 
 std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGImageRef image)
@@ -213,12 +213,15 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Form
         RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
-IOSurface::IOSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpace)
-    : m_colorSpace(colorSpace)
+IOSurface::IOSurface(IOSurfaceRef surface, std::optional<DestinationColorSpace>&& colorSpace)
+    : m_colorSpace(WTFMove(colorSpace))
     , m_surface(surface)
 {
     m_size = IntSize(IOSurfaceGetWidth(surface), IOSurfaceGetHeight(surface));
     m_totalBytes = IOSurfaceGetAllocSize(surface);
+
+    if (m_colorSpace)
+        setColorSpaceProperty();
 }
 
 IOSurface::~IOSurface() = default;
@@ -353,7 +356,8 @@ RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsign
     auto bitsPerPixel = configuration.bitsPerComponent * 4;
     auto bytesPerRow = width * bitsPerPixel;
 
-    return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace.platformColorSpace(), configuration.bitmapInfo));
+    ensureColorSpace();
+    return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
 }
 
 CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
@@ -364,7 +368,8 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     auto configuration = bitmapConfiguration();
     auto bitsPerPixel = configuration.bitsPerComponent * 4;
 
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), configuration.bitmapInfo));
+    ensureColorSpace();
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
@@ -426,6 +431,12 @@ SetNonVolatileResult IOSurface::setVolatile(bool isVolatile)
         return SetNonVolatileResult::Empty;
 
     return SetNonVolatileResult::Valid;
+}
+
+DestinationColorSpace IOSurface::colorSpace()
+{
+    ensureColorSpace();
+    return *m_colorSpace;
 }
 
 IOSurface::Format IOSurface::format() const
@@ -562,8 +573,30 @@ void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity
 
 void IOSurface::setColorSpaceProperty()
 {
-    auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace.platformColorSpace()));
+    ASSERT(m_colorSpace);
+    auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace->platformColorSpace()));
     IOSurfaceSetValue(m_surface.get(), kIOSurfaceColorSpace, colorSpaceProperties.get());
+}
+
+void IOSurface::ensureColorSpace()
+{
+    if (m_colorSpace)
+        return;
+
+    m_colorSpace = surfaceColorSpace().value_or(DestinationColorSpace::SRGB());
+}
+
+std::optional<DestinationColorSpace> IOSurface::surfaceColorSpace() const
+{
+    auto propertyList = adoptCF(IOSurfaceCopyValue(m_surface.get(), kIOSurfaceColorSpace));
+    if (!propertyList)
+        return { };
+    
+    auto colorSpaceCF = adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
+    if (!colorSpaceCF)
+        return { };
+    
+    return DestinationColorSpace { colorSpaceCF };
 }
 
 IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)

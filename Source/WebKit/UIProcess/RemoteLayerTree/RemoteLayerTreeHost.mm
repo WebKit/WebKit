@@ -337,7 +337,7 @@ static void recursivelyMapIOSurfaceBackingStore(CALayer *layer)
 {
     if (layer.contents && CFGetTypeID((__bridge CFTypeRef)layer.contents) == CAMachPortGetTypeID()) {
         MachSendRight port = MachSendRight::create(CAMachPortGetPort((__bridge CAMachPortRef)layer.contents));
-        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(port), WebCore::DestinationColorSpace::SRGB());
+        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(port));
         layer.contents = surface ? surface->asLayerContents() : nil;
     }
 
