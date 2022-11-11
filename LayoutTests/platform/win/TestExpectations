@@ -598,6 +598,9 @@ fast/gradients/conic-two-hints.html [ Skip ]
 fast/canvas/canvas-conic-gradient-angle.html [ Skip ]
 fast/canvas/canvas-conic-gradient-center.html [ Skip ]
 
+# Diagonal gradients
+fast/backgrounds/background-blend-mode-difference.html [ Skip ]
+
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]

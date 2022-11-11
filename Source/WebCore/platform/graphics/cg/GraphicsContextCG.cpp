@@ -398,7 +398,7 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
     CGContextStateSaver stateSaver(context);
     CGContextClipToRect(context, destRect);
 
-    setCompositeOperation(options.compositeOperator(), options.blendMode());
+    setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
