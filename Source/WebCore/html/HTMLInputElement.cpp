@@ -2044,7 +2044,10 @@ ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomString& id, H
 
 void ListAttributeTargetObserver::idTargetChanged()
 {
-    m_element->dataListMayHaveChanged();
+    m_element->document().eventLoop().queueTask(TaskSource::DOMManipulation, [element = m_element] {
+        if (element)
+            element->dataListMayHaveChanged();
+    });
 }
 #endif
 
