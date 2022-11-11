@@ -1,4 +1,20 @@
 ================
+WebKitGTK 2.39.1
+================
+
+What's new in WebKitGTK 2.39.1?
+
+  - Use ANGLE for WebGL implementation and enable WebGL2.
+  - Remove internal nested wayland compositor making libwpe mandatory when building with wayland enabled.
+  - Prefer EGL over X11, intead of GLX, where available.
+  - Add support for background-repeat: space.
+  - Add API to check if a response policy decision is for the main resource.
+  - Fix rendering of checkbox and radio buttons in black backgrounds.
+  - Make checkbox, radio and inner spin button scale along by page zoom.
+  - Add support for get computed label and get computed role WebDriver commands.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.37.1
 ================
 
