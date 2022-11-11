@@ -2325,6 +2325,7 @@
 		DF0C5F2B252ED44000D921DB /* WKDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F25252ECB8E00D921DB /* WKDownloadInternal.h */; };
 		DF462E0F23F22F5500EFF35F /* WKHTTPCookieStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF462E0E23F22F5300EFF35F /* WKHTTPCookieStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF462E1223F338BE00EFF35F /* WKContentWorldPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF462E1123F338AD00EFF35F /* WKContentWorldPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF7A231C291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF7A231B291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */; };
 		E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E105FE5318D7B9DE008F57A8 /* EditingRange.h */; };
 		E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
@@ -7403,6 +7404,7 @@
 		DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebWheelEvent.h; sourceTree = "<group>"; };
 		DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebWheelEventMac.mm; sourceTree = "<group>"; };
 		DF74275C24F4955000F8ABE9 /* PDFPluginIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPluginIdentifier.h; sourceTree = "<group>"; };
+		DF7A231B291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfigurationPrivate.h; sourceTree = "<group>"; };
 		DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFHUDView.mm; path = PDF/WKPDFHUDView.mm; sourceTree = "<group>"; };
 		DF84CEE3249AA21F009096F6 /* WKPDFHUDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFHUDView.h; path = PDF/WKPDFHUDView.h; sourceTree = "<group>"; };
 		E105FE5318D7B9DE008F57A8 /* EditingRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingRange.h; sourceTree = "<group>"; };
@@ -10348,6 +10350,7 @@
 				51CD1C611B34B9C900142CA5 /* WKSecurityOriginInternal.h */,
 				93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */,
 				93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */,
+				DF7A231B291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h */,
 				1AD8790918B6C38A006CAFD7 /* WKUIDelegate.h */,
 				3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */,
 				51D1242D1E6DDDD7002B2820 /* WKURLSchemeHandler.h */,
@@ -16092,6 +16095,7 @@
 				1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */,
 				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
 				93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */,
+				DF7A231C291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h in Headers */,
 				57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */,
 				93D6B7B925534A170058DD3A /* WKSpeechRecognitionPermissionCallback.h in Headers */,
 				7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */,

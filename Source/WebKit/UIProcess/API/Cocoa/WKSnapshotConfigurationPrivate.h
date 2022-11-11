@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,64 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKSnapshotConfigurationPrivate.h"
+#import <WebKit/WKSnapshotConfiguration.h>
 
-@implementation WKSnapshotConfiguration {
-#if PLATFORM(MAC)
-    BOOL _includesSelectionHighlighting;
-#endif
-}
+#if !TARGET_OS_IPHONE
 
-- (instancetype)init
-{
-    if (!(self = [super init]))
-        return nil;
+NS_ASSUME_NONNULL_BEGIN
 
-    self.rect = CGRectNull;
-    self.afterScreenUpdates = YES;
+@interface WKSnapshotConfiguration (WKPrivate)
 
-#if PLATFORM(MAC)
-    self._includesSelectionHighlighting = YES;
-#endif
-
-    return self;
-}
-
-- (void)dealloc
-{
-    [_snapshotWidth release];
-
-    [super dealloc];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    WKSnapshotConfiguration *snapshotConfiguration = [(WKSnapshotConfiguration *)[[self class] allocWithZone:zone] init];
-
-    snapshotConfiguration.rect = self.rect;
-    snapshotConfiguration.snapshotWidth = self.snapshotWidth;
-    snapshotConfiguration.afterScreenUpdates = self.afterScreenUpdates;
-
-#if PLATFORM(MAC)
-    snapshotConfiguration._includesSelectionHighlighting = self._includesSelectionHighlighting;
-#endif
-
-    return snapshotConfiguration;
-}
-
-#if PLATFORM(MAC)
-
-- (BOOL)_includesSelectionHighlighting
-{
-    return _includesSelectionHighlighting;
-}
-
-- (void)_setIncludesSelectionHighlighting:(BOOL)includesSelectionHighlighting
-{
-    _includesSelectionHighlighting = includesSelectionHighlighting;
-}
-
-#endif
+@property (nonatomic, setter=_setIncludesSelectionHighlighting:) BOOL _includesSelectionHighlighting WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 @end
+
+NS_ASSUME_NONNULL_END
+
+#endif
