@@ -304,14 +304,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static bool shouldTreatAsAttachmentByDefault(const String& typeIdentifier)
 {
     auto type = [UTType typeWithIdentifier:typeIdentifier];
-    if ([type conformsToType:UTTypeVCard])
-        return true;
-
-    if ([type conformsToType:UTTypeCompositeContent]
-        && !([type conformsToType:UTTypeRTFD] || [type conformsToType:UTTypeFlatRTFD] || [type conformsToType:UTTypeWebArchive]))
-        return true;
-
-    return false;
+    return [type conformsToType:UTTypeVCard] || [type conformsToType:UTTypePDF];
 }
 
 static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
