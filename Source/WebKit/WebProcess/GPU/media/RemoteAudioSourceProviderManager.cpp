@@ -137,7 +137,7 @@ void RemoteAudioSourceProviderManager::RemoteAudio::audioSamplesAvailable(uint64
         return;
     }
 
-    if (!WebAudioBufferList::isSupportedDescription(m_description, numberOfFrames)) {
+    if (!WebAudioBufferList::isSupportedDescription(*m_description, numberOfFrames)) {
         RELEASE_LOG_ERROR(Media, "Unable to support description with given number of frames for audio provider %llu", m_provider->identifier().toUInt64());
         return;
     }
@@ -146,7 +146,7 @@ void RemoteAudioSourceProviderManager::RemoteAudio::audioSamplesAvailable(uint64
 
     m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, startFrame);
 
-    m_provider->audioSamplesAvailable(*m_buffer, m_description, numberOfFrames);
+    m_provider->audioSamplesAvailable(*m_buffer, *m_description, numberOfFrames);
 }
 
 }

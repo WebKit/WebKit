@@ -75,7 +75,7 @@ private:
     WebCore::RealtimeMediaSourceSettings m_settings;
 
 #if PLATFORM(COCOA)
-    WebCore::CAAudioStreamDescription m_description;
+    std::optional<WebCore::CAAudioStreamDescription> m_description;
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
 #endif

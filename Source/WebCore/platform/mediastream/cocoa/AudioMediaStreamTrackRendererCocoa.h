@@ -29,18 +29,18 @@
 
 #include "AudioMediaStreamTrackRenderer.h"
 #include "AudioMediaStreamTrackRendererUnit.h"
+#include "CAAudioStreamDescription.h"
 #include "Logging.h"
-#include <wtf/WeakPtr.h>
-
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <optional>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class AudioSampleDataSource;
 class AudioSampleBufferList;
 class BaseAudioMediaStreamTrackRendererUnit;
-class CAAudioStreamDescription;
 
 class AudioMediaStreamTrackRendererCocoa : public AudioMediaStreamTrackRenderer, public CanMakeWeakPtr<AudioMediaStreamTrackRendererCocoa, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -62,7 +62,7 @@ private:
 
     BaseAudioMediaStreamTrackRendererUnit& rendererUnit();
 
-    std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_outputDescription;
     RefPtr<AudioSampleDataSource> m_dataSource; // Used in background thread.
     RefPtr<AudioSampleDataSource> m_registeredDataSource; // Used in main thread.
     bool m_shouldRecreateDataSource { false };

@@ -100,8 +100,8 @@ private:
         if (m_description != description) {
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
             m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
-            size_t numberOfFrames = m_description.sampleRate() * 2;
-            auto& format = m_description.streamDescription();
+            size_t numberOfFrames = m_description->sampleRate() * 2;
+            auto& format = m_description->streamDescription();
             auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, numberOfFrames);
             m_ringBuffer = WTFMove(ringBuffer);
             m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format, numberOfFrames), 0);
@@ -134,7 +134,7 @@ private:
 
 #if PLATFORM(COCOA)
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
-    CAAudioStreamDescription m_description { };
+    std::optional<CAAudioStreamDescription> m_description { };
 #endif
 };
 

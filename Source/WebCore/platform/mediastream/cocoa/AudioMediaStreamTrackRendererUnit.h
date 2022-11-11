@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT void render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&);
     void reset();
 
-    void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&);
+    void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
 
     // BaseAudioMediaStreamTrackRendererUnit
     void setAudioOutputDevice(const String&) final;

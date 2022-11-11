@@ -415,14 +415,14 @@ OSStatus CoreAudioSharedUnit::provideSpeakerData(AudioUnitRenderActionFlags& fla
             });
         }
 
-        AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(inNumberFrames * m_speakerProcFormat.bytesPerFrame()));
+        AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(inNumberFrames * m_speakerProcFormat->bytesPerFrame()));
         flags = kAudioUnitRenderAction_OutputIsSilence;
         return noErr;
     }
 
     Locker locker { AdoptLock, m_speakerSamplesProducerLock };
     if (!m_speakerSamplesProducer) {
-        AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(inNumberFrames * m_speakerProcFormat.bytesPerFrame()));
+        AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(inNumberFrames * m_speakerProcFormat->bytesPerFrame()));
         flags = kAudioUnitRenderAction_OutputIsSilence;
         return noErr;
     }
@@ -474,7 +474,7 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     if (volume() != 1.0)
         m_microphoneSampleBuffer->applyGain(volume());
 
-    audioSamplesAvailable(MediaTime(sampleTime, m_microphoneProcFormat.sampleRate()), m_microphoneSampleBuffer->bufferList(), m_microphoneProcFormat, inNumberFrames);
+    audioSamplesAvailable(MediaTime(sampleTime, m_microphoneProcFormat->sampleRate()), m_microphoneSampleBuffer->bufferList(), *m_microphoneProcFormat, inNumberFrames);
     return noErr;
 }
 

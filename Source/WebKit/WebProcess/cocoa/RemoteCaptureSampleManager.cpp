@@ -204,11 +204,11 @@ void RemoteCaptureSampleManager::RemoteAudio::startThread()
             if (m_shouldStopThread)
                 break;
 
-            auto currentTime = m_startTime + MediaTime { m_readOffset, static_cast<uint32_t>(m_description.sampleRate()) };
+            auto currentTime = m_startTime + MediaTime { m_readOffset, static_cast<uint32_t>(m_description->sampleRate()) };
             m_ringBuffer->fetch(m_buffer->list(), m_frameChunkSize, m_readOffset);
             m_readOffset += m_frameChunkSize;
 
-            m_source->remoteAudioSamplesAvailable(currentTime, *m_buffer, m_description, m_frameChunkSize);
+            m_source->remoteAudioSamplesAvailable(currentTime, *m_buffer, *m_description, m_frameChunkSize);
         } while (!m_shouldStopThread);
     };
     m_thread = Thread::create("RemoteCaptureSampleManager::RemoteAudio thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);

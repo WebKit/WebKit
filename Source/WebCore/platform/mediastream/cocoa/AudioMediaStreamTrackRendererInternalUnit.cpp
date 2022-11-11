@@ -59,7 +59,7 @@ private:
     // AudioMediaStreamTrackRendererInternalUnit API.
     void start() final;
     void stop() final;
-    void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&) final;
+    void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) final;
     void setAudioOutputDevice(const String&) final;
 
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 sampleCount, AudioBufferList*);
@@ -67,7 +67,7 @@ private:
 
     RenderCallback m_renderCallback;
     ResetCallback m_resetCallback;
-    std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_outputDescription;
     AudioComponentInstance m_remoteIOUnit { nullptr };
     bool m_isStarted { false };
     uint64_t m_sampleTime { 0 };
@@ -87,10 +87,10 @@ LocalAudioMediaStreamTrackRendererInternalUnit::LocalAudioMediaStreamTrackRender
 {
 }
 
-void LocalAudioMediaStreamTrackRendererInternalUnit::retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&& callback)
+void LocalAudioMediaStreamTrackRendererInternalUnit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
 {
     createAudioUnitIfNeeded();
-    callback(m_outputDescription.get());
+    callback(m_outputDescription);
 }
 
 void LocalAudioMediaStreamTrackRendererInternalUnit::setAudioOutputDevice(const String& deviceID)
@@ -211,16 +211,16 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
     }
 
     if (!m_outputDescription) {
-        CAAudioStreamDescription outputDescription;
-        UInt32 size = sizeof(outputDescription.streamDescription());
-        error  = PAL::AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
+        AudioStreamBasicDescription outputDescription { };
+        UInt32 size = sizeof(outputDescription);
+        error  = PAL::AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription, &size);
         if (error) {
             RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to get input stream format, error = %d", error);
             return;
         }
 
-        outputDescription.streamDescription().mSampleRate = AudioSession::sharedSession().sampleRate();
-        m_outputDescription = makeUnique<CAAudioStreamDescription>(outputDescription);
+        outputDescription.mSampleRate = AudioSession::sharedSession().sampleRate();
+        m_outputDescription = outputDescription;
     }
     error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &m_outputDescription->streamDescription(), sizeof(m_outputDescription->streamDescription()));
     if (error) {
@@ -233,7 +233,6 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit AudioUnitInitialize() failed, error = %d", error);
         return;
     }
-
     m_remoteIOUnit = remoteIOUnit;
 }
 

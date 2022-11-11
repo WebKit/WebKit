@@ -55,8 +55,8 @@ private:
     void pullAudioData();
 
     Ref<AudioSampleDataSource> m_sampleConverter;
-    CAAudioStreamDescription m_inputStreamDescription;
-    CAAudioStreamDescription m_outputStreamDescription;
+    std::optional<CAAudioStreamDescription> m_inputStreamDescription;
+    std::optional<CAAudioStreamDescription> m_outputStreamDescription;
 
     Vector<uint8_t> m_audioBuffer;
     uint64_t m_readCount { 0 };

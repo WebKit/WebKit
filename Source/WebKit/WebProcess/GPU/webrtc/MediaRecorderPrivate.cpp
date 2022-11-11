@@ -121,8 +121,8 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
         // Allocate a ring buffer large enough to contain 2 seconds of audio.
-        m_numberOfFrames = m_description.sampleRate() * 2;
-        auto& format = m_description.streamDescription();
+        m_numberOfFrames = m_description->sampleRate() * 2;
+        auto& format = m_description->streamDescription();
         auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
         m_ringBuffer = WTFMove(ringBuffer);
         m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format, m_numberOfFrames }, m_identifier);
@@ -133,7 +133,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
 
     if (shouldMuteAudio()) {
         if (!m_silenceAudioBuffer)
-            m_silenceAudioBuffer = makeUnique<WebAudioBufferList>(m_description, numberOfFrames);
+            m_silenceAudioBuffer = makeUnique<WebAudioBufferList>(*m_description, numberOfFrames);
         else
             m_silenceAudioBuffer->setSampleCount(numberOfFrames);
         m_silenceAudioBuffer->zeroFlatBuffer();

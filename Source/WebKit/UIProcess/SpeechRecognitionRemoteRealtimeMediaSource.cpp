@@ -95,7 +95,7 @@ void SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable(Med
 
     m_buffer->setSampleCount(numberOfFrames);
     m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, time.timeValue());
-    audioSamplesAvailable(time, *m_buffer, m_description, numberOfFrames);
+    audioSamplesAvailable(time, *m_buffer, *m_description, numberOfFrames);
 #else
     UNUSED_PARAM(time);
     UNUSED_PARAM(numberOfFrames);

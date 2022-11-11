@@ -49,16 +49,16 @@ public:
     {
         m_description = CAAudioStreamDescription(sampleRate, numChannels, format, isInterleaved);
         m_capacity = capacity;
-        size_t listSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max<uint32_t>(1, m_description.numberOfChannelStreams()));
+        size_t listSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max<uint32_t>(1, m_description->numberOfChannelStreams()));
         m_bufferList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (listSize)));
-        m_ringBuffer = InProcessCARingBuffer::allocate(m_description, capacity);
+        m_ringBuffer = InProcessCARingBuffer::allocate(*m_description, capacity);
     }
 
     void setListDataBuffer(uint8_t* bufferData, size_t sampleCount)
     {
-        size_t bufferCount = m_description.numberOfChannelStreams();
-        size_t channelCount = m_description.numberOfInterleavedChannels();
-        size_t bytesPerChannel = sampleCount * m_description.bytesPerFrame();
+        size_t bufferCount = m_description->numberOfChannelStreams();
+        size_t channelCount = m_description->numberOfInterleavedChannels();
+        size_t bytesPerChannel = sampleCount * m_description->bytesPerFrame();
 
         m_bufferList->mNumberBuffers = bufferCount;
         for (unsigned i = 0; i < bufferCount; ++i) {
@@ -70,7 +70,7 @@ public:
         }
     }
 
-    const CAAudioStreamDescription& description() const { return m_description; }
+    const CAAudioStreamDescription& description() const { return *m_description; }
     AudioBufferList& bufferList() const { return *m_bufferList.get(); }
     CARingBuffer& ringBuffer() const { return *m_ringBuffer.get(); }
     size_t capacity() const { return m_capacity; }
@@ -79,7 +79,7 @@ private:
 
     std::unique_ptr<AudioBufferList> m_bufferList;
     std::unique_ptr<InProcessCARingBuffer> m_ringBuffer;
-    CAAudioStreamDescription m_description = { };
+    std::optional<CAAudioStreamDescription> m_description;
     size_t m_capacity = { 0 };
 };
 
