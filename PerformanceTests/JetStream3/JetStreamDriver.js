@@ -201,20 +201,20 @@ const fileLoader = (function() {
                 throw new Error("Fetch failed");
             }
             if (url.indexOf(".js") !== -1)
-                return await response.text();
+                return response.text();
             else if (url.indexOf(".wasm") !== -1)
-                return await response.arrayBuffer();
+                return response.arrayBuffer();
 
             throw new Error("should not be reached!");
         }
 
         async load(url) {
             if (this.requests.has(url))
-                return (await this.requests.get(url));
+                return this.requests.get(url);
 
             let promise = this._loadInternal(url);
             this.requests.set(url, promise);
-            return (await promise);
+            return promise;
         }
     }
     return new Loader;
@@ -711,11 +711,11 @@ class Benchmark {
 
         let promise = JetStream.loadCache[resource];
         if (promise)
-            return await promise;
+            return promise;
 
         promise = this.doLoadBlob(resource);
         JetStream.loadCache[resource] = promise;
-        return await promise;
+        return promise;
     }
 
     updateCounter() {
