@@ -8246,8 +8246,14 @@ void WebPageProxy::tryReloadAfterProcessTermination()
         m_recentCrashCount = 0;
         return;
     }
-    WEBPAGEPROXY_RELEASE_LOG(Process, "tryReloadAfterProcessTermination: process crashed and the client did not handle it, reloading the page");
-    reload(ReloadOption::ExpiredOnly);
+    URL pendingAPIRequestURL { m_pageLoadState.pendingAPIRequestURL() };
+    if (pendingAPIRequestURL.isValid()) {
+        WEBPAGEPROXY_RELEASE_LOG(Process, "tryReloadAfterProcessTermination: process crashed and the client did not handle it, loading the pending API request URL again");
+        loadRequest(ResourceRequest { WTFMove(pendingAPIRequestURL) });
+    } else {
+        WEBPAGEPROXY_RELEASE_LOG(Process, "tryReloadAfterProcessTermination: process crashed and the client did not handle it, reloading the page");
+        reload(ReloadOption::ExpiredOnly);
+    }
 }
 
 void WebPageProxy::resetRecentCrashCountSoon()
