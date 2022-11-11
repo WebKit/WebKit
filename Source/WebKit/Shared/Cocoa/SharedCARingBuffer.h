@@ -36,28 +36,12 @@
 namespace WebKit {
 
 class SharedCARingBufferBase : public WebCore::CARingBuffer {
-public:
-    void flush() final;
-
 protected:
     SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<SharedMemory>);
-    void* data() final;
-    void getCurrentFrameBoundsWithoutUpdate(uint64_t& startTime, uint64_t& endTime) final;
-    uint64_t currentStartFrame() const final { return m_startFrame; }
-    uint64_t currentEndFrame() const final { return m_endFrame; }
-    void updateFrameBounds() final;
-    size_t size() const final;
-
-    static constexpr unsigned boundsBufferSize { 32 };
-    struct FrameBounds {
-        std::pair<uint64_t, uint64_t> boundsBuffer[boundsBufferSize];
-        Atomic<unsigned> boundsBufferIndex { 0 };
-    };
-    FrameBounds& sharedFrameBounds() const;
+    void* data() final { return static_cast<Byte*>(m_storage->data()) + sizeof(TimeBoundsBuffer); }
+    TimeBoundsBuffer& timeBoundsBuffer() final { return *reinterpret_cast<TimeBoundsBuffer*>(m_storage->data()); }
 
     Ref<SharedMemory> m_storage;
-    uint64_t m_startFrame { 0 };
-    uint64_t m_endFrame { 0 };
 };
 
 class ConsumerSharedCARingBuffer final : public SharedCARingBufferBase {
@@ -66,7 +50,6 @@ public:
     static std::unique_ptr<ConsumerSharedCARingBuffer> map(const WebCore::CAAudioStreamDescription& format, size_t frameCount, Handle&&);
 protected:
     using SharedCARingBufferBase::SharedCARingBufferBase;
-    void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final { }
 };
 
 class ProducerSharedCARingBuffer final : public SharedCARingBufferBase {
@@ -78,7 +61,6 @@ public:
     static Pair allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 protected:
     using SharedCARingBufferBase::SharedCARingBufferBase;
-    void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final;
 };
 
 }

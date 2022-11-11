@@ -107,13 +107,12 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
         return;
     }
 
-    uint64_t startFrame = 0;
-    uint64_t endFrame = 0;
+
     uint64_t seekTo = std::exchange(m_seekTo, NoSeek);
     if (seekTo != NoSeek)
         m_readCount = seekTo;
 
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    auto [startFrame, endFrame] = m_ringBuffer->getFetchTimeBounds();
 
     if (!m_readCount || m_readCount == seekTo) {
         // We have not started rendering yet. If there aren't enough frames in the buffer, then output
@@ -378,9 +377,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
         m_writeAheadCount = m_tapDescription->mSampleRate * earlyBy.toDouble();
     }
 
-    uint64_t startFrame = 0;
-    uint64_t endFrame = 0;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    auto [startFrame, endFrame] = m_ringBuffer->getStoreTimeBounds();
 
     // Check to see if the underlying media has seeked, which would require us to "flush"
     // our outstanding buffers.

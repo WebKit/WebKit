@@ -38,47 +38,6 @@ SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t fram
 {
 }
 
-void* SharedCARingBufferBase::data()
-{
-    return static_cast<Byte*>(m_storage->data()) + sizeof(FrameBounds);
-}
-
-auto SharedCARingBufferBase::sharedFrameBounds() const -> FrameBounds&
-{
-    return *reinterpret_cast<FrameBounds*>(m_storage->data());
-}
-
-void SharedCARingBufferBase::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame)
-{
-    startFrame = m_startFrame;
-    endFrame = m_endFrame;
-}
-
-void SharedCARingBufferBase::flush()
-{
-    m_startFrame = 0;
-    m_endFrame = 0;
-}
-
-void SharedCARingBufferBase::updateFrameBounds()
-{
-    auto& sharedBounds = sharedFrameBounds();
-    unsigned boundsBufferIndex = sharedBounds.boundsBufferIndex.load(std::memory_order_acquire);
-    if (UNLIKELY(boundsBufferIndex >= boundsBufferSize)) {
-        m_startFrame = 0;
-        m_endFrame = 0;
-        return;
-    }
-    auto pair = sharedBounds.boundsBuffer[boundsBufferIndex];
-    m_startFrame = pair.first;
-    m_endFrame = pair.second;
-}
-
-size_t SharedCARingBufferBase::size() const
-{
-    return m_storage->size() - sizeof(FrameBounds);
-}
-
 std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(const WebCore::CAAudioStreamDescription& format, size_t frameCount, ConsumerSharedCARingBuffer::Handle&& handle)
 {
     frameCount = WTF::roundUpToPowerOfTwo(frameCount);
@@ -86,7 +45,7 @@ std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(cons
     auto numChannelStreams = format.numberOfChannelStreams();
 
     // Validate the parameters as they may be coming from an untrusted process.
-    auto expectedStorageSize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(FrameBounds);
+    auto expectedStorageSize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
     if (expectedStorageSize.hasOverflowed()) {
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Overflowed when trying to compute the storage size");
         return nullptr;
@@ -117,7 +76,7 @@ ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebC
         RELEASE_LOG_FAULT(Media, "ProducerSharedCARingBuffer::allocate: Overflowed when trying to compute the storage size");
         return { nullptr, { } };
     }
-    auto sharedMemory = SharedMemory::allocate(sizeof(FrameBounds) + checkedSizeForBuffers.value());
+    auto sharedMemory = SharedMemory::allocate(sizeof(TimeBoundsBuffer) + checkedSizeForBuffers.value());
     if (!sharedMemory)
         return { nullptr, { } };
 
@@ -125,21 +84,10 @@ ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebC
     if (!sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly))
         return { nullptr, { } };
 
-    new (NotNull, sharedMemory->data()) FrameBounds;
+    new (NotNull, sharedMemory->data()) TimeBoundsBuffer;
     std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
     result->initialize();
     return { WTFMove(result), WTFMove(handle) };
-}
-
-void ProducerSharedCARingBuffer::setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame)
-{
-    m_startFrame = startFrame;
-    m_endFrame = endFrame;
-
-    auto& sharedBounds = sharedFrameBounds();
-    unsigned indexToWrite = (sharedBounds.boundsBufferIndex.load(std::memory_order_acquire) + 1) % boundsBufferSize;
-    sharedBounds.boundsBuffer[indexToWrite] = std::make_pair(startFrame, endFrame);
-    sharedBounds.boundsBufferIndex.store(indexToWrite, std::memory_order_release);
 }
 
 } // namespace WebKit

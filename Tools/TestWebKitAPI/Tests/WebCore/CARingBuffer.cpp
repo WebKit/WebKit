@@ -83,28 +83,33 @@ private:
     size_t m_capacity = { 0 };
 };
 
+static CARingBuffer::TimeBounds makeBounds(uint64_t start, uint64_t end)
+{
+    return { start, end };
+}
+
 TEST_F(CARingBufferTest, Basics)
 {
-    const int capacity = 32;
+    const size_t capacity = 32;
 
     setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
 
+    auto fetchBounds = ringBuffer().getFetchTimeBounds();
+    EXPECT_EQ(fetchBounds, makeBounds(0, 0));
+
     float sourceBuffer[capacity];
-    for (int i = 0; i < capacity; i++)
+    for (size_t i = 0; i < capacity; i++)
         sourceBuffer[i] = i + 0.5;
 
     setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
 
     // Fill the first half of the buffer ...
-    int sampleCount = capacity / 2;
+    uint64_t sampleCount = capacity / 2;
     CARingBuffer::Error err = ringBuffer().store(&bufferList(), sampleCount, 0);
     EXPECT_EQ(err, CARingBuffer::Error::Ok);
 
-    uint64_t startTime;
-    uint64_t endTime;
-    ringBuffer().getCurrentFrameBounds(startTime, endTime);
-    EXPECT_EQ(0, (int)startTime);
-    EXPECT_EQ((int)sampleCount, (int)endTime);
+    fetchBounds = ringBuffer().getFetchTimeBounds();
+    EXPECT_EQ(fetchBounds, makeBounds(0, sampleCount));
 
     float scratchBuffer[capacity];
     setListDataBuffer(reinterpret_cast<uint8_t*>(scratchBuffer), capacity);
@@ -116,9 +121,8 @@ TEST_F(CARingBufferTest, Basics)
     err = ringBuffer().store(&bufferList(), capacity / 2, capacity / 2);
     EXPECT_EQ(err, CARingBuffer::Error::Ok);
 
-    ringBuffer().getCurrentFrameBounds(startTime, endTime);
-    EXPECT_EQ(0, (int)startTime);
-    EXPECT_EQ(capacity, (int)endTime);
+    fetchBounds = ringBuffer().getFetchTimeBounds();
+    EXPECT_EQ(fetchBounds, makeBounds(0, capacity));
 
     memset(scratchBuffer, 0, sampleCount * description().sampleWordSize());
     ringBuffer().fetch(&bufferList(), sampleCount, 0);
@@ -128,23 +132,16 @@ TEST_F(CARingBufferTest, Basics)
     err = ringBuffer().store(&bufferList(), capacity, capacity - 1);
     EXPECT_EQ(err, CARingBuffer::Error::Ok);
 
-    ringBuffer().getCurrentFrameBounds(startTime, endTime);
-    EXPECT_EQ((int)capacity - 1, (int)startTime);
-    EXPECT_EQ(capacity - 1 + capacity, (int)endTime);
+    fetchBounds = ringBuffer().getFetchTimeBounds();
+    EXPECT_EQ(fetchBounds, makeBounds(capacity - 1, capacity - 1 + capacity));
 
     // Make sure it returns an error when asked to store too much ...
     err = ringBuffer().store(&bufferList(), capacity * 3, capacity / 2);
     EXPECT_EQ(err, CARingBuffer::Error::TooMuch);
 
     // ... and doesn't modify the buffer
-    ringBuffer().getCurrentFrameBounds(startTime, endTime);
-    EXPECT_EQ((int)capacity - 1, (int)startTime);
-    EXPECT_EQ(capacity - 1 + capacity, (int)endTime);
-
-    ringBuffer().flush();
-    ringBuffer().getCurrentFrameBounds(startTime, endTime);
-    EXPECT_EQ(0, (int)startTime);
-    EXPECT_EQ(0, (int)endTime);
+    fetchBounds = ringBuffer().getFetchTimeBounds();
+    EXPECT_EQ(fetchBounds, makeBounds(capacity - 1, capacity - 1 + capacity));
 }
 
 template <typename type>
