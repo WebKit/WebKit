@@ -1371,6 +1371,12 @@ void WebResourceLoadStatisticsStore::removeDataForDomain(RegistrableDomain domai
 void WebResourceLoadStatisticsStore::registrableDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler({ });
+        return;
+    }
+
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
         auto domains = m_statisticsStore ? m_statisticsStore->allDomains() : Vector<RegistrableDomain>();
         postTaskReply([domains = crossThreadCopy(WTFMove(domains)), completionHandler = WTFMove(completionHandler)]() mutable {
