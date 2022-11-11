@@ -38,7 +38,6 @@
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <wtf/URL.h>
 #import <wtf/text/StringHash.h>
@@ -301,19 +300,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         reader.readURL(url, title);
 }
 
-static bool shouldTreatAsAttachmentByDefault(const String& typeIdentifier)
-{
-    auto type = [UTType typeWithIdentifier:typeIdentifier];
-    if ([type conformsToType:UTTypeVCard])
-        return true;
-
-    if ([type conformsToType:UTTypeCompositeContent]
-        && !([type conformsToType:UTTypeRTFD] || [type conformsToType:UTTypeFlatRTFD] || [type conformsToType:UTTypeWebArchive]))
-        return true;
-
-    return false;
-}
-
 static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
 {
     auto contentTypeForHighestFidelityItem = info.contentTypeForHighestFidelityItem();
@@ -323,7 +309,9 @@ static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
     if (info.preferredPresentationStyle == PasteboardItemPresentationStyle::Inline)
         return false;
 
-    return info.canBeTreatedAsAttachmentOrFile() || shouldTreatAsAttachmentByDefault(contentTypeForHighestFidelityItem);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return info.canBeTreatedAsAttachmentOrFile() || UTTypeConformsTo(contentTypeForHighestFidelityItem.createCFString().get(), kUTTypeVCard);
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t> itemIndex)
