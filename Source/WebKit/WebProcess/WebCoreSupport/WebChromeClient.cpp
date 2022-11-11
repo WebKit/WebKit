@@ -1275,16 +1275,6 @@ void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicat
     m_page.setTextIndicator(indicatorData);
 }
 
-String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const
-{
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::SignedPublicKeyAndChallengeString(keySizeIndex, challengeString, url), m_page.identifier());
-    if (!sendResult)
-        return emptyString();
-
-    auto [result] = sendResult.takeReply();
-    return result;
-}
-
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
 void WebChromeClient::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
