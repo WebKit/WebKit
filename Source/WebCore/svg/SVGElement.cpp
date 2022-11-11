@@ -60,6 +60,7 @@
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
@@ -243,7 +244,7 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
     if (error == NoError)
         return;
 
-    String errorString = "<" + tagName() + "> attribute " + name.toString() + "=\"" + value + "\"";
+    String errorString = "<" + tagName() + "> attribute " + name.toString() + "=" + JSON::Value::quoteString(value);
     SVGDocumentExtensions& extensions = document().accessSVGExtensions();
 
     if (error == NegativeValueForbiddenError) {

@@ -104,6 +104,7 @@ public:
 
     static RefPtr<Value> parseJSON(StringView);
     static void escapeString(StringBuilder&, StringView);
+    static String quoteString(const StringView&);
 
     String toJSONString() const;
     virtual void writeJSON(StringBuilder& output) const;

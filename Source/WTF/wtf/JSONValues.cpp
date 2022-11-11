@@ -584,6 +584,13 @@ void Value::escapeString(StringBuilder& builder, StringView string)
     }
 }
 
+String Value::quoteString(const StringView& string)
+{
+    StringBuilder result;
+    Value::appendDoubleQuotedString(&result, string);
+    return result.toString();
+}
+
 String Value::toJSONString() const
 {
     StringBuilder result;
