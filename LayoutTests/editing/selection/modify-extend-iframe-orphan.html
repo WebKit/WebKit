@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() {
+    const selection = document.getSelection();
+    selection.selectAllChildren(span);
+    selection.selectAllChildren(input);
+    selection.modify("extend", "forward", "documentboundary");
+    document.execCommand("insertUnorderedList", false, null);
+    setTimeout(() => {
+        document.body.innerHTML = 'This test passes if WebKit does not hit any assertions.<br>PASS';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+function focusOut() {
+    document.getSelection().selectAllChildren(span);
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.contentDocument.body.appendChild(spanContainer);
+}
+
+function deleteAndShowModal() {
+    document.execCommand("delete", false, null);
+    dialog.showModal();
+}
+
+</script>
+<body onload="runTest()">
+<dialog id="dialog" contenteditable="true"></dialog>
+<div id="spanContainer" contenteditable="true" onblur="deleteAndShowModal()">A<span id="span"></span></div>
+<div onfocusout="focusOut()" contenteditable="true"><iframe></iframe><input id="input"></div>
