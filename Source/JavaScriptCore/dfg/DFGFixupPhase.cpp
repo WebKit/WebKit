@@ -4357,26 +4357,33 @@ private:
 
         Edge& searchElement = m_graph.varArgChild(node, 1);
 
+        fixEdge<KnownCellUse>(array);
+        if (node->numChildren() == 4)
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
+
         // Constant folding.
         switch (node->arrayMode().type()) {
         case Array::Double:
         case Array::Int32: {
             if (searchElement->shouldSpeculateCell()) {
-                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(searchElement.node(), CellUse));
+                fixEdge<CellUse>(searchElement);
+                m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
                 m_graph.convertToConstant(node, jsNumber(-1));
                 observeUseKindOnNode<CellUse>(searchElement.node());
                 return;
             }
 
             if (searchElement->shouldSpeculateOther()) {
-                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(searchElement.node(), OtherUse));
+                fixEdge<OtherUse>(searchElement);
+                m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
                 m_graph.convertToConstant(node, jsNumber(-1));
                 observeUseKindOnNode<OtherUse>(searchElement.node());
                 return;
             }
 
             if (searchElement->shouldSpeculateBoolean()) {
-                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(searchElement.node(), BooleanUse));
+                fixEdge<BooleanUse>(searchElement);
+                m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
                 m_graph.convertToConstant(node, jsNumber(-1));
                 observeUseKindOnNode<BooleanUse>(searchElement.node());
                 return;
@@ -4386,10 +4393,6 @@ private:
         default:
             break;
         }
-
-        fixEdge<KnownCellUse>(array);
-        if (node->numChildren() == 4)
-            fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
 
         switch (node->arrayMode().type()) {
         case Array::Double: {
