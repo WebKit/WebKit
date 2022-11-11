@@ -3052,7 +3052,8 @@ ExceptionOr<void> Document::open(Document* entryDocument)
         bool isNavigating = m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy() || m_frame->loader().state() == FrameState::Provisional || m_frame->navigationScheduler().hasQueuedNavigation();
         if (m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy())
             m_frame->loader().policyChecker().stopCheck();
-        if (isNavigating)
+        // Null-checking m_frame again as `policyChecker().stopCheck()` may have cleared it.
+        if (isNavigating && m_frame)
             m_frame->loader().stopAllLoaders();
     }
 
