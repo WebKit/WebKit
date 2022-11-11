@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- *           (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2013 Andrew Bortz. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include <wtf/RandomNumber.h>
-
-#include <limits>
-#include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/WeakRandom.h>
+#pragma once
 
 namespace WTF {
 
-double cryptographicallyRandomUnitInterval()
-{
-    uint32_t bits = cryptographicallyRandomNumber();
-    return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-}
+template<typename IntegerType> IntegerType weakRandomNumber() = delete;
 
-unsigned cryptographicallyRandomUint32()
-{
-    return cryptographicallyRandomNumber();
-}
-
-uint64_t cryptographicallyRandomUint64()
-{
-    auto high = static_cast<uint64_t>(cryptographicallyRandomNumber());
-    return (high << 32) | cryptographicallyRandomNumber();
-}
-
-unsigned weakRandomUint32()
-{
-    // We don't care about thread safety. WeakRandom just uses POD types,
-    // and racy access just increases randomness.
-    static WeakRandom s_weakRandom;
-    return s_weakRandom.getUint32();
-}
+// Returns a cheap pseudo-random number in the range [0, UINT_MAX].
+template<> WTF_EXPORT_PRIVATE unsigned weakRandomNumber<unsigned>();
 
 }
+
+using WTF::weakRandomNumber;

@@ -168,6 +168,8 @@ public:
             
         size_t markCount();
         size_t size();
+
+        size_t backingStorageSize() { return bitwise_cast<uintptr_t>(end()) - bitwise_cast<uintptr_t>(pageStart()); }
         
         bool isAllocated();
         
@@ -202,6 +204,7 @@ public:
         void* end() const { return &m_block->atoms()[endAtom]; }
         void* atomAt(size_t i) const { return &m_block->atoms()[i]; }
         bool contains(void* p) const { return start() <= p && p < end(); }
+        void* pageStart() const { return &m_block->atoms()[0]; }
 
         void dumpState(PrintStream&);
         

@@ -33,9 +33,9 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
+#include <wtf/WeakRandomNumber.h>
 
 // Configuration of WTF::HashTable.
 //  - 75% load factor for small tables.
@@ -459,7 +459,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
                 return end();
 
             while (true) {
-                auto& bucket = m_table[weakRandomUint32() & tableSizeMask()];
+                auto& bucket = m_table[weakRandomNumber<uint32_t>() & tableSizeMask()];
                 if (!isEmptyOrDeletedBucket(bucket))
                     return makeKnownGoodIterator(&bucket);
             };

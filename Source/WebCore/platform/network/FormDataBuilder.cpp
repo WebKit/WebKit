@@ -29,8 +29,8 @@
 #include <limits>
 #include <pal/text/TextEncoding.h>
 #include <wtf/Assertions.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 
@@ -136,18 +136,15 @@ Vector<char> generateUniqueBoundaryString()
     // Start with an informative prefix.
     append(boundary, "----WebKitFormBoundary");
 
-    // Append 16 random 7bit ascii AlphaNumeric characters.
-    Vector<char> randomBytes;
-
+    // Append 16 random 7-bit ASCII alphanumeric characters.
     for (unsigned i = 0; i < 4; ++i) {
-        unsigned randomness = cryptographicallyRandomUint32();
-        randomBytes.append(alphaNumericEncodingMap[(randomness >> 24) & 0x3F]);
-        randomBytes.append(alphaNumericEncodingMap[(randomness >> 16) & 0x3F]);
-        randomBytes.append(alphaNumericEncodingMap[(randomness >> 8) & 0x3F]);
-        randomBytes.append(alphaNumericEncodingMap[randomness & 0x3F]);
+        unsigned randomness = cryptographicallyRandomNumber<unsigned>();
+        boundary.append(alphaNumericEncodingMap[(randomness >> 24) & 0x3F]);
+        boundary.append(alphaNumericEncodingMap[(randomness >> 16) & 0x3F]);
+        boundary.append(alphaNumericEncodingMap[(randomness >> 8) & 0x3F]);
+        boundary.append(alphaNumericEncodingMap[randomness & 0x3F]);
     }
 
-    boundary.appendVector(randomBytes);
     boundary.append(0); // Add a 0 at the end so we can use this as a C-style string.
     return boundary;
 }

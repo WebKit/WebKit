@@ -505,9 +505,7 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
 static Salt makeSalt()
 {
     Salt salt;
-    static_assert(salt.size() == 8, "Salt size");
-    *reinterpret_cast_ptr<uint32_t*>(&salt[0]) = cryptographicallyRandomNumber();
-    *reinterpret_cast_ptr<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
+    cryptographicallyRandomValues(&salt, sizeof(Salt));
     return salt;
 }
 

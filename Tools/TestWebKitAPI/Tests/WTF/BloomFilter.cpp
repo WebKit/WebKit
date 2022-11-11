@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include <wtf/BloomFilter.h>
-#include <wtf/RandomNumber.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/SHA1.h>
 
 namespace TestWebKitAPI {
@@ -35,7 +35,7 @@ static Vector<unsigned> generateRandomHashes(size_t hashCount)
 {
     Vector<unsigned> hashes;
     for (unsigned i = 0; i < hashCount; ++i)
-        hashes.append(cryptographicallyRandomUint32());
+        hashes.append(cryptographicallyRandomNumber<uint32_t>());
     return hashes;
 }
 

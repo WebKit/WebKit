@@ -1765,8 +1765,6 @@ imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Fa
 
 webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Failure ]
 
-webkit.org/b/245802 imported/w3c/web-platform-tests/permissions/permissions-cg.https.html [ Pass Failure ]
-
 # webkit.org/b/246773 Constant crashes on wk2 debug
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
