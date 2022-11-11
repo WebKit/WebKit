@@ -37,6 +37,7 @@ class JSGlobalObject;
 
 namespace WebCore {
 
+class FontCache;
 class QualifiedNameCache;
 class ThreadTimers;
 
@@ -93,6 +94,17 @@ public:
     bool isInRemoveAllEventListeners() const { return m_isInRemoveAllEventListeners; }
     void setIsInRemoveAllEventListeners(bool value) { m_isInRemoveAllEventListeners = value; }
 
+    FontCache& fontCache()
+    {
+        ASSERT(!m_destroyed);
+        if (UNLIKELY(!m_fontCache))
+            initializeFontCache();
+        return *m_fontCache;
+    }
+
+    FontCache* fontCacheIfExists() { return m_fontCache.get(); }
+    FontCache* fontCacheIfNotDestroyed() { return m_destroyed ? nullptr : &fontCache(); }
+
 private:
     WEBCORE_EXPORT void initializeCachedResourceRequestInitiators();
     WEBCORE_EXPORT void initializeEventNames();
@@ -106,6 +118,7 @@ private:
     std::unique_ptr<QualifiedNameCache> m_qualifiedNameCache;
     JSC::JSGlobalObject* m_currentState { nullptr };
     std::unique_ptr<MIMETypeRegistryThreadGlobalData> m_MIMETypeRegistryThreadGlobalData;
+    std::unique_ptr<FontCache> m_fontCache;
 
 #ifndef NDEBUG
     bool m_isMainThread;

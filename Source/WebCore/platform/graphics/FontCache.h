@@ -97,7 +97,7 @@ class FontCache {
 public:
     WEBCORE_EXPORT static FontCache& forCurrentThread();
     static FontCache* forCurrentThreadIfExists();
-    static void destroy();
+    static FontCache* forCurrentThreadIfNotDestroyed();
 
     FontCache();
     ~FontCache();

@@ -99,7 +99,7 @@ CSSFontSelector::~CSSFontSelector()
 
     clearFonts();
 
-    if (auto fontCache = FontCache::forCurrentThreadIfExists())
+    if (auto fontCache = FontCache::forCurrentThreadIfNotDestroyed())
         fontCache->removeClient(*this);
 }
 
