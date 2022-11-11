@@ -3,7 +3,6 @@ global:
   jsc_*;
   webkit_*;
   extern "C++" {
-    "bmalloc::vmPageSize()::cached";
     "WebKit::GPUProcessMain(int, char**)";
     "WebKit::NetworkProcessMain(int, char**)";
     "WebKit::WebKitExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
