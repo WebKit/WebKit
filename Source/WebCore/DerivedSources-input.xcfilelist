@@ -1308,6 +1308,7 @@ $(PROJECT_DIR)/html/SubmitEvent.idl
 $(PROJECT_DIR)/html/TextMetrics.idl
 $(PROJECT_DIR)/html/TimeRanges.idl
 $(PROJECT_DIR)/html/URLSearchParams.idl
+$(PROJECT_DIR)/html/UserActivation.idl
 $(PROJECT_DIR)/html/ValidityState.idl
 $(PROJECT_DIR)/html/VideoFrameMetadata.idl
 $(PROJECT_DIR)/html/VideoFrameRequestCallback.idl
@@ -1460,6 +1461,7 @@ $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
+$(PROJECT_DIR)/page/Navigator+UserActivation.idl
 $(PROJECT_DIR)/page/Navigator.idl
 $(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl

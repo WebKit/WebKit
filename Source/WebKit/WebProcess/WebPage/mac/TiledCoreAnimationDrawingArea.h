@@ -78,6 +78,9 @@ private:
 
     bool supportsAsyncScrolling() const override { return true; }
 
+    void registerScrollingTree() override;
+    void unregisterScrollingTree() override;
+
     void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&) override;
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;

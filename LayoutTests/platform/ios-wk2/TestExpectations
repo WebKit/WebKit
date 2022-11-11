@@ -2413,3 +2413,9 @@ imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html 
 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Pass Failure ]
 
+# UserActivation tests rely on test_driver.click() which is not supported on iOS
+imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/user-activation-interface.html [ Skip ]

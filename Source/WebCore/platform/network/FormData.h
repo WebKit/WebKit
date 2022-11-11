@@ -58,19 +58,6 @@ struct FormDataElement {
 
     FormDataElement isolatedCopy() const;
 
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << data;
-    }
-    template<typename Decoder> static std::optional<FormDataElement> decode(Decoder& decoder)
-    {
-        std::optional<Data> data;
-        decoder >> data;
-        if (!data)
-            return std::nullopt;
-        return FormDataElement(WTFMove(*data));
-    }
-
     struct EncodedFileData {
         String filename;
         int64_t fileStart { 0 };
@@ -91,61 +78,14 @@ struct FormDataElement {
                 && fileLength == other.fileLength
                 && expectedFileModificationTime == other.expectedFileModificationTime;
         }
-        template<typename Encoder> void encode(Encoder& encoder) const
-        {
-            encoder << filename << fileStart << fileLength << expectedFileModificationTime;
-        }
-        template<typename Decoder> static std::optional<EncodedFileData> decode(Decoder& decoder)
-        {
-            std::optional<String> filename;
-            decoder >> filename;
-            if (!filename)
-                return std::nullopt;
-            
-            std::optional<int64_t> fileStart;
-            decoder >> fileStart;
-            if (!fileStart)
-                return std::nullopt;
-            
-            std::optional<int64_t> fileLength;
-            decoder >> fileLength;
-            if (!fileLength)
-                return std::nullopt;
-            
-            std::optional<std::optional<WallTime>> expectedFileModificationTime;
-            decoder >> expectedFileModificationTime;
-            if (!expectedFileModificationTime)
-                return std::nullopt;
-
-            return {{
-                WTFMove(*filename),
-                WTFMove(*fileStart),
-                WTFMove(*fileLength),
-                WTFMove(*expectedFileModificationTime)
-            }};
-        }
-
     };
-    
+
     struct EncodedBlobData {
         URL url;
 
         bool operator==(const EncodedBlobData& other) const
         {
             return url == other.url;
-        }
-        template<typename Encoder> void encode(Encoder& encoder) const
-        {
-            encoder << url;
-        }
-        template<typename Decoder> static std::optional<EncodedBlobData> decode(Decoder& decoder)
-        {
-            std::optional<URL> url;
-            decoder >> url;
-            if (!url)
-                return std::nullopt;
-
-            return {{ WTFMove(*url) }};
         }
     };
     

@@ -1367,6 +1367,7 @@ html/MediaElementSession.cpp
 html/MediaFragmentURIParser.cpp
 html/ModelDocument.cpp
 html/MonthInputType.cpp
+html/NavigatorUserActivation.cpp
 html/NumberInputType.cpp
 html/OffscreenCanvas.cpp
 html/PasswordInputType.cpp
@@ -1394,6 +1395,7 @@ html/URLDecomposition.cpp
 html/URLInputType.cpp
 html/URLRegistry.cpp
 html/URLSearchParams.cpp
+html/UserActivation.cpp
 html/ValidationMessage.cpp
 html/WeekInputType.cpp
 html/canvas/ANGLEInstancedArrays.cpp
@@ -4118,6 +4120,7 @@ JSFullscreenOptions.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp
+JSUserActivation.cpp
 JSUndoItem.cpp
 JSUndoManager.cpp
 JSUserMessageHandler.cpp

@@ -1555,6 +1555,14 @@ bool DOMWindow::hasTransientActivation() const
     return now >= m_lastActivationTimestamp && now < (m_lastActivationTimestamp + transientActivationDuration());
 }
 
+// When the current high resolution time given W is greater than or equal to the last activation timestamp in W,
+// W is said to have sticky activation. (https://html.spec.whatwg.org/multipage/interaction.html#sticky-activation)
+bool DOMWindow::hasStickyActivation() const
+{
+    auto now = MonotonicTime::now();
+    return now >= m_lastActivationTimestamp;
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#consume-user-activation
 bool DOMWindow::consumeTransientActivation()
 {

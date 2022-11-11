@@ -633,7 +633,7 @@ void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, C
     send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
 }
 
-void GPUProcessProxy::setScreenProperties(const ScreenProperties& properties)
+void GPUProcessProxy::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     send(Messages::GPUProcess::SetScreenProperties { properties }, 0);
 }

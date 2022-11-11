@@ -1152,6 +1152,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/TextMetrics.idl \
     $(WebCore)/html/TimeRanges.idl \
     $(WebCore)/html/URLSearchParams.idl \
+    $(WebCore)/html/UserActivation.idl \
     $(WebCore)/html/ValidityState.idl \
     $(WebCore)/html/VideoFrameMetadata.idl \
     $(WebCore)/html/VideoFrameRequestCallback.idl \
@@ -1296,6 +1297,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/Navigator.idl \
     $(WebCore)/page/Navigator+IsLoggedIn.idl \
+    $(WebCore)/page/Navigator+UserActivation.idl \
     $(WebCore)/page/NavigatorCookies.idl \
     $(WebCore)/page/NavigatorID.idl \
     $(WebCore)/page/NavigatorLanguage.idl \

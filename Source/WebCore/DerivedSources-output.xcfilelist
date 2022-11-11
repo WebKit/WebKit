@@ -1795,6 +1795,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNodeFilter.cpp
@@ -2701,6 +2703,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserActivation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandlersNamespace.cpp

@@ -4,5 +4,5 @@ Tests that pressing/releasing 'Escape' key is not treated as a user activation.
 
 
 
-FAIL 'Escape' key doesn't activate a page. assert_true: This test requires user activation query API expected true got false
+FAIL 'Escape' key doesn't activate a page. assert_false: No user activation on keydown expected false got true
 

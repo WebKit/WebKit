@@ -113,6 +113,9 @@ public:
     virtual bool usesDelegatedPageScaling() const { return false; }
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
+    virtual void registerScrollingTree() { }
+    virtual void unregisterScrollingTree() { }
+
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const { return false; }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
