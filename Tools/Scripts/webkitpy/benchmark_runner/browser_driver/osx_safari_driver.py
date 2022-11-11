@@ -29,6 +29,7 @@ class OSXSafariDriver(OSXBrowserDriver):
             if re.match(r'^__XPC_', key):
                 env[key] = value
         if self._enable_signposts:
+            env['WEBKIT_SIGNPOSTS_ENABLED'] = '1'
             env['__XPC_WEBKIT_SIGNPOSTS_ENABLED'] = '1'
             env['__XPC_JSC_exposeProfilersOnGlobalObject'] = '1'
         if browser_build_path or browser_path:
