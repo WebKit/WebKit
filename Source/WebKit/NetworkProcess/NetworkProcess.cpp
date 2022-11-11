@@ -2740,11 +2740,10 @@ void NetworkProcess::resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<
     completionHandler();
 }
 
-static constexpr auto delayMax = 100_ms;
-static constexpr auto delayMin = 10_ms;
 Seconds NetworkProcess::randomClosedPortDelay()
 {
-    return delayMin + Seconds::fromMilliseconds(static_cast<double>(cryptographicallyRandomNumber())) % delayMax;
+    // Random delay in the range [10ms, 110ms).
+    return 10_ms + Seconds { cryptographicallyRandomUnitInterval() * (100_ms).value() };
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

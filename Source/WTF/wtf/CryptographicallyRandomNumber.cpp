@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 1996, David Mazieres <dm@uun.org>
  * Copyright (c) 2008, Damien Miller <djm@openbsd.org>
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -173,7 +174,7 @@ ARC4RandomNumberGenerator& sharedRandomNumberGenerator()
 
 }
 
-uint32_t cryptographicallyRandomNumber()
+template<> unsigned cryptographicallyRandomNumber<unsigned>()
 {
     return sharedRandomNumberGenerator().randomNumber();
 }
@@ -181,6 +182,17 @@ uint32_t cryptographicallyRandomNumber()
 void cryptographicallyRandomValues(void* buffer, size_t length)
 {
     sharedRandomNumberGenerator().randomValues(buffer, length);
+}
+
+template<> uint64_t cryptographicallyRandomNumber<uint64_t>()
+{
+    uint64_t high = cryptographicallyRandomNumber<unsigned>();
+    return (high << 32) | cryptographicallyRandomNumber<unsigned>();
+}
+
+double cryptographicallyRandomUnitInterval()
+{
+    return cryptographicallyRandomNumber<unsigned>() / (std::numeric_limits<unsigned>::max() + 1.0);
 }
 
 }

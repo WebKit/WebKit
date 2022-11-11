@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ *           (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2013 Andrew Bortz. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +25,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include <wtf/WeakRandomNumber.h>
 
-#include <stdlib.h>
-#include <time.h>
-#include <wtf/CryptographicallyRandomNumber.h>
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if OS(UNIX)
-#include <sys/types.h>
-#include <unistd.h>
-#endif
+#include <wtf/WeakRandom.h>
 
 namespace WTF {
 
-inline void initializeRandomNumberGenerator()
+template<> unsigned weakRandomNumber<unsigned>()
 {
-#if OS(DARWIN)
-    // On Darwin we use arc4random which initialises itself.
-#elif COMPILER(MSVC) && defined(_CRT_RAND_S)
-    // On Windows we use rand_s which initialises itself
-#elif OS(UNIX)
-    srandom(cryptographicallyRandomNumber());
-#else
-    srand(cryptographicallyRandomNumber());
-#endif
-
+    // We don't care about thread safety. WeakRandom just uses POD types,
+    // and racy access just increases randomness.
+    static WeakRandom s_weakRandom;
+    return s_weakRandom.getUint32();
 }
+
+#if PLATFORM(COCOA)
+
+// Older versions of Safari frameworks were using weakRandomUint32.
+// Remove this once we no longer need to support those.
+
+WTF_EXPORT_PRIVATE unsigned weakRandomUint32();
+
+unsigned weakRandomUint32()
+{
+    return random();
+}
+
+#endif
 
 }

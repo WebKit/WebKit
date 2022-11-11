@@ -673,7 +673,7 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
 {
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-        auto randomNumber = cryptographicallyRandomNumber();
+        auto randomNumber = cryptographicallyRandomNumber<uint32_t>();
 
         WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ApplicationCache", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache", pathSeparator, randomNumber)).get());
