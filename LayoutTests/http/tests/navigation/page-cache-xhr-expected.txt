@@ -4,7 +4,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 pageshow - not from cache
-PASS Executed the XHR abort handler
+PASS Executed the XHR error handler before entering PageCache
+PASS xhr.status is 0
 pagehide - entering cache
 pageshow - from cache
 PASS Page did enter and was restored from the page cache

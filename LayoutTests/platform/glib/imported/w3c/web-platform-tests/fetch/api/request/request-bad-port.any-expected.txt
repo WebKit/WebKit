@@ -1,243 +1,83 @@
 CONSOLE MESSAGE: Not allowed to use restricted network port 1: http://example.com:1/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:1/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 7: http://example.com:7/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:7/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 9: http://example.com:9/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:9/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 11: http://example.com:11/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:11/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 13: http://example.com:13/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:13/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 15: http://example.com:15/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:15/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 17: http://example.com:17/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:17/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 19: http://example.com:19/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:19/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 20: http://example.com:20/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:20/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 21: http://example.com:21/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:21/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 22: http://example.com:22/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:22/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 23: http://example.com:23/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:23/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 25: http://example.com:25/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:25/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 37: http://example.com:37/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:37/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 42: http://example.com:42/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:42/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 43: http://example.com:43/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:43/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 53: http://example.com:53/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:53/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 69: http://example.com:69/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:69/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 77: http://example.com:77/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:77/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 79: http://example.com:79/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:79/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 87: http://example.com:87/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:87/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 95: http://example.com:95/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:95/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 101: http://example.com:101/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:101/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 102: http://example.com:102/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:102/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 103: http://example.com:103/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:103/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 104: http://example.com:104/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:104/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 109: http://example.com:109/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:109/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 110: http://example.com:110/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:110/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 111: http://example.com:111/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:111/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 113: http://example.com:113/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:113/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 115: http://example.com:115/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:115/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 117: http://example.com:117/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:117/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 119: http://example.com:119/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:119/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 123: http://example.com:123/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:123/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 135: http://example.com:135/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:135/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 137: http://example.com:137/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:137/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 139: http://example.com:139/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:139/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 143: http://example.com:143/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:143/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 161: http://example.com:161/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:161/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 179: http://example.com:179/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:179/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 389: http://example.com:389/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:389/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 427: http://example.com:427/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:427/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 465: http://example.com:465/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:465/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 512: http://example.com:512/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:512/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 513: http://example.com:513/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:513/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 514: http://example.com:514/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:514/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 515: http://example.com:515/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:515/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 526: http://example.com:526/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:526/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 530: http://example.com:530/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:530/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 531: http://example.com:531/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:531/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 532: http://example.com:532/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:532/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 540: http://example.com:540/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:540/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 548: http://example.com:548/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:548/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 554: http://example.com:554/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:554/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 556: http://example.com:556/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:556/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 563: http://example.com:563/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:563/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 587: http://example.com:587/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:587/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 601: http://example.com:601/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:601/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 636: http://example.com:636/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:636/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 989: http://example.com:989/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:989/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 990: http://example.com:990/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:990/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 993: http://example.com:993/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:993/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 995: http://example.com:995/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:995/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 1719: http://example.com:1719/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:1719/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 1720: http://example.com:1720/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:1720/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 1723: http://example.com:1723/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:1723/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 2049: http://example.com:2049/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:2049/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 3659: http://example.com:3659/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:3659/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 4045: http://example.com:4045/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:4045/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 5060: http://example.com:5060/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:5060/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 5061: http://example.com:5061/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:5061/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6000: http://example.com:6000/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6000/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6566: http://example.com:6566/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6566/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6665: http://example.com:6665/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6665/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6666: http://example.com:6666/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6666/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6667: http://example.com:6667/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6667/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6668: http://example.com:6668/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6668/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6669: http://example.com:6669/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6669/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 6697: http://example.com:6697/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:6697/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 10080: http://example.com:10080/
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: Fetch API cannot load http://example.com:10080/ due to access control checks.
 
 PASS Request on bad port 1 should throw TypeError.
 PASS Request on bad port 7 should throw TypeError.

@@ -5428,11 +5428,6 @@ fast/text/install-font-style-recalc.html [ Failure ]
 # These tests have been timing out since their import.
 imported/w3c/web-platform-tests/web-locks/bfcache
 
-# This test is timing out in WebKit as well as Blink/Gecko because it expects an XHR to fail
-# with a network error instead of a abort one when its iframe goes away. The test should be
-# fixed.
-imported/w3c/web-platform-tests/xhr/open-url-multi-window-4.htm [ Skip ]
-
 webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
 
 # Mismatching line wrapping when -webkit-hyphen is auto.

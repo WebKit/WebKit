@@ -113,6 +113,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_error(false)
     , m_uploadListenerFlag(false)
     , m_uploadComplete(false)
+    , m_wasAbortedByClient(false)
     , m_responseCacheIsValid(false)
     , m_readyState(static_cast<unsigned>(UNSENT))
     , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
@@ -375,6 +376,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     m_method = normalizeHTTPMethod(method);
     m_error = false;
     m_uploadComplete = false;
+    m_wasAbortedByClient = false;
 
     // clear stuff from possible previous load
     clearResponse();
@@ -680,6 +682,7 @@ void XMLHttpRequest::abort()
 {
     Ref<XMLHttpRequest> protectedThis(*this);
 
+    m_wasAbortedByClient = true;
     if (!internalAbort())
         return;
 
@@ -698,7 +701,6 @@ void XMLHttpRequest::abort()
 
 bool XMLHttpRequest::internalAbort()
 {
-    m_pendingAbortEvent.cancel();
     m_error = true;
 
     // FIXME: when we add the support for multi-part XHR, we will have to think be careful with this initialization.
@@ -768,6 +770,7 @@ void XMLHttpRequest::networkError()
     
 void XMLHttpRequest::abortError()
 {
+    ASSERT(m_wasAbortedByClient);
     genericError();
     dispatchErrorEvents(eventNames().abortEvent);
 }
@@ -895,12 +898,10 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     if (m_error)
         return;
 
-    if (error.isCancellation()) {
-        internalAbort();
-        queueCancellableTaskKeepingObjectAlive(*this, TaskSource::Networking, m_pendingAbortEvent, [this] {
-            m_exceptionCode = AbortError;
-            abortError();
-        });
+    // The XHR specification says we should only fire an abort event if the cancelation was requested by the client.
+    if (m_wasAbortedByClient && error.isCancellation()) {
+        m_exceptionCode = AbortError;
+        abortError();
         return;
     }
 
