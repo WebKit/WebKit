@@ -64,8 +64,11 @@ JSValue iteratorValue(JSGlobalObject* globalObject, JSValue iterResult)
 
 bool iteratorComplete(JSGlobalObject* globalObject, JSValue iterResult)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue done = iterResult.get(globalObject, globalObject->vm().propertyNames->done);
-    return done.toBoolean(globalObject);
+    RETURN_IF_EXCEPTION(scope, true);
+    RELEASE_AND_RETURN(scope, done.toBoolean(globalObject));
 }
 
 JSValue iteratorStep(JSGlobalObject* globalObject, IterationRecord iterationRecord)
