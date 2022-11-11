@@ -2578,7 +2578,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
 
 - (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data
 {
-    _dataMappings.set(urlString, [NSData dataWithBytesNoCopy:(void*)data length:strlen(data) freeWhenDone:NO]);
+    _dataMappings.set(urlString, [NSData dataWithBytes:(void*)data length:strlen(data)]);
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
