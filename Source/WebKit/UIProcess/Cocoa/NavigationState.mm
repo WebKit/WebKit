@@ -154,7 +154,6 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
 
     m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
-    m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo = [delegate respondsToSelector:@selector(_webView:didStartProvisionalNavigation:userInfo:)];
     m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestInFrame = [delegate respondsToSelector:@selector(_webView:didStartProvisionalLoadWithRequest:inFrame:)];
     m_navigationDelegateMethods.webViewDidReceiveServerRedirectForProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalNavigation:)];
     m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailProvisionalNavigation:withError:)];
@@ -626,11 +625,7 @@ void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPagePro
         return;
 
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-    if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    } else if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
         [navigationDelegate webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation)];
 }
 

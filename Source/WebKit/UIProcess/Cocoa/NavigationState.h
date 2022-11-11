@@ -207,7 +207,6 @@ private:
         bool webViewDecidePolicyForNavigationResponseDecisionHandler : 1;
 
         bool webViewDidStartProvisionalNavigation : 1;
-        bool webViewDidStartProvisionalNavigationUserInfo : 1;
         bool webViewDidStartProvisionalLoadWithRequestInFrame : 1;
         bool webViewDidReceiveServerRedirectForProvisionalNavigation : 1;
         bool webViewDidFailProvisionalNavigationWithError : 1;
