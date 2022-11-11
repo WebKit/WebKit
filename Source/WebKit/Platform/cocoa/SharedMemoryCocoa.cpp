@@ -265,7 +265,7 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
-    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
+    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, handle.sendRight(), 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
 #if RELEASE_LOG_DISABLED
     if (kr != KERN_SUCCESS)
         return nullptr;
