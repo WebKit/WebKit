@@ -185,6 +185,7 @@ public:
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
+    bool hasStickyActivation() const;
     bool consumeTransientActivation();
 
     WEBCORE_EXPORT Location& location();

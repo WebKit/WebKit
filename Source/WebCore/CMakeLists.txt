@@ -1162,6 +1162,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/TextMetrics.idl
     html/TimeRanges.idl
     html/URLSearchParams.idl
+    html/UserActivation.idl
     html/ValidityState.idl
     html/VideoFrameMetadata.idl
     html/VideoFrameRequestCallback.idl
@@ -1249,6 +1250,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/IntersectionObserverCallback.idl
     page/IntersectionObserverEntry.idl
     page/Location.idl
+    page/Navigator+UserActivation.idl
     page/Navigator.idl
     page/NavigatorCookies.idl
     page/NavigatorID.idl

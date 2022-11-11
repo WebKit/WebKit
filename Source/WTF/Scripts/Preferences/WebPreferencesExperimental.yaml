@@ -1766,6 +1766,18 @@ UseGPUProcessForWebGLEnabled:
       "PLATFORM(WIN)": true
       default: false
 
+UserActivationAPIEnabled:
+   type: bool
+   humanReadableName: "User Activation API"
+   humanReadableDescription: "Enable User Activation API"
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
+
 UserGesturePromisePropagationEnabled:
   type: bool
   humanReadableName: "UserGesture Promise Propagation"

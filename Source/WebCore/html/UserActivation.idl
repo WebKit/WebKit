@@ -1,0 +1,8 @@
+[
+  Exposed=Window,
+  GenerateIsReachable=ReachableFromNavigator
+]
+interface UserActivation {
+  readonly attribute boolean hasBeenActive;
+  readonly attribute boolean isActive;
+};

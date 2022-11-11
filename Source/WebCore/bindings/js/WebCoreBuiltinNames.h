@@ -55,7 +55,8 @@ namespace WebCore {
     macro(TextDecoder) \
     macro(TextEncoder) \
     macro(URL) \
-    macro(URLSearchParams)
+    macro(URLSearchParams) \
+    macro(UserActivation)
 #endif
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \

@@ -23,6 +23,7 @@ navigator.product is OK
 navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.storage is OK
+navigator.userActivation is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -52,6 +53,7 @@ navigator.product is OK
 navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.storage is OK
+navigator.userActivation is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
