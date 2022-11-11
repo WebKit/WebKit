@@ -866,7 +866,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(SCROLLING_THREAD)
     if (m_useAsyncScrolling)
-        webProcess.eventDispatcher().addScrollingTreeForPage(this);
+        m_drawingArea->registerScrollingTree();
 #endif
 
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
@@ -1625,6 +1625,12 @@ void WebPage::close()
 
     m_printContext = nullptr;
     m_mainFrame->coreFrame()->loader().detachFromParent();
+
+#if ENABLE(SCROLLING_THREAD)
+    if (m_useAsyncScrolling)
+        m_drawingArea->unregisterScrollingTree();
+#endif
+
     m_drawingArea = nullptr;
 
     DeferredPageDestructor::createDeferredPageDestructor(WTFMove(m_page), this);
@@ -1632,16 +1638,13 @@ void WebPage::close()
     bool isRunningModal = m_isRunningModal;
     m_isRunningModal = false;
 
-    auto& webProcess = WebProcess::singleton();
 #if PLATFORM(COCOA)
     if (m_remoteObjectRegistry)
         m_remoteObjectRegistry->close();
     ASSERT(!m_remoteObjectRegistry);
 #endif
-#if ENABLE(SCROLLING_THREAD)
-    if (m_useAsyncScrolling)
-        webProcess.eventDispatcher().removeScrollingTreeForPage(this);
-#endif
+
+    auto& webProcess = WebProcess::singleton();
     webProcess.removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_identifier);
     // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
     webProcess.removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_identifier);

@@ -68,8 +68,8 @@ public:
     WorkQueue& queue() { return m_queue.get(); }
 
 #if ENABLE(SCROLLING_THREAD)
-    void addScrollingTreeForPage(WebPage*);
-    void removeScrollingTreeForPage(WebPage*);
+    void addScrollingTreeForPage(WebPage&);
+    void removeScrollingTreeForPage(WebPage&);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
