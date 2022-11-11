@@ -2728,6 +2728,20 @@ TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WKAttachmentTestsIOS, PasteRichTextCopiedFromNotes)
+{
+    UIPasteboard.generalPasteboard.items = @[@{
+        @"com.apple.notes.richtext" : [@"foo" dataUsingEncoding:NSUTF8StringEncoding],
+        UTTypeHTML.identifier : [@"<p>foo</p>" dataUsingEncoding:NSUTF8StringEncoding]
+    }];
+
+    auto webView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    EXPECT_EQ(0U, observer.observer().inserted.count);
+    EXPECT_WK_STREQ("foo", [webView contentsAsString]);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI
