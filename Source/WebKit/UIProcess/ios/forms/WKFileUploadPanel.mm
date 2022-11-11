@@ -56,16 +56,16 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#if HAVE(PHOTOS_UI_PRIVATE)
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUICore)
+SOFT_LINK_CLASS(PhotosUICore, PXActivityProgressController)
+#else
 SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUIPrivate)
 SOFT_LINK_CLASS(PhotosUIPrivate, PUActivityProgressController)
 #endif
 
 #if HAVE(PHOTOS_UI)
 SOFT_LINK_FRAMEWORK(PhotosUI)
-#if !HAVE(PHOTOS_UI_PRIVATE)
-SOFT_LINK_CLASS(PhotosUI, PUActivityProgressController)
-#endif
 SOFT_LINK_CLASS(PhotosUI, PHPickerConfiguration)
 SOFT_LINK_CLASS(PhotosUI, PHPickerViewController)
 SOFT_LINK_CLASS(PhotosUI, PHPickerResult)
@@ -204,7 +204,11 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 @implementation WKFileUploadMediaTranscoder {
     RetainPtr<NSTimer> _progressTimer;
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+    RetainPtr<PXActivityProgressController> _progressController;
+#else
     RetainPtr<PUActivityProgressController> _progressController;
+#endif
     RetainPtr<AVAssetExportSession> _exportSession;
     RetainPtr<NSArray<_WKFileUploadItem *>> _items;
     RetainPtr<NSString> _temporaryDirectoryPath;
@@ -232,7 +236,11 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 - (void)start
 {
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+    _progressController = adoptNS([allocPXActivityProgressControllerInstance() init]);
+#else
     _progressController = adoptNS([allocPUActivityProgressControllerInstance() init]);
+#endif
     [_progressController setTitle:WEB_UI_STRING_KEY("Preparing…", "Preparing (file upload)", "Title for file upload progress view")];
     [_progressController showAnimated:YES allowDelay:YES];
 
