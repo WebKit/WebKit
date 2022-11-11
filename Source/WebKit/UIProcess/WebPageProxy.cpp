@@ -5212,7 +5212,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().didCommitLoadForFrame(frameID);
+    if (m_userMediaPermissionRequestManager)
+        m_userMediaPermissionRequestManager->didCommitLoadForFrame(frameID);
 #endif
 }
 
