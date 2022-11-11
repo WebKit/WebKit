@@ -1373,3 +1373,79 @@ struct WebCore::MediaCapabilitiesEncodingInfo : WebCore::MediaCapabilitiesInfo {
     WebCore::MediaEncodingConfiguration supportedConfiguration;
 }
 
+header: <WebCore/FormData.h>
+[CustomHeader] struct WebCore::FormDataElement {
+    std::variant<Vector<uint8_t>, WebCore::FormDataElement::EncodedFileData, WebCore::FormDataElement::EncodedBlobData> data
+}
+
+[Nested] struct WebCore::FormDataElement::EncodedFileData {
+    String filename;
+    int64_t fileStart;
+    int64_t fileLength;
+    std::optional<WallTime> expectedFileModificationTime;
+}
+
+[Nested] struct WebCore::FormDataElement::EncodedBlobData {
+    URL url;
+}
+
+header: <WebCore/NetworkLoadInformation.h>
+[CustomHeader] struct WebCore::NetworkTransactionInformation {
+    WebCore::NetworkTransactionInformation::Type type;
+    WebCore::ResourceRequest request;
+    WebCore::ResourceResponse response;
+    WebCore::NetworkLoadMetrics metrics;
+};
+
+[Nested] enum class WebCore::NetworkTransactionInformation::Type : bool
+
+class WebCore::ContentType {
+    String raw()
+}
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+struct WebCore::DateTimeChooserParameters {
+    AtomString type;
+    WebCore::IntRect anchorRectInRootView;
+    AtomString locale;
+    String currentValue;
+    Vector<String> suggestionValues;
+    Vector<String> localizedSuggestionValues;
+    Vector<String> suggestionLabels;
+    double minimum;
+    double maximum;
+    double step;
+    double stepBase;
+    bool required;
+    bool isAnchorElementRTL;
+    bool useDarkAppearance;
+    bool hasSecondField;
+    bool hasMillisecondField;
+}
+#endif
+
+header: <WebCore/ScreenProperties.h>
+[CustomHeader] struct WebCore::ScreenData {
+    WebCore::FloatRect screenAvailableRect;
+    WebCore::FloatRect screenRect;
+    WebCore::DestinationColorSpace colorSpace;
+    int screenDepth;
+    int screenDepthPerComponent;
+    bool screenSupportsExtendedColor;
+    bool screenHasInvertedColors;
+    bool screenSupportsHighDynamicRange;
+#if PLATFORM(MAC)
+    bool screenIsMonochrome;
+    uint32_t displayMask;
+    WebCore::PlatformGPUID gpuID;
+    WebCore::DynamicRangeMode preferredDynamicRangeMode;
+#endif
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    float scaleFactor;
+#endif
+};
+
+struct WebCore::ScreenProperties {
+    WebCore::PlatformDisplayID primaryDisplayID;
+    HashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
+};
