@@ -40,6 +40,7 @@
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -361,7 +362,7 @@ void TextFieldInputType::createShadowSubtree()
         return;
     }
 
-    createContainer();
+    createContainer(PreserveSelectionRange::No);
     updatePlaceholderText();
 
     if (shouldHaveSpinButton) {
@@ -823,7 +824,7 @@ void TextFieldInputType::autoFillButtonElementWasClicked()
     page->chrome().client().handleAutoFillButtonClick(*element());
 }
 
-void TextFieldInputType::createContainer()
+void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelection)
 {
     ASSERT(!m_container);
     ASSERT(element());
@@ -832,6 +833,11 @@ void TextFieldInputType::createContainer()
 
     ScriptDisallowedScope::EventAllowedScope allowedScope(*element()->userAgentShadowRoot());
 
+    // FIXME: <https://webkit.org/b/245977> Suppress selectionchange events during subtree modification.
+    std::optional<std::tuple<unsigned, unsigned, TextFieldSelectionDirection>> selectionState;
+    if (preserveSelection == PreserveSelectionRange::Yes && enclosingTextFormControl(element()->document().selection().selection().start()) == element())
+        selectionState = { element()->selectionStart(), element()->selectionEnd(), element()->computeSelectionDirection() };
+
     m_container = TextControlInnerContainer::create(element()->document());
     element()->userAgentShadowRoot()->appendChild(*m_container);
     m_container->setPseudo(ShadowPseudoIds::webkitTextfieldDecorationContainer());
@@ -839,6 +845,20 @@ void TextFieldInputType::createContainer()
     m_innerBlock = TextControlInnerElement::create(element()->document());
     m_container->appendChild(*m_innerBlock);
     m_innerBlock->appendChild(*m_innerText);
+
+    if (selectionState) {
+        element()->document().eventLoop().queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, element = WeakPtr { element() }] {
+            if (!element || !element->focused())
+                return;
+
+            auto selection = element->document().selection().selection();
+            if (selection.start().deprecatedNode() != element->userAgentShadowRoot())
+                return;
+
+            auto [selectionStart, selectionEnd, selectionDirection] = selectionState;
+            element->setSelectionRange(selectionStart, selectionEnd, selectionDirection);
+        });
+    }
 }
 
 void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonType)
