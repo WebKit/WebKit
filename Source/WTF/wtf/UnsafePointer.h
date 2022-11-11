@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 namespace WTF {
 
 // A UnsafePointer<> can be used to hold a pointer whose lifetime is not guaranteed
@@ -40,25 +42,21 @@ public:
     UnsafePointer() : m_pointer(nullptr) { }
     UnsafePointer(PtrType pointer) : m_pointer(pointer) { }
 
-    bool operator==(PtrType pointer) const { return pointer == m_pointer; }
-    bool operator!=(PtrType pointer) const { return pointer != m_pointer; }
-    operator bool() const { return m_pointer; }
+    explicit operator bool() const { return m_pointer; }
+
+    friend bool operator==(const UnsafePointer& lhs, const UnsafePointer& rhs)
+    {
+        return lhs.m_pointer == rhs.m_pointer;
+    }
+
+    friend bool operator!=(const UnsafePointer& lhs, const UnsafePointer& rhs)
+    {
+        return lhs.m_pointer != rhs.m_pointer;
+    }
 
 private:
     PtrType m_pointer;
 };
-
-template<typename T>
-bool operator==(typename UnsafePointer<T>::PtrType barePointer, const UnsafePointer<T>& unsafePointer)
-{
-    return unsafePointer == barePointer;
-}
-
-template<typename T>
-bool operator!=(typename UnsafePointer<T>::PtrType barePointer, const UnsafePointer<T>& unsafePointer)
-{
-    return unsafePointer != barePointer;
-}
 
 } // namespace WTF
 
