@@ -1,0 +1,6 @@
+
+FAIL allowsFeature() returns true for web-share undefined is not an object (evaluating 'document.featurePolicy.allowsFeature')
+FAIL features() includes web-share undefined is not an object (evaluating 'document.featurePolicy.features')
+FAIL allowedFeatures() includes web-share undefined is not an object (evaluating 'document.featurePolicy.allowedFeatures')
+FAIL allowsFeature() returns a single entry for web-share undefined is not an object (evaluating 'document.featurePolicy.getAllowlistForFeature')
+
