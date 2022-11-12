@@ -447,6 +447,35 @@ int codePointCompare(StringView lhs, StringView rhs)
     return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters16(), rhs.length());
 }
 
+template<typename CharacterType> static String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
+{
+    unsigned length = string.length();
+    unsigned resultLength = firstCarriageReturn;
+    auto* characters = string.characters<CharacterType>();
+    CharacterType* resultCharacters;
+    auto result = String::createUninitialized(length, resultCharacters);
+    memcpy(resultCharacters, characters, firstCarriageReturn * sizeof(CharacterType));
+    for (unsigned i = firstCarriageReturn; i < length; ++i) {
+        if (characters[i] != '\r')
+            resultCharacters[resultLength++] = characters[i];
+        else {
+            resultCharacters[resultLength++] = '\n';
+            if (i < length + 1 && characters[i + 1] == '\n')
+                ++i;
+        }
+    }
+    if (resultLength < length)
+        result = StringImpl::createSubstringSharingImpl(*result.impl(), 0, resultLength);
+    return result;
+}
+
+String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
+{
+    if (string.is8Bit())
+        return makeStringBySimplifyingNewLinesSlowCase<LChar>(string, firstCarriageReturn);
+    return makeStringBySimplifyingNewLinesSlowCase<UChar>(string, firstCarriageReturn);
+}
+
 #if CHECK_STRINGVIEW_LIFETIME
 
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.

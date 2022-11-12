@@ -1356,10 +1356,14 @@ inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, 
 }
 
 WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringByReplacingAll(StringView, UChar target, UChar replacement);
+WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringBySimplifyingNewLinesSlowCase(const String&, unsigned firstCarriageReturnOffset);
 
 inline String WARN_UNUSED_RETURN makeStringBySimplifyingNewLines(const String& string)
 {
-    return makeStringByReplacingAll(makeStringByReplacingAll(string, "\r\n"_s, "\n"_s), '\r', '\n');
+    auto firstCarriageReturn = string.find('\r');
+    if (firstCarriageReturn == notFound)
+        return string;
+    return makeStringBySimplifyingNewLinesSlowCase(string, firstCarriageReturn);
 }
 
 inline bool String::startsWith(StringView string) const
