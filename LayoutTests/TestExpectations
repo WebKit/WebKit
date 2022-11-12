@@ -4996,6 +4996,10 @@ fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ 
 fast/layoutformattingcontext/block-only/floats-and-block-formatting-roots.html [ Skip ]
 fast/layoutformattingcontext/float-avoider-available-horizontal-space2.html [ Skip ]
 fast/layoutformattingcontext/float-avoider-with-inline-content.html [ Skip ]
+# needs BlockLayoutState support
+fast/layoutformattingcontext/float-avoiding-br-last-line.html [ Skip ]
+fast/layoutformattingcontext/float-avoiding-br-simple.html [ Skip ]
+fast/layoutformattingcontext/intrusive-floats-and-stretchy-lines-simple.html [ Skip ]
 
 # Needs display box support.
 fast/layoutformattingcontext/flex-box-simple.html [ Skip ]

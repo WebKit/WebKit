@@ -86,8 +86,8 @@ static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
 }
 
 
-TableFormattingState::TableFormattingState(Ref<FloatingState>&& floatingState, LayoutState& layoutState, const ElementBox& tableBox)
-    : FormattingState(WTFMove(floatingState), Type::Table, layoutState)
+TableFormattingState::TableFormattingState(LayoutState& layoutState, const ElementBox& tableBox)
+    : FormattingState(Type::Table, layoutState)
     , m_tableGrid(ensureTableGrid(tableBox))
 {
 }

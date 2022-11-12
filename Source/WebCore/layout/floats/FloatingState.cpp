@@ -49,11 +49,12 @@ FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGe
 {
 }
 
-FloatingState::FloatingState(LayoutState& layoutState, const ElementBox& formattingContextRoot)
+FloatingState::FloatingState(LayoutState& layoutState, const ElementBox& blockFormattingContextRoot)
     : m_layoutState(layoutState)
-    , m_formattingContextRoot(formattingContextRoot)
-    , m_isLeftToRightDirection(formattingContextRoot.style().isLeftToRightDirection())
+    , m_blockFormattingContextRoot(blockFormattingContextRoot)
+    , m_isLeftToRightDirection(blockFormattingContextRoot.style().isLeftToRightDirection())
 {
+    ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext());
 }
 
 void FloatingState::append(FloatItem newFloatItem)

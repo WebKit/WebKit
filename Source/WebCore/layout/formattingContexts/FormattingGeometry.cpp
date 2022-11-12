@@ -794,7 +794,7 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
             auto& initialContainingBlock = FormattingContext::initialContainingBlock(documentBox);
-            auto floatingContext = FloatingContext { formattingContext(), layoutState().formattingStateForFormattingContext(initialContainingBlock).floatingState() };
+            auto floatingContext = FloatingContext { formattingContext(), downcast<BlockFormattingState>(layoutState().formattingStateForFormattingContext(initialContainingBlock)).floatingState() };
             if (auto floatBottom = floatingContext.bottom()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);
                 auto floatTop = floatingContext.top();

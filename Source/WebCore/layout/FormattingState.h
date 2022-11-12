@@ -33,15 +33,12 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
-class FloatingState;
 enum class StyleDiff;
 
 class FormattingState {
     WTF_MAKE_NONCOPYABLE(FormattingState);
     WTF_MAKE_ISO_ALLOCATED(FormattingState);
 public:
-    FloatingState& floatingState() const { return m_floatingState; }
-
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&);
 
@@ -69,12 +66,11 @@ public:
 
 protected:
     enum class Type { Block, Inline, Table, Flex };
-    FormattingState(Ref<FloatingState>&&, Type, LayoutState&);
+    FormattingState(Type, LayoutState&);
     ~FormattingState();
 
 private:
     LayoutState& m_layoutState;
-    Ref<FloatingState> m_floatingState;
     HashMap<const Box*, IntrinsicWidthConstraints> m_intrinsicWidthConstraintsForBoxes;
     std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     // FIXME: This needs WeakListHashSet

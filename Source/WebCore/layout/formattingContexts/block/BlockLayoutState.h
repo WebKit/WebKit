@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "FloatingState.h"
+
 namespace WebCore {
 namespace Layout {
 
@@ -33,20 +35,29 @@ class BlockFormattingContext;
 // This class holds block level information shared across child inline formatting contexts. 
 class BlockLayoutState {
 public:
+    BlockLayoutState(FloatingState&);
+
+    FloatingState& floatingState() { return m_floatingState; }
+
     struct LineClamp {
         size_t m_maximumNumberOfLines { 0 };
         size_t m_numberOfVisibleLines { 0 };
     };
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
-    // FIXME: Move FloatingState here.
 private:
     friend BlockFormattingContext;
 
     void setLineClamp(LineClamp lineClamp) { m_lineClamp = lineClamp; }
 
+    FloatingState& m_floatingState;
     std::optional<LineClamp> m_lineClamp;
 };
+
+inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState)
+    : m_floatingState(floatingState)
+{
+}
 
 }
 }
