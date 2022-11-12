@@ -126,9 +126,9 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
 
 ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const
 {
-    ShareableBitmapHandle handle;
-    m_bitmap->createHandle(handle, protection);
-    return ImageBufferBackendHandle(WTFMove(handle));
+    if (auto handle = m_bitmap->createHandle(protection))
+        return ImageBufferBackendHandle(WTFMove(*handle));
+    return { };
 }
 
 IntSize ImageBufferShareableBitmapBackend::backendSize() const

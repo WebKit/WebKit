@@ -85,21 +85,21 @@ fi
 jsargs=(
     --plan jetstream2
     --diagnose-directory="$BASE/jetstream"
-    --generate-profiles
+    --generate-pgo-profiles
     --count 1
 )
 
 spargs=(
     --plan speedometer2
     --diagnose-directory="$BASE/speedometer"
-    --generate-profiles
+    --generate-pgo-profiles
     --count 1
 )
 
 mmargs=(
     --plan motionmark1.1
     --diagnose-directory="$BASE/motionmark"
-    --generate-profiles
+    --generate-pgo-profiles
     --count 1
 )
 

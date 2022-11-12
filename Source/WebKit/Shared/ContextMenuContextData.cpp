@@ -100,8 +100,10 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmapHandle handle;
-    if (m_controlledImage)
-        m_controlledImage->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    if (m_controlledImage) {
+        if (auto imageHandle = m_controlledImage->createHandle(SharedMemory::Protection::ReadOnly))
+            handle = WTFMove(*imageHandle);
+    }
     encoder << handle;
     encoder << m_controlledSelectionData;
     encoder << m_selectedTelephoneNumbers;

@@ -121,7 +121,8 @@ private:
     bool shouldDrawCapsLockIndicator() const;
     bool shouldDrawAutoFillButton() const;
 
-    void createContainer();
+    enum class PreserveSelectionRange : bool { No, Yes };
+    void createContainer(PreserveSelectionRange = PreserveSelectionRange::Yes);
     void createAutoFillButton(AutoFillButtonType);
 
 #if ENABLE(DATALIST_ELEMENT)

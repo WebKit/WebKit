@@ -112,7 +112,7 @@ public:
 
     ~SharedMemory();
 
-    bool createHandle(Handle&, Protection);
+    std::optional<Handle> createHandle(Protection);
 
     size_t size() const { return m_size; }
     void* data() const

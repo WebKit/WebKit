@@ -1,6 +1,4 @@
 Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=origin
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=origin due to access control checks.
 CONSOLE MESSAGE: NetworkError:  A network error occurred.
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 Description

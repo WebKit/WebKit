@@ -217,9 +217,10 @@ ShareableBitmapHandle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(W
 
     context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
 
-    ShareableBitmapHandle bitmapHandle;
-    bitmap->createHandle(bitmapHandle);
-    return bitmapHandle;
+    auto bitmapHandle = bitmap->createHandle();
+    if (!bitmapHandle)
+        return { };
+    return WTFMove(*bitmapHandle);
 }
 
 } // namespace WebKit

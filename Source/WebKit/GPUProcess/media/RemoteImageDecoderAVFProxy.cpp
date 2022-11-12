@@ -151,7 +151,8 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
     FloatSize imageSize { float(width), float(height) };
     FloatRect imageRect { { }, imageSize };
     context->drawNativeImage(*nativeImage, imageSize, imageRect, imageRect, { CompositeOperator::Copy });
-    bitmap->createHandle(imageHandle);
+    if (auto handle = bitmap->createHandle())
+        imageHandle = WTFMove(*handle);
 }
 
 void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier identifier, size_t index)

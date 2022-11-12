@@ -409,15 +409,15 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
         if (!oolMessageBody)
             return false;
 
-        WebKit::SharedMemory::Handle handle;
-        if (!oolMessageBody->createHandle(handle, WebKit::SharedMemory::Protection::ReadOnly))
+        auto handle = oolMessageBody->createHandle(WebKit::SharedMemory::Protection::ReadOnly);
+        if (!handle)
             return false;
 
         outputMessage.messageInfo().setBodyOutOfLine();
 
         memcpy(oolMessageBody->data(), outputMessage.body(), outputMessage.bodySize());
 
-        outputMessage.appendAttachment(handle.releaseHandle());
+        outputMessage.appendAttachment(handle->releaseHandle());
     }
 
     return sendOutputMessage(outputMessage);

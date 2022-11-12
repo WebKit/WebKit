@@ -98,7 +98,8 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     CSSParser p(parserContext());
-    auto selectorList = p.parseSelector(selectorText);
+    auto* sheet = parentStyleSheet();
+    auto selectorList = p.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr);
     if (!selectorList)
         return;
 

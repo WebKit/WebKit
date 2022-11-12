@@ -245,19 +245,20 @@ SharedMemory::~SharedMemory()
     }
 }
     
-bool SharedMemory::createHandle(Handle& handle, Protection protection)
+auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
+    Handle handle;
     ASSERT(!handle.m_handle);
     ASSERT(!handle.m_size);
 
     auto sendRight = createSendRight(protection);
     if (!sendRight)
-        return false;
+        return std::nullopt;
 
     handle.m_handle = WTFMove(sendRight);
     handle.m_size = m_size;
 
-    return true;
+    return WTFMove(handle);
 }
 
 WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const

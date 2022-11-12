@@ -27,6 +27,7 @@
 #include "WebMouseEvent.h"
 
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/NavigationAction.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -70,5 +71,21 @@ bool WebMouseEvent::isMouseEventType(Type type)
 {
     return type == MouseDown || type == MouseUp || type == MouseMove || type == MouseForceUp || type == MouseForceDown || type == MouseForceChanged;
 }
-    
+
+WebMouseEventButton mouseButton(const WebCore::NavigationAction& navigationAction)
+{
+    auto& mouseEventData = navigationAction.mouseEventData();
+    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
+        return static_cast<WebMouseEventButton>(mouseEventData->button);
+    return WebMouseEventButton::NoButton;
+}
+
+WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationAction& navigationAction)
+{
+    auto& mouseEventData = navigationAction.mouseEventData();
+    if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
+        return static_cast<WebMouseEventSyntheticClickType>(mouseEventData->syntheticClickType);
+    return WebMouseEventSyntheticClickType::NoTap;
+}
+
 } // namespace WebKit

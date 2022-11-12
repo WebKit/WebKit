@@ -1,5 +1,5 @@
 
 PASS <a> should support autofocus
 PASS Renderable element with tabindex should support autofocus
-FAIL Never-rendered element with tabindex should not support autofocus promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.document.activeElement.tagName')"
+FAIL Never-rendered element with tabindex should not support autofocus assert_equals: expected "svg" but got "metadata"
 

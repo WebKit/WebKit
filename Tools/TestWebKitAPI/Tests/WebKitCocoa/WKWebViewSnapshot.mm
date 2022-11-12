@@ -29,7 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
-#import <WebKit/WKSnapshotConfiguration.h>
+#import <WebKit/WKSnapshotConfigurationPrivate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -629,6 +629,55 @@ TEST(WKWebView, SnapshotWebGL)
         EXPECT_EQ(255, rgba[pixelIndex + 1]);
         EXPECT_EQ(0, rgba[pixelIndex + 2]);
         EXPECT_EQ(255, rgba[pixelIndex + 3]);
+
+        free(rgba);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+#endif
+
+#if PLATFORM(MAC)
+TEST(WKWebView, SnapshotWithoutSelectionHighlighting)
+{
+    NSInteger viewWidth = 800;
+    NSInteger viewHeight = 600;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    RetainPtr<PlatformWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    CGFloat backingScaleFactor = [window backingScaleFactor];
+
+    // Select a line of underscore characters so we have a large selection highlight area that doesn't intersect with the character glyphs.
+    [webView loadHTMLString:@"<body> <div id='selectThis'>________</div> </body> <script> window.getSelection().selectAllChildren( document.getElementById('selectThis')); </script>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration _setIncludesSelectionHighlighting:NO];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+
+        EXPECT_EQ(viewWidth, snapshotImage.size.width);
+
+        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+
+        NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;
+        NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
+
+        uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
+
+        // Get a pixel from inside where the selection highlight would normally be and verify that the highlight isn't in the snapshot.
+        NSInteger pixelIndex = getPixelIndex(20 * backingScaleFactor, 20 * backingScaleFactor, viewWidthInPixels);
+        EXPECT_EQ(255, rgba[pixelIndex]);
+        EXPECT_EQ(255, rgba[pixelIndex + 1]);
+        EXPECT_EQ(255, rgba[pixelIndex + 2]);
 
         free(rgba);
 

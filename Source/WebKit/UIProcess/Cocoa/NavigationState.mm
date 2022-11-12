@@ -154,7 +154,6 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
 
     m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
-    m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo = [delegate respondsToSelector:@selector(_webView:didStartProvisionalNavigation:userInfo:)];
     m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestInFrame = [delegate respondsToSelector:@selector(_webView:didStartProvisionalLoadWithRequest:inFrame:)];
     m_navigationDelegateMethods.webViewDidReceiveServerRedirectForProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalNavigation:)];
     m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailProvisionalNavigation:withError:)];
@@ -402,7 +401,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
     trySOAuthorization(WTFMove(navigationAction), page, WTFMove(completionHandler));
 }
 
-void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
+void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
 
@@ -518,7 +517,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)
             [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
         else
-            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
     } else {
         auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
             decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
@@ -567,7 +566,7 @@ void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy
 }
 #endif
     
-void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy& page, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
+void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy& page, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener)
 {
     if (!m_navigationState || !m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
         NSURL *url = navigationResponse->response().nsURLResponse().URL;
@@ -626,11 +625,7 @@ void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPagePro
         return;
 
     // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
-    if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigationUserInfo) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    } else if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
         [navigationDelegate webView:m_navigationState->m_webView didStartProvisionalNavigation:wrapper(navigation)];
 }
 

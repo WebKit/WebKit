@@ -136,14 +136,18 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     encoder << dictionaryPopupInfo;
 
     WebKit::SharedMemory::Handle imageHandle;
-    if (imageSharedMemory && imageSharedMemory->data())
-        imageSharedMemory->createHandle(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
+    if (imageSharedMemory && imageSharedMemory->data()) {
+        if (auto handle = imageSharedMemory->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
+            imageHandle = WTFMove(*handle);
+    }
 
     encoder << imageHandle;
 
     ShareableBitmapHandle imageBitmapHandle;
-    if (imageBitmap)
-        imageBitmap->createHandle(imageBitmapHandle, SharedMemory::Protection::ReadOnly);
+    if (imageBitmap) {
+        if (auto handle = imageBitmap->createHandle(SharedMemory::Protection::ReadOnly))
+            imageBitmapHandle = WTFMove(*handle);
+    }
     encoder << imageBitmapHandle;
     encoder << sourceImageMIMEType;
 

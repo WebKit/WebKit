@@ -29,10 +29,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(PHOTOS_UI_PRIVATE)
-#import <PhotosUIPrivate/PUActivityProgressController.h>
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+#import <PhotosUICore/PXActivityProgressController.h>
 #else
-#import <PhotosUI/PUActivityProgressController.h>
+#import <PhotosUIPrivate/PUActivityProgressController.h>
 #endif
 
 #import <PhotosUI/PHPicker_Private.h>
@@ -41,7 +41,11 @@
 
 #import "UIKitSPI.h"
 
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+@interface PXActivityProgressController : NSObject
+#else
 @interface PUActivityProgressController : NSObject
+#endif
 
 @property (nonatomic, copy) NSString *title;
 

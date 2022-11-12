@@ -83,10 +83,10 @@ void WebSWOriginStore::unregisterSWServerConnection(WebSWServerConnection& conne
 
 void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
 {
-    SharedMemory::Handle handle;
-    if (!m_store.createSharedMemoryHandle(handle))
+    auto handle = m_store.createSharedMemoryHandle();
+    if (!handle)
         return;
-    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(handle));
+    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(*handle));
 }
 
 void WebSWOriginStore::didInvalidateSharedMemory()

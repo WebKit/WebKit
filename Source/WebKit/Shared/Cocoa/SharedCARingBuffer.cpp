@@ -80,14 +80,14 @@ ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebC
     if (!sharedMemory)
         return { nullptr, { } };
 
-    ConsumerSharedCARingBuffer::Handle handle;
-    if (!sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly))
+    auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!handle)
         return { nullptr, { } };
 
     new (NotNull, sharedMemory->data()) TimeBoundsBuffer;
     std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
     result->initialize();
-    return { WTFMove(result), WTFMove(handle) };
+    return { WTFMove(result), WTFMove(*handle) };
 }
 
 } // namespace WebKit

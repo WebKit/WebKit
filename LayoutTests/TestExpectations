@@ -941,7 +941,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/002.
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_002.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_003.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/058.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/evaluation-order-1.html [ Failure Pass ]
@@ -5419,11 +5418,6 @@ fast/text/install-font-style-recalc.html [ Failure ]
 
 # These tests have been timing out since their import.
 imported/w3c/web-platform-tests/web-locks/bfcache
-
-# This test is timing out in WebKit as well as Blink/Gecko because it expects an XHR to fail
-# with a network error instead of a abort one when its iframe goes away. The test should be
-# fixed.
-imported/w3c/web-platform-tests/xhr/open-url-multi-window-4.htm [ Skip ]
 
 webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
 

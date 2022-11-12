@@ -1,8 +1,10 @@
 
-PASS document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (XMLHttpRequest)
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (XMLHttpRequest) Test timed out
 PASS document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (fetch())
 PASS document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (image loading)
-PASS document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (XMLHttpRequest)
+TIMEOUT document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (XMLHttpRequest) Test timed out
 PASS document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (fetch())
 PASS document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (image loading)
 

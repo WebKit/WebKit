@@ -781,7 +781,7 @@ void PlatformCALayerCocoa::setContents(const WebCore::IOSurface& surface)
 
 void PlatformCALayerCocoa::setContents(const WTF::MachSendRight& surfaceHandle)
 {
-    auto surface = WebCore::IOSurface::createFromSendRight(surfaceHandle.copySendRight(), WebCore::DestinationColorSpace::SRGB());
+    auto surface = WebCore::IOSurface::createFromSendRight(surfaceHandle.copySendRight());
     setContents(*surface);
 }
 #endif

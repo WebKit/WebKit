@@ -630,7 +630,6 @@ WebProcess/InjectedBundle/InjectedBundle.cpp
 WebProcess/InjectedBundle/InjectedBundleClient.cpp
 WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
-WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp
 WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp

@@ -44,14 +44,8 @@ void PlatformPopupMenuData::encode(IPC::Encoder& encoder) const
     encoder << m_clientInsetRight;
     encoder << m_popupWidth;
     encoder << m_itemHeight;
-
-    ShareableBitmapHandle notSelectedBackingStoreHandle;
-    m_notSelectedBackingStore->createHandle(notSelectedBackingStoreHandle);
-    encoder << notSelectedBackingStoreHandle;
-
-    ShareableBitmapHandle selectedBackingStoreHandle;
-    m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
-    encoder << selectedBackingStoreHandle;
+    encoder << m_notSelectedBackingStore->createHandle();
+    encoder << m_selectedBackingStore->createHandle();
 #else
     UNUSED_PARAM(encoder);
 #endif
@@ -82,15 +76,17 @@ bool PlatformPopupMenuData::decode(IPC::Decoder& decoder, PlatformPopupMenuData&
     if (!decoder.decode(data.m_itemHeight))
         return false;
 
-    ShareableBitmapHandle notSelectedBackingStoreHandle;
-    if (!decoder.decode(notSelectedBackingStoreHandle))
+    std::optional<std::optional<ShareableBitmapHandle>> notSelectedBackingStoreHandle;
+    decoder >> notSelectedBackingStoreHandle;
+    if (!notSelectedBackingStoreHandle || !*notSelectedBackingStoreHandle)
         return false;
-    data.m_notSelectedBackingStore = ShareableBitmap::create(notSelectedBackingStoreHandle);
+    data.m_notSelectedBackingStore = ShareableBitmap::create(**notSelectedBackingStoreHandle);
 
-    ShareableBitmapHandle selectedBackingStoreHandle;
-    if (!decoder.decode(selectedBackingStoreHandle))
+    std::optional<std::optional<ShareableBitmapHandle>> selectedBackingStoreHandle;
+    decoder >> selectedBackingStoreHandle;
+    if (!selectedBackingStoreHandle || !*selectedBackingStoreHandle)
         return false;
-    data.m_selectedBackingStore = ShareableBitmap::create(selectedBackingStoreHandle);
+    data.m_selectedBackingStore = ShareableBitmap::create(**selectedBackingStoreHandle);
 #else
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(data);

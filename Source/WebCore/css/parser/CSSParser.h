@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
 
-    std::optional<CSSSelectorList> parseSelector(const String&);
+    std::optional<CSSSelectorList> parseSelector(const String&, StyleSheetContents* = nullptr);
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 

@@ -647,9 +647,10 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     if (!convertedImage)
         return false;
 
-    ShareableBitmapHandle handle;
-    convertedImage->createHandle(handle);
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, iconSize));
+    auto handle = convertedImage->createHandle();
+    if (!handle)
+        return false;
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, *handle, iconSize));
     return true;
 }
 
@@ -719,11 +720,8 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
     if (!hasRunningProcess())
         return;
 
-    auto memoryHandles = WTF::compactMap(highlights, [](auto& highlight) -> std::optional<SharedMemory::Handle> {
-        SharedMemory::Handle handle;
-        if (!highlight->createHandle(handle, SharedMemory::Protection::ReadOnly))
-            return std::nullopt;
-        return handle;
+    auto memoryHandles = WTF::compactMap(highlights, [](auto& highlight) {
+        return highlight->createHandle(SharedMemory::Protection::ReadOnly);
     });
     
     setUpHighlightsObserver();

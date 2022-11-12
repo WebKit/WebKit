@@ -188,14 +188,12 @@ std::optional<SharedMemory::Handle> RemoteRenderingBackendProxy::updateSharedMem
     auto memory = SharedMemory::allocate(dataSize);
     if (!memory)
         return std::nullopt;
-    SharedMemory::Handle handle;
-    if (!memory->createHandle(handle, SharedMemory::Protection::ReadWrite))
-        return std::nullopt;
-    if (handle.isNull())
+    auto handle = memory->createHandle(SharedMemory::Protection::ReadWrite);
+    if (!handle)
         return std::nullopt;
 
     m_getPixelBufferSharedMemory = WTFMove(memory);
-    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
     m_destroyGetPixelBufferSharedMemoryTimer.startOneShot(5_s);
     return handle;
 }

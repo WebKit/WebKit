@@ -35,7 +35,6 @@
 #include "IPCTestingAPI.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleDOMWindowExtension.h"
-#include "InjectedBundleNavigationAction.h"
 #include "Logging.h"
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -77,6 +76,7 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>
@@ -846,9 +846,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
         return;
     }
 
-    // FIXME: Remove this.
-    RefPtr<API::Object> userData;
-
     bool canShowResponse = webPage->canShowResponse(response);
 
     auto* coreFrame = m_frame->coreFrame();
@@ -857,7 +854,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 
     auto protector = m_frame.copyRef();
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
-    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForResponse(m_frame->frameID(), m_frame->info(), identifier, navigationID, response, request, canShowResponse, downloadAttribute, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())))) {
+    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForResponse(m_frame->frameID(), m_frame->info(), identifier, navigationID, response, request, canShowResponse, downloadAttribute, listenerID))) {
         WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: ignoring because WebPageProxy::DecidePolicyForResponse failed");
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { identifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
     }
@@ -887,19 +884,15 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
         return;
     }
 
-    // FIXME: Remove this.
-    RefPtr<API::Object> userData;
-
-    auto action = InjectedBundleNavigationAction::create(m_frame.ptr(), navigationAction, formState);
-
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
 
     NavigationActionData navigationActionData;
-    navigationActionData.navigationType = action->navigationType();
-    navigationActionData.modifiers = action->modifiers();
-    navigationActionData.mouseButton = action->mouseButton();
-    navigationActionData.syntheticClickType = action->syntheticClickType();
-    navigationActionData.clickLocationInRootViewCoordinates = action->clickLocationInRootViewCoordinates();
+    navigationActionData.navigationType = navigationAction.type();
+    navigationActionData.modifiers = modifiersForNavigationAction(navigationAction);
+    navigationActionData.mouseButton = mouseButton(navigationAction);
+    navigationActionData.syntheticClickType = syntheticClickType(navigationAction);
+    if (auto& data = navigationAction.mouseEventData())
+        navigationActionData.clickLocationInRootViewCoordinates = data->locationInRootViewCoordinates;
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
@@ -912,7 +905,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
 #endif
 
     webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), m_frame->info(), identifier, navigationActionData, request,
-        frameName, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        frameName, listenerID));
 }
 
 void WebFrameLoaderClient::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies)
@@ -956,12 +949,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
-    // FIXME: Remove this.
-    RefPtr<API::Object> userData;
-
-    // FIXME: This probably isn't necessary.
-    Ref<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame.ptr(), navigationAction, formState);
-
     uint64_t listenerID = m_frame->setUpPolicyListener(requestIdentifier, WTFMove(function), WebFrame::ForNavigationAction::Yes);
 
     ASSERT(navigationAction.requester());
@@ -992,11 +979,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     NavigationActionData navigationActionData;
-    navigationActionData.navigationType = action->navigationType();
-    navigationActionData.modifiers = action->modifiers();
-    navigationActionData.mouseButton = action->mouseButton();
-    navigationActionData.syntheticClickType = action->syntheticClickType();
-    navigationActionData.clickLocationInRootViewCoordinates = action->clickLocationInRootViewCoordinates();
+    navigationActionData.navigationType = navigationAction.type();
+    navigationActionData.modifiers = modifiersForNavigationAction(navigationAction);
+    navigationActionData.mouseButton = mouseButton(navigationAction);
+    navigationActionData.syntheticClickType = syntheticClickType(navigationAction);
+    if (auto& data = navigationAction.mouseEventData())
+        navigationActionData.clickLocationInRootViewCoordinates = data->locationInRootViewCoordinates;
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
@@ -1036,7 +1024,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     Ref protector { *coreFrame };
 
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
-        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse));
         if (!sendResult) {
             WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC");
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
@@ -1050,7 +1038,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), listenerID))) {
+    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, listenerID))) {
         WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send async IPC");
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
     }
@@ -1061,17 +1049,8 @@ void WebFrameLoaderClient::cancelPolicyCheck()
     m_frame->invalidatePolicyListeners();
 }
 
-void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& error)
+void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)
 {
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    // FIXME: Remove this.
-    RefPtr<API::Object> userData;
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::UnableToImplementPolicy(m_frame->frameID(), error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&& formState)

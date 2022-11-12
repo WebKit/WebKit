@@ -339,6 +339,19 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(resolvedCookieDirectory, FileSystem::pathFileName(m_configuration->cookieStorageFile())));
     }
 
+    // Do not back up cache type data.
+    std::array allCacheDirectories = {
+        resolvedApplicationCacheDirectory()
+        , resolvedMediaCacheDirectory()
+        , resolvedNetworkCacheDirectory()
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+        , resolvedModelElementCacheDirectory()
+#endif
+    };
+
+    for (const auto& directory : allCacheDirectories)
+        FileSystem::setExcludedFromBackup(directory, true);
+
     // Clear data of deprecated types asynchronously.
     if (auto webSQLDirectory = m_configuration->webSQLDatabaseDirectory(); !webSQLDirectory.isEmpty()) {
         m_queue->dispatch([webSQLDirectory = webSQLDirectory.isolatedCopy()]() {

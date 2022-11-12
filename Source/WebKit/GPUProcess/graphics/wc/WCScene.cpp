@@ -230,8 +230,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
     if (m_usesOffscreenRendering) {
         auto bitmap = ShareableBitmap::create(windowSize, { });
         glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
-        ShareableBitmapHandle handle;
-        if (bitmap->createHandle(handle)) {
+        if (auto handle = bitmap->createHandle()) {
             result.emplace();
             result->viewSize = windowSize;
             result->deviceScaleFactor = 1;
@@ -239,7 +238,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
             WebCore::IntRect viewport = { { }, windowSize };
             result->updateRectBounds = viewport;
             result->updateRects.append(viewport);
-            result->bitmapHandle = WTFMove(handle);
+            result->bitmapHandle = WTFMove(*handle);
         }
     } else
         m_context->swapBuffers();

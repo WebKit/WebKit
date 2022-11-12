@@ -833,7 +833,9 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     if (!bitmap)
         return;
 
-    if (!bitmap->createHandle(updateInfo.bitmapHandle))
+    if (auto handle = bitmap->createHandle())
+        updateInfo.bitmapHandle = WTFMove(*handle);
+    else
         return;
 
     auto rects = m_dirtyRegion.rects();

@@ -20,7 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import logging
+import os
 import requests
 
 _log = logging.getLogger(__name__)
@@ -54,3 +56,14 @@ def is_valid_id(id, expected_data_type=int):
         _log.warn('Invalid id: {}, id should be positive integer.'.format(id))
         return False
     return True
+
+
+def load_password(name, default=None):
+    if os.getenv(name):
+        return os.getenv(name)
+    try:
+        passwords = json.load(open('passwords.json'))
+        return passwords.get(name, default)
+    except Exception as e:
+        _log.error('Error in finding {} in passwords.json'.format(name))
+        return default

@@ -5896,10 +5896,7 @@ void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& pri
             std::optional<SharedMemory::Handle> ipcHandle;
             if (error.isNull()) {
                 auto sharedMemory = SharedMemory::copyBuffer(*data);
-                SharedMemory::Handle handle;
-                sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-                if (!handle.isNull())
-                    ipcHandle = WTFMove(handle);
+                ipcHandle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
             }
             completionHandler(WTFMove(ipcHandle), WTFMove(error));
         });
@@ -7965,9 +7962,8 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         return;
     }
 
-    ShareableBitmapHandle bitmapHandle;
-    bitmap->createHandle(bitmapHandle);
-    if (bitmapHandle.isNull()) {
+    auto bitmapHandle = bitmap->createHandle();
+    if (!bitmapHandle) {
         if (completion)
             completion({ });
         return;
@@ -7980,7 +7976,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
 
     auto cachedImage = renderImage.cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
-    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle), options.sourceLanguageIdentifier, options.targetLanguageIdentifier), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(*bitmapHandle), options.sourceLanguageIdentifier, options.targetLanguageIdentifier), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
         RefPtr protectedPage { webPage.get() };
         if (!protectedPage)
             return;
@@ -8079,9 +8075,8 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
         return;
     }
 
-    ShareableBitmapHandle handle;
-    bitmap->createHandle(handle);
-    if (handle.isNull()) {
+    auto handle = bitmap->createHandle();
+    if (!handle) {
         completion({ }, { });
         return;
     }
@@ -8092,7 +8087,7 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
             mimeType = image->mimeType();
     }
     ASSERT(!mimeType.isEmpty());
-    completion(handle, mimeType);
+    completion(*handle, mimeType);
 }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

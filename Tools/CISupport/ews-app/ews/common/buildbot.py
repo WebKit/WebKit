@@ -62,7 +62,7 @@ class Buildbot():
         buildbot_port = config.COMMIT_QUEUE_PORT if send_to_commit_queue else config.BUILDBOT_SERVER_PORT
         command = ['buildbot', 'try',
                    '--connect=pb',
-                   '--master={}:{}'.format(config.BUILDBOT_SERVER_HOST, buildbot_port),
+                   '--master={}:{}'.format(config.BUILDBOT_TRY_HOST, buildbot_port),
                    '--username={}'.format(config.BUILDBOT_TRY_USERNAME),
                    '--passwd={}'.format(config.BUILDBOT_TRY_PASSWORD),
                    '--diff={}'.format(patch_path),

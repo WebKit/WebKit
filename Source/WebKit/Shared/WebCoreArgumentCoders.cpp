@@ -1909,7 +1909,8 @@ void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, co
     SharedMemory::Handle handle;
     {
         auto sharedMemoryBuffer = SharedMemory::copyBuffer(buffer);
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        if (auto memoryHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
+            handle = WTFMove(*memoryHandle);
     }
     encoder << WTFMove(handle);
 #endif
@@ -1978,8 +1979,9 @@ static ShareableResource::Handle tryConvertToShareableResourceHandle(const Scrip
         return ShareableResource::Handle { };
 
     ShareableResource::Handle shareableResourceHandle;
-    shareableResource->createHandle(shareableResourceHandle);
-    return shareableResourceHandle;
+    if (auto handle = shareableResource->createHandle())
+        return WTFMove(*handle);
+    return ShareableResource::Handle { };
 }
 
 static std::optional<WebCore::ScriptBuffer> decodeScriptBufferAsShareableResourceHandle(Decoder& decoder)

@@ -1204,9 +1204,9 @@ JSValueRef JSIPCSemaphore::waitFor(JSContextRef context, JSObjectRef, JSObjectRe
 
 SharedMemory::Handle JSSharedMemory::createHandle(SharedMemory::Protection protection)
 {
-    SharedMemory::Handle handle;
-    m_sharedMemory->createHandle(handle, protection);
-    return handle;
+    if (auto handle = m_sharedMemory->createHandle(protection))
+        return *handle;
+    return { };
 }
 
 JSObjectRef JSSharedMemory::createJSWrapper(JSContextRef context)

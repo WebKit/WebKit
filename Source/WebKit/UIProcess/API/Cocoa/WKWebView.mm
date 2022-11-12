@@ -79,7 +79,7 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKSharedAPICast.h"
-#import "WKSnapshotConfiguration.h"
+#import "WKSnapshotConfigurationPrivate.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
@@ -1218,11 +1218,15 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     WebCore::IntSize bitmapSize(snapshotWidth, imageHeight);
     bitmapSize.scale(deviceScale, deviceScale);
 
+    WebKit::SnapshotOptions snapshotOptions = WebKit::SnapshotOptionsInViewCoordinates;
+    if (!snapshotConfiguration._includesSelectionHighlighting)
+        snapshotOptions |= WebKit::SnapshotOptionsExcludeSelectionHighlighting;
+
     // Software snapshot will not capture elements rendered with hardware acceleration (WebGL, video, etc).
     // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
     // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
     // in snapshotConfiguration.afterScreenUpdates at that time.
-    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmapHandle& imageHandle) {
+    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, snapshotOptions, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmapHandle& imageHandle) {
         if (imageHandle.isNull()) {
             tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
