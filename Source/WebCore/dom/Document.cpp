@@ -4780,7 +4780,17 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
             return false;
     }
 
-    if (newFocusedElement && newFocusedElement->isFocusable()) {
+    auto isNewElementFocusable = [&] {
+        if (!newFocusedElement)
+            return false;
+        // Resolving isFocusable() may require matching :focus-within as if the focus was already on the new element.
+        newFocusedElement->setHasTentativeFocus(true);
+        bool isFocusable = newFocusedElement->isFocusable();
+        newFocusedElement->setHasTentativeFocus(false);
+        return isFocusable;
+    }();
+
+    if (isNewElementFocusable) {
         if (&newFocusedElement->document() != this) {
             // Bluring oldFocusedElement may have moved newFocusedElement across documents.
             return false;
