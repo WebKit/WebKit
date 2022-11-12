@@ -129,27 +129,27 @@ void RenderTreeBuilder::Block::insertChildToContinuation(RenderBlock& parent, Re
             beforeChildParent = flow;
     }
 
-    if (child->isFloatingOrOutOfFlowPositioned()) {
-        m_builder.attachIgnoringContinuation(*beforeChildParent, WTFMove(child), beforeChild);
-        return;
-    }
-
-    bool childIsNormal = child->isInline() || child->style().columnSpan() == ColumnSpan::None;
-    bool bcpIsNormal = beforeChildParent->isInline() || beforeChildParent->style().columnSpan() == ColumnSpan::None;
-    bool flowIsNormal = flow->isInline() || flow->style().columnSpan() == ColumnSpan::None;
-
+    // If the two candidates are the same, no further checking is necessary.
     if (flow == beforeChildParent) {
         m_builder.attachIgnoringContinuation(*flow, WTFMove(child), beforeChild);
         return;
     }
 
+    // A table part will be wrapped by an inline anonymous table when it is added
+    // to the render tree, so treat it as inline when deciding where to add
+    // it. Floating and out-of-flow-positioned objects can also live under
+    // inlines, and since this about adding a child to an inline parent, we
+    // should not put them into a block continuation.
+    bool addInsideInline = child->isInline() || child->style().columnSpan() == ColumnSpan::None 
+        || child->isFloatingOrOutOfFlowPositioned();
+
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
-    if (childIsNormal == bcpIsNormal) {
+    if (addInsideInline == beforeChildParent->isInline() || (beforeChild && beforeChild->isInline())) {
         m_builder.attachIgnoringContinuation(*beforeChildParent, WTFMove(child), beforeChild);
         return;
     }
-    if (flowIsNormal == childIsNormal) {
+    if (addInsideInline == flow->isInline()) {
         m_builder.attachIgnoringContinuation(*flow, WTFMove(child)); // Just treat like an append.
         return;
     }
