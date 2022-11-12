@@ -5,7 +5,7 @@ PASS single type (simple) selector in the sequence of simple selectors that is n
 PASS single class (simple) selector in the sequence of simple selectors that is not a universal selector
 PASS single id (simple) selector in the sequence of simple selectors that is not a universal selector
 PASS single pseudo (simple) selector which does not accept arguments in the sequence of simple selectors that is not a universal selector
-FAIL single pseudo (simple) selector "lang" which accepts arguments in the sequence of simple selectors that is not a universal selector assert_equals: expected ":lang(ja)" but got ":lang(\"ja\")"
+PASS single pseudo (simple) selector "lang" which accepts arguments in the sequence of simple selectors that is not a universal selector
 PASS single pseudo (simple) selector "nth-child" which accepts arguments in the sequence of simple selectors that is not a universal selector
 PASS single pseudo (simple) selector "nth-last-child" which accepts arguments in the sequence of simple selectors that is not a universal selector
 PASS single pseudo (simple) selector "nth-of-child" which accepts arguments in the sequence of simple selectors that is not a universal selector

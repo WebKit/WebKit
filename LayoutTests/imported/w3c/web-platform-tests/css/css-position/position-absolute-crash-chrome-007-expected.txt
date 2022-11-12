@@ -1,7 +1,7 @@
 parent
 start split start
 splitter
-split middle css-container start ABSFULLABS css container end split end parent end
+split middle css-container start ABS FULLABS css container end split end parent end
 
 PASS test passes if it does not crash
 

@@ -68,9 +68,9 @@ PASS CSSStyleRule: selectorText value: |p + div| isMatch: true
 PASS CSSStyleRule: selectorText value: |span + div| isMatch: false
 PASS CSSStyleRule: selectorText value: |p ~ div| isMatch: true
 PASS CSSStyleRule: selectorText value: |span ~ div| isMatch: false
-FAIL CSSStyleRule: selectorText value: |:lang(zh-CN)| isMatch: true assert_equals: expected ":lang(zh-CN)" but got ":lang(\"zh-CN\")"
-FAIL CSSStyleRule: selectorText value: |:lang(zh)| isMatch: true assert_equals: expected ":lang(zh)" but got ":lang(\"zh\")"
-FAIL CSSStyleRule: selectorText value: |:lang(tr-AZ)| isMatch: false assert_equals: expected ":lang(tr-AZ)" but got ":lang(\"tr-AZ\")"
+PASS CSSStyleRule: selectorText value: |:lang(zh-CN)| isMatch: true
+PASS CSSStyleRule: selectorText value: |:lang(zh)| isMatch: true
+PASS CSSStyleRule: selectorText value: |:lang(tr-AZ)| isMatch: false
 PASS CSSStyleRule: selectorText value: |::after| isMatch: false
 PASS CSSStyleRule: selectorText value: |:after| isMatch: false
 PASS CSSStyleRule: selectorText value: |::before| isMatch: false

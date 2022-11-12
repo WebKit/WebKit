@@ -174,26 +174,32 @@ CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRan
     return CSSSelectorList { WTFMove(selectorList) };
 }
 
-static bool consumeLangArgumentList(std::unique_ptr<Vector<AtomString>>& argumentList, CSSParserTokenRange& range)
+static PossiblyQuotedIdentifier consumePossiblyQuotedIdentifer(CSSParserTokenRange& range)
 {
-    const CSSParserToken& ident = range.consumeIncludingWhitespace();
-    if (ident.type() != IdentToken && ident.type() != StringToken)
-        return false;
-    StringView string = ident.value();
+    auto& token = range.consumeIncludingWhitespace();
+    if (token.type() != IdentToken && token.type() != StringToken)
+        return { };
+    auto string = token.value();
     if (string.startsWith("--"_s))
-        return false;
-    argumentList->append(string.toAtomString());
+        return { };
+    return { string.toAtomString(), token.type() == StringToken };
+}
+
+static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTokenRange& range)
+{
+    Vector<PossiblyQuotedIdentifier> list;
+    auto item = consumePossiblyQuotedIdentifer(range);
+    if (item.isNull())
+        return { };
+    list.append(WTFMove(item));
     while (!range.atEnd() && range.peek().type() == CommaToken) {
         range.consumeIncludingWhitespace();
-        const CSSParserToken& ident = range.consumeIncludingWhitespace();
-        if (ident.type() != IdentToken && ident.type() != StringToken)
-            return false;
-        StringView string = ident.value();
-        if (string.startsWith("--"_s))
-            return false;
-        argumentList->append(string.toAtomString());
+        item = consumePossiblyQuotedIdentifer(range);
+        if (item.isNull())
+            return { };
+        list.append(WTFMove(item));
     }
-    return range.atEnd();
+    return FixedVector<PossiblyQuotedIdentifier> { WTFMove(list) };
 }
 
 enum class CompoundSelectorFlag {
@@ -726,11 +732,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
         case CSSSelector::PseudoClassLang: {
-            // FIXME: CSS Selectors Level 4 allows :lang(*-foo)
-            auto argumentList = makeUnique<Vector<AtomString>>();
-            if (!consumeLangArgumentList(argumentList, block))
+            auto list = consumeLangArgumentList(block);
+            if (list.isEmpty() || !block.atEnd())
                 return nullptr;
-            selector->setArgumentList(WTFMove(argumentList));
+            selector->setArgumentList(WTFMove(list));
             return selector;
         }
         case CSSSelector::PseudoClassIs:
@@ -793,23 +798,18 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             auto& ident = block.consumeIncludingWhitespace();
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
-
-            auto argumentList = makeUnique<Vector<AtomString>>();
-            argumentList->append(ident.value().toAtomString());
-            selector->setArgumentList(WTFMove(argumentList));
-
+            selector->setArgumentList({ { ident.value().toAtomString() } });
             return selector;
         }
         case CSSSelector::PseudoElementPart: {
-            auto argumentList = makeUnique<Vector<AtomString>>();
+            Vector<PossiblyQuotedIdentifier> argumentList;
             do {
                 auto& ident = block.consumeIncludingWhitespace();
                 if (ident.type() != IdentToken)
                     return nullptr;
-                argumentList->append(ident.value().toAtomString());
+                argumentList.append({ ident.value().toAtomString() });
             } while (!block.atEnd());
-
-            selector->setArgumentList(WTFMove(argumentList));
+            selector->setArgumentList(FixedVector<PossiblyQuotedIdentifier> { WTFMove(argumentList) });
             return selector;
         }
         case CSSSelector::PseudoElementSlotted: {

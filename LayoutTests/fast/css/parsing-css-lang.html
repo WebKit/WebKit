@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <style id="style-container">
 </style>
 </head>
@@ -16,11 +16,8 @@ function testValidLanguageRange(languageRangeString, expectedSerializedLanguageR
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = ':lang(' + languageRangeString + ') { }';
     shouldBe("document.getElementById('style-container').sheet.cssRules.length", "1");
-    if (!expectedSerializedLanguageRange)
-        expectedSerializedLanguageRange = languageRangeString;
-    expectedSerializedLanguageRange = expectedSerializedLanguageRange.replace(/\\/g, '');
-    if (expectedSerializedLanguageRange.indexOf('"') != 0)
-        expectedSerializedLanguageRange = '"' + expectedSerializedLanguageRange + '"';
+    if (expectedSerializedLanguageRange.indexOf('"') == 0)
+        expectedSerializedLanguageRange = expectedSerializedLanguageRange.replace(/\\/g, "");
     shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", ':lang(' + expectedSerializedLanguageRange + ')');
     styleContainer.innerHTML = '';
 }
@@ -79,10 +76,9 @@ var validLanguageRanges = [
 debug("valid language ranges");
 for (var i = 0; i < validLanguageRanges.length; ++i) {
     var languageRangeString = validLanguageRanges[i];
-    testValidLanguageRange(languageRangeString);
+    testValidLanguageRange(languageRangeString, languageRangeString);
     testValidLanguageRange(languageRangeString + "    ", languageRangeString);
 }
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </html>

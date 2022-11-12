@@ -23,7 +23,7 @@ div span#foo.test div:hover#bar a
 :active
 :focus
 :target
-:lang("en")
+:lang(en)
 :not(table)
 :root
 :enabled

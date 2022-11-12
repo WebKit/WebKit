@@ -4,18 +4,18 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS parseThenSerializeRule(':lang("a") { }') is ':lang("a") { }'
-PASS parseThenSerializeRule(':lang("bb", cc) { }') is ':lang("bb", "cc") { }'
-PASS parseThenSerializeRule(':lang("ddd", eee) { }') is ':lang("ddd", "eee") { }'
-PASS parseThenSerializeRule(':lang("ddd", eee, ffff) { }') is ':lang("ddd", "eee", "ffff") { }'
-PASS parseThenSerializeRule(':lang("ddd", eee, "ffff") { }') is ':lang("ddd", "eee", "ffff") { }'
+PASS parseThenSerializeRule(':lang("bb", cc) { }') is ':lang("bb", cc) { }'
+PASS parseThenSerializeRule(':lang("ddd", eee) { }') is ':lang("ddd", eee) { }'
+PASS parseThenSerializeRule(':lang("ddd", eee, ffff) { }') is ':lang("ddd", eee, ffff) { }'
+PASS parseThenSerializeRule(':lang("ddd", eee, "ffff") { }') is ':lang("ddd", eee, "ffff") { }'
 PASS parseThenSerializeRule(':lang("*-1997") { }') is ':lang("*-1997") { }'
 PASS parseThenSerializeRule(':lang("*-1997", "*-1998") { }') is ':lang("*-1997", "*-1998") { }'
 PASS parseThenSerializeRule(':lang("*-1997", "*-1998", "*-1999") { }') is ':lang("*-1997", "*-1998", "*-1999") { }'
 PASS parseThenSerializeRule(':lang("") { }') is ':lang("") { }'
 
-PASS parseThenSerializeRule(':lang(foo, "bar", baz) { }') is ':lang("foo", "bar", "baz") { }'
-PASS parseThenSerializeRule(':lang(foo,      "bar"     , baz) { }') is ':lang("foo", "bar", "baz") { }'
-PASS parseThenSerializeRule(':lang(    foo    ,     "bar"    ,     baz    ) { }') is ':lang("foo", "bar", "baz") { }'
+PASS parseThenSerializeRule(':lang(foo, "bar", baz) { }') is ':lang(foo, "bar", baz) { }'
+PASS parseThenSerializeRule(':lang(foo,      "bar"     , baz) { }') is ':lang(foo, "bar", baz) { }'
+PASS parseThenSerializeRule(':lang(    foo    ,     "bar"    ,     baz    ) { }') is ':lang(foo, "bar", baz) { }'
 PASS successfullyParsed is true
 
 TEST COMPLETE

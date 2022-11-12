@@ -3,7 +3,7 @@
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2007, 2008, 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -55,18 +55,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
     : m_relation(DescendantSpace)
     , m_match(Tag)
-    , m_pseudoType(0)
-    , m_isLastInSelectorList(false)
-    , m_isFirstInTagHistory(true)
-    , m_isLastInTagHistory(true)
-    , m_hasRareData(false)
-    , m_hasNameWithCase(false)
-    , m_isForPage(false)
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
-    , m_caseInsensitiveAttributeValueMatching(false)
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    , m_destructorHasBeenCalled(false)
-#endif
 {
     const AtomString& tagLocalName = tagQName.localName();
     const AtomString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
@@ -350,10 +339,16 @@ static void appendPseudoClassFunctionTail(StringBuilder& builder, const CSSSelec
 
 }
 
-static void appendLangArgumentList(StringBuilder& builder, const Vector<AtomString>& argumentList)
+static void appendLangArgumentList(StringBuilder& builder, const FixedVector<PossiblyQuotedIdentifier>& list)
 {
-    for (unsigned i = 0, size = argumentList.size(); i < size; ++i)
-        builder.append('"', argumentList[i], '"', i != size - 1 ? ", " : "");
+    for (unsigned i = 0, size = list.size(); i < size; ++i) {
+        if (!list[i].wasQuoted)
+            serializeIdentifier(list[i].identifier, builder);
+        else
+            serializeString(list[i].identifier, builder);
+        if (i != size - 1)
+            builder.append(", ");
+    }
 }
 
 // http://dev.w3.org/csswg/css-syntax/#serializing-anb
@@ -392,7 +387,7 @@ static void outputNthChildAnPlusB(const CSSSelector& selector, StringBuilder& bu
     }
 }
 
-String CSSSelector::selectorText(const String& rightSide) const
+String CSSSelector::selectorText(StringView separator, StringView rightSide) const
 {
     StringBuilder builder;
 
@@ -679,8 +674,8 @@ String CSSSelector::selectorText(const String& rightSide) const
                 builder.append(":scope");
                 break;
             case CSSSelector::PseudoClassRelativeScope:
-                // Just remove the space from the start to generate a relative selector string like in ":has(> foo)".
-                return rightSide.substring(1);
+                // Remove the space from the start to generate a relative selector string like in ":has(> foo)".
+                return makeString(separator.substring(1), rightSide);
             case CSSSelector::PseudoClassSingleButton:
                 builder.append(":single-button");
                 break;
@@ -730,7 +725,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                     if (!isFirst)
                         builder.append(' ');
                     isFirst = false;
-                    serializeIdentifier(partName, builder);
+                    serializeIdentifier(partName.identifier, builder);
                 }
                 builder.append(')');
                 break;
@@ -812,29 +807,34 @@ String CSSSelector::selectorText(const String& rightSide) const
         cs = cs->tagHistory();
     }
 
-    if (const CSSSelector* tagHistory = cs->tagHistory()) {
+    builder.append(separator, rightSide);
+
+    if (auto* previousSelector = cs->tagHistory()) {
+        ASCIILiteral separator = ""_s;
         switch (cs->relation()) {
         case CSSSelector::DescendantSpace:
-            return tagHistory->selectorText(" " + builder.toString() + rightSide);
+            separator = " "_s;
+            break;
         case CSSSelector::Child:
-            return tagHistory->selectorText(" > " + builder.toString() + rightSide);
+            separator = " > "_s;
+            break;
         case CSSSelector::DirectAdjacent:
-            return tagHistory->selectorText(" + " + builder.toString() + rightSide);
+            separator = " + "_s;
+            break;
         case CSSSelector::IndirectAdjacent:
-            return tagHistory->selectorText(" ~ " + builder.toString() + rightSide);
+            separator = " ~ "_s;
+            break;
         case CSSSelector::Subselector:
             ASSERT_NOT_REACHED();
-#if !ASSERT_ENABLED
-            FALLTHROUGH;
-#endif
+            break;
         case CSSSelector::ShadowDescendant:
         case CSSSelector::ShadowPartDescendant:
         case CSSSelector::ShadowSlotted:
-            builder.append(rightSide);
-            return tagHistory->selectorText(builder.toString());
+            break;
         }
+        return previousSelector->selectorText(separator, builder);
     }
-    builder.append(rightSide);
+
     return builder.toString();
 }
 
@@ -852,7 +852,7 @@ void CSSSelector::setArgument(const AtomString& value)
     m_data.m_rareData->m_argument = value;
 }
 
-void CSSSelector::setArgumentList(std::unique_ptr<Vector<AtomString>> argumentList)
+void CSSSelector::setArgumentList(FixedVector<PossiblyQuotedIdentifier> argumentList)
 {
     createRareData();
     m_data.m_rareData->m_argumentList = WTFMove(argumentList);

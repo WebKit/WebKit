@@ -1,6 +1,6 @@
 <html>
 <head id="head">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -37,13 +37,7 @@ function expectedSerializedLangSelector(selector)
     args = args[1].split(/\s*,\s*/);
     var expected = ':lang(';
     for (var i = 0; i < args.length; ++i) {
-        var arg = args[i];
-        var hasQuotes = arg.indexOf('"') == 0 && arg.lastIndexOf('"') == arg.length - 1;
-        if (!hasQuotes)
-            expected += '"';
         expected += args[i];
-        if (!hasQuotes)
-            expected += '"';
         if (i < args.length - 1)
             expected += ', ';
     }
@@ -53,13 +47,13 @@ function expectedSerializedLangSelector(selector)
 
 function testSelectorSerialization(selector, expectedSelector)
 {
-    shouldBe("setThenReadSelectorText('" + selector + "')", "'" + expectedSelector + "'");
+    shouldBeEqualToString("setThenReadSelectorText('" + selector + "')", expectedSelector);
 }
 
 function testSelectorRoundTrip(selector, expectFailure)
 {
     var expected = selector.indexOf(":lang") == 0 ? expectedSerializedLangSelector(selector) : selector;
-    shouldBe("setThenReadSelectorText('" + selector + "')", "'" + (expectFailure ? bogusSelector : expected) + "'");
+    shouldBeEqualToString("setThenReadSelectorText('" + selector + "')", expectFailure ? bogusSelector : expected);
 }
 
 testSelectorRoundTrip('', true);
@@ -95,12 +89,12 @@ testSelectorRoundTrip('[a*="b" i]');
 
 debug('');
 
-shouldBe("setThenReadSelectorText('*|a')", "'a'");
-shouldBe("setThenReadSelectorText('*|*')", "'*'");
+shouldBeEqualToString("setThenReadSelectorText('*|a')", "a");
+shouldBeEqualToString("setThenReadSelectorText('*|*')", "*");
 testSelectorRoundTrip('[*|a]');
 testSelectorRoundTrip('|*');
 testSelectorRoundTrip('[*|a]');
-shouldBe("setThenReadSelectorText('[|a]')", "'[a]'");
+shouldBeEqualToString("setThenReadSelectorText('[|a]')", "[a]");
 
 debug('');
 
@@ -133,7 +127,7 @@ testSelectorRoundTrip(":visited");
 debug('');
 
 testSelectorRoundTrip(":dir(a)");
-testSelectorRoundTrip(":lang(\"a\")");
+testSelectorRoundTrip(':lang("a")');
 testSelectorRoundTrip(":lang(a)");
 testSelectorRoundTrip(":not(a)");
 testSelectorRoundTrip(":-webkit-any(a, b, p)");
@@ -366,24 +360,24 @@ testSelectorRoundTrip('a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b
 
 debug('');
 
-shouldBe("setThenReadSelectorText('::-webkit-file-upload-button')", "'::-webkit-file-upload-button'");
-shouldBe("setThenReadSelectorText('::-webkit-search-cancel-button')", "'::-webkit-search-cancel-button'");
-shouldBe("setThenReadSelectorText('::-webkit-search-decoration')", "'::-webkit-search-decoration'");
-shouldBe("setThenReadSelectorText('::-webkit-search-results-button')", "'::-webkit-search-results-button'");
-shouldBe("setThenReadSelectorText('::-webkit-search-results-decoration')", "'::-webkit-search-results-decoration'");
-shouldBe("setThenReadSelectorText('::-webkit-slider-thumb')", "'::-webkit-slider-thumb'");
+shouldBeEqualToString("setThenReadSelectorText('::-webkit-file-upload-button')", "::-webkit-file-upload-button");
+shouldBeEqualToString("setThenReadSelectorText('::-webkit-search-cancel-button')", "::-webkit-search-cancel-button");
+shouldBeEqualToString("setThenReadSelectorText('::-webkit-search-decoration')", "::-webkit-search-decoration");
+shouldBeEqualToString("setThenReadSelectorText('::-webkit-search-results-button')", "::-webkit-search-results-button");
+shouldBeEqualToString("setThenReadSelectorText('::-webkit-search-results-decoration')", "::-webkit-search-results-decoration");
+shouldBeEqualToString("setThenReadSelectorText('::-webkit-slider-thumb')", "::-webkit-slider-thumb");
 
 debug('');
 
 testSelectorRoundTrip("a::-webkit-slider-thumb");
-shouldBe("setThenReadSelectorText('a ::-webkit-slider-thumb')", "'a ::-webkit-slider-thumb'");
+shouldBeEqualToString("setThenReadSelectorText('a ::-webkit-slider-thumb')", "a ::-webkit-slider-thumb");
 testSelectorRoundTrip("[a]::-webkit-slider-thumb");
-shouldBe("setThenReadSelectorText('[a] ::-webkit-slider-thumb')", "'[a] ::-webkit-slider-thumb'");
+shouldBeEqualToString("setThenReadSelectorText('[a] ::-webkit-slider-thumb')", "[a] ::-webkit-slider-thumb");
 testSelectorRoundTrip(".a::-webkit-slider-thumb");
-shouldBe("setThenReadSelectorText('.a ::-webkit-slider-thumb')", "'.a ::-webkit-slider-thumb'");
+shouldBeEqualToString("setThenReadSelectorText('.a ::-webkit-slider-thumb')", ".a ::-webkit-slider-thumb");
 testSelectorRoundTrip("#a::-webkit-slider-thumb");
-shouldBe("setThenReadSelectorText('#a ::-webkit-slider-thumb')", "'#a ::-webkit-slider-thumb'");
-shouldBe("setThenReadSelectorText('* ::-webkit-slider-thumb')", "'* ::-webkit-slider-thumb'");
+shouldBeEqualToString("setThenReadSelectorText('#a ::-webkit-slider-thumb')", "#a ::-webkit-slider-thumb");
+shouldBeEqualToString("setThenReadSelectorText('* ::-webkit-slider-thumb')", "* ::-webkit-slider-thumb");
 
 debug('');
 
@@ -444,94 +438,93 @@ testSelectorRoundTrip(':-webkit-any(a.class1.class2.class3:hover)');
 
 debug('');
 
-shouldBe("setThenReadSelectorText('*:active')", "':active'");
+shouldBeEqualToString("setThenReadSelectorText('*:active')", ":active");
 
 debug('');
 
-shouldBe("setThenReadSelectorText('input[type=file]:focus')", "'input[type=\"file\"]:focus'");
+shouldBeEqualToString("setThenReadSelectorText('input[type=file]:focus')", 'input[type="file"]:focus');
 
 debug('');
 
-shouldBe("setThenReadSelectorText('a+b')", "'a + b'");
-shouldBe("setThenReadSelectorText('a~b')", "'a ~ b'");
-shouldBe("setThenReadSelectorText('a>b')", "'a > b'");
+shouldBeEqualToString("setThenReadSelectorText('a+b')", "a + b");
+shouldBeEqualToString("setThenReadSelectorText('a~b')", "a ~ b");
+shouldBeEqualToString("setThenReadSelectorText('a>b')", "a > b");
 
 debug('');
 
-shouldBe("setThenReadSelectorText(':after')", "'::after'");
-shouldBe("setThenReadSelectorText(':before')", "'::before'");
-shouldBe("setThenReadSelectorText(':first-letter')", "'::first-letter'");
-shouldBe("setThenReadSelectorText(':first-line')", "'::first-line'");
-shouldBe("setThenReadSelectorText(':-webkit-any(    a.class1  ,  	#id,[attr]  )')","':-webkit-any(a.class1, #id, [attr])'");
+shouldBeEqualToString("setThenReadSelectorText(':after')", "::after");
+shouldBeEqualToString("setThenReadSelectorText(':before')", "::before");
+shouldBeEqualToString("setThenReadSelectorText(':first-letter')", "::first-letter");
+shouldBeEqualToString("setThenReadSelectorText(':first-line')", "::first-line");
+shouldBeEqualToString("setThenReadSelectorText(':-webkit-any(    a.class1  ,  	#id,[attr]  )')", ":-webkit-any(a.class1, #id, [attr])");
 
 debug('');
 
-shouldBe("setThenReadSelectorText(':is(single    )')", "':is(single)'");
-shouldBe("setThenReadSelectorText(':is(a,b    ,p)')", "':is(a, b, p)'");
-shouldBe("setThenReadSelectorText(':is(#alice,                   #bob,#chris)')", "':is(#alice, #bob, #chris)'");
-shouldBe("setThenReadSelectorText(':is(  .selector,#tama,                #hanayo,#midoriko)')", "':is(.selector, #tama, #hanayo, #midoriko)'");
-shouldBe("setThenReadSelectorText(':is(    .name,#ok,:visited   )')", "':is(.name, #ok, :visited)'");
-shouldBe("setThenReadSelectorText(':is(    .name,#ok,    :visited, :link)')", "':is(.name, #ok, :visited, :link)'");
-shouldBe("setThenReadSelectorText(':is(    .name,#ok,    :is(:visited    ))')", "':is(.name, #ok, :is(:visited))'");
-shouldBe("setThenReadSelectorText(':is(.name,  #ok,:not(:link))')", "':is(.name, #ok, :not(:link))'");
-shouldBe("setThenReadSelectorText(':is(.name,#ok,:not(:link))')", "':is(.name, #ok, :not(:link))'");
-shouldBe("setThenReadSelectorText(':is(    .name,#ok,:-webkit-any(   hello))')", "':is(.name, #ok, :-webkit-any(hello))'");
-shouldBe("setThenReadSelectorText(':is(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')", "':is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))'");
-shouldBe("setThenReadSelectorText(':is(       [type=\"file\"])')", "':is([type=\"file\"])'");
-shouldBe("setThenReadSelectorText(':is(  :hover    )')", "':is(:hover)'");
-shouldBe("setThenReadSelectorText('input:is([type=\"file\"],:hover,:focus):enabled')", "'input:is([type=\"file\"], :hover, :focus):enabled'");
-shouldBe("setThenReadSelectorText(':is(input[type=\"file\"], a:hover, button:focus)')", "':is(input[type=\"file\"], a:hover, button:focus)'");
-shouldBe("setThenReadSelectorText(':is( .class1.class2.class3   )')", "':is(.class1.class2.class3)'");
-shouldBe("setThenReadSelectorText(':is(.class1:hover   )')", "':is(.class1:hover)'");
-shouldBe("setThenReadSelectorText(':is(a.class1.class2.class3:hover   )')", "':is(a.class1.class2.class3:hover)'");
+shouldBeEqualToString("setThenReadSelectorText(':is(single    )')", ":is(single)");
+shouldBeEqualToString("setThenReadSelectorText(':is(a,b    ,p)')", ":is(a, b, p)");
+shouldBeEqualToString("setThenReadSelectorText(':is(#alice,                   #bob,#chris)')", ":is(#alice, #bob, #chris)");
+shouldBeEqualToString("setThenReadSelectorText(':is(  .selector,#tama,                #hanayo,#midoriko)')", ":is(.selector, #tama, #hanayo, #midoriko)");
+shouldBeEqualToString("setThenReadSelectorText(':is(    .name,#ok,:visited   )')", ":is(.name, #ok, :visited)");
+shouldBeEqualToString("setThenReadSelectorText(':is(    .name,#ok,    :visited, :link)')", ":is(.name, #ok, :visited, :link)");
+shouldBeEqualToString("setThenReadSelectorText(':is(    .name,#ok,    :is(:visited    ))')", ":is(.name, #ok, :is(:visited))");
+shouldBeEqualToString("setThenReadSelectorText(':is(.name,  #ok,:not(:link))')", ":is(.name, #ok, :not(:link))");
+shouldBeEqualToString("setThenReadSelectorText(':is(.name,#ok,:not(:link))')", ":is(.name, #ok, :not(:link))");
+shouldBeEqualToString("setThenReadSelectorText(':is(    .name,#ok,:-webkit-any(   hello))')", ":is(.name, #ok, :-webkit-any(hello))");
+shouldBeEqualToString("setThenReadSelectorText(':is(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')", ":is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))");
+shouldBeEqualToString("setThenReadSelectorText(':is(       [type=\"file\"])')", ':is([type="file"])');
+shouldBeEqualToString("setThenReadSelectorText(':is(  :hover    )')", ":is(:hover)");
+shouldBeEqualToString("setThenReadSelectorText('input:is([type=\"file\"],:hover,:focus):enabled')", 'input:is([type="file"], :hover, :focus):enabled');
+shouldBeEqualToString("setThenReadSelectorText(':is(input[type=\"file\"], a:hover, button:focus)')", ':is(input[type="file"], a:hover, button:focus)');
+shouldBeEqualToString("setThenReadSelectorText(':is( .class1.class2.class3   )')", ":is(.class1.class2.class3)");
+shouldBeEqualToString("setThenReadSelectorText(':is(.class1:hover   )')", ":is(.class1:hover)");
+shouldBeEqualToString("setThenReadSelectorText(':is(a.class1.class2.class3:hover   )')", ":is(a.class1.class2.class3:hover)");
 
 debug('');
 
-shouldBe("setThenReadSelectorText(':matches(single    )')", "':matches(single)'");
-shouldBe("setThenReadSelectorText(':matches(a,b    ,p)')", "':matches(a, b, p)'");
-shouldBe("setThenReadSelectorText(':matches(#alice,                   #bob,#chris)')", "':matches(#alice, #bob, #chris)'");
-shouldBe("setThenReadSelectorText(':matches(  .selector,#tama,                #hanayo,#midoriko)')", "':matches(.selector, #tama, #hanayo, #midoriko)'");
-shouldBe("setThenReadSelectorText(':matches(    .name,#ok,:visited   )')", "':matches(.name, #ok, :visited)'");
-shouldBe("setThenReadSelectorText(':matches(    .name,#ok,    :visited, :link)')", "':matches(.name, #ok, :visited, :link)'");
-shouldBe("setThenReadSelectorText(':matches(    .name,#ok,    :matches(:visited    ))')", "':matches(.name, #ok, :matches(:visited))'");
-shouldBe("setThenReadSelectorText(':matches(.name,  #ok,:not(:link))')", "':matches(.name, #ok, :not(:link))'");
-shouldBe("setThenReadSelectorText(':matches(.name,#ok,:not(:link))')", "':matches(.name, #ok, :not(:link))'");
-shouldBe("setThenReadSelectorText(':matches(    .name,#ok,:-webkit-any(   hello))')", "':matches(.name, #ok, :-webkit-any(hello))'");
-shouldBe("setThenReadSelectorText(':matches(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')", "':matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))'");
-shouldBe("setThenReadSelectorText(':matches(       [type=\"file\"])')", "':matches([type=\"file\"])'");
-shouldBe("setThenReadSelectorText(':matches(  :hover    )')", "':matches(:hover)'");
-shouldBe("setThenReadSelectorText('input:matches([type=\"file\"],:hover,:focus):enabled')", "'input:matches([type=\"file\"], :hover, :focus):enabled'");
-shouldBe("setThenReadSelectorText(':matches(input[type=\"file\"], a:hover, button:focus)')", "':matches(input[type=\"file\"], a:hover, button:focus)'");
-shouldBe("setThenReadSelectorText(':matches( .class1.class2.class3   )')", "':matches(.class1.class2.class3)'");
-shouldBe("setThenReadSelectorText(':matches(.class1:hover   )')", "':matches(.class1:hover)'");
-shouldBe("setThenReadSelectorText(':matches(a.class1.class2.class3:hover   )')", "':matches(a.class1.class2.class3:hover)'");
+shouldBeEqualToString("setThenReadSelectorText(':matches(single    )')", ":matches(single)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(a,b    ,p)')", ":matches(a, b, p)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(#alice,                   #bob,#chris)')", ":matches(#alice, #bob, #chris)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(  .selector,#tama,                #hanayo,#midoriko)')", ":matches(.selector, #tama, #hanayo, #midoriko)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(    .name,#ok,:visited   )')", ":matches(.name, #ok, :visited)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(    .name,#ok,    :visited, :link)')", ":matches(.name, #ok, :visited, :link)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(    .name,#ok,    :matches(:visited    ))')", ":matches(.name, #ok, :matches(:visited))");
+shouldBeEqualToString("setThenReadSelectorText(':matches(.name,  #ok,:not(:link))')", ":matches(.name, #ok, :not(:link))");
+shouldBeEqualToString("setThenReadSelectorText(':matches(.name,#ok,:not(:link))')", ":matches(.name, #ok, :not(:link))");
+shouldBeEqualToString("setThenReadSelectorText(':matches(    .name,#ok,:-webkit-any(   hello))')", ":matches(.name, #ok, :-webkit-any(hello))");
+shouldBeEqualToString("setThenReadSelectorText(':matches(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')", ":matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))");
+shouldBeEqualToString("setThenReadSelectorText(':matches(       [type=\"file\"])')", ':matches([type="file"])');
+shouldBeEqualToString("setThenReadSelectorText(':matches(  :hover    )')", ":matches(:hover)");
+shouldBeEqualToString("setThenReadSelectorText('input:matches([type=\"file\"],:hover,:focus):enabled')", 'input:matches([type="file"], :hover, :focus):enabled');
+shouldBeEqualToString("setThenReadSelectorText(':matches(input[type=\"file\"], a:hover, button:focus)')", ':matches(input[type="file"], a:hover, button:focus)');
+shouldBeEqualToString("setThenReadSelectorText(':matches( .class1.class2.class3   )')", ":matches(.class1.class2.class3)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(.class1:hover   )')", ":matches(.class1:hover)");
+shouldBeEqualToString("setThenReadSelectorText(':matches(a.class1.class2.class3:hover   )')", ":matches(a.class1.class2.class3:hover)");
 
 debug('');
 
-shouldBe("setThenReadSelectorText(':not(single    )')", "':not(single)'");
-shouldBe("setThenReadSelectorText(':not(a,b    ,p)')", "':not(a, b, p)'");
-shouldBe("setThenReadSelectorText(':not(#alice,                   #bob,#chris)')", "':not(#alice, #bob, #chris)'");
-shouldBe("setThenReadSelectorText(':not(  .selector,#tama,                #hanayo,#midoriko)')", "':not(.selector, #tama, #hanayo, #midoriko)'");
-shouldBe("setThenReadSelectorText(':not(    .name,#ok,:visited   )')", "':not(.name, #ok, :visited)'");
-shouldBe("setThenReadSelectorText(':not(    .name,#ok,    :visited, :link)')", "':not(.name, #ok, :visited, :link)'");
-shouldBe("setThenReadSelectorText(':not(    .name,#ok,    :not(:visited    ))')", "':not(.name, #ok, :not(:visited))'");
-shouldBe("setThenReadSelectorText(':not(.name,  #ok,:not(:link))')", "':not(.name, #ok, :not(:link))'");
-shouldBe("setThenReadSelectorText(':not(.name,#ok,:not(:link))')", "':not(.name, #ok, :not(:link))'");
-shouldBe("setThenReadSelectorText(':not(    .name,#ok,:-webkit-any(   hello))')", "':not(.name, #ok, :-webkit-any(hello))'");
-shouldBe("setThenReadSelectorText(':not(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')", "':not(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))'");
-shouldBe("setThenReadSelectorText(':not(       [type=\"file\"])')", "':not([type=\"file\"])'");
-shouldBe("setThenReadSelectorText(':not(  :hover    )')", "':not(:hover)'");
-shouldBe("setThenReadSelectorText('input:not([type=\"file\"],:hover,:focus):enabled')", "'input:not([type=\"file\"], :hover, :focus):enabled'");
-shouldBe("setThenReadSelectorText(':not(input[type=\"file\"], a:hover, button:focus)')", "':not(input[type=\"file\"], a:hover, button:focus)'");
-shouldBe("setThenReadSelectorText(':not( .class1.class2.class3   )')", "':not(.class1.class2.class3)'");
-shouldBe("setThenReadSelectorText(':not(.class1:hover   )')", "':not(.class1:hover)'");
-shouldBe("setThenReadSelectorText(':not(a.class1.class2.class3:hover   )')", "':not(a.class1.class2.class3:hover)'");
-shouldBe("setThenReadSelectorText(':not(:is(single    ),:is(a,b    ,p),:is(#alice,                   #bob,#chris))')", "':not(:is(single), :is(a, b, p), :is(#alice, #bob, #chris))'");
-shouldBe("setThenReadSelectorText(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris))')", "':not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris))'");
+shouldBeEqualToString("setThenReadSelectorText(':not(single    )')", ":not(single)");
+shouldBeEqualToString("setThenReadSelectorText(':not(a,b    ,p)')", ":not(a, b, p)");
+shouldBeEqualToString("setThenReadSelectorText(':not(#alice,                   #bob,#chris)')", ":not(#alice, #bob, #chris)");
+shouldBeEqualToString("setThenReadSelectorText(':not(  .selector,#tama,                #hanayo,#midoriko)')", ":not(.selector, #tama, #hanayo, #midoriko)");
+shouldBeEqualToString("setThenReadSelectorText(':not(    .name,#ok,:visited   )')", ":not(.name, #ok, :visited)");
+shouldBeEqualToString("setThenReadSelectorText(':not(    .name,#ok,    :visited, :link)')", ":not(.name, #ok, :visited, :link)");
+shouldBeEqualToString("setThenReadSelectorText(':not(    .name,#ok,    :not(:visited    ))')", ":not(.name, #ok, :not(:visited))");
+shouldBeEqualToString("setThenReadSelectorText(':not(.name,  #ok,:not(:link))')", ":not(.name, #ok, :not(:link))");
+shouldBeEqualToString("setThenReadSelectorText(':not(.name,#ok,:not(:link))')", ":not(.name, #ok, :not(:link))");
+shouldBeEqualToString("setThenReadSelectorText(':not(    .name,#ok,:-webkit-any(   hello))')", ":not(.name, #ok, :-webkit-any(hello))");
+shouldBeEqualToString("setThenReadSelectorText(':not(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')", ":not(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))");
+shouldBeEqualToString("setThenReadSelectorText(':not(       [type=\"file\"])')", ':not([type="file"])');
+shouldBeEqualToString("setThenReadSelectorText(':not(  :hover    )')", ":not(:hover)");
+shouldBeEqualToString("setThenReadSelectorText('input:not([type=\"file\"],:hover,:focus):enabled')", 'input:not([type="file"], :hover, :focus):enabled');
+shouldBeEqualToString("setThenReadSelectorText(':not(input[type=\"file\"], a:hover, button:focus)')", ':not(input[type="file"], a:hover, button:focus)');
+shouldBeEqualToString("setThenReadSelectorText(':not( .class1.class2.class3   )')", ":not(.class1.class2.class3)");
+shouldBeEqualToString("setThenReadSelectorText(':not(.class1:hover   )')", ":not(.class1:hover)");
+shouldBeEqualToString("setThenReadSelectorText(':not(a.class1.class2.class3:hover   )')", ":not(a.class1.class2.class3:hover)");
+shouldBeEqualToString("setThenReadSelectorText(':not(:is(single    ),:is(a,b    ,p),:is(#alice,                   #bob,#chris))')", ":not(:is(single), :is(a, b, p), :is(#alice, #bob, #chris))");
+shouldBeEqualToString("setThenReadSelectorText(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris))')", ":not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris))");
 
 debug('');
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

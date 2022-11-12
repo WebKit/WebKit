@@ -584,7 +584,10 @@
 
 ;; Access to ContainerManager
 (allow mach-lookup 
-    (global-name "com.apple.containermanagerd"))
+    (global-name
+        "com.apple.containermanagerd"
+        "com.apple.containermanagerd.system"))
+
 (allow ipc-posix-sem-open
     (ipc-posix-name "containermanagerd.fb_check"))
 
