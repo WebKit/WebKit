@@ -82,14 +82,6 @@ void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObjec
 {
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
-
-    // updateFromStyle() needs access to the SVGSVGElement, which is only posssible
-    // after the newly created RenderSVGViewportContainer was inserted into the render tree.
-    // However updateFromStyle() was already called at this point. Therefore we have to
-    // call it again here.
-    ASSERT(parent.viewportContainer());
-    parent.viewportContainer()->updateFromStyle();
-
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 #endif
@@ -162,7 +154,11 @@ RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(R
 {
     if (auto* viewportContainer = parent.viewportContainer())
         return *viewportContainer;
+    return createViewportContainer(parent);
+}
 
+RenderSVGViewportContainer& RenderTreeBuilder::SVG::createViewportContainer(RenderSVGRoot& parent)
+{
     auto viewportContainerStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), RenderStyle::initialDisplay());
     viewportContainerStyle.setUsedZIndex(0); // Enforce a stacking context.
     viewportContainerStyle.setTransformOriginX(Length(0, LengthType::Fixed));
@@ -174,7 +170,25 @@ RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(R
     auto* viewportContainerRenderer = viewportContainer.get();
     m_builder.attachToRenderElement(parent, WTFMove(viewportContainer), nullptr);
     parent.setViewportContainer(*viewportContainerRenderer);
+
+    // updateFromStyle() needs access to the SVGSVGElement, which is only posssible
+    // after the newly created RenderSVGViewportContainer was inserted into the render tree.
+    // However updateFromStyle() was already called at this point. Therefore we have to
+    // call it again here.
+    viewportContainerRenderer->updateFromStyle();
     return *viewportContainerRenderer;
+}
+
+void RenderTreeBuilder::SVG::updateAfterDescendants(RenderSVGRoot& svgRoot)
+{
+    // Usually the anonymous RenderSVGViewportContainer, wrapping all children of RenderSVGRoot,
+    // is created when the first <svg> child element is inserted into the render tree. We'll
+    // only reach this point with viewportContainer=nullptr, if the <svg> had no children -- we
+    // still need to ensure the creation of the RenderSVGViewportContainer, otherwise computing
+    // e.g. getCTM() would ignore the presence of a 'viewBox' induced transform (and ignore zoom/pan).
+    if (svgRoot.viewportContainer())
+        return;
+    createViewportContainer(svgRoot);
 }
 #endif
 
