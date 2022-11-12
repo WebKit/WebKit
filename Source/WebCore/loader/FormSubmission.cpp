@@ -241,13 +241,11 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
 URL FormSubmission::requestURL() const
 {
-    ASSERT(m_method == Method::Post || m_method == Method::Get);
-
     if (m_method == Method::Post)
         return m_action;
 
     URL requestURL(m_action);
-    if (!requestURL.protocolIsJavaScript())
+    if (m_method == Method::Get && !requestURL.protocolIsJavaScript())
         requestURL.setQuery(m_formData->flattenToString());
     return requestURL;
 }
