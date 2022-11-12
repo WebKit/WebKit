@@ -27,14 +27,15 @@
 #define WKBundleNavigationActionPrivate_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef);
-WK_EXPORT bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef);
-WK_EXPORT WKStringRef WKBundleNavigationActionCopyDownloadAttribute(WKBundleNavigationActionRef);
+WK_EXPORT bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef) WK_C_API_DEPRECATED;
+WK_EXPORT WKStringRef WKBundleNavigationActionCopyDownloadAttribute(WKBundleNavigationActionRef) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

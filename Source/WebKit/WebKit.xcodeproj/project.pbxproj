@@ -1846,7 +1846,6 @@
 		BC7B621512A4219A00D174A4 /* WebPageGroupProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */; };
 		BC7B625212A43C9600D174A4 /* WebPageGroupData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B625012A43C9600D174A4 /* WebPageGroupData.h */; };
 		BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B633512A45ABA00D174A4 /* WKPageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */; };
 		BC8283DA16B4DB9300A278FE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8452A61162C80900CAB9B5 /* DrawingArea.h */; };
 		BC857F8512B82D0B00EDEB2E /* WebOpenPanelResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857F8312B82D0B00EDEB2E /* WebOpenPanelResultListener.h */; };
@@ -5176,7 +5175,6 @@
 		51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKHTTPCookieStore.mm; sourceTree = "<group>"; };
 		51D124861E734AE3002B2820 /* WKHTTPCookieStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStoreInternal.h; sourceTree = "<group>"; };
 		51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemRequestData.cpp; sourceTree = "<group>"; };
-		86E6E357291959C3006C25CA /* SecItemRequestData.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecItemRequestData.serialization.in; sourceTree = "<group>"; };
 		51D130501382EAC000351EDD /* SecItemRequestData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemRequestData.h; sourceTree = "<group>"; };
 		51D130511382EAC000351EDD /* SecItemResponseData.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecItemResponseData.serialization.in; sourceTree = "<group>"; };
 		51D130521382EAC000351EDD /* SecItemResponseData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemResponseData.h; sourceTree = "<group>"; };
@@ -6656,8 +6654,6 @@
 		BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageGroupData.cpp; sourceTree = "<group>"; };
 		BC7B633512A45ABA00D174A4 /* WKPageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageGroup.h; sourceTree = "<group>"; };
 		BC7B633612A45ABA00D174A4 /* WKPageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageGroup.cpp; sourceTree = "<group>"; };
-		BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleNavigationAction.h; sourceTree = "<group>"; };
-		BC8147D412F66D31007B2C32 /* InjectedBundleNavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleNavigationAction.cpp; sourceTree = "<group>"; };
 		BC82839616B47EC400A278FE /* XPCServiceMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceMain.mm; sourceTree = "<group>"; };
 		BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283A316B4BD9100A278FE /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
@@ -12834,8 +12830,6 @@
 				BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */,
 				BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */,
 				84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */,
-				BC8147D412F66D31007B2C32 /* InjectedBundleNavigationAction.cpp */,
-				BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */,
 				512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */,
 				512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */,
 				E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */,
@@ -14959,7 +14953,6 @@
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,
 				BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */,
 				84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */,
-				BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */,
 				BC4BEEAB120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.h in Headers */,
 				512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */,
 				E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */,

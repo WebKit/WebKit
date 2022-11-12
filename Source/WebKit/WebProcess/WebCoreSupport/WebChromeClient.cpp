@@ -34,7 +34,6 @@
 #include "FrameInfoData.h"
 #include "HangDetectionDisabler.h"
 #include "ImageBufferShareableBitmapBackend.h"
-#include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleNodeHandle.h"
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -272,6 +271,23 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page.identifier());
 }
 
+OptionSet<WebEventModifier> modifiersForNavigationAction(const NavigationAction& navigationAction)
+{
+    OptionSet<WebEventModifier> modifiers;
+    auto keyStateEventData = navigationAction.keyStateEventData();
+    if (keyStateEventData && keyStateEventData->isTrusted) {
+        if (keyStateEventData->shiftKey)
+            modifiers.add(WebEventModifier::ShiftKey);
+        if (keyStateEventData->ctrlKey)
+            modifiers.add(WebEventModifier::ControlKey);
+        if (keyStateEventData->altKey)
+            modifiers.add(WebEventModifier::AltKey);
+        if (keyStateEventData->metaKey)
+            modifiers.add(WebEventModifier::MetaKey);
+    }
+    return modifiers;
+}
+
 Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
@@ -283,10 +299,11 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFe
 
     NavigationActionData navigationActionData;
     navigationActionData.navigationType = navigationAction.type();
-    navigationActionData.modifiers = InjectedBundleNavigationAction::modifiersForNavigationAction(navigationAction);
-    navigationActionData.mouseButton = InjectedBundleNavigationAction::mouseButtonForNavigationAction(navigationAction);
-    navigationActionData.syntheticClickType = InjectedBundleNavigationAction::syntheticClickTypeForNavigationAction(navigationAction);
-    navigationActionData.clickLocationInRootViewCoordinates = InjectedBundleNavigationAction::clickLocationInRootViewCoordinatesForNavigationAction(navigationAction);
+    navigationActionData.modifiers = modifiersForNavigationAction(navigationAction);
+    navigationActionData.mouseButton = mouseButton(navigationAction);
+    navigationActionData.syntheticClickType = syntheticClickType(navigationAction);
+    if (auto& data = navigationAction.mouseEventData())
+        navigationActionData.clickLocationInRootViewCoordinates = data->locationInRootViewCoordinates;
     navigationActionData.userGestureTokenIdentifier = webProcess.userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = m_page.canHandleRequest(navigationAction.resourceRequest());
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();

@@ -41,8 +41,6 @@
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundleFramePrivate.h>
 #include <WebKit/WKBundleHitTestResult.h>
-#include <WebKit/WKBundleNavigationAction.h>
-#include <WebKit/WKBundleNavigationActionPrivate.h>
 #include <WebKit/WKBundleNodeHandlePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>

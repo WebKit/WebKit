@@ -27,6 +27,7 @@
 #define WKBundleNavigationAction_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKPageLoadTypes.h>
 
@@ -34,13 +35,13 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBundleNavigationActionGetTypeID();
+WK_EXPORT WKTypeID WKBundleNavigationActionGetTypeID() WK_C_API_DEPRECATED;
 
-WK_EXPORT WKFrameNavigationType WKBundleNavigationActionGetNavigationType(WKBundleNavigationActionRef navigationAction);
-WK_EXPORT WKEventModifiers WKBundleNavigationActionGetEventModifiers(WKBundleNavigationActionRef navigationAction);
-WK_EXPORT WKEventMouseButton WKBundleNavigationActionGetEventMouseButton(WKBundleNavigationActionRef navigationAction);
-WK_EXPORT WKBundleHitTestResultRef WKBundleNavigationActionCopyHitTestResult(WKBundleNavigationActionRef navigationAction);
-WK_EXPORT WKBundleNodeHandleRef WKBundleNavigationActionCopyFormElement(WKBundleNavigationActionRef navigationAction);
+WK_EXPORT WKFrameNavigationType WKBundleNavigationActionGetNavigationType(WKBundleNavigationActionRef navigationAction) WK_C_API_DEPRECATED;
+WK_EXPORT WKEventModifiers WKBundleNavigationActionGetEventModifiers(WKBundleNavigationActionRef navigationAction) WK_C_API_DEPRECATED;
+WK_EXPORT WKEventMouseButton WKBundleNavigationActionGetEventMouseButton(WKBundleNavigationActionRef navigationAction) WK_C_API_DEPRECATED;
+WK_EXPORT WKBundleHitTestResultRef WKBundleNavigationActionCopyHitTestResult(WKBundleNavigationActionRef navigationAction) WK_C_API_DEPRECATED;
+WK_EXPORT WKBundleNodeHandleRef WKBundleNavigationActionCopyFormElement(WKBundleNavigationActionRef navigationAction) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

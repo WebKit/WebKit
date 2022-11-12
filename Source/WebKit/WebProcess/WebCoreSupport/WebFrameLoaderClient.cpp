@@ -35,7 +35,6 @@
 #include "IPCTestingAPI.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleDOMWindowExtension.h"
-#include "InjectedBundleNavigationAction.h"
 #include "Logging.h"
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -77,6 +76,7 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>
@@ -890,16 +890,15 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     // FIXME: Remove this.
     RefPtr<API::Object> userData;
 
-    auto action = InjectedBundleNavigationAction::create(m_frame.ptr(), navigationAction, formState);
-
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
 
     NavigationActionData navigationActionData;
-    navigationActionData.navigationType = action->navigationType();
-    navigationActionData.modifiers = action->modifiers();
-    navigationActionData.mouseButton = action->mouseButton();
-    navigationActionData.syntheticClickType = action->syntheticClickType();
-    navigationActionData.clickLocationInRootViewCoordinates = action->clickLocationInRootViewCoordinates();
+    navigationActionData.navigationType = navigationAction.type();
+    navigationActionData.modifiers = modifiersForNavigationAction(navigationAction);
+    navigationActionData.mouseButton = mouseButton(navigationAction);
+    navigationActionData.syntheticClickType = syntheticClickType(navigationAction);
+    if (auto& data = navigationAction.mouseEventData())
+        navigationActionData.clickLocationInRootViewCoordinates = data->locationInRootViewCoordinates;
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
@@ -959,9 +958,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // FIXME: Remove this.
     RefPtr<API::Object> userData;
 
-    // FIXME: This probably isn't necessary.
-    Ref<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame.ptr(), navigationAction, formState);
-
     uint64_t listenerID = m_frame->setUpPolicyListener(requestIdentifier, WTFMove(function), WebFrame::ForNavigationAction::Yes);
 
     ASSERT(navigationAction.requester());
@@ -992,11 +988,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     NavigationActionData navigationActionData;
-    navigationActionData.navigationType = action->navigationType();
-    navigationActionData.modifiers = action->modifiers();
-    navigationActionData.mouseButton = action->mouseButton();
-    navigationActionData.syntheticClickType = action->syntheticClickType();
-    navigationActionData.clickLocationInRootViewCoordinates = action->clickLocationInRootViewCoordinates();
+    navigationActionData.navigationType = navigationAction.type();
+    navigationActionData.modifiers = modifiersForNavigationAction(navigationAction);
+    navigationActionData.mouseButton = mouseButton(navigationAction);
+    navigationActionData.syntheticClickType = syntheticClickType(navigationAction);
+    if (auto& data = navigationAction.mouseEventData())
+        navigationActionData.clickLocationInRootViewCoordinates = data->locationInRootViewCoordinates;
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
