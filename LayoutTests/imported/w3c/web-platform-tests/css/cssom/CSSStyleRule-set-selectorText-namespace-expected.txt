@@ -1,8 +1,8 @@
 SVG text
 
-FAIL CSSStyleRule: selectorText value: |.style1| isMatch: false assert_equals: expected "rgb(255, 0, 255)" but got "rgb(0, 0, 255)"
-FAIL CSSStyleRule: selectorText value: |svg|*.style1  | isMatch: true assert_equals: expected "svg|*.style0" but got ".style1"
-FAIL CSSStyleRule: selectorText value: |*|*.style1  | isMatch: true assert_equals: expected "svg|*.style0" but got ".style1"
-FAIL CSSStyleRule: selectorText value: | *.style1  | isMatch: false assert_equals: expected "svg|*.style0" but got ".style1"
-FAIL CSSStyleRule: selectorText value: |p| isMatch: false assert_equals: expected "svg|*.style0" but got ".style1"
+PASS CSSStyleRule: selectorText value: |.style1| isMatch: false
+PASS CSSStyleRule: selectorText value: |svg|*.style1  | isMatch: true
+PASS CSSStyleRule: selectorText value: |*|*.style1  | isMatch: true
+PASS CSSStyleRule: selectorText value: | *.style1  | isMatch: false
+PASS CSSStyleRule: selectorText value: |p| isMatch: false
 
