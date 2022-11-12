@@ -196,7 +196,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
     return false;
 }
 
-ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<AtomString>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& argumentList)
 {
     AtomString language;
 #if ENABLE(VIDEO)
@@ -209,21 +209,18 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
     if (language.isEmpty())
         return false;
 
-    // Implement basic and extended filterings of given language tags
-    // as specified in www.ietf.org/rfc/rfc4647.txt.
-    StringView languageStringView = language.string();
+    // Implement basic and extended filterings of given language tags as specified in www.ietf.org/rfc/rfc4647.txt.
+    StringView languageStringView = language;
     unsigned languageLength = language.length();
-    for (const AtomString& range : argumentList) {
-        if (range.isEmpty())
+    for (auto& range : argumentList) {
+        StringView rangeStringView = range.identifier;
+        if (rangeStringView.isEmpty())
             continue;
-
-        if (range == "*"_s)
+        if (rangeStringView == "*"_s)
             return true;
-
-        StringView rangeStringView = range.string();
         if (equalIgnoringASCIICase(languageStringView, rangeStringView) && !languageStringView.contains('-'))
             return true;
-        
+
         unsigned rangeLength = rangeStringView.length();
         unsigned rangeSubtagsStartIndex = 0;
         unsigned rangeSubtagsEndIndex = rangeLength;

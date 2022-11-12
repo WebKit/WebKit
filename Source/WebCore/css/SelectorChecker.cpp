@@ -1037,10 +1037,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return true;
             break;
         case CSSSelector::PseudoClassLang:
-            {
-                ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
-                return matchesLangPseudoClass(element, *selector.argumentList());
-            }
+            ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
+            return matchesLangPseudoClass(element, *selector.argumentList());
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClassFullScreen:
             return matchesFullScreenPseudoClass(element);

@@ -1,730 +1,723 @@
 <html>
 <head id="head">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 
-description("This tests parsing and re-serialization of some CSS selectors.");
+description("This tests parsing and re-serialization of some CSS selectors.")
 
 function parseThenSerializeRule(rule)
 {
-    var styleElement = document.getElementById("style");
-    var head = document.getElementById("head");
+    var styleElement = document.getElementById("style")
+    var head = document.getElementById("head")
     if (styleElement)
-        head.removeChild(styleElement);
+        head.removeChild(styleElement)
 
-    styleElement = document.createElement("style");
-    styleElement.id = "style";
-    var head = document.getElementById("head");
-    head.appendChild(styleElement);
+    styleElement = document.createElement("style")
+    styleElement.id = "style"
+    var head = document.getElementById("head")
+    head.appendChild(styleElement)
     
-    styleElement.appendChild(document.createTextNode(rule));
-    return styleElement.sheet.cssRules[0].cssText;
+    styleElement.appendChild(document.createTextNode(rule))
+    return styleElement.sheet.cssRules[0].cssText
 }
 
 function expectedSerializedLangSelector(selector)
 {
-    var args = /:lang\(([^)]+)/.exec(selector);
+    var args = /:lang\(([^)]+)/.exec(selector)
     if (!args || !args[1])
-        return selector;
+        return selector
 
-    args = args[1].split(/\s*,\s*/);
-    var expected = ':lang(';
+    args = args[1].split(/\s*,\s*/)
+    var expected = ':lang('
     for (var i = 0; i < args.length; ++i) {
-        var arg = args[i];
-        var hasQuotes = arg.indexOf('"') == 0 && arg.lastIndexOf('"') == arg.length - 1;
-        if (!hasQuotes)
-            expected += '"';
-        expected += args[i];
-        if (!hasQuotes)
-            expected += '"';
+        expected += args[i]
         if (i < args.length - 1)
-            expected += ', ';
+            expected += ', '
     }
-    expected += ')';
-    return expected;
+    expected += ')'
+    return expected
 }
 
 function testSelectorSerialization(selector, expectedSelector)
 {
-    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + expectedSelector + " { }'");
+    shouldBeEqualToString("parseThenSerializeRule('" + selector + " { }')", expectedSelector + " { }")
 }
 
 function testSelectorRoundTrip(selector)
 {
-    var expected = selector.indexOf(":lang") == 0 ? expectedSerializedLangSelector(selector) : selector;
-    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + expected + " { }'");
+    var expected = selector.indexOf(":lang") == 0 ? expectedSerializedLangSelector(selector) : selector
+    shouldBeEqualToString("parseThenSerializeRule('" + selector + " { }')", expected + " { }")
 }
 
-testSelectorRoundTrip('*');
-testSelectorRoundTrip('a');
-testSelectorRoundTrip('#a');
-testSelectorRoundTrip('.a');
-testSelectorRoundTrip(':active');
-testSelectorRoundTrip('[a]');
-testSelectorRoundTrip('[a="b"]');
-testSelectorRoundTrip('[a~="b"]');
-testSelectorRoundTrip('[a|="b"]');
-testSelectorRoundTrip('[a^="b"]');
-testSelectorRoundTrip('[a$="b"]');
-testSelectorRoundTrip('[a*="b"]');
-testSelectorRoundTrip('[a="b" i]');
-testSelectorRoundTrip('[a~="b" i]');
-testSelectorRoundTrip('[a|="b" i]');
-testSelectorRoundTrip('[a^="b" i]');
-testSelectorRoundTrip('[a$="b" i]');
-testSelectorRoundTrip('[a*="b" i]');
-
-debug('');
-
-shouldBe("parseThenSerializeRule('*|a { }')", "'a { }'");
-shouldBe("parseThenSerializeRule('*|* { }')", "'* { }'");
-testSelectorRoundTrip('|a');
-testSelectorRoundTrip('|*');
-testSelectorRoundTrip('[*|a]');
-shouldBe("parseThenSerializeRule('[|a] { }')", "'[a] { }'");
-
-debug('');
-
-testSelectorRoundTrip('a:active');
-testSelectorRoundTrip('a b');
-testSelectorRoundTrip('a + b');
-testSelectorRoundTrip('a ~ b');
-testSelectorRoundTrip('a > b');
-
-debug('');
-
-testSelectorRoundTrip(":active");
-testSelectorRoundTrip(":any-link");
-testSelectorRoundTrip(":checked");
-testSelectorRoundTrip(":disabled");
-testSelectorRoundTrip(":empty");
-testSelectorRoundTrip(":enabled");
-testSelectorRoundTrip(":first-child");
-testSelectorRoundTrip(":first-of-type");
-testSelectorRoundTrip(":focus");
-testSelectorRoundTrip(":hover");
-testSelectorRoundTrip(":indeterminate");
-testSelectorRoundTrip(":link");
-testSelectorRoundTrip(":not(:placeholder-shown)");
-testSelectorRoundTrip(":placeholder-shown");
-testSelectorRoundTrip(":root");
-testSelectorRoundTrip(":target");
-testSelectorRoundTrip(":visited");
-
-debug('');
-
-testSelectorRoundTrip(':lang("*-ab")');
-testSelectorRoundTrip(':lang("*-ab-")');
-testSelectorRoundTrip(':lang("*-DE-1996")');
-
-debug('');
-
-testSelectorRoundTrip(":lang(a)");
-testSelectorRoundTrip(":lang(a, b, c)");
-testSelectorRoundTrip(":lang(fr, de, en, id)");
-testSelectorRoundTrip(":lang(fr, fr-ca, fr-be)");
-testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996)");
-testSelectorRoundTrip(":lang(de-CH, it-CH, fr-CH, rm-CH)");
-testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH)");
-
-debug('');
-
-testSelectorRoundTrip(":lang(a, a, a)");
-testSelectorRoundTrip(":lang(en, en, en)");
-testSelectorRoundTrip(":lang(en-us, en-us, en-us)");
-testSelectorRoundTrip(":lang(de-DE-1996, de-DE-1996, de-DE-1996)");
-testSelectorRoundTrip(":lang(de-Latn-DE-1996, de-Latn-DE-1996, de-Latn-DE-1996)");
-testSelectorRoundTrip(":lang(java, java, java)");
-
-debug('');
-
-testSelectorRoundTrip(":not(a)");
-testSelectorRoundTrip(":-webkit-any(a, b, p)");
-
-debug('');
-
-testSelectorRoundTrip("::after");
-testSelectorRoundTrip("::before");
-testSelectorRoundTrip("::first-letter");
-testSelectorRoundTrip("::first-line");
-testSelectorRoundTrip("::selection");
-
-debug('');
-
-testSelectorRoundTrip(":-webkit-any-link");
-testSelectorRoundTrip(":-webkit-drag");
-testSelectorRoundTrip(":autofill");
-testSelectorSerialization(":-webkit-autofill", ":autofill");
-
-debug('');
-
-testSelectorSerialization(":nth-child(odd)", ":nth-child(2n+1)");
-testSelectorSerialization(":nth-child(even)", ":nth-child(2n)");
-testSelectorRoundTrip(":nth-child(n)");
-testSelectorRoundTrip(":nth-child(-n)");
-testSelectorRoundTrip(":nth-child(5)");
-testSelectorRoundTrip(":nth-child(-5)");
-testSelectorRoundTrip(":nth-child(5n+7)");
-testSelectorRoundTrip(":nth-child(-5n+7)");
-testSelectorRoundTrip(":nth-child(5n-7)");
-testSelectorRoundTrip(":nth-child(-5n-7)");
-
-debug('');
-
-testSelectorSerialization(":nth-child(odd of .foo, :nth-child(odd))", ":nth-child(2n+1 of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(even of .foo, :nth-child(odd))", ":nth-child(2n of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(n of .foo, :nth-child(odd))", ":nth-child(n of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(-n of .foo, :nth-child(odd))", ":nth-child(-n of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(5 of .foo, :nth-child(odd))", ":nth-child(5 of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(-5 of .foo, :nth-child(odd))", ":nth-child(-5 of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(5n+7 of .foo, :nth-child(odd))", ":nth-child(5n+7 of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(-5n+7 of .foo, :nth-child(odd))", ":nth-child(-5n+7 of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(5n-7 of .foo, :nth-child(odd))", ":nth-child(5n-7 of .foo, :nth-child(2n+1))");
-testSelectorSerialization(":nth-child(-5n-7 of .foo, :nth-child(odd))", ":nth-child(-5n-7 of .foo, :nth-child(2n+1))");
-
-debug('');
-
-testSelectorSerialization(":nth-last-child(odd of .foo, :nth-last-child(odd))", ":nth-last-child(2n+1 of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(even of .foo, :nth-last-child(odd))", ":nth-last-child(2n of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(n of .foo, :nth-last-child(odd))", ":nth-last-child(n of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(-n of .foo, :nth-last-child(odd))", ":nth-last-child(-n of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(5 of .foo, :nth-last-child(odd))", ":nth-last-child(5 of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(-5 of .foo, :nth-last-child(odd))", ":nth-last-child(-5 of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(5n+7 of .foo, :nth-last-child(odd))", ":nth-last-child(5n+7 of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(-5n+7 of .foo, :nth-last-child(odd))", ":nth-last-child(-5n+7 of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(5n-7 of .foo, :nth-last-child(odd))", ":nth-last-child(5n-7 of .foo, :nth-last-child(2n+1))");
-testSelectorSerialization(":nth-last-child(-5n-7 of .foo, :nth-last-child(odd))", ":nth-last-child(-5n-7 of .foo, :nth-last-child(2n+1))");
-
-debug('');
-
-testSelectorRoundTrip(':is(single)');
-testSelectorRoundTrip(':is(a, b, p)');
-testSelectorRoundTrip(':is(#alice, #bob, #chris)');
-testSelectorRoundTrip(':is(.selector, #tama, #hanayo, #midoriko)');
-testSelectorRoundTrip(':is(.name, #ok, :visited)');
-testSelectorRoundTrip(':is(.name, #ok, :visited, :link)');
-testSelectorRoundTrip(':is(.name, #ok, :is(:visited))');
-testSelectorRoundTrip(':is(.name, #ok, :not(:link))');
-testSelectorRoundTrip(':is(.name, #ok, :not(:link))');
-testSelectorRoundTrip(':is(.name, #ok, :-webkit-any(hello))');
-testSelectorRoundTrip(':is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':is([type="file"])');
-testSelectorRoundTrip(':is(:hover)');
-testSelectorRoundTrip('input:is([type="file"], :hover, :focus):enabled');
-testSelectorRoundTrip(':is(input[type="file"], a:hover, button:focus)');
-testSelectorRoundTrip(':is(.class1.class2.class3)');
-testSelectorRoundTrip(':is(.class1:hover)');
-testSelectorRoundTrip(':is(a.class1.class2.class3:hover)');
-testSelectorRoundTrip(':where(single)');
-testSelectorRoundTrip(':where(a, b, p)');
-testSelectorRoundTrip(':where(#alice, #bob, #chris)');
-testSelectorRoundTrip(':where(.selector, #tama, #hanayo, #midoriko)');
-testSelectorRoundTrip(':where(.name, #ok, :visited)');
-testSelectorRoundTrip(':where(.name, #ok, :visited, :link)');
-testSelectorRoundTrip(':where(.name, #ok, :where(:visited))');
-testSelectorRoundTrip(':where(.name, #ok, :not(:link))');
-testSelectorRoundTrip(':where(.name, #ok, :not(:link))');
-testSelectorRoundTrip(':where(.name, #ok, :where(hello))');
-testSelectorRoundTrip(':where(.name, #ok, :where(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':where([type="file"])');
-testSelectorRoundTrip(':where(:hover)');
-testSelectorRoundTrip('input:where([type="file"], :hover, :focus):enabled');
-testSelectorRoundTrip(':where(input[type="file"], a:hover, button:focus)');
-testSelectorRoundTrip(':where(.class1.class2.class3)');
-testSelectorRoundTrip(':where(.class1:hover)');
-testSelectorRoundTrip(':where(a.class1.class2.class3:hover)');
-testSelectorRoundTrip(':matches(:is(single))');
-testSelectorRoundTrip(':matches(:is(a, b, p))');
-testSelectorRoundTrip(':matches(:is(#alice, #bob, #chris))');
-testSelectorRoundTrip(':matches(:is(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :visited))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :visited, :link))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :is(:visited)))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :matches(hello)))');
-testSelectorRoundTrip(':matches(:is(.name, #ok, :matches(.selector, #tama, #hanayo, #midoriko)))');
-testSelectorRoundTrip(':matches(:is([type="file"]))');
-testSelectorRoundTrip(':matches(:is(:hover))');
-testSelectorRoundTrip(':matches(input:is([type="file"], :hover, :focus):enabled)');
-testSelectorRoundTrip(':matches(:is(input[type="file"], a:hover, button:focus))');
-testSelectorRoundTrip(':matches(:is(.class1.class2.class3))');
-testSelectorRoundTrip(':matches(:is(.class1:hover))');
-testSelectorRoundTrip(':matches(:is(a.class1.class2.class3:hover))');
-testSelectorRoundTrip(':-webkit-any(:is(single))');
-testSelectorRoundTrip(':-webkit-any(:is(a, b, p))');
-testSelectorRoundTrip(':-webkit-any(:is(#alice, #bob, #chris))');
-testSelectorRoundTrip(':-webkit-any(:is(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :visited))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :visited, :link))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :is(:visited)))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :-webkit-any(hello)))');
-testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)))');
-testSelectorRoundTrip(':-webkit-any(:is([type="file"]))');
-testSelectorRoundTrip(':-webkit-any(:is(:hover))');
-testSelectorRoundTrip(':-webkit-any(input:is([type="file"], :hover, :focus):enabled)');
-testSelectorRoundTrip(':-webkit-any(:is(input[type="file"], a:hover, button:focus))');
-testSelectorRoundTrip(':-webkit-any(:is(.class1.class2.class3))');
-testSelectorRoundTrip(':-webkit-any(:is(.class1:hover))');
-testSelectorRoundTrip(':-webkit-any(:is(a.class1.class2.class3:hover))');
-
-debug('');
-
-testSelectorRoundTrip(':matches(single)');
-testSelectorRoundTrip(':matches(a, b, p)');
-testSelectorRoundTrip(':matches(#alice, #bob, #chris)');
-testSelectorRoundTrip(':matches(.selector, #tama, #hanayo, #midoriko)');
-testSelectorRoundTrip(':matches(.name, #ok, :visited)');
-testSelectorRoundTrip(':matches(.name, #ok, :visited, :link)');
-testSelectorRoundTrip(':matches(.name, #ok, :matches(:visited))');
-testSelectorRoundTrip(':matches(.name, #ok, :not(:link))');
-testSelectorRoundTrip(':matches(.name, #ok, :not(:link))');
-testSelectorRoundTrip(':matches(.name, #ok, :-webkit-any(hello))');
-testSelectorRoundTrip(':matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':matches([type="file"])');
-testSelectorRoundTrip(':matches(:hover)');
-testSelectorRoundTrip('input:matches([type="file"], :hover, :focus):enabled');
-testSelectorRoundTrip(':matches(input[type="file"], a:hover, button:focus)');
-testSelectorRoundTrip(':matches(.class1.class2.class3)');
-testSelectorRoundTrip(':matches(.class1:hover)');
-testSelectorRoundTrip(':matches(a.class1.class2.class3:hover)');
-testSelectorRoundTrip(':is(:matches(single))');
-testSelectorRoundTrip(':is(:matches(a, b, p))');
-testSelectorRoundTrip(':is(:matches(#alice, #bob, #chris))');
-testSelectorRoundTrip(':is(:matches(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :visited))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :visited, :link))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :matches(:visited)))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :is(hello)))');
-testSelectorRoundTrip(':is(:matches(.name, #ok, :is(.selector, #tama, #hanayo, #midoriko)))');
-testSelectorRoundTrip(':is(:matches([type="file"]))');
-testSelectorRoundTrip(':is(:matches(:hover))');
-testSelectorRoundTrip(':is(input:matches([type="file"], :hover, :focus):enabled)');
-testSelectorRoundTrip(':is(:matches(input[type="file"], a:hover, button:focus))');
-testSelectorRoundTrip(':is(:matches(.class1.class2.class3))');
-testSelectorRoundTrip(':is(:matches(.class1:hover))');
-testSelectorRoundTrip(':is(:matches(a.class1.class2.class3:hover))');
-testSelectorRoundTrip(':-webkit-any(:matches(single))');
-testSelectorRoundTrip(':-webkit-any(:matches(a, b, p))');
-testSelectorRoundTrip(':-webkit-any(:matches(#alice, #bob, #chris))');
-testSelectorRoundTrip(':-webkit-any(:matches(.selector, #tama, #hanayo, #midoriko))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :visited))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :visited, :link))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :matches(:visited)))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :not(:link)))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :-webkit-any(hello)))');
-testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)))');
-testSelectorRoundTrip(':-webkit-any(:matches([type="file"]))');
-testSelectorRoundTrip(':-webkit-any(:matches(:hover))');
-testSelectorRoundTrip(':-webkit-any(input:matches([type="file"], :hover, :focus):enabled)');
-testSelectorRoundTrip(':-webkit-any(:matches(input[type="file"], a:hover, button:focus))');
-testSelectorRoundTrip(':-webkit-any(:matches(.class1.class2.class3))');
-testSelectorRoundTrip(':-webkit-any(:matches(.class1:hover))');
-testSelectorRoundTrip(':-webkit-any(:matches(a.class1.class2.class3:hover))');
-
-debug('');
-
-testSelectorRoundTrip(':not(div)');
-testSelectorRoundTrip(':not(.div)');
-testSelectorRoundTrip(':not(#div)');
-testSelectorRoundTrip(':not([div])');
-testSelectorRoundTrip(':not(:empty)');
-testSelectorRoundTrip(':not(div.div#div[div]:empty)');
-testSelectorRoundTrip(':not(div.div:empty[div]#div)');
-testSelectorRoundTrip(':not(div.div, #div[div], :empty)');
-testSelectorRoundTrip(':not(div, .div, #div, [div], :empty)');
-
-testSelectorRoundTrip(':not(:not(div))');
-testSelectorRoundTrip(':not(:not(div)):not(:not(foo)):not(:not(bar))');
-testSelectorRoundTrip(':not(:not(div, :not(foo, bar))):not(:not(foo)):not(:not(bar, baz))');
-
-testSelectorRoundTrip(':not(:is(*))');
-testSelectorRoundTrip(':not(:is(foo, bar))');
-testSelectorRoundTrip(':not(:is(foo, bar), :is(.foo, .bar), :is(#foo, #bar), :is([foo], [bar]))');
-testSelectorRoundTrip(':not(:is(foo, bar:not(:empty)), :is(.foo, .bar:not(:not(.mosaic))), :is(#foo, #bar), :is([foo], [bar]))');
-
-testSelectorRoundTrip(':not(:matches(*))');
-testSelectorRoundTrip(':not(:matches(foo, bar))');
-testSelectorRoundTrip(':not(:matches(foo, bar), :matches(.foo, .bar), :matches(#foo, #bar), :matches([foo], [bar]))');
-testSelectorRoundTrip(':not(:matches(foo, bar:not(:empty)), :matches(.foo, .bar:not(:not(.mosaic))), :matches(#foo, #bar), :matches([foo], [bar]))');
-
-testSelectorRoundTrip(':nth-child(2n of :not(a.b, c#d.e))');
-testSelectorRoundTrip(':not(:nth-child(2n of :not(a.b, c#d.e)))');
-
-testSelectorRoundTrip(':not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)');
-testSelectorRoundTrip('a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b + c:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) ~ d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) > d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)');
-
-debug('');
-
-shouldBe("parseThenSerializeRule('::-webkit-file-upload-button { }')", "'::-webkit-file-upload-button { }'");
-shouldBe("parseThenSerializeRule('::-webkit-search-cancel-button { }')", "'::-webkit-search-cancel-button { }'");
-shouldBe("parseThenSerializeRule('::-webkit-search-decoration { }')", "'::-webkit-search-decoration { }'");
-shouldBe("parseThenSerializeRule('::-webkit-search-results-button { }')", "'::-webkit-search-results-button { }'");
-shouldBe("parseThenSerializeRule('::-webkit-search-results-decoration { }')", "'::-webkit-search-results-decoration { }'");
-shouldBe("parseThenSerializeRule('::-webkit-slider-thumb { }')", "'::-webkit-slider-thumb { }'");
-shouldBe("parseThenSerializeRule('::file-selector-button { }')", "'::file-selector-button { }'");
-
-debug('');
-
-testSelectorRoundTrip("a::-webkit-slider-thumb");
-shouldBe("parseThenSerializeRule('a ::-webkit-slider-thumb { }')", "'a ::-webkit-slider-thumb { }'");
-testSelectorRoundTrip("[a]::-webkit-slider-thumb");
-shouldBe("parseThenSerializeRule('[a] ::-webkit-slider-thumb { }')", "'[a] ::-webkit-slider-thumb { }'");
-testSelectorRoundTrip(".a::-webkit-slider-thumb");
-shouldBe("parseThenSerializeRule('.a ::-webkit-slider-thumb { }')", "'.a ::-webkit-slider-thumb { }'");
-testSelectorRoundTrip("#a::-webkit-slider-thumb");
-shouldBe("parseThenSerializeRule('#a ::-webkit-slider-thumb { }')", "'#a ::-webkit-slider-thumb { }'");
-shouldBe("parseThenSerializeRule('* ::-webkit-slider-thumb { }')", "'* ::-webkit-slider-thumb { }'");
-
-debug('');
-
-testSelectorRoundTrip("a[b]::-webkit-slider-thumb");
-testSelectorRoundTrip("a.b::-webkit-slider-thumb");
-testSelectorRoundTrip("a#b::-webkit-slider-thumb");
-testSelectorRoundTrip("a[b].c#d::-webkit-slider-thumb");
-
-debug('');
-
-testSelectorRoundTrip("a[b]::placeholder");
-testSelectorRoundTrip("a.b::placeholder");
-testSelectorRoundTrip("a#b::placeholder");
-testSelectorRoundTrip("a[b].c#d::placeholder");
-testSelectorRoundTrip("a[b]::-webkit-input-placeholder");
-testSelectorRoundTrip("a.b::-webkit-input-placeholder");
-testSelectorRoundTrip("a#b::-webkit-input-placeholder");
-testSelectorRoundTrip("a[b].c#d::-webkit-input-placeholder");
-
-debug('');
-
-testSelectorRoundTrip("a[b]:default");
-testSelectorRoundTrip("a.b:default");
-testSelectorRoundTrip("a#b:default");
-testSelectorRoundTrip("a[b].c#d:default");
-
-debug('');
-
-testSelectorRoundTrip("a[b]:in-range");
-testSelectorRoundTrip("a.b:in-range");
-testSelectorRoundTrip("a#b:in-range");
-testSelectorRoundTrip("a[b].c#d:in-range");
-
-debug('');
-
-testSelectorRoundTrip("a[b]:out-of-range");
-testSelectorRoundTrip("a.b:out-of-range");
-testSelectorRoundTrip("a#b:out-of-range");
-testSelectorRoundTrip("a[b].c#d:out-of-range");
-
-debug('');
-
-testSelectorRoundTrip("a[b]:focus-within");
-testSelectorRoundTrip("a.b:focus-within");
-testSelectorRoundTrip("a#b:focus-within");
-testSelectorRoundTrip("a[b].c#d:focus-within");
-
-debug('');
-
-testSelectorRoundTrip('input:not([type="file"]):focus');
-testSelectorRoundTrip(':-webkit-any([type="file"])');
-testSelectorRoundTrip(':-webkit-any(:hover)');
-testSelectorRoundTrip('input:-webkit-any([type="file"], :hover, :focus):enabled');
-testSelectorRoundTrip(':-webkit-any(input[type="file"], a:hover, button:focus)');
-testSelectorRoundTrip(':-webkit-any(.class1.class2.class3)');
-testSelectorRoundTrip(':-webkit-any(.class1:hover)');
-testSelectorRoundTrip(':-webkit-any(a.class1.class2.class3:hover)');
-testSelectorRoundTrip('a:any-link');
-testSelectorRoundTrip('a :any-link');
-testSelectorRoundTrip('div:any-link');
-testSelectorRoundTrip('div :any-link');
-testSelectorRoundTrip(':any-link > div');
-testSelectorRoundTrip(':any-link + div');
-testSelectorRoundTrip(':not(:any-link)');
-
-debug('');
-
-shouldBe("parseThenSerializeRule('*:active { }')", "':active { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule('input[type=file]:focus { }')", "'input[type=\"file\"]:focus { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule('a+b { }')", "'a + b { }'");
-shouldBe("parseThenSerializeRule('a~b { }')", "'a ~ b { }'");
-shouldBe("parseThenSerializeRule('a>b { }')", "'a > b { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':after { }')", "'::after { }'");
-shouldBe("parseThenSerializeRule(':before { }')", "'::before { }'");
-shouldBe("parseThenSerializeRule(':first-letter { }')", "'::first-letter { }'");
-shouldBe("parseThenSerializeRule(':first-line { }')", "'::first-line { }'");
-shouldBe("parseThenSerializeRule(':-webkit-any(    a.class1  ,  	#id,[attr]  ) { }')","':-webkit-any(a.class1, #id, [attr]) { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':is(single    ) { }')", "':is(single) { }'");
-shouldBe("parseThenSerializeRule(':is(a,b    ,p) { }')", "':is(a, b, p) { }'");
-shouldBe("parseThenSerializeRule(':is(#alice,                   #bob,#chris) { }')", "':is(#alice, #bob, #chris) { }'");
-shouldBe("parseThenSerializeRule(':is(  .selector,#tama,                #hanayo,#midoriko) { }')", "':is(.selector, #tama, #hanayo, #midoriko) { }'");
-shouldBe("parseThenSerializeRule(':is(    .name,#ok,:visited   ) { }')", "':is(.name, #ok, :visited) { }'");
-shouldBe("parseThenSerializeRule(':is(    .name,#ok,    :visited, :link) { }')", "':is(.name, #ok, :visited, :link) { }'");
-shouldBe("parseThenSerializeRule(':is(    .name,#ok,    :is(:visited    )) { }')", "':is(.name, #ok, :is(:visited)) { }'");
-shouldBe("parseThenSerializeRule(':is(.name,  #ok,:not(:link)) { }')", "':is(.name, #ok, :not(:link)) { }'");
-shouldBe("parseThenSerializeRule(':is(.name,#ok,:not(:link)) { }')", "':is(.name, #ok, :not(:link)) { }'");
-shouldBe("parseThenSerializeRule(':is(    .name,#ok,:-webkit-any(   hello)) { }')", "':is(.name, #ok, :-webkit-any(hello)) { }'");
-shouldBe("parseThenSerializeRule(':is(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", "':is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }'");
-shouldBe("parseThenSerializeRule(':is(       [type=\"file\"]) { }')", "':is([type=\"file\"]) { }'");
-shouldBe("parseThenSerializeRule(':is(  :hover    ) { }')", "':is(:hover) { }'");
-shouldBe("parseThenSerializeRule('input:is([type=\"file\"],:hover,:focus):enabled { }')", "'input:is([type=\"file\"], :hover, :focus):enabled { }'");
-shouldBe("parseThenSerializeRule(':is(input[type=\"file\"], a:hover, button:focus) { }')", "':is(input[type=\"file\"], a:hover, button:focus) { }'");
-shouldBe("parseThenSerializeRule(':is( .class1.class2.class3   ) { }')", "':is(.class1.class2.class3) { }'");
-shouldBe("parseThenSerializeRule(':is(.class1:hover   ) { }')", "':is(.class1:hover) { }'");
-shouldBe("parseThenSerializeRule(':is(a.class1.class2.class3:hover   ) { }')", "':is(a.class1.class2.class3:hover) { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':matches(single    ) { }')", "':matches(single) { }'");
-shouldBe("parseThenSerializeRule(':matches(a,b    ,p) { }')", "':matches(a, b, p) { }'");
-shouldBe("parseThenSerializeRule(':matches(#alice,                   #bob,#chris) { }')", "':matches(#alice, #bob, #chris) { }'");
-shouldBe("parseThenSerializeRule(':matches(  .selector,#tama,                #hanayo,#midoriko) { }')", "':matches(.selector, #tama, #hanayo, #midoriko) { }'");
-shouldBe("parseThenSerializeRule(':matches(    .name,#ok,:visited   ) { }')", "':matches(.name, #ok, :visited) { }'");
-shouldBe("parseThenSerializeRule(':matches(    .name,#ok,    :visited, :link) { }')", "':matches(.name, #ok, :visited, :link) { }'");
-shouldBe("parseThenSerializeRule(':matches(    .name,#ok,    :matches(:visited    )) { }')", "':matches(.name, #ok, :matches(:visited)) { }'");
-shouldBe("parseThenSerializeRule(':matches(.name,  #ok,:not(:link)) { }')", "':matches(.name, #ok, :not(:link)) { }'");
-shouldBe("parseThenSerializeRule(':matches(.name,#ok,:not(:link)) { }')", "':matches(.name, #ok, :not(:link)) { }'");
-shouldBe("parseThenSerializeRule(':matches(    .name,#ok,:-webkit-any(   hello)) { }')", "':matches(.name, #ok, :-webkit-any(hello)) { }'");
-shouldBe("parseThenSerializeRule(':matches(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", "':matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }'");
-shouldBe("parseThenSerializeRule(':matches(       [type=\"file\"]) { }')", "':matches([type=\"file\"]) { }'");
-shouldBe("parseThenSerializeRule(':matches(  :hover    ) { }')", "':matches(:hover) { }'");
-shouldBe("parseThenSerializeRule('input:matches([type=\"file\"],:hover,:focus):enabled { }')", "'input:matches([type=\"file\"], :hover, :focus):enabled { }'");
-shouldBe("parseThenSerializeRule(':matches(input[type=\"file\"], a:hover, button:focus) { }')", "':matches(input[type=\"file\"], a:hover, button:focus) { }'");
-shouldBe("parseThenSerializeRule(':matches( .class1.class2.class3   ) { }')", "':matches(.class1.class2.class3) { }'");
-shouldBe("parseThenSerializeRule(':matches(.class1:hover   ) { }')", "':matches(.class1:hover) { }'");
-shouldBe("parseThenSerializeRule(':matches(a.class1.class2.class3:hover   ) { }')", "':matches(a.class1.class2.class3:hover) { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':not(single    ) { }')", "':not(single) { }'");
-shouldBe("parseThenSerializeRule(':not(a,b    ,p) { }')", "':not(a, b, p) { }'");
-shouldBe("parseThenSerializeRule(':not(#alice,                   #bob,#chris) { }')", "':not(#alice, #bob, #chris) { }'");
-shouldBe("parseThenSerializeRule(':not(  .selector,#tama,                #hanayo,#midoriko) { }')", "':not(.selector, #tama, #hanayo, #midoriko) { }'");
-shouldBe("parseThenSerializeRule(':not(    .name,#ok,:visited   ) { }')", "':not(.name, #ok, :visited) { }'");
-shouldBe("parseThenSerializeRule(':not(    .name,#ok,    :visited, :link) { }')", "':not(.name, #ok, :visited, :link) { }'");
-shouldBe("parseThenSerializeRule(':not(    .name,#ok,    :not(:visited    )) { }')", "':not(.name, #ok, :not(:visited)) { }'");
-shouldBe("parseThenSerializeRule(':not(.name,  #ok,:not(:link)) { }')", "':not(.name, #ok, :not(:link)) { }'");
-shouldBe("parseThenSerializeRule(':not(.name,#ok,:not(:link)) { }')", "':not(.name, #ok, :not(:link)) { }'");
-shouldBe("parseThenSerializeRule(':not(    .name,#ok,:-webkit-any(   hello)) { }')", "':not(.name, #ok, :-webkit-any(hello)) { }'");
-shouldBe("parseThenSerializeRule(':not(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", "':not(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }'");
-shouldBe("parseThenSerializeRule(':not(       [type=\"file\"]) { }')", "':not([type=\"file\"]) { }'");
-shouldBe("parseThenSerializeRule(':not(  :hover    ) { }')", "':not(:hover) { }'");
-shouldBe("parseThenSerializeRule('input:not([type=\"file\"],:hover,:focus):enabled { }')", "'input:not([type=\"file\"], :hover, :focus):enabled { }'");
-shouldBe("parseThenSerializeRule(':not(input[type=\"file\"], a:hover, button:focus) { }')", "':not(input[type=\"file\"], a:hover, button:focus) { }'");
-shouldBe("parseThenSerializeRule(':not( .class1.class2.class3   ) { }')", "':not(.class1.class2.class3) { }'");
-shouldBe("parseThenSerializeRule(':not(.class1:hover   ) { }')", "':not(.class1:hover) { }'");
-shouldBe("parseThenSerializeRule(':not(a.class1.class2.class3:hover   ) { }')", "':not(a.class1.class2.class3:hover) { }'");
-shouldBe("parseThenSerializeRule(':not(:is(single    ),:is(a,b    ,p),:is(#alice,                   #bob,#chris)) { }')", "':not(:is(single), :is(a, b, p), :is(#alice, #bob, #chris)) { }'");
-shouldBe("parseThenSerializeRule(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris)) { }')", "':not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris)) { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(a    ) { }')", "':lang(\"a\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    a) { }')", "':lang(\"a\") { }'");
-shouldBe("parseThenSerializeRule(':lang(a,    b,    c) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    a, b ,c) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(  a  ,  b  ,  c  ) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    a  ,b,c) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    a  ,b  ,c) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    a  ,b  ,c  ) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(a,b    ,c) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(a,b,    c) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-shouldBe("parseThenSerializeRule(':lang(a,b,    c    ) { }')", "':lang(\"a\", \"b\", \"c\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(en, en, en) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en,en,en) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en,en,    en) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en,    en,en) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en,    en,en    ) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    en,    en,en    ) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en,   en,   en) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    en,    en,    en) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    en,    en,    en    ) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    en    ,    en    ,   en    ) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    en,en,en    ) { }')", "':lang(\"en\", \"en\", \"en\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(\"*-DE\", \"*-CH\", \"*-EN\") { }')", "':lang(\"*-DE\", \"*-CH\", \"*-EN\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-DE\",\"*-CH\",\"*-EN\") { }')", "':lang(\"*-DE\", \"*-CH\", \"*-EN\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   \"*-DE\"  ,  \"*-CH\"  ,  \"*-EN\"  ) { }')", "':lang(\"*-DE\", \"*-CH\", \"*-EN\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(\\\\*) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-\\\\*\") { }')", "':lang(\"*-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-\\\\*-\\\\*\") { }')", "':lang(\"*-*-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-\\\\*-\\\\*-\\\\*\") { }')", "':lang(\"*-*-*-*\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(ab-\\\\*) { }')", "':lang(\"ab-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-ab-\\\\*\") { }')", "':lang(\"*-ab-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-ab-\\\\*-\") { }')", "':lang(\"*-ab-*-\") { }'");
-
-shouldBe("parseThenSerializeRule(':lang(\"*-foo-\\\\3A\") { }')", "':lang(\"*-foo-:\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-foo-\\\\3A\\\\`\\\\)\") { }')", "':lang(\"*-foo-:`)\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-foo-\\\\*\") { }')", "':lang(\"*-foo-*\") { }'");
-
-shouldBe("parseThenSerializeRule(':lang(\"*-foo-\\\\0072 aisin\") { }')", "':lang(\"*-foo-raisin\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-foo-\\\\0062 \\\\0061 r\") { }')", "':lang(\"*-foo-bar\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-foo-col\\\\6Fr\") { }')", "':lang(\"*-foo-color\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(\\\\*    ) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en\"    ) { }')", "':lang(\"*-en\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*\"    ) { }')", "':lang(\"*-en-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\"    ) { }')", "':lang(\"*-en-*-fr\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",br    ) { }')", "':lang(\"*-en-*-fr\", \"br\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\", br    ) { }')", "':lang(\"*-en-*-fr\", \"br\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",   br    ) { }')", "':lang(\"*-en-*-fr\", \"br\") { }'");
-shouldBe("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\",   br    ) { }')", "':lang(\"*-en-*-fr\", \"br\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    \"*-en-\\\\*-fr\",   br    ) { }')", "':lang(\"*-en-*-fr\", \"br\") { }'");
-shouldBe("parseThenSerializeRule(':lang(    \"*-en-\\\\*-fr\"  ,   br    ) { }')", "':lang(\"*-en-*-fr\", \"br\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",\"*-br-zh\"    ) { }')", "':lang(\"*-en-*-fr\", \"*-br-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\", \"*-br-zh\"    ) { }')", "':lang(\"*-en-*-fr\", \"*-br-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",   \"*-br-zh\"    ) { }')", "':lang(\"*-en-*-fr\", \"*-br-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",     \"*-br-zh\"    ) { }')", "':lang(\"*-en-*-fr\", \"*-br-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",       \"*-br-zh\"    ) { }')", "':lang(\"*-en-*-fr\", \"*-br-zh\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\", br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",   br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",      br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\",      br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\" ,      br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-shouldBe("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\"  ,      br-\\\\*-zh    ) { }')", "':lang(\"*-en-*-fr\", \"br-*-zh\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(\\\\*) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\\\\* ) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(\\\\*   ) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang( \\\\*   ) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(  \\\\*) { }')", "':lang(\"*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   \\\\*   ) { }')", "':lang(\"*\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(   \\\\*,id-\\\\*-sumatra   ) { }')", "':lang(\"*\", \"id-*-sumatra\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   \\\\* ,id-\\\\*-sumatra) { }')", "':lang(\"*\", \"id-*-sumatra\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   \\\\*  ,  id-\\\\*-sumatra  ) { }')", "':lang(\"*\", \"id-*-sumatra\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   \\\\*   ,    id-\\\\*-sumatra  ) { }')", "':lang(\"*\", \"id-*-sumatra\") { }'");
-
-debug('');
-
-shouldBe("parseThenSerializeRule(':lang(en-\\\\*) { }')", "':lang(\"en-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\*) { }')", "':lang(\"en-*\", \"fr-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\* ) { }')", "':lang(\"en-*\", \"fr-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   en-\\\\*   ,  fr-\\\\*   ) { }')", "':lang(\"en-*\", \"fr-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   en-\\\\*   ,fr-\\\\*   ) { }')", "':lang(\"en-*\", \"fr-*\") { }'");
-shouldBe("parseThenSerializeRule(':lang(   en-\\\\*,fr-\\\\*   ) { }')", "':lang(\"en-*\", \"fr-*\") { }'");
-
-debug('');
-
-shouldThrow("parseThenSerializeRule(':lang() { }')");
-shouldThrow("parseThenSerializeRule(':lang(12, b, c) { }')");
-shouldThrow("parseThenSerializeRule(':lang(a, 12, c) { }')");
-shouldThrow("parseThenSerializeRule(':lang(a, b, 12) { }')");
-shouldThrow("parseThenSerializeRule(':lang(a, 12, 12) { }')");
-shouldThrow("parseThenSerializeRule(':lang(12, b, 12) { }')");
-shouldThrow("parseThenSerializeRule(':lang(12, 12, 12) { }')");
-shouldThrow("parseThenSerializeRule(':lang(lang()) { }')");
-shouldThrow("parseThenSerializeRule(':lang(:lang()) { }')");
-shouldThrow("parseThenSerializeRule(':lang(:lang(id)) { }')");
-shouldThrow("parseThenSerializeRule(':lang(:lang(en, br)) { }')");
-shouldThrow("parseThenSerializeRule(':lang(<0_0>) { }')");
-shouldThrow("parseThenSerializeRule(':lang(99) { }')");
-shouldThrow("parseThenSerializeRule(':lang(88) { }')");
-shouldThrow("parseThenSerializeRule(':lang(00) { }')");
-shouldThrow("parseThenSerializeRule(':lang(}) { }')");
-shouldThrow("parseThenSerializeRule(':lang({) { }')");
-shouldThrow("parseThenSerializeRule(':lang({}) { }')");
-shouldThrow("parseThenSerializeRule(':lang(]) { }')");
-shouldThrow("parseThenSerializeRule(':lang([) { }')");
-shouldThrow("parseThenSerializeRule(':lang([]) { }')");
-shouldThrow("parseThenSerializeRule(':lang(@media screen {}) { }')");
-
-shouldThrow("parseThenSerializeRule(':lang(*-) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-    ) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*--) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*---) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*----) { }')");
-
-shouldThrow("parseThenSerializeRule(':lang(*)' { })");
-shouldThrow("parseThenSerializeRule(':lang(**) { }')");
-shouldThrow("parseThenSerializeRule(':lang(-*-) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(de-*)')");
-shouldThrow("parseThenSerializeRule(':lang(*-en-*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-en-fr-*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-en-*fr) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-*en-fr) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-1997) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-1997-*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*a*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*a) { }')");
-shouldThrow("parseThenSerializeRule(':lang(a*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-a, a*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-a, a**) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-a, *a) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-a, **a) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*- a*) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-a, br fr) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-a, br fr en *) { }')");
-
-shouldThrow("parseThenSerializeRule(':lang(*-1996, *-1997) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-1996, *-1997 ) { }')");
-shouldThrow("parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }')");
-shouldThrow("parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }')");
-shouldThrow("parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }')");
-
-debug('');
-
-shouldThrow("parseThenSerializeRule(':role(a) { }')");
-
-debug('');
-
-testSelectorRoundTrip(":dir(ltr)");
-testSelectorRoundTrip(":dir(rtl)");
-testSelectorRoundTrip(":dir(LTR)");
-testSelectorRoundTrip(":dir(aBcD)");
-shouldBe("parseThenSerializeRule(':dir( a    ) { }')", "':dir(a) { }'");
-
-debug('');
-
-shouldThrow("parseThenSerializeRule(':dir() { }')");
-shouldThrow("parseThenSerializeRule(':dir(42) { }')");
-shouldThrow("parseThenSerializeRule(':dir(a, b) { }')");
-shouldThrow("parseThenSerializeRule(':dir(}) { }')");
-shouldThrow("parseThenSerializeRule(':dir()) { }')");
-shouldThrow("parseThenSerializeRule(':dir(dir()) { }')");
-shouldThrow("parseThenSerializeRule(':dir(:dir()) { }')");
-shouldThrow("parseThenSerializeRule(':dir(:dir(ltr)) { }')");
+testSelectorRoundTrip('*')
+testSelectorRoundTrip('a')
+testSelectorRoundTrip('#a')
+testSelectorRoundTrip('.a')
+testSelectorRoundTrip(':active')
+testSelectorRoundTrip('[a]')
+testSelectorRoundTrip('[a="b"]')
+testSelectorRoundTrip('[a~="b"]')
+testSelectorRoundTrip('[a|="b"]')
+testSelectorRoundTrip('[a^="b"]')
+testSelectorRoundTrip('[a$="b"]')
+testSelectorRoundTrip('[a*="b"]')
+testSelectorRoundTrip('[a="b" i]')
+testSelectorRoundTrip('[a~="b" i]')
+testSelectorRoundTrip('[a|="b" i]')
+testSelectorRoundTrip('[a^="b" i]')
+testSelectorRoundTrip('[a$="b" i]')
+testSelectorRoundTrip('[a*="b" i]')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule('*|a { }')", "a { }")
+shouldBeEqualToString("parseThenSerializeRule('*|* { }')", "* { }")
+testSelectorRoundTrip('|a')
+testSelectorRoundTrip('|*')
+testSelectorRoundTrip('[*|a]')
+shouldBeEqualToString("parseThenSerializeRule('[|a] { }')", "[a] { }")
+
+debug('')
+
+testSelectorRoundTrip('a:active')
+testSelectorRoundTrip('a b')
+testSelectorRoundTrip('a + b')
+testSelectorRoundTrip('a ~ b')
+testSelectorRoundTrip('a > b')
+
+debug('')
+
+testSelectorRoundTrip(":active")
+testSelectorRoundTrip(":any-link")
+testSelectorRoundTrip(":checked")
+testSelectorRoundTrip(":disabled")
+testSelectorRoundTrip(":empty")
+testSelectorRoundTrip(":enabled")
+testSelectorRoundTrip(":first-child")
+testSelectorRoundTrip(":first-of-type")
+testSelectorRoundTrip(":focus")
+testSelectorRoundTrip(":hover")
+testSelectorRoundTrip(":indeterminate")
+testSelectorRoundTrip(":link")
+testSelectorRoundTrip(":not(:placeholder-shown)")
+testSelectorRoundTrip(":placeholder-shown")
+testSelectorRoundTrip(":root")
+testSelectorRoundTrip(":target")
+testSelectorRoundTrip(":visited")
+
+debug('')
+
+testSelectorRoundTrip(':lang("*-ab")')
+testSelectorRoundTrip(':lang("*-ab-")')
+testSelectorRoundTrip(':lang("*-DE-1996")')
+
+debug('')
+
+testSelectorRoundTrip(":lang(a)")
+testSelectorRoundTrip(":lang(a, b, c)")
+testSelectorRoundTrip(":lang(fr, de, en, id)")
+testSelectorRoundTrip(":lang(fr, fr-ca, fr-be)")
+testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996)")
+testSelectorRoundTrip(":lang(de-CH, it-CH, fr-CH, rm-CH)")
+testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH)")
+
+debug('')
+
+testSelectorRoundTrip(":lang(a, a, a)")
+testSelectorRoundTrip(":lang(en, en, en)")
+testSelectorRoundTrip(":lang(en-us, en-us, en-us)")
+testSelectorRoundTrip(":lang(de-DE-1996, de-DE-1996, de-DE-1996)")
+testSelectorRoundTrip(":lang(de-Latn-DE-1996, de-Latn-DE-1996, de-Latn-DE-1996)")
+testSelectorRoundTrip(":lang(java, java, java)")
+
+debug('')
+
+testSelectorRoundTrip(":not(a)")
+testSelectorRoundTrip(":-webkit-any(a, b, p)")
+
+debug('')
+
+testSelectorRoundTrip("::after")
+testSelectorRoundTrip("::before")
+testSelectorRoundTrip("::first-letter")
+testSelectorRoundTrip("::first-line")
+testSelectorRoundTrip("::selection")
+
+debug('')
+
+testSelectorRoundTrip(":-webkit-any-link")
+testSelectorRoundTrip(":-webkit-drag")
+testSelectorRoundTrip(":autofill")
+testSelectorSerialization(":-webkit-autofill", ":autofill")
+
+debug('')
+
+testSelectorSerialization(":nth-child(odd)", ":nth-child(2n+1)")
+testSelectorSerialization(":nth-child(even)", ":nth-child(2n)")
+testSelectorRoundTrip(":nth-child(n)")
+testSelectorRoundTrip(":nth-child(-n)")
+testSelectorRoundTrip(":nth-child(5)")
+testSelectorRoundTrip(":nth-child(-5)")
+testSelectorRoundTrip(":nth-child(5n+7)")
+testSelectorRoundTrip(":nth-child(-5n+7)")
+testSelectorRoundTrip(":nth-child(5n-7)")
+testSelectorRoundTrip(":nth-child(-5n-7)")
+
+debug('')
+
+testSelectorSerialization(":nth-child(odd of .foo, :nth-child(odd))", ":nth-child(2n+1 of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(even of .foo, :nth-child(odd))", ":nth-child(2n of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(n of .foo, :nth-child(odd))", ":nth-child(n of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(-n of .foo, :nth-child(odd))", ":nth-child(-n of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(5 of .foo, :nth-child(odd))", ":nth-child(5 of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(-5 of .foo, :nth-child(odd))", ":nth-child(-5 of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(5n+7 of .foo, :nth-child(odd))", ":nth-child(5n+7 of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(-5n+7 of .foo, :nth-child(odd))", ":nth-child(-5n+7 of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(5n-7 of .foo, :nth-child(odd))", ":nth-child(5n-7 of .foo, :nth-child(2n+1))")
+testSelectorSerialization(":nth-child(-5n-7 of .foo, :nth-child(odd))", ":nth-child(-5n-7 of .foo, :nth-child(2n+1))")
+
+debug('')
+
+testSelectorSerialization(":nth-last-child(odd of .foo, :nth-last-child(odd))", ":nth-last-child(2n+1 of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(even of .foo, :nth-last-child(odd))", ":nth-last-child(2n of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(n of .foo, :nth-last-child(odd))", ":nth-last-child(n of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(-n of .foo, :nth-last-child(odd))", ":nth-last-child(-n of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(5 of .foo, :nth-last-child(odd))", ":nth-last-child(5 of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(-5 of .foo, :nth-last-child(odd))", ":nth-last-child(-5 of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(5n+7 of .foo, :nth-last-child(odd))", ":nth-last-child(5n+7 of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(-5n+7 of .foo, :nth-last-child(odd))", ":nth-last-child(-5n+7 of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(5n-7 of .foo, :nth-last-child(odd))", ":nth-last-child(5n-7 of .foo, :nth-last-child(2n+1))")
+testSelectorSerialization(":nth-last-child(-5n-7 of .foo, :nth-last-child(odd))", ":nth-last-child(-5n-7 of .foo, :nth-last-child(2n+1))")
+
+debug('')
+
+testSelectorRoundTrip(':is(single)')
+testSelectorRoundTrip(':is(a, b, p)')
+testSelectorRoundTrip(':is(#alice, #bob, #chris)')
+testSelectorRoundTrip(':is(.selector, #tama, #hanayo, #midoriko)')
+testSelectorRoundTrip(':is(.name, #ok, :visited)')
+testSelectorRoundTrip(':is(.name, #ok, :visited, :link)')
+testSelectorRoundTrip(':is(.name, #ok, :is(:visited))')
+testSelectorRoundTrip(':is(.name, #ok, :not(:link))')
+testSelectorRoundTrip(':is(.name, #ok, :not(:link))')
+testSelectorRoundTrip(':is(.name, #ok, :-webkit-any(hello))')
+testSelectorRoundTrip(':is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':is([type="file"])')
+testSelectorRoundTrip(':is(:hover)')
+testSelectorRoundTrip('input:is([type="file"], :hover, :focus):enabled')
+testSelectorRoundTrip(':is(input[type="file"], a:hover, button:focus)')
+testSelectorRoundTrip(':is(.class1.class2.class3)')
+testSelectorRoundTrip(':is(.class1:hover)')
+testSelectorRoundTrip(':is(a.class1.class2.class3:hover)')
+testSelectorRoundTrip(':where(single)')
+testSelectorRoundTrip(':where(a, b, p)')
+testSelectorRoundTrip(':where(#alice, #bob, #chris)')
+testSelectorRoundTrip(':where(.selector, #tama, #hanayo, #midoriko)')
+testSelectorRoundTrip(':where(.name, #ok, :visited)')
+testSelectorRoundTrip(':where(.name, #ok, :visited, :link)')
+testSelectorRoundTrip(':where(.name, #ok, :where(:visited))')
+testSelectorRoundTrip(':where(.name, #ok, :not(:link))')
+testSelectorRoundTrip(':where(.name, #ok, :not(:link))')
+testSelectorRoundTrip(':where(.name, #ok, :where(hello))')
+testSelectorRoundTrip(':where(.name, #ok, :where(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':where([type="file"])')
+testSelectorRoundTrip(':where(:hover)')
+testSelectorRoundTrip('input:where([type="file"], :hover, :focus):enabled')
+testSelectorRoundTrip(':where(input[type="file"], a:hover, button:focus)')
+testSelectorRoundTrip(':where(.class1.class2.class3)')
+testSelectorRoundTrip(':where(.class1:hover)')
+testSelectorRoundTrip(':where(a.class1.class2.class3:hover)')
+testSelectorRoundTrip(':matches(:is(single))')
+testSelectorRoundTrip(':matches(:is(a, b, p))')
+testSelectorRoundTrip(':matches(:is(#alice, #bob, #chris))')
+testSelectorRoundTrip(':matches(:is(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :visited))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :visited, :link))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :is(:visited)))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :matches(hello)))')
+testSelectorRoundTrip(':matches(:is(.name, #ok, :matches(.selector, #tama, #hanayo, #midoriko)))')
+testSelectorRoundTrip(':matches(:is([type="file"]))')
+testSelectorRoundTrip(':matches(:is(:hover))')
+testSelectorRoundTrip(':matches(input:is([type="file"], :hover, :focus):enabled)')
+testSelectorRoundTrip(':matches(:is(input[type="file"], a:hover, button:focus))')
+testSelectorRoundTrip(':matches(:is(.class1.class2.class3))')
+testSelectorRoundTrip(':matches(:is(.class1:hover))')
+testSelectorRoundTrip(':matches(:is(a.class1.class2.class3:hover))')
+testSelectorRoundTrip(':-webkit-any(:is(single))')
+testSelectorRoundTrip(':-webkit-any(:is(a, b, p))')
+testSelectorRoundTrip(':-webkit-any(:is(#alice, #bob, #chris))')
+testSelectorRoundTrip(':-webkit-any(:is(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :visited))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :visited, :link))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :is(:visited)))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :-webkit-any(hello)))')
+testSelectorRoundTrip(':-webkit-any(:is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)))')
+testSelectorRoundTrip(':-webkit-any(:is([type="file"]))')
+testSelectorRoundTrip(':-webkit-any(:is(:hover))')
+testSelectorRoundTrip(':-webkit-any(input:is([type="file"], :hover, :focus):enabled)')
+testSelectorRoundTrip(':-webkit-any(:is(input[type="file"], a:hover, button:focus))')
+testSelectorRoundTrip(':-webkit-any(:is(.class1.class2.class3))')
+testSelectorRoundTrip(':-webkit-any(:is(.class1:hover))')
+testSelectorRoundTrip(':-webkit-any(:is(a.class1.class2.class3:hover))')
+
+debug('')
+
+testSelectorRoundTrip(':matches(single)')
+testSelectorRoundTrip(':matches(a, b, p)')
+testSelectorRoundTrip(':matches(#alice, #bob, #chris)')
+testSelectorRoundTrip(':matches(.selector, #tama, #hanayo, #midoriko)')
+testSelectorRoundTrip(':matches(.name, #ok, :visited)')
+testSelectorRoundTrip(':matches(.name, #ok, :visited, :link)')
+testSelectorRoundTrip(':matches(.name, #ok, :matches(:visited))')
+testSelectorRoundTrip(':matches(.name, #ok, :not(:link))')
+testSelectorRoundTrip(':matches(.name, #ok, :not(:link))')
+testSelectorRoundTrip(':matches(.name, #ok, :-webkit-any(hello))')
+testSelectorRoundTrip(':matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':matches([type="file"])')
+testSelectorRoundTrip(':matches(:hover)')
+testSelectorRoundTrip('input:matches([type="file"], :hover, :focus):enabled')
+testSelectorRoundTrip(':matches(input[type="file"], a:hover, button:focus)')
+testSelectorRoundTrip(':matches(.class1.class2.class3)')
+testSelectorRoundTrip(':matches(.class1:hover)')
+testSelectorRoundTrip(':matches(a.class1.class2.class3:hover)')
+testSelectorRoundTrip(':is(:matches(single))')
+testSelectorRoundTrip(':is(:matches(a, b, p))')
+testSelectorRoundTrip(':is(:matches(#alice, #bob, #chris))')
+testSelectorRoundTrip(':is(:matches(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :visited))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :visited, :link))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :matches(:visited)))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :is(hello)))')
+testSelectorRoundTrip(':is(:matches(.name, #ok, :is(.selector, #tama, #hanayo, #midoriko)))')
+testSelectorRoundTrip(':is(:matches([type="file"]))')
+testSelectorRoundTrip(':is(:matches(:hover))')
+testSelectorRoundTrip(':is(input:matches([type="file"], :hover, :focus):enabled)')
+testSelectorRoundTrip(':is(:matches(input[type="file"], a:hover, button:focus))')
+testSelectorRoundTrip(':is(:matches(.class1.class2.class3))')
+testSelectorRoundTrip(':is(:matches(.class1:hover))')
+testSelectorRoundTrip(':is(:matches(a.class1.class2.class3:hover))')
+testSelectorRoundTrip(':-webkit-any(:matches(single))')
+testSelectorRoundTrip(':-webkit-any(:matches(a, b, p))')
+testSelectorRoundTrip(':-webkit-any(:matches(#alice, #bob, #chris))')
+testSelectorRoundTrip(':-webkit-any(:matches(.selector, #tama, #hanayo, #midoriko))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :visited))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :visited, :link))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :matches(:visited)))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :not(:link)))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :-webkit-any(hello)))')
+testSelectorRoundTrip(':-webkit-any(:matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)))')
+testSelectorRoundTrip(':-webkit-any(:matches([type="file"]))')
+testSelectorRoundTrip(':-webkit-any(:matches(:hover))')
+testSelectorRoundTrip(':-webkit-any(input:matches([type="file"], :hover, :focus):enabled)')
+testSelectorRoundTrip(':-webkit-any(:matches(input[type="file"], a:hover, button:focus))')
+testSelectorRoundTrip(':-webkit-any(:matches(.class1.class2.class3))')
+testSelectorRoundTrip(':-webkit-any(:matches(.class1:hover))')
+testSelectorRoundTrip(':-webkit-any(:matches(a.class1.class2.class3:hover))')
+
+debug('')
+
+testSelectorRoundTrip(':not(div)')
+testSelectorRoundTrip(':not(.div)')
+testSelectorRoundTrip(':not(#div)')
+testSelectorRoundTrip(':not([div])')
+testSelectorRoundTrip(':not(:empty)')
+testSelectorRoundTrip(':not(div.div#div[div]:empty)')
+testSelectorRoundTrip(':not(div.div:empty[div]#div)')
+testSelectorRoundTrip(':not(div.div, #div[div], :empty)')
+testSelectorRoundTrip(':not(div, .div, #div, [div], :empty)')
+
+testSelectorRoundTrip(':not(:not(div))')
+testSelectorRoundTrip(':not(:not(div)):not(:not(foo)):not(:not(bar))')
+testSelectorRoundTrip(':not(:not(div, :not(foo, bar))):not(:not(foo)):not(:not(bar, baz))')
+
+testSelectorRoundTrip(':not(:is(*))')
+testSelectorRoundTrip(':not(:is(foo, bar))')
+testSelectorRoundTrip(':not(:is(foo, bar), :is(.foo, .bar), :is(#foo, #bar), :is([foo], [bar]))')
+testSelectorRoundTrip(':not(:is(foo, bar:not(:empty)), :is(.foo, .bar:not(:not(.mosaic))), :is(#foo, #bar), :is([foo], [bar]))')
+
+testSelectorRoundTrip(':not(:matches(*))')
+testSelectorRoundTrip(':not(:matches(foo, bar))')
+testSelectorRoundTrip(':not(:matches(foo, bar), :matches(.foo, .bar), :matches(#foo, #bar), :matches([foo], [bar]))')
+testSelectorRoundTrip(':not(:matches(foo, bar:not(:empty)), :matches(.foo, .bar:not(:not(.mosaic))), :matches(#foo, #bar), :matches([foo], [bar]))')
+
+testSelectorRoundTrip(':nth-child(2n of :not(a.b, c#d.e))')
+testSelectorRoundTrip(':not(:nth-child(2n of :not(a.b, c#d.e)))')
+
+testSelectorRoundTrip(':not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)')
+testSelectorRoundTrip('a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b + c:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) ~ d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) > d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-file-upload-button { }')", "::-webkit-file-upload-button { }")
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-cancel-button { }')", "::-webkit-search-cancel-button { }")
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-decoration { }')", "::-webkit-search-decoration { }")
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-results-button { }')", "::-webkit-search-results-button { }")
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-results-decoration { }')", "::-webkit-search-results-decoration { }")
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-slider-thumb { }')", "::-webkit-slider-thumb { }")
+shouldBeEqualToString("parseThenSerializeRule('::file-selector-button { }')", "::file-selector-button { }")
+
+debug('')
+
+testSelectorRoundTrip("a::-webkit-slider-thumb")
+shouldBeEqualToString("parseThenSerializeRule('a ::-webkit-slider-thumb { }')", "a ::-webkit-slider-thumb { }")
+testSelectorRoundTrip("[a]::-webkit-slider-thumb")
+shouldBeEqualToString("parseThenSerializeRule('[a] ::-webkit-slider-thumb { }')", "[a] ::-webkit-slider-thumb { }")
+testSelectorRoundTrip(".a::-webkit-slider-thumb")
+shouldBeEqualToString("parseThenSerializeRule('.a ::-webkit-slider-thumb { }')", ".a ::-webkit-slider-thumb { }")
+testSelectorRoundTrip("#a::-webkit-slider-thumb")
+shouldBeEqualToString("parseThenSerializeRule('#a ::-webkit-slider-thumb { }')", "#a ::-webkit-slider-thumb { }")
+shouldBeEqualToString("parseThenSerializeRule('* ::-webkit-slider-thumb { }')", "* ::-webkit-slider-thumb { }")
+
+debug('')
+
+testSelectorRoundTrip("a[b]::-webkit-slider-thumb")
+testSelectorRoundTrip("a.b::-webkit-slider-thumb")
+testSelectorRoundTrip("a#b::-webkit-slider-thumb")
+testSelectorRoundTrip("a[b].c#d::-webkit-slider-thumb")
+
+debug('')
+
+testSelectorRoundTrip("a[b]::placeholder")
+testSelectorRoundTrip("a.b::placeholder")
+testSelectorRoundTrip("a#b::placeholder")
+testSelectorRoundTrip("a[b].c#d::placeholder")
+testSelectorRoundTrip("a[b]::-webkit-input-placeholder")
+testSelectorRoundTrip("a.b::-webkit-input-placeholder")
+testSelectorRoundTrip("a#b::-webkit-input-placeholder")
+testSelectorRoundTrip("a[b].c#d::-webkit-input-placeholder")
+
+debug('')
+
+testSelectorRoundTrip("a[b]:default")
+testSelectorRoundTrip("a.b:default")
+testSelectorRoundTrip("a#b:default")
+testSelectorRoundTrip("a[b].c#d:default")
+
+debug('')
+
+testSelectorRoundTrip("a[b]:in-range")
+testSelectorRoundTrip("a.b:in-range")
+testSelectorRoundTrip("a#b:in-range")
+testSelectorRoundTrip("a[b].c#d:in-range")
+
+debug('')
+
+testSelectorRoundTrip("a[b]:out-of-range")
+testSelectorRoundTrip("a.b:out-of-range")
+testSelectorRoundTrip("a#b:out-of-range")
+testSelectorRoundTrip("a[b].c#d:out-of-range")
+
+debug('')
+
+testSelectorRoundTrip("a[b]:focus-within")
+testSelectorRoundTrip("a.b:focus-within")
+testSelectorRoundTrip("a#b:focus-within")
+testSelectorRoundTrip("a[b].c#d:focus-within")
+
+debug('')
+
+testSelectorRoundTrip('input:not([type="file"]):focus')
+testSelectorRoundTrip(':-webkit-any([type="file"])')
+testSelectorRoundTrip(':-webkit-any(:hover)')
+testSelectorRoundTrip('input:-webkit-any([type="file"], :hover, :focus):enabled')
+testSelectorRoundTrip(':-webkit-any(input[type="file"], a:hover, button:focus)')
+testSelectorRoundTrip(':-webkit-any(.class1.class2.class3)')
+testSelectorRoundTrip(':-webkit-any(.class1:hover)')
+testSelectorRoundTrip(':-webkit-any(a.class1.class2.class3:hover)')
+testSelectorRoundTrip('a:any-link')
+testSelectorRoundTrip('a :any-link')
+testSelectorRoundTrip('div:any-link')
+testSelectorRoundTrip('div :any-link')
+testSelectorRoundTrip(':any-link > div')
+testSelectorRoundTrip(':any-link + div')
+testSelectorRoundTrip(':not(:any-link)')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule('*:active { }')", ":active { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule('input[type=file]:focus { }')", 'input[type="file"]:focus { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule('a+b { }')", "a + b { }")
+shouldBeEqualToString("parseThenSerializeRule('a~b { }')", "a ~ b { }")
+shouldBeEqualToString("parseThenSerializeRule('a>b { }')", "a > b { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':after { }')", "::after { }")
+shouldBeEqualToString("parseThenSerializeRule(':before { }')", "::before { }")
+shouldBeEqualToString("parseThenSerializeRule(':first-letter { }')", "::first-letter { }")
+shouldBeEqualToString("parseThenSerializeRule(':first-line { }')", "::first-line { }")
+shouldBeEqualToString("parseThenSerializeRule(':-webkit-any(    a.class1  ,  	#id,[attr]  ) { }')", ":-webkit-any(a.class1, #id, [attr]) { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':is(single    ) { }')", ":is(single) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(a,b    ,p) { }')", ":is(a, b, p) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(#alice,                   #bob,#chris) { }')", ":is(#alice, #bob, #chris) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(  .selector,#tama,                #hanayo,#midoriko) { }')", ":is(.selector, #tama, #hanayo, #midoriko) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(    .name,#ok,:visited   ) { }')", ":is(.name, #ok, :visited) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(    .name,#ok,    :visited, :link) { }')", ":is(.name, #ok, :visited, :link) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(    .name,#ok,    :is(:visited    )) { }')", ":is(.name, #ok, :is(:visited)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(.name,  #ok,:not(:link)) { }')", ":is(.name, #ok, :not(:link)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(.name,#ok,:not(:link)) { }')", ":is(.name, #ok, :not(:link)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(    .name,#ok,:-webkit-any(   hello)) { }')", ":is(.name, #ok, :-webkit-any(hello)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", ":is(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(       [type=\"file\"]) { }')", ':is([type="file"]) { }')
+shouldBeEqualToString("parseThenSerializeRule(':is(  :hover    ) { }')", ":is(:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule('input:is([type=\"file\"],:hover,:focus):enabled { }')", 'input:is([type="file"], :hover, :focus):enabled { }')
+shouldBeEqualToString("parseThenSerializeRule(':is(input[type=\"file\"], a:hover, button:focus) { }')", ':is(input[type="file"], a:hover, button:focus) { }')
+shouldBeEqualToString("parseThenSerializeRule(':is( .class1.class2.class3   ) { }')", ":is(.class1.class2.class3) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(.class1:hover   ) { }')", ":is(.class1:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule(':is(a.class1.class2.class3:hover   ) { }')", ":is(a.class1.class2.class3:hover) { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':matches(single    ) { }')", ":matches(single) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(a,b    ,p) { }')", ":matches(a, b, p) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(#alice,                   #bob,#chris) { }')", ":matches(#alice, #bob, #chris) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(  .selector,#tama,                #hanayo,#midoriko) { }')", ":matches(.selector, #tama, #hanayo, #midoriko) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(    .name,#ok,:visited   ) { }')", ":matches(.name, #ok, :visited) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(    .name,#ok,    :visited, :link) { }')", ":matches(.name, #ok, :visited, :link) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(    .name,#ok,    :matches(:visited    )) { }')", ":matches(.name, #ok, :matches(:visited)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(.name,  #ok,:not(:link)) { }')", ":matches(.name, #ok, :not(:link)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(.name,#ok,:not(:link)) { }')", ":matches(.name, #ok, :not(:link)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(    .name,#ok,:-webkit-any(   hello)) { }')", ":matches(.name, #ok, :-webkit-any(hello)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", ":matches(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(       [type=\"file\"]) { }')", ':matches([type="file"]) { }')
+shouldBeEqualToString("parseThenSerializeRule(':matches(  :hover    ) { }')", ":matches(:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule('input:matches([type=\"file\"],:hover,:focus):enabled { }')", 'input:matches([type="file"], :hover, :focus):enabled { }')
+shouldBeEqualToString("parseThenSerializeRule(':matches(input[type=\"file\"], a:hover, button:focus) { }')", ':matches(input[type="file"], a:hover, button:focus) { }')
+shouldBeEqualToString("parseThenSerializeRule(':matches( .class1.class2.class3   ) { }')", ":matches(.class1.class2.class3) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(.class1:hover   ) { }')", ":matches(.class1:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule(':matches(a.class1.class2.class3:hover   ) { }')", ":matches(a.class1.class2.class3:hover) { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':not(single    ) { }')", ":not(single) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(a,b    ,p) { }')", ":not(a, b, p) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(#alice,                   #bob,#chris) { }')", ":not(#alice, #bob, #chris) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(  .selector,#tama,                #hanayo,#midoriko) { }')", ":not(.selector, #tama, #hanayo, #midoriko) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(    .name,#ok,:visited   ) { }')", ":not(.name, #ok, :visited) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(    .name,#ok,    :visited, :link) { }')", ":not(.name, #ok, :visited, :link) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(    .name,#ok,    :not(:visited    )) { }')", ":not(.name, #ok, :not(:visited)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(.name,  #ok,:not(:link)) { }')", ":not(.name, #ok, :not(:link)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(.name,#ok,:not(:link)) { }')", ":not(.name, #ok, :not(:link)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(    .name,#ok,:-webkit-any(   hello)) { }')", ":not(.name, #ok, :-webkit-any(hello)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", ":not(.name, #ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(       [type=\"file\"]) { }')", ':not([type="file"]) { }')
+shouldBeEqualToString("parseThenSerializeRule(':not(  :hover    ) { }')", ":not(:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule('input:not([type=\"file\"],:hover,:focus):enabled { }')", 'input:not([type="file"], :hover, :focus):enabled { }')
+shouldBeEqualToString("parseThenSerializeRule(':not(input[type=\"file\"], a:hover, button:focus) { }')", ':not(input[type="file"], a:hover, button:focus) { }')
+shouldBeEqualToString("parseThenSerializeRule(':not( .class1.class2.class3   ) { }')", ":not(.class1.class2.class3) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(.class1:hover   ) { }')", ":not(.class1:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(a.class1.class2.class3:hover   ) { }')", ":not(a.class1.class2.class3:hover) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(:is(single    ),:is(a,b    ,p),:is(#alice,                   #bob,#chris)) { }')", ":not(:is(single), :is(a, b, p), :is(#alice, #bob, #chris)) { }")
+shouldBeEqualToString("parseThenSerializeRule(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris)) { }')", ":not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris)) { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(a    ) { }')", ":lang(a) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    a) { }')", ":lang(a) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(a,    b,    c) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    a, b ,c) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(  a  ,  b  ,  c  ) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    a  ,b,c) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    a  ,b  ,c) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    a  ,b  ,c  ) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(a,b    ,c) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(a,b,    c) { }')", ":lang(a, b, c) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(a,b,    c    ) { }')", ":lang(a, b, c) { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(en, en, en) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(en,en,en) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(en,en,    en) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(en,    en,en) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(en,    en,en    ) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    en,    en,en    ) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(en,   en,   en) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    en,    en,    en) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    en,    en,    en    ) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    en    ,    en    ,   en    ) { }')", ":lang(en, en, en) { }")
+shouldBeEqualToString("parseThenSerializeRule(':lang(    en,en,en    ) { }')", ":lang(en, en, en) { }")
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-DE\", \"*-CH\", \"*-EN\") { }')", ':lang("*-DE", "*-CH", "*-EN") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-DE\",\"*-CH\",\"*-EN\") { }')", ':lang("*-DE", "*-CH", "*-EN") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   \"*-DE\"  ,  \"*-CH\"  ,  \"*-EN\"  ) { }')", ':lang("*-DE", "*-CH", "*-EN") { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\\\\*) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-\\\\*\") { }')", ':lang("*-*") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-\\\\*-\\\\*\") { }')", ':lang("*-*-*") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-\\\\*-\\\\*-\\\\*\") { }')", ':lang("*-*-*-*") { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(ab-\\\\*) { }')", ':lang(ab-\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-ab-\\\\*\") { }')", ':lang("*-ab-*") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-ab-\\\\*-\") { }')", ':lang("*-ab-*-") { }')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-foo-\\\\3A\") { }')", ':lang("*-foo-:") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-foo-\\\\3A\\\\`\\\\)\") { }')", ':lang("*-foo-:`)") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-foo-\\\\*\") { }')", ':lang("*-foo-*") { }')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-foo-\\\\0072 aisin\") { }')", ':lang("*-foo-raisin") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-foo-\\\\0062 \\\\0061 r\") { }')", ':lang("*-foo-bar") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-foo-col\\\\6Fr\") { }')", ':lang("*-foo-color") { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\\\\*    ) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en\"    ) { }')", ':lang("*-en") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*\"    ) { }')", ':lang("*-en-*") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\"    ) { }')", ':lang("*-en-*-fr") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",br    ) { }')", ':lang("*-en-*-fr", br) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\", br    ) { }')", ':lang("*-en-*-fr", br) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",   br    ) { }')", ':lang("*-en-*-fr", br) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\",   br    ) { }')", ':lang("*-en-*-fr", br) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(    \"*-en-\\\\*-fr\",   br    ) { }')", ':lang("*-en-*-fr", br) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(    \"*-en-\\\\*-fr\"  ,   br    ) { }')", ':lang("*-en-*-fr", br) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",\"*-br-zh\"    ) { }')", ':lang("*-en-*-fr", "*-br-zh") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\", \"*-br-zh\"    ) { }')", ':lang("*-en-*-fr", "*-br-zh") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",   \"*-br-zh\"    ) { }')", ':lang("*-en-*-fr", "*-br-zh") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",     \"*-br-zh\"    ) { }')", ':lang("*-en-*-fr", "*-br-zh") { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",       \"*-br-zh\"    ) { }')", ':lang("*-en-*-fr", "*-br-zh") { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\", br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",   br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\"*-en-\\\\*-fr\",      br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\",      br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\" ,      br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(  \"*-en-\\\\*-fr\"  ,      br-\\\\*-zh    ) { }')", ':lang("*-en-*-fr", br-\\*-zh) { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(\\\\*) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\\\\* ) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(\\\\*   ) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang( \\\\*   ) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(  \\\\*) { }')", ':lang(\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   \\\\*   ) { }')", ':lang(\\*) { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(   \\\\*,id-\\\\*-sumatra   ) { }')", ':lang(\\*, id-\\*-sumatra) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   \\\\* ,id-\\\\*-sumatra) { }')", ':lang(\\*, id-\\*-sumatra) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   \\\\*  ,  id-\\\\*-sumatra  ) { }')", ':lang(\\*, id-\\*-sumatra) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   \\\\*   ,    id-\\\\*-sumatra  ) { }')", ':lang(\\*, id-\\*-sumatra) { }')
+
+debug('')
+
+shouldBeEqualToString("parseThenSerializeRule(':lang(en-\\\\*) { }')", ':lang(en-\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\*) { }')", ':lang(en-\\*, fr-\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\* ) { }')", ':lang(en-\\*, fr-\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   en-\\\\*   ,  fr-\\\\*   ) { }')", ':lang(en-\\*, fr-\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   en-\\\\*   ,fr-\\\\*   ) { }')", ':lang(en-\\*, fr-\\*) { }')
+shouldBeEqualToString("parseThenSerializeRule(':lang(   en-\\\\*,fr-\\\\*   ) { }')", ':lang(en-\\*, fr-\\*) { }')
+
+debug('')
+
+shouldThrow("parseThenSerializeRule(':lang() { }')")
+shouldThrow("parseThenSerializeRule(':lang(12, b, c) { }')")
+shouldThrow("parseThenSerializeRule(':lang(a, 12, c) { }')")
+shouldThrow("parseThenSerializeRule(':lang(a, b, 12) { }')")
+shouldThrow("parseThenSerializeRule(':lang(a, 12, 12) { }')")
+shouldThrow("parseThenSerializeRule(':lang(12, b, 12) { }')")
+shouldThrow("parseThenSerializeRule(':lang(12, 12, 12) { }')")
+shouldThrow("parseThenSerializeRule(':lang(lang()) { }')")
+shouldThrow("parseThenSerializeRule(':lang(:lang()) { }')")
+shouldThrow("parseThenSerializeRule(':lang(:lang(id)) { }')")
+shouldThrow("parseThenSerializeRule(':lang(:lang(en, br)) { }')")
+shouldThrow("parseThenSerializeRule(':lang(<0_0>) { }')")
+shouldThrow("parseThenSerializeRule(':lang(99) { }')")
+shouldThrow("parseThenSerializeRule(':lang(88) { }')")
+shouldThrow("parseThenSerializeRule(':lang(00) { }')")
+shouldThrow("parseThenSerializeRule(':lang(}) { }')")
+shouldThrow("parseThenSerializeRule(':lang({) { }')")
+shouldThrow("parseThenSerializeRule(':lang({}) { }')")
+shouldThrow("parseThenSerializeRule(':lang(]) { }')")
+shouldThrow("parseThenSerializeRule(':lang([) { }')")
+shouldThrow("parseThenSerializeRule(':lang([]) { }')")
+shouldThrow("parseThenSerializeRule(':lang(@media screen {}) { }')")
+
+shouldThrow("parseThenSerializeRule(':lang(*-) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-    ) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*--) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*---) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*----) { }')")
+
+shouldThrow("parseThenSerializeRule(':lang(*)' { })")
+shouldThrow("parseThenSerializeRule(':lang(**) { }')")
+shouldThrow("parseThenSerializeRule(':lang(-*-) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(de-*)')")
+shouldThrow("parseThenSerializeRule(':lang(*-en-*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-en-fr-*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-en-*fr) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-*en-fr) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-1997) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-1997-*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*a*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*a) { }')")
+shouldThrow("parseThenSerializeRule(':lang(a*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-a, a*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-a, a**) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-a, *a) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-a, **a) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*- a*) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-a, br fr) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-a, br fr en *) { }')")
+
+shouldThrow("parseThenSerializeRule(':lang(*-1996, *-1997) { }')")
+shouldThrow("parseThenSerializeRule(':lang(*-1996, *-1997 ) { }')")
+shouldThrow("parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }')")
+shouldThrow("parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }')")
+shouldThrow("parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }')")
+
+debug('')
+
+shouldThrow("parseThenSerializeRule(':role(a) { }')")
+
+debug('')
+
+testSelectorRoundTrip(":dir(ltr)")
+testSelectorRoundTrip(":dir(rtl)")
+testSelectorRoundTrip(":dir(LTR)")
+testSelectorRoundTrip(":dir(aBcD)")
+shouldBeEqualToString("parseThenSerializeRule(':dir( a    ) { }')", ":dir(a) { }")
+
+debug('')
+
+shouldThrow("parseThenSerializeRule(':dir() { }')")
+shouldThrow("parseThenSerializeRule(':dir(42) { }')")
+shouldThrow("parseThenSerializeRule(':dir(a, b) { }')")
+shouldThrow("parseThenSerializeRule(':dir(}) { }')")
+shouldThrow("parseThenSerializeRule(':dir()) { }')")
+shouldThrow("parseThenSerializeRule(':dir(dir()) { }')")
+shouldThrow("parseThenSerializeRule(':dir(:dir()) { }')")
+shouldThrow("parseThenSerializeRule(':dir(:dir(ltr)) { }')")
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
