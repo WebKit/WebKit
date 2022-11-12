@@ -12,5 +12,6 @@ layer at (8,8) size 100x22
   RenderInline (relative positioned) {SPAN} at (0,0) size 100x22
     RenderText {#text} at (0,0) size 0x0
     RenderBR {BR} at (0,0) size 0x18
+    RenderText {#text} at (0,0) size 0x0
     RenderBlock {DIV} at (0,18) size 100x0 [bgcolor=#FF0000]
     RenderText {#text} at (0,0) size 0x0
