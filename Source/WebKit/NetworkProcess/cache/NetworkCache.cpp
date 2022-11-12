@@ -495,7 +495,8 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
                     completionHandler(mappedBody);
                 return;
             }
-            mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
+            if (auto handle = mappedBody.shareableResource->createHandle())
+                mappedBody.shareableResourceHandle = WTFMove(*handle);
         }
 #endif
         if (completionHandler)

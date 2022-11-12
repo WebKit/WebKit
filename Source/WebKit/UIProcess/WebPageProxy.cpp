@@ -10591,7 +10591,8 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
 
 #if PLATFORM(COCOA)
         if (auto icon = iconForAttachment(fileName, contentType, title, size))
-            icon->createHandle(handle);
+            if (auto iconHandle = icon->createHandle())
+                handle = WTFMove(*iconHandle);
 #endif
 
         send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, size));
@@ -10643,8 +10644,10 @@ void WebPageProxy::updateAttachmentThumbnail(const String& identifier, const Ref
         return;
     
     ShareableBitmapHandle handle;
-    if (bitmap)
-        bitmap->createHandle(handle);
+    if (bitmap) {
+        if (auto bitmapHandle = bitmap->createHandle())
+            handle = WTFMove(*bitmapHandle);
+    }
 
     send(Messages::WebPage::UpdateAttachmentThumbnail(identifier, handle));
 }

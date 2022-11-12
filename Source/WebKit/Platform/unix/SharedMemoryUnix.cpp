@@ -202,8 +202,9 @@ SharedMemory::~SharedMemory()
     munmap(m_data, m_size);
 }
 
-bool SharedMemory::createHandle(Handle& handle, Protection)
+auto SharedMemory::createHandle(Protection) -> std::optional<Handle>
 {
+    Handle handle;
     ASSERT_ARG(handle, handle.isNull());
     ASSERT(m_fileDescriptor);
 
@@ -213,11 +214,11 @@ bool SharedMemory::createHandle(Handle& handle, Protection)
     UnixFileDescriptor duplicate { m_fileDescriptor.value(), UnixFileDescriptor::Duplicate };
     if (!duplicate) {
         ASSERT_NOT_REACHED();
-        return false;
+        return std::nullopt;
     }
     handle.m_handle = WTFMove(duplicate);
     handle.m_size = m_size;
-    return true;
+    return { WTFMove(handle) };
 }
 
 } // namespace WebKit

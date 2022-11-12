@@ -141,8 +141,9 @@ SharedMemory::~SharedMemory()
     ::UnmapViewOfFile(m_data);
 }
 
-bool SharedMemory::createHandle(Handle& handle, Protection protection)
+auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
+    Handle handle;
     ASSERT_ARG(handle, !handle.m_handle);
     ASSERT_ARG(handle, !handle.m_size);
 
@@ -150,11 +151,11 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
 
     HANDLE duplicatedHandle;
     if (!::DuplicateHandle(processHandle, m_handle.get(), processHandle, &duplicatedHandle, accessRights(protection), FALSE, 0))
-        return false;
+        return std::nullopt;
 
     handle.m_handle = Win32Handle { duplicatedHandle };
     handle.m_size = m_size;
-    return true;
+    return WTFMove(handle);
 }
 
 } // namespace WebKit

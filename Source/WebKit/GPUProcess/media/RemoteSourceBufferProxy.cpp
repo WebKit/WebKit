@@ -196,18 +196,13 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 
 void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
 {
-    SharedMemory::Handle handle;
-
-    auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        completionHandler(WTFMove(handle));
-    });
-
     auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
-        return;
+        return completionHandler(std::nullopt);
+
     m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()));
 
-    sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    completionHandler(sharedMemory->createHandle(SharedMemory::Protection::ReadOnly));
 }
 
 void RemoteSourceBufferProxy::abort()

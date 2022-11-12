@@ -3371,7 +3371,8 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
             auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
             if (!sharedMemoryBuffer)
                 return;
-            sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+            if (auto memoryHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
+                handle = WTFMove(*memoryHandle);
         }
         send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(handle), authorizationToken));
     }
@@ -4855,17 +4856,19 @@ void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedShare
     // If we could create a handle from that existing resource then we could avoid this extra
     // allocation and copy.
 
-    ShareableResource::Handle handle;
-    {
-        auto sharedMemory = SharedMemory::copyBuffer(buffer);
-        if (!sharedMemory)
-            return;
+    auto sharedMemory = SharedMemory::copyBuffer(buffer);
+    if (!sharedMemory)
+        return;
 
-        auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
-        if (!shareableResource || !shareableResource->createHandle(handle))
-            return;
-    }
-    send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(handle));
+    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
+    if (!shareableResource)
+        return;
+
+    auto handle = shareableResource->createHandle();
+    if (!handle)
+        return;
+
+    send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(*handle));
 }
 
 void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)

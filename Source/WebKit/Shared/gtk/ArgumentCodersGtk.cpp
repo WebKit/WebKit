@@ -43,20 +43,17 @@ static void encodeImage(Encoder& encoder, Image& image)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image.size()), { });
     bitmap->createGraphicsContext()->drawImage(image, IntPoint());
-
-    ShareableBitmapHandle handle;
-    bitmap->createHandle(handle);
-
-    encoder << handle;
+    encoder << bitmap->createHandle();
 }
 
 static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
-    ShareableBitmapHandle handle;
-    if (!decoder.decode(handle))
+    std::optional<std::optional<ShareableBitmapHandle>> handle;
+    decoder >> handle;
+    if (!handle || !*handle)
         return false;
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(**handle);
     if (!bitmap)
         return false;
     image = bitmap->createImage();

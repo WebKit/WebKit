@@ -68,10 +68,10 @@ StreamConnectionBuffer& StreamConnectionBuffer::operator=(StreamConnectionBuffer
 
 void StreamConnectionBuffer::encode(Encoder& encoder) const
 {
-    WebKit::SharedMemory::Handle handle;
-    if (!m_sharedMemory->createHandle(handle, WebKit::SharedMemory::Protection::ReadWrite))
+    auto handle = m_sharedMemory->createHandle(WebKit::SharedMemory::Protection::ReadWrite);
+    if (!handle)
         CRASH();
-    encoder << handle;
+    encoder << *handle;
 }
 
 std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& decoder)

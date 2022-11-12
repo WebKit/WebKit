@@ -78,15 +78,13 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         auto sharedMemory = WebKit::SharedMemory::allocate(byteCount);
         if (!sharedMemory)
             return { };
-        SharedMemory::Handle handle;
-        if (!sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly))
-            return { };
-        if (handle.isNull())
+        auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!handle)
             return { };
         uint8_t* data = static_cast<uint8_t*>(sharedMemory->data());
         for (size_t i = 0; i < sharedMemory->size(); ++i)
             data[i] = i;
-        return handle;
+        return *handle;
     }();
     completionHandler(WTFMove(result));
 }

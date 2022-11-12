@@ -75,9 +75,11 @@ bool SharedVideoFrameWriter::allocateStorage(size_t size, const Function<void(co
     if (!m_storage)
         return false;
 
-    SharedMemory::Handle handle;
-    m_storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    newMemoryCallback(WTFMove(handle));
+    auto handle = m_storage->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!handle)
+        return false;
+
+    newMemoryCallback(WTFMove(*handle));
     return true;
 }
 

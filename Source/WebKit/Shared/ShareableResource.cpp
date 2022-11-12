@@ -113,14 +113,17 @@ ShareableResource::ShareableResource(Ref<SharedMemory>&& sharedMemory, unsigned 
 
 ShareableResource::~ShareableResource() = default;
 
-bool ShareableResource::createHandle(Handle& handle)
+auto ShareableResource::createHandle() -> std::optional<Handle>
 {
-    if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::Protection::ReadOnly))
-        return false;
+    auto memoryHandle = m_sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!memoryHandle)
+        return std::nullopt;
 
+    Handle handle;
+    handle.m_handle = WTFMove(*memoryHandle);
     handle.m_offset = m_offset;
     handle.m_size = m_size;
-    return true;
+    return { WTFMove(handle) };
 }
 
 const uint8_t* ShareableResource::data() const

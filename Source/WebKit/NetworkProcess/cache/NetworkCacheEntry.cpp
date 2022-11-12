@@ -188,7 +188,8 @@ void Entry::initializeShareableResourceHandleFromStorageRecord() const
     auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size());
     if (!shareableResource)
         return;
-    shareableResource->createHandle(m_shareableResourceHandle);
+    if (auto handle = shareableResource->createHandle())
+        m_shareableResourceHandle = WTFMove(*handle);
 }
 #endif
 
