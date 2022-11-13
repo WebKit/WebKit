@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+      position: relative;
+      margin: 100px;
+      width: 600px;
+      min-height: 2000px;
+      border: 1px solid black;
+      overflow-x: clip;
+    }
+
+    .sticky {
+      position: sticky;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      background: blue;
+      height: 100px;
+    }        
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.addEventListener('load', () => {
+        if (window.testRunner)
+            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+    }, false);
+</script>
+</head>
+<body>
+    <div class="container">
+      <div class="sticky"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
