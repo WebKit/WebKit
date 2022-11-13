@@ -220,7 +220,7 @@ public:
         // Return a rect that is slightly smaller than the true max rect to allow pixelSnapping to round up to the nearest IntRect without overflowing.
         return LayoutRect(LayoutUnit::nearlyMin() / 2, LayoutUnit::nearlyMin() / 2, LayoutUnit::nearlyMax(), LayoutUnit::nearlyMax());
     }
-    
+
     operator FloatRect() const { return FloatRect(m_location, m_size); }
 
 private:
