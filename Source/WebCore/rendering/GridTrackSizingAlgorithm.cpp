@@ -34,7 +34,13 @@
 
 namespace WebCore {
 
-const LayoutUnit& GridTrack::baseSize() const
+LayoutUnit GridTrack::baseSize() const
+{
+    ASSERT(isGrowthLimitBiggerThanBaseSize());
+    return std::max(m_baseSize, 0_lu);
+}
+
+LayoutUnit GridTrack::unclampedBaseSize() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
     return m_baseSize;
@@ -43,7 +49,7 @@ const LayoutUnit& GridTrack::baseSize() const
 const LayoutUnit& GridTrack::growthLimit() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
-    ASSERT(!m_growthLimitCap || m_growthLimitCap.value() >= m_growthLimit || m_baseSize >= m_growthLimitCap.value());
+    ASSERT(!m_growthLimitCap || m_growthLimitCap.value() >= m_growthLimit || baseSize() >= m_growthLimitCap.value());
     return m_growthLimit;
 }
 
@@ -59,10 +65,10 @@ void GridTrack::setGrowthLimit(LayoutUnit growthLimit)
     ensureGrowthLimitIsBiggerThanBaseSize();
 }
 
-const LayoutUnit& GridTrack::growthLimitIfNotInfinite() const
+LayoutUnit GridTrack::growthLimitIfNotInfinite() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
-    return m_growthLimit == infinity ? m_baseSize : m_growthLimit;
+    return m_growthLimit == infinity ? baseSize() : m_growthLimit;
 }
 
 void GridTrack::setTempSize(const LayoutUnit& tempSize)
@@ -91,8 +97,8 @@ void GridTrack::setCachedTrackSize(const GridTrackSize& cachedTrackSize)
 
 void GridTrack::ensureGrowthLimitIsBiggerThanBaseSize()
 {
-    if (m_growthLimit != infinity && m_growthLimit < m_baseSize)
-        m_growthLimit = m_baseSize;
+    if (m_growthLimit != infinity && m_growthLimit < std::max(m_baseSize, 0_lu))
+        m_growthLimit = std::max(m_baseSize, 0_lu);
 }
 
 // Static helper methods.
@@ -1588,7 +1594,7 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
             size -= gapDifference;
         if (i != numTracks - 1)
             size -= gapDifference;
-        allTracks[i].setBaseSize(std::max(size, 0_lu));
+        allTracks[i].setBaseSize(size);
     }
     return true;
 }

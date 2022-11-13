@@ -1194,8 +1194,8 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
         unsigned nextToLastLine = numberOfLines - 2;
 
         for (unsigned i = 0; i < nextToLastLine; ++i)
-            positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].baseSize() + gap;
-        positions[lastLine] = positions[nextToLastLine] + tracks[nextToLastLine].baseSize();
+            positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].unclampedBaseSize() + gap;
+        positions[lastLine] = positions[nextToLastLine] + tracks[nextToLastLine].unclampedBaseSize();
 
         // Adjust collapsed gaps. Collapsed tracks cause the surrounding gutters to collapse (they
         // coincide exactly) except on the edges of the grid where they become 0.
