@@ -2141,7 +2141,7 @@ void RenderBlockFlow::addOverflowFromFloats()
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         const auto& floatingObject = *it->get();
-        if (floatingObject.isDescendant())
+        if (floatingObject.shouldPaint())
             addOverflowFromChild(&floatingObject.renderer(), floatingObject.locationOffsetOfBorderBox());
     }
 }
