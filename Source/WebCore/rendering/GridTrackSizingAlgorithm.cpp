@@ -818,9 +818,9 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForChild(RenderBox& ch
         child.setNeedsLayout(MarkOnlyThis);
     }
 
-    // We need to clear the stretched height to properly compute logical height during layout.
+    // We need to clear the stretched content size to properly compute logical height during layout.
     if (child.needsLayout())
-        child.clearOverridingLogicalHeight();
+        child.clearOverridingContentSize();
 
     child.layoutIfNeeded();
     return child.logicalHeight() + GridLayoutFunctions::marginLogicalSizeForChild(*renderGrid(), childBlockDirection, child) + m_algorithm.baselineOffsetForChild(child, gridAxisForDirection(direction()));
