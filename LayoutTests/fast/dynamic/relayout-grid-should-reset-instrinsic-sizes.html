@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+#grid_container {
+  display: grid;
+  align-items:end;
+}
+
+#inner {
+  width: 100%;
+  background-color: green;
+}
+</style>
+</head>
+<body>
+<div id="grid_container">
+  <div>
+    <canvas id="inner" width="100" height="100"></img>
+  </div>
+</div>
+
+<script>
+  let container = document.getElementById('grid_container');
+  window.getComputedStyle(container).width;
+  container.style.width = '150px';
+</script>
+</body>
+</html>
