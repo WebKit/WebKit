@@ -115,6 +115,7 @@ const TestFeatures& TestOptions::defaults()
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
             { "RequiresUserGestureForVideoPlayback", false },
+            { "ScrollToTextFragmentIndicatorEnabled", false },
             { "ShowModalDialogEnabled", false },
             { "SpeakerSelectionRequiresUserGesture", false },
             { "TabsToLinks", false },

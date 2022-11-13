@@ -93,6 +93,7 @@ const TestFeatures& TestOptions::defaults()
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
             { "RequiresUserGestureForVideoPlayback", false },
+            { "ScrollToTextFragmentIndicatorEnabled", false },
             { "ShouldPrintBackgrounds", true },
             { "ShrinksStandaloneImagesToFit", true },
             { "TextAreasAreResizable", true },

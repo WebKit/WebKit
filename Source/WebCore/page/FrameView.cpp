@@ -2298,7 +2298,7 @@ bool FrameView::scrollToFragment(const URL& url)
                 // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
                 TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
                 maintainScrollPositionAtScrollToTextFragmentRange(range);
-                if (frame().settings().scrollToTextFragmentIndicatorEnabled())
+                if (frame().settings().scrollToTextFragmentIndicatorEnabled() && !frame().page()->isControlledByAutomation())
                     m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
                 return true;
             }
