@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+<div><input form="formOwner"><form id="formOwner"></form></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+description(`This tests removing an input element with form content attribute from the document.<br>
+The input element should be dissociated from the form element.`);
+owner = document.getElementById('owner');
+input = document.querySelector('input');
+form = document.querySelector('form');
+input.parentNode.remove();
+shouldBeNull('input.form');
+shouldBe('form.elements.length', '0');
+</script>
+</body>

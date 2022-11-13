@@ -2,6 +2,6 @@ form
 
 
 PASS Form control's form attribute should point to the form element.
-FAIL Shadow form control's form attribute should work also in shadow DOM. assert_equals: expected null but got Element node <form id="form">form</form>
+PASS Shadow form control's form attribute should work also in shadow DOM.
 PASS Form element as form control's ancestor should work also in shadow DOM.
 
