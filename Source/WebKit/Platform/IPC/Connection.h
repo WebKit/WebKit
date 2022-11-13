@@ -611,25 +611,6 @@ uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint
     return 0;
 }
 
-template<size_t i, typename A, typename B> struct TupleMover {
-    static void move(A&& a, B& b)
-    {
-        std::get<i - 1>(b) = WTFMove(std::get<i - 1>(a));
-        TupleMover<i - 1, A, B>::move(WTFMove(a), b);
-    }
-};
-
-template<typename A, typename B> struct TupleMover<0, A, B> {
-    static void move(A&&, B&) { }
-};
-
-template<typename... A, typename... B>
-void moveTuple(std::tuple<A...>&& a, std::tuple<B...>& b)
-{
-    static_assert(sizeof...(A) == sizeof...(B), "Should be used with two tuples of same size");
-    TupleMover<sizeof...(A), std::tuple<A...>, std::tuple<B...>>::move(WTFMove(a), b);
-}
-
 template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& message, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     static_assert(T::isSync, "Sync message expected");
