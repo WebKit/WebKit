@@ -32,6 +32,7 @@
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/Image.h>
+#import <WebCore/LocalCurrentTraitCollection.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -406,6 +407,10 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
                 UIURLDragPreviewView *previewView = [UIURLDragPreviewView viewWithTitle:title.get() URL:url.get()];
                 previewView.center = center;
                 auto parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:previewView.bounds] ]]);
+                [parameters setBackgroundColor:[UIColor colorWithDynamicProvider:[] (UITraitCollection *traitCollection) -> UIColor * {
+                    WebCore::LocalCurrentTraitCollection localCurrentTraitCollection(traitCollection);
+                    return [UIColor.systemBackgroundColor resolvedColorWithTraitCollection:UITraitCollection.currentTraitCollection];
+                }]];
                 return adoptNS([[UIDragPreview alloc] initWithView:previewView parameters:parameters.get()]).autorelease();
             };
         }

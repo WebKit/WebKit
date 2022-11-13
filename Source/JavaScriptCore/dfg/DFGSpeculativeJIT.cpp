@@ -9687,24 +9687,24 @@ void SpeculativeJIT::compileNewArray(Node* node)
     size_t scratchSize = sizeof(EncodedJSValue) * node->numChildren();
     ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
     EncodedJSValue* buffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : nullptr;
-
-    for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
-        // Need to perform the speculations that this node promises to perform. If we're
-        // emitting code here and the indexing type is not array storage then there is
-        // probably something hilarious going on and we're already failing at all the
-        // things, but at least we're going to be sound.
-        Edge use = m_graph.m_varArgChildren[node->firstChild() + operandIdx];
-        switch (node->indexingType()) {
-        case ALL_BLANK_INDEXING_TYPES:
-        case ALL_UNDECIDED_INDEXING_TYPES:
-            CRASH();
-            break;
-        case ALL_DOUBLE_INDEXING_TYPES: {
+    switch (node->indexingType()) {
+    // Need to perform the speculations that this node promises to perform. If we're
+    // emitting code here and the indexing type is not array storage then there is
+    // probably something hilarious going on and we're already failing at all the
+    // things, but at least we're going to be sound.
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
+            Edge use = m_graph.m_varArgChildren[node->firstChild() + operandIdx];
             SpeculateDoubleOperand operand(this, use);
             FPRReg opFPR = operand.fpr();
             DFG_TYPE_CHECK(
                 JSValueRegs(), use, SpecDoubleReal,
                 m_jit.branchIfNaN(opFPR));
+        }
+        for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
+            Edge use = m_graph.m_varArgChildren[node->firstChild() + operandIdx];
+            SpeculateDoubleOperand operand(this, use);
+            FPRReg opFPR = operand.fpr();
 #if USE(JSVALUE64)
             JSValueRegsTemporary scratch(this);
             JSValueRegs scratchRegs = scratch.regs();
@@ -9714,26 +9714,34 @@ void SpeculativeJIT::compileNewArray(Node* node)
             m_jit.storeDouble(opFPR, TrustedImmPtr(buffer + operandIdx));
 #endif
             operand.use();
-            break;
         }
-        case ALL_INT32_INDEXING_TYPES:
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
-            JSValueOperand operand(this, use, ManualOperandSpeculation);
-            JSValueRegs operandRegs = operand.jsValueRegs();
-            if (hasInt32(node->indexingType())) {
+        break;
+    }
+    case ALL_INT32_INDEXING_TYPES:
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+        if (hasInt32(node->indexingType())) {
+            for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
+                Edge use = m_graph.m_varArgChildren[node->firstChild() + operandIdx];
+                JSValueOperand operand(this, use, ManualOperandSpeculation);
+                JSValueRegs operandRegs = operand.jsValueRegs();
                 DFG_TYPE_CHECK(
                     operandRegs, use, SpecInt32Only,
                     m_jit.branchIfNotInt32(operandRegs));
             }
+        }
+        for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
+            Edge use = m_graph.m_varArgChildren[node->firstChild() + operandIdx];
+            JSValueOperand operand(this, use, ManualOperandSpeculation);
+            JSValueRegs operandRegs = operand.jsValueRegs();
             m_jit.storeValue(operandRegs, buffer + operandIdx);
             operand.use();
-            break;
         }
-        default:
-            CRASH();
-            break;
-        }
+        break;
+    }
+    default:
+        CRASH();
+        break;
     }
 
     flushRegisters();

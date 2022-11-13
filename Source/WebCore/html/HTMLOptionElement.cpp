@@ -146,6 +146,13 @@ bool HTMLOptionElement::accessKeyAction(bool)
     return false;
 }
 
+HTMLFormElement* HTMLOptionElement::form() const
+{
+    if (RefPtr selectElement = ownerSelectElement())
+        return selectElement->form();
+    return nullptr;
+}
+
 int HTMLOptionElement::index() const
 {
     // It would be faster to cache the index, but harder to get it right in all cases.

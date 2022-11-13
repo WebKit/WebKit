@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationLineLayout.h"
 
+#include "BlockFormattingState.h"
 #include "BlockLayoutState.h"
 #include "DeprecatedGlobalSettings.h"
 #include "EventRegion.h"
@@ -74,6 +75,7 @@ namespace LayoutIntegration {
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
     , m_layoutState(flow.view().ensureLayoutState())
+    , m_blockFormattingState(layoutState().ensureBlockFormattingState(rootLayoutBox()))
     , m_inlineFormattingState(layoutState().ensureInlineFormattingState(rootLayoutBox()))
 {
 }
@@ -82,6 +84,7 @@ LineLayout::~LineLayout()
 {
     clearInlineContent();
     layoutState().destroyInlineFormattingState(rootLayoutBox());
+    layoutState().destroyBlockFormattingState(rootLayoutBox());
 }
 
 static inline bool isContentRenderer(const RenderObject& renderer)
@@ -440,7 +443,8 @@ void LineLayout::layout()
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
     ASSERT(m_inlineContentConstraints);
-    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, { });
+    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState() };
+    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, blockLayoutState);
 
     constructContent();
 
@@ -455,7 +459,7 @@ void LineLayout::constructContent()
 
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();
-    auto isLeftToRightFloatingStateInlineDirection = m_inlineFormattingState.floatingState().isLeftToRightDirection();
+    auto isLeftToRightFloatingStateInlineDirection = m_blockFormattingState.floatingState().isLeftToRightDirection();
     auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
     auto isFlippedBlocksWritingMode = rootStyle.isFlippedBlocksWritingMode();
     for (auto& renderObject : m_boxTree.renderers()) {
@@ -547,7 +551,7 @@ void LineLayout::prepareLayoutState()
 
 void LineLayout::prepareFloatingState()
 {
-    auto& floatingState = m_inlineFormattingState.floatingState();
+    auto& floatingState = m_blockFormattingState.floatingState();
     floatingState.clear();
 
     if (!flow().containsFloats())

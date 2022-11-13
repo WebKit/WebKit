@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FormattingState.h"
 
-#include "FloatingState.h"
 #include "LayoutBoxGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -35,9 +34,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingState);
 
-FormattingState::FormattingState(Ref<FloatingState>&& floatingState, Type type, LayoutState& layoutState)
+FormattingState::FormattingState(Type type, LayoutState& layoutState)
     : m_layoutState(layoutState)
-    , m_floatingState(WTFMove(floatingState))
     , m_type(type)
 {
 }

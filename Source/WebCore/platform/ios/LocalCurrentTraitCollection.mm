@@ -68,6 +68,17 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
 #endif
 }
 
+LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
+{
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
+    auto newTraitCollection = adjustedTraitCollection(traitCollection);
+    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
+#else
+    UNUSED_PARAM(traitCollection);
+#endif
+}
+
 LocalCurrentTraitCollection::~LocalCurrentTraitCollection()
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)

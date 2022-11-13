@@ -140,19 +140,22 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     collectContentIfNeeded();
 
     auto& inlineItems = formattingState().inlineItems();
-    lineLayout(inlineItems, { 0, inlineItems.size() }, { constraints, { } });
+    // FIXME: Let the caller pass in the block layout state. 
+    auto floatingState = FloatingState { layoutState(), FormattingContext::initialContainingBlock(root()) };
+    auto blockLayoutState = BlockLayoutState { floatingState };
+    lineLayout(inlineItems, { 0, inlineItems.size() }, { constraints, { } }, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), { constraints.horizontal().logicalLeft, constraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints, const BlockLayoutState&)
+void InlineFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints, BlockLayoutState& blockLayoutState)
 {
     invalidateFormattingState();
     collectContentIfNeeded();
     auto& inlineItems = formattingState().inlineItems();
     auto inlineConstraints = downcast<ConstraintsForInlineContent>(constraints);
-    lineLayout(inlineItems, { 0, inlineItems.size() }, inlineConstraints);
+    lineLayout(inlineItems, { 0, inlineItems.size() }, inlineConstraints, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), { inlineConstraints.horizontal().logicalLeft, inlineConstraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
 }
@@ -174,24 +177,11 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
 LayoutUnit InlineFormattingContext::usedContentHeight() const
 {
-    // 10.6.7 'Auto' heights for block formatting context roots
-
-    // If it only has inline-level children, the height is the distance between the top of the topmost line box and the bottom of the bottommost line box.
-
-    // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
-    // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
-    // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
     auto& lines = formattingState().lines();
     // Even empty content generates a line.
     ASSERT(!lines.isEmpty());
     auto top = LayoutUnit { lines.first().top() };
     auto bottom = LayoutUnit { lines.last().bottom() + formattingState().clearGapAfterLastLine() };
-
-    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
-    if (auto floatBottom = floatingContext.bottom()) {
-        bottom = std::max(*floatBottom, bottom);
-        top = std::min(*floatingContext.top(), top);
-    }
     return bottom - top;
 }
 
@@ -212,7 +202,7 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
     return lineContentRange.end;
 }
 
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
@@ -222,7 +212,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLine = std::optional<LineBuilder::PreviousLine> { };
     auto previousLineLastInlineItemIndex = std::optional<size_t> { };
-    auto& floatingState = formattingState.floatingState();
+    auto& floatingState = blockLayoutState.floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
     auto firstInlineItemNeedsLayout = needsLayoutRange.start;
 

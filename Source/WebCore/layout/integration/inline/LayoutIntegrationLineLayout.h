@@ -134,6 +134,8 @@ private:
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
 
+    Layout::LayoutState& layoutState() { return *m_layoutState; }
+
     Layout::InlineDamage& ensureLineDamage();
 
     const Layout::ElementBox& rootLayoutBox() const;
@@ -144,7 +146,8 @@ private:
     LayoutUnit physicalBaselineForLine(LayoutIntegration::Line&) const;
     
     BoxTree m_boxTree;
-    Layout::LayoutState m_layoutState;
+    WeakPtr<Layout::LayoutState> m_layoutState;
+    Layout::BlockFormattingState& m_blockFormattingState;
     Layout::InlineFormattingState& m_inlineFormattingState;
     std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
     // FIXME: This should be part of LayoutState.
