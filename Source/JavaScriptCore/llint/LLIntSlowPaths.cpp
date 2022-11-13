@@ -2243,6 +2243,12 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 
     if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
         LLINT_THROW(createUndefinedVariableError(globalObject, ident));
+    
+    // https://tc39.es/ecma262/2022/multipage/ecmascript-data-types-and-values.html#sec-putvalue
+    // 4. If IsUnresolvableReference(V) is true, then
+    //      a. If V.[[Strict]] is true, throw a ReferenceError exception.
+    if (metadata.m_getPutInfo.ecmaMode().isStrict() && metadata.m_getPutInfo.resolveType() == UnresolvedProperty && !scope->isGlobalLexicalEnvironment())
+        LLINT_THROW(createUndefinedVariableError(globalObject, ident));
 
     PutPropertySlot slot(scope, metadata.m_getPutInfo.ecmaMode().isStrict(), PutPropertySlot::UnknownContext, isInitialization(metadata.m_getPutInfo.initializationMode()));
     scope->methodTable()->put(scope, globalObject, ident, value, slot);
