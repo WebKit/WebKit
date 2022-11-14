@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
 <title>AVIF animation reftest: when animation ends, compare its last frame against the reference static avif image.</title>
 <style>
-img { margin: 1px; }
+    canvas {
+        width: 63px;
+        height: 63px;
+    }
 </style>
-</head>
-<body style="margin: 1px">
-<img src=resources/avifs00-ref.avif><img src=resources/avifs01-ref.avif><img src=resources/avifs02-ref.avif>
+<script src="resources/animated-image-loop-count.js"></script>
+<body>
+    <canvas id="canvas-0"></canvas>
+    <canvas id="canvas-1"></canvas>
+    <canvas id="canvas-2"></canvas>
+    <script>
+        (function() {
+            var images = [
+                { src: "resources/avifs00-ref.avif", canvasIds: [ "canvas-0" ], frameCount: 1 },
+                { src: "resources/avifs01-ref.avif", canvasIds: [ "canvas-1" ], frameCount: 1 },
+                { src: "resources/avifs02-ref.avif", canvasIds: [ "canvas-2" ], frameCount: 1 }
+            ];
+            runTest(images);
+        })();
+    </script>
 </body>
 </html>

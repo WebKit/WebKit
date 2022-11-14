@@ -772,7 +772,7 @@ http/tests/scroll-to-text-fragment/ [ Skip ]
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
 
-# Requires APNG and WebP support.
+# Requires APNG, AVIF and WebP support.
 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
 fast/images/webp-image-decoding.html [ Skip ]
 fast/images/webp-color-profile-lossless.html [ Skip ]
@@ -782,6 +782,11 @@ http/tests/images/webp-partial-load.html [ Skip ]
 http/tests/images/webp-progressive-load.html [ Skip ]
 fast/images/animated-webp-expected.html [ Skip ]
 fast/images/animated-png-loop-count.html [ Skip ]
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
+fast/images/avif-heif-container-as-image.html [ Skip ]
+fast/images/animated-avif.html [ Skip ]
+http/tests/images/avif-partial-load-crash.html [ Skip ]
 
 # TODO The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 # method. But that method is not implemented in win port since win port can't

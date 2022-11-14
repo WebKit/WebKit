@@ -594,7 +594,7 @@ String ImageDecoderCG::decodeUTI(const SharedBuffer& data) const
 String ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffer& data)
 {
     auto uti = String(CGImageSourceGetType(imageSource));
-    if (uti != "public.heif"_s && uti != "public.heic"_s)
+    if (uti != "public.heif"_s && uti != "public.heic"_s && uti != "public.heics"_s)
         return uti;
 
     if (data.size() < sizeof(unsigned)) {

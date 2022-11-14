@@ -38,9 +38,42 @@
     <script>
         (function() {
             var images = [
-                { src: "resources/animated-red-green-blue-repeat-1.png", canvasId: '1', frameCount: 4 },
-                { src: "resources/animated-red-green-blue-repeat-2.png", canvasId: 'a', frameCount: 7 },
-                { src: "resources/animated-red-green-blue-repeat-infinite.png", canvasId: 'A', frameCount: 7 }
+                { 
+                    src: "resources/animated-red-green-blue-repeat-1.png", 
+                    canvasIds: [ 
+                        "canvas-1", 
+                        "canvas-2", 
+                        "canvas-3", 
+                        "canvas-4" 
+                    ], 
+                    frameCount: 4
+                },
+                { 
+                    src: "resources/animated-red-green-blue-repeat-2.png", 
+                    canvasIds: [
+                        "canvas-a",
+                        "canvas-b",
+                        "canvas-c",
+                        "canvas-d",
+                        "canvas-e",
+                        "canvas-f",
+                        "canvas-g"
+                    ],
+                    frameCount: 7
+                },
+                { 
+                    src: "resources/animated-red-green-blue-repeat-infinite.png", 
+                    canvasIds: [ 
+                        "canvas-A",
+                        "canvas-B",
+                        "canvas-C",
+                        "canvas-D",
+                        "canvas-E",
+                        "canvas-F",
+                        "canvas-G"
+                    ], 
+                    frameCount: 7 
+                }
             ];
             runTest(images);
         })();
