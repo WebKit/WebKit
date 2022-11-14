@@ -891,7 +891,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/DataListSuggestionInformation.h
     html/EnterKeyHint.h
     html/FeaturePolicy.h
-    html/FormAssociatedElement.h
+    html/FormListedElement.h
     html/FormNamedItem.h
     html/HTMLAnchorElement.h
     html/HTMLAnchorElementInlines.h

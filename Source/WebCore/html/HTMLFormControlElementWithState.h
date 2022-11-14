@@ -62,5 +62,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFormControlElementWithState)
     static bool isType(const WebCore::Element& element) { return element.isFormControlElementWithState(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
-    static bool isType(const WebCore::FormAssociatedElement& element) { return element.isFormControlElementWithState(); }
+    static bool isType(const WebCore::FormListedElement& element) { return element.isFormControlElementWithState(); }
 SPECIALIZE_TYPE_TRAITS_END()

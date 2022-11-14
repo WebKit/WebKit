@@ -56,6 +56,9 @@ public:
 
     virtual ~HTMLImageElement();
 
+    using HTMLElement::ref;
+    using HTMLElement::deref;
+
     void formOwnerRemovedFromTree(const Node& formRoot);
 
     WEBCORE_EXPORT unsigned width(bool ignorePendingStylesheets = false);
@@ -169,6 +172,8 @@ protected:
 private:
     HTMLFormElement* form() const final;
     void setForm(HTMLFormElement*);
+    void refFormAssociatedElement() final { HTMLElement::ref(); }
+    void derefFormAssociatedElement() final { HTMLElement::deref(); }
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void parseAttribute(const QualifiedName&, const AtomString&) override;
@@ -200,7 +205,7 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
 
-    bool isFormAssociatedElement() const final { return false; }
+    bool isFormListedElement() const final { return false; }
     FormNamedItem* asFormNamedItem() final { return this; }
     HTMLImageElement& asHTMLElement() final { return *this; }
     const HTMLImageElement& asHTMLElement() const final { return *this; }

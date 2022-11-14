@@ -115,10 +115,10 @@ void HTMLImageElement::setForm(HTMLFormElement* newForm)
     if (m_form == newForm)
         return;
     if (m_form)
-        m_form->removeImgElement(this);
+        m_form->unregisterImgElement(*this);
     m_form = newForm;
     if (newForm)
-        newForm->registerImgElement(this);
+        newForm->registerImgElement(*this);
 }
 
 void HTMLImageElement::formOwnerRemovedFromTree(const Node& formRoot)

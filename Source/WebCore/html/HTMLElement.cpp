@@ -767,7 +767,7 @@ FormNamedItem* HTMLElement::asFormNamedItem()
     return nullptr;
 }
 
-FormAssociatedElement* HTMLElement::asFormAssociatedElement()
+FormListedElement* HTMLElement::asFormListedElement()
 {
     return nullptr;
 }

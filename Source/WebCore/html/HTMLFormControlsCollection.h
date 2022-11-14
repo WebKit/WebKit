@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class FormAssociatedElement;
+class FormListedElement;
 class HTMLImageElement;
 
 // This class is just a big hack to find form elements even in malformed HTML elements.

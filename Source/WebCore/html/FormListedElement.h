@@ -38,14 +38,12 @@ class HTMLElement;
 class HTMLFormElement;
 class ValidityState;
 
-class FormAssociatedElement : public FormNamedItem {
-    WTF_MAKE_NONCOPYABLE(FormAssociatedElement);
+// https://html.spec.whatwg.org/multipage/forms.html#category-listed
+class FormListedElement : public FormNamedItem {
+    WTF_MAKE_NONCOPYABLE(FormListedElement);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~FormAssociatedElement();
-
-    void ref() { refFormAssociatedElement(); }
-    void deref() { derefFormAssociatedElement(); }
+    virtual ~FormListedElement();
 
     static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
     WEBCORE_EXPORT HTMLFormElement* form() const;
@@ -91,7 +89,7 @@ public:
     void formAttributeTargetChanged();
 
 protected:
-    FormAssociatedElement(HTMLFormElement*);
+    FormListedElement(HTMLFormElement*);
 
     void insertedIntoAncestor(Node::InsertionType, ContainerNode&);
     void removedFromAncestor(Node::RemovalType, ContainerNode&);
@@ -112,12 +110,10 @@ protected:
 private:
     // "willValidate" means "is a candidate for constraint validation".
     virtual bool willValidate() const = 0;
-    virtual void refFormAssociatedElement() = 0;
-    virtual void derefFormAssociatedElement() = 0;
 
     void resetFormAttributeTargetObserver();
 
-    bool isFormAssociatedElement() const final { return true; }
+    bool isFormListedElement() const final { return true; }
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;

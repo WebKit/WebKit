@@ -1128,10 +1128,10 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
     HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (formElement) {
         AtomString targetName((UChar*)name, SysStringLen(name));
-        for (auto& associatedElement : formElement->copyAssociatedElementsVector()) {
-            if (!is<HTMLFormControlElement>(associatedElement))
+        for (auto& listedElement : formElement->copyListedElementsVector()) {
+            if (!is<HTMLFormControlElement>(listedElement))
                 continue;
-            auto& elt = downcast<HTMLFormControlElement>(associatedElement.get());
+            auto& elt = downcast<HTMLFormControlElement>(listedElement.get());
             // Skip option elements, other duds.
             if (elt.name() == targetName) {
                 *element = DOMElement::createInstance(&elt);
@@ -1232,7 +1232,7 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
     if (!formElement)
         return E_FAIL;
 
-    auto elements = formElement->copyAssociatedElementsVector();
+    auto elements = formElement->copyListedElementsVector();
     int inCount = *cControls;
     int count = (int) elements.size();
     *cControls = count;

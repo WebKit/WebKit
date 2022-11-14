@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "FormAssociatedElement.h"
+#include "FormListedElement.h"
 
 #include "EditorClient.h"
 #include "ElementAncestorIterator.h"
@@ -43,33 +43,33 @@ using namespace HTMLNames;
 class FormAttributeTargetObserver final : private IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FormAttributeTargetObserver(const AtomString& id, FormAssociatedElement&);
+    FormAttributeTargetObserver(const AtomString& id, FormListedElement&);
 
 private:
     void idTargetChanged() override;
 
-    FormAssociatedElement& m_element;
+    FormListedElement& m_element;
 };
 
-FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
+FormListedElement::FormListedElement(HTMLFormElement* form)
     : m_form(nullptr)
     , m_formSetByParser(form)
 {
 }
 
-FormAssociatedElement::~FormAssociatedElement()
+FormListedElement::~FormListedElement()
 {
     RELEASE_ASSERT(!m_form);
 }
 
-void FormAssociatedElement::didMoveToNewDocument(Document&)
+void FormListedElement::didMoveToNewDocument(Document&)
 {
     HTMLElement& element = asHTMLElement();
     if (element.hasAttributeWithoutSynchronization(formAttr) && element.isConnected())
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::insertedIntoAncestor(Node::InsertionType insertionType, ContainerNode&)
+void FormListedElement::insertedIntoAncestor(Node::InsertionType insertionType, ContainerNode&)
 {
     HTMLElement& element = asHTMLElement();
     if (m_formSetByParser) {
@@ -89,7 +89,7 @@ void FormAssociatedElement::insertedIntoAncestor(Node::InsertionType insertionTy
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::removedFromAncestor(Node::RemovalType removalType, ContainerNode&)
+void FormListedElement::removedFromAncestor(Node::RemovalType removalType, ContainerNode&)
 {
     auto& element = asHTMLElement();
     m_formAttributeTargetObserver = nullptr;
@@ -104,7 +104,7 @@ void FormAssociatedElement::removedFromAncestor(Node::RemovalType removalType, C
     }
 }
 
-HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
+HTMLFormElement* FormListedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
 {
     const AtomString& formId(element->attributeWithoutSynchronization(formAttr));
     if (!formId.isNull() && element->isConnected()) {
@@ -127,12 +127,12 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
     return currentAssociatedForm;
 }
 
-HTMLFormElement* FormAssociatedElement::form() const
+HTMLFormElement* FormListedElement::form() const
 {
     return m_form.get();
 }
 
-void FormAssociatedElement::formOwnerRemovedFromTree(const Node& formRoot)
+void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     ASSERT(m_form);
     // Can't use RefPtr here beacuse this function might be called inside ~ShadowRoot via addChildNodesToDeletionQueue. See webkit.org/b/189493.
@@ -152,28 +152,28 @@ void FormAssociatedElement::formOwnerRemovedFromTree(const Node& formRoot)
         setForm(nullptr);
 }
 
-void FormAssociatedElement::setForm(HTMLFormElement* newForm)
+void FormListedElement::setForm(HTMLFormElement* newForm)
 {
     if (m_form == newForm)
         return;
     willChangeForm();
     if (m_form)
-        m_form->removeFormElement(this);
+        m_form->unregisterFormListedElement(*this);
     m_form = newForm;
     if (newForm)
-        newForm->registerFormElement(this);
+        newForm->registerFormListedElement(*this);
     didChangeForm();
 }
 
-void FormAssociatedElement::willChangeForm()
+void FormListedElement::willChangeForm()
 {
 }
 
-void FormAssociatedElement::didChangeForm()
+void FormListedElement::didChangeForm()
 {
 }
 
-void FormAssociatedElement::formWillBeDestroyed()
+void FormListedElement::formWillBeDestroyed()
 {
     ASSERT(m_form);
     if (!m_form)
@@ -183,7 +183,7 @@ void FormAssociatedElement::formWillBeDestroyed()
     didChangeForm();
 }
 
-void FormAssociatedElement::resetFormOwner()
+void FormListedElement::resetFormOwner()
 {
     RefPtr<HTMLFormElement> originalForm = m_form.get();
     setForm(findAssociatedForm(&asHTMLElement(), originalForm.get()));
@@ -193,7 +193,7 @@ void FormAssociatedElement::resetFormOwner()
         element.document().didAssociateFormControl(element);
 }
 
-void FormAssociatedElement::formAttributeChanged()
+void FormListedElement::formAttributeChanged()
 {
     HTMLElement& element = asHTMLElement();
     if (!element.hasAttributeWithoutSynchronization(formAttr)) {
@@ -212,101 +212,101 @@ void FormAssociatedElement::formAttributeChanged()
     }
 }
 
-bool FormAssociatedElement::customError() const
+bool FormListedElement::customError() const
 {
     return !m_customValidationMessage.isEmpty();
 }
 
-bool FormAssociatedElement::hasBadInput() const
+bool FormListedElement::hasBadInput() const
 {
     return false;
 }
 
-bool FormAssociatedElement::patternMismatch() const
+bool FormListedElement::patternMismatch() const
 {
     return false;
 }
 
-bool FormAssociatedElement::rangeOverflow() const
+bool FormListedElement::rangeOverflow() const
 {
     return false;
 }
 
-bool FormAssociatedElement::rangeUnderflow() const
+bool FormListedElement::rangeUnderflow() const
 {
     return false;
 }
 
-bool FormAssociatedElement::stepMismatch() const
+bool FormListedElement::stepMismatch() const
 {
     return false;
 }
 
-bool FormAssociatedElement::tooShort() const
+bool FormListedElement::tooShort() const
 {
     return false;
 }
 
-bool FormAssociatedElement::tooLong() const
+bool FormListedElement::tooLong() const
 {
     return false;
 }
 
-bool FormAssociatedElement::typeMismatch() const
+bool FormListedElement::typeMismatch() const
 {
     return false;
 }
 
-bool FormAssociatedElement::computeValidity() const
+bool FormListedElement::computeValidity() const
 {
     bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow()
         || tooShort() || tooLong() || patternMismatch() || valueMissing() || hasBadInput() || customError();
     return !someError;
 }
 
-bool FormAssociatedElement::valueMissing() const
+bool FormListedElement::valueMissing() const
 {
     return false;
 }
 
-String FormAssociatedElement::customValidationMessage() const
+String FormListedElement::customValidationMessage() const
 {
     return m_customValidationMessage;
 }
 
-String FormAssociatedElement::validationMessage() const
+String FormListedElement::validationMessage() const
 {
     return willValidate() ? m_customValidationMessage : String();
 }
 
-void FormAssociatedElement::setCustomValidity(const String& error)
+void FormListedElement::setCustomValidity(const String& error)
 {
     m_customValidationMessage = error;
 }
 
-void FormAssociatedElement::resetFormAttributeTargetObserver()
+void FormListedElement::resetFormAttributeTargetObserver()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(asHTMLElement().isConnected());
     m_formAttributeTargetObserver = makeUnique<FormAttributeTargetObserver>(asHTMLElement().attributeWithoutSynchronization(formAttr), *this);
 }
 
-void FormAssociatedElement::formAttributeTargetChanged()
+void FormListedElement::formAttributeTargetChanged()
 {
     resetFormOwner();
 }
 
-const AtomString& FormAssociatedElement::name() const
+const AtomString& FormListedElement::name() const
 {
     const AtomString& name = asHTMLElement().getNameAttribute();
     return name.isNull() ? emptyAtom() : name;
 }
 
-bool FormAssociatedElement::isFormControlElementWithState() const
+bool FormListedElement::isFormControlElementWithState() const
 {
     return false;
 }
 
-FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomString& id, FormAssociatedElement& element)
+FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomString& id, FormListedElement& element)
     : IdTargetObserver(element.asHTMLElement().treeScope().idTargetObserverRegistry(), id)
     , m_element(element)
 {
