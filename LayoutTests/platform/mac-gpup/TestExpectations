@@ -1,1 +1,5 @@
 # Test expectations for macOS with --use-gpu-process --remote-layer-tree.
+
+# The direct image codepath is not used with the remote layer tree.
+compositing/images/direct-image-object-fit.html [ Skip ]
+compositing/reflections/direct-image-object-fit-reflected.html [ Skip ]
