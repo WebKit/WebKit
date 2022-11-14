@@ -4994,6 +4994,7 @@ fast/layoutformattingcontext/float-avoider-with-inline-content.html [ Skip ]
 fast/layoutformattingcontext/float-avoiding-br-last-line.html [ Skip ]
 fast/layoutformattingcontext/float-avoiding-br-simple.html [ Skip ]
 fast/layoutformattingcontext/intrusive-floats-and-stretchy-lines-simple.html [ Skip ]
+fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html [ Skip ]
 
 # Needs display box support.
 fast/layoutformattingcontext/flex-box-simple.html [ Skip ]
