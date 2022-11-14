@@ -33,7 +33,7 @@ static void testEmptyArtwork(const WebCore::NowPlayingInfoArtwork& artwork)
 {
     EXPECT_TRUE(artwork.src.isEmpty());
     EXPECT_TRUE(artwork.mimeType.isEmpty());
-    EXPECT_EQ(nullptr, artwork.imageData.get());
+    EXPECT_EQ(nullptr, artwork.image.get());
 }
 
 TEST(NowPlayingInfoArtwork, DefaultConstruction)
