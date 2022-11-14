@@ -36,7 +36,6 @@
 
 #include "EventNames.h"
 #include "JSRTCCertificate.h"
-#include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
 #include "Page.h"
 #include "RTCDataChannelEvent.h"
@@ -55,6 +54,11 @@
 
 #if USE(GSTREAMER_WEBRTC)
 #include "GStreamerWebRTCUtils.h"
+#endif
+
+#if USE(LIBWEBRTC)
+#include "LibWebRTCCertificateGenerator.h"
+#include "LibWebRTCProvider.h"
 #endif
 
 namespace WebCore {

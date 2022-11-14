@@ -47,7 +47,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediasession"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
-    "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
     "${WEBCORE_DIR}/Modules/model-element"
     "${WEBCORE_DIR}/Modules/model-element/dummy"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
@@ -157,7 +156,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mediastream"
-    "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
     "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/mock/mediasource"
@@ -2040,10 +2038,16 @@ if (USE_XDGMIME)
 endif ()
 
 if (USE_LIBWEBRTC)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/libwebrtc/Source/"
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/libwebrtc/Source"
         "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
         "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/libvpx/source/libvpx"
-        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
+        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp"
+    )
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
+        "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
+    )
     list(APPEND WebCore_LIBRARIES webrtc)
     list(APPEND WebCore_SOURCES
         Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp

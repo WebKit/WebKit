@@ -25,15 +25,20 @@
 #include "config.h"
 #include "LibWebRTCCertificateGenerator.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCProvider.h"
 #include "RTCCertificate.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_COMMA_BEGIN
 
+#include <webrtc/rtc_base/ref_counted_object.h>
 #include <webrtc/rtc_base/rtc_certificate_generator.h>
+#include <webrtc/rtc_base/ssl_certificate.h>
 
+ALLOW_COMMA_END
 ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
@@ -121,4 +126,4 @@ void generateCertificate(Ref<SecurityOrigin>&& origin, LibWebRTCProvider& provid
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

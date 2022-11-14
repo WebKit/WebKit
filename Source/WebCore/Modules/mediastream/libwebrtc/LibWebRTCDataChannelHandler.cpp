@@ -25,7 +25,7 @@
 #include "config.h"
 #include "LibWebRTCDataChannelHandler.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "EventNames.h"
 #include "LibWebRTCUtils.h"
@@ -226,4 +226,4 @@ void LibWebRTCDataChannelHandler::postTask(Function<void()>&& function)
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

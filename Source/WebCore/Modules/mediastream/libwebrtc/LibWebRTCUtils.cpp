@@ -25,7 +25,7 @@
 #include "config.h"
 #include "LibWebRTCUtils.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
 #include "RTCDtlsTransportState.h"
@@ -37,11 +37,14 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/rtp_parameters.h>
 #include <webrtc/api/rtp_transceiver_interface.h>
+#include <webrtc/p2p/base/p2p_constants.h>
 #include <webrtc/pc/webrtc_sdp.h>
 
+ALLOW_COMMA_END
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -455,4 +458,4 @@ RefPtr<RTCError> toRTCError(const webrtc::RTCError& rtcError)
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

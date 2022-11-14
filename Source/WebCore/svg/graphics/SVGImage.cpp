@@ -44,7 +44,6 @@
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
 #include "LegacyRenderSVGRoot.h"
-#include "LibWebRTCProvider.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"

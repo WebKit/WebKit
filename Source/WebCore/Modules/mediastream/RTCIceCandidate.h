@@ -33,7 +33,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "ExceptionOr.h"
-#include "LibWebRTCUtils.h"
 #include "RTCIceCandidateFields.h"
 #include "ScriptWrappable.h"
 

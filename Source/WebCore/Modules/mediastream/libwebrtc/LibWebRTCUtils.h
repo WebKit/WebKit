@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "ExceptionCode.h"
 #include "RTCIceCandidateFields.h"
@@ -84,4 +84,4 @@ RTCIceCandidateFields convertIceCandidate(const cricket::Candidate&);
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)
