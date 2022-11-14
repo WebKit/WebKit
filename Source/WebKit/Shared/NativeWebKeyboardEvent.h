@@ -36,6 +36,7 @@ OBJC_CLASS NSView;
 #endif
 
 #if PLATFORM(GTK)
+#include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GUniquePtrGtk.h>
 #if USE(GTK4)
 typedef struct _GdkEvent GdkEvent;
@@ -96,6 +97,8 @@ public:
 private:
 #if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
+#elif PLATFORM(GTK) && USE(GTK4)
+    GRefPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(IOS_FAMILY)

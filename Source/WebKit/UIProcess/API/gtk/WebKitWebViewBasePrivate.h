@@ -41,6 +41,8 @@
 #include "WebKitWebViewBaseInternal.h"
 #include "WebPageProxy.h"
 #include <WebCore/DragActions.h>
+#include <WebCore/GRefPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/SelectionData.h>
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
@@ -58,7 +60,13 @@ bool webkitWebViewBaseIsFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase*, unsigned size);
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
 WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
-GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
+
+#if USE(GTK4)
+GRefPtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
+#else
+GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
+#endif
+
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase*, std::optional<WebKit::InputMethodState>&&);
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase*);
 void webkitWebViewBaseSetContentsSize(WebKitWebViewBase*, const WebCore::IntSize&);
