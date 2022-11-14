@@ -33,10 +33,6 @@
 
 namespace WebCore {
 
-#if ENABLE(WEB_ARCHIVE) && USE(CF)
-constexpr auto webArchivePrefix { "webarchive+"_s };
-#endif
-
 void ArchiveResourceCollection::addAllResources(Archive& archive)
 {
     for (auto& subresource : archive.subresources())
@@ -57,34 +53,19 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
 // Can we change the design in a manner that will let us deprecate that API without reducing functionality of those apps?
 void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 {
-#if ENABLE(WEB_ARCHIVE) && USE(CF)
-    const bool addPrefix = !resource->url().protocol().startsWith(webArchivePrefix);
-    const auto prefix { addPrefix ? webArchivePrefix : ""_s };
-    const auto subresourceKey { String { prefix + resource->url().string() } };
-#else
-    const auto& subresourceKey = resource->url().string();
-#endif
-    m_subresources.set(subresourceKey, WTFMove(resource));
+    auto& url = resource->url();
+    m_subresources.set(url.string(), WTFMove(resource));
 }
 
-ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(URL url)
+ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
 {
-#if ENABLE(WEB_ARCHIVE) && USE(CF)
-    const auto httpsScheme = String { webArchivePrefix + "https"_str };
-    const auto httpScheme = String { webArchivePrefix + "http"_str };
-    if (!url.protocol().startsWith(webArchivePrefix))
-        url.setProtocol(String { webArchivePrefix + url.protocol() });
-#else
-    constexpr auto httpsScheme = "https"_s;
-    constexpr auto httpScheme = "http"_s;
-#endif
-
     if (auto* resource = m_subresources.get(url.string()))
         return resource;
-    if (!url.protocolIs(httpsScheme))
+    if (!url.protocolIs("https"_s))
         return nullptr;
-    url.setProtocol(httpScheme);
-    return m_subresources.get(url.string());
+    URL httpURL = url;
+    httpURL.setProtocol("http"_s);
+    return m_subresources.get(httpURL.string());
 }
 
 RefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const URL& url)
