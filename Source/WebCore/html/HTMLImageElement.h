@@ -56,6 +56,8 @@ public:
 
     virtual ~HTMLImageElement();
 
+    void formOwnerRemovedFromTree(const Node& formRoot);
+
     WEBCORE_EXPORT unsigned width(bool ignorePendingStylesheets = false);
     WEBCORE_EXPORT unsigned height(bool ignorePendingStylesheets = false);
 
@@ -165,6 +167,9 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
+    HTMLFormElement* form() const final;
+    void setForm(HTMLFormElement*);
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;

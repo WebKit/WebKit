@@ -174,6 +174,11 @@ void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode
     auto associatedElements = copyAssociatedElementsVector();
     for (auto& associatedElement : associatedElements)
         associatedElement->formOwnerRemovedFromTree(root);
+    auto imageElements = WTF::compactMap(m_imageElements, [](auto& weakPtr) {
+        return RefPtr { weakPtr.get() };
+    });
+    for (auto& imageElement : imageElements)
+        imageElement->formOwnerRemovedFromTree(root);
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
