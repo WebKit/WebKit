@@ -51,6 +51,12 @@ static constexpr bool fullGPUProcessEnabledValue = true;
 static constexpr bool fullGPUProcessEnabledValue = false;
 #endif
 
+#if PLATFORM(MAC)
+static constexpr bool eventHandlerDrivenSmoothKeyboardScrollingEnabledValue = true;
+#else
+static constexpr bool eventHandlerDrivenSmoothKeyboardScrollingEnabledValue = false;
+#endif
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -82,6 +88,7 @@ const TestFeatures& TestOptions::defaults()
             { "DataTransferItemsEnabled", true },
             { "DeveloperExtrasEnabled", true },
             { "DirectoryUploadEnabled", true },
+            { "EventHandlerDrivenSmoothKeyboardScrollingEnabled", eventHandlerDrivenSmoothKeyboardScrollingEnabledValue },
             { "ExposeSpeakersEnabled", true },
             { "FrameFlatteningEnabled", false },
             { "FullScreenEnabled", true },

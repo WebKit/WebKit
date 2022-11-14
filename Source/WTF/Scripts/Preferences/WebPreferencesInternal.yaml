@@ -289,7 +289,7 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
       default: false
     WebCore:
       default: false
