@@ -82,9 +82,9 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo)
     if (!nowPlayingInfo.artwork)
         m_nowPlayingInfoArtwork = { };
     else if (!m_nowPlayingInfoArtwork || nowPlayingInfo.artwork->src != m_nowPlayingInfoArtwork->src)
-        m_nowPlayingInfoArtwork = ArtworkCache { nowPlayingInfo.artwork->src, nowPlayingInfo.artwork->imageData };
+        m_nowPlayingInfoArtwork = ArtworkCache { nowPlayingInfo.artwork->src, nowPlayingInfo.artwork->image };
     else
-        m_nowPlayingInfo->artwork->imageData = nullptr;
+        m_nowPlayingInfo->artwork->image = nullptr;
 
     setNowPlayingInfoPrivate(*m_nowPlayingInfo);
     m_setAsNowPlayingApplication = true;
@@ -95,10 +95,10 @@ void NowPlayingManager::setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayin
 {
     setSupportsSeeking(nowPlayingInfo.supportsSeeking);
 #if PLATFORM(COCOA)
-    if (nowPlayingInfo.artwork && !nowPlayingInfo.artwork->imageData) {
+    if (nowPlayingInfo.artwork && !nowPlayingInfo.artwork->image) {
         ASSERT(m_nowPlayingInfoArtwork, "cached value must have been initialized");
         NowPlayingInfo nowPlayingInfoRebuilt = nowPlayingInfo;
-        nowPlayingInfoRebuilt.artwork->imageData = m_nowPlayingInfoArtwork->imageData;
+        nowPlayingInfoRebuilt.artwork->image = m_nowPlayingInfoArtwork->image;
         MediaSessionManagerCocoa::setNowPlayingInfo(!m_setAsNowPlayingApplication, nowPlayingInfoRebuilt);
         return;
     }
