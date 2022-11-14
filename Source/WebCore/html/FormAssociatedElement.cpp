@@ -89,15 +89,19 @@ void FormAssociatedElement::insertedIntoAncestor(Node::InsertionType insertionTy
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::removedFromAncestor(Node::RemovalType, ContainerNode&)
+void FormAssociatedElement::removedFromAncestor(Node::RemovalType removalType, ContainerNode&)
 {
+    auto& element = asHTMLElement();
     m_formAttributeTargetObserver = nullptr;
 
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
     // Do not rely on rootNode() because our IsInTreeScope is outdated.
-    if (m_form && &asHTMLElement().traverseToRootNode() != &m_form->traverseToRootNode())
+    if ((m_form && &element.traverseToRootNode() != &m_form->traverseToRootNode())
+        || (removalType.disconnectedFromDocument && element.hasAttributeWithoutSynchronization(formAttr))) {
         setForm(nullptr);
+        resetFormOwner();
+    }
 }
 
 HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)

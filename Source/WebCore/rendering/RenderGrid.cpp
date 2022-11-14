@@ -229,10 +229,10 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
     m_hasAspectRatioBlockSizeDependentItem = false;
 
     auto computeOrthogonalAndDependentItems = [&](RenderBox* child) {
-        // Grid's layout logic controls the grid item's override height, hence we need to
-        // clear any override height set previously, so it doesn't interfere in current layout
-        // execution. Grid never uses the override width, that's why we don't need to clear  it.
-        child->clearOverridingLogicalHeight();
+        // Grid's layout logic controls the grid item's override content size, hence we need to
+        // clear any override set previously, so it doesn't interfere in current layout
+        // execution.
+        child->clearOverridingContentSize();
 
         // We may need to repeat the track sizing in case of any grid item was orthogonal.
         if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
@@ -1194,8 +1194,8 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
         unsigned nextToLastLine = numberOfLines - 2;
 
         for (unsigned i = 0; i < nextToLastLine; ++i)
-            positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].baseSize() + gap;
-        positions[lastLine] = positions[nextToLastLine] + tracks[nextToLastLine].baseSize();
+            positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].unclampedBaseSize() + gap;
+        positions[lastLine] = positions[nextToLastLine] + tracks[nextToLastLine].unclampedBaseSize();
 
         // Adjust collapsed gaps. Collapsed tracks cause the surrounding gutters to collapse (they
         // coincide exactly) except on the edges of the grid where they become 0.

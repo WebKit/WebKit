@@ -2607,10 +2607,6 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         return;
     }
 
-    // If layout is limited to a subtree, the subtree root's logical width does not change.
-    if (element() && !view().frameView().layoutContext().isLayoutPending() && view().frameView().layoutContext().subtreeLayoutRoot() == this)
-        return;
-
     // The parent box is flexing us, so it has increased or decreased our
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
