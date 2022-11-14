@@ -185,12 +185,10 @@ void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHand
     completionHandler();
 }
 
-#if PLATFORM(IOS_FAMILY)
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
     m_webPage.setDeviceScaleFactor(deviceScaleFactor);
 }
-#endif
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const
 {
