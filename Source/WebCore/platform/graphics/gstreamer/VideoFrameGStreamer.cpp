@@ -37,7 +37,18 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+GST_DEBUG_CATEGORY(webkit_video_frame_debug);
+#define GST_CAT_DEFAULT webkit_video_frame_debug
+
 namespace WebCore {
+
+static void ensureDebugCategoryInitialized()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_video_frame_debug, "webkitvideoframe", 0, "WebKit Video Frame");
+    });
+}
 
 class GstSampleColorConverter {
 public:
@@ -57,6 +68,7 @@ private:
 
 GstSampleColorConverter& GstSampleColorConverter::singleton()
 {
+    ensureDebugCategoryInitialized();
     static NeverDestroyed<GstSampleColorConverter> sharedInstance;
     return sharedInstance;
 }
@@ -74,43 +86,52 @@ GRefPtr<GstSample> GstSampleColorConverter::convertSample(const GRefPtr<GstSampl
     if (!gst_video_info_from_caps(&videoInfo, caps))
         return nullptr;
 
-    GRefPtr<GstBuffer> outputBuffer;
-    auto* memory = gst_buffer_peek_memory(buffer, 0);
-#if USE(GSTREAMER_GL)
-    if (gst_is_gl_memory(memory)) {
-        if (!m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), caps)) {
-            m_glColorConvert = adoptGRef(gst_gl_color_convert_new(GST_GL_BASE_MEMORY_CAST(memory)->context));
-            m_colorConvertInputCaps = adoptGRef(gst_caps_copy(caps));
-            m_colorConvertOutputCaps = adoptGRef(gst_caps_copy(outputCaps.get()));
+    GST_DEBUG("Converting video frame from %" GST_PTR_FORMAT " to %" GST_PTR_FORMAT, caps, outputCaps.get());
 
-            gst_caps_set_features(m_colorConvertOutputCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
-            gst_caps_set_simple(m_colorConvertOutputCaps.get(), "texture-target", G_TYPE_STRING, GST_GL_TEXTURE_TARGET_2D_STR, nullptr);
-            if (!gst_gl_color_convert_set_caps(m_glColorConvert.get(), caps, m_colorConvertOutputCaps.get())) {
-                m_colorConvertInputCaps.clear();
-                m_colorConvertOutputCaps.clear();
-                return nullptr;
-            }
-        }
-
-        outputBuffer = adoptGRef(gst_gl_color_convert_perform(m_glColorConvert.get(), buffer));
-    } else
-#endif
-    {
+    auto colorConvert = [&]() -> GRefPtr<GstBuffer> {
         GstVideoInfo outputInfo;
         gst_video_info_init(&outputInfo);
         if (!gst_video_info_from_caps(&outputInfo, outputCaps.get()))
             return nullptr;
 
-        if (!m_colorConvertOutputCaps || !gst_caps_is_equal(m_colorConvertOutputCaps.get(), outputCaps.get())) {
+        if (!m_colorConvertOutputCaps || !gst_caps_is_equal(m_colorConvertOutputCaps.get(), outputCaps.get())
+            || !m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), caps)) {
             m_colorConvert.reset(gst_video_converter_new(&videoInfo, &outputInfo, nullptr));
+            m_colorConvertInputCaps = adoptGRef(gst_caps_copy(caps));
             m_colorConvertOutputCaps = outputCaps;
         }
 
-        outputBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&outputInfo), nullptr));
+        auto outputBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&outputInfo), nullptr));
         GstMappedFrame inputFrame(buffer, videoInfo, GST_MAP_READ);
         GstMappedFrame outputFrame(outputBuffer.get(), outputInfo, GST_MAP_WRITE);
         gst_video_converter_frame(m_colorConvert.get(), inputFrame.get(), outputFrame.get());
-    }
+        return outputBuffer;
+    };
+
+    GRefPtr<GstBuffer> outputBuffer;
+    auto* memory = gst_buffer_peek_memory(buffer, 0);
+#if USE(GSTREAMER_GL)
+    if (gst_is_gl_memory(memory)) {
+        if (gst_caps_features_contains(gst_caps_get_features(outputCaps.get(), 0), GST_CAPS_FEATURE_MEMORY_GL_MEMORY)) {
+            if (!m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), caps)) {
+                m_glColorConvert = adoptGRef(gst_gl_color_convert_new(GST_GL_BASE_MEMORY_CAST(memory)->context));
+                m_colorConvertInputCaps = adoptGRef(gst_caps_copy(caps));
+                m_colorConvertOutputCaps = adoptGRef(gst_caps_copy(outputCaps.get()));
+
+                gst_caps_set_features(m_colorConvertOutputCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+                gst_caps_set_simple(m_colorConvertOutputCaps.get(), "texture-target", G_TYPE_STRING, GST_GL_TEXTURE_TARGET_2D_STR, nullptr);
+                if (!gst_gl_color_convert_set_caps(m_glColorConvert.get(), caps, m_colorConvertOutputCaps.get())) {
+                    m_colorConvertInputCaps.clear();
+                    m_colorConvertOutputCaps.clear();
+                    return nullptr;
+                }
+            }
+            outputBuffer = adoptGRef(gst_gl_color_convert_perform(m_glColorConvert.get(), buffer));
+        } else
+            outputBuffer = colorConvert();
+    } else
+#endif
+        outputBuffer = colorConvert();
 
     if (UNLIKELY(!GST_IS_BUFFER(outputBuffer.get())))
         return nullptr;
@@ -222,6 +243,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const Floa
     , m_sample(WTFMove(sample))
     , m_presentationSize(presentationSize)
 {
+    ensureDebugCategoryInitialized();
     ASSERT(m_sample);
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
@@ -234,6 +256,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
     : VideoFrame(presentationTime, false, videoRotation)
     , m_sample(sample)
 {
+    ensureDebugCategoryInitialized();
 }
 
 void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, const ImageOrientation& destinationImageOrientation, bool shouldDiscardAlpha)
