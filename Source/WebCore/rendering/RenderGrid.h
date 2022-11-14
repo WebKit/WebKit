@@ -67,11 +67,11 @@ public:
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
 
-    unsigned autoRepeatCountForDirection(GridTrackSizingDirection direction) const { return m_grid.autoRepeatTracks(direction); }
-    unsigned explicitGridStartForDirection(GridTrackSizingDirection direction) const { return m_grid.explicitGridStart(direction); }
+    unsigned autoRepeatCountForDirection(GridTrackSizingDirection direction) const { return currentGrid().autoRepeatTracks(direction); }
+    unsigned explicitGridStartForDirection(GridTrackSizingDirection direction) const { return currentGrid().explicitGridStart(direction); }
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
-    LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
+    LayoutUnit guttersSize(GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
     LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
     void updateGridAreaLogicalSize(RenderBox&, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height) const;
@@ -102,15 +102,10 @@ public:
     // nested subgrids, where ancestor may not be our direct parent.
     bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor);
 
-    const Grid& currentGrid() const
-    {
-        return m_grid;
-    }
+    const Grid& currentGrid() const;
+    Grid& currentGrid();
 
-    unsigned numTracks(GridTrackSizingDirection direction) const
-    {
-        return numTracks(direction, m_grid);
-    }
+    unsigned numTracks(GridTrackSizingDirection) const;
 
     void placeItems();
 
@@ -143,17 +138,17 @@ private:
 
     unsigned clampAutoRepeatTracks(GridTrackSizingDirection, unsigned autoRepeatTracks) const;
 
-    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
+    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(GridTrackSizingDirection) const;
 
     void performGridItemsPreLayout(const GridTrackSizingAlgorithm&) const;
 
-    void placeItemsOnGrid(GridTrackSizingAlgorithm&, std::optional<LayoutUnit> availableLogicalWidth) const;
-    void populateExplicitGridAndOrderIterator(Grid&) const;
-    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid&, const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
-    void placeSpecifiedMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
-    void placeAutoMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
+    void placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth);
+    void populateExplicitGridAndOrderIterator();
+    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
+    void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
+    void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     typedef std::pair<unsigned, unsigned> AutoPlacementCursor;
-    void placeAutoMajorAxisItemOnGrid(Grid&, RenderBox&, AutoPlacementCursor&) const;
+    void placeAutoMajorAxisItemOnGrid(RenderBox&, AutoPlacementCursor&);
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 
@@ -216,7 +211,6 @@ private:
     LayoutUnit rowAxisBaselineOffsetForChild(const RenderBox&) const;
 
     unsigned nonCollapsedTracks(GridTrackSizingDirection) const;
-    unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
@@ -231,7 +225,13 @@ private:
 
     bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
 
-    Grid m_grid;
+    class GridWrapper {
+        Grid m_layoutGrid;
+    public:
+        GridWrapper(RenderGrid&);
+        void resetCurrentGrid() const;
+        mutable std::reference_wrapper<Grid> m_currentGrid { std::ref(m_layoutGrid) };
+    } m_grid;
 
     GridTrackSizingAlgorithm m_trackSizingAlgorithm;
 
@@ -243,9 +243,6 @@ private:
     typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;
     OutOfFlowPositionsMap m_outOfFlowItemRow;
-
-    std::optional<LayoutUnit> m_minContentSize;
-    std::optional<LayoutUnit> m_maxContentSize;
 
     bool m_hasAnyOrthogonalItem {false};
     bool m_hasAspectRatioBlockSizeDependentItem { false };

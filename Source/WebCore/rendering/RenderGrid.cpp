@@ -52,7 +52,7 @@ enum TrackSizeRestriction {
 RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), 0)
     , m_grid(*this)
-    , m_trackSizingAlgorithm(this, m_grid)
+    , m_trackSizingAlgorithm(this, currentGrid())
 {
     // All of our children must be block level.
     setChildrenInline(false);
@@ -145,7 +145,7 @@ std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDi
 
 void RenderGrid::computeTrackSizesForDefiniteSize(GridTrackSizingDirection direction, LayoutUnit availableSpace)
 {
-    m_trackSizingAlgorithm.setup(direction, numTracks(direction, m_grid), TrackSizing, availableSpace);
+    m_trackSizingAlgorithm.setup(direction, numTracks(direction), TrackSizing, availableSpace);
     m_trackSizingAlgorithm.run();
 
     ASSERT(m_trackSizingAlgorithm.tracksAreWiderThanMinTrackBreadth());
@@ -180,7 +180,7 @@ bool RenderGrid::canPerformSimplifiedLayout() const
 {
     // We cannot perform a simplified layout if we need to position the items and we have some
     // positioned items to be laid out.
-    if (m_grid.needsItemsPlacement() && posChildNeedsLayout())
+    if (currentGrid().needsItemsPlacement() && posChildNeedsLayout())
         return false;
 
     return RenderBlock::canPerformSimplifiedLayout();
@@ -250,7 +250,6 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
     return dependentGridItems;
 }
 
-
 void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
@@ -284,7 +283,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         updateLogicalWidth();
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
-        placeItemsOnGrid(m_trackSizingAlgorithm, availableSpaceForColumns);
+        placeItemsOnGrid(availableSpaceForColumns);
 
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
@@ -293,16 +292,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic 
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require 
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
-        auto shouldIgnoreGridItemContentForLogicalWidth = shouldApplySizeOrInlineSizeContainment();
-        if (shouldIgnoreGridItemContentForLogicalWidth)
-            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForColumns);
-        else
-            computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
-
-        m_minContentSize = m_trackSizingAlgorithm.minContentSize();
-        m_maxContentSize = m_trackSizingAlgorithm.maxContentSize();
-        if (shouldIgnoreGridItemContentForLogicalWidth)
-            computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
+        computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
         // 1.5- Compute Content Distribution offsets for column tracks
         computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
@@ -411,7 +401,7 @@ LayoutUnit RenderGrid::gridItemOffset(GridTrackSizingDirection direction) const
     return direction == ForRows ? m_offsetBetweenRows.distributionOffset : m_offsetBetweenColumns.distributionOffset;
 }
 
-LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection direction, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const
+LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const
 {
     if (span <= 1)
         return { };
@@ -419,7 +409,7 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
     LayoutUnit gap = gridGap(direction, availableSize);
 
     // Fast path, no collapsing tracks.
-    if (!grid.hasAutoRepeatEmptyTracks(direction))
+    if (!currentGrid().hasAutoRepeatEmptyTracks(direction))
         return gap * (span - 1);
 
     // If there are collapsing tracks we need to be sure that gutters are properly collapsed. Apart
@@ -431,12 +421,12 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
     unsigned endLine = startLine + span;
 
     for (unsigned line = startLine; line < endLine - 1; ++line) {
-        if (!grid.isEmptyAutoRepeatTrack(direction, line))
+        if (!currentGrid().isEmptyAutoRepeatTrack(direction, line))
             gapAccumulator += gap;
     }
 
     // The above loop adds one extra gap for trailing collapsed tracks.
-    if (gapAccumulator && grid.isEmptyAutoRepeatTrack(direction, endLine - 1)) {
+    if (gapAccumulator && currentGrid().isEmptyAutoRepeatTrack(direction, endLine - 1)) {
         ASSERT(gapAccumulator >= gap);
         gapAccumulator -= gap;
     }
@@ -444,9 +434,9 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
     // If the startLine is the start line of a collapsed track we need to go backwards till we reach
     // a non collapsed track. If we find a non collapsed track we need to add that gap.
     size_t nonEmptyTracksBeforeStartLine = 0;
-    if (startLine && grid.isEmptyAutoRepeatTrack(direction, startLine)) {
+    if (startLine && currentGrid().isEmptyAutoRepeatTrack(direction, startLine)) {
         nonEmptyTracksBeforeStartLine = startLine;
-        auto begin = grid.autoRepeatEmptyTracks(direction)->begin();
+        auto begin = currentGrid().autoRepeatEmptyTracks(direction)->begin();
         for (auto it = begin; *it != startLine; ++it) {
             ASSERT(nonEmptyTracksBeforeStartLine);
             --nonEmptyTracksBeforeStartLine;
@@ -457,10 +447,10 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
 
     // If the endLine is the end line of a collapsed track we need to go forward till we reach a non
     // collapsed track. If we find a non collapsed track we need to add that gap.
-    if (grid.isEmptyAutoRepeatTrack(direction, endLine - 1)) {
-        unsigned nonEmptyTracksAfterEndLine = grid.numTracks(direction) - endLine;
-        auto currentEmptyTrack = grid.autoRepeatEmptyTracks(direction)->find(endLine - 1);
-        auto endEmptyTrack = grid.autoRepeatEmptyTracks(direction)->end();
+    if (currentGrid().isEmptyAutoRepeatTrack(direction, endLine - 1)) {
+        unsigned nonEmptyTracksAfterEndLine = currentGrid().numTracks(direction) - endLine;
+        auto currentEmptyTrack = currentGrid().autoRepeatEmptyTracks(direction)->find(endLine - 1);
+        auto endEmptyTrack = currentGrid().autoRepeatEmptyTracks(direction)->end();
         // HashSet iterators do not implement operator- so we have to manually iterate to know the number of remaining empty tracks.
         for (auto it = ++currentEmptyTrack; it != endEmptyTrack; ++it) {
             ASSERT(nonEmptyTracksAfterEndLine >= 1);
@@ -485,25 +475,25 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     LayoutUnit childMaxWidth;
     bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
 
-    if (needsLayout()) {
-        GridTrackSizingAlgorithm algorithm(this, const_cast<Grid&>(m_grid));
-        placeItemsOnGrid(algorithm, std::nullopt);
+    Grid grid(const_cast<RenderGrid&>(*this));
+    m_grid.m_currentGrid = std::ref(grid);
+    GridTrackSizingAlgorithm algorithm(this, grid);
+    // placeItemsOnGrid isn't const since it mutates our grid, but it's safe to do
+    // so here since we've overriden m_currentGrid with a stack based temporary.
+    const_cast<RenderGrid&>(*this).placeItemsOnGrid(std::nullopt);
 
-        performGridItemsPreLayout(algorithm);
+    performGridItemsPreLayout(algorithm);
 
-        if (m_baselineItemsCached)
-            algorithm.copyBaselineItemsCache(m_trackSizingAlgorithm, GridRowAxis);
-        else {
-            auto emptyCallback = [](RenderBox*) { };
-            cacheBaselineAlignedChildren(*this, algorithm, GridRowAxis, emptyCallback);
-        }
-
-        computeTrackSizesForIndefiniteSize(algorithm, ForColumns, &minLogicalWidth, &maxLogicalWidth);
-    } else {
-        LayoutUnit totalGuttersSize = explicitIntrinsicInnerLogicalSize(ForColumns).has_value() ? 0_lu : guttersSize(m_grid, ForColumns, 0, numTracks(ForColumns), std::nullopt);
-        minLogicalWidth = *m_minContentSize + totalGuttersSize;
-        maxLogicalWidth = *m_maxContentSize + totalGuttersSize;
+    if (m_baselineItemsCached)
+        algorithm.copyBaselineItemsCache(m_trackSizingAlgorithm, GridRowAxis);
+    else {
+        auto emptyCallback = [](RenderBox*) { };
+        cacheBaselineAlignedChildren(*this, algorithm, GridRowAxis, emptyCallback);
     }
+
+    computeTrackSizesForIndefiniteSize(algorithm, ForColumns, &minLogicalWidth, &maxLogicalWidth);
+
+    m_grid.resetCurrentGrid();
 
     if (hadExcludedChildren) {
         minLogicalWidth = std::max(minLogicalWidth, childMinWidth);
@@ -517,12 +507,11 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 
 void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const
 {
-    const Grid& grid = algorithm.grid();
-    algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, std::nullopt);
+    algorithm.setup(direction, numTracks(direction), IntrinsicSizeComputation, std::nullopt);
     algorithm.run();
 
     size_t numberOfTracks = algorithm.tracks(direction).size();
-    LayoutUnit totalGuttersSize = direction == ForColumns && explicitIntrinsicInnerLogicalSize(direction).has_value() ? 0_lu : guttersSize(grid, direction, 0, numberOfTracks, std::nullopt);
+    LayoutUnit totalGuttersSize = direction == ForColumns && explicitIntrinsicInnerLogicalSize(direction).has_value() ? 0_lu : guttersSize(direction, 0, numberOfTracks, std::nullopt);
 
     if (minIntrinsicSize)
         *minIntrinsicSize = algorithm.minContentSize() + totalGuttersSize;
@@ -641,7 +630,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
 }
 
 
-std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepeat(Grid& grid, GridTrackSizingDirection direction) const
+std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepeat(GridTrackSizingDirection direction) const
 {
     bool isRowAxis = direction == ForColumns;
     if ((isRowAxis && style().gridAutoRepeatColumnsType() != AutoRepeatType::Fit)
@@ -650,16 +639,16 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
 
     std::unique_ptr<OrderedTrackIndexSet> emptyTrackIndexes;
     unsigned insertionPoint = isRowAxis ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
-    unsigned firstAutoRepeatTrack = insertionPoint + grid.explicitGridStart(direction);
-    unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
+    unsigned firstAutoRepeatTrack = insertionPoint + currentGrid().explicitGridStart(direction);
+    unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + currentGrid().autoRepeatTracks(direction);
 
-    if (!grid.hasGridItems() || shouldApplyInlineSizeContainment() || (shouldApplySizeContainment() && !explicitIntrinsicInnerLogicalSize(direction))) {
+    if (!currentGrid().hasGridItems() || shouldApplyInlineSizeContainment() || (shouldApplySizeContainment() && !explicitIntrinsicInnerLogicalSize(direction))) {
         emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);
     } else {
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex) {
-            GridIterator iterator(grid, direction, trackIndex);
+            GridIterator iterator(currentGrid(), direction, trackIndex);
             if (!iterator.nextGridItem()) {
                 if (!emptyTrackIndexes)
                     emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
@@ -692,7 +681,7 @@ void RenderGrid::placeItems()
     updateLogicalWidth();
 
     LayoutUnit availableSpaceForColumns = availableLogicalWidth();
-    placeItemsOnGrid(m_trackSizingAlgorithm, availableSpaceForColumns);
+    placeItemsOnGrid(availableSpaceForColumns);
 }
 
 static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& area)
@@ -711,29 +700,28 @@ static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& are
 // availableLogicalWidth() does always return a value even if we cannot resolve it like when
 // computing the intrinsic size (preferred widths). That's why we pass the responsibility to the
 // caller who does know whether the available logical width is indefinite or not.
-void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::optional<LayoutUnit> availableLogicalWidth) const
+void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth)
 {
-    Grid& grid = algorithm.mutableGrid();
     unsigned autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, availableLogicalWidth);
     unsigned autoRepeatRows = computeAutoRepeatTracksCount(ForRows, availableLogicalHeightForPercentageComputation());
     autoRepeatRows = clampAutoRepeatTracks(ForRows, autoRepeatRows);
     autoRepeatColumns = clampAutoRepeatTracks(ForColumns, autoRepeatColumns);
 
-    if (autoRepeatColumns != grid.autoRepeatTracks(ForColumns) || autoRepeatRows != grid.autoRepeatTracks(ForRows)) {
-        grid.setNeedsItemsPlacement(true);
-        grid.setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
+    if (autoRepeatColumns != currentGrid().autoRepeatTracks(ForColumns) || autoRepeatRows != currentGrid().autoRepeatTracks(ForRows)) {
+        currentGrid().setNeedsItemsPlacement(true);
+        currentGrid().setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
     }
 
-    if (!grid.needsItemsPlacement())
+    if (!currentGrid().needsItemsPlacement())
         return;
 
-    ASSERT(!grid.hasGridItems());
-    populateExplicitGridAndOrderIterator(grid);
+    ASSERT(!currentGrid().hasGridItems());
+    populateExplicitGridAndOrderIterator();
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
-    for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
-        if (grid.orderIterator().shouldSkipChild(*child))
+    for (auto* child = currentGrid().orderIterator().first(); child; child = currentGrid().orderIterator().next()) {
+        if (currentGrid().orderIterator().shouldSkipChild(*child))
             continue;
 
         // Grid items should use the grid area sizes instead of the containing block (grid container)
@@ -743,15 +731,15 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
         if (!child->hasOverridingContainingBlockContentLogicalHeight())
             child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
-        GridArea area = grid.gridItemArea(*child);
-        grid.clampAreaToSubgridIfNeeded(area);
+        GridArea area = currentGrid().gridItemArea(*child);
+        currentGrid().clampAreaToSubgridIfNeeded(area);
         if (!area.rows.isIndefinite())
-            area.rows.translate(grid.explicitGridStart(ForRows));
+            area.rows.translate(currentGrid().explicitGridStart(ForRows));
         if (!area.columns.isIndefinite())
-            area.columns.translate(grid.explicitGridStart(ForColumns));
+            area.columns.translate(currentGrid().explicitGridStart(ForColumns));
 
         if (area.rows.isIndefinite() || area.columns.isIndefinite()) {
-            grid.setGridItemArea(*child, area);
+            currentGrid().setGridItemArea(*child, area);
             bool majorAxisDirectionIsForColumns = autoPlacementMajorAxisDirection() == ForColumns;
             if ((majorAxisDirectionIsForColumns && area.columns.isIndefinite())
                 || (!majorAxisDirectionIsForColumns && area.rows.isIndefinite()))
@@ -760,31 +748,31 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
                 specifiedMajorAxisAutoGridItems.append(child);
             continue;
         }
-        insertIntoGrid(grid, *child, { area.rows, area.columns });
+        insertIntoGrid(currentGrid(), *child, { area.rows, area.columns });
     }
 
 #if ASSERT_ENABLED
-    if (grid.hasGridItems()) {
-        ASSERT(grid.numTracks(ForRows) >= GridPositionsResolver::explicitGridRowCount(*this));
-        ASSERT(grid.numTracks(ForColumns) >= GridPositionsResolver::explicitGridColumnCount(*this));
+    if (currentGrid().hasGridItems()) {
+        ASSERT(currentGrid().numTracks(ForRows) >= GridPositionsResolver::explicitGridRowCount(*this));
+        ASSERT(currentGrid().numTracks(ForColumns) >= GridPositionsResolver::explicitGridColumnCount(*this));
     }
 #endif
 
-    placeSpecifiedMajorAxisItemsOnGrid(grid, specifiedMajorAxisAutoGridItems);
-    placeAutoMajorAxisItemsOnGrid(grid, autoMajorAxisAutoGridItems);
+    placeSpecifiedMajorAxisItemsOnGrid(specifiedMajorAxisAutoGridItems);
+    placeAutoMajorAxisItemsOnGrid(autoMajorAxisAutoGridItems);
 
     // Compute collapsible tracks for auto-fit.
-    grid.setAutoRepeatEmptyColumns(computeEmptyTracksForAutoRepeat(grid, ForColumns));
-    grid.setAutoRepeatEmptyRows(computeEmptyTracksForAutoRepeat(grid, ForRows));
+    currentGrid().setAutoRepeatEmptyColumns(computeEmptyTracksForAutoRepeat(ForColumns));
+    currentGrid().setAutoRepeatEmptyRows(computeEmptyTracksForAutoRepeat(ForRows));
 
-    grid.setNeedsItemsPlacement(false);
+    currentGrid().setNeedsItemsPlacement(false);
 
 #if ASSERT_ENABLED
-    for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
-        if (grid.orderIterator().shouldSkipChild(*child))
+    for (auto* child = currentGrid().orderIterator().first(); child; child = currentGrid().orderIterator().next()) {
+        if (currentGrid().orderIterator().shouldSkipChild(*child))
             continue;
 
-        GridArea area = grid.gridItemArea(*child);
+        GridArea area = currentGrid().gridItemArea(*child);
         ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
     }
 #endif
@@ -817,9 +805,9 @@ void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algor
     }
 }
 
-void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
+void RenderGrid::populateExplicitGridAndOrderIterator()
 {
-    OrderIteratorPopulator populator(grid.orderIterator());
+    OrderIteratorPopulator populator(currentGrid().orderIterator());
     unsigned explicitRowStart = 0;
     unsigned explicitColumnStart = 0;
     unsigned maximumRowIndex = GridPositionsResolver::explicitGridRowCount(*this);
@@ -853,24 +841,24 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
             }
         }
 
-        grid.setGridItemArea(*child, { rowPositions, columnPositions });
+        currentGrid().setGridItemArea(*child, { rowPositions, columnPositions });
     }
 
-    grid.setExplicitGridStart(explicitRowStart, explicitColumnStart);
-    grid.ensureGridSize(maximumRowIndex + explicitRowStart, maximumColumnIndex + explicitColumnStart);
-    grid.setClampingForSubgrid(isSubgridRows() ? maximumRowIndex : 0, isSubgridColumns() ? maximumColumnIndex : 0);
+    currentGrid().setExplicitGridStart(explicitRowStart, explicitColumnStart);
+    currentGrid().ensureGridSize(maximumRowIndex + explicitRowStart, maximumColumnIndex + explicitColumnStart);
+    currentGrid().setClampingForSubgrid(isSubgridRows() ? maximumRowIndex : 0, isSubgridColumns() ? maximumColumnIndex : 0);
 }
 
-std::unique_ptr<GridArea> RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid& grid, const RenderBox& gridItem, GridTrackSizingDirection specifiedDirection, const GridSpan& specifiedPositions) const
+std::unique_ptr<GridArea> RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox& gridItem, GridTrackSizingDirection specifiedDirection, const GridSpan& specifiedPositions) const
 {
     GridTrackSizingDirection crossDirection = specifiedDirection == ForColumns ? ForRows : ForColumns;
-    const unsigned endOfCrossDirection = grid.numTracks(crossDirection);
+    const unsigned endOfCrossDirection = currentGrid().numTracks(crossDirection);
     unsigned crossDirectionSpanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(gridItem, crossDirection);
     GridSpan crossDirectionPositions = GridSpan::translatedDefiniteGridSpan(endOfCrossDirection, endOfCrossDirection + crossDirectionSpanSize);
     return makeUnique<GridArea>(specifiedDirection == ForColumns ? crossDirectionPositions : specifiedPositions, specifiedDirection == ForColumns ? specifiedPositions : crossDirectionPositions);
 }
 
-void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(Grid& grid, const Vector<RenderBox*>& autoGridItems) const
+void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>& autoGridItems)
 {
     bool isForColumns = autoPlacementMajorAxisDirection() == ForColumns;
     bool isGridAutoFlowDense = style().isGridAutoFlowAlgorithmDense();
@@ -881,31 +869,31 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(Grid& grid, const Vector<Ren
     HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> minorAxisCursors;
 
     for (auto& autoGridItem : autoGridItems) {
-        GridSpan majorAxisPositions = grid.gridItemSpan(*autoGridItem, autoPlacementMajorAxisDirection());
+        GridSpan majorAxisPositions = currentGrid().gridItemSpan(*autoGridItem, autoPlacementMajorAxisDirection());
         ASSERT(majorAxisPositions.isTranslatedDefinite());
-        ASSERT(grid.gridItemSpan(*autoGridItem, autoPlacementMinorAxisDirection()).isIndefinite());
+        ASSERT(currentGrid().gridItemSpan(*autoGridItem, autoPlacementMinorAxisDirection()).isIndefinite());
         unsigned minorAxisSpanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(*autoGridItem, autoPlacementMinorAxisDirection());
         unsigned majorAxisInitialPosition = majorAxisPositions.startLine();
 
-        GridIterator iterator(grid, autoPlacementMajorAxisDirection(), majorAxisPositions.startLine(), isGridAutoFlowDense ? 0 : minorAxisCursors.get(majorAxisInitialPosition));
+        GridIterator iterator(currentGrid(), autoPlacementMajorAxisDirection(), majorAxisPositions.startLine(), isGridAutoFlowDense ? 0 : minorAxisCursors.get(majorAxisInitialPosition));
         std::unique_ptr<GridArea> emptyGridArea = iterator.nextEmptyGridArea(majorAxisPositions.integerSpan(), minorAxisSpanSize);
         if (!emptyGridArea)
-            emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(grid, *autoGridItem, autoPlacementMajorAxisDirection(), majorAxisPositions);
+            emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(*autoGridItem, autoPlacementMajorAxisDirection(), majorAxisPositions);
 
-        *emptyGridArea = insertIntoGrid(grid, *autoGridItem, *emptyGridArea);
+        *emptyGridArea = insertIntoGrid(currentGrid(), *autoGridItem, *emptyGridArea);
 
         if (!isGridAutoFlowDense)
             minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.startLine() : emptyGridArea->columns.startLine());
     }
 }
 
-void RenderGrid::placeAutoMajorAxisItemsOnGrid(Grid& grid, const Vector<RenderBox*>& autoGridItems) const
+void RenderGrid::placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>& autoGridItems)
 {
     AutoPlacementCursor autoPlacementCursor = {0, 0};
     bool isGridAutoFlowDense = style().isGridAutoFlowAlgorithmDense();
 
     for (auto& autoGridItem : autoGridItems) {
-        placeAutoMajorAxisItemOnGrid(grid, *autoGridItem, autoPlacementCursor);
+        placeAutoMajorAxisItemOnGrid(*autoGridItem, autoPlacementCursor);
 
         if (isGridAutoFlowDense) {
             autoPlacementCursor.first = 0;
@@ -914,40 +902,40 @@ void RenderGrid::placeAutoMajorAxisItemsOnGrid(Grid& grid, const Vector<RenderBo
     }
 }
 
-void RenderGrid::placeAutoMajorAxisItemOnGrid(Grid& grid, RenderBox& gridItem, AutoPlacementCursor& autoPlacementCursor) const
+void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacementCursor& autoPlacementCursor)
 {
-    ASSERT(grid.gridItemSpan(gridItem, autoPlacementMajorAxisDirection()).isIndefinite());
+    ASSERT(currentGrid().gridItemSpan(gridItem, autoPlacementMajorAxisDirection()).isIndefinite());
     unsigned majorAxisSpanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(gridItem, autoPlacementMajorAxisDirection());
 
-    const unsigned endOfMajorAxis = grid.numTracks(autoPlacementMajorAxisDirection());
+    const unsigned endOfMajorAxis = currentGrid().numTracks(autoPlacementMajorAxisDirection());
     unsigned majorAxisAutoPlacementCursor = autoPlacementMajorAxisDirection() == ForColumns ? autoPlacementCursor.second : autoPlacementCursor.first;
     unsigned minorAxisAutoPlacementCursor = autoPlacementMajorAxisDirection() == ForColumns ? autoPlacementCursor.first : autoPlacementCursor.second;
 
     std::unique_ptr<GridArea> emptyGridArea;
-    GridSpan minorAxisPositions = grid.gridItemSpan(gridItem, autoPlacementMinorAxisDirection());
+    GridSpan minorAxisPositions = currentGrid().gridItemSpan(gridItem, autoPlacementMinorAxisDirection());
     if (minorAxisPositions.isTranslatedDefinite()) {
         // Move to the next track in major axis if initial position in minor axis is before auto-placement cursor.
         if (minorAxisPositions.startLine() < minorAxisAutoPlacementCursor)
             majorAxisAutoPlacementCursor++;
 
         if (majorAxisAutoPlacementCursor < endOfMajorAxis) {
-            GridIterator iterator(grid, autoPlacementMinorAxisDirection(), minorAxisPositions.startLine(), majorAxisAutoPlacementCursor);
+            GridIterator iterator(currentGrid(), autoPlacementMinorAxisDirection(), minorAxisPositions.startLine(), majorAxisAutoPlacementCursor);
             emptyGridArea = iterator.nextEmptyGridArea(minorAxisPositions.integerSpan(), majorAxisSpanSize);
         }
 
         if (!emptyGridArea)
-            emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(grid, gridItem, autoPlacementMinorAxisDirection(), minorAxisPositions);
+            emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(gridItem, autoPlacementMinorAxisDirection(), minorAxisPositions);
     } else {
         unsigned minorAxisSpanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(gridItem, autoPlacementMinorAxisDirection());
 
         for (unsigned majorAxisIndex = majorAxisAutoPlacementCursor; majorAxisIndex < endOfMajorAxis; ++majorAxisIndex) {
-            GridIterator iterator(grid, autoPlacementMajorAxisDirection(), majorAxisIndex, minorAxisAutoPlacementCursor);
+            GridIterator iterator(currentGrid(), autoPlacementMajorAxisDirection(), majorAxisIndex, minorAxisAutoPlacementCursor);
             emptyGridArea = iterator.nextEmptyGridArea(majorAxisSpanSize, minorAxisSpanSize);
 
             if (emptyGridArea) {
                 // Check that it fits in the minor axis direction, as we shouldn't grow in that direction here (it was already managed in populateExplicitGridAndOrderIterator()).
                 unsigned minorAxisFinalPositionIndex = autoPlacementMinorAxisDirection() == ForColumns ? emptyGridArea->columns.endLine() : emptyGridArea->rows.endLine();
-                const unsigned endOfMinorAxis = grid.numTracks(autoPlacementMinorAxisDirection());
+                const unsigned endOfMinorAxis = currentGrid().numTracks(autoPlacementMinorAxisDirection());
                 if (minorAxisFinalPositionIndex <= endOfMinorAxis)
                     break;
 
@@ -961,10 +949,10 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(Grid& grid, RenderBox& gridItem, A
         }
 
         if (!emptyGridArea)
-            emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(grid, gridItem, autoPlacementMinorAxisDirection(), GridSpan::translatedDefiniteGridSpan(0, minorAxisSpanSize));
+            emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(gridItem, autoPlacementMinorAxisDirection(), GridSpan::translatedDefiniteGridSpan(0, minorAxisSpanSize));
     }
 
-    *emptyGridArea = insertIntoGrid(grid, gridItem, *emptyGridArea);
+    *emptyGridArea = insertIntoGrid(currentGrid(), gridItem, *emptyGridArea);
     autoPlacementCursor.first = emptyGridArea->rows.startLine();
     autoPlacementCursor.second = emptyGridArea->columns.startLine();
 }
@@ -981,10 +969,10 @@ GridTrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const
 
 void RenderGrid::dirtyGrid()
 {
-    if (m_grid.needsItemsPlacement())
+    if (currentGrid().needsItemsPlacement())
         return;
 
-    m_grid.setNeedsItemsPlacement(true);
+    currentGrid().setNeedsItemsPlacement(true);
 }
 
 Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirection direction) const
@@ -998,8 +986,8 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     if (numPositions < 2)
         return tracks;
 
-    ASSERT(!m_grid.needsItemsPlacement());
-    bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
+    ASSERT(!currentGrid().needsItemsPlacement());
+    bool hasCollapsedTracks = currentGrid().hasAutoRepeatEmptyTracks(direction);
     LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
     tracks.reserveInitialCapacity(numPositions - 1);
     for (size_t i = 0; i < numPositions - 2; ++i)
@@ -1009,17 +997,17 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     if (!hasCollapsedTracks)
         return tracks;
 
-    size_t remainingEmptyTracks = m_grid.autoRepeatEmptyTracks(direction)->size();
+    size_t remainingEmptyTracks = currentGrid().autoRepeatEmptyTracks(direction)->size();
     size_t lastLine = tracks.size();
     gap = gridGap(direction);
     for (size_t i = 1; i < lastLine; ++i) {
-        if (m_grid.isEmptyAutoRepeatTrack(direction, i - 1))
+        if (currentGrid().isEmptyAutoRepeatTrack(direction, i - 1))
             --remainingEmptyTracks;
         else {
             // Remove the gap between consecutive non empty tracks. Remove it also just once for an
             // arbitrary number of empty tracks between two non empty ones.
             bool allRemainingTracksAreEmpty = remainingEmptyTracks == (lastLine - i);
-            if (!allRemainingTracksAreEmpty || !m_grid.isEmptyAutoRepeatTrack(direction, i))
+            if (!allRemainingTracksAreEmpty || !currentGrid().isEmptyAutoRepeatTrack(direction, i))
                 tracks[i - 1] -= gap;
         }
     }
@@ -1077,7 +1065,7 @@ void RenderGrid::layoutGridItems()
     populateGridPositionsForDirection(ForRows);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (m_grid.orderIterator().shouldSkipChild(*child)) {
+        if (currentGrid().orderIterator().shouldSkipChild(*child)) {
             if (child->isOutOfFlowPositioned())
                 prepareChildForPositionedLayout(*child);
             continue;
@@ -1154,7 +1142,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const Re
     // We need the cached value when available because Content Distribution alignment properties
     // may have some influence in the final grid area breadth.
     const auto& tracks = m_trackSizingAlgorithm.tracks(direction);
-    const auto& span = m_grid.gridItemSpan(child, direction);
+    const auto& span = currentGrid().gridItemSpan(child, direction);
     const auto& linePositions = (direction == ForColumns) ? m_columnPositions : m_rowPositions;
 
     LayoutUnit initialTrackPosition = linePositions[span.startLine()];
@@ -1178,8 +1166,8 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
     unsigned numberOfTracks = tracks.size();
     unsigned numberOfLines = numberOfTracks + 1;
     unsigned lastLine = numberOfLines - 1;
-    bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
-    size_t numberOfCollapsedTracks = hasCollapsedTracks ? m_grid.autoRepeatEmptyTracks(direction)->size() : 0;
+    bool hasCollapsedTracks = currentGrid().hasAutoRepeatEmptyTracks(direction);
+    size_t numberOfCollapsedTracks = hasCollapsedTracks ? currentGrid().autoRepeatEmptyTracks(direction)->size() : 0;
     const auto& offset = direction == ForColumns ? m_offsetBetweenColumns : m_offsetBetweenRows;
     auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
     positions.resize(numberOfLines);
@@ -1205,14 +1193,14 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
             LayoutUnit offsetAccumulator;
             LayoutUnit gapAccumulator;
             for (unsigned i = 1; i < lastLine; ++i) {
-                if (m_grid.isEmptyAutoRepeatTrack(direction, i - 1)) {
+                if (currentGrid().isEmptyAutoRepeatTrack(direction, i - 1)) {
                     --remainingEmptyTracks;
                     offsetAccumulator += offset.distributionOffset;
                 } else {
                     // Add gap between consecutive non empty tracks. Add it also just once for an
                     // arbitrary number of empty tracks between two non empty ones.
                     bool allRemainingTracksAreEmpty = remainingEmptyTracks == (lastLine - i);
-                    if (!allRemainingTracksAreEmpty || !m_grid.isEmptyAutoRepeatTrack(direction, i))
+                    if (!allRemainingTracksAreEmpty || !currentGrid().isEmptyAutoRepeatTrack(direction, i))
                         gapAccumulator += gap;
                 }
                 positions[i] += gapAccumulator - offsetAccumulator;
@@ -1443,7 +1431,7 @@ LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode di
 
 std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
-    if (isWritingModeRoot() || !m_grid.hasGridItems() || shouldApplyLayoutContainment())
+    if (isWritingModeRoot() || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return std::nullopt;
 
     // Finding the first grid item in grid order.
@@ -1465,7 +1453,7 @@ std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 
 std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
 {
-    if (isWritingModeRoot() || !m_grid.hasGridItems() || shouldApplyLayoutContainment())
+    if (isWritingModeRoot() || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return std::nullopt;
 
     auto baselineChild = getBaselineChild(ItemPosition::LastBaseline);
@@ -1486,13 +1474,13 @@ WeakPtr<RenderBox> RenderGrid::getBaselineChild(ItemPosition alignment) const
 {
     ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
     const RenderBox* baselineChild = nullptr;
-    unsigned numColumns = m_grid.numTracks(ForColumns);
-    unsigned numRows = m_grid.numTracks(ForRows);
+    unsigned numColumns = currentGrid().numTracks(ForColumns);
+    unsigned numRows = currentGrid().numTracks(ForRows);
 
     for (size_t column = 0; column < numColumns; column++) {
-        auto cell = m_grid.cell(0, column);
+        auto cell = currentGrid().cell(0, column);
         if (alignment == ItemPosition::LastBaseline)
-            cell = m_grid.cell(numRows - 1, numColumns - column - 1);
+            cell = currentGrid().cell(numRows - 1, numColumns - column - 1);
 
         for (auto& child : cell) {
             ASSERT(child.get());
@@ -1756,11 +1744,21 @@ bool RenderGrid::isSubgridOf(GridTrackSizingDirection direction, const RenderGri
     return parentGrid.isSubgridOf(parentDirection, ancestor);
 }
 
+const Grid& RenderGrid::currentGrid() const
+{
+    return m_grid.m_currentGrid;
+}
+
+Grid& RenderGrid::currentGrid()
+{
+    return m_grid.m_currentGrid;
+}
+
 LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
     ASSERT(child.isOutOfFlowPositioned());
     bool isRowAxis = direction == ForColumns;
-    int lastLine = numTracks(direction, m_grid);
+    int lastLine = numTracks(direction);
 
     int startLine, endLine;
     bool startIsAuto, endIsAuto;
@@ -1788,8 +1786,8 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
         // These vectors store line positions including gaps, but we shouldn't consider them for the edges of the grid.
         std::optional<LayoutUnit> availableSizeForGutters = availableSpaceForGutters(direction);
         if (endLine > 0 && endLine < lastLine) {
-            ASSERT(!m_grid.needsItemsPlacement());
-            end -= guttersSize(m_grid, direction, endLine - 1, 2, availableSizeForGutters);
+            ASSERT(!currentGrid().needsItemsPlacement());
+            end -= guttersSize(direction, endLine - 1, 2, availableSizeForGutters);
             end -= isRowAxis ? m_offsetBetweenColumns.distributionOffset : m_offsetBetweenRows.distributionOffset;
         }
     }
@@ -1834,7 +1832,7 @@ void RenderGrid::gridAreaPositionForOutOfFlowChild(const RenderBox& child, GridT
 void RenderGrid::gridAreaPositionForInFlowChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit& start, LayoutUnit& end) const
 {
     ASSERT(!child.isOutOfFlowPositioned());
-    const GridSpan& span = m_grid.gridItemSpan(child, direction);
+    const GridSpan& span = currentGrid().gridItemSpan(child, direction);
     // FIXME (lajava): This is a common pattern, why not defining a function like
     // positions(direction) ?
     auto& positions = direction == ForColumns ? m_columnPositions : m_rowPositions;
@@ -1846,8 +1844,8 @@ void RenderGrid::gridAreaPositionForInFlowChild(const RenderBox& child, GridTrac
     // last track as there are no more positions's elements after it, nor for
     // collapsed tracks).
     if (span.endLine() < positions.size() - 1
-        && !(m_grid.hasAutoRepeatEmptyTracks(direction)
-        && m_grid.isEmptyAutoRepeatTrack(direction, span.endLine()))) {
+        && !(currentGrid().hasAutoRepeatEmptyTracks(direction)
+        && currentGrid().isEmptyAutoRepeatTrack(direction, span.endLine()))) {
         end -= gridGap(direction) + gridItemOffset(direction);
     }
 }
@@ -2041,30 +2039,30 @@ unsigned RenderGrid::nonCollapsedTracks(GridTrackSizingDirection direction) cons
 {
     auto& tracks = m_trackSizingAlgorithm.tracks(direction);
     size_t numberOfTracks = tracks.size();
-    bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
-    size_t numberOfCollapsedTracks = hasCollapsedTracks ? m_grid.autoRepeatEmptyTracks(direction)->size() : 0;
+    bool hasCollapsedTracks = currentGrid().hasAutoRepeatEmptyTracks(direction);
+    size_t numberOfCollapsedTracks = hasCollapsedTracks ? currentGrid().autoRepeatEmptyTracks(direction)->size() : 0;
     return numberOfTracks - numberOfCollapsedTracks;
 }
 
-unsigned RenderGrid::numTracks(GridTrackSizingDirection direction, const Grid& grid) const
+unsigned RenderGrid::numTracks(GridTrackSizingDirection direction) const
 {
     // Due to limitations in our internal representation, we cannot know the number of columns from
-    // m_grid *if* there is no row (because m_grid would be empty). That's why in that case we need
+    // currentGrid *if* there is no row (because currentGrid would be empty). That's why in that case we need
     // to get it from the style. Note that we know for sure that there are't any implicit tracks,
     // because not having rows implies that there are no "normal" children (out-of-flow children are
-    // not stored in m_grid).
-    ASSERT(!grid.needsItemsPlacement());
+    // not stored in currentGrid).
+    ASSERT(!currentGrid().needsItemsPlacement());
     if (direction == ForRows)
-        return grid.numTracks(ForRows);
+        return currentGrid().numTracks(ForRows);
 
-    // FIXME: This still requires knowledge about m_grid internals.
-    return grid.numTracks(ForRows) ? grid.numTracks(ForColumns) : GridPositionsResolver::explicitGridColumnCount(*this);
+    // FIXME: This still requires knowledge about currentGrid internals.
+    return currentGrid().numTracks(ForRows) ? currentGrid().numTracks(ForColumns) : GridPositionsResolver::explicitGridColumnCount(*this);
 }
 
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
 {
-    ASSERT(!m_grid.needsItemsPlacement());
-    for (RenderBox* child = m_grid.orderIterator().first(); child; child = m_grid.orderIterator().next())
+    ASSERT(!currentGrid().needsItemsPlacement());
+    for (RenderBox* child = currentGrid().orderIterator().first(); child; child = currentGrid().orderIterator().next())
         paintChild(*child, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
 }
 
@@ -2118,12 +2116,12 @@ bool RenderGrid::hasAutoSizeInRowAxis(const RenderBox& child) const
 bool RenderGrid::computeGridPositionsForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction, int& startLine, bool& startIsAuto, int& endLine, bool& endIsAuto) const
 {
     ASSERT(child.isOutOfFlowPositioned());
-    int lastLine = numTracks(direction, m_grid);
+    int lastLine = numTracks(direction);
     GridSpan span = GridPositionsResolver::resolveGridPositionsFromStyle(*this, child, direction);
     if (span.isIndefinite())
         return false;
 
-    unsigned explicitStart = m_grid.explicitGridStart(direction);
+    unsigned explicitStart = currentGrid().explicitGridStart(direction);
     startLine = span.untranslatedStartLine() + explicitStart;
     endLine = span.untranslatedEndLine() + explicitStart;
 
@@ -2137,7 +2135,7 @@ bool RenderGrid::computeGridPositionsForOutOfFlowChild(const RenderBox& child, G
 
 GridSpan RenderGrid::gridSpanForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction) const
 {
-    int lastLine = numTracks(direction, m_grid);
+    int lastLine = numTracks(direction);
     int startLine, endLine;
     bool startIsAuto, endIsAuto;
     if (!computeGridPositionsForOutOfFlowChild(child, direction, startLine, startIsAuto, endLine, endIsAuto))
@@ -2183,6 +2181,15 @@ bool RenderGrid::establishesIndependentFormattingContext() const
             return true;
     }
     return RenderElement::establishesIndependentFormattingContext();
+}
+
+RenderGrid::GridWrapper::GridWrapper(RenderGrid& renderGrid)
+    : m_layoutGrid(renderGrid)
+{ }
+
+void RenderGrid::GridWrapper::resetCurrentGrid() const
+{
+    m_currentGrid = std::ref(const_cast<Grid&>(m_layoutGrid));
 }
 
 } // namespace WebCore
