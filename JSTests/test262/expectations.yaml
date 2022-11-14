@@ -2709,12 +2709,6 @@ test/language/statements/for-of/dstr/array-rest-iter-thrw-close.js:
 test/language/statements/for-of/dstr/array-rest-lref-err.js:
   default: 'Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
-test/language/statements/for-of/dstr/obj-id-put-const.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/for-of/dstr/obj-id-put-let.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/for/dstr/const-ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
