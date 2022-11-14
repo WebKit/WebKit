@@ -1222,7 +1222,7 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
         std::optional<NowPlayingInfoArtwork> artwork;
         if (sessionMetadata->artworkImage()) {
             ASSERT(sessionMetadata->artworkImage()->data(), "An image must always have associated data");
-            artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage()->data() };
+            artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage() };
         }
         return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
     }

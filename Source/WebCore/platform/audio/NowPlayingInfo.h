@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "Image.h"
 #include "MediaUniqueIdentifier.h"
-#include "SharedBuffer.h"
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 struct NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<FragmentedSharedBuffer> imageData;
+    RefPtr<Image> image;
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {
@@ -54,24 +54,20 @@ struct NowPlayingInfoArtwork {
 
 template<class Encoder> inline void NowPlayingInfoArtwork::encode(Encoder& encoder) const
 {
-    encoder << src << mimeType << imageData;
+    // Encoder of RefPtr<Image> will automatically decode the image and convert it to a BitmapImage/ShareableBitmap.
+    encoder << src << mimeType << image;
 }
 
 template<class Decoder> inline std::optional<NowPlayingInfoArtwork> NowPlayingInfoArtwork::decode(Decoder& decoder)
 {
-    String src;
-    if (!decoder.decode(src))
-        return { };
+    auto src = decoder.template decode<String>();
+    auto mimeType = decoder.template decode<String>();
+    auto image = decoder.template decode<RefPtr<Image>>();
 
-    String mimeType;
-    if (!decoder.decode(mimeType))
-        return { };
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
 
-    RefPtr<FragmentedSharedBuffer> imageData;
-    if (!decoder.decode(imageData))
-        return { };
-
-    return NowPlayingInfoArtwork { WTFMove(src), WTFMove(mimeType), WTFMove(imageData) };
+    return { { WTFMove(*src), WTFMove(*mimeType), WTFMove(*image) } };
 }
 
 struct NowPlayingInfo {
