@@ -548,7 +548,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         // 3. If the element has a running transition or completed transition for the property, and there is not a matching transition-property
         //    value, then implementations must cancel the running transition or remove the completed transition from the set of completed transitions.
         if (hasRunningTransition)
-            styleable.ensureRunningTransitionsByProperty().take(property)->cancel();
+            styleable.ensureRunningTransitionsByProperty().take(property)->cancelFromStyle();
         else
             styleable.ensureCompletedTransitionsByProperty().remove(property);
     }
