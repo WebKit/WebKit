@@ -1,1 +1,0 @@
-[warning -w]
