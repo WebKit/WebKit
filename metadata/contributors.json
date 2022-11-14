@@ -1575,6 +1575,17 @@
    },
    {
       "emails" : [
+         "cgibb2@apple.com"
+      ],
+      "github" : "chgibb-apple",
+      "name" : "Chris Gibb",
+      "nicks" : [
+         "chgibb-apple"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "ctguil@chromium.org",
          "chris.guillory@google.com"
       ],
