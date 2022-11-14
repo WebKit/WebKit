@@ -52,8 +52,6 @@ public:
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
 
 private:
-    enum class UsePrefixedScheme : bool { No, Yes };
-
     LegacyWebArchive() = default;
 
     bool shouldLoadFromArchiveOnly() const final { return false; }
@@ -63,16 +61,15 @@ private:
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&, const UsePrefixedScheme);
     static RefPtr<LegacyWebArchive> create(const String& markupString, Frame&, const Vector<Node*>& nodes, Function<bool(Frame&)>&& frameFilter);
-    static RefPtr<ArchiveResource> createResource(CFDictionaryRef, const UsePrefixedScheme);
+    static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
     static RetainPtr<CFDataRef> createPropertyListRepresentation(const ResourceResponse&);
     static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(Archive&);
     static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(ArchiveResource*, MainResourceStatus);
 
-    bool extract(CFDictionaryRef, const UsePrefixedScheme);
+    bool extract(CFDictionaryRef);
 };
 
 } // namespace WebCore
