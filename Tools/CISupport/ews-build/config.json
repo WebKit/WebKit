@@ -83,7 +83,7 @@
     { "name": "ews166", "platform": "*" },
     { "name": "ews167", "platform": "*" },
     { "name": "ews168", "platform": "*" },
-    { "name": "ews170", "platform": "tvos-simulator-15" },
+    { "name": "ews170", "platform": "tvos-simulator-16" },
     { "name": "ews171", "platform": "mac-bigsur" },
     { "name": "ews172", "platform": "mac-bigsur" },
     { "name": "ews173", "platform": "mac-bigsur" },
@@ -225,14 +225,14 @@
       "workernames": ["ews164", "ews165", "ews166"]
     },
     {
-      "name": "tvOS-15-Build-EWS", "shortname": "tv", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-15",
+      "name": "tvOS-16-Build-EWS", "shortname": "tv", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-16",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews167", "ews168"]
     },
     {
-      "name": "tvOS-15-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-15",
+      "name": "tvOS-16-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-16",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170"]
     },
@@ -360,7 +360,7 @@
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
             "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
-            "Services-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-9-Build-EWS",
+            "Services-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
     },
@@ -374,7 +374,7 @@
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
             "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
-            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-9-Build-EWS",
+            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
     },

@@ -317,7 +317,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'tvOS-15-Build-EWS': [
+        'tvOS-16-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -331,7 +331,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'tvOS-15-Simulator-Build-EWS': [
+        'tvOS-16-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
