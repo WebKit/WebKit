@@ -163,6 +163,7 @@ public:
     const HashSet<AtomString>& animatedCustomProperties();
     const HashSet<CSSPropertyID>& inheritedProperties() const { return m_inheritedProperties; }
     bool animatesProperty(CSSPropertyID) const;
+    bool animatesDirectionAwareProperty() const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;

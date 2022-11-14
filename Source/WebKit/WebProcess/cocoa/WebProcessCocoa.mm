@@ -113,6 +113,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/spi/cocoa/OSLogSPI.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -169,6 +170,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/VideoToolboxAdditions.h>
+#endif
+
+#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
+#include <WebKitAdditions/InternalBuildAdditions.h>
+#else
+static bool isInternalBuild()
+{
+    return false;
+}
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -242,20 +252,27 @@ static void softlinkDataDetectorsFrameworks()
 #endif // ENABLE(DATA_DETECTION)
 }
 
-static void initializeXPCConnectionToLogd()
+static void initializeLogd()
 {
+    if (isInternalBuild())
+        os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG | OS_TRACE_MODE_STREAM_LIVE);
+    else
+        os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
+
     // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
     // This is needed to block launchd after the WebContent process has launched, since access to launchd is
     // required when opening new XPC connections.
     char stringWithSpaces[1024];
     memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
     stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
-    RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess %s", stringWithSpaces);
+    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    initializeXPCConnectionToLogd();
+    WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
+
+    initializeLogd();
     
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 
