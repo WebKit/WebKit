@@ -41,6 +41,9 @@
     }
 
     window.addEventListener("message", async event => {
+        // Test driver can send messages too...
+        if (typeof event.data !== "string") return;
+
         var msg = JSON.parse(event.data);
 
         if (msg.type == 'child-one-loaded') {
