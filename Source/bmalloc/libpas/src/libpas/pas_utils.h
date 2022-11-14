@@ -534,7 +534,9 @@ static inline void pas_atomic_store_uint8(uint8_t* ptr, uint8_t value)
         /* clobbers */ : "memory"
     );
 #elif PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     __c11_atomic_store((_Atomic uint8_t*)ptr, value, __ATOMIC_SEQ_CST);
+PAS_IGNORE_WARNINGS_END
 #else
     __atomic_store_n(ptr, value, __ATOMIC_SEQ_CST);
 #endif
@@ -913,7 +915,9 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
     );
     return cond;
 #elif PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     return __c11_atomic_compare_exchange_weak((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+PAS_IGNORE_WARNINGS_END
 #else
     return __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 #endif
@@ -951,7 +955,9 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
     );
     return pas_pair_create(low, high);
 #elif PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     __c11_atomic_compare_exchange_strong((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+PAS_IGNORE_WARNINGS_END
     return old_value;
 #else
     __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
@@ -963,7 +969,9 @@ static inline pas_pair pas_atomic_load_pair_relaxed(void* raw_ptr)
 {
 #if PAS_COMPILER(CLANG)
     /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     return __c11_atomic_load((_Atomic pas_pair*)raw_ptr, __ATOMIC_RELAXED);
+PAS_IGNORE_WARNINGS_END
 #else
     return __atomic_load_n((pas_pair*)raw_ptr, __ATOMIC_RELAXED);
 #endif
@@ -986,7 +994,9 @@ static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
         /* clobbers */ : "cc", "memory"
     );
 #elif PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
+PAS_IGNORE_WARNINGS_END
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
 #endif
@@ -996,7 +1006,9 @@ static inline void pas_atomic_store_pair_relaxed(void* raw_ptr, pas_pair value)
 {
     /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
 #if PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
+PAS_IGNORE_WARNINGS_END
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
 #endif
