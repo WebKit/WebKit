@@ -144,10 +144,18 @@
 {
     RELEASE_ASSERT(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("setSession: (existing session = %p, new session = %p)", _session.get(), session.get());
-    _session = WTFMove(session);
+    if (_session.get() == session.get())
+        return;
 
     if (_session)
+        _session->setSOAuthorizationDelegate(nil);
+
+    _session = WTFMove(session);
+
+    if (_session) {
+        _session->setSOAuthorizationDelegate(self);
         _session->shouldStart();
+    }
 }
 @end
 

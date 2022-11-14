@@ -64,6 +64,8 @@ public:
 
     virtual ~SOAuthorizationSession();
 
+    void setSOAuthorizationDelegate(WKSOAuthorizationDelegate *);
+
     // Probably not start immediately.
     void shouldStart();
 
@@ -88,7 +90,7 @@ protected:
         Completed
     };
 
-    SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction);
+    SOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction);
 
     void start();
     WebPageProxy* page() const { return m_page.get(); }
