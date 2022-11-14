@@ -34,8 +34,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     PreconnectTo(std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
     IsResourceLoadFinished(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (bool isFinished)
 
-    StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName)
-    ConvertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+    StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName)
+    ConvertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 
     CookiesForDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ShouldAskITP shouldAskITP, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (String cookieString, bool didAccessSecureCookies) Synchronous
     SetCookiesFromDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::ShouldAskITP shouldAskITP, String cookieString, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)

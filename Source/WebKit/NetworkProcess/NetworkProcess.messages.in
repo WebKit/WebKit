@@ -48,7 +48,7 @@ messages -> NetworkProcess LegacyReceiver {
     RenameOriginInWebsiteData(PAL::SessionID sessionID, URL oldDomain, URL newDomain, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> ()
     WebsiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, URL origin, URL topOrigin, enum:uint32_t WebKit::WebsiteDataType websiteDataType) -> (String directory)
 
-    DownloadRequest(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedFilename)
+    DownloadRequest(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedFilename)
     ResumeDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle, enum:bool WebKit::CallDownloadDidStart callDownloadDidStart)
     CancelDownload(WebKit::DownloadID downloadID) -> (IPC::DataReference resumeData)
 #if PLATFORM(COCOA)
@@ -75,7 +75,7 @@ messages -> NetworkProcess LegacyReceiver {
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume(bool forForegroundActivity)
 
-    PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, enum:bool WebKit::LastNavigationWasAppInitiated lastNavigationWasAppInitiated);
+    PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, enum:bool WebKit::LastNavigationWasAppInitiated lastNavigationWasAppInitiated);
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
