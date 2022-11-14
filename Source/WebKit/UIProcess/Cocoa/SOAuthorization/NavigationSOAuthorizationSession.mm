@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
 
 namespace WebKit {
 
-NavigationSOAuthorizationSession::NavigationSOAuthorizationSession(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action, Callback&& completionHandler)
-    : SOAuthorizationSession(soAuthorization, WTFMove(navigationAction), page, action)
+NavigationSOAuthorizationSession::NavigationSOAuthorizationSession(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action, Callback&& completionHandler)
+    : SOAuthorizationSession(WTFMove(navigationAction), page, action)
     , m_callback(WTFMove(completionHandler))
 {
 }
