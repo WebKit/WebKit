@@ -936,6 +936,21 @@ bool KeyframeEffect::animatesProperty(CSSPropertyID property) const
     return false;
 }
 
+bool KeyframeEffect::animatesDirectionAwareProperty() const
+{
+    if (!m_blendingKeyframes.isEmpty())
+        return m_blendingKeyframes.containsDirectionAwareProperty();
+
+    for (auto& keyframe : m_parsedKeyframes) {
+        for (auto property : keyframe.styleStrings.keys()) {
+            if (CSSProperty::isDirectionAwareProperty(property))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 bool KeyframeEffect::forceLayoutIfNeeded()
 {
     if (!m_needsForcedLayout || !m_target)

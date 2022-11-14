@@ -149,6 +149,7 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
 
     for (const auto& effect : sortedEffects()) {
         ASSERT(effect->animation());
+        auto* animation = effect->animation();
 
         auto inheritedPropertyChanged = [&]() {
             if (previousLastStyleChangeEventStyle) {
@@ -160,10 +161,11 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             return false;
         };
 
-        if (propertyAffectingLogicalPropertiesChanged || fontSizeChanged || inheritedPropertyChanged())
+        auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
+        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged())
             effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
-        effect->animation()->resolve(targetStyle, resolutionContext);
+        animation->resolve(targetStyle, resolutionContext);
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
             impact.add(AnimationImpact::RequiresRecomposite);
@@ -173,6 +175,12 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
 
         if (transformRelatedPropertyChanged && effect->isRunningAcceleratedTransformRelatedAnimation())
             effect->transformRelatedPropertyDidChange();
+
+        // If one of the effect's resolved property changed it could affect whether that effect's animation is removed.
+        if (logicalPropertyDidChange) {
+            ASSERT(animation->timeline());
+            animation->timeline()->animationTimingDidChange(*animation);
+        }
     }
 
     return impact;

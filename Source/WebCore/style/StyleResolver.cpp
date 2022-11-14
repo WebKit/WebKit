@@ -281,13 +281,16 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     bool hasRevert = false;
     for (unsigned i = 0; i < propertyCount; ++i) {
         auto propertyReference = keyframe.properties().propertyAt(i);
-        auto property = CSSProperty::resolveDirectionAwareProperty(propertyReference.id(), elementStyle.direction(), elementStyle.writingMode());
+        auto unresolvedProperty = propertyReference.id();
+        auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
         // The animation-composition and animation-timing-function within keyframes are special
         // because they are not animated; they just describe the composite operation and timing
         // function between this keyframe and the next.
-        bool isAnimatableValue = property != CSSPropertyAnimationTimingFunction && property != CSSPropertyAnimationComposition;
+        bool isAnimatableValue = resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition;
         if (isAnimatableValue)
-            keyframeValue.addProperty(property);
+            keyframeValue.addProperty(resolvedProperty);
+        if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
+            keyframeValue.setContainsDirectionAwareProperty(true);
         if (auto* value = propertyReference.value()) {
             if (isAnimatableValue && value->isCustomPropertyValue())
                 keyframeValue.addCustomProperty(downcast<CSSCustomPropertyValue>(*value).name());

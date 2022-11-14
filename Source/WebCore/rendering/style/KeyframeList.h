@@ -69,6 +69,9 @@ public:
     std::optional<CompositeOperation> compositeOperation() const { return m_compositeOperation; }
     void setCompositeOperation(std::optional<CompositeOperation> op) { m_compositeOperation = op; }
 
+    bool containsDirectionAwareProperty() const { return m_containsDirectionAwareProperty; }
+    void setContainsDirectionAwareProperty(bool containsDirectionAwareProperty) { m_containsDirectionAwareProperty = containsDirectionAwareProperty; }
+
 private:
     double m_key;
     HashSet<CSSPropertyID> m_properties; // The properties specified in this keyframe.
@@ -76,6 +79,7 @@ private:
     std::unique_ptr<RenderStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
     std::optional<CompositeOperation> m_compositeOperation;
+    bool m_containsDirectionAwareProperty { false };
 };
 
 class KeyframeList {
@@ -97,6 +101,7 @@ public:
     bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
     const HashSet<CSSPropertyID>& properties() const { return m_properties; }
     bool containsAnimatableProperty() const;
+    bool containsDirectionAwareProperty() const;
 
     void addCustomProperty(const AtomString& customProperty) { m_customProperties.add(customProperty); }
     bool containsCustomProperty(const AtomString& customProperty) const { return m_customProperties.contains(customProperty); }
