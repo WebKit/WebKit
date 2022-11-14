@@ -104,8 +104,11 @@ promise_test(async t => {
   // snap area, we should advance to the next.
   await keyPress(scroller, "ArrowDown");
   await waitForAnimationEnd(scrollTop);
+
+  // Position of the second target. Probably need a better way of calculating it,
+  // as we have to hardcode the margin
   assert_equals(scroller.scrollTop,
-                next.clientTop,
+                target.clientHeight + 10,
                 'Advance to next snap-area');
 
 }, "Keyboard scrolling with vertical snap-area overflow");
