@@ -42,14 +42,14 @@ public:
     using SOAuthorizationSession::WeakValueType;
     using SOAuthorizationSession::WeakPtrImplType;
 
-    static Ref<SOAuthorizationSession> create(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
+    static Ref<SOAuthorizationSession> create(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
 
     ~SubFrameSOAuthorizationSession();
 
 private:
     using Supplement = std::variant<Vector<uint8_t>, String>;
 
-    SubFrameSOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
+    SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
 
     // SOAuthorizationSession
     void fallBackToWebPathInternal() final;

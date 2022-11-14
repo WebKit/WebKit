@@ -51,7 +51,7 @@ public:
 protected:
     using Callback = CompletionHandler<void(bool)>;
 
-    NavigationSOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction, Callback&&);
+    NavigationSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction, Callback&&);
 
     void invokeCallback(bool intercepted) { m_callback(intercepted); }
 
