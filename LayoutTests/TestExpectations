@@ -364,7 +364,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandbox
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-worker-timing-frame.tentative.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-worker-fetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/nested-blob-url-workers.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck-cors-import.https.html [ Skip ]
 
 # This test is a flaky timeout.

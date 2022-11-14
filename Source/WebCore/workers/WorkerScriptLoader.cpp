@@ -41,17 +41,22 @@
 #include "TextResourceDecoder.h"
 #include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerSWClientConnection.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-static HashMap<ScriptExecutionContextIdentifier, WorkerScriptLoader*>& scriptExecutionContextIdentifierToWorkerScriptLoaderMap()
+#if ENABLE(SERVICE_WORKER)
+static Lock workerScriptLoaderControlledCallbackMapLock;
+static void accessWorkerScriptLoaderMap(CompletionHandler<void(HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)
 {
-    static MainThreadNeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WorkerScriptLoader*>> map;
-    return map.get();
+    Locker locker { workerScriptLoaderControlledCallbackMapLock };
+    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>> map;
+    callback(map.get());
 }
+#endif
 
 WorkerScriptLoader::WorkerScriptLoader()
     : m_script(ScriptBuffer::empty())
@@ -60,14 +65,9 @@ WorkerScriptLoader::WorkerScriptLoader()
 
 WorkerScriptLoader::~WorkerScriptLoader()
 {
-    if (m_didAddToWorkerScriptLoaderMap)
-        scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
-
 #if ENABLE(SERVICE_WORKER)
-    if (m_activeServiceWorkerData) {
-        if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
-            serviceWorkerConnection->unregisterServiceWorkerClient(m_clientIdentifier);
-    }
+    if (m_didAddToWorkerScriptLoaderMap)
+        accessWorkerScriptLoaderMap([clientIdentifier = m_clientIdentifier](auto& map) { map.remove(clientIdentifier); });
 #endif
 }
 
@@ -158,15 +158,20 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     // A service worker job can be executed from a worker context or a document context.
     options.serviceWorkersMode = serviceWorkerMode;
 #if ENABLE(SERVICE_WORKER)
-    if ((m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker) && is<Document>(scriptExecutionContext) && downcast<Document>(scriptExecutionContext).settings().serviceWorkersEnabled()) {
+    if (scriptExecutionContext.settingsValues().serviceWorkersEnabled && clientIdentifier) {
+        ASSERT(m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker);
         m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
-        ASSERT(clientIdentifier);
         options.clientIdentifier = clientIdentifier;
-        // In case of blob URLs, we reuse the document controlling service worker.
+        m_serviceWorkerDataManager = ServiceWorkerDataManager::create(clientIdentifier);
+        m_context = scriptExecutionContext;
+
+        // In case of blob URLs, we reuse the context controlling service worker.
         if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
         else {
-            scriptExecutionContextIdentifierToWorkerScriptLoaderMap().add(m_clientIdentifier, this);
+            accessWorkerScriptLoaderMap([this](auto& map) mutable {
+                map.add(m_clientIdentifier, *m_serviceWorkerDataManager);
+            });
             m_didAddToWorkerScriptLoaderMap = true;
         }
     } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
@@ -253,9 +258,10 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
     m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
 
 #if ENABLE(SERVICE_WORKER)
-    if (m_topOriginForServiceWorkerRegistration && response.source() == ResourceResponse::Source::MemoryCache) {
+    if (m_topOriginForServiceWorkerRegistration && response.source() == ResourceResponse::Source::MemoryCache && m_context) {
         m_isMatchingServiceWorkerRegistration = true;
-        ServiceWorkerProvider::singleton().serviceWorkerConnection().matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, identifier](auto&& registrationData) mutable {
+        auto& swConnection = is<WorkerGlobalScope>(m_context) ? static_cast<SWClientConnection&>(downcast<WorkerGlobalScope>(*m_context).swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        swConnection.matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, identifier](auto&& registrationData) mutable {
             m_isMatchingServiceWorkerRegistration = false;
             if (registrationData && registrationData->activeWorker)
                 setControllingServiceWorker(WTFMove(*registrationData->activeWorker));
@@ -356,20 +362,49 @@ WorkerFetchResult WorkerScriptLoader::fetchResult() const
     return { script(), responseURL(), certificateInfo(), contentSecurityPolicy(), crossOriginEmbedderPolicy(), referrerPolicy(), { } };
 }
 
-WorkerScriptLoader* WorkerScriptLoader::fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier identifier)
-{
-    return scriptExecutionContextIdentifierToWorkerScriptLoaderMap().get(identifier);
-}
-
 #if ENABLE(SERVICE_WORKER)
-bool WorkerScriptLoader::setControllingServiceWorker(ServiceWorkerData&& activeServiceWorkerData)
+std::optional<ServiceWorkerData> WorkerScriptLoader::takeServiceWorkerData()
 {
-    if (!m_client)
-        return false;
-
-    m_activeServiceWorkerData = WTFMove(activeServiceWorkerData);
-    return true;
+    if (!m_serviceWorkerDataManager)
+        return { };
+    return m_serviceWorkerDataManager->takeData();
 }
+
+RefPtr<WorkerScriptLoader::ServiceWorkerDataManager> WorkerScriptLoader::serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier identifier)
+{
+    RefPtr<ServiceWorkerDataManager> result;
+    accessWorkerScriptLoaderMap([identifier, &result](auto& map) {
+        result = map.get(identifier);
+    });
+    return result;
+}
+
+void WorkerScriptLoader::setControllingServiceWorker(ServiceWorkerData&& activeServiceWorkerData)
+{
+    m_serviceWorkerDataManager->setData(WTFMove(activeServiceWorkerData));
+}
+
+WorkerScriptLoader::ServiceWorkerDataManager::~ServiceWorkerDataManager()
+{
+    if (!m_activeServiceWorkerData)
+        return;
+    if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
+        serviceWorkerConnection->unregisterServiceWorkerClient(m_clientIdentifier);
+}
+
+void WorkerScriptLoader::ServiceWorkerDataManager::setData(ServiceWorkerData&& data)
+{
+    Locker lock(m_activeServiceWorkerDataLock);
+    m_activeServiceWorkerData = WTFMove(data).isolatedCopy();
+}
+
+std::optional<ServiceWorkerData> WorkerScriptLoader::ServiceWorkerDataManager::takeData()
+{
+    Locker lock(m_activeServiceWorkerDataLock);
+    std::optional<ServiceWorkerData> data = std::exchange(data, m_activeServiceWorkerData);
+    return data;
+}
+
 #endif
 
 } // namespace WebCore

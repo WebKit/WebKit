@@ -96,11 +96,29 @@ public:
 
     WEBCORE_EXPORT static ResourceError validateWorkerResponse(const ResourceResponse&, Source, FetchOptions::Destination);
 
-    WEBCORE_EXPORT static WorkerScriptLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
-
 #if ENABLE(SERVICE_WORKER)
-    WEBCORE_EXPORT bool setControllingServiceWorker(ServiceWorkerData&&);
-    std::optional<ServiceWorkerData> takeServiceWorkerData() { return std::exchange(m_activeServiceWorkerData, { }); }
+    class ServiceWorkerDataManager : public ThreadSafeRefCounted<ServiceWorkerDataManager, WTF::DestructionThread::Main> {
+    public:
+        static Ref<ServiceWorkerDataManager> create(ScriptExecutionContextIdentifier identifier) { return adoptRef(*new ServiceWorkerDataManager(identifier)); }
+        WEBCORE_EXPORT ~ServiceWorkerDataManager();
+
+        WEBCORE_EXPORT void setData(ServiceWorkerData&&);
+        std::optional<ServiceWorkerData> takeData();
+
+    private:
+        explicit ServiceWorkerDataManager(ScriptExecutionContextIdentifier identifier)
+            : m_clientIdentifier(identifier)
+        {
+        }
+
+        ScriptExecutionContextIdentifier m_clientIdentifier;
+        Lock m_activeServiceWorkerDataLock;
+        std::optional<ServiceWorkerData> m_activeServiceWorkerData WTF_GUARDED_BY_LOCK(m_activeServiceWorkerDataLock);
+    };
+
+    void setControllingServiceWorker(ServiceWorkerData&&);
+    std::optional<ServiceWorkerData> takeServiceWorkerData();
+    WEBCORE_EXPORT static RefPtr<ServiceWorkerDataManager> serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier);
 #endif
 
     ScriptExecutionContextIdentifier clientIdentifier() const { return m_clientIdentifier; }
@@ -134,15 +152,16 @@ private:
     bool m_finishing { false };
     bool m_isRedirected { false };
     bool m_isCOEPEnabled { false };
-    bool m_didAddToWorkerScriptLoaderMap { false };
     ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceResponse::Tainting m_responseTainting { ResourceResponse::Tainting::Basic };
     ResourceError m_error;
     ScriptExecutionContextIdentifier m_clientIdentifier;
 #if ENABLE(SERVICE_WORKER)
+    bool m_didAddToWorkerScriptLoaderMap { false };
     bool m_isMatchingServiceWorkerRegistration { false };
     std::optional<SecurityOriginData> m_topOriginForServiceWorkerRegistration;
-    std::optional<ServiceWorkerData> m_activeServiceWorkerData;
+    RefPtr<ServiceWorkerDataManager> m_serviceWorkerDataManager;
+    WeakPtr<ScriptExecutionContext> m_context;
 #endif
     String m_userAgentForSharedWorker;
 };
