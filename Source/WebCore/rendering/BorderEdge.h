@@ -76,10 +76,9 @@ inline bool includesEdge(OptionSet<BoxSideFlag> flags, BoxSide side) { return fl
 
 inline bool includesAdjacentEdges(OptionSet<BoxSideFlag> flags)
 {
-    return flags.containsAll({ BoxSideFlag::Top, BoxSideFlag::Right })
-        || flags.containsAll({ BoxSideFlag::Right, BoxSideFlag::Bottom })
-        || flags.containsAll({ BoxSideFlag::Bottom, BoxSideFlag::Left })
-        || flags.containsAll({ BoxSideFlag::Left, BoxSideFlag::Top });
+    // The set includes adjacent edges if and only if it contains at least one horizontal and one vertical edge.
+    return flags.containsAny({ BoxSideFlag::Top, BoxSideFlag::Bottom })
+        && flags.containsAny({ BoxSideFlag::Left, BoxSideFlag::Right });
 }
 
 } // namespace WebCore
