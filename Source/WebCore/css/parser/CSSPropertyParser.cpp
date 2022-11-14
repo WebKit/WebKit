@@ -5324,6 +5324,22 @@ bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID propId)
 
 bool CSSPropertyParser::consumeFont(bool important)
 {
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(m_range.peek().id())) {
+        auto systemFont = m_range.consumeIncludingWhitespace().id();
+        if (!m_range.atEnd())
+            return false;
+
+        // We can't store properties (weight, size, etc.) of the system font here,
+        // since those values can change (e.g. accessibility font sizes, or accessibility bold).
+        // Parsing (correctly) doesn't re-run in response to updateStyleAfterChangeInEnvironment().
+        // Instead, we store sentinel values, later replaced by environment-sensitive values
+        // inside Style::BuilderCustom and Style::BuilderConverter.
+        for (auto property : fontShorthand())
+            addProperty(property, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(systemFont), important, true);
+
+        return true;
+    }
+
     auto range = m_range;
 
     RefPtr<CSSValue> fontStyle;
@@ -5334,80 +5350,54 @@ bool CSSPropertyParser::consumeFont(bool important)
     RefPtr<CSSValue> lineHeight;
     RefPtr<CSSValue> fontFamily;
 
-    if (CSSPropertyParserHelpers::isSystemFontShorthand(range.peek().id())) {
-        auto systemFont = range.consumeIncludingWhitespace().id();
+    // Optional font-style, font-variant, font-stretch and font-weight, in any order.
+    for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
+        if (consumeIdent<CSSValueNormal>(range))
+            continue;
+        if (!fontStyle && (fontStyle = consumeFontStyle(range, m_context.mode, CSSValuePool::singleton())))
+            continue;
+        if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueSmallCaps>(range)))
+            continue;
+        if (!fontWeight && (fontWeight = consumeFontWeight(range)))
+            continue;
+        if (!fontStretch && (fontStretch = consumeFontStretchKeywordValue(range, CSSValuePool::singleton())))
+            continue;
+        break;
+    }
 
-        // We can't store properties (weight, size, etc.) of the system font here,
-        // since those values can change (e.g. accessibility font sizes, or accessibility bold).
-        // Parsing (correctly) doesn't re-run in response to updateStyleAfterChangeInEnvironment().
-        // Instead, we store sentinel values, later replaced by environment-sensitive values
-        // inside Style::BuilderCustom and Style::BuilderConverter.
+    if (range.atEnd())
+        return false;
 
-        auto set = [&] (RefPtr<CSSValue>& value) {
-            value = CSSValuePool::singleton().createIdentifierValue(systemFont);
-        };
+    fontSize = consumeFontSize(range, m_context.mode);
+    if (!fontSize || range.atEnd())
+        return false;
 
-        set(fontStyle);
-        set(fontVariantCaps);
-        set(fontWeight);
-        set(fontStretch);
-        set(fontSize);
-        set(lineHeight);
-        set(fontFamily);
-    } else {
-        // Optional font-style, font-variant, font-stretch and font-weight, in any order.
-        for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
-            if (consumeIdent<CSSValueNormal>(range))
-                continue;
-            if (!fontStyle && (fontStyle = consumeFontStyle(range, m_context.mode, CSSValuePool::singleton())))
-                continue;
-            if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueSmallCaps>(range)))
-                continue;
-            if (!fontWeight && (fontWeight = consumeFontWeight(range)))
-                continue;
-            if (!fontStretch && (fontStretch = consumeFontStretchKeywordValue(range, CSSValuePool::singleton())))
-                continue;
-            break;
+    if (consumeSlashIncludingWhitespace(range)) {
+        if (!consumeIdent<CSSValueNormal>(range)) {
+            lineHeight = consumeLineHeight(range, m_context.mode);
+            if (!lineHeight)
+                return false;
         }
-
         if (range.atEnd())
-            return false;
-
-        fontSize = consumeFontSize(range, m_context.mode);
-        if (!fontSize || range.atEnd())
-            return false;
-
-        if (consumeSlashIncludingWhitespace(range)) {
-            if (!consumeIdent<CSSValueNormal>(range)) {
-                lineHeight = consumeLineHeight(range, m_context.mode);
-                if (!lineHeight)
-                    return false;
-            }
-        }
-
-        if (range.atEnd())
-            return false;
-
-        fontFamily = consumeFontFamily(range);
-        if (!fontFamily)
             return false;
     }
 
-    if (!range.atEnd())
+    fontFamily = consumeFontFamily(range);
+    if (!fontFamily || !range.atEnd())
         return false;
 
-    auto reset = [&] (CSSPropertyID property) {
-        addProperty(property, CSSPropertyFont, CSSValuePool::singleton().createImplicitInitialValue(), important, true);
+    auto reset = [&] (CSSPropertyID property, CSSValueID initialValue) {
+        ASSERT(initialValue != CSSValueInvalid);
+        addProperty(property, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(initialValue), important, true);
     };
     auto add = [&] (CSSPropertyID property, RefPtr<CSSValue>& value) {
         if (value)
             addProperty(property, CSSPropertyFont, value.releaseNonNull(), important);
         else
-            reset(property);
+            reset(property, CSSValueNormal);
     };
 
-    // This should be in the same order as the list of shorthands in CSSProperties.json.
-    // FIXME: We could find a way to compile time assert this, or control order of properties another way.
+    // This must be in the same order as the list of shorthands in CSSProperties.json.
     add(CSSPropertyFontStyle, fontStyle);
     add(CSSPropertyFontVariantCaps, fontVariantCaps);
     add(CSSPropertyFontWeight, fontWeight);
@@ -5415,21 +5405,8 @@ bool CSSPropertyParser::consumeFont(bool important)
     add(CSSPropertyFontSize, fontSize);
     add(CSSPropertyLineHeight, lineHeight);
     add(CSSPropertyFontFamily, fontFamily);
-
-    reset(CSSPropertyFontSizeAdjust);
-    reset(CSSPropertyFontKerning);
-    reset(CSSPropertyFontVariantAlternates);
-    reset(CSSPropertyFontVariantLigatures);
-    reset(CSSPropertyFontVariantNumeric);
-    reset(CSSPropertyFontVariantEastAsian);
-    reset(CSSPropertyFontVariantPosition);
-    reset(CSSPropertyFontFeatureSettings);
-    // When we add font-language-override, also add code to reset it here.
-#if ENABLE(VARIATION_FONTS)
-    reset(CSSPropertyFontOpticalSizing);
-    reset(CSSPropertyFontVariationSettings);
-#endif
-    reset(CSSPropertyFontPalette);
+    for (auto [property, initialValue] : fontShorthandSubpropertiesResetToInitialValues)
+        reset(property, initialValue);
 
     m_range = range;
     return true;

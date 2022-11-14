@@ -460,7 +460,7 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
 
         if (auto* styleProperties = editingStyle->style()) {
             bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
-            switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign)) {
+            switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign).value_or(CSSValueInvalid)) {
             case CSSValueRight:
             case CSSValueWebkitRight:
                 postLayoutData.textAlignment = RightAlignment;

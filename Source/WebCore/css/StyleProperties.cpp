@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
@@ -30,6 +30,7 @@
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSOffsetRotateValue.h"
 #include "CSSParser.h"
+#include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSTokenizer.h"
@@ -103,6 +104,16 @@ static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 static bool isValueIDIncludingList(const RefPtr<CSSValue>& value, CSSValueID id)
 {
     return value && isValueIDIncludingList(*value, id);
+}
+
+static CSSValueID valueID(const CSSPrimitiveValue* value)
+{
+    return value ? value->valueID() : CSSValueInvalid;
+}
+
+static CSSValueID valueID(const CSSValue* value)
+{
+    return valueID(dynamicDowncast<CSSPrimitiveValue>(value));
 }
 
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
@@ -415,10 +426,12 @@ std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) co
     return primitiveColor.isRGBColor() ? primitiveColor.color() : CSSParser::parseColorWithoutContext(colorValue->cssText());
 }
 
-CSSValueID StyleProperties::propertyAsValueID(CSSPropertyID property) const
+std::optional<CSSValueID> StyleProperties::propertyAsValueID(CSSPropertyID property) const
 {
-    auto cssValue = getPropertyCSSValue(property);
-    return is<CSSPrimitiveValue>(cssValue) ? downcast<CSSPrimitiveValue>(*cssValue).valueID() : CSSValueInvalid;
+    auto value = getPropertyCSSValue(property);
+    if (!value)
+        return std::nullopt;
+    return valueID(value.get());
 }
 
 String StyleProperties::getCustomPropertyValue(const String& propertyName) const
@@ -486,82 +499,6 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
         commonValue = String();
 }
 
-std::optional<CSSValueID> StyleProperties::isSingleFontShorthand() const
-{
-    // Intentionally don't check font-stretch here, because it isn't set by the font shorthand in CSSPropertyParser::consumeSystemFont().
-
-    auto sizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
-    auto familyPropertyIndex = findPropertyIndex(CSSPropertyFontFamily);
-    auto stylePropertyIndex = findPropertyIndex(CSSPropertyFontStyle);
-    auto variantCapsPropertyIndex = findPropertyIndex(CSSPropertyFontVariantCaps);
-    auto weightPropertyIndex = findPropertyIndex(CSSPropertyFontWeight);
-    auto lineHeightPropertyIndex = findPropertyIndex(CSSPropertyLineHeight);
-
-    if (sizePropertyIndex == -1
-        || familyPropertyIndex == -1
-        || stylePropertyIndex == -1
-        || variantCapsPropertyIndex == -1
-        || weightPropertyIndex == -1
-        || lineHeightPropertyIndex == -1)
-        return std::nullopt;
-
-    auto sizeProperty = propertyAt(sizePropertyIndex);
-    auto familyProperty = propertyAt(familyPropertyIndex);
-    auto styleProperty = propertyAt(stylePropertyIndex);
-    auto variantCapsProperty = propertyAt(variantCapsPropertyIndex);
-    auto weightProperty = propertyAt(weightPropertyIndex);
-    auto lineHeightProperty = propertyAt(lineHeightPropertyIndex);
-
-    if (sizeProperty.isImplicit()
-        || familyProperty.isImplicit()
-        || styleProperty.isImplicit()
-        || variantCapsProperty.isImplicit()
-        || weightProperty.isImplicit()
-        || lineHeightProperty.isImplicit())
-        return std::nullopt;
-
-    auto* sizeValue = sizeProperty.value();
-    auto* familyValue = familyProperty.value();
-    auto* styleValue = styleProperty.value();
-    auto* variantCapsValue = variantCapsProperty.value();
-    auto* weightValue = weightProperty.value();
-    auto* lineHeightValue = lineHeightProperty.value();
-
-    if (!is<CSSPrimitiveValue>(sizeValue)
-        || !is<CSSPrimitiveValue>(familyValue)
-        || !is<CSSPrimitiveValue>(styleValue)
-        || !is<CSSPrimitiveValue>(variantCapsValue)
-        || !is<CSSPrimitiveValue>(weightValue)
-        || !is<CSSPrimitiveValue>(lineHeightValue))
-        return std::nullopt;
-
-    auto& sizePrimitiveValue = downcast<CSSPrimitiveValue>(*sizeValue);
-    auto& familyPrimitiveValue = downcast<CSSPrimitiveValue>(*familyValue);
-    auto& stylePrimitiveValue = downcast<CSSPrimitiveValue>(*styleValue);
-    auto& variantCapsPrimitiveValue = downcast<CSSPrimitiveValue>(*variantCapsValue);
-    auto& weightPrimitiveValue = downcast<CSSPrimitiveValue>(*weightValue);
-    auto& lineHeightPrimitiveValue = downcast<CSSPrimitiveValue>(*lineHeightValue);
-
-    auto sizeValueID = sizePrimitiveValue.valueID();
-    auto familyValueID = familyPrimitiveValue.valueID();
-    auto styleValueID = stylePrimitiveValue.valueID();
-    auto variantCapsValueID = variantCapsPrimitiveValue.valueID();
-    auto weightValueID = weightPrimitiveValue.valueID();
-    auto lineHeightValueID = lineHeightPrimitiveValue.valueID();
-
-    if (sizeValueID != familyValueID
-        || sizeValueID != styleValueID
-        || sizeValueID != variantCapsValueID
-        || sizeValueID != weightValueID
-        || sizeValueID != lineHeightValueID)
-        return std::nullopt;
-
-    if (sizeValueID == CSSValueInvalid)
-        return std::nullopt;
-
-    return sizeValueID;
-}
-
 static std::optional<CSSValueID> fontStretchKeyword(double value)
 {
     // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
@@ -575,58 +512,76 @@ static std::optional<CSSValueID> fontStretchKeyword(double value)
 
 String StyleProperties::fontValue() const
 {
-    // FIXME: This should check more font subproperties aand return empty string when they do not have their initial values. https://bugs.webkit.org/show_bug.cgi?id=247498
+    // If all properties are set to the same special keyword, serialize as that.
+    // If some but not all properties are, the font shorthand can't represent that, serialize as empty string.
+    std::optional<CSSValueID> specialKeyword;
+    bool allSpecialKeywords = true;
+    for (auto property : fontShorthand()) {
+        // Can't call propertyAsValueID here because we need to bypass the isSystemFontShorthand check in getPropertyCSSValue.
+        int index = findPropertyIndex(property);
+        auto keyword = index == -1 ? CSSValueInvalid : valueID(propertyAt(index).value());
+        if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword) && !isCSSWideKeyword(keyword))
+            allSpecialKeywords = false;
+        else {
+            if (specialKeyword.value_or(keyword) != keyword)
+                return emptyString();
+            specialKeyword = keyword;
+        }
+    }
+    if (specialKeyword)
+        return allSpecialKeywords ? nameString(*specialKeyword) : emptyString();
 
-    int fontSizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
-    int fontFamilyPropertyIndex = findPropertyIndex(CSSPropertyFontFamily);
-    if (fontSizePropertyIndex == -1 || fontFamilyPropertyIndex == -1)
+    // If a subproperty is not set to the initial value, the font shorthand can't represent that, serialize as empty string.
+    for (auto [property, initialValue] : fontShorthandSubpropertiesResetToInitialValues) {
+        auto keyword = propertyAsValueID(property);
+        if (keyword && *keyword != initialValue)
+            return emptyString();
+    }
+
+    // These properties are the mandatory ones. If either is missing, serialize as empty string.
+    auto size = getPropertyCSSValue(CSSPropertyFontSize);
+    auto family = getPropertyCSSValue(CSSPropertyFontFamily);
+    if (!size || !family)
         return emptyString();
 
-    PropertyReference fontSizeProperty = propertyAt(fontSizePropertyIndex);
-    PropertyReference fontFamilyProperty = propertyAt(fontFamilyPropertyIndex);
-    if (fontSizeProperty.isImplicit() || fontFamilyProperty.isImplicit())
+    // Only two values of variant-caps can be serialized in the font shorthand, if the value is anything else serialize as empty string.
+    auto variantCaps = propertyAsValueID(CSSPropertyFontVariantCaps);
+    if (variantCaps && *variantCaps != CSSValueNormal && *variantCaps != CSSValueSmallCaps)
         return emptyString();
-
-    if (auto shorthand = isSingleFontShorthand())
-        return nameString(shorthand.value());
 
     // Font stretch values can only be serialized in the font shorthand as keywords, since percentages are also valid font sizes.
     // If a font stretch percentage can be expressed as a keyword, then do that.
-    ASCIILiteral fontStretchPercentageAsKeyword;
-    bool fontStretchIsNormal = false;
-    if (int fontStretchPropertyIndex = findPropertyIndex(CSSPropertyFontStretch); fontStretchPropertyIndex != -1) {
-        if (auto fontStretch = dynamicDowncast<CSSPrimitiveValue>(*propertyAt(fontStretchPropertyIndex).value())) {
-            std::optional<CSSValueID> keyword;
-            if (!fontStretch->isPercentage())
-                keyword = fontStretch->valueID();
-            else {
-                keyword = fontStretchKeyword(fontStretch->doubleValue());
-                if (!keyword)
-                    return emptyString();
-                fontStretchPercentageAsKeyword = nameLiteral(*keyword);
-            }
-            fontStretchIsNormal = keyword == CSSValueNormal;
+    ASCIILiteral stretchPercentageAsKeyword;
+    bool stretchIsNormal = false;
+    if (auto stretchBase = getPropertyCSSValue(CSSPropertyFontStretch)) {
+        auto stretch = downcast<CSSPrimitiveValue>(stretchBase.get());
+        std::optional<CSSValueID> keyword;
+        if (!stretch->isPercentage())
+            keyword = stretch->valueID();
+        else {
+            keyword = fontStretchKeyword(stretch->doubleValue());
+            if (!keyword)
+                return emptyString();
+            stretchPercentageAsKeyword = nameLiteral(*keyword);
         }
+        stretchIsNormal = keyword == CSSValueNormal;
     }
 
-    auto fontSizeString = fontSizeProperty.value()->cssText();
-    auto commonValue = fontSizeString;
+    // This code no longer uses commonValue, for now we define it so we can use appendFontLonghandValueIfExplicit.
+    String commonValue;
     StringBuilder result;
     appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result, commonValue);
-    if (fontStretchIsNormal)
-        commonValue = { };
-    else if (!fontStretchPercentageAsKeyword.isNull()) {
-        result.append(result.isEmpty() ? "" : " ", fontStretchPercentageAsKeyword);
-        commonValue = { };
-    } else
-        appendFontLonghandValueIfExplicit(CSSPropertyFontStretch, result, commonValue);
-    result.append(result.isEmpty() ? "" : " ", fontSizeString);
+    if (!stretchIsNormal) {
+        if (!stretchPercentageAsKeyword.isNull())
+            result.append(result.isEmpty() ? "" : " ", stretchPercentageAsKeyword);
+        else
+            appendFontLonghandValueIfExplicit(CSSPropertyFontStretch, result, commonValue);
+    }
+    result.append(result.isEmpty() ? "" : " ", size->cssText());
     appendFontLonghandValueIfExplicit(CSSPropertyLineHeight, result, commonValue);
-    result.append(result.isEmpty() ? "" : " ", fontFamilyProperty.value()->cssText());
-    if (isCSSWideValueKeyword(commonValue))
-        return commonValue;
+    result.append(result.isEmpty() ? "" : " ", family->cssText());
     return result.toString();
 }
 
@@ -763,12 +718,6 @@ String StyleProperties::fontSynthesisValue() const
     auto weightValue = getExplicitLonghandValue(CSSPropertyFontSynthesisWeight);
     auto styleValue = getExplicitLonghandValue(CSSPropertyFontSynthesisStyle);
     auto capsValue = getExplicitLonghandValue(CSSPropertyFontSynthesisSmallCaps);
-
-    auto valueID = [&](CSSValue *value) {
-        if (!value || !is<CSSPrimitiveValue>(value))
-            return CSSValueInvalid;
-        return downcast<CSSPrimitiveValue>(value)->valueID();
-    };
 
     auto weightValueID = valueID(weightValue);
     auto styleValueID = valueID(styleValue);
@@ -1423,7 +1372,7 @@ RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) 
     auto value = property.value();
     // System fonts are represented as CSSPrimitiveValue for various font subproperties, but these must serialize as the empty string.
     // It might be better to implement this as a special CSSValue type instead of turning them into null here.
-    if (property.id() != CSSPropertyFont && is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(*value).valueID()))
+    if (property.id() != CSSPropertyFont && CSSPropertyParserHelpers::isSystemFontShorthand(valueID(value)))
         return nullptr;
     return value;
 }

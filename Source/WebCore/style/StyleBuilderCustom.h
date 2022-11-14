@@ -723,6 +723,11 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
 
 inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialLineHeight(builderState);
+        return;
+    }
+
     std::optional<Length> lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
     if (!lineHeight)
         return;
@@ -1647,6 +1652,10 @@ inline void BuilderCustom::applyInitialFontVariantLigatures(BuilderState& builde
 
 inline void BuilderCustom::applyValueFontVariantLigatures(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialFontVariantLigatures(builderState);
+        return;
+    }
     auto fontDescription = builderState.fontDescription();
     auto variantLigatures = extractFontVariantLigatures(value);
     fontDescription.setVariantCommonLigatures(variantLigatures.commonLigatures);
@@ -1680,6 +1689,10 @@ inline void BuilderCustom::applyInitialFontVariantNumeric(BuilderState& builderS
 
 inline void BuilderCustom::applyValueFontVariantNumeric(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialFontVariantNumeric(builderState);
+        return;
+    }
     auto fontDescription = builderState.fontDescription();
     auto variantNumeric = extractFontVariantNumeric(value);
     fontDescription.setVariantNumericFigure(variantNumeric.figure);
@@ -1710,6 +1723,10 @@ inline void BuilderCustom::applyInitialFontVariantEastAsian(BuilderState& builde
 
 inline void BuilderCustom::applyValueFontVariantEastAsian(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialFontVariantEastAsian(builderState);
+        return;
+    }
     auto fontDescription = builderState.fontDescription();
     auto variantEastAsian = extractFontVariantEastAsian(value);
     fontDescription.setVariantEastAsianVariant(variantEastAsian.variant);
@@ -1735,12 +1752,12 @@ inline void BuilderCustom::applyInitialFontVariantAlternates(BuilderState& build
 inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
         // Apply "normal" value (which is the same as initial).
         applyInitialFontVariantAlternates(builderState);
         return;
     }
-    
+
     if (value.isFontVariantAlternatesValue()) {
         auto alternates = downcast<CSSFontVariantAlternatesValue>(value).value();
         auto fontDescription = builderState.fontDescription();
@@ -1912,11 +1929,10 @@ inline void BuilderCustom::applyValueFontSizeAdjust(BuilderState& builderState, 
 {
     auto fontDescription = builderState.fontDescription();
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
     if (primitiveValue.isNumber())
         fontDescription.setFontSizeAdjust(primitiveValue.floatValue());
     else {
-        ASSERT(primitiveValue.valueID() == CSSValueNone);
+        ASSERT(primitiveValue.valueID() == CSSValueNone || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
         fontDescription.setFontSizeAdjust(std::nullopt);
     }
     builderState.setFontDescription(WTFMove(fontDescription));

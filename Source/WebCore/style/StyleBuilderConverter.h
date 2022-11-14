@@ -149,7 +149,6 @@ public:
     static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
-    static FontVariantCaps convertFontVariantCaps(BuilderState&, const CSSValue&);
     static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
     static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&);
     static Vector<SVGLengthValue> convertSVGLengthVector(BuilderState&, const CSSValue&);
@@ -1294,7 +1293,7 @@ inline std::optional<FilterOperations> BuilderConverter::convertFilterOperations
 inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
         return { };
     }
 
@@ -1375,16 +1374,6 @@ inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& buil
     return convertFontWeightFromValue(value);
 }
 
-inline FontVariantCaps BuilderConverter::convertFontVariantCaps(BuilderState&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    auto valueID = primitiveValue.valueID();
-    if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
-        return FontVariantCaps::Normal;
-
-    return static_cast<FontVariantCaps>(primitiveValue);
-}
-
 inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, const CSSValue& value)
 {
     return convertFontStretchFromValue(value);
@@ -1393,7 +1382,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, co
 inline FontVariationSettings BuilderConverter::convertFontVariationSettings(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
         return { };
     }
 
@@ -1619,8 +1608,6 @@ inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSS
 {
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
-    case CSSValueNormal:
-        return { FontPalette::Type::Normal, nullAtom() };
     case CSSValueLight:
         return { FontPalette::Type::Light, nullAtom() };
     case CSSValueDark:
@@ -1629,7 +1616,7 @@ inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSS
         ASSERT(primitiveValue.isCustomIdent());
         return { FontPalette::Type::Custom, AtomString { primitiveValue.stringValue() } };
     default:
-        ASSERT_NOT_REACHED();
+        ASSERT(primitiveValue.valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
         return { FontPalette::Type::Normal, nullAtom() };
     }
 }
