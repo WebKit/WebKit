@@ -63,8 +63,8 @@ public:
 private:
     bool canAuthorize(const URL&) const;
 
-    RetainPtr<SOAuthorization> m_soAuthorization;
     RetainPtr<WKSOAuthorizationDelegate> m_soAuthorizationDelegate;
+    bool m_hasAppSSO { false };
 };
 
 } // namespace WebKit
