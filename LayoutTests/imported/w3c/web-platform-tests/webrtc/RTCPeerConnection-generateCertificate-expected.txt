@@ -1,5 +1,5 @@
 
-PASS generateCertificate() with compulsary RSASSA-PKCS1-v1_5 parameters should succeed
+PASS generateCertificate() with compulsary RSA-PSS parameters should succeed
 PASS generateCertificate() with compulsary ECDSA parameters should succeed
 PASS generateCertificate() with invalid string algorithm should reject with NotSupportedError
 PASS generateCertificate() with invalid algorithm dict should reject with NotSupportedError

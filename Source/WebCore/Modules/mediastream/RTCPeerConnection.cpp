@@ -880,11 +880,11 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
     if (parameters.expires && *parameters.expires < 0)
         return Exception { TypeError, "Expire value is invalid"_s };
 
-    if (parameters.name == "RSASSA-PKCS1-v1_5"_s) {
+    if (parameters.name == "RSA-PSS"_s) {
         if (!parameters.hash.isNull() && parameters.hash != "SHA-256"_s)
-            return Exception { NotSupportedError, "Only SHA-256 is supported for RSASSA-PKCS1-v1_5"_s };
+            return Exception { NotSupportedError, "Only SHA-256 is supported for RSA_PSS"_s };
 
-        auto result = PeerConnectionBackend::CertificateInformation::RSASSA_PKCS1_v1_5();
+        auto result = PeerConnectionBackend::CertificateInformation::RSASS_PSS();
         if (parameters.modulusLength && parameters.publicExponent) {
             int publicExponent = 0;
             int value = 1;

@@ -7,8 +7,8 @@ onmessage = function(evt)
             postMessage({ result:false, message:'publicKey.type should be "public"' });
         else if (!publicKey.extractable)
             postMessage({ result:false, message:'publicKey.extractable should be true' });
-        else if (publicKey.algorithm.name != "RSASSA-PKCS1-v1_5")
-            postMessage({ result:false, message:'publicKey.algorithm.name should be "RSASSA-PKCS1-v1_5"' });
+        else if (publicKey.algorithm.name != "RSA-PSS")
+            postMessage({ result:false, message:'publicKey.algorithm.name should be "RSA-PSS"' });
         else if (publicKey.algorithm.modulusLength != 2048)
             postMessage({ result:false, message:'publicKey.algorithm.modulusLength should be 2048' });
         else if (bytesToHexString(publicKey.algorithm.publicExponent) != "010001")
@@ -24,14 +24,14 @@ onmessage = function(evt)
             postMessage({ result:false, message:'privateKey.type should be "private"' });
         else if (privateKey.extractable)
             postMessage({ result:false, message:'privateKey.extractable should be false' });
-        else if (privateKey.algorithm.name != "RSASSA-PKCS1-v1_5")
-            postMessage({ result:false, message:'privateKey.algorithm.name should be "RSASSA-PKCS1-v1_5"' });
+        else if (privateKey.algorithm.name != "RSA-PSS")
+            postMessage({ result:false, message:'privateKey.algorithm.name should be "RSA-PSS"' });
         else if (privateKey.algorithm.modulusLength != 2048)
             postMessage({ result:false, message:'privateKey.algorithm.modulusLength should be 2048' });
         else if (bytesToHexString(privateKey.algorithm.publicExponent) != "010001")
             postMessage({ result:false, message:'privateKey.algorithm.publicExponent should be "010001"' });
-        else if (privateKey.algorithm.hash.name != "SHA-256")
-            postMessage({ result:false, message:'publicKey.algorithm.hash.name should be "SHA-256"' });
+        else if (privateKey.algorithm.hash.name != "SHA-1")
+            postMessage({ result:false, message:'publicKey.algorithm.hash.name should be "SHA-1"' });
         else if (privateKey.usages.toString() != "sign")
             postMessage({ result:false, message:'privateKey.usages should be ["sign"]' });
         else

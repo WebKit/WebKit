@@ -175,7 +175,7 @@ public:
             int publicExponent;
         };
 
-        static CertificateInformation RSASSA_PKCS1_v1_5()
+        static CertificateInformation RSASS_PSS()
         {
             return CertificateInformation { Type::RSASSAPKCS1v15 };
         }

@@ -317,8 +317,7 @@ enum class CryptoKeyUsageTag {
 const uint8_t cryptoKeyUsageTagMaximumValue = 7;
 
 enum class CryptoAlgorithmIdentifierTag {
-    RSAES_PKCS1_v1_5 = 0,
-    RSASSA_PKCS1_v1_5 = 1,
+    RSAES_PKCS1_v1_5 = 1,
     RSA_PSS = 2,
     RSA_OAEP = 3,
     ECDSA = 4,
@@ -1816,9 +1815,6 @@ private:
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
             write(CryptoAlgorithmIdentifierTag::RSAES_PKCS1_v1_5);
             break;
-        case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
-            write(CryptoAlgorithmIdentifierTag::RSASSA_PKCS1_v1_5);
-            break;
         case CryptoAlgorithmIdentifier::RSA_PSS:
             write(CryptoAlgorithmIdentifierTag::RSA_PSS);
             break;
@@ -2984,9 +2980,6 @@ private:
         switch (static_cast<CryptoAlgorithmIdentifierTag>(algorithmTag)) {
         case CryptoAlgorithmIdentifierTag::RSAES_PKCS1_v1_5:
             result = CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5;
-            break;
-        case CryptoAlgorithmIdentifierTag::RSASSA_PKCS1_v1_5:
-            result = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;
             break;
         case CryptoAlgorithmIdentifierTag::RSA_PSS:
             result = CryptoAlgorithmIdentifier::RSA_PSS;

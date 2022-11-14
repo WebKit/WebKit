@@ -31,6 +31,7 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesGcmParams.h"
 #include "CryptoKeyAES.h"
+#include <CommonCrypto/CommonCrypto.h>
 #include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {

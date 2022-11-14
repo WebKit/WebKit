@@ -56,22 +56,22 @@ PASS RSA-PSS with SHA-1, salted round trip
 PASS RSA-PSS with SHA-256, salted round trip
 PASS RSA-PSS with SHA-384, salted round trip
 PASS RSA-PSS with SHA-512, salted round trip
-PASS RSA-PSS with SHA-1 and no salt signing with wrong algorithm name
-PASS RSA-PSS with SHA-256 and no salt signing with wrong algorithm name
-PASS RSA-PSS with SHA-384 and no salt signing with wrong algorithm name
-PASS RSA-PSS with SHA-512 and no salt signing with wrong algorithm name
-PASS RSA-PSS with SHA-1, salted signing with wrong algorithm name
-PASS RSA-PSS with SHA-256, salted signing with wrong algorithm name
-PASS RSA-PSS with SHA-384, salted signing with wrong algorithm name
-PASS RSA-PSS with SHA-512, salted signing with wrong algorithm name
-PASS RSA-PSS with SHA-1 and no salt verification with wrong algorithm name
-PASS RSA-PSS with SHA-256 and no salt verification with wrong algorithm name
-PASS RSA-PSS with SHA-384 and no salt verification with wrong algorithm name
-PASS RSA-PSS with SHA-512 and no salt verification with wrong algorithm name
-PASS RSA-PSS with SHA-1, salted verification with wrong algorithm name
-PASS RSA-PSS with SHA-256, salted verification with wrong algorithm name
-PASS RSA-PSS with SHA-384, salted verification with wrong algorithm name
-PASS RSA-PSS with SHA-512, salted verification with wrong algorithm name
+FAIL importVectorKeys step: RSA-PSS with SHA-1 and no salt signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-1 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-256 and no salt signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-256 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-384 and no salt signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-384 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-512 and no salt signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-512 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-1, salted signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-1, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-256, salted signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-256, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-384, salted signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-384, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-512, salted signing with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-512, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-1 and no salt verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-1 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-256 and no salt verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-256 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-384 and no salt verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-384 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-512 and no salt verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-512 and no salt. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-1, salted verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-1, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-256, salted verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-256, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-384, salted verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-384, salted. Message: ''The operation is not supported.'' Reached unreachable code
+FAIL importVectorKeys step: RSA-PSS with SHA-512, salted verification with wrong algorithm name assert_unreached: importVectorKeys failed for RSA-PSS with SHA-512, salted. Message: ''The operation is not supported.'' Reached unreachable code
 PASS RSA-PSS with SHA-1 and no salt verification failure with altered signature
 PASS RSA-PSS with SHA-256 and no salt verification failure with altered signature
 PASS RSA-PSS with SHA-384 and no salt verification failure with altered signature

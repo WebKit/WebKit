@@ -30,6 +30,7 @@
 
 #import "CommonCryptoUtilities.h"
 #import "LocalizedStrings.h"
+#include <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonSymmetricKeywrap.h>
 #import <crt_externs.h>
 #import <wtf/CryptographicUtilities.h>

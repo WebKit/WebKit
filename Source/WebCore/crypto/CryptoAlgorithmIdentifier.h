@@ -31,7 +31,6 @@ namespace WebCore {
 
 enum class CryptoAlgorithmIdentifier {
     RSAES_PKCS1_v1_5 = 1,
-    RSASSA_PKCS1_v1_5,
     RSA_PSS,
     RSA_OAEP,
     ECDSA,
