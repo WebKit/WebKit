@@ -29,9 +29,12 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRenderer.h"
-#include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include "RealtimeIncomingAudioSource.h"
+
+#if USE(LIBWEBRTC)
+#include "LibWebRTCAudioModule.h"
+#endif
 
 namespace WebCore {
 

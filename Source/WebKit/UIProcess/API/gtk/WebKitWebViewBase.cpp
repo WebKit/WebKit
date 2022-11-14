@@ -59,6 +59,7 @@
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/CairoUtilities.h>
+#include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
@@ -74,6 +75,7 @@
 #include <glib/gi18n-lib.h>
 #include <memory>
 #include <pal/system/SleepDisabler.h>
+#include <utility>
 #include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -222,8 +224,10 @@ struct MotionEvent {
 
 #if !USE(GTK4)
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
-#endif
 typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
+#else
+typedef HashMap<uint32_t, GRefPtr<GdkEvent>> TouchEventsMap;
+#endif
 
 struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
@@ -280,7 +284,11 @@ struct _WebKitWebViewBasePrivate {
     GtkWidget* inspectorView { nullptr };
     AttachmentSide inspectorAttachmentSide { AttachmentSide::Bottom };
     unsigned inspectorViewSize { 0 };
+#if USE(GTK4)
+    GRefPtr<GdkEvent> contextMenuEvent;
+#else
     GUniquePtr<GdkEvent> contextMenuEvent;
+#endif
     WebContextMenuProxyGtk* activeContextMenuProxy { nullptr };
     InputMethodFilter inputMethodFilter;
     KeyBindingTranslator keyBindingTranslator;
@@ -1220,7 +1228,7 @@ static void webkitWebViewBaseButtonPressed(WebKitWebViewBase* webViewBase, int c
 
     // If it's a right click event save it as a possible context menu event.
     if (button == GDK_BUTTON_SECONDARY)
-        priv->contextMenuEvent.reset(gdk_event_copy(event));
+        priv->contextMenuEvent = event;
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, std::nullopt));
 }
@@ -1597,14 +1605,22 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
         if (priv->touchEvents.isEmpty())
             priv->pageGrabbedTouch = false;
         ASSERT(!priv->touchEvents.contains(sequence));
+#if USE(GTK4)
+        GRefPtr<GdkEvent> event = touchEvent;
+#else
         GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
+#endif
         priv->touchEvents.add(sequence, WTFMove(event));
         break;
     }
     case GDK_TOUCH_UPDATE: {
         auto it = priv->touchEvents.find(sequence);
         ASSERT(it != priv->touchEvents.end());
+#if USE(GTK4)
+        it->value = touchEvent;
+#else
         it->value.reset(gdk_event_copy(touchEvent));
+#endif
         break;
     }
     case GDK_TOUCH_CANCEL:
@@ -2432,10 +2448,17 @@ WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebView
     return webkitWebViewBase->priv->activeContextMenuProxy;
 }
 
-GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
+#if USE(GTK4)
+GRefPtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
 {
-    return webkitWebViewBase->priv->contextMenuEvent.release();
+    return std::exchange(webkitWebViewBase->priv->contextMenuEvent, nullptr);
 }
+#else
+GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
+{
+    return WTFMove(webkitWebViewBase->priv->contextMenuEvent);
+}
+#endif
 
 void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
 {

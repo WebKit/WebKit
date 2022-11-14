@@ -57,6 +57,8 @@ static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
     if (!size.value())
         return emptyString();
 
+    if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(*size))
+        return std::nullopt;
     Vector<uint8_t> buffer(size.value());
     if (!decoder.decodeFixedLengthData({ buffer.data(), size.value() }))
         return std::nullopt;

@@ -125,7 +125,7 @@ inline Element* TreeScopeOrderedMap::get(const AtomStringImpl& key, const TreeSc
     }
 
 #if ASSERT_ENABLED
-    // FormAssociatedElement may call getElementById to find its owner form in the middle of a tree removal.
+    // FormListedElement may call getElementById to find its owner form in the middle of a tree removal.
     if (auto* currentScope = ContainerChildRemovalScope::currentScope()) {
         ASSERT(&scope.rootNode() == &currentScope->parentOfRemovedTree().rootNode());
         Node& removedTree = currentScope->removedChild();

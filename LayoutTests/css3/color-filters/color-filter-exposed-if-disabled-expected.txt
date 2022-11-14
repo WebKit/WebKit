@@ -7,8 +7,6 @@ PASS '-apple-color-filter' in document.documentElement.style is false
 PASS document.documentElement.style['-apple-color-filter'] is undefined.
 PASS document.documentElement.style.getPropertyValue('-apple-color-filter') is ""
 PASS document.documentElement.style.getPropertyPriority('-apple-color-filter') is ""
-PASS document.documentElement.style.getPropertyShorthand('-apple-color-filter') is null
-PASS document.documentElement.style.isPropertyImplicit('-apple-color-filter') is false
 PASS document.documentElement.style.getPropertyCSSValue('-apple-color-filter') is null
 PASS document.documentElement.style.removeProperty('-apple-color-filter') is ""
 PASS document.documentElement.style.getPropertyValue('-apple-color-filter') is ""
@@ -18,8 +16,6 @@ PASS '-apple-color-filter' in getComputedStyle(document.documentElement) is fals
 PASS getComputedStyle(document.documentElement)['-apple-color-filter'] is undefined.
 PASS getComputedStyle(document.documentElement).getPropertyValue('-apple-color-filter') is ""
 PASS getComputedStyle(document.documentElement).getPropertyPriority('-apple-color-filter') is ""
-PASS getComputedStyle(document.documentElement).getPropertyShorthand('-apple-color-filter') is ""
-PASS getComputedStyle(document.documentElement).isPropertyImplicit('-apple-color-filter') is false
 PASS getComputedStyle(document.documentElement).getPropertyCSSValue('-apple-color-filter') is null
 PASS getComputedStyle(document.documentElement).removeProperty('-apple-color-filter') threw exception NoModificationAllowedError: The object can not be modified..
 PASS document.documentElement.style.getPropertyValue('-apple-color-filter') is ""

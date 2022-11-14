@@ -25,10 +25,11 @@
 #include "config.h"
 #include "LibWebRTCStatsCollector.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "JSDOMMapLike.h"
 #include "JSRTCStatsReport.h"
+#include "LibWebRTCUtils.h"
 #include "Performance.h"
 #include <wtf/MainThread.h>
 
@@ -47,11 +48,6 @@ LibWebRTCStatsCollector::~LibWebRTCStatsCollector()
     callOnMainThread([callback = WTFMove(m_callback)]() mutable {
         callback(nullptr);
     });
-}
-
-static inline String fromStdString(const std::string& value)
-{
-    return String::fromUTF8(value.data(), value.length());
 }
 
 static inline void fillRTCStats(RTCStatsReport::Stats& stats, const webrtc::RTCStats& rtcStats)
@@ -629,4 +625,4 @@ Ref<RTCStatsReport> LibWebRTCStatsCollector::createReport(const rtc::scoped_refp
 }; // namespace WTF
 
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

@@ -101,9 +101,7 @@ private:
 
     void displayDidRefresh() override;
 
-#if PLATFORM(IOS_FAMILY)
     void setDeviceScaleFactor(float) override;
-#endif
 
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 

@@ -23,7 +23,7 @@
 #include "config.h"
 #include "HTMLFormControlsCollection.h"
 
-#include "FormAssociatedElement.h"
+#include "FormListedElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -66,14 +66,14 @@ std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormCont
     return std::variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
 }
 
-static unsigned findFormAssociatedElement(const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& elements, const Element& element)
+static unsigned findFormListedElement(const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& elements, const Element& element)
 {
     for (unsigned i = 0; i < elements.size(); ++i) {
         RefPtr currentElement = elements[i].get();
         ASSERT(currentElement);
-        auto* associatedElement = currentElement->asFormAssociatedElement();
-        ASSERT(associatedElement);
-        if (associatedElement->isEnumeratable() && currentElement == &element)
+        auto* listedElement = currentElement->asFormListedElement();
+        ASSERT(listedElement);
+        if (listedElement->isEnumeratable() && currentElement == &element)
             return i;
     }
     return elements.size();
@@ -82,20 +82,20 @@ static unsigned findFormAssociatedElement(const Vector<WeakPtr<HTMLElement, Weak
 HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) const
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    auto& elements = ownerNode().unsafeAssociatedElements();
+    auto& elements = ownerNode().unsafeListedElements();
     unsigned start;
     if (!current)
         start = 0;
     else if (m_cachedElement == current)
         start = m_cachedElementOffsetInArray + 1;
     else
-        start = findFormAssociatedElement(elements, *current) + 1;
+        start = findFormListedElement(elements, *current) + 1;
 
     for (unsigned i = start; i < elements.size(); ++i) {
         RefPtr element = elements[i].get();
         ASSERT(element);
-        ASSERT(element->asFormAssociatedElement());
-        if (element->asFormAssociatedElement()->isEnumeratable()) {
+        ASSERT(element->asFormListedElement());
+        if (element->asFormListedElement()->isEnumeratable()) {
             m_cachedElement = element.get();
             m_cachedElementOffsetInArray = i;
             return element.get();
@@ -116,24 +116,24 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
 
     auto cache = makeUnique<CollectionNamedElementCache>();
 
-    HashSet<AtomStringImpl*> foundInputElements;
+    HashSet<AtomString> foundInputElements;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    for (auto& weakElement : ownerNode().unsafeAssociatedElements()) {
+    for (auto& weakElement : ownerNode().unsafeListedElements()) {
         RefPtr element { weakElement.get() };
         ASSERT(element);
-        auto* associatedElement = element->asFormAssociatedElement();
+        auto* associatedElement = element->asFormListedElement();
         ASSERT(associatedElement);
         if (associatedElement->isEnumeratable()) {
             const AtomString& id = element->getIdAttribute();
             if (!id.isEmpty()) {
                 cache->appendToIdCache(id, *element);
-                foundInputElements.add(id.impl());
+                foundInputElements.add(id);
             }
             const AtomString& name = element->getNameAttribute();
             if (!name.isEmpty() && id != name) {
                 cache->appendToNameCache(name, *element);
-                foundInputElements.add(name.impl());
+                foundInputElements.add(name);
             }
         }
     }
@@ -143,10 +143,10 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
             continue;
         HTMLImageElement& element = *elementPtr;
         const AtomString& id = element.getIdAttribute();
-        if (!id.isEmpty() && !foundInputElements.contains(id.impl()))
+        if (!id.isEmpty() && !foundInputElements.contains(id))
             cache->appendToIdCache(id, element);
         const AtomString& name = element.getNameAttribute();
-        if (!name.isEmpty() && id != name && !foundInputElements.contains(name.impl()))
+        if (!name.isEmpty() && id != name && !foundInputElements.contains(name))
             cache->appendToNameCache(name, element);
     }
 

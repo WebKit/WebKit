@@ -238,10 +238,7 @@ String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& proper
 
 bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyName)
 {
-    CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!isExposed(propertyID))
-        return false;
-    return m_propertySet->isPropertyImplicit(propertyID);
+    return m_propertySet->isPropertyImplicit(cssPropertyID(propertyName));
 }
 
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority)

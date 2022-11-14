@@ -39,7 +39,5 @@ typedef USVString CSSOMString;
     [CEReactions] attribute [LegacyNullToEmptyString] CSSOMString cssFloat;
 
     // Non-standard.
-    DOMString? getPropertyShorthand(optional DOMString propertyName);
-    boolean isPropertyImplicit(optional DOMString propertyName);
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
 };

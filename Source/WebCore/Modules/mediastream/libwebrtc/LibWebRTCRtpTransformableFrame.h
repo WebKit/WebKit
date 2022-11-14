@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "RTCRtpTransformableFrame.h"
 #include <wtf/Ref.h>
@@ -60,4 +60,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_RTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

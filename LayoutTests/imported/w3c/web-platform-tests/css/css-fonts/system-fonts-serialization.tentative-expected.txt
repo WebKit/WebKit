@@ -1,11 +1,11 @@
 
-FAIL caption assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL icon assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL menu assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL message-box assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL small-caption assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL status-bar assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL -webkit-mini-control assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL -webkit-small-control assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
-FAIL -webkit-control assert_equals: Longhand 'font-size-adjust' serializes as empty string expected "" but got "initial"
+PASS caption
+PASS icon
+PASS menu
+PASS message-box
+PASS small-caption
+PASS status-bar
+PASS -webkit-mini-control
+PASS -webkit-small-control
+PASS -webkit-control
 

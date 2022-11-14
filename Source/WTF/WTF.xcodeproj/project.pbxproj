@@ -447,7 +447,6 @@
 		DD3DC96D27A4BF8E007E5B61 /* CrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC96E27A4BF8E007E5B61 /* FilePrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D335C165DBA73005AD387 /* FilePrintStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC96F27A4BF8E007E5B61 /* PointerPreparations.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB6B035201BE0B600B958C1 /* PointerPreparations.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC97027A4BF8E007E5B61 /* UnsafePointer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7600FF1F90A3CA00026E26 /* UnsafePointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97127A4BF8E007E5B61 /* TranslatedProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1F2F462498F73300C63A83 /* TranslatedProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97227A4BF8E007E5B61 /* InlineASM.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472BC151A825A004123FF /* InlineASM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97327A4BF8E007E5B61 /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4729F151A825A004123FF /* ExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1429,7 +1428,6 @@
 		CD5497AA15857D0300B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
 		CD6D9FCD1EEF3AD4008B0671 /* Algorithms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Algorithms.h; sourceTree = "<group>"; };
-		CD7600FF1F90A3CA00026E26 /* UnsafePointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnsafePointer.h; sourceTree = "<group>"; };
 		CDCC9BC422382FCE00FFB51C /* AggregateLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AggregateLogger.h; path = wtf/AggregateLogger.h; sourceTree = SOURCE_ROOT; };
 		CE1132832370634900A8C83B /* AnsiColors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnsiColors.h; sourceTree = "<group>"; };
 		CEA072A8236FFBF70018839C /* CrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashReporter.h; sourceTree = "<group>"; };
@@ -2313,7 +2311,6 @@
 				5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */,
 				3A1337A928F915B400F29B73 /* UniqueRefVector.h */,
 				DD4901DF27B4748A00D7E50D /* UniStdExtras.h */,
-				CD7600FF1F90A3CA00026E26 /* UnsafePointer.h */,
 				5CC0EE7421629F1900A1A842 /* URL.cpp */,
 				5CC0EE7121629F1800A1A842 /* URL.h */,
 				5C1F0597216439940039302C /* URLHash.h */,
@@ -3253,7 +3250,6 @@
 				DD3DC90227A4BF8E007E5B61 /* UniqueRef.h in Headers */,
 				3A1337AA28F915B400F29B73 /* UniqueRefVector.h in Headers */,
 				DD4901E627B4748A00D7E50D /* UniStdExtras.h in Headers */,
-				DD3DC97027A4BF8E007E5B61 /* UnsafePointer.h in Headers */,
 				DD3DC90327A4BF8E007E5B61 /* URL.h in Headers */,
 				DD3DC8ED27A4BF8E007E5B61 /* URLHash.h in Headers */,
 				DD3DC99A27A4BF8E007E5B61 /* URLHelpers.h in Headers */,

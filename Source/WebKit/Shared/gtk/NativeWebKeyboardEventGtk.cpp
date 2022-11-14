@@ -33,9 +33,15 @@
 
 namespace WebKit {
 
+#if USE(GTK4)
+#define constructNativeEvent(event) event
+#else
+#define constructNativeEvent(event) gdk_event_copy(event)
+#endif
+
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, Vector<String>&& commands)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, false, std::nullopt, std::nullopt, WTFMove(commands)))
-    , m_nativeEvent(gdk_event_copy(event))
+    , m_nativeEvent(constructNativeEvent(event))
 {
 }
 
@@ -51,8 +57,10 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(Type type, const String& text, co
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
     : WebKeyboardEvent(WebEvent(event.type(), event.modifiers(), event.timestamp()), event.text(), event.key(), event.code(), event.keyIdentifier(), event.windowsVirtualKeyCode(), event.nativeVirtualKeyCode(), event.handledByInputMethod(), std::optional<Vector<WebCore::CompositionUnderline>>(event.preeditUnderlines()), std::optional<EditingRange>(event.preeditSelectionRange()), Vector<String>(event.commands()), event.isKeypad())
-    , m_nativeEvent(event.nativeEvent() ? gdk_event_copy(event.nativeEvent()) : nullptr)
+    , m_nativeEvent(event.nativeEvent() ? constructNativeEvent(event.nativeEvent()) : nullptr)
 {
 }
 
 } // namespace WebKit
+
+#undef constructNativeEvent

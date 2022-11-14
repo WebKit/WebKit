@@ -64,7 +64,6 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
-#include "LibWebRTCProvider.h"
 #include "MarkupAccumulator.h"
 #include "NodeList.h"
 #include "Page.h"

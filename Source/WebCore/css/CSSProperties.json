@@ -116,7 +116,6 @@
         "Indicates that this CSS property is descriptor only (populates.",
         "CSSProperty::isDescriptorOnly().",
         "",
-        "",
         "* font-property:",
         "Indicates that this CSS property is font-related. It must have corresponding",
         "methods on the FontDescription class.",
@@ -590,8 +589,7 @@
             "codegen-properties": {
                 "name-for-methods": "VariantCaps",
                 "font-property": true,
-                "high-priority": true,
-                "converter": "FontVariantCaps"
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",

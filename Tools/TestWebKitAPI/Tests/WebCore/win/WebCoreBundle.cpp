@@ -65,9 +65,15 @@ TEST_F(WebCoreBundleTest, BundlePathFromNameTypeDirectory)
     auto expected = FileSystem::pathByAppendingComponents(m_root, { "WebInspectorUI"_s, "Protocol"_s, "InspectorBackendCommands.js"_s });
     EXPECT_STREQ(expected.utf8().data(), actual.utf8().data());
 
+    actual = WebCore::webKitBundlePath("Localizable"_s, "strings"_s, ""_s);
+    expected = FileSystem::pathByAppendingComponents(m_root, { "en.lproj"_s, "Localizable.strings"_s });
+    EXPECT_STREQ(expected.utf8().data(), actual.utf8().data());
+
+#if !ENABLE(MODERN_MEDIA_CONTROLS)
     actual = WebCore::webKitBundlePath("mediaControlsLocalizedStrings"_s, "js"_s, ""_s);
     expected = FileSystem::pathByAppendingComponents(m_root, { "en.lproj"_s, "mediaControlsLocalizedStrings.js"_s });
     EXPECT_STREQ(expected.utf8().data(), actual.utf8().data());
+#endif
 
     actual = WebCore::webKitBundlePath("file-does-not"_s, "exist"_s, "file"_s);
     expected = emptyString();

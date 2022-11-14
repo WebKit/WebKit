@@ -71,6 +71,10 @@
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
+#if USE(LIBWEBRTC)
+#include "LibWebRTCProvider.h"
+#endif
+
 namespace WebCore {
 
 using namespace PeerConnection;

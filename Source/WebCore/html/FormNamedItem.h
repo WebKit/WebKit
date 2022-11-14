@@ -24,12 +24,20 @@ namespace WebCore {
 
 class HTMLElement;
 
+// FIXME: Rename this to FormAssociatedElement
 class FormNamedItem {
 public:
+    void ref() { refFormAssociatedElement(); }
+    void deref() { derefFormAssociatedElement(); }
+
     virtual ~FormNamedItem() = default;
     virtual HTMLElement& asHTMLElement() = 0;
     virtual const HTMLElement& asHTMLElement() const = 0;
-    virtual bool isFormAssociatedElement() const = 0;
+    virtual bool isFormListedElement() const = 0;
+
+private:
+    virtual void refFormAssociatedElement() = 0;
+    virtual void derefFormAssociatedElement() = 0;
 };
 
 } // namespace WebCore

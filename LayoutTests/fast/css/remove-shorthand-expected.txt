@@ -3,7 +3,7 @@ Test for http://bugs.webkit.org/show_bug.cgi?id=9284 Quirksmode (CSS1): Removing
 Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed when a shortcut property is removed. The shortcut’s constituents and only them should be removed.
 
 Removing background
-removes "background-image, background-repeat, background-attachment, background-color, background-position"
+removes "background-image, background-position, background-repeat, background-attachment, background-color"
 and adds "".
 Removing background-position
 removes "background-position"

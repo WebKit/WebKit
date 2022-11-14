@@ -33,7 +33,7 @@
         //   - 5th grouping, epub case, alphabetical, all properties prefixed with "epub" with 
         //     initial lowercase letter 'e'.
         //   - 6th grouping, [item, getPropertyValue, getPropertyPriority, setProperty, removeProperty, 
-        //     getPropertyShorthand, isPropertyImplicit, getPropertyCSSValue]
+        //     getPropertyCSSValue]
 
         let properties = [];
         for (let p in document.body.style)
@@ -98,7 +98,7 @@
         shouldBeTrue(`group5.every(property => property.startsWith("epub"))`);
 
         // Group 6
-        shouldBe(`group6`, `["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyShorthand", "isPropertyImplicit", "getPropertyCSSValue"]`);
+        shouldBe(`group6`, `["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyCSSValue"]`);
     </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>

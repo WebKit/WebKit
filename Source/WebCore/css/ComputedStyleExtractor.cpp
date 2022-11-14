@@ -2767,12 +2767,12 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
         if (variantSettingsOmittingExpressible.caps == FontVariantCaps::Small)
             variantSettingsOmittingExpressible.caps = FontVariantCaps::Normal;
 
-        // FIXME: This also needs to check for the effects of CSSPropertyFontKerning.
         // When we add font-language-override, also add code to check for non-expressible values for it here.
         return variantSettingsOmittingExpressible.isAllNormal()
             && fontStretch
             && fontStyle
             && !description.fontSizeAdjust()
+            && description.kerning() == Kerning::Auto
             && description.featureSettings().isEmpty()
             && description.opticalSizing() == FontOpticalSizing::Enabled
             && description.variationSettings().isEmpty()

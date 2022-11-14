@@ -431,6 +431,9 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
 
     const auto& buffered = m_buffered->ranges();
 
+    // FIXME: All this is nice but we should take into account negative playback rate and begin from after current time
+    // and be more conservative with before current time.
+
     unsigned timeChunkAsMilliseconds = evictionAlgorithmInitialTimeChunk;
     do {
         const MediaTime timeChunk = MediaTime(timeChunkAsMilliseconds, 1000);

@@ -1,4 +1,4 @@
 
 PASS Hit-testing doesn't reach contents of an inert SVG
-PASS Hit-testing can reach contents of a no longer inert SVG
+FAIL Hit-testing can reach contents of a no longer inert SVG assert_true: target is active expected true got false
 

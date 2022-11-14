@@ -5,9 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS columnsValue("columns1") is "10px"
 PASS columnsValue("columns2") is "10"
-PASS columnsValue("columns3") is "10px auto"
+PASS columnsValue("columns3") is "10px"
 PASS columnsValue("columns4") is "auto"
-PASS columnsValue("columns5") is "auto 2"
+PASS columnsValue("columns5") is "2"
 PASS columnsValue("columns6") is "10px 2"
 PASS columnsValue("columns7") is "auto auto"
 NOTE: 'foo' is an illegal CSS value for 'columns'.

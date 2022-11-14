@@ -22,25 +22,25 @@
 
 #pragma once
 
-#include "FormAssociatedElement.h"
+#include "FormListedElement.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
 
-// ValidityState is not a separate object, but rather an interface of FormAssociatedElement that
-// is published as part of the DOM. We could implement this as a base class of FormAssociatedElement,
+// ValidityState is not a separate object, but rather an interface of FormListedElement that
+// is published as part of the DOM. We could implement this as a base class of FormListedElement,
 // but that would have a small runtime cost, and no significant benefit. We'd prefer to implement this
-// as a typedef of FormAssociatedElement, but that would require changes to bindings generation.
-class ValidityState : public FormAssociatedElement {
+// as a typedef of FormListedElement, but that would require changes to bindings generation.
+class ValidityState : public FormListedElement {
 public:
     Element* element() { return &asHTMLElement(); }
     Node* opaqueRootConcurrently() { return &asHTMLElement(); }
 };
 
-inline ValidityState* FormAssociatedElement::validity()
+inline ValidityState* FormListedElement::validity()
 {
-    // Because ValidityState adds nothing to FormAssociatedElement, we rely on it being safe
-    // to cast a FormAssociatedElement like this, even though it's not actually a ValidityState.
+    // Because ValidityState adds nothing to FormListedElement, we rely on it being safe
+    // to cast a FormListedElement like this, even though it's not actually a ValidityState.
     return static_cast<ValidityState*>(this);
 }
 

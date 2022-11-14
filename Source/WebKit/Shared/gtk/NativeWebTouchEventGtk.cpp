@@ -34,18 +34,26 @@
 
 namespace WebKit {
 
+#if USE(GTK4)
+#define constructNativeEvent(event) event
+#else
+#define constructNativeEvent(event) gdk_event_copy(event)
+#endif
+
 NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
     : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTFMove(touchPoints)))
-    , m_nativeEvent(gdk_event_copy(event))
+    , m_nativeEvent(constructNativeEvent(event))
 {
 }
 
 NativeWebTouchEvent::NativeWebTouchEvent(const NativeWebTouchEvent& event)
     : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), Vector<WebPlatformTouchPoint>(event.touchPoints())))
-    , m_nativeEvent(gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())))
+    , m_nativeEvent(constructNativeEvent(const_cast<GdkEvent*>(event.nativeEvent())))
 {
 }
 
 } // namespace WebKit
+
+#undef constructNativeEvent
 
 #endif // ENABLE(TOUCH_EVENTS)

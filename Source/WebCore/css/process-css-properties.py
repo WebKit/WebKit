@@ -33,7 +33,6 @@ import subprocess
 import sys
 import textwrap
 
-
 class ParsingContext:
     def __init__(self, *, defines_string, parsing_for_codegen, verbose):
         if defines_string:
@@ -1847,12 +1846,17 @@ class GenerationContext:
             else:
                 return "downcast<CSSPrimitiveValue>(value)"
 
+        if property in self.properties.properties_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.custom and not property.codegen_properties.converter:
+            to.write(f"        if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {{\n")
+            to.write(f"            applyInitial{property.id_without_prefix}(builderState);\n")
+            to.write(f"            return;\n")
+            to.write(f"        }}\n")
+
         if property.codegen_properties.auto_functions:
             to.write(f"        if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto) {{\n")
             to.write(f"            builderState.style().setHasAuto{property.name_for_methods}();\n")
             to.write(f"            return;\n")
             to.write(f"        }}\n")
-
             if property.codegen_properties.svg:
                 self._generate_svg_property_value_setter(to, property, converted_value(property))
             else:

@@ -439,3 +439,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     check_cxx_source_compiles("${REMOVE_CVREF_TEST_SOURCE}" STD_REMOVE_CVREF_IS_AVAILABLE)
     unset(CMAKE_REQUIRED_FLAGS)
 endif ()
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    set(COMPILE_C_AS_CXX "-xc++")
+endif ()

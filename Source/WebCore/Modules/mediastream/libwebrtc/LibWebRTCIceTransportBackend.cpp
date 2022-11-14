@@ -25,11 +25,11 @@
 #include "config.h"
 #include "LibWebRTCIceTransportBackend.h"
 
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
 #include "RTCIceCandidate.h"
-
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 

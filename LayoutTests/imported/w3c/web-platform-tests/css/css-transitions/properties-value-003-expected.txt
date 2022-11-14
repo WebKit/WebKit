@@ -25,10 +25,10 @@ FAIL background-size background-size(keyword) / values assert_not_equals: must n
 FAIL background-size background-size(keyword) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "background-size:2s" but got ""
 PASS box-shadow box-shadow(shadow) / values
 FAIL box-shadow box-shadow(shadow) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "box-shadow:2s" but got "-webkit-box-shadow:2s box-shadow:2s"
-FAIL font-size-adjust number(integer) / values assert_not_equals: initial and target values may not match got disallowed value ""
-FAIL font-size-adjust number(integer) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "font-size-adjust:2s" but got ""
-FAIL font-size-adjust number(decimal) / values assert_not_equals: initial and target values may not match got disallowed value ""
-FAIL font-size-adjust number(decimal) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "font-size-adjust:2s" but got ""
+PASS font-size-adjust number(integer) / values
+PASS font-size-adjust number(integer) / events
+PASS font-size-adjust number(decimal) / values
+PASS font-size-adjust number(decimal) / events
 PASS font-stretch font-stretch(keyword) / values
 PASS font-stretch font-stretch(keyword) / events
 FAIL marker-offset length(pt) / values assert_not_equals: initial and target values may not match got disallowed value ""

@@ -93,7 +93,7 @@ public:
     WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
 
     WEBCORE_EXPORT std::optional<Color> propertyAsColor(CSSPropertyID) const;
-    WEBCORE_EXPORT CSSValueID propertyAsValueID(CSSPropertyID) const;
+    WEBCORE_EXPORT std::optional<CSSValueID> propertyAsValueID(CSSPropertyID) const;
 
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
@@ -170,7 +170,6 @@ private:
     String textDecorationSkipValue() const;
     String offsetValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
-    std::optional<CSSValueID> isSingleFontShorthand() const;
     bool shorthandHasVariableReference(CSSPropertyID, String&) const;
     StringBuilder asTextInternal() const;
 

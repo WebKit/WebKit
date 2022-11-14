@@ -25,7 +25,7 @@
 #include "config.h"
 #include "LibWebRTCMediaEndpoint.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "DeprecatedGlobalSettings.h"
 #include "EventNames.h"
@@ -864,4 +864,4 @@ struct LogArgument<WebCore::RTCStatsLogger> {
 }; // namespace WTF
 
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

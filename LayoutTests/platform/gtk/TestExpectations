@@ -598,8 +598,6 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
 webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
 # This feature is only enabled on Mac and iOS right now

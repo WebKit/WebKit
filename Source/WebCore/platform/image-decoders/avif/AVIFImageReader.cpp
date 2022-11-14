@@ -114,22 +114,6 @@ size_t AVIFImageReader::imageCount() const
     return m_avifDecoder->imageCount;
 }
 
-double AVIFImageReader::repetitionCount() const
-{
-    double trackDuration = m_avifDecoder->duration;
-    if (!trackDuration)
-        return 0.0;
-
-    double accumulatedFrameDuration = 0.0;
-    for (int i = 0; i < m_avifDecoder->imageCount; ++i) {
-        avifImageTiming timing;
-        if (avifDecoderNthImageTiming(m_avifDecoder.get(), i, &timing) != AVIF_RESULT_OK)
-            return 0.0;
-        accumulatedFrameDuration += timing.duration;
-    }
-    return accumulatedFrameDuration / trackDuration;
-}
-
 }
 
 #endif // USE(AVIF)

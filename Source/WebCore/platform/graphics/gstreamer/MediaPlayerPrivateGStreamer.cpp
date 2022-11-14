@@ -3841,6 +3841,26 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 {
     acceleratedRenderingStateChanged();
 
+    // Ensure the sink has the max-lateness property set.
+    auto exit = makeScopeExit([this] {
+        ASSERT(m_videoSink);
+        if (isMediaStreamPlayer())
+            return;
+
+        GstElement* sink = m_videoSink.get();
+        while (GST_IS_BIN(sink)) {
+            GUniquePtr<GstIterator> iter(gst_bin_iterate_sinks(GST_BIN_CAST(sink)));
+            GValue value = G_VALUE_INIT;
+            auto result = gst_iterator_next(iter.get(), &value);
+            ASSERT_UNUSED(result, result == GST_ITERATOR_OK);
+            sink = GST_ELEMENT(g_value_get_object(&value));
+            g_value_unset(&value);
+        }
+
+        uint64_t maxLateness = 100 * GST_MSECOND;
+        g_object_set(sink, "max-lateness", maxLateness, nullptr);
+    });
+
     if (!m_player->isVideoPlayer()) {
         m_videoSink = makeGStreamerElement("fakevideosink", nullptr);
         if (!m_videoSink) {

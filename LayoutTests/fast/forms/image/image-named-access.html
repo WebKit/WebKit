@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<div id="willBeRemoved">
+    <div>
+        <form id="form">
+        <img id="img1">
+    </div>
+    <img id="img2">
+</div>
+<img id="img3">
+<script src="../../../resources/js-test.js"></script>
+<script>
+description('This tests removing an image element with a form element ancestor during parsing');
+const form = document.getElementById('form');
+const img1 = document.getElementById('img1');
+const img2 = document.getElementById('img2');
+const img3 = document.getElementById('img3');
+const willBeRemoved = document.getElementById('willBeRemoved');
+willBeRemoved.remove();
+shouldBe('form["img1"]', 'img1');
+shouldBe('form["img2"]', 'img2');
+shouldBeUndefined('form["img3"]');
+</script>

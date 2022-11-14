@@ -1,0 +1,12 @@
+This tests removing an image element with a form element ancestor during parsing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS form["img1"] is img1
+PASS form["img2"] is img2
+PASS form["img3"] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "PeerConnectionBackend.h"
 #include "RealtimeMediaSource.h"
@@ -118,4 +118,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

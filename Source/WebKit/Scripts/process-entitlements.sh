@@ -114,6 +114,7 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.private.tcc.allow array
             plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceScreenCapture
             plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+            plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
