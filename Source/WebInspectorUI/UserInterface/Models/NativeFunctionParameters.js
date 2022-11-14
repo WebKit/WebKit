@@ -610,9 +610,7 @@ WI.NativePrototypeFunctionParameters = {
     CSSStyleDeclaration: {
         getPropertyCSSValue: "[propertyName]",
         getPropertyPriority: "[propertyName]",
-        getPropertyShorthand: "[propertyName]",
         getPropertyValue: "[propertyName]",
-        isPropertyImplicit: "[propertyName]",
         item: "[index]",
         removeProperty: "[propertyName]",
         setProperty: "[propertyName], [value], [priority]",
