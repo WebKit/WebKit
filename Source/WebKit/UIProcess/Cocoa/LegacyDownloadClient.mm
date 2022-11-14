@@ -165,6 +165,8 @@ void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, co
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         downloadProxy.setDestinationFilename(destination);
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->setDestinationURL(URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename()));
         return;
     }
 #endif
