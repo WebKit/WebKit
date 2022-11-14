@@ -95,6 +95,10 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
     ASSERT(m_stream);
     m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream.get()));
 
+    g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](TrackPrivateBaseGStreamer* track) {
+        track->tagsChanged();
+    }), this);
+
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
 }
@@ -112,7 +116,7 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
         auto* track = static_cast<TrackPrivateBaseGStreamer*>(userData);
         switch (GST_EVENT_TYPE(gst_pad_probe_info_get_event(info))) {
         case GST_EVENT_TAG:
-            tagsChangedCallback(track);
+            track->tagsChanged();
             break;
         case GST_EVENT_STREAM_START:
             if (track->m_shouldHandleStreamStartEvent)
@@ -133,6 +137,9 @@ TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
 
 void TrackPrivateBaseGStreamer::disconnect()
 {
+    if (m_stream)
+        g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
     m_tags.clear();
 
     m_notifier->cancelPendingNotifications();
@@ -145,11 +152,6 @@ void TrackPrivateBaseGStreamer::disconnect()
 
     if (m_pad)
         m_pad.clear();
-}
-
-void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* track)
-{
-    track->tagsChanged();
 }
 
 void TrackPrivateBaseGStreamer::tagsChanged()
