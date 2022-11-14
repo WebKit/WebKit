@@ -1685,7 +1685,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
 
     // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
     case CSSPropertyBackground:
-    case CSSPropertyBackgroundPosition:
     case CSSPropertyBorderBlockEnd:
     case CSSPropertyBorderBlockStart:
     case CSSPropertyBorderBottom:
@@ -1722,9 +1721,6 @@ StringBuilder StyleProperties::asTextInternal() const
 {
     StringBuilder result;
 
-    int positionXPropertyIndex = -1;
-    int positionYPropertyIndex = -1;
-
     constexpr unsigned shorthandPropertyCount = lastShorthandProperty - firstShorthandProperty + 1;
     std::bitset<shorthandPropertyCount> shorthandPropertyUsed;
     std::bitset<shorthandPropertyCount> shorthandPropertyAppeared;
@@ -1741,18 +1737,9 @@ StringBuilder StyleProperties::asTextInternal() const
             auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
             shorthands.append(substitutionValue.shorthandPropertyId());
         } else {
-            switch (propertyID) {
-            case CSSPropertyBackgroundPositionX:
-                positionXPropertyIndex = n;
-                continue;
-            case CSSPropertyBackgroundPositionY:
-                positionYPropertyIndex = n;
-                continue;
-            default:
-                for (auto& shorthand : matchingShorthandsForLonghand(propertyID)) {
-                    if (canUseShorthandForLonghand(shorthand.id(), propertyID))
-                        shorthands.append(shorthand.id());
-                }
+            for (auto& shorthand : matchingShorthandsForLonghand(propertyID)) {
+                if (canUseShorthandForLonghand(shorthand.id(), propertyID))
+                    shorthands.append(shorthand.id());
             }
         }
 
@@ -1797,46 +1784,6 @@ StringBuilder StyleProperties::asTextInternal() const
 
         result.append(": ", value, property.isImportant() ? " !important" : "", ';');
     }
-
-    // FIXME: This is a not-so-nice way to turn x/y positions into single background-position/repeat in output.
-    // In 2007 we decided this was required because background-position-x/y are non-standard properties and WebKit generated output would not work in Firefox (<rdar://problem/5143183>).
-    // FIXME: This can probably be cleaned up now that background-position-x/y are standardized.
-    auto appendPositionOrProperty = [&] (int xIndex, int yIndex, const char* name, const StylePropertyShorthand& shorthand) {
-        if (shorthandPropertyUsed[CSSPropertyAll - firstShorthandProperty])
-            return;
-        if (xIndex != -1 && yIndex != -1 && propertyAt(xIndex).isImportant() == propertyAt(yIndex).isImportant()) {
-            String value;
-            auto xProperty = propertyAt(xIndex);
-            auto yProperty = propertyAt(yIndex);
-            if (xProperty.value()->isValueList() || yProperty.value()->isValueList())
-                value = getLayeredShorthandValue(shorthand);
-            else {
-                auto x = xProperty.value()->cssText();
-                auto y = yProperty.value()->cssText();
-                if (x == y && isCSSWideValueKeyword(x))
-                    value = x;
-                else
-                    value = makeString(x, ' ', y);
-            }
-            if (value != "initial"_s) {
-                result.append(numDecls ? " " : "", name, ": ", value, xProperty.isImportant() ? " !important" : "", ';');
-                ++numDecls;
-            }
-        } else {
-            if (xIndex != -1) {
-                if (numDecls++)
-                    result.append(' ');
-                result.append(propertyAt(xIndex).cssText());
-            }
-            if (yIndex != -1) {
-                if (numDecls++)
-                    result.append(' ');
-                result.append(propertyAt(yIndex).cssText());
-            }
-        }
-    };
-
-    appendPositionOrProperty(positionXPropertyIndex, positionYPropertyIndex, "background-position", backgroundPositionShorthand());
 
     ASSERT(!numDecls ^ !result.isEmpty());
     return result;
