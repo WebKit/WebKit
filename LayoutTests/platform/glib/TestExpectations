@@ -3010,6 +3010,8 @@ http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html 
 
 webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
 
+webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ Pass ImageOnlyFailure ]
+
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.tentative.sub.html [ Failure ]
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.html [ Failure ]
