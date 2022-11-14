@@ -33,9 +33,6 @@ var malformedKey6 = hexStringToUint8Array("30820122300d06092a864886f70d010101050
 var malformedKey7 = hexStringToUint8Array("308204bd020100300d06092a864886f70d0101010500048204a7"); // truncated Pkcs8 key
 
 // Jwk: Wrong usages
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: ""}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["sign"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: ""}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"])');
@@ -46,8 +43,6 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e}, {name: "R
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d}, {name: "RSA-PSS", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: ""}, {name: "RSA-PSS", hash: "sha-1"}, extractable, ["verify"])');
 // Jwk: Wrong use
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: "sig"}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: ""}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: "enc"}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: ""}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: "sig"}, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt", "wrapKey"])');
@@ -55,8 +50,6 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: ""}, 
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: "enc"}, {name: "RSA-PSS", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, use: ""}, {name: "RSA-PSS", hash: "sha-1"}, extractable, ["verify"])');
 // Jwk: Wrong alg
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: "foo"}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: ""}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: "RS224"}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: "RS256"}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-224"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: "RS384"}, {name: "RSASSA-PKCS1-v1_5", hash: "sha-256"}, extractable, ["verify"])');
@@ -88,48 +81,19 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: ""}, 
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: ""}, {name: "RSA-PSS", hash: "sha-384"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: ""}, {name: "RSA-PSS", hash: "sha-512"}, extractable, ["verify"])');
 // Jwk: Wrong kty
-shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", n: n, e: e}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-// Jwk: Wrong key_ops
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, key_ops: ["sign", "verify"]}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, key_ops: [ ]}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 // Jwk: Wrong ext
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, ext: false}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 // Jwk: Missing n or e
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA"}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", e: e}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 // Jwk: We currently only support import private key with two prime factors
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dp: dp, dq: dq, qi: qi, oth: [{r: q, d: dq, t: qi}]}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-// Jwk: miss any of p, q, dp, dq, qi
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, q: q, dp: dp, dq: dq, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, dp: dp, dq: dq, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dq: dq, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dp: dp, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dp: dp, dq: dq}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
 // Empty p
-shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: "", q: q, dp: dp, dq: dq, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-// Spki: Wrong usages
-shouldReject('crypto.subtle.importKey("spki", spkiKey, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
 shouldReject('crypto.subtle.importKey("spki", spkiKey, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["sign"])');
 shouldReject('crypto.subtle.importKey("spki", spkiKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["decrypt", "unwrapKey"])');
 shouldReject('crypto.subtle.importKey("spki", spkiKey, {name: "RSA-PSS", hash: "sha-1"}, extractable, ["sign"])');
 // Pkcs8: Wrong usages
-shouldReject('crypto.subtle.importKey("pkcs8", pkcs8Key, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
+// Pkcs8: Wrong usages
 shouldReject('crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt", "wrapKey"])');
 shouldReject('crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSA-PSS", hash: "sha-1"}, extractable, ["verify"])');
 // Malformed Key for Spki and Pkcs8
-shouldReject('crypto.subtle.importKey("spki", malformedKey0, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("spki", malformedKey1, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("spki", malformedKey2, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("spki", malformedKey4, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("spki", malformedKey6, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
-shouldReject('crypto.subtle.importKey("pkcs8", malformedKey0, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("pkcs8", malformedKey1, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("pkcs8", malformedKey3, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("pkcs8", malformedKey5, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
-shouldReject('crypto.subtle.importKey("pkcs8", malformedKey7, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_CRYPTO)
 
+#include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
 #include "CryptoUtilitiesCocoa.h"

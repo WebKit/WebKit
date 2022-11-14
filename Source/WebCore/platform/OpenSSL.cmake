@@ -10,7 +10,6 @@ if (ENABLE_WEB_CRYPTO)
         crypto/openssl/CryptoAlgorithmHKDFOpenSSL.cpp
         crypto/openssl/CryptoAlgorithmHMACOpenSSL.cpp
         crypto/openssl/CryptoAlgorithmPBKDF2OpenSSL.cpp
-        crypto/openssl/CryptoAlgorithmRSAES_PKCS1_v1_5OpenSSL.cpp
         crypto/openssl/CryptoAlgorithmRSASSA_PKCS1_v1_5OpenSSL.cpp
         crypto/openssl/CryptoAlgorithmRSA_OAEPOpenSSL.cpp
         crypto/openssl/CryptoAlgorithmRSA_PSSOpenSSL.cpp

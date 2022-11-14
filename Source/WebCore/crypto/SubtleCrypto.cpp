@@ -114,9 +114,6 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     case Operations::Encrypt:
     case Operations::Decrypt:
         switch (*identifier) {
-        case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
-            result = makeUnique<CryptoAlgorithmParameters>(params);
-            break;
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
             auto params = convertDictionary<CryptoAlgorithmRsaOaepParams>(state, value.get());
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
@@ -188,12 +185,6 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         break;
     case Operations::GenerateKey:
         switch (*identifier) {
-        case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
-            auto params = convertDictionary<CryptoAlgorithmRsaKeyGenParams>(state, value.get());
-            RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
-            result = makeUnique<CryptoAlgorithmRsaKeyGenParams>(params);
-            break;
-        }
         case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
         case CryptoAlgorithmIdentifier::RSA_PSS:
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
@@ -278,9 +269,6 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         break;
     case Operations::ImportKey:
         switch (*identifier) {
-        case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
-            result = makeUnique<CryptoAlgorithmParameters>(params);
-            break;
         case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
         case CryptoAlgorithmIdentifier::RSA_PSS:
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
@@ -485,7 +473,6 @@ static Vector<uint8_t> copyToVector(BufferSource&& data)
 static bool isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
-    case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSA_PSS:
     case CryptoAlgorithmIdentifier::RSA_OAEP:

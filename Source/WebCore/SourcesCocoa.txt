@@ -154,7 +154,6 @@ crypto/mac/CryptoAlgorithmECDSAMac.cpp
 crypto/mac/CryptoAlgorithmHKDFMac.cpp
 crypto/mac/CryptoAlgorithmHMACMac.cpp
 crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp
-crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp
 crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
 crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
 crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp
