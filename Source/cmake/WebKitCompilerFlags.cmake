@@ -132,8 +132,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
                                          -Wformat-security
                                          -Wmissing-format-attribute
                                          -Wpointer-arith
-                                         -Wundef
-                                         -Wwrite-strings)
+                                         -Wundef)
 
     # Warnings to be disabled
     # FIXME: We should probably not be disabling -Wno-maybe-uninitialized?
