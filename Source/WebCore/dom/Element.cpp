@@ -3180,6 +3180,8 @@ static bool isProgramaticallyFocusable(Element& element)
     return element.supportsFocus();
 }
 
+static RefPtr<Element> findFocusDelegateInternal(ContainerNode& target);
+
 // https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
 static RefPtr<Element> autoFocusDelegate(ContainerNode& target)
 {
@@ -3187,7 +3189,7 @@ static RefPtr<Element> autoFocusDelegate(ContainerNode& target)
         if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
             continue;
         if (auto root = shadowRootWithDelegatesFocus(element)) {
-            if (auto target = autoFocusDelegate(*root))
+            if (auto target = findFocusDelegateInternal(*root))
                 return target;
         }
         if (isProgramaticallyFocusable(element))
