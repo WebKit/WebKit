@@ -32,7 +32,6 @@ document.documentElement.setAttribute("style", "-apple-color-filter: contrast(1)
 shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
 shouldBeEmptyString("document.documentElement.style.getPropertyPriority('-apple-color-filter')");
 shouldBeNull("document.documentElement.style.getPropertyShorthand('-apple-color-filter')");
-shouldBeFalse("document.documentElement.style.isPropertyImplicit('-apple-color-filter')");
 shouldBeNull("document.documentElement.style.getPropertyCSSValue('-apple-color-filter')");
 shouldBeEmptyString("document.documentElement.style.removeProperty('-apple-color-filter')");
 shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");
@@ -47,7 +46,6 @@ document.documentElement.setAttribute("style", "-apple-color-filter: contrast(1)
 shouldBeEmptyString("getComputedStyle(document.documentElement).getPropertyValue('-apple-color-filter')");
 shouldBeEmptyString("getComputedStyle(document.documentElement).getPropertyPriority('-apple-color-filter')");
 shouldBeEmptyString("getComputedStyle(document.documentElement).getPropertyShorthand('-apple-color-filter')");
-shouldBeFalse("getComputedStyle(document.documentElement).isPropertyImplicit('-apple-color-filter')");
 shouldBeNull("getComputedStyle(document.documentElement).getPropertyCSSValue('-apple-color-filter')");
 shouldThrowErrorName("getComputedStyle(document.documentElement).removeProperty('-apple-color-filter')", "NoModificationAllowedError");
 shouldBeEmptyString("document.documentElement.style.getPropertyValue('-apple-color-filter')");

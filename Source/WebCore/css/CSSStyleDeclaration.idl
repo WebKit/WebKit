@@ -40,6 +40,5 @@ typedef USVString CSSOMString;
 
     // Non-standard.
     DOMString? getPropertyShorthand(optional DOMString propertyName);
-    boolean isPropertyImplicit(optional DOMString propertyName);
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
 };

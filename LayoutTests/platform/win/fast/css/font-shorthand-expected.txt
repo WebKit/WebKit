@@ -1,165 +1,165 @@
 Test
 Font for '12px monospace':
-font-style: initial (original property was font and property was implicitly set.)
-font-variant-caps: initial (original property was font and property was implicitly set.)
-font-weight: initial (original property was font and property was implicitly set.)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: initial (original property was font and property was implicitly set.)
-font-family: monospace (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: initial
+font-variant-caps: initial
+font-weight: initial
+font-stretch: initial
+font-size: 12px
+line-height: initial
+font-family: monospace
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for '12px/24px serif':
-font-style: initial (original property was font and property was implicitly set.)
-font-variant-caps: initial (original property was font and property was implicitly set.)
-font-weight: initial (original property was font and property was implicitly set.)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: 24px (original property was font)
-font-family: serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: initial
+font-variant-caps: initial
+font-weight: initial
+font-stretch: initial
+font-size: 12px
+line-height: 24px
+font-family: serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'normal 12px serif':
-font-style: initial (original property was font and property was implicitly set.)
-font-variant-caps: initial (original property was font and property was implicitly set.)
-font-weight: initial (original property was font and property was implicitly set.)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: initial (original property was font and property was implicitly set.)
-font-family: serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: initial
+font-variant-caps: initial
+font-weight: initial
+font-stretch: initial
+font-size: 12px
+line-height: initial
+font-family: serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'normal normal 12px serif':
-font-style: initial (original property was font and property was implicitly set.)
-font-variant-caps: initial (original property was font and property was implicitly set.)
-font-weight: initial (original property was font and property was implicitly set.)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: initial (original property was font and property was implicitly set.)
-font-family: serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: initial
+font-variant-caps: initial
+font-weight: initial
+font-stretch: initial
+font-size: 12px
+line-height: initial
+font-family: serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'normal normal normal 12px serif':
-font-style: initial (original property was font and property was implicitly set.)
-font-variant-caps: initial (original property was font and property was implicitly set.)
-font-weight: initial (original property was font and property was implicitly set.)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: initial (original property was font and property was implicitly set.)
-font-family: serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: initial
+font-variant-caps: initial
+font-weight: initial
+font-stretch: initial
+font-size: 12px
+line-height: initial
+font-family: serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'italic small-caps 12px/24px serif':
-font-style: italic (original property was font)
-font-variant-caps: small-caps (original property was font)
-font-weight: initial (original property was font and property was implicitly set.)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: 24px (original property was font)
-font-family: serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: italic
+font-variant-caps: small-caps
+font-weight: initial
+font-stretch: initial
+font-size: 12px
+line-height: 24px
+font-family: serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'italic bold 12px/24px serif':
-font-style: italic (original property was font)
-font-variant-caps: initial (original property was font and property was implicitly set.)
-font-weight: bold (original property was font)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: 24px (original property was font)
-font-family: serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: italic
+font-variant-caps: initial
+font-weight: bold
+font-stretch: initial
+font-size: 12px
+line-height: 24px
+font-family: serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'small-caps bold 14px/28px Arial, sans-serif':
-font-style: initial (original property was font and property was implicitly set.)
-font-variant-caps: small-caps (original property was font)
-font-weight: bold (original property was font)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 14px (original property was font)
-line-height: 28px (original property was font)
-font-family: Arial, sans-serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: initial
+font-variant-caps: small-caps
+font-weight: bold
+font-stretch: initial
+font-size: 14px
+line-height: 28px
+font-family: Arial, sans-serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'italic small-caps bold 14px/28px Arial, sans-serif':
-font-style: italic (original property was font)
-font-variant-caps: small-caps (original property was font)
-font-weight: bold (original property was font)
-font-stretch: initial (original property was font and property was implicitly set.)
-font-size: 14px (original property was font)
-line-height: 28px (original property was font)
-font-family: Arial, sans-serif (original property was font)
-font-size-adjust: initial (original property was font and property was implicitly set.)
-font-kerning: initial (original property was font and property was implicitly set.)
-font-variant-alternates: initial (original property was font and property was implicitly set.)
-font-variant-ligatures: initial (original property was font and property was implicitly set.)
-font-variant-numeric: initial (original property was font and property was implicitly set.)
-font-variant-east-asian: initial (original property was font and property was implicitly set.)
-font-variant-position: initial (original property was font and property was implicitly set.)
-font-feature-settings: initial (original property was font and property was implicitly set.)
-font-palette: initial (original property was font and property was implicitly set.)
+font-style: italic
+font-variant-caps: small-caps
+font-weight: bold
+font-stretch: initial
+font-size: 14px
+line-height: 28px
+font-family: Arial, sans-serif
+font-size-adjust: initial
+font-kerning: initial
+font-variant-alternates: initial
+font-variant-ligatures: initial
+font-variant-numeric: initial
+font-variant-east-asian: initial
+font-variant-position: initial
+font-feature-settings: initial
+font-palette: initial
 
 Font for 'italic small-caps bold 12px/24px':
 

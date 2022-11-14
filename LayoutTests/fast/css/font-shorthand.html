@@ -16,12 +16,7 @@ function testFontValue(value)
     decl.font = "";
     decl.font = value;
     for (var i = 0; i < decl.length; i++) {
-        var shorthand = decl.getPropertyShorthand(decl[i]);
         document.write(decl[i] + ": " + decl.getPropertyValue(decl[i]));
-        if (shorthand) {
-            document.write(" (original property was " + shorthand
-                + (decl.isPropertyImplicit(decl[i]) ? " and property was implicitly set.)" : ")"));
-        }
         document.write("<br>");
     }
     document.write("<br>");
