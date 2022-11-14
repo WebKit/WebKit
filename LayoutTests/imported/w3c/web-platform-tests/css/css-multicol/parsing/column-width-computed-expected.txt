@@ -1,5 +1,5 @@
 
 PASS Property column-width value 'auto'
 PASS Property column-width value 'calc(10px + 0.5em)'
-FAIL Property column-width value 'calc(10px - 0.5em)' assert_equals: computed value should round-trip expected "0px" but got "auto"
+PASS Property column-width value 'calc(10px - 0.5em)'
 

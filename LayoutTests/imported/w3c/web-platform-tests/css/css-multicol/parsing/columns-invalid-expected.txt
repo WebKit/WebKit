@@ -2,4 +2,10 @@
 PASS e.style['columns'] = "none" should not set the property value
 PASS e.style['columns'] = "10px 20px" should not set the property value
 PASS e.style['columns'] = "10 20" should not set the property value
+PASS e.style['columns'] = "0 0" should not set the property value
+PASS e.style['columns'] = "0 7px" should not set the property value
+PASS e.style['columns'] = "auto auto auto" should not set the property value
+PASS e.style['columns'] = "10em auto auto" should not set the property value
+PASS e.style['columns'] = "initial initial" should not set the property value
+PASS e.style['columns'] = "inherit inherit" should not set the property value
 
