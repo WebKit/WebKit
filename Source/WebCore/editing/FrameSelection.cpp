@@ -719,6 +719,14 @@ TextDirection FrameSelection::directionOfSelection()
     return directionOfEnclosingBlock();
 }
 
+static bool selectionIsOrphanedOrBelongsToWrongDocument(const VisibleSelection& selection, RefPtr<Document>&& document)
+{
+    if (selection.isOrphan())
+        return true;
+    RefPtr documentOfSelection = selection.document();
+    return document && documentOfSelection && document != documentOfSelection;
+}
+
 void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direction)
 {
     if (alter != AlterationExtend)
@@ -766,6 +774,8 @@ void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direct
         m_selection.setBase(end);
         m_selection.setExtent(start);
     }
+    if (selectionIsOrphanedOrBelongsToWrongDocument(m_selection, m_document.get()))
+        clear();
 }
 
 VisiblePosition FrameSelection::positionForPlatform(bool isGetStart) const
