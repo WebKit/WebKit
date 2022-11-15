@@ -342,9 +342,10 @@ void CurlHandle::enableSSLForHost(const String& host)
         setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
     }
 
-    const auto& cipherList = sslHandle.getCipherList();
-    if (!cipherList.isEmpty())
-        setSslCipherList(cipherList.utf8().data());
+    setSslCipherList(sslHandle.cipherList().data());
+
+    if (const auto& ecCurves = sslHandle.ecCurves(); !ecCurves.isNull())
+        setSslECCurves(ecCurves.data());
 
     setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
 
@@ -592,6 +593,11 @@ void CurlHandle::setSslKeyPassword(const char* password)
 void CurlHandle::setSslCipherList(const char* cipherList)
 {
     curl_easy_setopt(m_handle, CURLOPT_SSL_CIPHER_LIST, cipherList);
+}
+
+void CurlHandle::setSslECCurves(const char* ecCurves)
+{
+    curl_easy_setopt(m_handle, CURLOPT_SSL_EC_CURVES, ecCurves);
 }
 
 void CurlHandle::enableProxyIfExists()

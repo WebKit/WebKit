@@ -2046,18 +2046,12 @@ if (USE_LIBWEBRTC)
     )
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
+        "${WEBCORE_DIR}/platform/libwebrtc"
         "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
     )
     list(APPEND WebCore_LIBRARIES webrtc)
-    list(APPEND WebCore_SOURCES
-        Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp
+    list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+        "platform/SourcesLibWebRTC.txt"
     )
 endif ()
 

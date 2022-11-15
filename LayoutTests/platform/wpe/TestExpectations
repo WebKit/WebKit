@@ -483,14 +483,14 @@ fast/history/page-cache-notification-showing.html [ Skip ]
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
 
-webkit.org/b/177527 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
+webkit.org/b/177527 fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/176757 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
-webkit.org/b/176757 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
+webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
+webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/179948 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
+webkit.org/b/179948 fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
+webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
 

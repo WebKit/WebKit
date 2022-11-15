@@ -49,14 +49,9 @@ CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
 #endif
 
 #if (!defined(LIBRESSL_VERSION_NUMBER))
-    const auto& signatureAlgorithmsList = sslHandle.getSignatureAlgorithmsList();
-    if (!signatureAlgorithmsList.isEmpty())
-        SSL_CTX_set1_sigalgs_list(ctx, signatureAlgorithmsList.utf8().data());
+    if (const auto& signatureAlgorithmsList = sslHandle.signatureAlgorithmsList(); !signatureAlgorithmsList.isNull())
+        SSL_CTX_set1_sigalgs_list(ctx, signatureAlgorithmsList.data());
 #endif
-
-    const auto& curvesList = sslHandle.getCurvesList();
-    if (!curvesList.isEmpty())
-        SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
 
 #if ENABLE(TLS_DEBUG)
     SSL_CTX_set_info_callback(ctx, infoCallback);

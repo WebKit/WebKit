@@ -229,14 +229,6 @@ Modules/mediastream/SFrameUtils.cpp
 Modules/mediastream/STUNMessageParsing.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
-Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
-Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp
-Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.cpp
-Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
-Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
-Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
-Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.cpp
-Modules/mediastream/libwebrtc/LibWebRTCSctpTransportBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/model-element/ModelPlayer.cpp
 Modules/model-element/ModelPlayerClient.cpp
@@ -1958,7 +1950,6 @@ platform/LengthBox.cpp
 platform/LengthFunctions.cpp
 platform/LengthPoint.cpp
 platform/LengthSize.cpp
-platform/LibWebRTCVPXVideoDecoder.cpp
 platform/LocalizedStrings.cpp
 platform/LogInitialization.cpp
 platform/Logging.cpp
@@ -2018,6 +2009,7 @@ platform/ThreadGlobalData.cpp
 platform/ThreadTimers.cpp
 platform/Timer.cpp
 platform/UserActivity.cpp
+platform/VideoEncoder.cpp
 platform/VideoDecoder.cpp
 platform/VideoFrame.cpp
 platform/VideoPixelFormat.cpp
@@ -2303,9 +2295,6 @@ platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/RealtimeVideoSource.cpp
 platform/mediastream/WebRTCProvider.cpp
-platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp
-platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
-platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp
 platform/mock/DeviceOrientationClientMock.cpp
 platform/mock/GeolocationClientMock.cpp
 platform/mock/MediaEngineConfigurationFactoryMock.cpp
