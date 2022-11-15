@@ -362,7 +362,7 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
     CGContextStrokePath(context);
 }
 
-bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings) const
+bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings, ControlPart) const
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (settings.iOSFormControlRefreshEnabled())

@@ -256,8 +256,21 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&) const
+bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, ControlPart part) const
 {
+    switch (part) {
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case AttachmentPart:
+    case BorderlessAttachmentPart:
+        return true;
+#endif
+#if ENABLE(APPLE_PAY)
+    case ApplePayButtonPart:
+        return true;
+#endif
+    default:
+        break;
+    }
     return paintInfo.context().hasPlatformContext();
 }
 
