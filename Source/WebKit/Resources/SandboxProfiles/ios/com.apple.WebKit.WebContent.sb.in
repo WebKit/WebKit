@@ -888,11 +888,12 @@
 (media-accessibility-support)
 
 (deny mach-lookup (with no-report)
-    (global-name "com.apple.SystemConfiguration.configd")
-    (global-name "com.apple.aggregated")
-    (global-name "com.apple.diagnosticd")
-    (global-name "com.apple.fontservicesd")
-)
+    (global-name
+        "com.apple.SystemConfiguration.configd"
+        "com.apple.aggregated"
+        "com.apple.analyticsd"
+        "com.apple.diagnosticd"
+        "com.apple.fontservicesd"))
 
 (deny mach-lookup (with telemetry)
     (global-name "com.apple.PowerManagement.control"))
