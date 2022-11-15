@@ -29,11 +29,11 @@ namespace WebCore {
 
 class SVGForeignObjectElement;
 
-class RenderSVGForeignObject final : public RenderSVGBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGForeignObject);
+class LegacyRenderSVGForeignObject final : public RenderSVGBlock {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGForeignObject);
 public:
-    RenderSVGForeignObject(SVGForeignObjectElement&, RenderStyle&&);
-    virtual ~RenderSVGForeignObject();
+    LegacyRenderSVGForeignObject(SVGForeignObjectElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGForeignObject();
 
     SVGForeignObjectElement& foreignObjectElement() const;
 
@@ -51,7 +51,7 @@ public:
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
 private:
-    bool isSVGForeignObject() const override { return true; }
+    bool isLegacySVGForeignObject() const override { return true; }
     void graphicsElement() const = delete;
     ASCIILiteral renderName() const override { return "RenderSVGForeignObject"_s; }
 
@@ -73,4 +73,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGForeignObject, isSVGForeignObject())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGForeignObject, isLegacySVGForeignObject())

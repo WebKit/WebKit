@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGForeignObject.h"
+#include "LegacyRenderSVGForeignObject.h"
 
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -40,21 +40,21 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGForeignObject);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGForeignObject);
 
-RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
+LegacyRenderSVGForeignObject::LegacyRenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
     : RenderSVGBlock(element, WTFMove(style))
 {
 }
 
-RenderSVGForeignObject::~RenderSVGForeignObject() = default;
+LegacyRenderSVGForeignObject::~LegacyRenderSVGForeignObject() = default;
 
-SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
+SVGForeignObjectElement& LegacyRenderSVGForeignObject::foreignObjectElement() const
 {
     return downcast<SVGForeignObjectElement>(RenderSVGBlock::graphicsElement());
 }
 
-void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
+void LegacyRenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context().paintingDisabled())
         return;
@@ -96,21 +96,21 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     RenderBlock::paint(childPaintInfo, childPoint);
 }
 
-const AffineTransform& RenderSVGForeignObject::localToParentTransform() const
+const AffineTransform& LegacyRenderSVGForeignObject::localToParentTransform() const
 {
     m_localToParentTransform = localTransform();
     m_localToParentTransform.translate(m_viewport.location());
     return m_localToParentTransform;
 }
 
-void RenderSVGForeignObject::updateLogicalWidth()
+void LegacyRenderSVGForeignObject::updateLogicalWidth()
 {
     // FIXME: Investigate in size rounding issues
     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     setWidth(static_cast<int>(roundf(m_viewport.width())));
 }
 
-RenderBox::LogicalExtentComputedValues RenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
+RenderBox::LogicalExtentComputedValues LegacyRenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
     // FIXME: Investigate in size rounding issues
     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
@@ -118,7 +118,7 @@ RenderBox::LogicalExtentComputedValues RenderSVGForeignObject::computeLogicalHei
     return { static_cast<int>(roundf(m_viewport.height())), logicalTop, ComputedMarginValues() };
 }
 
-void RenderSVGForeignObject::layout()
+void LegacyRenderSVGForeignObject::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
@@ -146,7 +146,7 @@ void RenderSVGForeignObject::layout()
     // positions. A regular RenderBoxModelObject would pull this information from RenderStyle - in SVG those
     // properties are ignored for non <svg> elements, so we mimic what happens when specifying them through CSS.
 
-    // FIXME: Investigate in location rounding issues - only affects RenderSVGForeignObject & RenderSVGText
+    // FIXME: Investigate in location rounding issues - only affects LegacyRenderSVGForeignObject & RenderSVGText
     setLocation(roundedIntPoint(viewportLocation));
 
     bool layoutChanged = everHadLayout() && selfNeedsLayout();
@@ -164,7 +164,7 @@ void RenderSVGForeignObject::layout()
     repainter.repaintAfterLayout();
 }
 
-bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
+bool LegacyRenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // Embedded content is drawn in the foreground phase.
     if (hitTestAction != HitTestForeground)
@@ -184,7 +184,7 @@ bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, Hit
 }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-LayoutSize RenderSVGForeignObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool*) const
+LayoutSize LegacyRenderSVGForeignObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool*) const
 {
     ASSERT_UNUSED(container, &container == this->container());
     ASSERT(!isInFlowPositioned());
