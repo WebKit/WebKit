@@ -102,6 +102,7 @@ const Vector<Ref<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
     if (!m_voiceList.isEmpty())
         return m_voiceList;
 
+    WTFLogAlways("m_voiceList is empty");
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
     auto& voiceList = m_speechSynthesisClient ? m_speechSynthesisClient->voiceList() : ensurePlatformSpeechSynthesizer().voiceList();
     m_voiceList = voiceList.map([](auto& voice) {
@@ -281,6 +282,7 @@ void SpeechSynthesis::boundaryEventOccurred(bool wordBoundary, unsigned charInde
 
 void SpeechSynthesis::voicesChanged()
 {
+    WTFLogAlways("SpeechSynthesis::voicesChanged");
     voicesDidChange();
 }
 

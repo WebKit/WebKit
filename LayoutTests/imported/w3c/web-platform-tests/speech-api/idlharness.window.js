@@ -11,9 +11,11 @@ function getVoices() {
   return new Promise(resolve => {
     const voices = speechSynthesis.getVoices();
     if (voices.length) {
+        console.log('resolved sync');
         resolve(voices);
     } else {
         // wait for voiceschanged event
+        console.log('waiting for voiceschanged event');
         speechSynthesis.addEventListener('voiceschanged', () => {
           resolve(speechSynthesis.getVoices());
         }, { once: true });

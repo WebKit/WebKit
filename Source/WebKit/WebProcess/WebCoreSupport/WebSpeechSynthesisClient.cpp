@@ -39,7 +39,9 @@ const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisC
     // FIXME: this message should not be sent synchronously. Instead, the UI process should
     // get the list of voices and pass it on to the WebContent processes, see
     // https://bugs.webkit.org/show_bug.cgi?id=195723
+    WTFLogAlways("Sending sync message to UIProcess Messages::WebPageProxy::SpeechSynthesisVoiceList");
     auto sendResult = m_page.sendSync(Messages::WebPageProxy::SpeechSynthesisVoiceList());
+    WTFLogAlways("received response");
     auto [voiceList] = sendResult.takeReplyOr(Vector<WebSpeechSynthesisVoice> { });
 
     m_voices = voiceList.map([](auto& voice) -> RefPtr<WebCore::PlatformSpeechSynthesisVoice> {

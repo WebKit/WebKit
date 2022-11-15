@@ -34,8 +34,10 @@ const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& PlatformSpeechSynthesizer::v
 {
     if (!m_voiceListIsInitialized) {
         ASSERT(m_voiceList.isEmpty());
+        WTFLogAlways("const_cast<PlatformSpeechSynthesizer*>(this)->initializeVoiceList();");
         const_cast<PlatformSpeechSynthesizer*>(this)->initializeVoiceList();
         const_cast<PlatformSpeechSynthesizer*>(this)->m_voiceListIsInitialized = true;
+        WTFLogAlways("initialized");
     }
     return m_voiceList;
 }

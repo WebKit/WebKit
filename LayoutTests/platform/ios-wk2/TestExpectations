@@ -2303,9 +2303,6 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Skip ]
 
 
-# rdar://97228542 ([ iOS16 ] imported/w3c/web-platform-tests/speech-api/idlharness.window.html is a constant text failure)
-imported/w3c/web-platform-tests/speech-api/idlharness.window.html [ Failure ]
-
 # rdar://97297483 ([ iOS16 ] fast/events/ios/rotation/zz-no-rotation.html is a constant timeout =)
 fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
 

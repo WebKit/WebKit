@@ -1750,17 +1750,21 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     [webView2 loadRequest:server.request()];
 
     auto webViewToUpdate = useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes ? webView : webView2;
-    [webViewToUpdate _setThrottleStateForTesting: 1];
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
-    [webViewToUpdate _setThrottleStateForTesting: 2];
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        [webViewToUpdate _setThrottleStateForTesting:1];
+        return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting] && [webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
-    [webViewToUpdate _setThrottleStateForTesting: 0];
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        [webViewToUpdate _setThrottleStateForTesting:2];
+        return [webViewToUpdate _hasServiceWorkerForegroundActivityForTesting] && ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting];
+    }));
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        [webViewToUpdate _setThrottleStateForTesting:0];
+        return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting] && ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
     [webView _close];
     webView = nullptr;

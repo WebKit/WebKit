@@ -11081,6 +11081,7 @@ void WebPageProxy::speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpe
     auto result = speechSynthesisData().synthesizer->voiceList().map([](auto& voice) {
         return WebSpeechSynthesisVoice { voice->voiceURI(), voice->name(), voice->lang(), voice->localService(), voice->isDefault() };
     });
+    WTFLogAlways("WebPageProxy::speechSynthesisVoiceList result.size() %lu", result.size());
     completionHandler(WTFMove(result));
 }
 
