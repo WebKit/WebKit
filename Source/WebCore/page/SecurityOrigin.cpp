@@ -119,11 +119,6 @@ static bool shouldTreatAsOpaqueOrigin(const URL& url)
         || url.protocolIs("x-apple-ql-id2"_s)
         || url.protocolIs("x-apple-ql-magic"_s)
 #endif
-#if ENABLE(WEB_ARCHIVE) && USE(CF)
-        || url.protocolIs("webarchive+http"_s)
-        || url.protocolIs("webarchive+https"_s)
-        || url.protocolIs("webarchive+ftp"_s)
-#endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         || url.protocolIs("resource"_s)
 #endif
