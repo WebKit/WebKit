@@ -20,9 +20,10 @@
 
 #pragma once
 
-namespace WebCore {
+#include "ElementInlines.h"
+#include "HTMLFormElement.h"
 
-class HTMLElement;
+namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/forms.html#form-associated-element
 class FormAssociatedElement {
@@ -30,14 +31,72 @@ public:
     void ref() { refFormAssociatedElement(); }
     void deref() { derefFormAssociatedElement(); }
 
-    virtual ~FormAssociatedElement() = default;
+    virtual ~FormAssociatedElement() { RELEASE_ASSERT(!m_form); }
     virtual HTMLElement& asHTMLElement() = 0;
     virtual const HTMLElement& asHTMLElement() const = 0;
     virtual bool isFormListedElement() const = 0;
 
+    virtual void formWillBeDestroyed() { m_form = nullptr; }
+
+    HTMLFormElement* form() const { return m_form.get(); }
+
+    virtual void setForm(HTMLFormElement*);
+    virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
+    virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
+
+protected:
+    FormAssociatedElement(HTMLFormElement*);
+
+    virtual void resetFormOwner() = 0;
+    virtual void setFormInternal(HTMLFormElement*);
+
 private:
+    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
+    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
+
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;
 };
+
+inline FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
+    : m_formSetByParser(form)
+{
+}
+
+inline void FormAssociatedElement::setForm(HTMLFormElement* newForm)
+{
+    if (m_form != newForm)
+        setFormInternal(newForm);
+}
+
+inline void FormAssociatedElement::setFormInternal(HTMLFormElement* newForm)
+{
+    ASSERT(m_form != newForm);
+    m_form = newForm;
+}
+
+inline void FormAssociatedElement::elementInsertedIntoAncestor(Element& element, Node::InsertionType)
+{
+    ASSERT(&asHTMLElement() == &element);
+    if (m_formSetByParser) {
+        // The form could have been removed by a script during parsing.
+        if (m_formSetByParser->isConnected())
+            setForm(m_formSetByParser.get());
+        m_formSetByParser = nullptr;
+    }
+
+    if (m_form && element.rootElement() != m_form->rootElement())
+        setForm(nullptr);
+}
+
+inline void FormAssociatedElement::elementRemovedFromAncestor(Element& element, Node::RemovalType)
+{
+    ASSERT(&asHTMLElement() == &element);
+    // Do not rely on rootNode() because m_form's IsInTreeScope can be outdated.
+    if (m_form && &element.traverseToRootNode() != &m_form->traverseToRootNode()) {
+        setForm(nullptr);
+        resetFormOwner();
+    }
+}
 
 } // namespace WebCore

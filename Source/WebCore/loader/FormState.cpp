@@ -45,6 +45,8 @@ inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldV
     RELEASE_ASSERT(sourceDocument.frame());
 }
 
+FormState::~FormState() = default;
+
 Ref<FormState> FormState::create(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
 {
     return adoptRef(*new FormState(form, WTFMove(textFieldValues), sourceDocument, formSubmissionTrigger));

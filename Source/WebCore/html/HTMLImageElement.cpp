@@ -74,10 +74,9 @@ using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
+    , FormAssociatedElement(form)
     , ActiveDOMObject(document)
     , m_imageLoader(makeUnique<HTMLImageLoader>(*this))
-    , m_form(nullptr)
-    , m_formSetByParser(form)
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
 {
@@ -105,18 +104,16 @@ HTMLImageElement::~HTMLImageElement()
     setForm(nullptr);
 }
 
-HTMLFormElement* HTMLImageElement::form() const
+void HTMLImageElement::resetFormOwner()
 {
-    return m_form.get();
+    setForm(HTMLFormElement::findClosestFormAncestor(*this));
 }
 
-void HTMLImageElement::setForm(HTMLFormElement* newForm)
+void HTMLImageElement::setFormInternal(HTMLFormElement* newForm)
 {
-    if (m_form == newForm)
-        return;
-    if (m_form)
-        m_form->unregisterImgElement(*this);
-    m_form = newForm;
+    if (auto* form = FormAssociatedElement::form())
+        form->unregisterImgElement(*this);
+    FormAssociatedElement::setFormInternal(newForm);
     if (newForm)
         newForm->registerImgElement(*this);
 }
@@ -453,17 +450,9 @@ void HTMLImageElement::didAttachRenderers()
 
 Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (m_formSetByParser) {
-        if (m_formSetByParser->isConnected())
-            setForm(m_formSetByParser.get());
-        m_formSetByParser = nullptr;
-    }
-
-    if (m_form && rootElement() != m_form->rootElement())
-        setForm(nullptr);
-
-    if (!m_form)
-        setForm(HTMLFormElement::findClosestFormAncestor(*this));
+    FormAssociatedElement::elementInsertedIntoAncestor(*this, insertionType);
+    if (!form())
+        resetFormOwner();
 
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
@@ -500,10 +489,7 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
     }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-
-    // Do not rely on rootNode() because IsInTreeScope can be outdated.
-    if (m_form && &traverseToRootNode() != &m_form->traverseToRootNode())
-        setForm(HTMLFormElement::findClosestFormAncestor(*this));
+    FormAssociatedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const

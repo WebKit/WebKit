@@ -295,7 +295,7 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 Node::InsertedIntoAncestorResult HTMLObjectElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLPlugInImageElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    FormListedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    FormListedElement::elementInsertedIntoAncestor(*this, insertionType);
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
@@ -307,7 +307,7 @@ void HTMLObjectElement::didFinishInsertingNode()
 void HTMLObjectElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLPlugInImageElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    FormListedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormListedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
 void HTMLObjectElement::childrenChanged(const ChildChange& change)

@@ -52,15 +52,11 @@ private:
 };
 
 FormListedElement::FormListedElement(HTMLFormElement* form)
-    : m_form(nullptr)
-    , m_formSetByParser(form)
+    : FormAssociatedElement(form)
 {
 }
 
-FormListedElement::~FormListedElement()
-{
-    RELEASE_ASSERT(!m_form);
-}
+FormListedElement::~FormListedElement() = default;
 
 void FormListedElement::didMoveToNewDocument(Document&)
 {
@@ -69,18 +65,9 @@ void FormListedElement::didMoveToNewDocument(Document&)
         resetFormAttributeTargetObserver();
 }
 
-void FormListedElement::insertedIntoAncestor(Node::InsertionType insertionType, ContainerNode&)
+void FormListedElement::elementInsertedIntoAncestor(Element& element, Node::InsertionType insertionType)
 {
-    HTMLElement& element = asHTMLElement();
-    if (m_formSetByParser) {
-        // The form could have been removed by a script during parsing.
-        if (m_formSetByParser->isConnected())
-            setForm(m_formSetByParser.get());
-        m_formSetByParser = nullptr;
-    }
-
-    if (m_form && element.rootElement() != m_form->rootElement())
-        setForm(nullptr);
+    FormAssociatedElement::elementInsertedIntoAncestor(element, insertionType);
 
     if (!insertionType.connectedToDocument)
         return;
@@ -89,16 +76,14 @@ void FormListedElement::insertedIntoAncestor(Node::InsertionType insertionType, 
         resetFormAttributeTargetObserver();
 }
 
-void FormListedElement::removedFromAncestor(Node::RemovalType removalType, ContainerNode&)
+void FormListedElement::elementRemovedFromAncestor(Element& element, Node::RemovalType removalType)
 {
-    auto& element = asHTMLElement();
+    ASSERT(&asHTMLElement() == &element);
     m_formAttributeTargetObserver = nullptr;
 
-    // If the form and element are both in the same tree, preserve the connection to the form.
-    // Otherwise, null out our form and remove ourselves from the form's list of elements.
-    // Do not rely on rootNode() because our IsInTreeScope is outdated.
-    if ((m_form && &element.traverseToRootNode() != &m_form->traverseToRootNode())
-        || (removalType.disconnectedFromDocument && element.hasAttributeWithoutSynchronization(formAttr))) {
+    FormAssociatedElement::elementRemovedFromAncestor(element, removalType);
+
+    if (removalType.disconnectedFromDocument && element.hasAttributeWithoutSynchronization(formAttr)) {
         setForm(nullptr);
         resetFormOwner();
     }
@@ -127,18 +112,14 @@ HTMLFormElement* FormListedElement::findAssociatedForm(const HTMLElement* elemen
     return currentAssociatedForm;
 }
 
-HTMLFormElement* FormListedElement::form() const
-{
-    return m_form.get();
-}
-
 void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
-    ASSERT(m_form);
+    ASSERT(form());
     // Can't use RefPtr here beacuse this function might be called inside ~ShadowRoot via addChildNodesToDeletionQueue. See webkit.org/b/189493.
     Node* rootNode = &asHTMLElement();
+    auto* currentForm = form();
     for (auto* ancestor = asHTMLElement().parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (ancestor == m_form) {
+        if (ancestor == currentForm) {
             // Form is our ancestor so we don't need to reset our owner, we also no longer
             // need an id observer since we are no longer connected.
             m_formAttributeTargetObserver = nullptr;
@@ -152,14 +133,12 @@ void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
         setForm(nullptr);
 }
 
-void FormListedElement::setForm(HTMLFormElement* newForm)
+void FormListedElement::setFormInternal(HTMLFormElement* newForm)
 {
-    if (m_form == newForm)
-        return;
     willChangeForm();
-    if (m_form)
-        m_form->unregisterFormListedElement(*this);
-    m_form = newForm;
+    if (auto* oldForm = form())
+        oldForm->unregisterFormListedElement(*this);
+    FormAssociatedElement::setFormInternal(newForm);
     if (newForm)
         newForm->registerFormListedElement(*this);
     didChangeForm();
@@ -175,20 +154,20 @@ void FormListedElement::didChangeForm()
 
 void FormListedElement::formWillBeDestroyed()
 {
-    ASSERT(m_form);
-    if (!m_form)
+    ASSERT(form());
+    if (!form())
         return;
     willChangeForm();
-    m_form = nullptr;
+    FormAssociatedElement::formWillBeDestroyed();
     didChangeForm();
 }
 
 void FormListedElement::resetFormOwner()
 {
-    RefPtr<HTMLFormElement> originalForm = m_form.get();
+    RefPtr<HTMLFormElement> originalForm = form();
     setForm(findAssociatedForm(&asHTMLElement(), originalForm.get()));
     HTMLElement& element = asHTMLElement();
-    auto* newForm = m_form.get();
+    auto* newForm = form();
     if (newForm && newForm != originalForm && newForm->isConnected())
         element.document().didAssociateFormControl(element);
 }
@@ -198,10 +177,10 @@ void FormListedElement::formAttributeChanged()
     HTMLElement& element = asHTMLElement();
     if (!element.hasAttributeWithoutSynchronization(formAttr)) {
         // The form attribute removed. We need to reset form owner here.
-        RefPtr<HTMLFormElement> originalForm = m_form.get();
+        RefPtr originalForm = form();
         // FIXME: Why does this not pass originalForm to findClosestFormAncestor?
         setForm(HTMLFormElement::findClosestFormAncestor(element));
-        auto* newForm = m_form.get();
+        auto* newForm = form();
         if (newForm && newForm != originalForm && newForm->isConnected())
             element.document().didAssociateFormControl(element);
         m_formAttributeTargetObserver = nullptr;
