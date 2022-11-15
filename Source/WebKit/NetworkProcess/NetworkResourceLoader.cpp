@@ -1394,7 +1394,7 @@ void NetworkResourceLoader::continueDidReceiveResponse()
         m_responseCompletionHandler(PolicyAction::Use);
 }
 
-void NetworkResourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void NetworkResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
     if (!isSynchronous())
         send(Messages::WebResourceLoader::DidSendData(bytesSent, totalBytesToBeSent));
