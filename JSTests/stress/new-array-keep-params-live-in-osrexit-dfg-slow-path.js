@@ -1,4 +1,4 @@
-//@ requireOptions("--useConcurrentJIT=0 --jitPolicyScale=0.001")
+//@ requireOptions("--useConcurrentJIT=0", "--jitPolicyScale=0.001")
 
 function main() {
   const v75 = {};
