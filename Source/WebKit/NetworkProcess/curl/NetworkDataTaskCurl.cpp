@@ -34,6 +34,7 @@
 #include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
 #include "PrivateRelayed.h"
+#include "WebErrors.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/CurlRequest.h>
@@ -441,7 +442,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
 
         if (disposition == AuthenticationChallengeDisposition::Cancel) {
             cancel();
-            m_client->didCompleteWithError(ResourceError::httpError(CURLE_COULDNT_RESOLVE_HOST, m_response.url()));
+            m_client->didCompleteWithError(cancelledError(m_curlRequest->resourceRequest()));
             return;
         }
 
@@ -467,7 +468,7 @@ void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChalleng
 
         if (disposition == AuthenticationChallengeDisposition::Cancel) {
             cancel();
-            m_client->didCompleteWithError(ResourceError::httpError(CURLE_COULDNT_RESOLVE_PROXY, m_response.url()));
+            m_client->didCompleteWithError(cancelledError(m_curlRequest->resourceRequest()));
             return;
         }
 
