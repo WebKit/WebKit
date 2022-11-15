@@ -42,7 +42,7 @@
 #if defined(BUILDING_WITH_CMAKE)
 
 // CMake path
-#if defined(BUILDING_TestJSC)
+#if defined(BUILDING_TestJSC) || defined(BUILDING_TestJavaScriptCore)
 #include <JavaScriptCore/JSExportMacros.h>
 #endif
 
@@ -86,6 +86,7 @@
 // Work around the less strict coding standards of the gtest framework.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wundef"
 #endif
 
 #ifdef __cplusplus

@@ -117,59 +117,59 @@
 #endif
 
 /* FIXME: Remove after CMake build enabled on Darwin */
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_ERRNO_H 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_LANGINFO_H 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_LOCALTIME_R 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_MMAP 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_REGEX_H 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_SIGNAL_H 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_STAT_BIRTHTIME 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_STRNSTR 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_SYS_PARAM_H 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_SYS_TIME_H 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_TM_GMTOFF 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_TM_ZONE 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_TIMEGM 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_PTHREAD_MAIN_NP 1
 #endif
 
@@ -209,7 +209,7 @@
 #define HAVE_READLINE 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #define HAVE_SYS_TIMEB_H 1
 #endif
 

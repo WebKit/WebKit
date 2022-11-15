@@ -22,6 +22,7 @@
 #pragma once
 
 #include <unicode/utypes.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/text/LChar.h>
 
 namespace WTF {
