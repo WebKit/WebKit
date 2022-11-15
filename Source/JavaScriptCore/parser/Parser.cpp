@@ -1932,7 +1932,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
             newScope->preventVarDeclarations();
             break;
         case BlockType::StaticBlock:
-            newScope->setIsStaticBlock();
+            newScope->setSourceParseMode(SourceParseMode::ClassStaticBlockMode);
+            newScope->setExpectedSuperBinding(SuperBinding::Needed);
             break;
         case BlockType::Normal:
             newScope->preventVarDeclarations();
@@ -3203,7 +3204,6 @@ parseMethod:
             matchOrFail(OPENBRACE, "Expected block statement for class static block");
             size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
             currentScope()->pushUsedVariableSet();
-            SetForScope parsingWithClassStaticBlockMode(m_parseMode, parseMode);
             DepthManager statementDepth(&m_statementDepth);
             m_statementDepth = 1;
             failIfFalse(parseBlockStatement(context, BlockType::StaticBlock), "Cannot parse class static block");
