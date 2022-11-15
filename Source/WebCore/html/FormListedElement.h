@@ -46,7 +46,6 @@ public:
     virtual ~FormListedElement();
 
     static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
-    WEBCORE_EXPORT HTMLFormElement* form() const;
     ValidityState* validity();
 
     virtual bool isFormControlElement() const = 0;
@@ -62,9 +61,9 @@ public:
     // Return true for a successful control (see HTML4-17.13.2).
     virtual bool appendFormData(DOMFormData&) { return false; }
 
-    void formWillBeDestroyed();
+    void formWillBeDestroyed() final;
 
-    void resetFormOwner();
+    void resetFormOwner() final;
 
     void formOwnerRemovedFromTree(const Node&);
 
@@ -91,12 +90,11 @@ public:
 protected:
     FormListedElement(HTMLFormElement*);
 
-    void insertedIntoAncestor(Node::InsertionType, ContainerNode&);
-    void removedFromAncestor(Node::RemovalType, ContainerNode&);
+    void elementInsertedIntoAncestor(Element&, Node::InsertionType) final;
+    void elementRemovedFromAncestor(Element&, Node::RemovalType);
     void didMoveToNewDocument(Document& oldDocument);
 
     void clearForm() { setForm(nullptr); }
-    void setForm(HTMLFormElement*);
     void formAttributeChanged();
 
     // If you add an override of willChangeForm() or didChangeForm() to a class
@@ -108,6 +106,7 @@ protected:
     String customValidationMessage() const;
 
 private:
+    void setFormInternal(HTMLFormElement*) final;
     // "willValidate" means "is a candidate for constraint validation".
     virtual bool willValidate() const = 0;
 
@@ -116,8 +115,6 @@ private:
     bool isFormListedElement() const final { return true; }
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
-    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
-    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
     String m_customValidationMessage;
 };
 

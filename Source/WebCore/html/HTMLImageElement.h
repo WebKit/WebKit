@@ -48,7 +48,6 @@ enum class RelevantMutation : bool;
 
 class HTMLImageElement : public HTMLElement, public FormAssociatedElement, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
-    friend class HTMLFormElement;
 public:
     static Ref<HTMLImageElement> create(Document&);
     static Ref<HTMLImageElement> create(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
@@ -170,10 +169,11 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
-    HTMLFormElement* form() const final;
-    void setForm(HTMLFormElement*);
+    HTMLFormElement* form() const final { return FormAssociatedElement::form(); }
+    void resetFormOwner() final;
     void refFormAssociatedElement() final { HTMLElement::ref(); }
     void derefFormAssociatedElement() final { HTMLElement::deref(); }
+    void setFormInternal(HTMLFormElement*) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void parseAttribute(const QualifiedName&, const AtomString&) override;
@@ -228,8 +228,6 @@ private:
     void setSourceElement(HTMLSourceElement*);
 
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
-    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
-    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
 
     CompositeOperator m_compositeOperator;
     AtomString m_bestFitImageURL;

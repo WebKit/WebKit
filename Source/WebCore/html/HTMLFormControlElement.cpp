@@ -255,7 +255,7 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
     if (document().hasDisabledFieldsetElement())
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    FormListedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    FormListedElement::elementInsertedIntoAncestor(*this, insertionType);
 
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
@@ -280,7 +280,7 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
     }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    FormListedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormListedElement::elementRemovedFromAncestor(*this, removalType);
 
     if (wasMatchingInvalidPseudoClass)
         removeInvalidElementToAncestorFromInsertionPoint(*this, &oldParentOfRemovedTree);

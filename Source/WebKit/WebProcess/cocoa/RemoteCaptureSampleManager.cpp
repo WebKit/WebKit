@@ -128,7 +128,7 @@ void RemoteCaptureSampleManager::setVideoFrameObjectHeapProxy(RemoteVideoFrameOb
     m_videoFrameObjectHeapProxy = proxy;
 }
 
-void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
+void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -137,7 +137,7 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for storageChanged", identifier.toUInt64());
         return;
     }
-    iterator->value->setStorage(WTFMove(handle), description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
+    iterator->value->setStorage(WTFMove(handle), description, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
 void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
@@ -214,11 +214,11 @@ void RemoteCaptureSampleManager::RemoteAudio::startThread()
     m_thread = Thread::create("RemoteCaptureSampleManager::RemoteAudio thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
 }
 
-void RemoteCaptureSampleManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
+void RemoteCaptureSampleManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
 {
     stopThread();
     m_buffer = nullptr;
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_semaphore = WTFMove(semaphore);

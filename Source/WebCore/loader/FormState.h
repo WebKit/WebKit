@@ -44,6 +44,7 @@ using StringPairVector = Vector<std::pair<String, String>>;
 class FormState : public RefCounted<FormState>, public CanMakeWeakPtr<FormState>, public FrameDestructionObserver {
 public:
     static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
+    ~FormState();
 
     HTMLFormElement& form() const { return m_form; }
     const StringPairVector& textFieldValues() const { return m_textFieldValues; }

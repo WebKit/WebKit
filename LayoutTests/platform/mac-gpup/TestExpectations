@@ -3,3 +3,8 @@
 # The direct image codepath is not used with the remote layer tree.
 compositing/images/direct-image-object-fit.html [ Skip ]
 compositing/reflections/direct-image-object-fit-reflected.html [ Skip ]
+
+# rdar://102067140 WebXR tests crash
+http/wpt/webxr [ Skip ]
+imported/w3c/web-platform-tests/webxr [ Skip ]
+webxr [ Skip ]

@@ -104,7 +104,7 @@ private:
             auto& format = m_description->streamDescription();
             auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, numberOfFrames);
             m_ringBuffer = WTFMove(ringBuffer);
-            m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format, numberOfFrames), 0);
+            m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format), 0);
         }
 
         ASSERT(is<WebAudioBufferList>(audioData));

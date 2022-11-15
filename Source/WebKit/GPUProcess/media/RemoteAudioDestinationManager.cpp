@@ -93,7 +93,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, uint64_t numberOfFrames)
+    void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
     {
         if (m_isPlaying) {
             stop();
@@ -101,7 +101,7 @@ public:
             if (m_isPlaying)
                 return;
         }
-        m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, numberOfFrames, WTFMove(handle));
+        m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, WTFMove(handle));
         if (!m_ringBuffer)
             return;
         start();
@@ -221,10 +221,10 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 }
 
 #if PLATFORM(COCOA)
-void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, uint64_t numberOfFrames)
+void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle)
 {
     if (auto* item = m_audioDestinations.get(identifier))
-        item->audioSamplesStorageChanged(WTFMove(handle), numberOfFrames);
+        item->audioSamplesStorageChanged(WTFMove(handle));
 }
 #endif
 

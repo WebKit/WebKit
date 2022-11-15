@@ -125,7 +125,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         auto& format = m_description->streamDescription();
         auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
         m_ringBuffer = WTFMove(ringBuffer);
-        m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format, m_numberOfFrames }, m_identifier);
+        m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format }, m_identifier);
         m_silenceAudioBuffer = nullptr;
     }
 

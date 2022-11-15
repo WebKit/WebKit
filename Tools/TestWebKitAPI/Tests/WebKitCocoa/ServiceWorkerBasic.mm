@@ -2969,6 +2969,17 @@ static constexpr auto ServiceWorkerWindowClientFocusJS =
 "   });"
 "});"_s;
 
+#if PLATFORM(MAC)
+void miniaturizeWebView(TestWKWebView* webView)
+{
+    [[webView hostWindow] miniaturize:[webView hostWindow]];
+
+    int cptr = 0;
+    while ([webView hostWindow].isVisible && ++cptr < 1000)
+        TestWebKitAPI::Util::spinRunLoop(10);
+}
+#endif // PLATFORM(MAC)
+
 TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -3006,9 +3017,10 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
     EXPECT_WK_STREQ([webView2 _test_waitForAlert], "already active");
 
 #if PLATFORM(MAC)
-    [[webView1 hostWindow] miniaturize:[webView1 hostWindow]];
-    [[webView2 hostWindow] miniaturize:[webView2 hostWindow]];
+    miniaturizeWebView(webView1.get());
     EXPECT_FALSE([webView1 hostWindow].isVisible);
+
+    miniaturizeWebView(webView2.get());
     EXPECT_FALSE([webView2 hostWindow].isVisible);
 #endif
 

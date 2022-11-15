@@ -64,11 +64,11 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
 {
 }
 
-void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
     MESSAGE_CHECK(m_recordAudio);
     m_audioBufferList = nullptr;
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;

@@ -122,7 +122,7 @@ HTMLFormElement::~HTMLFormElement()
         listedElement->formWillBeDestroyed();
     }
     for (auto& imageElement : m_imageElements)
-        imageElement->m_form = nullptr;
+        imageElement->formWillBeDestroyed();
 }
 
 bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
