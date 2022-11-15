@@ -447,4 +447,19 @@ TEST(WTF, StringSplitWithConsecutiveSeparators)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 }
 
+TEST(WTF, StringMakeStringByJoining)
+{
+    Vector<String> test1 = { "hello"_s, "foo"_s, "bar"_s };
+    auto test1_result = makeStringByJoining(test1, " "_s);
+    ASSERT_EQ(test1_result, "hello foo bar"_s);
+
+    std::array<String, 1> test2 = { "hello"_s };
+    auto test2_result = makeStringByJoining(test2, "sdf"_s);
+    ASSERT_EQ(test2_result, "hello"_s);
+    
+    std::vector<String> test3 = { "foo"_s, "bar"_s };
+    auto test3_result = makeStringByJoining(test3, ", "_s);
+    ASSERT_EQ(test3_result, "foo, bar"_s);
+}
+
 } // namespace TestWebKitAPI

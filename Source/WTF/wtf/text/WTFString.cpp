@@ -78,6 +78,18 @@ UChar32 String::characterStartingAt(unsigned i) const
     return m_impl->characterStartingAt(i);
 }
 
+String makeStringByJoining(Span<const String> strings, const String& separator)
+{
+    StringBuilder builder;
+    for (const auto& string : strings) {
+        if (builder.isEmpty())
+            builder.append(string);
+        else
+            builder.append(separator, string);
+    }
+    return builder.toString();
+}
+
 String makeStringByRemoving(const String& string, unsigned position, unsigned lengthToRemove)
 {
     if (!lengthToRemove)

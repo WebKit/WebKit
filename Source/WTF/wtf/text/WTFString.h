@@ -497,6 +497,8 @@ template<size_t inlineCapacity> inline String String::make8BitFrom16BitSource(co
     return make8BitFrom16BitSource(buffer.data(), buffer.size());
 }
 
+WTF_EXPORT_PRIVATE String makeStringByJoining(Span<const String> strings, const String& separator);
+
 inline UCharDirection String::defaultWritingDirection(bool* hasStrongDirectionality) const
 {
     if (m_impl)
@@ -603,6 +605,7 @@ using WTF::String;
 using WTF::charactersToDouble;
 using WTF::charactersToFloat;
 using WTF::emptyString;
+using WTF::makeStringByJoining;
 using WTF::makeStringByRemoving;
 using WTF::makeStringByReplacingAll;
 using WTF::nullString;
