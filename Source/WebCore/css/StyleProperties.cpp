@@ -460,45 +460,6 @@ String StyleProperties::borderSpacingValue(const StylePropertyShorthand& shortha
     return horizontalValueCSSText + ' ' + verticalValueCSSText;
 }
 
-void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID, StringBuilder& result, String& commonValue) const
-{
-    int foundPropertyIndex = findPropertyIndex(propertyID);
-    if (foundPropertyIndex == -1)
-        return; // All longhands must have at least implicit values if "font" is specified.
-
-    if (propertyAt(foundPropertyIndex).isImplicit()) {
-        commonValue = String();
-        return;
-    }
-
-    const char* prefix = "";
-    switch (propertyID) {
-    case CSSPropertyFontStyle:
-        break; // No prefix.
-    case CSSPropertyFontFamily:
-    case CSSPropertyFontVariantAlternates:
-    case CSSPropertyFontVariantCaps:
-    case CSSPropertyFontVariantLigatures:
-    case CSSPropertyFontVariantNumeric:
-    case CSSPropertyFontVariantPosition:
-    case CSSPropertyFontVariantEastAsian:
-    case CSSPropertyFontWeight:
-    case CSSPropertyFontStretch:
-        prefix = " ";
-        break;
-    case CSSPropertyLineHeight:
-        prefix = " / ";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    String value = propertyAt(foundPropertyIndex).value()->cssText();
-    result.append(result.isEmpty() ? "" : prefix, value);
-    if (!commonValue.isNull() && commonValue != value)
-        commonValue = String();
-}
-
 static std::optional<CSSValueID> fontStretchKeyword(double value)
 {
     // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
@@ -551,36 +512,39 @@ String StyleProperties::fontValue() const
 
     // Font stretch values can only be serialized in the font shorthand as keywords, since percentages are also valid font sizes.
     // If a font stretch percentage can be expressed as a keyword, then do that.
-    ASCIILiteral stretchPercentageAsKeyword;
-    bool stretchIsNormal = false;
+    std::optional<CSSValueID> stretchKeyword;
     if (auto stretchBase = getPropertyCSSValue(CSSPropertyFontStretch)) {
         auto stretch = downcast<CSSPrimitiveValue>(stretchBase.get());
-        std::optional<CSSValueID> keyword;
         if (!stretch->isPercentage())
-            keyword = stretch->valueID();
+            stretchKeyword = stretch->valueID();
         else {
-            keyword = fontStretchKeyword(stretch->doubleValue());
-            if (!keyword)
+            stretchKeyword = fontStretchKeyword(stretch->doubleValue());
+            if (!stretchKeyword)
                 return emptyString();
-            stretchPercentageAsKeyword = nameLiteral(*keyword);
         }
-        stretchIsNormal = keyword == CSSValueNormal;
     }
 
-    // This code no longer uses commonValue, for now we define it so we can use appendFontLonghandValueIfExplicit.
-    String commonValue;
     StringBuilder result;
-    appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result, commonValue);
-    if (!stretchIsNormal) {
-        if (!stretchPercentageAsKeyword.isNull())
-            result.append(result.isEmpty() ? "" : " ", stretchPercentageAsKeyword);
-        else
-            appendFontLonghandValueIfExplicit(CSSPropertyFontStretch, result, commonValue);
-    }
+    auto appendOptionalValue = [this, &result](CSSPropertyID property) {
+        int foundPropertyIndex = findPropertyIndex(property);
+        if (foundPropertyIndex == -1)
+            return; // All longhands must have at least implicit values if "font" is specified.
+
+        // Omit default normal values.
+        if (propertyAsValueID(property) == CSSValueNormal)
+            return;
+
+        auto prefix = property == CSSPropertyLineHeight ? " / " : " ";
+        result.append(result.isEmpty() ? "" : prefix, propertyAt(foundPropertyIndex).value()->cssText());
+    };
+
+    appendOptionalValue(CSSPropertyFontStyle);
+    appendOptionalValue(CSSPropertyFontVariantCaps);
+    appendOptionalValue(CSSPropertyFontWeight);
+    if (stretchKeyword && *stretchKeyword != CSSValueNormal)
+        result.append(result.isEmpty() ? "" : " ", nameString(*stretchKeyword));
     result.append(result.isEmpty() ? "" : " ", size->cssText());
-    appendFontLonghandValueIfExplicit(CSSPropertyLineHeight, result, commonValue);
+    appendOptionalValue(CSSPropertyLineHeight);
     result.append(result.isEmpty() ? "" : " ", family->cssText());
     return result.toString();
 }
@@ -685,16 +649,54 @@ String StyleProperties::textDecorationSkipValue() const
 
 String StyleProperties::fontVariantValue() const
 {
-    String commonValue;
     StringBuilder result;
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantLigatures, result, commonValue);
-    if (isCSSWideValueKeyword(result.toString()))
-        return result.toString();
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantAlternates, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantNumeric, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantEastAsian, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantPosition, result, commonValue);
+    std::optional<CSSValueID> commonCSSWideKeyword;
+    bool isAllNormal = true;
+    auto ligaturesKeyword = propertyAsValueID(CSSPropertyFontVariantLigatures);
+
+    for (auto property : fontVariantShorthand()) {
+        int foundPropertyIndex = findPropertyIndex(property);
+        if (foundPropertyIndex == -1)
+            return emptyString(); // All longhands must have at least implicit values.
+
+        // Bypass getPropertyCSSValue which will return an empty string for system keywords.
+        auto value = propertyAt(foundPropertyIndex).value();
+        auto keyword = valueID(value);
+
+        // If all properties are set to the same special keyword, serialize as that.
+        // If some but not all properties are, the shorthand can't represent that, serialize as empty string.
+        if (isCSSWideKeyword(keyword)) {
+            if (commonCSSWideKeyword.value_or(keyword) != keyword)
+                return emptyString();
+            commonCSSWideKeyword = keyword;
+            continue;
+        }
+        if (commonCSSWideKeyword)
+            return emptyString();
+
+        // Skip normal for brevity.
+        if (keyword == CSSValueNormal)
+            continue;
+
+        isAllNormal = false;
+
+        // System keywords are not representable by font-variant.
+        if (CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
+            return emptyString();
+
+        // font-variant cannot represent font-variant-ligatures: none along with other non-normal longhands.
+        if (ligaturesKeyword.value_or(CSSValueNormal) == CSSValueNone && property != CSSPropertyFontVariantLigatures)
+            return emptyString();
+
+        result.append(result.isEmpty() ? "" : " ", value->cssText());
+    }
+
+    if (commonCSSWideKeyword)
+        return nameString(*commonCSSWideKeyword);
+
+    if (result.isEmpty() && isAllNormal)
+        return nameString(CSSValueNormal);
+
     return result.toString();
 }
 
@@ -1683,6 +1685,8 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyMask:
         return longhandID != CSSPropertyMaskComposite && longhandID != CSSPropertyMaskMode && longhandID != CSSPropertyMaskSize;
 
+    // FIXME: If font-variant-ligatures is none, this depends on the value of the longhand.
+    case CSSPropertyFontVariant:
     // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
     case CSSPropertyBackground:
     case CSSPropertyBorderBlockEnd:
@@ -1697,7 +1701,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyColumns:
     case CSSPropertyContainer:
     case CSSPropertyFontSynthesis:
-    case CSSPropertyFontVariant:
     case CSSPropertyGap:
     case CSSPropertyGridArea:
     case CSSPropertyGridColumn:

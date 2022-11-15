@@ -20,6 +20,9 @@
       var child = document.getElementById("child");
       child.src = "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/user-activation/resources/child-one.html";
       window.addEventListener("message", t.step_func(event => {
+          // Test driver can send messages too...
+          if (typeof event.data !== "string") return;
+
           var msg = JSON.parse(event.data);
           if (msg.type == 'child-one-loaded') {
               assert_false(navigator.userActivation.isActive);

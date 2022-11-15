@@ -406,4 +406,14 @@ template<> struct EnumTraits<WebCore::ScrollGranularity> {
         WebCore::ScrollGranularity::Pixel
     >;
 };
+
+template<> struct EnumTraits<WebCore::ScrollDirection> {
+    using values = EnumValues<
+        WebCore::ScrollDirection,
+        WebCore::ScrollDirection::ScrollUp,
+        WebCore::ScrollDirection::ScrollDown,
+        WebCore::ScrollDirection::ScrollLeft,
+        WebCore::ScrollDirection::ScrollRight
+    >;
+};
 } // namespace WTF

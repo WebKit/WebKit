@@ -33,7 +33,7 @@ PASS window.getComputedStyle(document.getElementById('t12')).getPropertyValue('f
 PASS window.getComputedStyle(document.getElementById('t13')).getPropertyValue('font-variant') is "normal"
 PASS window.getComputedStyle(document.getElementById('t14')).getPropertyValue('font-variant') is "normal"
 PASS window.getComputedStyle(document.getElementById('t15')).getPropertyValue('font-variant') is "normal"
-PASS window.getComputedStyle(document.getElementById('t16')).getPropertyValue('font-variant') is "common-ligatures super small-caps lining-nums historical-forms simplified"
+PASS window.getComputedStyle(document.getElementById('t16')).getPropertyValue('font-variant') is "common-ligatures small-caps historical-forms lining-nums simplified super"
 PASS window.getComputedStyle(document.getElementById('t17')).getPropertyValue('font-variant') is "normal"
 PASS window.getComputedStyle(document.getElementById('t18')).getPropertyValue('font-variant') is "none"
 PASS window.getComputedStyle(document.getElementById('t19')).getPropertyValue('font-variant') is "normal"

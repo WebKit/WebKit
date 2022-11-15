@@ -61,6 +61,10 @@ private:
     const AffineTransform& localToParentTransform() const override;
     AffineTransform localTransform() const override { return m_localTransform; }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+#endif
+
     AffineTransform m_localTransform;
     mutable AffineTransform m_localToParentTransform;
     FloatRect m_viewport;

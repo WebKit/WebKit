@@ -123,7 +123,7 @@ public:
     struct SynchronousLoadData;
 
     // NetworkLoadClient.
-    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
+    void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final;
     bool isSynchronous() const final;
     bool isAllowedToAskUserForCredentials() const final { return m_isAllowedToAskUserForCredentials; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) final;

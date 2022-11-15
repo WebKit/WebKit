@@ -526,11 +526,8 @@ class PullRequest(Command):
             component = issue.component
             if pr_issue.component == component or component not in pr_issue.tracker.projects.get(project, {}).get('components', {}):
                 component = None
-            version = issue.version
-            if pr_issue.version == version or version not in pr_issue.tracker.projects.get(project, {}).get('versions', []):
-                version = None
-            if component or version:
-                pr_issue.set_component(component=component, version=version)
+            if component:
+                pr_issue.set_component(component=component)
                 log.info('Synced PR labels with issue component!')
             else:
                 log.info('No label syncing required')

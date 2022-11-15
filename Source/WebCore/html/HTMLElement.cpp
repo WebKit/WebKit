@@ -762,7 +762,7 @@ HTMLFormElement* HTMLElement::form() const
     return HTMLFormElement::findClosestFormAncestor(*this);
 }
 
-FormNamedItem* HTMLElement::asFormNamedItem()
+FormAssociatedElement* HTMLElement::asFormAssociatedElement()
 {
     return nullptr;
 }

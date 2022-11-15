@@ -22,8 +22,8 @@ PASS show: Autofocus after, yes delegatesFocus
 PASS showModal: Autofocus after, yes delegatesFocus
 PASS show: Autofocus on shadow host, yes delegatesFocus, no siblings
 PASS showModal: Autofocus on shadow host, yes delegatesFocus, no siblings
-FAIL show: Autofocus on shadow host, yes delegatesFocus, sibling before assert_equals: expected Element node <div autofocus="true"></div> but got Element node <button tabindex="-1">Focusable</button>
-FAIL showModal: Autofocus on shadow host, yes delegatesFocus, sibling before assert_equals: expected Element node <div autofocus="true"></div> but got Element node <button tabindex="-1">Focusable</button>
+PASS show: Autofocus on shadow host, yes delegatesFocus, sibling before
+PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling before
 PASS show: Autofocus on shadow host, yes delegatesFocus, sibling after
 PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling after
 PASS show: Autofocus on shadow host, no delegatesFocus, no siblings

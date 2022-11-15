@@ -878,7 +878,7 @@ bool HTMLFormElement::reportValidity()
 }
 
 #if ASSERT_ENABLED
-void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem& item) const
+void HTMLFormElement::assertItemCanBeInPastNamesMap(FormAssociatedElement& item) const
 {
     HTMLElement& element = item.asHTMLElement();
     ASSERT(element.form() == this);
@@ -902,12 +902,12 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& p
         return nullptr;
     RefPtr element { weakElement.get() };
 #if ASSERT_ENABLED
-    assertItemCanBeInPastNamesMap(*element->asFormNamedItem());
+    assertItemCanBeInPastNamesMap(*element->asFormAssociatedElement());
 #endif
     return element;
 }
 
-void HTMLFormElement::addToPastNamesMap(FormNamedItem& item, const AtomString& pastName)
+void HTMLFormElement::addToPastNamesMap(FormAssociatedElement& item, const AtomString& pastName)
 {
 #if ASSERT_ENABLED
     assertItemCanBeInPastNamesMap(item);
@@ -917,7 +917,7 @@ void HTMLFormElement::addToPastNamesMap(FormNamedItem& item, const AtomString& p
     m_pastNamesMap.set(pastName.impl(), item.asHTMLElement());
 }
 
-void HTMLFormElement::removeFromPastNamesMap(FormNamedItem& item)
+void HTMLFormElement::removeFromPastNamesMap(FormAssociatedElement& item)
 {
     if (m_pastNamesMap.isEmpty())
         return;
@@ -948,7 +948,7 @@ Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
 
     auto elementFromPast = elementFromPastNamesMap(name);
     if (namedItems.size() == 1 && namedItems.first().ptr() != elementFromPast)
-        addToPastNamesMap(*downcast<HTMLElement>(namedItems.first().get()).asFormNamedItem(), name);
+        addToPastNamesMap(*downcast<HTMLElement>(namedItems.first().get()).asFormAssociatedElement(), name);
     else if (elementFromPast && namedItems.isEmpty())
         namedItems.append(*elementFromPast);
 

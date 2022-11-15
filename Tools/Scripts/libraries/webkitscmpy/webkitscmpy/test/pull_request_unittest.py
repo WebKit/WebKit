@@ -598,7 +598,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -655,7 +654,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -754,7 +752,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -812,7 +809,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -958,7 +954,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),

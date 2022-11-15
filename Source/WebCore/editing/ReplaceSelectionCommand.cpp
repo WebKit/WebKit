@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
- * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -832,6 +832,9 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
 {
     Ref<Node> protectedNode = node;
     Ref<Node> protectedAncestor = ancestor;
+
+    if (!protectedAncestor->parentNode()->hasEditableStyle())
+        return;
 
     VisiblePosition positionAtEndOfNode = lastPositionInOrAfterNode(&node);
     VisiblePosition lastPositionInParagraph = lastPositionInNode(&ancestor);

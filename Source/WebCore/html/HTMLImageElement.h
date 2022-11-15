@@ -25,7 +25,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DecodingOptions.h"
-#include "FormNamedItem.h"
+#include "FormAssociatedElement.h"
 #include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
@@ -46,7 +46,7 @@ struct ImageCandidate;
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 
-class HTMLImageElement : public HTMLElement, public FormNamedItem, public ActiveDOMObject {
+class HTMLImageElement : public HTMLElement, public FormAssociatedElement, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
     friend class HTMLFormElement;
 public:
@@ -206,7 +206,7 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     bool isFormListedElement() const final { return false; }
-    FormNamedItem* asFormNamedItem() final { return this; }
+    FormAssociatedElement* asFormAssociatedElement() final { return this; }
     HTMLImageElement& asHTMLElement() final { return *this; }
     const HTMLImageElement& asHTMLElement() const final { return *this; }
 

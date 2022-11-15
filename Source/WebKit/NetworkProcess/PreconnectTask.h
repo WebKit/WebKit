@@ -52,7 +52,7 @@ private:
     // NetworkLoadClient.
     bool isSynchronous() const final { return false; }
     bool isAllowedToAskUserForCredentials() const final { return false; }
-    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
+    void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final;
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
     void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) final;
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, int reportedEncodedDataLength) final;

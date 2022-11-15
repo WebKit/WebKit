@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "FormNamedItem.h"
+#include "FormAssociatedElement.h"
 #include "Node.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +39,7 @@ class HTMLFormElement;
 class ValidityState;
 
 // https://html.spec.whatwg.org/multipage/forms.html#category-listed
-class FormListedElement : public FormNamedItem {
+class FormListedElement : public FormAssociatedElement {
     WTF_MAKE_NONCOPYABLE(FormListedElement);
     WTF_MAKE_FAST_ALLOCATED;
 public:

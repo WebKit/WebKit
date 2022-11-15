@@ -47,7 +47,13 @@ protected:
 class ConsumerSharedCARingBuffer final : public SharedCARingBufferBase {
 public:
     using Handle = SharedMemory::Handle;
-    static std::unique_ptr<ConsumerSharedCARingBuffer> map(const WebCore::CAAudioStreamDescription& format, size_t frameCount, Handle&&);
+    // FIXME: Remove this deprecated constructor.
+    static std::unique_ptr<ConsumerSharedCARingBuffer> map(const WebCore::CAAudioStreamDescription& format, size_t frameCount, Handle&& handle)
+    {
+        return map(format.bytesPerFrame(), format.numberOfChannelStreams(), frameCount, WTFMove(handle));
+    }
+    static std::unique_ptr<ConsumerSharedCARingBuffer> map(uint32_t bytesPerFrame, uint32_t numChannelStreams, size_t frameCount, Handle&&);
+
 protected:
     using SharedCARingBufferBase::SharedCARingBufferBase;
 };
