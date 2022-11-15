@@ -75,7 +75,7 @@ public:
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
     virtual void deviceScaleFactorDidChange() = 0;
-    
+    virtual void colorSpaceDidChange() { }
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond> /* nominalFramesPerSecond */) { }
 
     // FIXME: These should be pure virtual.
@@ -92,7 +92,6 @@ public:
     virtual void targetRefreshRateDidChange(unsigned) { }
 #endif
 
-    virtual void colorSpaceDidChange() { }
     virtual void minimumSizeForAutoLayoutDidChange() { }
     virtual void sizeToContentAutoSizeMaximumSizeDidChange() { }
     virtual void windowKindDidChange() { }

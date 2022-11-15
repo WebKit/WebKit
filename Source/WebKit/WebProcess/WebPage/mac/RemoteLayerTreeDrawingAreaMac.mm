@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "WebPageCreationParameters.h"
 #import <WebCore/ScrollView.h>
 
 namespace WebKit {
@@ -36,6 +37,7 @@ using namespace WebCore;
 RemoteLayerTreeDrawingAreaMac::RemoteLayerTreeDrawingAreaMac(WebPage& webPage, const WebPageCreationParameters& parameters)
     : RemoteLayerTreeDrawingArea(webPage, parameters)
 {
+    setColorSpace(parameters.colorSpace);
 }
 
 RemoteLayerTreeDrawingAreaMac::~RemoteLayerTreeDrawingAreaMac() = default;
@@ -44,6 +46,17 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaMac::delegatedScrollingMode() c
 {
     return DelegatedScrollingMode::DelegatedToWebKit;
 }
+
+void RemoteLayerTreeDrawingAreaMac::setColorSpace(std::optional<WebCore::DestinationColorSpace> colorSpace)
+{
+    m_displayColorSpace = colorSpace;
+}
+
+std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeDrawingAreaMac::displayColorSpace() const
+{
+    return m_displayColorSpace;
+}
+
 
 } // namespace WebKit
 

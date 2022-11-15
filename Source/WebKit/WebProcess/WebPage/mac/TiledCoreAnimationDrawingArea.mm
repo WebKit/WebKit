@@ -645,6 +645,11 @@ void TiledCoreAnimationDrawingArea::setColorSpace(std::optional<WebCore::Destina
     m_layerHostingContext->setColorSpace(colorSpace ? colorSpace->platformColorSpace() : nullptr);
 }
 
+std::optional<WebCore::DestinationColorSpace> TiledCoreAnimationDrawingArea::displayColorSpace() const
+{
+    return DestinationColorSpace { m_layerHostingContext->colorSpace() };
+}
+
 RefPtr<WebCore::DisplayRefreshMonitor> TiledCoreAnimationDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     return DisplayRefreshMonitorMac::create(displayID);

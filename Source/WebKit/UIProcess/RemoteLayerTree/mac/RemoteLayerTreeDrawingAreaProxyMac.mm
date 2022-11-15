@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DrawingAreaMessages.h"
 #import "RemoteScrollingCoordinatorProxyMac.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
@@ -211,6 +212,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
 {
     RemoteLayerTreeDrawingAreaProxy::didChangeViewExposedRect();
     updateDebugIndicatorPosition();
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()
+{
+    send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()));
 }
 
 } // namespace WebKit

@@ -198,8 +198,13 @@ bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
 
 DestinationColorSpace RemoteLayerBackingStore::colorSpace() const
 {
+#if PLATFORM(MAC)
+    if (auto* context = m_layer->context())
+        return context->displayColorSpace().value_or(DestinationColorSpace::SRGB());
+#else
     if (usesDeepColorBackingStore())
         return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+#endif
     return DestinationColorSpace::SRGB();
 }
 

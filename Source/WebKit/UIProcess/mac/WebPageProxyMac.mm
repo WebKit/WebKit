@@ -318,10 +318,12 @@ void WebPageProxy::assistiveTechnologyMakeFirstResponder()
     pageClient().assistiveTechnologyMakeFirstResponder();
 }
 
+#if PLATFORM(MAC)
 WebCore::DestinationColorSpace WebPageProxy::colorSpace()
 {
     return pageClient().colorSpace();
 }
+#endif
 
 void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {

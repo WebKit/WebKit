@@ -56,6 +56,7 @@ private:
     void pauseDisplayRefreshCallbacks() override;
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
+    void colorSpaceDidChange() override;
 
     void didChangeViewExposedRect() override;
 
