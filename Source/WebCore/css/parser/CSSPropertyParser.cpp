@@ -816,7 +816,10 @@ static RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
 
     auto parseSomethingWithoutError = [&range, &result]() {
         bool hasParsedSomething = false;
-        auto parseAndSetArgument = [&range, &hasParsedSomething] (auto& value) {
+        auto parseAndSetArgument = [&range, &hasParsedSomething] (std::optional<String>& value) {
+            if (value)
+                return false;
+        
             CSSParserTokenRange args = consumeFunction(range);
             auto ident = consumeCustomIdent(args);
             if (!args.atEnd())
@@ -825,11 +828,26 @@ static RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
             if (!ident)
                 return false;
         
-            if (value)
+            hasParsedSomething = true;
+            value = ident->stringValue();
+            return true;
+        };
+        auto parseListAndSetArgument = [&range, &hasParsedSomething] (Vector<String>& value) {
+            if (!value.isEmpty())
+                return false;
+
+            CSSParserTokenRange args = consumeFunction(range);
+            do {
+                auto ident = consumeCustomIdent(args);
+                if (!ident)
+                    return false;
+                value.append(ident->stringValue());
+            } while (consumeCommaIncludingWhitespace(args));
+
+            if (!args.atEnd())
                 return false;
         
             hasParsedSomething = true;
-            value = ident->stringValue();
             return true;
         };
         while (true) {
@@ -852,10 +870,10 @@ static RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
                 if (!parseAndSetArgument(result.valuesRef().stylistic))
                     return false;
             } else if (token.functionId() == CSSValueStyleset) {
-                if (!parseAndSetArgument(result.valuesRef().styleset))
+                if (!parseListAndSetArgument(result.valuesRef().styleset))
                     return false;
             } else if (token.functionId() == CSSValueCharacterVariant) {
-                if (!parseAndSetArgument(result.valuesRef().characterVariant))
+                if (!parseListAndSetArgument(result.valuesRef().characterVariant))
                     return false;
             } else if (token.functionId() == CSSValueOrnaments) {
                 if (!parseAndSetArgument(result.valuesRef().ornaments))

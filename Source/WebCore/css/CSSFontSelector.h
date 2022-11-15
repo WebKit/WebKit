@@ -138,7 +138,7 @@ private:
         }
     };
     HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
-    HashMap<AtomString, Ref<FontFeatureValues>> m_featureValues;
+    HashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;

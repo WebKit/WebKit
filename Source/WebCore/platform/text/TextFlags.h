@@ -194,10 +194,8 @@ struct FontVariantAlternatesValues {
     }
 
     std::optional<String> stylistic;
-    // FIXME: supports a list of strings for styleset and characterVariant.
-    // https://bugs.webkit.org/show_bug.cgi?id=246811
-    std::optional<String> styleset;
-    std::optional<String> characterVariant;
+    Vector<String> styleset;
+    Vector<String> characterVariant;
     std::optional<String> swash;
     std::optional<String> ornaments;
     std::optional<String> annotation;

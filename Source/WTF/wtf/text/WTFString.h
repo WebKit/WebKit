@@ -474,6 +474,8 @@ ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& s
 
 WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringByRemoving(const String&, unsigned position, unsigned lengthToRemove);
 
+WTF_EXPORT_PRIVATE String makeStringByJoining(Span<const String> strings, const String& separator);
+
 inline std::optional<UCharDirection> String::defaultWritingDirection() const
 {
     if (m_impl)
@@ -599,6 +601,7 @@ using WTF::String;
 using WTF::charactersToDouble;
 using WTF::charactersToFloat;
 using WTF::emptyString;
+using WTF::makeStringByJoining;
 using WTF::makeStringByRemoving;
 using WTF::makeStringByReplacingAll;
 using WTF::nullString;

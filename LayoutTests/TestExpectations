@@ -3750,9 +3750,7 @@ webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-default-0
 webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-03.html [ ImageOnlyFailure ]
 webkit.org/b/86071 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
 
-# font-variant-alternates
-# (failing because of font-family case matching, and multiple properties unimplemented)
-webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/alternates-order.html [ ImageOnlyFailure ]
+# font-variant-alternates: swash doesn't work
 webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ ImageOnlyFailure ]
 webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ ImageOnlyFailure ]
 
