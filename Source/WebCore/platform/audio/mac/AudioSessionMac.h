@@ -28,6 +28,7 @@
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
 #include "AudioSession.h"
+#include <pal/spi/cf/CoreAudioSPI.h>
 
 typedef UInt32 AudioObjectID;
 typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
@@ -42,11 +43,25 @@ public:
 private:
     void addSampleRateObserverIfNeeded() const;
     void addBufferSizeObserverIfNeeded() const;
+    void addDefaultDeviceObserverIfNeeded() const;
+    void addMuteChangeObserverIfNeeded() const;
+    void removeMuteChangeObserverIfNeeded() const;
+
+    float sampleRateWithoutCaching() const;
+    std::optional<size_t> bufferSizeWithoutCaching() const;
+    void removePropertyListenersForDefaultDevice() const;
 
     static OSStatus handleSampleRateChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
     void handleSampleRateChange() const;
     static OSStatus handleBufferSizeChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
     void handleBufferSizeChange() const;
+    static OSStatus handleDefaultDeviceChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
+
+    AudioDeviceID defaultDevice() const;
+    static const AudioObjectPropertyAddress& defaultOutputDeviceAddress();
+    static const AudioObjectPropertyAddress& nominalSampleRateAddress();
+    static const AudioObjectPropertyAddress& bufferSizeAddress();
+    static const AudioObjectPropertyAddress& muteAddress();
 
     // AudioSession
     CategoryType category() const final { return m_category; }
@@ -79,8 +94,11 @@ private:
 #endif
     mutable bool m_hasSampleRateObserver { false };
     mutable bool m_hasBufferSizeObserver { false };
+    mutable bool m_hasDefaultDeviceObserver { false };
+    mutable bool m_hasMuteChangeObserver { false };
     mutable std::optional<double> m_sampleRate;
     mutable std::optional<size_t> m_bufferSize;
+    mutable std::optional<AudioDeviceID> m_defaultDevice;
 };
 
 }
