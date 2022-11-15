@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0;">
+  <script src="../../resources/js-test-pre.js"></script>
+  <script src="../../resources/ui-helper.js"></script>
+  <script type="text/javascript">
+    function runTest() {
+      window.jsTestIsAsync = true;
+
+      setTimeout(() => {
+        UIHelper.activateAt(110, 110);
+      }, 0);
+    }
+
+    runTest();
+  </script>
+  <svg style="width: 200px; height: 200px;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="5,5 195,10 185,185 10,195" />
+
+    <foreignObject x="100" y="100" width="160" height="160">
+      <div id="target" style="background-color: blue; width: 20px; height: 20px" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+
+      <script type="text/javascript">
+        document.getElementById('target').addEventListener('click', (event) => {
+          shouldBe("event.offsetX", "10");
+          shouldBe("event.offsetY", "10");
+          finishJSTest();
+        })
+      </script>
+    </foreignObject>
+  </svg>
+  <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
