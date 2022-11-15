@@ -74,6 +74,7 @@ public:
         : m_id(identifier)
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
+        , m_numOutputChannels(numberOfOutputChannels)
 #endif
         , m_renderSemaphore(WTFMove(renderSemaphore))
     {
@@ -92,7 +93,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+    void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, uint64_t numberOfFrames)
     {
         if (m_isPlaying) {
             stop();
@@ -100,7 +101,7 @@ public:
             if (m_isPlaying)
                 return;
         }
-        m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
+        m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, numberOfFrames, WTFMove(handle));
         if (!m_ringBuffer)
             return;
         start();
@@ -157,6 +158,7 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
+    const uint32_t m_numOutputChannels;
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
     unsigned m_extraRequestedFrames { 0 };
@@ -219,10 +221,10 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 }
 
 #if PLATFORM(COCOA)
-void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestinationIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, uint64_t numberOfFrames)
 {
     if (auto* item = m_audioDestinations.get(identifier))
-        item->audioSamplesStorageChanged(WTFMove(handle), description, numberOfFrames);
+        item->audioSamplesStorageChanged(WTFMove(handle), numberOfFrames);
 }
 #endif
 

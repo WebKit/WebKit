@@ -117,7 +117,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         getAudioStreamBasicDescription(streamFormat);
         auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(streamFormat, m_numberOfFrames);
         m_ringBuffer = WTFMove(ringBuffer);
-        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle), streamFormat, m_numberOfFrames }, 0);
+        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle), m_numberOfFrames }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
         m_audioBufferList->setSampleCount(WebCore::AudioUtilities::renderQuantumSize);
 #endif

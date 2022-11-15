@@ -38,11 +38,9 @@ SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t fram
 {
 }
 
-std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(const WebCore::CAAudioStreamDescription& format, size_t frameCount, ConsumerSharedCARingBuffer::Handle&& handle)
+std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint32_t bytesPerFrame, uint32_t numChannelStreams, size_t frameCount, ConsumerSharedCARingBuffer::Handle&& handle)
 {
     frameCount = WTF::roundUpToPowerOfTwo(frameCount);
-    auto bytesPerFrame = format.bytesPerFrame();
-    auto numChannelStreams = format.numberOfChannelStreams();
 
     // Validate the parameters as they may be coming from an untrusted process.
     auto expectedStorageSize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
