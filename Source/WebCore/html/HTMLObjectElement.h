@@ -91,7 +91,7 @@ private:
     void refFormAssociatedElement() final { ref(); }
     void derefFormAssociatedElement() final { deref(); }
 
-    FormNamedItem* asFormNamedItem() final { return this; }
+    FormAssociatedElement* asFormAssociatedElement() final { return this; }
     FormListedElement* asFormListedElement() final { return this; }
 
     // These functions can be called concurrently for ValidityState.

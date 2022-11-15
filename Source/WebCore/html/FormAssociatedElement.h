@@ -24,13 +24,13 @@ namespace WebCore {
 
 class HTMLElement;
 
-// FIXME: Rename this to FormAssociatedElement
-class FormNamedItem {
+// https://html.spec.whatwg.org/multipage/forms.html#form-associated-element
+class FormAssociatedElement {
 public:
     void ref() { refFormAssociatedElement(); }
     void deref() { derefFormAssociatedElement(); }
 
-    virtual ~FormNamedItem() = default;
+    virtual ~FormAssociatedElement() = default;
     virtual HTMLElement& asHTMLElement() = 0;
     virtual const HTMLElement& asHTMLElement() const = 0;
     virtual bool isFormListedElement() const = 0;

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ElementInternals;
 class FormListedElement;
-class FormNamedItem;
+class FormAssociatedElement;
 class HTMLFormElement;
 class VisibleSelection;
 struct SimpleRange;
@@ -100,7 +100,7 @@ public:
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
     virtual bool isLabelable() const { return false; }
-    virtual FormNamedItem* asFormNamedItem();
+    virtual FormAssociatedElement* asFormAssociatedElement();
     virtual FormListedElement* asFormListedElement();
 
     virtual bool isInteractiveContent() const { return false; }

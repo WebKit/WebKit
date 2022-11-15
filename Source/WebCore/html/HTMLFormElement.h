@@ -160,11 +160,11 @@ private:
     bool checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTMLFormControlElement>>&);
 
     RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
-    void addToPastNamesMap(FormNamedItem&, const AtomString& pastName);
+    void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);
 #if ASSERT_ENABLED
-    void assertItemCanBeInPastNamesMap(FormNamedItem&) const;
+    void assertItemCanBeInPastNamesMap(FormAssociatedElement&) const;
 #endif
-    void removeFromPastNamesMap(FormNamedItem&);
+    void removeFromPastNamesMap(FormAssociatedElement&);
 
     bool matchesValidPseudoClass() const final;
     bool matchesInvalidPseudoClass() const final;
