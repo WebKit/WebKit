@@ -1765,24 +1765,30 @@ class TableSorter
 
         let rows = Utils.toArray(testsTable.querySelectorAll('tbody'));
 
+        const LT = reversed ? 1 : -1;
+        const GT = reversed ? -1 : 1;
+
         rows.sort(function(a, b) {
             // Only need to support lexicographic sort for now.
             let aText = TableSorter._textContent(a, sortColumn);
             let bText = TableSorter._textContent(b, sortColumn);
         
-            // Forward sort equal values by test name.
-            if (sortColumn && aText == bText) {
-                let aTestName = TableSorter._textContent(a, 0);
-                let bTestName = TableSorter._textContent(b, 0);
-                if (aTestName == bTestName)
-                    return 0;
-                return aTestName < bTestName ? -1 : 1;
-            }
+            // First, sort numerically by percentage (for the "image results" column).
+            let aPercentage = (/([0-9.]+)%/.exec(aText) || [, 0])[1];
+            let bPercentage = (/([0-9.]+)%/.exec(bText) || [, 0])[1];
+            if (aPercentage != bPercentage)
+                return +aPercentage < +bPercentage ? LT : GT;
 
-            if (reversed)
-                return aText < bText ? 1 : -1;
-            else
-                return aText < bText ? -1 : 1;
+            // Second, sort by the column text.
+            if (aText != bText)
+                return aText < bText ? LT : GT;
+
+            // Finally, forward sort by the test name.
+            let aTestName = TableSorter._textContent(a, 0);
+            let bTestName = TableSorter._textContent(b, 0);
+            if (aTestName != bTestName)
+                return aTestName < bTestName ? -1 : 1;
+            return 0;
         });
 
         for (let row of rows)
