@@ -177,6 +177,7 @@ my (
     $webAssemblyB3JITSupport,
     $webAudioSupport,
     $webAuthNSupport,
+    $webCodecsSupport,
     $webCryptoSupport,
     $webRTCSupport,
     $webdriverKeyboardInteractionsSupport,
@@ -557,6 +558,9 @@ my @features = (
 
     { option => "web-crypto", desc => "Toggle WebCrypto Subtle-Crypto support",
       define => "ENABLE_WEB_CRYPTO", value => \$webCryptoSupport },
+
+    { option => "web-codecs", desc => "Toggle WebCodecs support",
+      define => "ENABLE_WEB_CODECS", value => \$webCodecsSupport },
 
     { option => "web-rtc", desc => "Toggle WebRTC support",
       define => "ENABLE_WEB_RTC", value => \$webRTCSupport },

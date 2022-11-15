@@ -29,13 +29,17 @@
 #if ENABLE(WEB_CODECS)
 
 #include "DOMException.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "JSWebCodecsVideoEncoderSupport.h"
 #include "Logging.h"
+#include "WebCodecsEncodedVideoChunk.h"
 #include "WebCodecsEncodedVideoChunkMetadata.h"
 #include "WebCodecsEncodedVideoChunkOutputCallback.h"
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsVideoEncoderConfig.h"
 #include "WebCodecsVideoEncoderEncodeOptions.h"
+#include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 

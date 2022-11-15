@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "JSWebCodecsVideoDecoderSupport.h"
 #include "ScriptExecutionContext.h"
+#include "WebCodecsEncodedVideoChunk.h"
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
