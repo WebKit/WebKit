@@ -69,7 +69,7 @@ private:
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
 #if PLATFORM(COCOA)
-    void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, ConsumerSharedCARingBuffer::Handle&&, uint64_t numberOfFrames);
+    void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, ConsumerSharedCARingBuffer::Handle&&);
 #endif
 
     HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;

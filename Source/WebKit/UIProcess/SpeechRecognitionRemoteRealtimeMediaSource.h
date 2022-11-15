@@ -53,7 +53,7 @@ public:
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
 
 #if PLATFORM(COCOA)
-    void setStorage(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void setStorage(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
 #endif
 
     void remoteAudioSamplesAvailable(MediaTime, uint64_t numberOfFrames);

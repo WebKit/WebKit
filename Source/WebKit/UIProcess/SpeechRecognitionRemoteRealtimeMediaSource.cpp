@@ -72,10 +72,10 @@ void SpeechRecognitionRemoteRealtimeMediaSource::stopProducingData()
 
 #if PLATFORM(COCOA)
 
-void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
     m_buffer = nullptr;
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;

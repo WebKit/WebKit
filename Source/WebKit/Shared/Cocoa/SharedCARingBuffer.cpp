@@ -38,9 +38,9 @@ SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t fram
 {
 }
 
-std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint32_t bytesPerFrame, uint32_t numChannelStreams, size_t frameCount, ConsumerSharedCARingBuffer::Handle&& handle)
+std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint32_t bytesPerFrame, uint32_t numChannelStreams, ConsumerSharedCARingBuffer::Handle&& handle)
 {
-    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
+    auto frameCount = WTF::roundUpToPowerOfTwo(handle.frameCount);
 
     // Validate the parameters as they may be coming from an untrusted process.
     auto expectedStorageSize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
@@ -48,7 +48,7 @@ std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Overflowed when trying to compute the storage size");
         return nullptr;
     }
-    auto storage = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto storage = SharedMemory::map(WTFMove(handle.memory), SharedMemory::Protection::ReadOnly);
     if (!storage) {
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Failed to map memory");
         return nullptr;
@@ -85,7 +85,7 @@ ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebC
     new (NotNull, sharedMemory->data()) TimeBoundsBuffer;
     std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
     result->initialize();
-    return { WTFMove(result), WTFMove(*handle) };
+    return { WTFMove(result), { WTFMove(*handle), frameCount } };
 }
 
 } // namespace WebKit

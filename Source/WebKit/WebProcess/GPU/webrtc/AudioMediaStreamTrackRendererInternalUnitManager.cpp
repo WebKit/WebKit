@@ -185,7 +185,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
     m_numberOfFrames = m_description->sampleRate() * 2;
     auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(*m_description, m_numberOfFrames);
     m_ringBuffer = WTFMove(ringBuffer);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), m_numberOfFrames, *m_semaphore }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);

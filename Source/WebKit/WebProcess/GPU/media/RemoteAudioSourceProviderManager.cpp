@@ -90,7 +90,7 @@ void RemoteAudioSourceProviderManager::removeProvider(MediaPlayerIdentifier iden
     });
 }
 
-void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -99,7 +99,7 @@ void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier
         RELEASE_LOG_ERROR(Media, "Unable to find provider %llu for storageChanged", identifier.toUInt64());
         return;
     }
-    iterator->value->setStorage(WTFMove(handle), description, numberOfFrames);
+    iterator->value->setStorage(WTFMove(handle), description);
 }
 
 void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifier identifier, uint64_t startFrame, uint64_t numberOfFrames)
@@ -119,15 +119,15 @@ RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio(Ref<RemoteAudioSource
 {
 }
 
-void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
     m_buffer = nullptr;
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
-    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, numberOfFrames, WTFMove(handle));
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
     if (!m_ringBuffer)
         return;
     m_description = description;
-    m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
+    m_buffer = makeUnique<WebAudioBufferList>(description);
 }
 
 void RemoteAudioSourceProviderManager::RemoteAudio::audioSamplesAvailable(uint64_t startFrame, uint64_t numberOfFrames)
