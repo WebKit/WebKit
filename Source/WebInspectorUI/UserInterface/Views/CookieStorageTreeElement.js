@@ -36,7 +36,7 @@ WI.CookieStorageTreeElement = class CookieStorageTreeElement extends WI.StorageT
 
     get name()
     {
-        return this.representedObject.host;
+        return WI.displayNameForHost(this.representedObject.host);
     }
 
     get categoryName()
