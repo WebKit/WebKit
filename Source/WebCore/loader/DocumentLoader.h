@@ -512,10 +512,6 @@ private:
     void clearArchiveResources();
 #endif
 
-#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-    bool isLoadingRemoteArchive() const;
-#endif
-
     void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     void finishedLoading();
     void mainReceivedError(const ResourceError&);
