@@ -2,10 +2,10 @@ Test for rdar://problem/6065547 REGRESSION (r34879): "Subject" in unread emails 
 
 Property 'font-weight' has priority 'important'.
 Property 'font-variant-ligatures' has priority 'important'.
-Property 'font-variant-numeric' has priority 'important'.
 Property 'font-variant-caps' has priority 'important'.
 Property 'font-variant-alternates' has priority 'important'.
-Property 'font-variant-position' has priority 'important'.
+Property 'font-variant-numeric' has priority 'important'.
 Property 'font-variant-east-asian' has priority 'important'.
+Property 'font-variant-position' has priority 'important'.
 Property 'font-style' has priority 'important'.
 

@@ -750,13 +750,13 @@
             "inherited": true,
             "codegen-properties": {
                 "longhands": [
-                              "font-variant-ligatures",
-                              "font-variant-position",
-                              "font-variant-caps",
-                              "font-variant-numeric",
-                              "font-variant-alternates",
-                              "font-variant-east-asian"
-                              ]
+                    "font-variant-ligatures",
+                    "font-variant-caps",
+                    "font-variant-alternates",
+                    "font-variant-numeric",
+                    "font-variant-east-asian",
+                    "font-variant-position"
+                ]
             },
             "specification": {
                 "category": "css-fonts",
