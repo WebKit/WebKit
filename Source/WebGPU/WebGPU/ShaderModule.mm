@@ -30,14 +30,6 @@
 #import "Device.h"
 #import "PipelineLayout.h"
 
-#if ENABLE(WEBGPU_BY_DEFAULT) && __has_include("ShaderModuleSource.msl")
-#define TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP 1
-#include "ShaderModuleSource.msl"
-#else
-#define TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP 0
-#define WEBGPU_SHADER_SOURCE ""
-#endif
-
 namespace WebGPU {
 
 struct ShaderModuleParameters {
@@ -103,12 +95,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     }
 
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-#if TEMPORARY_MSL_HACK_PLEASE_DELETE_ONCE_WGSL_COMPILER_IS_HOOKED_UP
-    auto prepareResultMSL = prepareResult.msl.length() ? prepareResult.msl : String::fromUTF8(WEBGPU_SHADER_SOURCE);
-#else
-    auto prepareResultMSL = prepareResult.msl;
-#endif
-    auto library = ShaderModule::createLibrary(device.device(), prepareResultMSL, WTFMove(label));
+    auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, device);
@@ -128,6 +115,11 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
         if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
             return result.releaseNonNull();
+    } else {
+        // FIXME: remove shader library generation from MSL after compiler bringup
+        auto library = ShaderModule::createLibrary(device(), String::fromUTF8(shaderModuleParameters->wgsl.code), fromAPI(descriptor.label));
+        if (library)
+            return ShaderModule::create(WTFMove(checkResult), { }, { }, library, *this);
     }
 
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
