@@ -1449,3 +1449,106 @@ struct WebCore::ScreenProperties {
     WebCore::PlatformDisplayID primaryDisplayID;
     HashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
 };
+
+#if ENABLE(SPEECH_SYNTHESIS)
+struct WebKit::WebSpeechSynthesisVoice {
+    String voiceURI;
+    String name;
+    String lang;
+    bool localService;
+    bool defaultLang;
+};
+#endif
+
+struct WebKit::SharedVideoFrame {
+    MediaTime time;
+    bool mirrored;
+    WebCore::VideoFrame::Rotation rotation;
+    using Buffer = std::variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>;
+    Buffer buffer;
+};
+
+struct WebKit::RemoteVideoFrameProxy::Properties {
+    WebKit::RemoteVideoFrameReference reference;
+    MediaTime presentationTime;
+    bool isMirrored;
+    Rotation rotation;
+    WebCore::IntSize size;
+    uint32_t pixelFormat;
+    WebCore::PlatformVideoColorSpace colorSpace;
+};
+
+#if ENABLE(GPU_PROCESS)
+struct WebKit::RemoteMediaPlayerState {
+    WTF::MediaTime duration;
+    WTF::MediaTime minTimeSeekable;
+    WTF::MediaTime maxTimeSeekable;
+    WTF::MediaTime startDate;
+    WTF::MediaTime startTime;
+    String languageOfPrimaryAudioTrack;
+    String wirelessPlaybackTargetName;
+    WebCore::PlatformTimeRanges bufferedRanges;
+    WebCore::MediaPlayerEnums::NetworkState networkState;
+    WebCore::MediaPlayerEnums::ReadyState readyState;
+    WebCore::MediaPlayerEnums::MovieLoadType movieLoadType;
+    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType wirelessPlaybackTargetType;
+    WebCore::FloatSize naturalSize;
+    double maxFastForwardRate;
+    double minFastReverseRate;
+    double seekableTimeRangesLastModifiedTime;
+    double liveUpdateInterval;
+    uint64_t totalBytes;
+    std::optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
+    std::optional<bool> wouldTaintDocumentSecurityOrigin;
+    bool paused;
+    bool canSaveMediaData;
+    bool hasAudio;
+    bool hasVideo;
+    bool hasClosedCaptions;
+    bool hasAvailableVideoFrame;
+    bool wirelessVideoPlaybackDisabled;
+    bool hasSingleSecurityOrigin;
+    bool didPassCORSAccessCheck;
+    };
+    
+struct WebKit::RemoteMediaPlayerConfiguration {
+    String engineDescription;
+    double maximumDurationToCacheMediaTime;
+    bool supportsScanning;
+    bool supportsFullscreen;
+    bool supportsPictureInPicture;
+    bool supportsAcceleratedRendering;
+    bool supportsPlayAtHostTime;
+    bool supportsPauseAtHostTime;
+    bool canPlayToWirelessPlaybackTarget;
+    bool shouldIgnoreIntrinsicSize;
+};
+
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+struct WebKit::RemoteCDMInstanceConfiguration {
+    String keySystem;
+};
+
+struct WebKit::RemoteCDMConfiguration {
+    Vector<AtomString> supportedInitDataTypes;
+    Vector<AtomString> supportedRobustnesses;
+    bool supportsServerCertificates;
+    bool supportsSessions;
+    uint64_t logIdentifier;
+};
+#endif
+
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+struct WebKit::RemoteAudioSessionConfiguration {
+    String routingContextUID;
+    float sampleRate;
+    size_t bufferSize;
+    size_t numberOfOutputChannels { 0 };
+    size_t maximumNumberOfOutputChannels { 0 };
+    size_t preferredBufferSize { 0 };
+    bool isMuted { false };
+    bool isActive { false };
+};
+#endif
