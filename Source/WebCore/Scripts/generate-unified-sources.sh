@@ -19,10 +19,10 @@ UnifiedSourceCFileCount=0
 UnifiedSourceMmFileCount=62
 
 if [ $# -eq 0 ]; then
-    echo "Using unified source list files: Sources.txt, SourcesCocoa.txt"
+    echo "Using unified source list files: Sources.txt, SourcesCocoa.txt, platform/SourcesLibWebRTC.txt"
 fi
 
-SOURCES="Sources.txt SourcesCocoa.txt"
+SOURCES="Sources.txt SourcesCocoa.txt platform/SourcesLibWebRTC.txt"
 if [ "${USE_INTERNAL_SDK}" == "YES" ]; then
     SOURCES="${SOURCES} SourcesCocoaInternalSDK.txt"
 fi
