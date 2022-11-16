@@ -579,11 +579,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
-    if (auto authorization = m_firstRequest.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
-        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects)
-        && protocolHostAndPortAreEqual(m_firstRequest.url(), request.url()))
-        request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
-
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         // The network layer might carry over some headers from the original request that
         // we want to strip here because the redirect is cross-origin.

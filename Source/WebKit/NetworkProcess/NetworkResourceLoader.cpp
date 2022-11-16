@@ -1167,6 +1167,14 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         return;
     }
 
+    if (auto authorization = request.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
+#if PLATFORM(COCOA)
+        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects)
+#endif
+        && protocolHostAndPortAreEqual(request.url(), redirectRequest.url())) {
+        redirectRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
+    }
+
     if (m_networkLoadChecker) {
         if (privateClickMeasurementAttributionTriggerData)
             m_networkLoadChecker->enableContentExtensionsCheck();

@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tests that the Authorization header is present on same-origin redirect requests coming from cache</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(async () => {
+    let response = await fetch("/WebKit/fetch/resources/redirect301.py?request=1&url=" + encodeURIComponent("/WebKit/fetch/resources/dump-authorization-header.py"), {
+        headers: {
+            Authorization: "Foo Bar1",
+        },
+    });
+    assert_equals(await response.text(), "Foo Bar1");
+
+   response = await fetch("/WebKit/fetch/resources/redirect301.py?request=1&url=" + encodeURIComponent("/WebKit/fetch/resources/dump-authorization-header.py"));
+    assert_equals(await response.text(), "none");
+}, "Permanent redirections should not reuse a previous Authorization header - request without authorization header");
+
+promise_test(async () => {
+    let response = await fetch("/WebKit/fetch/resources/redirect301.py?request=2&url=" + encodeURIComponent("/WebKit/fetch/resources/dump-authorization-header.py"), {
+        headers: {
+            Authorization: "Foo Bar1",
+        },
+    });
+    assert_equals(await response.text(), "Foo Bar1");
+
+   response = await fetch("/WebKit/fetch/resources/redirect301.py?request=2&url=" + encodeURIComponent("/WebKit/fetch/resources/dump-authorization-header.py"), {
+        headers: {
+            Authorization: "Foo Bar2",
+        },
+    });
+    assert_equals(await response.text(), "Foo Bar2");
+}, "Permanent redirections should not allow reusing Authorization header - request with authorization header");
+    </script>
+  </body>
+</html>

@@ -459,7 +459,9 @@ std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request,
 
 std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
-    return makeUnique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
+    auto cachedRedirectRequest = redirectRequest;
+    cachedRedirectRequest.clearHTTPAuthorization();
+    return makeUnique<Entry>(makeCacheKey(request), response, WTFMove(cachedRedirectRequest), WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
 }
 
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&)>&& completionHandler)
