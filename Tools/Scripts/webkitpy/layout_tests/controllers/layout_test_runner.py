@@ -39,6 +39,7 @@ from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
+from webkitpy.layout_tests.models.test_input import Test, TestInput
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
@@ -503,6 +504,50 @@ class TestShard(object):
         self.name = name
         self.test_inputs = test_inputs
         self.needs_servers = test_inputs[0].needs_servers
+
+    def shorten(self, string):
+        if not string:
+            return string
+        return string.replace('{}/'.format(self.name), '{}')
+
+    def expand(self, string):
+        if not string:
+            return string
+        return string.replace('{}', '{}/'.format(self.name))
+
+    def pack(self, test_input, mutation=None):
+        mutation = mutation if mutation else self.shorten
+        return TestInput(
+            test=Test(
+                test_path=mutation(test_input.test.test_path),
+                expected_text_path=mutation(test_input.test.expected_text_path),
+                expected_image_path=mutation(test_input.test.expected_image_path),
+                expected_checksum_path=mutation(test_input.test.expected_checksum_path),
+                expected_audio_path=mutation(test_input.test.expected_audio_path),
+                reference_files=None if test_input.test.reference_files is None else [mutation(file) for file in test_input.test.reference_files],
+                is_http_test=test_input.test.is_http_test,
+                is_websocket_test=test_input.test.is_websocket_test,
+                is_wpt_test=test_input.test.is_wpt_test,
+                is_wpt_crash_test=test_input.test.is_wpt_crash_test,
+            ), timeout=test_input.timeout,
+            is_slow=test_input.is_slow,
+            needs_servers=test_input.needs_servers,
+            should_dump_jsconsolelog_in_stderr=test_input.should_dump_jsconsolelog_in_stderr,
+            reference_files=test_input.reference_files,
+            should_run_pixel_test=test_input.should_run_pixel_test,
+        )
+
+    def __getstate__(self):
+        return (
+            self.name,
+            [self.pack(i, mutation=self.shorten) for i in self.test_inputs],
+            self.needs_servers,
+        )
+
+    def __setstate__(self, state):
+        self.name = state[0]
+        self.test_inputs = [self.pack(i, mutation=self.expand) for i in state[1]]
+        self.needs_servers = state[2]
 
     def __repr__(self):
         return "TestShard(name='%s', test_inputs=%s, needs_servers=%s'" % (self.name, self.test_inputs, self.needs_servers)
