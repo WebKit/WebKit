@@ -64,3 +64,6 @@
 
 - path: complex/intl-date-time-format-date-parse.js
   cmd: runComplexTest [], [], "TZ=America/New_York"
+
+- path: complex/date-parse-with-narrow-no-break-space.js
+  cmd: runComplexTest [], [], "TZ=America/Los_Angeles"
