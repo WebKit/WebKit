@@ -5312,7 +5312,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee or @rjepstein")
+        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @jbedard or @ryanhaddad")
         return self.runStep()
 
 

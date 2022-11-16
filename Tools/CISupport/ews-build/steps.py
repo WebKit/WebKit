@@ -1693,7 +1693,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     descriptionDone = ['Validated commiter and reviewer']
     VALIDATORS_FOR = {
         # FIXME: This should be a bot, for now validation is manual
-        'apple': ['geoffreygaren', 'markcgee', 'rjepstein'],
+        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'jbedard', 'ryanhaddad'],
     }
 
     def __init__(self, *args, **kwargs):
