@@ -1474,15 +1474,15 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * WebKitSettings:hardware-acceleration-policy:
      *
      * The #WebKitHardwareAccelerationPolicy to decide how to enable and disable
-     * hardware acceleration. The default value %WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND
-     * enables the hardware acceleration when the web contents request it.
+     * hardware acceleration. The value %WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND
+     * enables hardware acceleration only when the web content requests it.
      * It's possible to enforce hardware acceleration to be always enabled
-     * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS. And it's also possible to disable it
+     * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS, or to disable it
      * completely using %WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER. Note that disabling hardware
      * acceleration might cause some websites to not render correctly or consume more CPU.
      *
      * Note that changing this setting might not be possible if hardware acceleration is not
-     * supported by the hardware or the system. In that case you can get the value to know the
+     * supported by the hardware or the system. In that case, you can get the value to know the
      * actual policy being used, but changing the setting will not have any effect.
      *
      * Since: 2.16
@@ -1510,7 +1510,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Whether horizontal swipe gesture will trigger back-forward navigation"),
             FALSE,
             readWriteConstructParamFlags);
-#endif // PLATFOTM(GTK)
+#endif // PLATFORM(GTK)
 
     /**
      * WebKitSettings:enable-javascript-markup:
