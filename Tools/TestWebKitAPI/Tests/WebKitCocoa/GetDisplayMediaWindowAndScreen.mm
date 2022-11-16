@@ -151,7 +151,7 @@ TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
     EXPECT_TRUE([webView _displayCaptureSurfaces] == WKDisplayCaptureSurfaceNone);
 
     auto hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
-    EXPECT_TRUE(hasSleepDisabler);
+    EXPECT_FALSE(hasSleepDisabler);
 
     // Check "Allow Screen"
     [webView stringByEvaluatingJavaScript:@"stop()"];
@@ -174,6 +174,9 @@ TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
     EXPECT_TRUE([webView _displayCaptureSurfaces] == WKDisplayCaptureSurfaceScreen);
     EXPECT_TRUE([observer displayCaptureSurfaces] == WKDisplayCaptureSurfaceScreen);
 
+    hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_TRUE(hasSleepDisabler);
+
     // Mute and unmute screen capture
     __block bool completionCalled = false;
     [webView _setDisplayCaptureState:WKDisplayCaptureStateMuted completionHandler:^() {
@@ -195,12 +198,16 @@ TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
     EXPECT_TRUE([webView _displayCaptureSurfaces] == WKDisplayCaptureSurfaceScreen);
     EXPECT_TRUE([observer displayCaptureSurfaces] == WKDisplayCaptureSurfaceScreen);
 
+    hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_TRUE(hasSleepDisabler);
+
     // Stop all capture
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE([webView _displayCaptureState] == WKDisplayCaptureStateNone);
-    EXPECT_TRUE([observer displayCaptureSurfaces] == WKDisplayCaptureSurfaceNone);
-    EXPECT_TRUE([webView _displayCaptureState] == WKDisplayCaptureStateNone);
-    EXPECT_TRUE([observer displayCaptureSurfaces] == WKDisplayCaptureSurfaceNone);
+    EXPECT_TRUE([observer waitForDisplayCaptureState:WKDisplayCaptureStateNone]);
+    EXPECT_TRUE([observer waitForDisplayCaptureSurfaces:WKDisplayCaptureSurfaceNone]);
+
+    hasSleepDisabler = [webView stringByEvaluatingJavaScript:@"hasSleepDisabler()"].boolValue;
+    EXPECT_FALSE(hasSleepDisabler);
 
     // Check "Allow Window"
     [delegate resetWasPrompted];

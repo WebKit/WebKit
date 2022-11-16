@@ -144,6 +144,7 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
         settings.setWidth(size.width());
         settings.setHeight(size.height());
         settings.setDeviceId(hashedId());
+        settings.setLabel(name());
 
         settings.setDisplaySurface(m_capturer->surfaceType());
         settings.setLogicalSurface(false);
