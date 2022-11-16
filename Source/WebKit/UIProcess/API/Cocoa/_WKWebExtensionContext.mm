@@ -380,6 +380,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 
 - (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forURL:(NSURL *)url
 {
+    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
     NSParameterAssert(url);
 
     [self setPermissionState:state forURL:url expirationDate:nil];
@@ -387,6 +388,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 
 - (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forURL:(NSURL *)url expirationDate:(NSDate *)expirationDate
 {
+    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
     NSParameterAssert(url);
 
     _webExtensionContext->setPermissionState(toImpl(state), url, toImpl(expirationDate));

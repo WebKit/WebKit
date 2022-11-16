@@ -27,53 +27,70 @@
 
 #import <Foundation/Foundation.h>
 
+/*! @abstract Constants for specifying permission in a @link WKWebExtensionContext @/link. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 typedef NSString * _WKWebExtensionPermission NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(_WKWebExtension.Permission);
 
+/*! @abstract The `activeTab` permission requests that when the user interacts with the extension, the extension is granted extra permissions for the active tab only. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionActiveTab;
 
+/*! @abstract The `alarms` permission requests access to the `browser.alarms` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionAlarms;
 
+/*! @abstract The `clipboardWrite` permission requests access to write to the clipboard. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionClipboardWrite;
 
+/*! @abstract The `contextMenus` permission requests access to the `browser.contextMenus` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionContextMenus;
 
+/*! @abstract The `cookies` permission requests access to the `browser.cookies` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionCookies;
 
+/*! @abstract The `declarativeNetRequest` permission requests access to the `browser.declarativeNetRequest` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionDeclarativeNetRequest;
 
+/*! @abstract The `declarativeNetRequestFeedback` permission requests access to the `browser.declarativeNetRequest` APIs with extra information on matched rules. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionDeclarativeNetRequestFeedback;
 
+/*! @abstract The `declarativeNetRequestWithHostAccess` permission requests access to the `browser.declarativeNetRequest` APIs with the ability to modify or redirect requests. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess;
 
+/*! @abstract The `menus` permission requests access to the `browser.menus` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionMenus;
 
+/*! @abstract The `nativeMessaging` permission requests access to send messages to the App Extension bundle. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionNativeMessaging;
 
+/*! @abstract The `scripting` permission requests access to the `browser.scripting` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionScripting;
 
+/*! @abstract The `storage` permission requests access to the `browser.storage` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionStorage;
 
+/*! @abstract The `tabs` permission requests access extra information on the `browser.tabs` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionTabs;
 
+/*! @abstract The `unlimitedStorage` permission requests access to an unlimited quota on the `browser.storage.local` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionUnlimitedStorage;
 
+/*! @abstract The `webNavigation` permission requests access to the `browser.webNavigation` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionWebNavigation;
 
+/*! @abstract The `webRequest` permission requests access to the `browser.webRequest` APIs. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionWebRequest;

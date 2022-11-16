@@ -33,20 +33,69 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ @abstract A `WKWebExtensionController` object manages a set of loaded extension contexts.
+ @discussion You can have one or more extension controller instances, allowing different parts of the app to use different sets of extensions.
+ A controller is associated with @link WKWebView @/link via the `webExtensionController` property on @link WKWebViewConfiguration @/link.
+ */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebExtensionController : NSObject <NSSecureCoding>
 
+/*! @abstract The extension controller delegate. */
 @property (nonatomic, weak) id <_WKWebExtensionControllerDelegate> delegate;
 
+/*!
+ @abstract Loads the specified extension context.
+ @discussion Causes the context to start, loading any background content, and injecting any content into relevant tabs.
+ @result A Boolean value indicating if the context was successfully loaded.
+ @seealso loadExtensionContext:error:
+*/
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_UNAVAILABLE("Use error version");
+
+/*!
+ @abstract Loads the specified extension context.
+ @discussion Causes the context to start, loading any background content, and injecting any content into relevant tabs.
+ @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @result A Boolean value indicating if the context was successfully loaded.
+ @seealso loadExtensionContext:
+*/
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error;
 
+/*!
+ @abstract Unloads the specified extension context.
+ @discussion Causes the context to stop running.
+ @result A Boolean value indicating if the context was successfully unloaded.
+ @seealso unloadExtensionContext:error:
+*/
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_UNAVAILABLE("Use error version");
+
+/*!
+ @abstract Unloads the specified extension context.
+ @discussion Causes the context to stop running.
+ @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @result A Boolean value indicating if the context was successfully unloaded.
+ @seealso unloadExtensionContext:
+*/
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error;
 
+/*!
+ @abstract Returns a loaded extension context for the specified extension.
+ @param extension An extension to lookup.
+ @result An extension context or `nil` if no match was found.
+ @seealso extensions
+*/
 - (nullable _WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension NS_SWIFT_NAME(extensionContext(for:));
 
+/*!
+ @abstract A set of all the currently loaded extensions.
+ @seealso extensionContexts
+*/
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtension *> *extensions;
+
+/*!
+ @abstract A set of all the currently loaded extension contexts.
+ @seealso extensions
+*/
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionContext *> *extensionContexts;
 
 @end
