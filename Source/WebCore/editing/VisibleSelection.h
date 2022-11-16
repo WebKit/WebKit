@@ -165,7 +165,14 @@ private:
 
 inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)
 {
-    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.isBaseFirst() == b.isBaseFirst() && a.isDirectional() == b.isDirectional();
+    if (a.affinity() != b.affinity() || a.isDirectional() != b.isDirectional())
+        return false;
+
+    if (a.isNone())
+        return b.isNone();
+    
+    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() 
+        && a.isDirectional() == b.isDirectional() && a.base() == b.base() && a.extent() == b.extent();
 }
 
 inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
