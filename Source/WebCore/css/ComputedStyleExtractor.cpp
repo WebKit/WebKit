@@ -725,12 +725,6 @@ static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& tr
     return transformValue.releaseNonNull();
 }
 
-static bool rendererCanBeTransformed(RenderObject* renderer)
-{
-    // Inline renderers do not support transforms.
-    return renderer && !is<RenderInline>(*renderer);
-}
-
 static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -899,7 +893,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
 static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
 {
     auto* translate = style.translate();
-    if (!translate || !rendererCanBeTransformed(renderer) || translate->isIdentity())
+    if (!translate || is<RenderInline>(renderer) || translate->isIdentity())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
@@ -922,7 +916,7 @@ static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& st
 {
     auto* scale = style.scale();
     auto& cssValuePool = CSSValuePool::singleton();
-    if (!scale || !rendererCanBeTransformed(renderer) || scale->isIdentity())
+    if (!scale || is<RenderInline>(renderer) || scale->isIdentity())
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
@@ -939,7 +933,7 @@ static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& s
 {
     auto* rotate = style.rotate();
     auto& cssValuePool = CSSValuePool::singleton();
-    if (!rotate || !rendererCanBeTransformed(renderer) || rotate->isIdentity())
+    if (!rotate || is<RenderInline>(renderer) || rotate->isIdentity())
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
     if (!rotate->is3DOperation() || (!rotate->x() && !rotate->y() && rotate->z()))
