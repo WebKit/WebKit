@@ -1,0 +1,4 @@
+
+PASS Permanent redirections should not reuse a previous Authorization header - request without authorization header
+PASS Permanent redirections should not allow reusing Authorization header - request with authorization header
+
