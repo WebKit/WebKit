@@ -1386,34 +1386,22 @@ editing/undo/undo-deleteWord.html [ Pass Failure ]
 resize-observer/element-leak.html [ Pass Timeout ]
 resize-observer/resize-observer-entry-keeps-js-wrapper-of-target-alive.html [ Pass Timeout ]
 
-# Text diff failures
-storage/indexeddb/exceptions.html [ Failure Pass ]
-storage/indexeddb/index-cursor.html [ Pass Timeout ]
-storage/indexeddb/intversion-revert-on-abort.html [ Failure Pass ]
-storage/indexeddb/metadata.html [ Failure Pass ]
-storage/indexeddb/modern/idbindex-getall-1.html [ Failure Pass ]
-storage/indexeddb/modern/idbindex-getallkeys-1.html [ Failure Pass ]
-storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Failure Pass ]
-storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Failure Pass ]
-storage/indexeddb/objectstore-basics.html [ Failure Pass ]
-storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
 storage/indexeddb/structured-clone.html [ Pass Timeout ]
-storage/indexeddb/version-change-abort.html [ Failure Pass ]
-storage/indexeddb/wasm-exceptions.html [ Failure ]
+storage/indexeddb/wasm-exceptions.html [ Skip ]
+storage/indexeddb/modern/leak-1.html [ Failure Pass ]
 
-# Crashing indexeddb tests
-storage/indexeddb/invalid-keys.html [ Crash Pass ]
-storage/indexeddb/modern/autoincrement-abort.html [ Crash Pass ]
-storage/indexeddb/modern/idbobjectstore-get-failures.html [ Crash Pass ]
-storage/indexeddb/modern/multiple-objectstore-index-cursor-collision.html [ Crash Pass ]
-storage/indexeddb/modern/objectstore-cursor-advance-failures-private.html [ Crash Pass ]
-storage/indexeddb/modern/workers-enable.html [ Crash Pass ]
+storage/indexeddb/IDBKey-create-array-buffer-view-oom.html [ Skip ] # Slow
+storage/indexeddb/cursor-request-cycle-private.html [ Skip ] # Slow
+storage/indexeddb/cursor-request-cycle.html [ Skip ] # Slow
 
-# Flaky timeouts
-storage/indexeddb/clone-exception.html [ Timeout Pass ]
-storage/indexeddb/modern/objectstore-rename-1.html [ Timeout Pass ]
-storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
-[ Debug ] storage/indexeddb/modern/index-rename-1.html [ Skip ]
+storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by assertion failure
+storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
+
+storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
+storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
+storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
+
 
 # Flaky values in WPT cookie expectations
 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Pass Failure ]
@@ -1702,8 +1690,6 @@ webxr [ Skip ]
 [ Debug ] js/sort-with-side-effecting-comparisons.html [ Skip ]
 [ Debug ] js/stack-overflow-regexp.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
-[ Debug ] storage/indexeddb/database-odd-names.html [ Failure Pass ]
-[ Debug ] storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout Pass ]
 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
 [ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
@@ -2029,13 +2015,6 @@ js/dom/webassembly-memory-shared-fail.html [ Failure ]
 loader/reload-subresource-when-type-changes.html [ Failure ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ] # Timeout
 loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
-storage/indexeddb/IDBTransaction-page-cache.html [ Timeout Pass ]
-storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by assertion failure
-storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
-storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
-storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
-storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
-storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
@@ -2141,7 +2120,7 @@ imported/w3c/web-platform-tests/resource-timing/resource_reuse.sub.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_timing_same_origin_redirect.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_timing_TAO_cross_origin_redirect.html [ Pass ]
-imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass ]
+webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
 # UIScriptController::removeViewFromWindow/addViewToWindow is not supported.
 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
