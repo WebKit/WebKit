@@ -76,6 +76,7 @@
 #include "VM.h"
 #include <limits>
 #include <wtf/Language.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if U_ICU_VERSION_MAJOR_NUM >= 69 || (U_ICU_VERSION_MAJOR_NUM == 68 && USE(APPLE_INTERNAL_SDK))
@@ -317,7 +318,14 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
 
     if (date == m_cachedDateString)
         return m_cachedDateStringValue;
-    auto expectedString = date.tryGetUTF8();
+
+    // After ICU 72, CLDR generates narrowNoBreakSpace for date time format. Thus, `new Date().toLocaleString('en-US')` starts generating
+    // a string including narrowNoBreakSpaces instead of simple spaces. However since code in the wild assumes `new Date(new Date().toLocaleString('en-US'))`
+    // works, we need to maintain the ability to parse string including narrowNoBreakSpaces. Rough consensus among implementaters is replacing narrowNoBreakSpaces
+    // with simple spaces before parsing.
+    String updatedString = makeStringByReplacingAll(date, narrowNoBreakSpace, space);
+
+    auto expectedString = updatedString.tryGetUTF8();
     if (!expectedString) {
         if (expectedString.error() == UTF8ConversionError::OutOfMemory)
             throwOutOfMemoryError(globalObject, scope);

@@ -627,7 +627,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     options.initiator = cachedResourceRequestInitiators().xmlhttprequest;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.filteringPolicy = ResponseFilteringPolicy::Enable;
-    options.sniffContentEncoding = ContentEncodingSniffingPolicy::DoNotSniff;
+    options.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Disable;
 
     if (m_timeoutMilliseconds) {
         if (!m_async)

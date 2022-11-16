@@ -31,6 +31,7 @@
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerMessages.h"
 #include "WebExtensionControllerProxyMessages.h"
+#include "WebFrame.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 

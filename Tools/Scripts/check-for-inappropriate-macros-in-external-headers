@@ -52,7 +52,7 @@ def framework_headers_for_path(framework, path)
 end
 
 def verify_macros_in_header(header)
-  File.open(header) do |file|
+  File.open(header, :encoding => 'utf-8') do |file|
     file.each_line.with_index do |line, index|
       # Check for the common macros from Platform.h and Compiler.h.
       # Require a '(' immediately after the macro name to prevent matching things like "defined(__OS2__)".
