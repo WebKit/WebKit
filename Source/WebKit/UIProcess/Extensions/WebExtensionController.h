@@ -47,6 +47,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebPageProxy;
+class WebProcessProxy;
 struct WebExtensionControllerParameters;
 
 class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
@@ -65,6 +66,9 @@ public:
 
     WebExtensionControllerIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerParameters parameters() const;
+
+    bool operator==(const WebExtensionController& other) const { return (this == &other); }
+    bool operator!=(const WebExtensionController& other) const { return !(this == &other); }
 
 #if PLATFORM(COCOA)
     bool load(WebExtensionContext&, NSError ** = nullptr);
@@ -92,6 +96,7 @@ private:
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
     WeakHashSet<WebPageProxy> m_pages;
+    WeakHashSet<WebProcessProxy> m_processes;
     HashMap<String, Ref<WebExtensionURLSchemeHandler>> m_registeredSchemeHandlers;
 #endif
 };

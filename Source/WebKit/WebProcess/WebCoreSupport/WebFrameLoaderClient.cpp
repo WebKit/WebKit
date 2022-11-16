@@ -1744,8 +1744,13 @@ void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& world)
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
-    
+
     webPage->injectedBundleLoaderClient().globalObjectIsAvailableForFrame(*webPage, m_frame, world);
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+        extensionControllerProxy->globalObjectIsAvailableForFrame(*webPage, m_frame, world);
+#endif
 }
 
 void WebFrameLoaderClient::dispatchServiceWorkerGlobalObjectAvailable(DOMWrapperWorld& world)
@@ -1755,6 +1760,11 @@ void WebFrameLoaderClient::dispatchServiceWorkerGlobalObjectAvailable(DOMWrapper
         return;
 
     webPage->injectedBundleLoaderClient().serviceWorkerGlobalObjectIsAvailableForFrame(*webPage, m_frame, world);
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+        extensionControllerProxy->serviceWorkerGlobalObjectIsAvailableForFrame(*webPage, m_frame, world);
+#endif
 }
 
 void WebFrameLoaderClient::willInjectUserScript(DOMWrapperWorld& world)

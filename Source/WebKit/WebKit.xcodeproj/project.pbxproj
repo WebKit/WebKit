@@ -417,6 +417,7 @@
 		1C3BEB7B2888A00B00E66E38 /* WebExtensionControllerParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C3BEB46288740AE00E66E38 /* WebExtensionControllerParameters.h */; };
 		1C3BEB7C2888A01000E66E38 /* WebExtensionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC23B1C288732A800D0A65A /* WebExtensionController.h */; };
 		1C3BEB7D2888A01600E66E38 /* WebExtensionControllerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC23B20288732F600D0A65A /* WebExtensionControllerProxy.h */; };
+		1C3D0AC1291AE6210093F67E /* WebExtensionControllerProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C56557F2745C5A1006300AF /* UnifiedSource101.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */; };
 		1C5655802745C5A1006300AF /* UnifiedSource102.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */; };
 		1C5655812745C5A1006300AF /* UnifiedSource103.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */; };
@@ -3576,6 +3577,7 @@
 		1C3BEB6D288883E200E66E38 /* _WKWebExtensionInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionInternal.h; sourceTree = "<group>"; };
 		1C3BEB6E288883E200E66E38 /* _WKWebExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtension.mm; sourceTree = "<group>"; };
 		1C3BEB6F288883E300E66E38 /* _WKWebExtensionPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionPrivate.h; sourceTree = "<group>"; };
+		1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionControllerProxyCocoa.mm; sourceTree = "<group>"; };
 		1C4B7BBF28E7A43F00B7265A /* WebExtensionControllerParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionControllerParameters.serialization.in; sourceTree = "<group>"; };
 		1C55A572275457C300EB7E95 /* RemoteQuerySetMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQuerySetMessagesReplies.h; sourceTree = "<group>"; };
 		1C55A573275457C400EB7E95 /* RemoteTextureMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureMessages.h; sourceTree = "<group>"; };
@@ -8808,6 +8810,14 @@
 			path = Automation;
 			sourceTree = "<group>";
 		};
+		1C3D0ABF291AE6200093F67E /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
 		1C5DC44D29087E7F0061EC62 /* API */ = {
 			isa = PBXGroup;
 			children = (
@@ -9233,6 +9243,7 @@
 			children = (
 				1C5DC44D29087E7F0061EC62 /* API */,
 				1C5DC45629099F010061EC62 /* Bindings */,
+				1C3D0ABF291AE6200093F67E /* Cocoa */,
 				1C9DD98F28FA19A30093BDB0 /* Interfaces */,
 				1C0234C428A00E9E00AC1E5B /* WebExtensionContextProxy.cpp */,
 				1C0234C628A00E9F00AC1E5B /* WebExtensionContextProxy.h */,
@@ -18173,6 +18184,7 @@
 				1C0234CE28A00FE600AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp in Sources */,
 				1CBEE27028F4DDA1006D1A02 /* WebExtensionControllerCocoa.mm in Sources */,
 				1C3BEB522887492F00E66E38 /* WebExtensionControllerMessageReceiver.cpp in Sources */,
+				1C3D0AC1291AE6210093F67E /* WebExtensionControllerProxyCocoa.mm in Sources */,
 				1C3BEB532887492F00E66E38 /* WebExtensionControllerProxyMessageReceiver.cpp in Sources */,
 				1C1CE96D288DF46D0098D3A1 /* WebExtensionMatchPatternCocoa.mm in Sources */,
 				1CAB9B8628F743DB00E6C77E /* WebExtensionURLSchemeHandlerCocoa.mm in Sources */,

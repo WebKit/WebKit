@@ -65,6 +65,8 @@
 #include "UserContentControllerIdentifier.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
+#include "WebExtensionContextIdentifier.h"
+#include "WebExtensionControllerIdentifier.h"
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
@@ -439,6 +441,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionContextIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebGPUIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
@@ -512,6 +516,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::UserContentControllerIdentifier"_s,
         "WebKit::VideoDecoderIdentifier"_s,
         "WebKit::VideoEncoderIdentifier"_s,
+        "WebKit::WebExtensionContextIdentifier"_s,
+        "WebKit::WebExtensionControllerIdentifier"_s,
         "WebKit::WebGPUIdentifier"_s,
         "WebKit::WebPageProxyIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,

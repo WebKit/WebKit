@@ -81,7 +81,7 @@ public:
     static const URLSchemeSet& supportedSchemes();
 
     bool operator==(const WebExtensionMatchPattern&) const;
-    bool operator!=(const WebExtensionMatchPattern& other) const { return !(*this == other); }
+    bool operator!=(const WebExtensionMatchPattern& other) const { return !(this == &other); }
 
     bool isValid() const { return m_valid; }
     bool isSupported() const;

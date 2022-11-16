@@ -66,6 +66,16 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
 
     parameters.identifier = identifier();
 
+#if PLATFORM(COCOA)
+    Vector<WebExtensionContextParameters> contextParameters;
+    contextParameters.reserveInitialCapacity(extensionContexts().size());
+
+    for (auto& context : extensionContexts())
+        contextParameters.append(context->parameters());
+
+    parameters.contextParameters = contextParameters;
+#endif
+
     return parameters;
 }
 

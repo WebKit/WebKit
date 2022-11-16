@@ -29,6 +29,7 @@
 
 #include "JSWebExtensionWrappable.h"
 #include "JSWebExtensionWrapper.h"
+#include "WebExtensionContextProxy.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
@@ -40,14 +41,16 @@ class WebExtensionAPIObject {
 public:
     enum class ForMainWorld : bool { No, Yes };
 
-    WebExtensionAPIObject(ForMainWorld forMainWorld)
+    WebExtensionAPIObject(ForMainWorld forMainWorld, WebExtensionContextProxy& context)
         : m_forMainWorld(forMainWorld)
+        , m_extensionContext(&context)
     {
     }
 
-    WebExtensionAPIObject(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime)
+    WebExtensionAPIObject(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context)
         : m_forMainWorld(forMainWorld)
         , m_runtime(&runtime)
+        , m_extensionContext(&context)
     {
     }
 
@@ -57,10 +60,12 @@ public:
     bool isForMainWorld() const { return m_forMainWorld == ForMainWorld::Yes; }
 
     virtual WebExtensionAPIRuntimeBase& runtime() { return *m_runtime; }
+    WebExtensionContextProxy& extensionContext() { return *m_extensionContext; }
 
 private:
     ForMainWorld m_forMainWorld = ForMainWorld::Yes;
     RefPtr<WebExtensionAPIRuntimeBase> m_runtime;
+    RefPtr<WebExtensionContextProxy> m_extensionContext;
 };
 
 } // namespace WebKit
@@ -78,13 +83,13 @@ public: \
     virtual ~ImplClass() = default; \
 \
 private: \
-    explicit ImplClass(ForMainWorld forMainWorld) \
-        : WebExtensionAPIObject(forMainWorld) \
+    explicit ImplClass(ForMainWorld forMainWorld, WebExtensionContextProxy& context) \
+        : WebExtensionAPIObject(forMainWorld, context) \
     { \
     } \
 \
-    explicit ImplClass(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime) \
-        : WebExtensionAPIObject(forMainWorld, runtime) \
+    explicit ImplClass(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context) \
+        : WebExtensionAPIObject(forMainWorld, runtime, context) \
     { \
     } \
 \

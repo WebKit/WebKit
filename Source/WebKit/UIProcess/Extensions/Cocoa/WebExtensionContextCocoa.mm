@@ -183,6 +183,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, NSError **out
     }
 
     m_extensionController = controller;
+    m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
 
     loadBackgroundWebViewDuringLoad();
 
@@ -203,6 +204,7 @@ bool WebExtensionContext::unload(NSError **outError)
     }
 
     m_extensionController = nil;
+    m_contentScriptWorld = nullptr;
 
     unloadBackgroundWebView();
 
