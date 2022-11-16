@@ -118,6 +118,10 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
             insertNodeAt(*targetBlockquote, start);
         else if (!insertNodeBefore(*targetBlockquote, *outerBlock))
             return;
+        if (!targetBlockquote->hasEditableStyle()) {
+            removeNode(*targetBlockquote);
+            return;
+        }
         startOfContents = positionInParentAfterNode(targetBlockquote.get());
     }
     
