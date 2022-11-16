@@ -49,7 +49,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
                    DeleteStaleBuildFiles, DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedLayoutTests, GitHub,
+                   FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -279,6 +279,125 @@ class TestGitHub(unittest.TestCase):
             GitHub.commit_url('936e3f7cab4a826519121a75bf4481fe56e727e2', 'https://github.example.com/WebKit/WebKit'),
             '',
         )
+
+
+class TestGitHubMixin(unittest.TestCase):
+    class Response(object):
+        @staticmethod
+        def fromText(data, url=None, headers=None):
+            assert isinstance(data, str)
+            return TestGitHubMixin.Response(text=data, url=url, headers=headers)
+
+        @staticmethod
+        def fromJson(data, url=None, headers=None, status_code=None):
+            assert isinstance(data, list) or isinstance(data, dict)
+
+            headers = headers or {}
+            if 'Content-Type' not in headers:
+                headers['Content-Type'] = 'text/json'
+
+            return TestGitHubMixin.Response(text=json.dumps(data), url=url, headers=headers, status_code=status_code)
+
+        def __init__(self, status_code=None, text=None, content=None, url=None, headers=None):
+            if status_code is not None:
+                self.status_code = status_code
+            elif text is not None:
+                self.status_code = 200
+            else:
+                self.status_code = 204  # No content
+
+            if text and content:
+                raise ValueError("Cannot define both 'text' and 'content'")
+            elif text:
+                self.content = text.encode('utf-8')
+            else:
+                self.content = content or b''
+
+            self.url = url
+            self.headers = headers or {}
+
+            if 'Content-Type' not in self.headers:
+                self.headers['Content-Type'] = 'text'
+            if 'Content-Length' not in self.headers:
+                self.headers['Content-Length'] = len(self.content) if self.content else 0
+
+        @property
+        def text(self):
+            return self.content.decode('utf-8')
+
+        def json(self):
+            return json.loads(self.text)
+
+    def test_no_reviewers(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([])
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), [])
+        self.assertEqual(logs, dict(stdio=[]))
+
+    def test_single_review(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+            dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
+        ], url=url)
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), ['webkit-reviewer'])
+        self.assertEqual(logs, dict(stdio=[]))
+
+    def test_multipe_reviews(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+            dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
+            dict(id=2, state='COMMENTED', user=dict(login='webkit-committer')),
+            dict(id=3, state='APPROVED', user=dict(login='webkit-committer')),
+        ], url=url)
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), ['webkit-committer', 'webkit-reviewer'])
+        self.assertEqual(logs, dict(stdio=[]))
+
+    def test_retracted_review(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+            dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
+            dict(id=2, state='CHANGES_REQUESTED', user=dict(login='webkit-reviewer')),
+        ], url=url)
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), [])
+        self.assertEqual(logs, dict(stdio=[]))
+
+    def test_pagination(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+            dict(id=101, state='APPROVED', user=dict(login='webkit-committer')),
+        ], url=url) if 'page=2' in url else self.Response.fromJson([
+            dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
+        ] + [
+            dict(id=i, state='COMMENTED', user=dict(login='webkit-reviewer')) for i in range(1, 100)
+        ], url=url)
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), ['webkit-committer', 'webkit-reviewer'])
+        self.assertEqual(logs, dict(stdio=[]))
+
+    def test_reviewers_invalid_response(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson({}, url=url)
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), [])
+        self.assertEqual(logs, dict(stdio=[]))
+
+    def test_reviewers_error(self):
+        logs = dict(stdio=[])
+        mixin = GitHubMixin()
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: None
+        mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
+        self.assertEqual(mixin.get_reviewers(1234), [])
+        self.assertEqual(logs, dict(stdio=[]))
 
 
 class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.TestCase):

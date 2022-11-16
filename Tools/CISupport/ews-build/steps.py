@@ -162,6 +162,8 @@ class GitHubMixin(object):
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
+    PER_PAGE_LIMIT = 100
+    NUM_PAGE_LIMIT = 10
 
     def fetch_data_from_url_with_authentication_github(self, url):
         response = None
@@ -213,17 +215,35 @@ class GitHubMixin(object):
         if not api_url:
             return []
 
-        reviews_url = f'{api_url}/pulls/{pr_number}/reviews'
-        content = self.fetch_data_from_url_with_authentication_github(reviews_url)
-        if not content:
-            return []
+        reviews = []
+        reviews_url = f'{api_url}/pulls/{pr_number}/reviews?per_page={self.PER_PAGE_LIMIT}'
+        for page in range(1, self.NUM_PAGE_LIMIT + 1):
+            content = self.fetch_data_from_url_with_authentication_github(
+                f'{api_url}/pulls/{pr_number}/reviews?per_page={self.PER_PAGE_LIMIT}&page={page}'
+            )
+            if not content:
+                break
+            response_content = content.json() or []
+            if not isinstance(response_content, list):
+                self._addToLog('stdio', f"Malformed response when listing reviews with '{url}'\n")
+                break
+            reviews += response_content
+            if len(response_content) < self.PER_PAGE_LIMIT:
+                break
+            page += 1
 
-        result = []
-        for review in (content.json() or []):
+        last_approved = dict()
+        last_rejected = dict()
+        for review in reviews:
             reviewer = review.get('user', {}).get('login')
-            if reviewer and review.get('state') == 'APPROVED':
-                result.append(reviewer)
-        return result
+            if not reviewer:
+                continue
+            review_id = review.get('id', 0)
+            if review.get('state') == 'APPROVED':
+                last_approved[reviewer] = max(review_id, last_approved.get(reviewer, 0))
+            elif review.get('state') == 'CHANGES_REQUESTED':
+                last_rejected[reviewer] = max(review_id, last_rejected.get(reviewer, 0))
+        return sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)])
 
     def _is_pr_closed(self, pr_json):
         if not pr_json or not pr_json.get('state'):
