@@ -129,6 +129,50 @@ static const char* samlResponse =
 "</script>"
 "</html>";
 
+constexpr Seconds actionAbsenceTimeout = 300_ms;
+constexpr Seconds actionDoneTimeout = 1000_ms;
+
+namespace {
+
+class ScopedNotificationCenterObserveOnce {
+    WTF_MAKE_NONCOPYABLE(ScopedNotificationCenterObserveOnce);
+public:
+    ScopedNotificationCenterObserveOnce() = default;
+    ScopedNotificationCenterObserveOnce(NSNotificationName name, NSObject* object)
+    {
+        m_observer = [m_center addObserverForName:name object:object queue:nil usingBlock:[this] (NSNotification *) {
+            [m_center removeObserver:m_observer.get()];
+            m_observer = nullptr;
+            m_didObserve = true;
+            m_center = nullptr;
+        }];
+    }
+
+    ~ScopedNotificationCenterObserveOnce()
+    {
+        if (!m_observer)
+            return;
+        [m_center removeObserver:m_observer.get()];
+    }
+
+    ScopedNotificationCenterObserveOnce(ScopedNotificationCenterObserveOnce&&) = default;
+    ScopedNotificationCenterObserveOnce& operator=(ScopedNotificationCenterObserveOnce&&) = default;
+
+    bool waitFor(Seconds timeout)
+    {
+        return TestWebKitAPI::Util::runFor(&m_didObserve, timeout);
+    }
+
+    explicit operator bool() const { return m_didObserve; }
+
+private:
+    NSNotificationCenter * __weak m_center { [NSNotificationCenter defaultCenter] };
+    RetainPtr<NSObject> m_observer;
+    bool m_didObserve { false };
+};
+
+}
+
 @interface TestSOAuthorizationBasicDelegate : NSObject <WKNavigationDelegate>
 @end
 
@@ -956,7 +1000,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
 {
     resetState();
     SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
-    
+
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -1447,20 +1491,24 @@ TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturization)
     }];
     Util::run(&uiShowed);
 
-    bool didEndSheet = false;
     auto *hostWindow = [webView hostWindow];
-    auto observer = adoptNS([[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidEndSheetNotification object:hostWindow queue:nil usingBlock:[&didEndSheet] (NSNotification *) {
-        didEndSheet = true;
-    }]);
+    ScopedNotificationCenterObserveOnce didEndSheet { NSWindowDidEndSheetNotification, hostWindow };
+
+    ScopedNotificationCenterObserveOnce didMiniaturize { NSWindowDidMiniaturizeNotification, hostWindow };
     [hostWindow miniaturize:hostWindow];
+    EXPECT_TRUE(didMiniaturize.waitFor(actionDoneTimeout));
 
-    // Dimiss the UI
+    // Dimiss the UI while it is miniaturized.
     [gDelegate authorizationDidCancel:gAuthorization];
-    EXPECT_FALSE(didEndSheet);
 
-    // UI is only dimissed after the hostWindow is deminimized.
+    // This is the condition that the test tests: it is expected that the sheet is not ended because the view is miniaturized.
+    EXPECT_FALSE(didEndSheet.waitFor(actionAbsenceTimeout));
+
+    ScopedNotificationCenterObserveOnce didDeminiaturize { NSWindowDidDeminiaturizeNotification, hostWindow };
     [hostWindow deminiaturize:hostWindow];
-    EXPECT_TRUE(didEndSheet);
+    EXPECT_TRUE(didDeminiaturize.waitFor(actionDoneTimeout));
+
+    EXPECT_TRUE(didEndSheet.waitFor(actionDoneTimeout));
 }
 
 TEST(SOAuthorizationRedirect, DismissUIDuringHiding)
@@ -1486,21 +1534,28 @@ TEST(SOAuthorizationRedirect, DismissUIDuringHiding)
         EXPECT_TRUE(success);
     }];
     Util::run(&uiShowed);
+    auto *hostWindow = [webView hostWindow];
 
-    bool didEndSheet = false;
-    auto observer = adoptNS([[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidEndSheetNotification object:[webView hostWindow] queue:nil usingBlock:[&didEndSheet] (NSNotification *) {
-        didEndSheet = true;
-    }]);
+    ScopedNotificationCenterObserveOnce didEndSheet { NSWindowDidEndSheetNotification, hostWindow };
 
     [NSApp hide:NSApp];
 
+    // Wait for hiding to finish.
+    while (!NSApp.hidden)
+        Util::spinRunLoop();
+
     // Dimiss the UI
     [gDelegate authorizationDidCancel:gAuthorization];
-    EXPECT_FALSE(didEndSheet);
+
+    // This is the condition that the test tests: it is expected that the sheet is not ended because the view is hidden.
+    EXPECT_FALSE(didEndSheet.waitFor(actionAbsenceTimeout));
 
     // UI is only dimissed after the hostApp is unhidden.
     [NSApp unhide:NSApp];
-    EXPECT_TRUE(didEndSheet);
+    while (NSApp.hidden)
+        Util::spinRunLoop();
+
+    EXPECT_TRUE(didEndSheet.waitFor(actionDoneTimeout));
 }
 
 TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturizationThenAnother)
@@ -1526,17 +1581,18 @@ TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturizationThenAnother)
         EXPECT_TRUE(success);
     }];
     Util::run(&uiShowed);
-
-    bool didEndSheet = false;
     auto *hostWindow = [webView hostWindow];
-    auto observer = adoptNS([[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidEndSheetNotification object:hostWindow queue:nil usingBlock:[&didEndSheet] (NSNotification *) {
-        didEndSheet = true;
-    }]);
+
+    ScopedNotificationCenterObserveOnce didEndSheet { NSWindowDidEndSheetNotification, hostWindow };
+    ScopedNotificationCenterObserveOnce didMiniaturize { NSWindowDidMiniaturizeNotification, hostWindow };
     [hostWindow miniaturize:hostWindow];
+    didMiniaturize.waitFor(actionDoneTimeout);
 
     // Dimiss the UI
     [gDelegate authorizationDidCancel:gAuthorization];
-    EXPECT_FALSE(didEndSheet);
+
+    // This is the condition that the test tests: it is expected that the sheet is not ended because the view is miniaturized.
+    EXPECT_FALSE(didEndSheet.waitFor(actionAbsenceTimeout));
 
     // Load another AppSSO request.
     authorizationPerformed = false;
@@ -1545,9 +1601,15 @@ TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturizationThenAnother)
     Util::run(&authorizationPerformed);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
-    // UI is only dimissed after the hostApp is unhidden.
+    // This is the condition that the test tests: it is expected that the sheet is not ended because the view is miniaturized.
+    EXPECT_FALSE(didEndSheet.waitFor(actionAbsenceTimeout));
+
+    // UI is only dimissed after the window is deminiaturized.
+    ScopedNotificationCenterObserveOnce didDeminiaturize { NSWindowDidDeminiaturizeNotification, hostWindow };
     [hostWindow deminiaturize:hostWindow];
-    EXPECT_TRUE(didEndSheet);
+    EXPECT_TRUE(didDeminiaturize.waitFor(actionDoneTimeout));
+
+    EXPECT_TRUE(didEndSheet.waitFor(actionDoneTimeout));
 }
 
 TEST(SOAuthorizationRedirect, DismissUIDuringHidingThenAnother)
@@ -1574,16 +1636,17 @@ TEST(SOAuthorizationRedirect, DismissUIDuringHidingThenAnother)
     }];
     Util::run(&uiShowed);
 
-    bool didEndSheet = false;
-    auto observer = adoptNS([[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidEndSheetNotification object:[webView hostWindow] queue:nil usingBlock:[&didEndSheet] (NSNotification *) {
-        didEndSheet = true;
-    }]);
+    ScopedNotificationCenterObserveOnce didEndSheet { NSWindowDidEndSheetNotification, [webView hostWindow] };
 
     [NSApp hide:NSApp];
+    while (!NSApp.hidden)
+        Util::spinRunLoop();
 
     // Dimiss the UI
     [gDelegate authorizationDidCancel:gAuthorization];
-    EXPECT_FALSE(didEndSheet);
+
+    // This is the condition that the test tests: it is expected that the sheet is not ended because the view is hidden.
+    EXPECT_FALSE(didEndSheet.waitFor(actionAbsenceTimeout));
 
     // Load another AppSSO request.
     authorizationPerformed = false;
@@ -1592,9 +1655,11 @@ TEST(SOAuthorizationRedirect, DismissUIDuringHidingThenAnother)
     Util::run(&authorizationPerformed);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
-    // UI is only dimissed after the hostApp is unhidden.
     [NSApp unhide:NSApp];
-    EXPECT_TRUE(didEndSheet);
+    while (NSApp.hidden)
+        Util::spinRunLoop();
+
+    EXPECT_TRUE(didEndSheet.waitFor(actionDoneTimeout));
 }
 #endif
 
@@ -2007,7 +2072,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     // Suppress the last active session.
-    
+
     auto configuration = adoptNS([webView.get().configuration copy]);
     auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
@@ -2267,7 +2332,7 @@ TEST(SOAuthorizationSubFrame, InterceptionError)
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [messageHandler extendExpectations:@[@"null", @"SOAuthorizationDidCancel", @""]];
-    
+
     [gDelegate authorization:gAuthorization didCompleteWithError:adoptNS([[NSError alloc] initWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]).get()];
     Util::run(&allMessagesReceived);
     // Make sure we don't load the request of the iframe to the main frame.
@@ -2427,7 +2492,7 @@ TEST(SOAuthorizationSubFrame, InterceptionSuccessTwice)
         policyForAppSSOPerformed = false;
 
         [messageHandler resetExpectations:@[@"http://www.example.com", @"SOAuthorizationDidStart"]];
-        
+
         [webView loadHTMLString:testHtml baseURL:nil];
         Util::run(&allMessagesReceived);
 
