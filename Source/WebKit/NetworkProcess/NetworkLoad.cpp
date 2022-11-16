@@ -105,6 +105,11 @@ static inline void updateRequest(ResourceRequest& currentRequest, const Resource
 #endif
 }
 
+void NetworkLoad::setRequestAuthorizationHeader(const String& value)
+{
+    m_currentRequest.setHTTPHeaderField(HTTPHeaderName::Authorization, value);
+}
+
 void NetworkLoad::updateRequestAfterRedirection(WebCore::ResourceRequest& newRequest) const
 {
     ResourceRequest updatedRequest = m_currentRequest;

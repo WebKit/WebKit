@@ -56,6 +56,7 @@ public:
     bool isAllowedToAskUserForCredentials() const;
 
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
+    void setRequestAuthorizationHeader(const String&) final;
     void updateRequestAfterRedirection(WebCore::ResourceRequest&) const;
     void reprioritizeRequest(WebCore::ResourceLoadPriority);
 

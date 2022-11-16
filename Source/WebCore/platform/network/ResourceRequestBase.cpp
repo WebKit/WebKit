@@ -36,6 +36,10 @@
 #include "SecurityPolicy.h"
 #include <wtf/PointerComparison.h>
 
+#if PLATFORM(COCOA)
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(IOS_FAMILY) || USE(CFURLCONNECTION)
@@ -168,9 +172,15 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https"_s) && WTF::protocolIs(request.httpReferrer(), "https"_s))
         request.clearHTTPReferrer();
 
-    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
+    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         request.clearHTTPOrigin();
-    request.clearHTTPAuthorization();
+        request.clearHTTPAuthorization();
+    }
+#if PLATFORM(COCOA)
+    else if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects))
+        request.clearHTTPAuthorization();
+#endif
+
     request.m_requestData.m_httpHeaderFields.remove(HTTPHeaderName::ProxyAuthorization);
 
     return request;

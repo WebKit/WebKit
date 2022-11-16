@@ -1136,6 +1136,10 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
     if (!m_firstResponseURL.isValid())
         m_firstResponseURL = redirectResponse.url();
 
+    auto newURL = redirectRequest.url();
+    redirectRequest = request.redirectedRequest(redirectResponse, parameters().shouldClearReferrerOnHTTPSToHTTPRedirect);
+    redirectRequest.setURL(WTFMove(newURL));
+
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(redirectRequest, redirectResponse))
         return;
@@ -1165,14 +1169,6 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
         didFailLoading(*error);
         return;
-    }
-
-    if (auto authorization = request.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
-#if PLATFORM(COCOA)
-        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects)
-#endif
-        && protocolHostAndPortAreEqual(request.url(), redirectRequest.url())) {
-        redirectRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
     }
 
     if (m_networkLoadChecker) {
@@ -1626,8 +1622,9 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(ResourceRequest
 
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
+    auto redirectRequest = request.redirectedRequest(entry->response(), parameters().shouldClearReferrerOnHTTPSToHTTPRedirect);
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
-    willSendRedirectedRequest(WTFMove(request), ResourceRequest { *entry->redirectRequest() }, ResourceResponse { entry->response() });
+    willSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), ResourceResponse { entry->response() });
 }
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection() const
