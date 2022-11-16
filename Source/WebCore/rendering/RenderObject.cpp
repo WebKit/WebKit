@@ -706,10 +706,13 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
     }
 
     if (positionType == PositionType::Fixed) {
-        auto containingBlockForFixedPosition = [&] {
+        auto containingBlockForFixedPosition = [&] () -> RenderBlock* {
             auto* ancestor = renderer.parent();
-            while (ancestor && !ancestor->canContainFixedPositionObjects())
+            while (ancestor && !ancestor->canContainFixedPositionObjects()) {
+                if (isInTopLayerOrBackdrop(ancestor->style(), ancestor->element()))
+                    return &renderer.view();
                 ancestor = ancestor->parent();
+            }
             return nearestNonAnonymousContainingBlockIncludingSelf(ancestor);
         };
         return containingBlockForFixedPosition();
@@ -1558,20 +1561,20 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     // This does mean that computePositionedLogicalWidth and computePositionedLogicalHeight have to use container().
     if (!is<RenderElement>(renderer))
         return renderer.parent();
-    if (isInTopLayerOrBackdrop(renderer.style(), downcast<RenderElement>(renderer).element())) {
-        auto updateRepaintContainerSkippedFlagIfApplicable = [&] {
-            if (!repaintContainerSkipped)
-                return;
-            *repaintContainerSkipped = false;
-            if (repaintContainer == &renderer.view())
-                return;
-            for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
-                if (repaintContainer == &ancestor) {
-                    *repaintContainerSkipped = true;
-                    break;
-                }
+    auto updateRepaintContainerSkippedFlagIfApplicable = [&] {
+        if (!repaintContainerSkipped)
+            return;
+        *repaintContainerSkipped = false;
+        if (repaintContainer == &renderer.view())
+            return;
+        for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+            if (repaintContainer == &ancestor) {
+                *repaintContainerSkipped = true;
+                break;
             }
-        };
+        }
+    };
+    if (isInTopLayerOrBackdrop(renderer.style(), downcast<RenderElement>(renderer).element())) {
         updateRepaintContainerSkippedFlagIfApplicable();
         return &renderer.view();
     }
@@ -1579,7 +1582,18 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     if (position == PositionType::Static || position == PositionType::Relative || position == PositionType::Sticky)
         return renderer.parent();
     auto* parent = renderer.parent();
-    for (; parent && (position == PositionType::Absolute ? !parent->canContainAbsolutelyPositionedObjects() : !parent->canContainFixedPositionObjects()); parent = parent->parent()) {
+    if (position == PositionType::Absolute) {
+        for (; parent && !parent->canContainAbsolutelyPositionedObjects(); parent = parent->parent()) {
+            if (repaintContainerSkipped && repaintContainer == parent)
+                *repaintContainerSkipped = true;
+        }
+        return parent;
+    }
+    for (; parent && !parent->canContainFixedPositionObjects(); parent = parent->parent()) {
+        if (isInTopLayerOrBackdrop(parent->style(), parent->element())) {
+            updateRepaintContainerSkippedFlagIfApplicable();
+            return &renderer.view();
+        }
         if (repaintContainerSkipped && repaintContainer == parent)
             *repaintContainerSkipped = true;
     }
