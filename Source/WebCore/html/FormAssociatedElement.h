@@ -45,17 +45,17 @@ public:
     virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
 
 protected:
-    FormAssociatedElement(HTMLFormElement*);
+    explicit FormAssociatedElement(HTMLFormElement*);
 
     virtual void resetFormOwner() = 0;
     virtual void setFormInternal(HTMLFormElement*);
 
 private:
-    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
-    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
-
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;
+
+    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
+    WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
 };
 
 inline FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
