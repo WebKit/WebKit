@@ -155,7 +155,7 @@ void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const Res
 }
 
 BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest& request, ResourceHandleClient* client, bool async)
-    : ResourceHandle { nullptr, request, client, false /* defersLoading */, false /* shouldContentSniff */, true /* shouldContentEncodingSniff */, nullptr /* sourceOrigin */, false /* isMainFrameNavigation */ }
+    : ResourceHandle { nullptr, request, client, false /* defersLoading */, false /* shouldContentSniff */, ContentEncodingSniffingPolicy::Default, nullptr /* sourceOrigin */, false /* isMainFrameNavigation */ }
     , m_blobData { blobData }
     , m_async { async }
 {

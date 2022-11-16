@@ -252,6 +252,10 @@ imported/w3c/web-platform-tests/xhr/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/open-url-redirected-sharedworker-origin.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Skip ]
 
+imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
+
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 fast/history/page-cache-media-recorder.html [ Skip ]

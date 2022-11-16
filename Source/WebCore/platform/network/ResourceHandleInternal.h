@@ -65,7 +65,7 @@ class ResourceHandleInternal {
     WTF_MAKE_NONCOPYABLE(ResourceHandleInternal);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceHandleInternal);
 public:
-    ResourceHandleInternal(ResourceHandle* loader, NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
+    ResourceHandleInternal(ResourceHandle* loader, NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
         : m_context(context)
         , m_client(client)
         , m_firstRequest(request)
@@ -73,7 +73,7 @@ public:
         , m_partition(request.cachePartition())
         , m_defersLoading(defersLoading)
         , m_shouldContentSniff(shouldContentSniff)
-        , m_shouldContentEncodingSniff(shouldContentEncodingSniff)
+        , m_contentEncodingSniffingPolicy(contentEncodingSniffingPolicy)
 #if USE(CFURLCONNECTION)
         , m_currentRequest(request)
 #endif
@@ -107,7 +107,7 @@ public:
 
     bool m_defersLoading;
     bool m_shouldContentSniff;
-    bool m_shouldContentEncodingSniff;
+    ContentEncodingSniffingPolicy m_contentEncodingSniffingPolicy;
 #if USE(CFURLCONNECTION)
     RetainPtr<CFURLConnectionRef> m_connection;
     ResourceRequest m_currentRequest;

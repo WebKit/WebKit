@@ -1,0 +1,4 @@
+
+PASS fetched gzip data with content type text should be decompressed.
+PASS fetched gzip data with content type octetstream should be decompressed.
+
