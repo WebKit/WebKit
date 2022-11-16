@@ -291,6 +291,12 @@ HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebVie
     if (!challenge || FAILED(challenge->sender(&sender)))
         return E_FAIL;
 
+    if (gTestRunner->rejectsProtectionSpaceAndContinueForAuthenticationChallenges()) {
+        fprintf(testResult, "Simulating reject protection space and continue for authentication challenge\n");
+        sender->continueWithoutCredentialForAuthenticationChallenge(challenge);
+        return S_OK;
+    }
+
     if (!gTestRunner->handlesAuthenticationChallenges()) {
         fprintf(testResult, "%S - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n", descriptionSuitableForTestResult(identifier).c_str());
         sender->continueWithoutCredentialForAuthenticationChallenge(challenge);

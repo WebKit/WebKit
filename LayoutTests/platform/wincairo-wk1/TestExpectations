@@ -392,7 +392,6 @@ http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-emb
 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
 http/tests/xmlhttprequest/access-control-and-redirects.html [ Failure ]
 http/tests/xmlhttprequest/access-control-preflight-not-successful.html [ Failure ]
-http/tests/xmlhttprequest/auth-reject-protection-space.html [ Failure ]
 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html [ Failure ]
 http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Failure ]
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
