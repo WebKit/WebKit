@@ -65,7 +65,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.webFrameID = globalFrameID.frameID;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
-    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.request = m_originalRequest;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *networkSession);

@@ -262,7 +262,7 @@ void ResourceLoader::start()
 
     bool isMainFrameNavigation = frame() && frame()->isMainFrame() && options().mode == FetchOptions::Mode::Navigate;
 
-    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff, WTFMove(sourceOrigin), isMainFrameNavigation);
+    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)

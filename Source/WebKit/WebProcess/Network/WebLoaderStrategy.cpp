@@ -345,7 +345,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     }
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? ContentSniffingPolicy::SniffContent : ContentSniffingPolicy::DoNotSniffContent;
-    ContentEncodingSniffingPolicy contentEncodingSniffingPolicy = resourceLoader.shouldSniffContentEncoding() ? ContentEncodingSniffingPolicy::Sniff : ContentEncodingSniffingPolicy::DoNotSniff;
+    auto contentEncodingSniffingPolicy = resourceLoader.contentEncodingSniffingPolicy();
     StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d, storedCredentialsPolicy %i", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()), (int)storedCredentialsPolicy);
@@ -701,7 +701,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
 #endif
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
-    loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? webFrame->coreFrame() : nullptr);

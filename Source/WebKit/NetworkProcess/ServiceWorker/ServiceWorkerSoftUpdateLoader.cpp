@@ -124,7 +124,7 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     NetworkLoadParameters parameters;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
-    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.needsCertificateInfo = true;
     parameters.request = WTFMove(request);
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), session);

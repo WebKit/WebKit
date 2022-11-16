@@ -376,8 +376,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     bool defersLoading = false;
     bool shouldContentSniff = true;
-    bool shouldContentEncodingSniff = true;
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff, nullptr, false));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, ContentEncodingSniffingPolicy::Default, nullptr, false));
     handle->d->m_messageQueue = &client.messageQueue();
 
     if (request.url().protocolIsData()) {

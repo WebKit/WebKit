@@ -130,7 +130,7 @@ public:
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
     bool shouldSniffContent() const { return m_options.sniffContent == ContentSniffingPolicy::SniffContent; }
-    bool shouldSniffContentEncoding() const { return m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff; }
+    ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const { return m_options.contentEncodingSniffingPolicy; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
     WEBCORE_EXPORT bool shouldIncludeCertificateInfo() const;
     
