@@ -1,0 +1,20 @@
+
+PASS sec-fetch-site - Same origin, no attributes
+PASS sec-fetch-site - Cross-site, no attributes
+PASS sec-fetch-site - Same site, no attributes
+PASS sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - Cross-Site -> Same Origin, no attributes
+PASS sec-fetch-site - Cross-Site -> Same-Site, no attributes
+PASS sec-fetch-site - Cross-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - Same-Origin -> Same Origin, no attributes
+PASS sec-fetch-site - Same-Origin -> Same-Site, no attributes
+PASS sec-fetch-site - Same-Origin -> Cross-Site, no attributes
+PASS sec-fetch-site - Same-Site -> Same Origin, no attributes
+PASS sec-fetch-site - Same-Site -> Same-Site, no attributes
+PASS sec-fetch-site - Same-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - HTTPS downgrade-upgrade, no attributes
+PASS sec-fetch-mode - no attributes
+PASS sec-fetch-dest - no attributes
+PASS sec-fetch-user - no attributes
+

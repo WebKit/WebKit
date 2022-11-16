@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/appcache-manifest.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/audioworklet.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/css-font-face.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/css-images.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-a.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-area.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-audio.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-embed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-img-environment-change.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-img.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-input-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-link-icon.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-link-prefetch.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-meta-refresh.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-picture.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-script.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-video-poster.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/element-video.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/fetch-via-serviceworker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/fetch.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/form-submission.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/header-link.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/header-refresh.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/script-module-import-dynamic.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/script-module-import-static.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/serviceworker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/svg-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/window-history.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/window-location.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/worker-dedicated-constructor.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/tools/templates/worker-dedicated-importscripts.sub.html

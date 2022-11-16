@@ -1175,6 +1175,15 @@ http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSCon
 # SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+imported/w3c/web-platform-tests/fetch/metadata/generated [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/private-network-access [ DumpJSConsoleLogInStdErr ]
+
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Pass Failure ]
+
+# Timeouts. Some flaky, others timing out routinely.
+webkit.org/b/247692 imported/w3c/web-platform-tests/fetch/metadata/generated/element-img-environment-change.sub.html [ Skip ]
+webkit.org/b/247692 imported/w3c/web-platform-tests/fetch/metadata/generated/element-img-environment-change.https.sub.html [ Skip ]
+
 # The tests are crashing, timing out and passing. Mark as Skip for now.
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
 webkit.org/b/177940 workers/wasm-hashset-many.html [ Skip ]
@@ -1874,24 +1883,11 @@ imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.s
 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.any.html [ DumpJSConsoleLogInStdErr ]
 
 # These are skipped globally as they only work with the web-platform.test domain.
-imported/w3c/web-platform-tests/fetch/metadata/redirect/cross-site-redirect.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-cross-site.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-same-site.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/same-origin-redirect.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/same-site-redirect.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/fetch.https.sub.any.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/fetch.https.sub.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/font.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/img.https.sub.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Pass ]
 # These tests work totally fine but have unreliable ordering for test output making them flakey.
-imported/w3c/web-platform-tests/fetch/metadata/form.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/history.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/iframe.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
 

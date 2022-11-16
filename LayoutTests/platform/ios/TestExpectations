@@ -3447,8 +3447,6 @@ webkit.org/b/238211 fast/text/text-shadow-ink-overflow-missing.html [ Pass Image
 
 webkit.org/b/237812 editing/spelling/spellcheck-api-crash.html [ Pass Crash ]
 
-webkit.org/b/238469 imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Skip ]
-
 webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
 
 # rdar://82190832 ([ iOS15 ] editing/caret/ios/caret-in-overflow-area.html is failing)

@@ -1,0 +1,25 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - Same origin
+TIMEOUT sec-fetch-site - Cross-site Test timed out
+TIMEOUT sec-fetch-site - Same site Test timed out
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) Failed to query for recorded headers.
+TIMEOUT sec-fetch-site - HTTPS upgrade Test timed out
+FAIL sec-fetch-site - HTTPS downgrade-upgrade Failed to query for recorded headers.
+FAIL sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect Failed to query for recorded headers.
+FAIL sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect Failed to query for recorded headers.
+TIMEOUT sec-fetch-site - Cross-Site -> Same Origin Test timed out
+TIMEOUT sec-fetch-site - Cross-Site -> Same-Site Test timed out
+TIMEOUT sec-fetch-site - Cross-Site -> Cross-Site Test timed out
+FAIL sec-fetch-site - Same-Origin -> Same Origin Failed to query for recorded headers.
+FAIL sec-fetch-site - Same-Origin -> Same-Site Failed to query for recorded headers.
+FAIL sec-fetch-site - Same-Origin -> Cross-Site Failed to query for recorded headers.
+TIMEOUT sec-fetch-site - Same-Site -> Same Origin Test timed out
+TIMEOUT sec-fetch-site - Same-Site -> Same-Site Test timed out
+TIMEOUT sec-fetch-site - Same-Site -> Cross-Site Test timed out
+PASS sec-fetch-mode
+PASS sec-fetch-dest
+PASS sec-fetch-user
+

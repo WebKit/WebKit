@@ -1,0 +1,6 @@
+
+PASS Status(100) should be ignored.
+FAIL Status(101) should be accepted, with removing body. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Status(103) should be ignored.
+PASS Status(199) should be ignored.
+

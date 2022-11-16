@@ -26,5 +26,7 @@ FAIL Fetch with POST with ReadableStream containing Blob promise_rejects_js: fun
     [native code]
 }" ("TypeError")
 FAIL Fetch with POST with text body on 421 response should be retried once on new connection. assert_equals: expected "ok. Request was sent 2 times. 2 connections were created." but got "ok. Request was sent 1 times. 1 connections were created."
-FAIL Fetch with POST with ReadableStream on 421 response should return the response and not retry. promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Streaming upload shouldn't work on Http/1.1. promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

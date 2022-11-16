@@ -1,0 +1,79 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/appcache-manifest.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/audioworklet.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/css-images.https.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/css-images.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-audio.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-audio.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-embed.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-embed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-frame.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-iframe.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-img-environment-change.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-img-environment-change.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-img.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-img.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-input-image.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-input-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-link-icon.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-link-icon.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-link-prefetch.https.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-link-prefetch.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.https.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-picture.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-picture.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-script.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-script.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-video-poster.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-video-poster.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-video.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/element-video.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/fetch-via-serviceworker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/fetch.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/fetch.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/header-link.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/header-link.https.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/header-link.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/header-refresh.https.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/header-refresh.optional.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-dynamic.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-dynamic.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-static.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-static.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/serviceworker.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/svg-image.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/svg-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/window-history.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/window-history.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-constructor.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-constructor.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-importscripts.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-importscripts.sub.html

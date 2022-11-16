@@ -1,4 +1,0 @@
-
-
-FAIL Same-Origin -> Cross-Site -> Same-Origin redirect assert_not_equals: got disallowed value "No header has been recorded"
-

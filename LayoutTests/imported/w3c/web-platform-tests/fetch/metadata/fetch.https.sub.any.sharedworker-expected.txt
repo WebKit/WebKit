@@ -1,0 +1,24 @@
+
+PASS Same-origin fetch
+FAIL Same-site fetch promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Cross-site fetch promise_test: Unhandled rejection with value: object "TypeError: URL is not valid or contains user credentials."
+PASS Same-origin mode
+PASS CORS mode
+PASS no-CORS mode
+PASS Same-origin fetch: sec-fetch-dest
+PASS Same-origin fetch: sec-fetch-mode
+PASS Same-origin fetch: sec-fetch-site
+PASS Same-origin fetch: sec-fetch-user
+PASS Same-origin mode: sec-fetch-dest
+PASS Same-origin mode: sec-fetch-mode
+PASS Same-origin mode: sec-fetch-site
+PASS Same-origin mode: sec-fetch-user
+PASS CORS mode: sec-fetch-dest
+PASS CORS mode: sec-fetch-mode
+PASS CORS mode: sec-fetch-site
+PASS CORS mode: sec-fetch-user
+PASS no-CORS mode: sec-fetch-dest
+PASS no-CORS mode: sec-fetch-mode
+PASS no-CORS mode: sec-fetch-site
+PASS no-CORS mode: sec-fetch-user
+

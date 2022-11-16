@@ -1,0 +1,19 @@
+
+PASS local to local: no preflight required.
+PASS local to private: no preflight required.
+PASS local to public: no preflight required.
+FAIL private to local: failed preflight. assert_equals: response loaded expected false but got true
+FAIL private to local: success. assert_equals: response loaded expected true but got false
+PASS private to private: no preflight required.
+PASS private to public: no preflight required.
+FAIL public to local: failed preflight. assert_equals: response loaded expected false but got true
+FAIL public to local: success. assert_equals: response loaded expected true but got false
+FAIL public to private: failed preflight. assert_equals: response loaded expected false but got true
+FAIL public to private: success. assert_equals: response loaded expected true but got false
+PASS public to public: no preflight required.
+FAIL treat-as-public to local: failed preflight. assert_equals: response loaded expected false but got true
+FAIL treat-as-public to local: success. assert_equals: response status expected 200 but got 405
+FAIL treat-as-public to private: failed preflight. assert_equals: response loaded expected false but got true
+FAIL treat-as-public to private: success. assert_equals: response loaded expected true but got false
+PASS treat-as-public to public: no preflight required.
+

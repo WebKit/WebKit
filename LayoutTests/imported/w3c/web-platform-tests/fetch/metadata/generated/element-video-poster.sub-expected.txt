@@ -1,0 +1,21 @@
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&body=%0A++++++%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+width%3D%22123%22+height%3D%22123%22%3E%0A++++++++%3Crect+fill%3D%22lime%22+width%3D%22123%22+height%3D%22123%22%2F%3E%0A++++++%3C%2Fsvg%3E%0A++++&mime=image%2Fsvg%2Bxml
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+TIMEOUT sec-fetch-site - Not sent to non-trustworthy same-site destination Test timed out
+NOTRUN sec-fetch-site - Not sent to non-trustworthy cross-site destination
+NOTRUN sec-fetch-mode - Not sent to non-trustworthy same-origin destination
+NOTRUN sec-fetch-mode - Not sent to non-trustworthy same-site destination
+NOTRUN sec-fetch-mode - Not sent to non-trustworthy cross-site destination
+NOTRUN sec-fetch-dest - Not sent to non-trustworthy same-origin destination
+NOTRUN sec-fetch-dest - Not sent to non-trustworthy same-site destination
+NOTRUN sec-fetch-dest - Not sent to non-trustworthy cross-site destination
+NOTRUN sec-fetch-user - Not sent to non-trustworthy same-origin destination
+NOTRUN sec-fetch-user - Not sent to non-trustworthy same-site destination
+NOTRUN sec-fetch-user - Not sent to non-trustworthy cross-site destination
+NOTRUN sec-fetch-site - HTTPS downgrade (header not sent)
+NOTRUN sec-fetch-site - HTTPS upgrade
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade
+

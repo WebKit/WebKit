@@ -1,0 +1,3 @@
+
+FAIL Non-ascii bytes in request headers assert_equals: Accept Header expected "before-æøå-after" but got "before-Ã¦Ã¸Ã¥-after"
+

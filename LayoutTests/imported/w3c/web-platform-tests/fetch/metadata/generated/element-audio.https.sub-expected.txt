@@ -1,0 +1,25 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT sec-fetch-site - Same origin, no attributes Test timed out
+NOTRUN sec-fetch-site - Cross-site, no attributes
+NOTRUN sec-fetch-site - Same site, no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin, no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site, no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin, no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site, no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - Same-Site -> Same Origin, no attributes
+NOTRUN sec-fetch-site - Same-Site -> Same-Site, no attributes
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade, no attributes
+NOTRUN sec-fetch-mode - no attributes
+NOTRUN sec-fetch-mode - attributes: crossorigin
+NOTRUN sec-fetch-mode - attributes: crossorigin=anonymous
+NOTRUN sec-fetch-mode - attributes: crossorigin=use-credentials
+NOTRUN sec-fetch-dest - no attributes
+NOTRUN sec-fetch-user - no attributes
+

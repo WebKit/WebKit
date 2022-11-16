@@ -1,0 +1,11 @@
+
+FAIL local to local: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL private to local: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL private to private: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL public to local: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL public to private: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL public to public: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL treat-as-public to local: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL treat-as-public to private: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+FAIL treat-as-public to public: success. assert_equals: set permission error expected (undefined) undefined but got (string) "Error"
+

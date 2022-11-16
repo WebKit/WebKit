@@ -1,6 +1,14 @@
 
-PASS Getting blob after cancelling the Response body
-PASS Getting text after cancelling the Response body
-PASS Getting json after cancelling the Response body
-PASS Getting arrayBuffer after cancelling the Response body
+PASS Getting blob after cancelling the Response body (body source: fetch)
+PASS Getting text after cancelling the Response body (body source: fetch)
+PASS Getting json after cancelling the Response body (body source: fetch)
+PASS Getting arrayBuffer after cancelling the Response body (body source: fetch)
+PASS Getting blob after cancelling the Response body (body source: stream)
+PASS Getting text after cancelling the Response body (body source: stream)
+PASS Getting json after cancelling the Response body (body source: stream)
+PASS Getting arrayBuffer after cancelling the Response body (body source: stream)
+PASS Getting blob after cancelling the Response body (body source: string)
+PASS Getting text after cancelling the Response body (body source: string)
+PASS Getting json after cancelling the Response body (body source: string)
+PASS Getting arrayBuffer after cancelling the Response body (body source: string)
 

@@ -18,17 +18,17 @@ FAIL Input: "Content-Length: 30\r\nContent-Length: \t". Expected: network error.
 FAIL Input: "Content-Length: \r\nContent-Length: 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: aaaah\r\nContent-Length: nah". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: aaaah, nah". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: aaaah\r\nContent-Length: aaaah". Expected: 42. promise_test: Unhandled rejection with value: object "TypeError: The network connection was lost."
-FAIL Input: "Content-Length: aaaah, aaaah". Expected: 42. promise_test: Unhandled rejection with value: object "TypeError: The network connection was lost."
-FAIL Input: "Content-Length: aaaah". Expected: 42. promise_test: Unhandled rejection with value: object "TypeError: The network connection was lost."
+FAIL Input: "Content-Length: aaaah\r\nContent-Length: aaaah". Expected: 42. assert_equals: expected 42 but got 0
+FAIL Input: "Content-Length: aaaah, aaaah". Expected: 42. assert_equals: expected 42 but got 0
+FAIL Input: "Content-Length: aaaah". Expected: 42. assert_equals: expected 42 but got 0
 PASS Input: "Content-Length: 42s". Expected: 42.
 FAIL Input: "Content-Length: 30s". Expected: 42. assert_equals: expected 42 but got 30
-PASS Input: "Content-Length: -1". Expected: 42.
+FAIL Input: "Content-Length: -1". Expected: 42. assert_equals: expected 42 but got 0
 FAIL Input: "Content-Length: 0x20". Expected: 42. assert_equals: expected 42 but got 0
 PASS Input: "Content-Length: 030". Expected: 30.
 FAIL Input: "Content-Length: 030\r\nContent-Length: 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: 030, 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: \"30\"". Expected: 42. promise_test: Unhandled rejection with value: object "TypeError: The network connection was lost."
+FAIL Input: "Content-Length: \"30\"". Expected: 42. assert_equals: expected 42 but got 0
 FAIL Input: "Content-Length:30\r\nContent-Length:,\r\nContent-Length:30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: ". Expected: 42. assert_equals: expected 42 but got 0
 

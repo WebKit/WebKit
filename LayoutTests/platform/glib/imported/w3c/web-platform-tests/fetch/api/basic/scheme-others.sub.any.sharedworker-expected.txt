@@ -1,0 +1,18 @@
+
+PASS Fetching aaa://web-platform.test:8800/ is KO
+PASS Fetching cap://web-platform.test:8800/ is KO
+PASS Fetching cid://web-platform.test:8800/ is KO
+PASS Fetching dav://web-platform.test:8800/ is KO
+PASS Fetching dict://web-platform.test:8800/ is KO
+PASS Fetching dns://web-platform.test:8800/ is KO
+PASS Fetching geo://web-platform.test:8800/ is KO
+PASS Fetching im://web-platform.test:8800/ is KO
+PASS Fetching imap://web-platform.test:8800/ is KO
+PASS Fetching ipp://web-platform.test:8800/ is KO
+PASS Fetching ldap://web-platform.test:8800/ is KO
+PASS Fetching mailto://web-platform.test:8800/ is KO
+PASS Fetching nfs://web-platform.test:8800/ is KO
+PASS Fetching pop://web-platform.test:8800/ is KO
+PASS Fetching rtsp://web-platform.test:8800/ is KO
+PASS Fetching snmp://web-platform.test:8800/ is KO
+

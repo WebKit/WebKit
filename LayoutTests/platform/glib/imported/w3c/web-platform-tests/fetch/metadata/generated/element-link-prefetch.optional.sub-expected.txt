@@ -1,0 +1,19 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - Not sent to non-trustworthy same-origin destination no attributes
+PASS sec-fetch-site - Not sent to non-trustworthy same-site destination no attributes
+PASS sec-fetch-site - Not sent to non-trustworthy cross-site destination no attributes
+PASS sec-fetch-mode - Not sent to non-trustworthy same-origin destination no attributes
+PASS sec-fetch-mode - Not sent to non-trustworthy same-site destination no attributes
+PASS sec-fetch-mode - Not sent to non-trustworthy cross-site destination no attributes
+PASS sec-fetch-dest - Not sent to non-trustworthy same-origin destination no attributes
+PASS sec-fetch-dest - Not sent to non-trustworthy same-site destination no attributes
+PASS sec-fetch-dest - Not sent to non-trustworthy cross-site destination no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination no attributes
+TIMEOUT sec-fetch-site - HTTPS downgrade (header not sent) no attributes Test timed out
+NOTRUN sec-fetch-site - HTTPS upgrade no attributes
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade no attributes
+

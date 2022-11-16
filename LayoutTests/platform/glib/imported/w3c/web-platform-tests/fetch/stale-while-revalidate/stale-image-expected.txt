@@ -1,4 +1,4 @@
 
 
-PASS Cache returns stale resource
+FAIL Cache returns stale resource assert_equals: (revalidated version loaded) expected 256 but got 16
 
