@@ -110,9 +110,8 @@ unsigned long AudioDestination::maxChannelCount()
 }
 
 AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, unsigned long numberOfOutputChannels, float sampleRate)
-    : AudioDestination(callback)
+    : AudioDestination(callback, sampleRate)
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
-    , m_sampleRate(sampleRate)
 {
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("audio-destination-", pipelineId.exchangeAdd(1)).ascii().data());

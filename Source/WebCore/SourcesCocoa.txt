@@ -246,6 +246,7 @@ platform/audio/cocoa/AudioOutputUnitAdaptor.cpp
 platform/audio/cocoa/AudioSampleBufferList.cpp
 platform/audio/cocoa/AudioSampleDataConverter.mm
 platform/audio/cocoa/AudioSampleDataSource.mm
+platform/audio/cocoa/AudioUtilitiesCocoa.cpp
 platform/audio/cocoa/CAAudioStreamDescription.cpp
 platform/audio/cocoa/CARingBuffer.cpp
 platform/audio/cocoa/MediaSessionManagerCocoa.mm

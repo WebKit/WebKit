@@ -37,7 +37,6 @@ class AudioBus;
 // varies on the platform, but the WebAudio always renders 128 frames (render
 // quantum, RQ) thus FIFO is needed to handle the general case.
 class PushPullFIFO {
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PushPullFIFO);
 
 public:
