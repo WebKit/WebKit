@@ -860,12 +860,12 @@ void FrameLoader::HistoryController::pushState(RefPtr<SerializedScriptValue>&& s
 
     bool shouldRestoreScrollPosition = m_currentItem->shouldRestoreScrollPosition();
 
+    // Get a HistoryItem tree for the current frame tree.
+    Ref<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
+
     auto* document = m_frame.document();
     if (document && !document->hasRecentUserInteractionForNavigationFromJS())
         m_currentItem->setWasCreatedByJSWithoutUserInteraction(true);
-
-    // Get a HistoryItem tree for the current frame tree.
-    Ref<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
     
     // Override data in the current item (created by createItemTree) to reflect
     // the pushState() arguments.
