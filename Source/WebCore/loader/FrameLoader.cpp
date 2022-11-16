@@ -1131,13 +1131,13 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
         // we have already saved away the scroll and doc state for the long slow load,
         // but it's not an obvious case.
 
+        history().updateBackForwardListForFragmentScroll();
+
         auto* document = m_frame.document();
         if (document && !document->hasRecentUserInteractionForNavigationFromJS() && !documentLoader()->triggeringAction().isRequestFromClientOrUserInput()) {
             if (auto* currentItem = history().currentItem())
                 currentItem->setWasCreatedByJSWithoutUserInteraction(true);
         }
-
-        history().updateBackForwardListForFragmentScroll();
     }
 
     bool hashChange = equalIgnoringFragmentIdentifier(url, oldURL) && !equalRespectingNullity(url.fragmentIdentifier(), oldURL.fragmentIdentifier());
