@@ -112,13 +112,21 @@ class LayoutTestFinder(object):
                 test_file,
                 is_http_test=self.http_subdir in test_file,
                 is_websocket_test=self.websocket_subdir in test_file or (self.http_subdir in test_file and 'websocket' in test_file),
-                is_wpt_test=(
-                    self.web_platform_test_subdir in test_file
-                    or self.webkit_specific_web_platform_test_subdir in test_file
-                ),
+                is_wpt_test=self._is_wpt_test(test_file),
+                is_wpt_crash_test=self._is_wpt_crash_test(test_file),
             )
             for test_file in self._real_tests(expanded_paths)
         ]
+
+    def _is_wpt_test(self, test_file):
+        return self.web_platform_test_subdir in test_file or self.webkit_specific_web_platform_test_subdir in test_file
+
+    def _is_wpt_crash_test(self, test_file):
+        if not self._is_wpt_test(test_file):
+            return False
+        filename, _ = self._filesystem.splitext(test_file)
+        crashtests_dirname = self._port.TEST_PATH_SEPARATOR + 'crashtests' + self._port.TEST_PATH_SEPARATOR
+        return filename.endswith('-crash') or crashtests_dirname in test_file
 
     def _expanded_paths(self, paths, device_type=None):
         expanded_paths = []

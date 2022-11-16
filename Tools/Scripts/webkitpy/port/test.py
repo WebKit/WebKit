@@ -51,6 +51,7 @@ class TestInstance(object):
         self.error = ''
         self.timeout = False
         self.is_reftest = False
+        self.is_wpt_crash_test = False
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
@@ -106,12 +107,12 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 75
+TOTAL_TESTS = 83
 TOTAL_SKIPS = 11
-TOTAL_RETRIES = 11
+TOTAL_RETRIES = 13
 
 UNEXPECTED_PASSES = 6
-UNEXPECTED_FAILURES = 14
+UNEXPECTED_FAILURES = 19
 
 
 def unit_test_list():
@@ -265,6 +266,24 @@ layer at (0,0) size 800x34
     tests.add('corner-cases/ews/directory-flaky/failure.html', expected_text='ok-txt', actual_text='text_fail-txt')
     tests.add('corner-cases/ews/directory-flaky/timeout.html', timeout=True)
 
+    tests.add('imported/w3c/web-platform-tests/some/new.html',
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
+    tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.html',
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+    tests.add('imported/w3c/web-platform-tests/some/test-timeout-crash.html',
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+    tests.add('imported/w3c/web-platform-tests/some/test-crash-crash.html',
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_wpt_crash_test=True, crash=True, error='mock-crash-stderr')
+
+    tests.add('imported/w3c/web-platform-tests/crashtests/pass.html',
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+    tests.add('imported/w3c/web-platform-tests/crashtests/timeout.html',
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+    tests.add('imported/w3c/web-platform-tests/crashtests/crash.html',
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_wpt_crash_test=True)
+    tests.add('imported/w3c/web-platform-tests/crashtests/dir/test.html',
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+
     return tests
 
 
@@ -312,6 +331,10 @@ Bug(test) passes/skipped/skip.html [ Skip ]
 Bug(test) corner-cases/ews/directory-skipped [ Skip ]
 Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
 """)
+    w3c_resources_path = LAYOUT_TEST_DIR + '/imported/w3c/resources/'
+    if not filesystem.exists(w3c_resources_path + 'resource-files.json'):
+        filesystem.maybe_make_directory(w3c_resources_path)
+        filesystem.write_text_file(w3c_resources_path + 'resource-files.json', '{"directories": [], "files": []}')
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
     # Fixing the typo causes several tests to assert, so disabling the test entirely.
@@ -335,6 +358,8 @@ Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
     for test in test_list.tests.values():
         add_file(test, test.name[test.name.rfind('.'):], '')
         if test.is_reftest:
+            continue
+        if test.is_wpt_crash_test:
             continue
         if test.actual_audio:
             add_file(test, '-expected.wav', test.expected_audio)
@@ -482,6 +507,21 @@ class TestPort(Port):
 
     def stop_websocket_server(self):
         pass
+
+    def start_web_platform_test_server(self, additional_dirs=None, number_of_servers=None):
+        pass
+
+    def stop_web_platform_test_server(self):
+        pass
+
+    def web_platform_test_server_doc_root(self):
+        return 'imported/w3c/web-platform-tests/'
+
+    def web_platform_test_server_base_http_url(self):
+        return "http://localhost:8800/"
+
+    def web_platform_test_server_base_https_url(self):
+        return "https://localhost:8800/"
 
     def _path_to_lighttpd(self):
         return "/usr/sbin/lighttpd"
