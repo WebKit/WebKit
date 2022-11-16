@@ -153,6 +153,9 @@ public:
     void ref() final { ThreadSafeRefCounted::ref(); }
     void deref() final { ThreadSafeRefCounted::deref(); }
 
+    bool operator==(const AuxiliaryProcessProxy& other) const { return (this == &other); }
+    bool operator!=(const AuxiliaryProcessProxy& other) const { return !(this == &other); }
+
     std::optional<SandboxExtension::Handle> createMobileGestaltSandboxExtensionIfNeeded() const;
 
 protected:

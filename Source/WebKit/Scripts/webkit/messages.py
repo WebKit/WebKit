@@ -321,6 +321,8 @@ def serialized_identifiers():
         'WebKit::UserContentControllerIdentifier',
         'WebKit::VideoDecoderIdentifier',
         'WebKit::VideoEncoderIdentifier',
+        'WebKit::WebExtensionContextIdentifier',
+        'WebKit::WebExtensionControllerIdentifier',
         'WebKit::WebGPUIdentifier',
         'WebKit::WebPageProxyIdentifier',
         'WebKit::WebURLSchemeHandlerIdentifier',

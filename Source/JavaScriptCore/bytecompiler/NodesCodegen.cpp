@@ -3638,16 +3638,22 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     bool isReadOnly = var.isReadOnly() && m_assignmentContext != AssignmentContext::ConstDeclarationStatement;
     if (RegisterID* local = var.local()) {
         RegisterID* result = nullptr;
-        if (m_assignmentContext == AssignmentContext::AssignmentExpression)
-            generator.emitTDZCheckIfNecessary(var, local, nullptr);
 
         if (isReadOnly) {
             result = generator.emitNode(dst, m_right); // Execute side effects first.
+
+            if (m_assignmentContext == AssignmentContext::AssignmentExpression)
+                generator.emitTDZCheckIfNecessary(var, local, nullptr);
+
             generator.emitReadOnlyExceptionIfNeeded(var);
             generator.emitProfileType(result, var, divotStart(), divotEnd());
-        } else if (var.isSpecial()) {
+        } else if ((m_assignmentContext == AssignmentContext::AssignmentExpression && generator.needsTDZCheck(var)) || var.isSpecial()) {
             RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
-            generator.emitNode(tempDst.get(), m_right);
+            generator.emitNode(tempDst.get(), m_right); // Execute side effects first.
+
+            if (m_assignmentContext == AssignmentContext::AssignmentExpression)
+                generator.emitTDZCheckIfNecessary(var, local, nullptr);
+
             generator.move(local, tempDst.get());
             generator.emitProfileType(local, var, divotStart(), divotEnd());
             result = generator.move(dst, tempDst.get());

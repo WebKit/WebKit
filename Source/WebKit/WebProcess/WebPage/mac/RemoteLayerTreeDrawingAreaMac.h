@@ -38,6 +38,11 @@ public:
 
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
+
+    void setColorSpace(std::optional<WebCore::DestinationColorSpace>) override;
+    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
+
+    std::optional<WebCore::DestinationColorSpace> m_displayColorSpace;
 };
 
 } // namespace WebKit

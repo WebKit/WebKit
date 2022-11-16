@@ -1489,6 +1489,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/AudioBus.h
     platform/audio/AudioChannel.h
     platform/audio/AudioDestination.h
+    platform/audio/AudioDestinationResampler.h
     platform/audio/AudioHardwareListener.h
     platform/audio/AudioIOCallback.h
     platform/audio/AudioSession.h

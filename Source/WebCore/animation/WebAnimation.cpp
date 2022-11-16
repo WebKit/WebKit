@@ -1578,7 +1578,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
                 if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
-                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false);
+                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false, { styledElement.document() });
                 return false;
             },
             [&] (AtomString customProperty) {

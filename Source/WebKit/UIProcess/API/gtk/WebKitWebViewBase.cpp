@@ -1880,6 +1880,16 @@ static gboolean webkitWebViewBaseGrabFocus(GtkWidget* widget)
 }
 #endif
 
+#if USE(GTK4)
+static void webkitWebViewBaseMoveFocus(GtkWidget* widget, GtkDirectionType direction)
+{
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    if (priv->dialog)
+        g_signal_emit_by_name(priv->dialog, "move-focus", direction);
+
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->move_focus(widget, direction);
+}
+#else
 static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direction)
 {
     // If a dialog is active, we need to forward focus events there. This
@@ -1893,6 +1903,7 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
 
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
 }
+#endif
 
 #if USE(GTK4)
 static void webkitWebViewBaseCssChanged(GtkWidget* widget, GtkCssStyleChange* change)
@@ -2240,7 +2251,11 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 #endif
     widgetClass->map = webkitWebViewBaseMap;
     widgetClass->unmap = webkitWebViewBaseUnmap;
+#if USE(GTK4)
+    widgetClass->move_focus = webkitWebViewBaseMoveFocus;
+#else
     widgetClass->focus = webkitWebViewBaseFocus;
+#endif
 #if USE(GTK4)
     widgetClass->grab_focus = webkitWebViewBaseGrabFocus;
 #else

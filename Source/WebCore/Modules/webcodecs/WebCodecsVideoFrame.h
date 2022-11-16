@@ -129,6 +129,8 @@ public:
 
     const WebCodecsVideoFrameData& data() const { return m_data; }
 
+    size_t memoryCost() const { return m_data.memoryCost(); }
+
 private:
     WebCodecsVideoFrame();
     explicit WebCodecsVideoFrame(WebCodecsVideoFrameData&&);

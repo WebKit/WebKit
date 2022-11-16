@@ -14,8 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/support.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/treat-as-public-address.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/treat-as-public-address.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/treat-as-public-address.https.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/treat-as-public-address.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/fetcher.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/fetcher.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/iframed.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/iframer.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/preflight.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/service-worker-bridge.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/shared-fetcher.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/shared-worker-fetcher.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/socket-opener.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/support.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/worker-fetcher.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/worker-fetcher.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/xhr-sender.html

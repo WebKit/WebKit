@@ -58,20 +58,18 @@ void WebExtensionAPIRuntimeBase::reportErrorForCallbackHandler(WebExtensionCallb
 
 NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **errorString)
 {
-    // FIXME: Implement.
-    return nil;
+    URL baseURL = extensionContext().baseURL();
+    return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
 }
 
-NSString *WebExtensionAPIRuntime::getManifest()
+NSDictionary *WebExtensionAPIRuntime::getManifest()
 {
-    // FIXME: Implement.
-    return nil;
+    return extensionContext().manifest();
 }
 
 NSString *WebExtensionAPIRuntime::runtimeIdentifier()
 {
-    // FIXME: Implement.
-    return nil;
+    return extensionContext().uniqueIdentifier();
 }
 
 void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& callback)

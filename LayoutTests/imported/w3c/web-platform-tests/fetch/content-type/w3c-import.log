@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-type/README.md
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-type/multipart.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-type/response.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-type/script.window.js

@@ -406,7 +406,7 @@ private:
     RefPtr<PlatformCALayer> fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
     
     Ref<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
-    RefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap&, CloneLevel);
+    RefPtr<PlatformCALayer> findOrMakeClone(const CloneID&, PlatformCALayer *, LayerMap&, CloneLevel);
 
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
         RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer,

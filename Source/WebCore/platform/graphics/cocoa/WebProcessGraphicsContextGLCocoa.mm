@@ -74,7 +74,7 @@ public:
         }
         if (m_displayBuffer && displayBuffer->surface() == m_displayBuffer->surface())
             return;
-        m_displayBuffer = IOSurface::createFromSurface(displayBuffer->surface(), DestinationColorSpace::SRGB());
+        m_displayBuffer = IOSurface::createFromSurface(displayBuffer->surface(), { });
     }
 
 private:

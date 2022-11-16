@@ -611,6 +611,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUVertexState.serialization.in
 
     Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
+
+    WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 )
 
 list(APPEND WebKit_DERIVED_SOURCES

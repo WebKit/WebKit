@@ -31,6 +31,7 @@
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
+#include <WebCore/AudioDestinationResampler.h>
 #include <WebCore/AudioIOCallback.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/MediaTime.h>
@@ -38,31 +39,22 @@
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
-#include <WebCore/AudioDestinationCocoa.h>
-#else
-#include <WebCore/AudioDestinationGStreamer.h>
 #endif
 
+#if PLATFORM(COCOA)
 namespace WebCore {
 class WebAudioBufferList;
 }
+#endif
 
 namespace WebKit {
 
-class RemoteAudioDestinationProxy final
-#if PLATFORM(COCOA)
-    : public WebCore::AudioDestinationCocoa
-#else
-    : public WebCore::AudioDestinationGStreamer
-#endif
-    , public GPUProcessConnection::Client {
+class RemoteAudioDestinationProxy final : public WebCore::AudioDestinationResampler, public GPUProcessConnection::Client {
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
 public:
     using AudioIOCallback = WebCore::AudioIOCallback;
-    using WebCore::AudioDestination::ref;
-    using WebCore::AudioDestination::deref;
 
-    static Ref<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
+    static Ref<RemoteAudioDestinationProxy> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
     RemoteAudioDestinationProxy(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
     ~RemoteAudioDestinationProxy();
@@ -81,29 +73,19 @@ private:
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
-#if !PLATFORM(COCOA)
-    bool isPlaying() final { return false; }
-    void setIsPlaying(bool) { }
-    float sampleRate() const final { return 0; }
-    unsigned numberOfOutputChannels() const { return m_numberOfOutputChannels; }
-#endif
-
     RemoteAudioDestinationIdentifier m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA)
-    uint64_t m_numberOfFrames { 0 };
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     uint64_t m_currentFrame { 0 };
-    float m_sampleRate;
-#else
-    unsigned m_numberOfOutputChannels;
 #endif
     IPC::Semaphore m_renderSemaphore;
 
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels;
+    float m_remoteSampleRate;
 
     RefPtr<Thread> m_renderThread;
     std::atomic<bool> m_shouldStopThread { false };

@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/basic.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/long-wav.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/partial-script.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/partial-text.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/range-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/stash-take.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/range/resources/video-with-range.py

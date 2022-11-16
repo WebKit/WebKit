@@ -79,8 +79,8 @@ private:
     WebExtensionCallbackHandler(JSContextRef, JSObjectRef callbackFunction, WebExtensionAPIRuntimeBase&);
     WebExtensionCallbackHandler(JSContextRef, WebExtensionAPIRuntimeBase&);
 
-    JSObjectRef m_callbackFunction;
-    JSObjectRef m_rejectFunction;
+    JSObjectRef m_callbackFunction = nullptr;
+    JSObjectRef m_rejectFunction = nullptr;
     JSRetainPtr<JSGlobalContextRef> m_globalContext;
     RefPtr<WebExtensionAPIRuntimeBase> m_runtime;
 #endif
@@ -150,7 +150,7 @@ inline JSValueRef toJSValue(JSContextRef context, id object)
     ASSERT(context);
 
     if (!object)
-        return nullptr;
+        return JSValueMakeUndefined(context);
 
     if (JSValue *value = dynamic_objc_cast<JSValue>(object))
         return value.JSValueRef;

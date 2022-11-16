@@ -4528,7 +4528,7 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer, Composi
     setLayerDebugBorder(*contentsLayer, contentsLayerDebugBorderColor(isShowingDebugBorder()), contentsLayerBorderWidth);
 }
 
-RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, PlatformCALayer *sourceLayer, LayerMap& clones, CloneLevel cloneLevel)
+RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(const CloneID& cloneID, PlatformCALayer *sourceLayer, LayerMap& clones, CloneLevel cloneLevel)
 {
     if (!sourceLayer)
         return nullptr;
@@ -4545,7 +4545,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Platfo
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #if ENABLE(TREE_DEBUGGING)
-        resultLayer->setName(makeString("clone ", cloneID[0U], " of ", sourceLayer->layerID()));
+        resultLayer->setName(makeString("clone ", hex(cloneID[0U]), " of ", sourceLayer->layerID()));
 #else
         resultLayer->setName("clone of " + m_name);
 #endif
@@ -4553,7 +4553,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Platfo
     }
 
     return resultLayer;
-}   
+}
 
 void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
     RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, RefPtr<PlatformCALayer>& backdropLayer, RefPtr<PlatformCALayer>& backdropClippingLayer, CloneLevel cloneLevel)
@@ -4664,9 +4664,8 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replica
         replicaState.setBranchType(ReplicaState::ChildBranch);
     }
 
-    if (contentsClippingLayer && contentsLayer) {
+    if (contentsClippingLayer && contentsLayer)
         contentsClippingLayer->appendSublayer(*contentsLayer);
-    }
 
     if (contentsShapeMaskLayer)
         contentsClippingLayer->setMask(contentsShapeMaskLayer.get());

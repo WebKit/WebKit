@@ -1,0 +1,32 @@
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - GET assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - POST assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - GET assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - POST assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - GET assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - POST assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - GET assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - POST assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - GET assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - POST assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - GET assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - POST assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - GET assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - POST assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - GET assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - POST assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - GET assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - POST assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - GET
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - POST
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - GET
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - POST
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - GET
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - POST
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - GET assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - POST assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+PASS sec-fetch-site - HTTPS upgrade - GET
+PASS sec-fetch-site - HTTPS upgrade - POST
+PASS sec-fetch-site - HTTPS downgrade-upgrade - GET
+PASS sec-fetch-site - HTTPS downgrade-upgrade - POST
+

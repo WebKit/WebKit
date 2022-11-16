@@ -460,18 +460,11 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return false;
     
     ControlPart part = box.style().effectiveAppearance();
-    IntRect integralSnappedRect = snappedIntRect(rect);
 
-    // Temporarily move this call above the canPaint check to allow
-    // this to work in the GPU process
-#if ENABLE(ATTACHMENT_ELEMENT)
-    if (part == AttachmentPart || part == BorderlessAttachmentPart)
-        return paintAttachment(box, paintInfo, integralSnappedRect);
-#endif
-
-    if (UNLIKELY(!canPaint(paintInfo, box.settings())))
+    if (UNLIKELY(!canPaint(paintInfo, box.settings(), part)))
         return false;
 
+    IntRect integralSnappedRect = snappedIntRect(rect);
     float deviceScaleFactor = box.document().deviceScaleFactor();
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
@@ -558,6 +551,11 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #if ENABLE(DATALIST_ELEMENT)
     case ListButtonPart:
         return paintListButton(box, paintInfo, devicePixelSnappedRect);
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case AttachmentPart:
+    case BorderlessAttachmentPart:
+        return paintAttachment(box, paintInfo, integralSnappedRect);
 #endif
     default:
         break;

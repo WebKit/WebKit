@@ -1,5 +1,6 @@
 
 PASS Commits styles
+PASS Commits styles for individual transform properties
 PASS Commits styles for an animation that has been removed
 PASS Commits shorthand styles
 PASS Commits logical properties

@@ -252,7 +252,7 @@ public:
 #endif
 
 protected:
-    virtual bool canPaint(const PaintInfo&, const Settings&) const { return true; }
+    virtual bool canPaint(const PaintInfo&, const Settings&, ControlPart) const { return true; }
 
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;

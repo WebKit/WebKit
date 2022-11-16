@@ -1372,6 +1372,10 @@ public:
 
     UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    WebExtensionControllerProxy* webExtensionControllerProxy() const { return m_webExtensionController.get(); }
+#endif
+
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const { return m_userInterfaceLayoutDirection; }
 
     bool isSuspended() const { return m_isSuspended; }

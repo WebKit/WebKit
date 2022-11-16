@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -881,16 +881,10 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
         blockPosition = layer()->staticBlockPosition();
     }
 
+    // Per http://www.w3.org/TR/CSS2/visudet.html#abs-non-replaced-width an absolute positioned box with a static position
+    // should locate itself as though it is a normal flow box in relation to its containing block.
     if (!child->style().hasStaticInlinePosition(style().isHorizontalWritingMode()))
         logicalOffset.setWidth(inlinePosition);
-
-    // This is not terribly intuitive, but we have to match other browsers.  Despite being a block display type inside
-    // an inline, we still keep our x locked to the left of the relative positioned inline.  Arguably the correct
-    // behavior would be to go flush left to the block that contains the inline, but that isn't what other browsers
-    // do.
-    else if (!child->style().isOriginalDisplayInlineType())
-        // Avoid adding in the left border/padding of the containing block twice.  Subtract it out.
-        logicalOffset.setWidth(inlinePosition - child->containingBlock()->borderAndPaddingLogicalLeft());
 
     if (!child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))
         logicalOffset.setHeight(blockPosition);

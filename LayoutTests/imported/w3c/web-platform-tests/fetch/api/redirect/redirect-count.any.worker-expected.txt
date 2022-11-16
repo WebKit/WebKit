@@ -1,12 +1,12 @@
 
-FAIL Redirect 301 20 times assert_equals: Response's status is 200 expected 200 but got 301
-FAIL Redirect 301 21 times assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Redirect 302 20 times assert_equals: Response's status is 200 expected 200 but got 302
-FAIL Redirect 302 21 times assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Redirect 303 20 times assert_equals: Response's status is 200 expected 200 but got 303
-FAIL Redirect 303 21 times assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Redirect 307 20 times promise_test: Unhandled rejection with value: object "TypeError: too many HTTP redirects"
-FAIL Redirect 307 21 times assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Redirect 308 20 times assert_equals: Response's status is 200 expected 200 but got 308
-FAIL Redirect 308 21 times assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Redirect 301 20 times
+PASS Redirect 301 21 times
+PASS Redirect 302 20 times
+PASS Redirect 302 21 times
+PASS Redirect 303 20 times
+PASS Redirect 303 21 times
+PASS Redirect 307 20 times
+PASS Redirect 307 21 times
+PASS Redirect 308 20 times
+PASS Redirect 308 21 times
 

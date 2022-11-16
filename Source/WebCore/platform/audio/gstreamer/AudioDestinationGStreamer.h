@@ -35,7 +35,6 @@ public:
     WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;
 
     bool isPlaying() override { return m_isPlaying; }
-    float sampleRate() const override { return m_sampleRate; }
     unsigned framesPerBuffer() const final;
 
     bool handleMessage(GstMessage*);
@@ -51,7 +50,6 @@ private:
 
     RefPtr<AudioBus> m_renderBus;
 
-    float m_sampleRate;
     bool m_isPlaying { false };
     bool m_audioSinkAvailable { false };
     GRefPtr<GstElement> m_pipeline;

@@ -1,0 +1,8 @@
+
+PASS Request() with a forbidden method CONNECT must throw.
+PASS Request() with a forbidden method TRACE must throw.
+PASS Request() with a forbidden method TRACK must throw.
+PASS Request() with a forbidden method connect must throw.
+PASS Request() with a forbidden method trace must throw.
+PASS Request() with a forbidden method track must throw.
+

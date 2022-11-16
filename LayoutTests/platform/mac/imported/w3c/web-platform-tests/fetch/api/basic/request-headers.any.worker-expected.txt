@@ -1,6 +1,6 @@
 
 PASS Fetch with GET
-FAIL Fetch with HEAD assert_equals: Request should have header content-length: null expected (object) null but got (string) "0"
+PASS Fetch with HEAD
 PASS Fetch with PUT without body
 PASS Fetch with PUT with body
 PASS Fetch with POST without body

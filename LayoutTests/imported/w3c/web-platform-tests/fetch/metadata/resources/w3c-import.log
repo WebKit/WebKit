@@ -14,18 +14,21 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/appcache-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/dedicatedWorker.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/echo-as-json.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/echo-as-script.py
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--fallback--frame.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/es-module.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--fallback--sw.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--respondWith--frame.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--respondWith--sw.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/go-back.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/header-link.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/helper.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/post-to-owner-onload.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/helper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/message-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/post-to-owner.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/record-header.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/record-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/redirectTestHelper.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/serviceworker-accessors-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/serviceworker-accessors.sw.js

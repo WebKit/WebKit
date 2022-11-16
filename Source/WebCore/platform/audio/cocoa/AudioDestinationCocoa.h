@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioDestination.h"
+#include "AudioDestinationResampler.h"
 #include "AudioOutputUnitAdaptor.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/Lock.h>
@@ -43,60 +43,24 @@ class PushPullFIFO;
 using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
-class AudioDestinationCocoa : public AudioDestination, public AudioUnitRenderer {
+class AudioDestinationCocoa : public AudioDestinationResampler, public AudioUnitRenderer {
 public:
-    WEBCORE_EXPORT AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit = true);
+    WEBCORE_EXPORT AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate);
     WEBCORE_EXPORT virtual ~AudioDestinationCocoa();
 
     WEBCORE_EXPORT static CreateAudioDestinationCocoaOverride createOverride;
 
 protected:
-    WEBCORE_EXPORT bool hasEnoughFrames(UInt32 numberOfFrames) const;
     WEBCORE_EXPORT OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData) final;
-
-    WEBCORE_EXPORT void setIsPlaying(bool);
-    bool isPlaying() final { return m_isPlaying; }
-    float sampleRate() const final { return m_contextSampleRate; }
-    WEBCORE_EXPORT unsigned framesPerBuffer() const final;
-
-    WEBCORE_EXPORT unsigned numberOfOutputChannels() const;
-
-    WEBCORE_EXPORT void getAudioStreamBasicDescription(AudioStreamBasicDescription&);
 
 private:
     friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
 
-    WEBCORE_EXPORT void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
-    WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;
-
-    virtual void startRendering(CompletionHandler<void(bool)>&&);
-    virtual void stopRendering(CompletionHandler<void(bool)>&&);
-
-    void renderOnRenderingTheadIfPlaying(size_t framesToRender);
-    void renderOnRenderingThead(size_t framesToRender);
+    void startRendering(CompletionHandler<void(bool)>&&) override;
+    void stopRendering(CompletionHandler<void(bool)>&&) override;
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
 
-    // To pass the data from FIFO to the audio device callback.
-    Ref<AudioBus> m_outputBus;
-
-    // To push the rendered result from WebAudio graph into the FIFO.
-    Ref<AudioBus> m_renderBus;
-
-    // Resolves the buffer size mismatch between the WebAudio engine and
-    // the callback function from the actual audio device.
-    Lock m_fifoLock;
-    UniqueRef<PushPullFIFO> m_fifo WTF_GUARDED_BY_LOCK(m_fifoLock);
-
-    std::unique_ptr<MultiChannelResampler> m_resampler;
-    AudioIOPosition m_outputTimestamp;
-
-    Lock m_dispatchToRenderThreadLock;
-    Function<void(Function<void()>&&)> m_dispatchToRenderThread WTF_GUARDED_BY_LOCK(m_dispatchToRenderThreadLock);
-
-    float m_contextSampleRate;
-
-    std::atomic<bool> m_isPlaying;
 };
 
 } // namespace WebCore

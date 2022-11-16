@@ -401,8 +401,7 @@ void WorkerScriptLoader::ServiceWorkerDataManager::setData(ServiceWorkerData&& d
 std::optional<ServiceWorkerData> WorkerScriptLoader::ServiceWorkerDataManager::takeData()
 {
     Locker lock(m_activeServiceWorkerDataLock);
-    std::optional<ServiceWorkerData> data = std::exchange(data, m_activeServiceWorkerData);
-    return data;
+    return std::exchange(m_activeServiceWorkerData, std::nullopt);
 }
 
 #endif

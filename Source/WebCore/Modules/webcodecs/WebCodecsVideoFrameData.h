@@ -33,6 +33,9 @@
 namespace WebCore {
 
 struct WebCodecsVideoFrameData {
+    // We might want to make memory cost take into account the video frame format.
+    size_t memoryCost() const { return 4 * codedWidth * codedHeight; }
+
     RefPtr<VideoFrame> internalFrame;
     std::optional<VideoPixelFormat> format;
     size_t codedWidth { 0 };

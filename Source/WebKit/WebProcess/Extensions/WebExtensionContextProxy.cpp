@@ -43,20 +43,32 @@ static HashMap<WebExtensionContextIdentifier, WebExtensionContextProxy*>& webExt
     return contexts;
 }
 
-Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(WebExtensionContextIdentifier identifier)
+RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionContextIdentifier identifier)
 {
-    auto& webExtensionContextProxyPtr = webExtensionContextProxies().add(identifier, nullptr).iterator->value;
-    if (webExtensionContextProxyPtr)
-        return *webExtensionContextProxyPtr;
-
-    RefPtr<WebExtensionContextProxy> webExtensionContextProxy = adoptRef(new WebExtensionContextProxy(identifier));
-    webExtensionContextProxyPtr = webExtensionContextProxy.get();
-
-    return webExtensionContextProxy.releaseNonNull();
+    return webExtensionContextProxies().get(identifier);
 }
 
-WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextIdentifier identifier)
-    : m_identifier(identifier)
+Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(WebExtensionContextParameters parameters)
+{
+    auto updateProperties = [&](WebExtensionContextProxy* context) {
+        context->m_baseURL = parameters.baseURL;
+        context->m_uniqueIdentifier = parameters.uniqueIdentifier;
+        context->m_manifest = parameters.manifest;
+        context->m_manifestVersion = parameters.manifestVersion;
+    };
+
+    if (auto* context = webExtensionContextProxies().add(parameters.identifier, nullptr).iterator->value) {
+        updateProperties(context);
+        return *context;
+    }
+
+    auto result = adoptRef(new WebExtensionContextProxy(parameters));
+    updateProperties(result.get());
+    return result.releaseNonNull();
+}
+
+WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextParameters parameters)
+    : m_identifier(parameters.identifier)
 {
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
 }

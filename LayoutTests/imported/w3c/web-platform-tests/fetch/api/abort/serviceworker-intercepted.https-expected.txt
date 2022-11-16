@@ -1,4 +1,7 @@
 
+
+Harness Error (TIMEOUT), message = null
+
 PASS Already aborted request does not land in service worker
 PASS response.arrayBuffer() rejects if already aborted
 PASS response.blob() rejects if already aborted
@@ -6,4 +9,7 @@ PASS response.formData() rejects if already aborted
 PASS response.json() rejects if already aborted
 PASS response.text() rejects if already aborted
 PASS Stream errors once aborted.
+FAIL fetch() rejects with abort reason promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'promise.then.bind')"
+TIMEOUT Service Worker can observe the fetch abort and associated abort reason Test timed out
+NOTRUN Abort reason serialization happens on abort
 

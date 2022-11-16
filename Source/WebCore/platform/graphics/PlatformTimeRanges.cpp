@@ -51,14 +51,14 @@ void PlatformTimeRanges::invert()
     if (!m_ranges.size())
         inverted.add(negInf, posInf);
     else {
-        MediaTime start = m_ranges.first().m_start;
+        MediaTime start = m_ranges.first().start;
         if (start != negInf)
             inverted.add(negInf, start);
 
         for (size_t index = 0; index + 1 < m_ranges.size(); ++index)
-            inverted.add(m_ranges[index].m_end, m_ranges[index + 1].m_start);
+            inverted.add(m_ranges[index].end, m_ranges[index + 1].start);
 
-        MediaTime end = m_ranges.last().m_end;
+        MediaTime end = m_ranges.last().end;
         if (end != posInf)
             inverted.add(end, posInf);
     }
@@ -82,7 +82,7 @@ void PlatformTimeRanges::unionWith(const PlatformTimeRanges& other)
 
     for (size_t index = 0; index < other.m_ranges.size(); ++index) {
         const Range& range = other.m_ranges[index];
-        unioned.add(range.m_start, range.m_end);
+        unioned.add(range.start, range.end);
     }
 
     m_ranges.swap(unioned.m_ranges);
@@ -102,7 +102,7 @@ MediaTime PlatformTimeRanges::start(unsigned index, bool& valid) const
     }
     
     valid = true;
-    return m_ranges[index].m_start;
+    return m_ranges[index].start;
 }
 
 MediaTime PlatformTimeRanges::end(unsigned index) const
@@ -119,7 +119,7 @@ MediaTime PlatformTimeRanges::end(unsigned index, bool& valid) const
     }
 
     valid = true;
-    return m_ranges[index].m_end;
+    return m_ranges[index].end;
 }
 
 MediaTime PlatformTimeRanges::duration(unsigned index) const
@@ -127,7 +127,7 @@ MediaTime PlatformTimeRanges::duration(unsigned index) const
     if (index >= length())
         return MediaTime::invalidTime();
 
-    return m_ranges[index].m_end - m_ranges[index].m_start;
+    return m_ranges[index].end - m_ranges[index].start;
 }
 
 MediaTime PlatformTimeRanges::maximumBufferedTime() const
@@ -135,7 +135,7 @@ MediaTime PlatformTimeRanges::maximumBufferedTime() const
     if (!length())
         return MediaTime::invalidTime();
 
-    return m_ranges[length() - 1].m_end;
+    return m_ranges[length() - 1].end;
 }
 
 MediaTime PlatformTimeRanges::minimumBufferedTime() const
@@ -143,7 +143,7 @@ MediaTime PlatformTimeRanges::minimumBufferedTime() const
     if (!length())
         return MediaTime::invalidTime();
 
-    return m_ranges[0].m_start;
+    return m_ranges[0].start;
 }
 
 void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
@@ -155,7 +155,7 @@ void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
     ASSERT(start <= end);
 
     unsigned overlappingArcIndex;
-    Range addedRange(start, end);
+    Range addedRange { .start = start, .end = end };
 
     // For each present range check if we need to:
     // - merge with the added range, in case we are overlapping or contiguous
@@ -229,13 +229,13 @@ PlatformTimeRanges PlatformTimeRanges::copyWithEpsilon(const MediaTime& epsilon)
     Vector<Range> ranges;
     unsigned n1 = 0;
     for (unsigned n2 = 1; n2 < length(); n2++) {
-        auto& previousRangeEnd = m_ranges[n2 - 1].m_end;
-        if (previousRangeEnd + epsilon < m_ranges[n2].m_start) {
-            ranges.append({ m_ranges[n1].m_start, previousRangeEnd });
+        auto& previousRangeEnd = m_ranges[n2 - 1].end;
+        if (previousRangeEnd + epsilon < m_ranges[n2].start) {
+            ranges.append({ m_ranges[n1].start, previousRangeEnd });
             n1 = n2;
         }
     }
-    ranges.append({ m_ranges[n1].m_start, m_ranges[length() - 1].m_end });
+    ranges.append({ m_ranges[n1].start, m_ranges[length() - 1].end });
     return ranges;
 }
 

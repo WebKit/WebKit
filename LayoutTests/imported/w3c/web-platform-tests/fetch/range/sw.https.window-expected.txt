@@ -1,9 +1,12 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Defer range header filter tests to service worker
 PASS Defer range header passthrough tests to service worker
 PASS Ranged response not allowed following no-cors ranged request
 PASS Non-opaque ranged response executed
 PASS Accept-Encoding should not appear in a service worker
+TIMEOUT Opaque range preload successes and failures should be indistinguishable Test timed out
 PASS Range headers correctly preserved
 PASS Range headers correctly removed
 PASS Headers correctly filtered

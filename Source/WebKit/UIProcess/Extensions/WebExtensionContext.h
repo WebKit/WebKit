@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "APIContentWorld.h"
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "WebExtension.h"
@@ -113,6 +114,9 @@ public:
     WebExtensionContextIdentifier identifier() const { return m_identifier; }
     WebExtensionContextParameters parameters() const;
 
+    bool operator==(const WebExtensionContext& other) const { return (this == &other); }
+    bool operator!=(const WebExtensionContext& other) const { return !(this == &other); }
+
 #if PLATFORM(COCOA)
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
@@ -124,7 +128,7 @@ public:
     WebExtension& extension() const { return *m_extension; }
     WebExtensionController* extensionController() const { return m_extensionController.get(); }
 
-    URL baseURL() const { return m_baseURL; }
+    const URL& baseURL() const { return m_baseURL; }
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&);
@@ -226,6 +230,8 @@ private:
 
     URL m_baseURL;
     String m_uniqueIdentifier = UUID::createVersion4().toString();
+
+    RefPtr<API::ContentWorld> m_contentScriptWorld;
 
     PermissionsMap m_grantedPermissions;
     PermissionsMap m_deniedPermissions;

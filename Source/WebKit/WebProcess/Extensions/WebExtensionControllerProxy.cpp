@@ -28,6 +28,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerMessages.h"
 #include "WebExtensionControllerProxyMessages.h"
 #include <wtf/HashMap.h>
@@ -43,20 +44,39 @@ static HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>& 
     return controllers;
 }
 
-Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExtensionControllerIdentifier identifier)
+RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensionControllerIdentifier identifier)
 {
-    auto& webExtensionControllerProxyPtr = webExtensionControllerProxies().add(identifier, nullptr).iterator->value;
-    if (webExtensionControllerProxyPtr)
-        return *webExtensionControllerProxyPtr;
-
-    RefPtr<WebExtensionControllerProxy> webExtensionControllerProxy = adoptRef(new WebExtensionControllerProxy(identifier));
-    webExtensionControllerProxyPtr = webExtensionControllerProxy.get();
-
-    return webExtensionControllerProxy.releaseNonNull();
+    return webExtensionControllerProxies().get(identifier);
 }
 
-WebExtensionControllerProxy::WebExtensionControllerProxy(WebExtensionControllerIdentifier identifier)
-    : m_identifier(identifier)
+Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExtensionControllerParameters parameters)
+{
+    auto updateProperties = [&](WebExtensionControllerProxy* controller) {
+        WebExtensionContextProxySet contexts;
+        WebExtensionContextProxyBaseURLMap baseURLMap;
+
+        for (auto& contextParameters : parameters.contextParameters) {
+            auto context = WebExtensionContextProxy::getOrCreate(contextParameters);
+            baseURLMap.add(contextParameters.baseURL, context);
+            contexts.add(context);
+        }
+
+        controller->m_extensionContexts.swap(contexts);
+        controller->m_extensionContextBaseURLMap.swap(baseURLMap);
+    };
+
+    if (auto* controller = webExtensionControllerProxies().add(parameters.identifier, nullptr).iterator->value) {
+        updateProperties(controller);
+        return *controller;
+    }
+
+    auto result = adoptRef(new WebExtensionControllerProxy(parameters));
+    updateProperties(result.get());
+    return result.releaseNonNull();
+}
+
+WebExtensionControllerProxy::WebExtensionControllerProxy(WebExtensionControllerParameters parameters)
+    : m_identifier(parameters.identifier)
 {
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier, *this);
 }
@@ -67,6 +87,54 @@ WebExtensionControllerProxy::~WebExtensionControllerProxy()
 
     ASSERT(webExtensionControllerProxies().contains(m_identifier));
     webExtensionControllerProxies().remove(m_identifier);
+}
+
+void WebExtensionControllerProxy::load(const WebExtensionContextParameters& contextParameters)
+{
+    auto context = WebExtensionContextProxy::getOrCreate(contextParameters);
+    m_extensionContextBaseURLMap.add(contextParameters.baseURL, context);
+    m_extensionContexts.add(context);
+}
+
+void WebExtensionControllerProxy::unload(WebExtensionContextIdentifier contextIdentifier)
+{
+    m_extensionContextBaseURLMap.removeIf([&](auto& entry) {
+        return entry.value->identifier() == contextIdentifier;
+    });
+
+    m_extensionContexts.removeIf([&](auto& entry) {
+        return entry->identifier() == contextIdentifier;
+    });
+}
+
+RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(const String& uniqueIdentifier) const
+{
+    for (auto& extensionContext : m_extensionContexts) {
+        if (extensionContext->uniqueIdentifier() == uniqueIdentifier)
+            return extensionContext.ptr();
+    }
+
+    return nullptr;
+}
+
+RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(const URL& url) const
+{
+    return m_extensionContextBaseURLMap.get(url.truncatedForUseAsBase());
+}
+
+RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(WebFrame& frame, DOMWrapperWorld& world) const
+{
+    if (!world.isNormal()) {
+        auto prefix = "WebExtension-"_s;
+        if (!world.name().startsWith(prefix))
+            return nullptr;
+
+        auto prefixLength = prefix.length();
+        auto uniqueIdentifier = world.name().substring(prefixLength);
+        return extensionContext(uniqueIdentifier);
+    }
+
+    return extensionContext(frame.url());
 }
 
 } // namespace WebKit

@@ -1,0 +1,7 @@
+
+PASS Redirect to escaped UTF-8
+PASS Redirect to unescaped UTF-8
+PASS Redirect to escaped and unescaped UTF-8
+PASS Escaping produces double-percent
+PASS Redirect to invalid UTF-8
+

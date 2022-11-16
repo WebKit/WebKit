@@ -1,0 +1,13 @@
+
+PASS Check default redirect response
+PASS Check response returned by static method redirect(), status = 301
+PASS Check response returned by static method redirect(), status = 302
+PASS Check response returned by static method redirect(), status = 303
+PASS Check response returned by static method redirect(), status = 307
+PASS Check response returned by static method redirect(), status = 308
+PASS Check error returned when giving invalid url to redirect()
+PASS Check error returned when giving invalid status to redirect(), status = 200
+PASS Check error returned when giving invalid status to redirect(), status = 309
+PASS Check error returned when giving invalid status to redirect(), status = 400
+PASS Check error returned when giving invalid status to redirect(), status = 500
+

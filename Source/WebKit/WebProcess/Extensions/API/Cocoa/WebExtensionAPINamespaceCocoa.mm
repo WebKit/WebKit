@@ -37,14 +37,14 @@ namespace WebKit {
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 {
     if (!m_extension)
-        m_extension = WebExtensionAPIExtension::create(forMainWorld(), runtime());
+        m_extension = WebExtensionAPIExtension::create(forMainWorld(), runtime(), extensionContext());
     return *m_extension;
 }
 
 WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
 {
     if (!m_runtime)
-        m_runtime = WebExtensionAPIRuntime::create(forMainWorld());
+        m_runtime = WebExtensionAPIRuntime::create(forMainWorld(), extensionContext());
     return *m_runtime;
 }
 

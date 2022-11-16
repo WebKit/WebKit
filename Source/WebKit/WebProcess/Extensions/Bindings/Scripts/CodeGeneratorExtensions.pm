@@ -162,6 +162,8 @@ sub _generateHeaderFile
     push(@contents, $self->_licenseBlock());
     push(@contents, "\n\n");
 
+    push(@contents, "#pragma once\n\n");
+
     my $idlType = $interface->type;
     my $className = _className($idlType);
     my $implementationClassName = _implementationClassName($idlType);
@@ -175,10 +177,10 @@ sub _generateHeaderFile
 EOF
 
     push(@contents, <<EOF);
-#import "${parentClassName}.h"
+#include "${parentClassName}.h"
 EOF
 
-    push(@contents, "#import \"${className}Custom.h\"\n") if $interface->extendedAttributes->{"CustomHeader"};
+    push(@contents, "#include \"${className}Custom.h\"\n") if $interface->extendedAttributes->{"CustomHeader"};
     push(@contents, <<EOF);
 
 namespace WebKit {
@@ -311,7 +313,7 @@ EOF
     $contentsIncludes{"\"${implementationClassName}.h\""} = 1;
 
     push(@contents, <<EOF);
-#import <wtf/GetPtr.h>
+#include <wtf/GetPtr.h>
 
 namespace WebKit {
 
@@ -851,7 +853,7 @@ EOF
 #endif // ${conditionalString}
 EOF
 
-    unshift(@contents, map { "#import $_\n" } sort keys(%contentsIncludes));
+    unshift(@contents, map { "#include $_\n" } sort keys(%contentsIncludes));
     unshift(@contents, @contentsPrefix);
 
     return { name => $filename, contents => \@contents };

@@ -240,12 +240,14 @@ void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
     }
 
     m_pendingFlushPromises.append(promise.copyRef());
+    m_isFlushing = true;
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalEncoder->flush([this, weakedThis = WeakPtr { *this }, clearFlushPromiseCount] {
-            if (!weakedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+        m_internalEncoder->flush([this, weakThis = WeakPtr { *this }, clearFlushPromiseCount] {
+            if (!weakThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
             m_pendingFlushPromises.takeFirst()->resolve();
+            m_isFlushing = !m_pendingFlushPromises.isEmpty();
         });
     });
 }
@@ -379,7 +381,7 @@ const char* WebCodecsVideoEncoder::activeDOMObjectName() const
 
 bool WebCodecsVideoEncoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_beingEncodedQueueSize);
+    return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_beingEncodedQueueSize || m_isFlushing);
 }
 
 } // namespace WebCore

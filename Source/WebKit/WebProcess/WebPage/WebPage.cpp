@@ -681,7 +681,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (parameters.webExtensionControllerParameters)
-        m_webExtensionController = WebExtensionControllerProxy::getOrCreate(parameters.webExtensionControllerParameters.value().identifier);
+        m_webExtensionController = WebExtensionControllerProxy::getOrCreate(parameters.webExtensionControllerParameters.value());
 #endif
 
     m_corsDisablingPatterns = WTFMove(parameters.corsDisablingPatterns);

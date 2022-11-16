@@ -516,6 +516,7 @@ public:
     {
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         const Identifier& ident = parserArena.identifierArena().makeNumericIdentifier(vm, name);
+        functionInfo.body->setEcmaName(ident);
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, vm.propertyNames->nullIdentifier, functionInfo.body, source);
         return new (m_parserArena) PropertyNode(ident, methodDef, type, SuperBinding::Needed, tag);

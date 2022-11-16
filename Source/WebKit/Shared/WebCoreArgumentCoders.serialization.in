@@ -1449,3 +1449,21 @@ struct WebCore::ScreenProperties {
     WebCore::PlatformDisplayID primaryDisplayID;
     HashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
 };
+class WebCore::PlatformTimeRanges {
+    Vector<WebCore::PlatformTimeRanges::Range> m_ranges;
+}
+
+[Nested] struct WebCore::PlatformTimeRanges::Range {
+    MediaTime start;
+    MediaTime end;
+}
+
+#if ENABLE(VIDEO)
+struct WebCore::VideoPlaybackQualityMetrics {
+    uint32_t totalVideoFrames;
+    uint32_t droppedVideoFrames;
+    uint32_t corruptedVideoFrames;
+    double totalFrameDelay;
+    uint32_t displayCompositedVideoFrames;
+}
+#endif

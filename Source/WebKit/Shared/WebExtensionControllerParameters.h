@@ -27,12 +27,17 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionContextParameters.h"
 #include "WebExtensionControllerIdentifier.h"
 
 namespace WebKit {
 
 struct WebExtensionControllerParameters {
     WebExtensionControllerIdentifier identifier;
+
+#if PLATFORM(COCOA)
+    Vector<WebExtensionContextParameters> contextParameters;
+#endif
 };
 
 } // namespace WebKit

@@ -1,4 +1,21 @@
 
 FAIL Fetch with POST with empty ReadableStream promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
 FAIL Fetch with POST with ReadableStream promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Fetch with POST with ReadableStream on 421 response should return the response and not retry. promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Feature detect for POST with ReadableStream promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Feature detect for POST with ReadableStream, using request object promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Synchronous feature detect assert_true: duplex dictionary property should be accessed expected true got false
+PASS Synchronous feature detect fails if feature unsupported
+FAIL Streaming upload with body containing a String promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Streaming upload with body containing null promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Streaming upload with body containing a number promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Streaming upload should fail on a 401 response promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

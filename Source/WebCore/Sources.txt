@@ -2022,6 +2022,7 @@ platform/animation/AnimationList.cpp
 platform/animation/TimingFunction.cpp
 platform/audio/AudioBus.cpp
 platform/audio/AudioChannel.cpp
+platform/audio/AudioDestinationResampler.cpp
 platform/audio/AudioDSPKernelProcessor.cpp
 platform/audio/AudioHardwareListener.cpp
 platform/audio/AudioResampler.cpp

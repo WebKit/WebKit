@@ -21,7 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
 struct WebKit::WebExtensionControllerParameters {
     WebKit::WebExtensionControllerIdentifier identifier;
+
+#if PLATFORM(COCOA)
+    Vector<WebKit::WebExtensionContextParameters> contextParameters;
+#endif
 }
+
 #endif

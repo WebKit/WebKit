@@ -1,0 +1,37 @@
+
+PASS sec-fetch-site - Same origin, no attributes
+PASS sec-fetch-site - Same origin, attributes: type=module
+PASS sec-fetch-site - Cross-site, no attributes
+PASS sec-fetch-site - Cross-site, attributes: type=module
+PASS sec-fetch-site - Same site, no attributes
+PASS sec-fetch-site - Same site, attributes: type=module
+PASS sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+FAIL sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+FAIL sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Cross-Site -> Same Origin, no attributes
+FAIL sec-fetch-site - Cross-Site -> Same Origin, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Cross-Site -> Same-Site, no attributes
+FAIL sec-fetch-site - Cross-Site -> Same-Site, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Cross-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - Cross-Site -> Cross-Site, attributes: type=module
+PASS sec-fetch-site - Same-Origin -> Same Origin, no attributes
+PASS sec-fetch-site - Same-Origin -> Same Origin, attributes: type=module
+PASS sec-fetch-site - Same-Origin -> Same-Site, no attributes
+FAIL sec-fetch-site - Same-Origin -> Same-Site, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Same-Origin -> Cross-Site, no attributes
+FAIL sec-fetch-site - Same-Origin -> Cross-Site, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Same-Site -> Same Origin, no attributes
+FAIL sec-fetch-site - Same-Site -> Same Origin, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Same-Site -> Same-Site, no attributes
+PASS sec-fetch-site - Same-Site -> Same-Site, attributes: type=module
+PASS sec-fetch-site - Same-Site -> Cross-Site, no attributes
+FAIL sec-fetch-site - Same-Site -> Cross-Site, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-mode - no attributes
+PASS sec-fetch-mode - attributes: type=module
+PASS sec-fetch-mode - attributes: crossorigin
+PASS sec-fetch-mode - attributes: crossorigin=anonymous
+PASS sec-fetch-mode - attributes: crossorigin=use-credentials
+PASS sec-fetch-dest - no attributes
+PASS sec-fetch-user - no attributes
+

@@ -1,0 +1,26 @@
+
+PASS Fetch with GET
+PASS Fetch with HEAD
+PASS Fetch with PUT without body
+PASS Fetch with PUT with body
+PASS Fetch with POST without body
+PASS Fetch with POST with text body
+PASS Fetch with POST with FormData body
+PASS Fetch with POST with URLSearchParams body
+PASS Fetch with POST with Blob body
+PASS Fetch with POST with ArrayBuffer body
+PASS Fetch with POST with Uint8Array body
+PASS Fetch with POST with Int8Array body
+PASS Fetch with POST with Float32Array body
+PASS Fetch with POST with Float64Array body
+PASS Fetch with POST with DataView body
+PASS Fetch with POST with Blob body with mime type
+PASS Fetch with Chicken
+PASS Fetch with Chicken with body
+PASS Fetch with GET and mode "cors" does not need an Origin header
+PASS Fetch with POST and mode "same-origin" needs an Origin header
+PASS Fetch with POST and mode "no-cors" needs an Origin header
+PASS Fetch with PUT and mode "same-origin" needs an Origin header
+PASS Fetch with TacO and mode "same-origin" needs an Origin header
+PASS Fetch with TacO and mode "cors" needs an Origin header
+

@@ -119,7 +119,9 @@ public:
     WebFrame* parentFrame() const;
     Ref<API::Array> childFrames();
     JSGlobalContextRef jsContext();
+    JSGlobalContextRef jsContextForWorld(WebCore::DOMWrapperWorld&);
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
+    JSGlobalContextRef jsContextForServiceWorkerWorld(WebCore::DOMWrapperWorld&);
     JSGlobalContextRef jsContextForServiceWorkerWorld(InjectedBundleScriptWorld*);
     WebCore::IntRect contentBounds() const;
     WebCore::IntRect visibleContentBounds() const;

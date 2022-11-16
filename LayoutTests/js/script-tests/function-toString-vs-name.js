@@ -735,8 +735,8 @@ section = "get/set function";
 
     let o2 = { get 100() {}, set 100(x){} };
     let desc2 = Object.getOwnPropertyDescriptor(o2, 100);
-    test(desc2.get, "get ", "function() {}");
-    test(desc2.set, "set ", "function(x) {}");
+    test(desc2.get, "get 100", "function() {}");
+    test(desc2.set, "set 100", "function(x) {}");
 
     let o3 = { get [100]() {}, set [100](x){} };
     let desc3 = Object.getOwnPropertyDescriptor(o3, 100);
@@ -759,9 +759,9 @@ section = "get/set function";
         test(bound2, "bound set bar", "function set bar() { [native code] }");
 
         bound1 = desc2.get.bind(o);
-        test(bound1, "bound get ", "function get () { [native code] }");
+        test(bound1, "bound get 100", "function get 100() { [native code] }");
         bound2 = desc2.set.bind(o);
-        test(bound2, "bound set ", "function set () { [native code] }");
+        test(bound2, "bound set 100", "function set 100() { [native code] }");
 
         bound1 = desc3.get.bind(o);
         test(bound1, "bound get 100", "function get 100() { [native code] }");

@@ -564,27 +564,37 @@ JSGlobalContextRef WebFrame::jsContext()
     return toGlobalRef(localFrame->script().globalObject(mainThreadNormalWorld()));
 }
 
-JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
+JSGlobalContextRef WebFrame::jsContextForWorld(DOMWrapperWorld& world)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
         return nullptr;
 
-    return toGlobalRef(localFrame->script().globalObject(world->coreWorld()));
+    return toGlobalRef(localFrame->script().globalObject(world));
 }
 
-JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScriptWorld* world)
+JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
+{
+    return jsContextForWorld(world->coreWorld());
+}
+
+JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(DOMWrapperWorld& world)
 {
 #if ENABLE(SERVICE_WORKER)
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame || !localFrame->page())
         return nullptr;
 
-    return toGlobalRef(localFrame->page()->serviceWorkerGlobalObject(world->coreWorld()));
+    return toGlobalRef(localFrame->page()->serviceWorkerGlobalObject(world));
 #else
     UNUSED_PARAM(world);
     return nullptr;
 #endif
+}
+
+JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScriptWorld* world)
+{
+    return jsContextForServiceWorkerWorld(world->coreWorld());
 }
 
 void WebFrame::setAccessibleName(const AtomString& accessibleName)

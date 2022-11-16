@@ -731,6 +731,9 @@ Color PlatformCALayerRemote::backgroundColor() const
 
 void PlatformCALayerRemote::setBackgroundColor(const Color& value)
 {
+    if (value == m_properties.backgroundColor)
+        return;
+
     m_properties.backgroundColor = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackgroundColorChanged);
 }
@@ -896,6 +899,9 @@ GraphicsLayer::CustomAppearance PlatformCALayerRemote::customAppearance() const
 
 void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance)
 {
+    if (customAppearance == m_properties.customAppearance)
+        return;
+
     m_properties.customAppearance = customAppearance;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }

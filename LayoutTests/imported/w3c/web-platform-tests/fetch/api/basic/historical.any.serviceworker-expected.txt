@@ -1,0 +1,5 @@
+
+PASS Headers object no longer has a getAll() method
+PASS 'type' getter should not exist on Request objects
+PASS Response object no longer has a trailer getter
+

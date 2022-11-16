@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPIRuntime.h"
 #include "WebExtensionAPIObject.h"
 
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 
@@ -60,7 +61,7 @@ public:
 #if PLATFORM(COCOA)
     NSURL *getURL(NSString *resourcePath, NSString **errorString);
 
-    NSString *getManifest();
+    NSDictionary *getManifest();
 
     NSString *runtimeIdentifier();
 

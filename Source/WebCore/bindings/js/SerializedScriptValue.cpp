@@ -4377,7 +4377,8 @@ size_t SerializedScriptValue::computeMemoryCost() const
         if (chunk)
             cost += chunk->memoryCost();
     }
-    // FIXME: Add memory cost to serialized video frames.
+    for (auto& frame : m_serializedVideoFrames)
+        cost += frame.memoryCost();
 #endif
 
     for (auto& handle : m_blobHandles)

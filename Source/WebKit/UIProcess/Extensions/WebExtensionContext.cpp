@@ -66,6 +66,13 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
 
     parameters.identifier = identifier();
 
+#if PLATFORM(COCOA)
+    parameters.baseURL = baseURL();
+    parameters.uniqueIdentifier = uniqueIdentifier();
+    parameters.manifest = extension().manifest();
+    parameters.manifestVersion = extension().manifestVersion();
+#endif
+
     return parameters;
 }
 

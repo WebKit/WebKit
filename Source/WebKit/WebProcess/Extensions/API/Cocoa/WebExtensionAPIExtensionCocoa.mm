@@ -34,16 +34,20 @@
 
 namespace WebKit {
 
-bool WebExtensionAPIExtension::isPropertyAllowed(String, WebPage*)
+bool WebExtensionAPIExtension::isPropertyAllowed(String name, WebPage*)
 {
-    // FIXME: Implement.
+    // This method was removed in manifest version 3.
+    if (name == "getURL"_s)
+        return !extensionContext().usesManifestVersion(3);
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 
 NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **errorString)
 {
-    // FIXME: Implement.
-    return nil;
+    URL baseURL = extensionContext().baseURL();
+    return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
 }
 
 } // namespace WebKit

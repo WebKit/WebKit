@@ -59,4 +59,5 @@ PASS cross-origin redirect 308 in manual redirect and cors mode
 PASS cross-origin redirect 308 in manual redirect and no-cors mode
 PASS cross-origin redirect 308 in follow redirect and cors mode
 PASS cross-origin redirect 308 in follow redirect and no-cors mode
+PASS manual redirect with a CORS error should be rejected
 

@@ -1,0 +1,20 @@
+
+FAIL sec-fetch-site - Same origin assert_array_equals: expected property 0 to be "same-origin" but got "none" (expected array ["same-origin"] got ["none"])
+FAIL sec-fetch-site - Cross-site assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Same site assert_array_equals: expected property 0 to be "same-site" but got "none" (expected array ["same-site"] got ["none"])
+FAIL sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect assert_array_equals: expected property 0 to be "same-site" but got "none" (expected array ["same-site"] got ["none"])
+FAIL sec-fetch-site - Cross-Site -> Same Origin assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Cross-Site -> Same-Site assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Cross-Site -> Cross-Site assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Same-Origin -> Same Origin assert_array_equals: expected property 0 to be "same-origin" but got "none" (expected array ["same-origin"] got ["none"])
+FAIL sec-fetch-site - Same-Origin -> Same-Site assert_array_equals: expected property 0 to be "same-site" but got "none" (expected array ["same-site"] got ["none"])
+FAIL sec-fetch-site - Same-Origin -> Cross-Site assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Same-Site -> Same Origin assert_array_equals: expected property 0 to be "same-site" but got "none" (expected array ["same-site"] got ["none"])
+FAIL sec-fetch-site - Same-Site -> Same-Site assert_array_equals: expected property 0 to be "same-site" but got "none" (expected array ["same-site"] got ["none"])
+FAIL sec-fetch-site - Same-Site -> Cross-Site assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - HTTPS downgrade-upgrade assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+PASS sec-fetch-mode
+PASS sec-fetch-dest
+PASS sec-fetch-user
+

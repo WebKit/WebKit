@@ -107,6 +107,7 @@ private:
     bool m_isKeyChunkRequired { false };
     Deque<Function<void()>> m_controlMessageQueue;
     bool m_isMessageQueueBlocked { false };
+    bool m_isFlushing { false };
 };
 
 }

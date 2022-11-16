@@ -1,0 +1,130 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT background-image sec-fetch-site - Same origin Test timed out
+PASS border-image sec-fetch-site - Same origin
+PASS content sec-fetch-site - Same origin
+PASS cursor sec-fetch-site - Same origin
+PASS list-style-image sec-fetch-site - Same origin
+TIMEOUT background-image sec-fetch-site - Cross-site Test timed out
+PASS border-image sec-fetch-site - Cross-site
+PASS content sec-fetch-site - Cross-site
+PASS cursor sec-fetch-site - Cross-site
+PASS list-style-image sec-fetch-site - Cross-site
+TIMEOUT background-image sec-fetch-site - Same site Test timed out
+FAIL border-image sec-fetch-site - Same site assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Same site assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Same site assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Same site assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect Test timed out
+PASS border-image sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect
+PASS content sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect
+PASS cursor sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect
+PASS list-style-image sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect
+TIMEOUT background-image sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect Test timed out
+FAIL border-image sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - Cross-Site -> Same Origin Test timed out
+PASS border-image sec-fetch-site - Cross-Site -> Same Origin
+PASS content sec-fetch-site - Cross-Site -> Same Origin
+PASS cursor sec-fetch-site - Cross-Site -> Same Origin
+PASS list-style-image sec-fetch-site - Cross-Site -> Same Origin
+TIMEOUT background-image sec-fetch-site - Cross-Site -> Same-Site Test timed out
+FAIL border-image sec-fetch-site - Cross-Site -> Same-Site assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Cross-Site -> Same-Site assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Cross-Site -> Same-Site assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Cross-Site -> Same-Site assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - Cross-Site -> Cross-Site Test timed out
+PASS border-image sec-fetch-site - Cross-Site -> Cross-Site
+PASS content sec-fetch-site - Cross-Site -> Cross-Site
+PASS cursor sec-fetch-site - Cross-Site -> Cross-Site
+PASS list-style-image sec-fetch-site - Cross-Site -> Cross-Site
+TIMEOUT background-image sec-fetch-site - Same-Origin -> Same Origin Test timed out
+PASS border-image sec-fetch-site - Same-Origin -> Same Origin
+PASS content sec-fetch-site - Same-Origin -> Same Origin
+PASS cursor sec-fetch-site - Same-Origin -> Same Origin
+PASS list-style-image sec-fetch-site - Same-Origin -> Same Origin
+TIMEOUT background-image sec-fetch-site - Same-Origin -> Same-Site Test timed out
+FAIL border-image sec-fetch-site - Same-Origin -> Same-Site assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Same-Origin -> Same-Site assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Same-Origin -> Same-Site assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Same-Origin -> Same-Site assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - Same-Origin -> Cross-Site Test timed out
+PASS border-image sec-fetch-site - Same-Origin -> Cross-Site
+PASS content sec-fetch-site - Same-Origin -> Cross-Site
+PASS cursor sec-fetch-site - Same-Origin -> Cross-Site
+PASS list-style-image sec-fetch-site - Same-Origin -> Cross-Site
+TIMEOUT background-image sec-fetch-site - Same-Site -> Same Origin Test timed out
+FAIL border-image sec-fetch-site - Same-Site -> Same Origin assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Same-Site -> Same Origin assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Same-Site -> Same Origin assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Same-Site -> Same Origin assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - Same-Site -> Same-Site Test timed out
+FAIL border-image sec-fetch-site - Same-Site -> Same-Site assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Same-Site -> Same-Site assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Same-Site -> Same-Site assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Same-Site -> Same-Site assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - Same-Site -> Cross-Site Test timed out
+FAIL border-image sec-fetch-site - Same-Site -> Cross-Site assert_unreached: Reached unreachable code
+FAIL content sec-fetch-site - Same-Site -> Cross-Site assert_unreached: Reached unreachable code
+FAIL cursor sec-fetch-site - Same-Site -> Cross-Site assert_unreached: Reached unreachable code
+FAIL list-style-image sec-fetch-site - Same-Site -> Cross-Site assert_unreached: Reached unreachable code
+TIMEOUT background-image sec-fetch-site - HTTPS downgrade-upgrade Test timed out
+PASS border-image sec-fetch-site - HTTPS downgrade-upgrade
+PASS content sec-fetch-site - HTTPS downgrade-upgrade
+PASS cursor sec-fetch-site - HTTPS downgrade-upgrade
+PASS list-style-image sec-fetch-site - HTTPS downgrade-upgrade
+TIMEOUT background-image sec-fetch-mode Test timed out
+PASS border-image sec-fetch-mode
+PASS content sec-fetch-mode
+PASS cursor sec-fetch-mode
+PASS list-style-image sec-fetch-mode
+TIMEOUT background-image sec-fetch-dest Test timed out
+PASS border-image sec-fetch-dest
+PASS content sec-fetch-dest
+PASS cursor sec-fetch-dest
+PASS list-style-image sec-fetch-dest
+PASS background-image sec-fetch-user
+PASS border-image sec-fetch-user
+PASS content sec-fetch-user
+PASS cursor sec-fetch-user
+PASS list-style-image sec-fetch-user
+

@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "MultiChannelResampler.h"
 #include "PushPullFIFO.h"
+#include <algorithm>
 
 namespace WebCore {
 
@@ -69,49 +70,14 @@ unsigned long AudioDestination::maxChannelCount()
     return AudioSession::sharedSession().maximumNumberOfOutputChannels();
 }
 
-AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit)
-    : AudioDestination(callback)
+AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate)
+    : AudioDestinationResampler(callback, numberOfOutputChannels, sampleRate, hardwareSampleRate())
     , m_audioOutputUnitAdaptor(*this)
-    , m_outputBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
-    , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
-    , m_fifo(makeUniqueRef<PushPullFIFO>(numberOfOutputChannels, fifoSize))
-    , m_contextSampleRate(sampleRate)
 {
-    if (configureAudioOutputUnit)
-        m_audioOutputUnitAdaptor.configure(hardwareSampleRate(), numberOfOutputChannels);
-
-    auto hardwareSampleRate = this->hardwareSampleRate();
-    if (sampleRate != hardwareSampleRate) {
-        double scaleFactor = static_cast<double>(sampleRate) / hardwareSampleRate;
-        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, AudioUtilities::renderQuantumSize, [this](AudioBus* bus, size_t framesToProcess) {
-            ASSERT_UNUSED(framesToProcess, framesToProcess == AudioUtilities::renderQuantumSize);
-            callRenderCallback(nullptr, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
-        });
-    }
+    m_audioOutputUnitAdaptor.configure(hardwareSampleRate(), numberOfOutputChannels);
 }
 
 AudioDestinationCocoa::~AudioDestinationCocoa() = default;
-
-unsigned AudioDestinationCocoa::numberOfOutputChannels() const
-{
-    return m_renderBus->numberOfChannels();
-}
-
-unsigned AudioDestinationCocoa::framesPerBuffer() const
-{
-    return m_renderBus->length();
-}
-
-void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
-{
-    ASSERT(isMainThread());
-    LOG(Media, "AudioDestinationCocoa::start");
-    {
-        Locker locker { m_dispatchToRenderThreadLock };
-        m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
-    }
-    startRendering(WTFMove(completionHandler));
-}
 
 void AudioDestinationCocoa::startRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
@@ -123,17 +89,6 @@ void AudioDestinationCocoa::startRendering(CompletionHandler<void(bool)>&& compl
     callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
         completionHandler(success);
     });
-}
-
-void AudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionHandler)
-{
-    ASSERT(isMainThread());
-    LOG(Media, "AudioDestinationCocoa::stop");
-    stopRendering(WTFMove(completionHandler));
-    {
-        Locker locker { m_dispatchToRenderThreadLock };
-        m_dispatchToRenderThread = nullptr;
-    }
 }
 
 void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
@@ -148,110 +103,23 @@ void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& comple
     });
 }
 
-void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
-{
-    ASSERT(isMainThread());
-
-    if (m_isPlaying == isPlaying)
-        return;
-
-    m_isPlaying = isPlaying;
-
-    {
-        Locker locker { m_callbackLock };
-        if (m_callback)
-            m_callback->isPlayingDidChange();
-    }
-}
-
-void AudioDestinationCocoa::getAudioStreamBasicDescription(AudioStreamBasicDescription& streamFormat)
-{
-    const int bytesPerFloat = sizeof(Float32);
-    const int bitsPerByte = 8;
-    streamFormat.mSampleRate = hardwareSampleRate();
-    streamFormat.mFormatID = kAudioFormatLinearPCM;
-    streamFormat.mFormatFlags = static_cast<AudioFormatFlags>(kAudioFormatFlagsNativeFloatPacked) | static_cast<AudioFormatFlags>(kAudioFormatFlagIsNonInterleaved);
-    streamFormat.mBytesPerPacket = bytesPerFloat;
-    streamFormat.mFramesPerPacket = 1;
-    streamFormat.mBytesPerFrame = bytesPerFloat;
-    streamFormat.mChannelsPerFrame = numberOfOutputChannels();
-    streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
-}
-
-static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 numberOfBuffers, UInt32 numberOfFrames, UInt32 frameOffset, UInt32 framesThisTime)
-{
-    for (UInt32 i = 0; i < numberOfBuffers; ++i) {
-        UInt32 bytesPerFrame = buffers[i].mDataByteSize / numberOfFrames;
-        UInt32 byteOffset = frameOffset * bytesPerFrame;
-        auto* memory = reinterpret_cast<float*>(reinterpret_cast<char*>(buffers[i].mData) + byteOffset);
-        bus.setChannelMemory(i, memory, framesThisTime);
-    }
-}
-
-bool AudioDestinationCocoa::hasEnoughFrames(UInt32 numberOfFrames) const
-{
-    return fifoSize >= numberOfFrames;
-}
-
 // Pulls on our provider to get rendered audio stream.
 OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
     ASSERT(!isMainThread());
 
-    if (!hasEnoughFrames(numberOfFrames))
-        return noErr;
-
-    m_outputTimestamp = {
-        Seconds { sampleTime / sampleRate() },
-        MonotonicTime::fromMachAbsoluteTime(hostTime)
-    };
-
     auto* buffers = ioData->mBuffers;
-    auto numberOfBuffers = ioData->mNumberBuffers;
+    auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
 
     // Associate the destination data array with the output bus then fill the FIFO.
-    assignAudioBuffersToBus(buffers, m_outputBus.get(), numberOfBuffers, numberOfFrames, 0, numberOfFrames);
-    size_t framesToRender;
-
-    {
-        Locker locker { m_fifoLock };
-        framesToRender = m_fifo->pull(m_outputBus.ptr(), numberOfFrames);
+    for (UInt32 i = 0; i < numberOfBuffers; ++i) {
+        auto* memory = reinterpret_cast<float*>(buffers[i].mData);
+        size_t channelNumberOfFrames = std::min<size_t>(numberOfFrames, buffers[i].mDataByteSize / sizeof(float));
+        m_outputBus->setChannelMemory(i, memory, channelNumberOfFrames);
     }
-
-    // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.
-    if (!m_dispatchToRenderThreadLock.tryLock())
-        return -1;
-
-    Locker locker { AdoptLock, m_dispatchToRenderThreadLock };
-    if (!m_dispatchToRenderThread)
-        renderOnRenderingTheadIfPlaying(framesToRender);
-    else {
-        m_dispatchToRenderThread([protectedThis = Ref { *this }, framesToRender]() mutable {
-            protectedThis->renderOnRenderingTheadIfPlaying(framesToRender);
-        });
-    }
-
-    return noErr;
-}
-
-void AudioDestinationCocoa::renderOnRenderingTheadIfPlaying(size_t framesToRender)
-{
-    if (m_isPlaying)
-        renderOnRenderingThead(framesToRender);
-}
-
-// This runs on the AudioWorkletThread when AudioWorklet is enabled, on the audio device's rendering thread otherwise.
-void AudioDestinationCocoa::renderOnRenderingThead(size_t framesToRender)
-{
-    for (size_t pushedFrames = 0; pushedFrames < framesToRender; pushedFrames += AudioUtilities::renderQuantumSize) {
-        if (m_resampler)
-            m_resampler->process(m_renderBus.ptr(), AudioUtilities::renderQuantumSize);
-        else
-            callRenderCallback(nullptr, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
-
-        Locker locker { m_fifoLock };
-        m_fifo->push(m_renderBus.ptr());
-    }
+    auto framesToRender = pullRendered(numberOfFrames);
+    bool success = AudioDestinationResampler::render(sampleTime, MonotonicTime::fromMachAbsoluteTime(hostTime), framesToRender);
+    return success ? noErr : -1;
 }
 
 } // namespace WebCore

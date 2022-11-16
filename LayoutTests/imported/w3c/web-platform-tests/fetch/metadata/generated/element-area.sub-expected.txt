@@ -1,0 +1,17 @@
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - no attributes
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - HTTPS upgrade - no attributes assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - HTTPS downgrade-upgrade - no attributes assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+

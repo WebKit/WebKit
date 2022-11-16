@@ -1,7 +1,0 @@
-
-PASS Sec-Fetch headers after SW fallback
-PASS undefined: sec-fetch-dest
-PASS undefined: sec-fetch-mode
-PASS undefined: sec-fetch-site
-PASS undefined: sec-fetch-user
-

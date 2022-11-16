@@ -33,6 +33,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WebExtensionControllerMessages.h"
+#import "WebExtensionControllerProxyMessages.h"
 #import "WebPageProxy.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -75,6 +77,9 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         return handler;
     });
 
+    for (auto& process : m_processes)
+        process.send(Messages::WebExtensionControllerProxy::Load(extensionContext.parameters()), m_identifier);
+
     return true;
 }
 
@@ -95,14 +100,19 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
     if (!extensionContext.unload(outError))
         return false;
 
+    for (auto& process : m_processes)
+        process.send(Messages::WebExtensionControllerProxy::Unload(extensionContext.identifier()), m_identifier);
+
     return true;
 }
 
 void WebExtensionController::addPage(WebPageProxy& page)
 {
     ASSERT(!m_pages.contains(page));
-
     m_pages.add(page);
+
+    if (m_processes.add(page.process()))
+        page.process().addMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier, *this);
 
     for (auto& entry : m_registeredSchemeHandlers)
         page.setURLSchemeHandlerForScheme(entry.value.copyRef(), entry.key);
@@ -111,8 +121,22 @@ void WebExtensionController::addPage(WebPageProxy& page)
 void WebExtensionController::removePage(WebPageProxy& page)
 {
     ASSERT(m_pages.contains(page));
-
     m_pages.remove(page);
+
+    // The process might have already been deallocated and removed from the weak set.
+    if (!m_processes.contains(page.process()))
+        return;
+
+    // Only remove the message receiver and process if no other pages use the same process.
+    Ref<WebProcessProxy> process = page.process();
+    for (auto& page : m_pages) {
+        if (page.process() == process)
+            return;
+    }
+
+    process->removeMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier);
+
+    m_processes.remove(process.get());
 }
 
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebExtension& extension) const

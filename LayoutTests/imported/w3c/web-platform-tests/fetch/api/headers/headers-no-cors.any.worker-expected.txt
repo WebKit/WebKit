@@ -19,7 +19,9 @@ PASS "no-cors" Headers object cannot have content-type/text/plain; long=01234567
 PASS "no-cors" Headers object cannot have range/bytes 0- as header
 PASS "no-cors" Headers object cannot have test/hi as header
 PASS "no-cors" Headers object cannot have dpr/2 as header
-PASS "no-cors" Headers object cannot have downlink/1 as header
+PASS "no-cors" Headers object cannot have rtt/1.0 as header
+PASS "no-cors" Headers object cannot have downlink/-1.0 as header
+PASS "no-cors" Headers object cannot have ect/6g as header
 PASS "no-cors" Headers object cannot have save-data/on as header
 PASS "no-cors" Headers object cannot have viewport-width/100 as header
 PASS "no-cors" Headers object cannot have width/100 as header

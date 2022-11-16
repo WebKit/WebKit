@@ -1208,6 +1208,8 @@ public:
 #if PLATFORM(MAC)
     void setUseSystemAppearance(bool);
     bool useSystemAppearance() const { return m_useSystemAppearance; }
+
+    WebCore::DestinationColorSpace colorSpace();
 #endif
 
     void effectiveAppearanceDidChange();
@@ -1227,8 +1229,6 @@ public:
     RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
     void makeFirstResponder();
     void assistiveTechnologyMakeFirstResponder();
-
-    WebCore::DestinationColorSpace colorSpace();
 #endif
 
     void pageScaleFactorDidChange(double);

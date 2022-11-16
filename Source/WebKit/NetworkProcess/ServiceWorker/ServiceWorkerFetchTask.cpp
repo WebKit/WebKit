@@ -483,7 +483,7 @@ NetworkSession* ServiceWorkerFetchTask::session()
 
 bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    if (m_preloader  && !m_preloader->isServiceWorkerNavigationPreloadEnabled())
+    if (m_preloader)
         return m_preloader->convertToDownload(manager, downloadID, request, response);
 
     auto* session = this->session();

@@ -1,6 +1,14 @@
 
-PASS Getting blob after reading the Response body
-PASS Getting text after reading the Response body
-PASS Getting json after reading the Response body
-PASS Getting arrayBuffer after reading the Response body
+PASS Getting blob after reading the Response body (body source: fetch)
+PASS Getting text after reading the Response body (body source: fetch)
+PASS Getting json after reading the Response body (body source: fetch)
+PASS Getting arrayBuffer after reading the Response body (body source: fetch)
+PASS Getting blob after reading the Response body (body source: stream)
+PASS Getting text after reading the Response body (body source: stream)
+PASS Getting json after reading the Response body (body source: stream)
+PASS Getting arrayBuffer after reading the Response body (body source: stream)
+PASS Getting blob after reading the Response body (body source: string)
+PASS Getting text after reading the Response body (body source: string)
+PASS Getting json after reading the Response body (body source: string)
+PASS Getting arrayBuffer after reading the Response body (body source: string)
 

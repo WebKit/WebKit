@@ -39,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-put.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-take.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/status.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/sw-intercept-abort.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/sw-intercept.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/top.txt
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/trickle.py

@@ -77,9 +77,12 @@ static std::optional<float>& defaultSampleRateForTesting()
 
 static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
 {
-    if (document.processingUserGestureForMedia() || document.isCapturing())
+    if (document.isCapturing())
         return true;
-    return document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction();
+    if (document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction())
+        return true;
+    auto* window = document.domWindow();
+    return window && window->hasTransientActivation();
 }
 
 void AudioContext::setDefaultSampleRateForTesting(std::optional<float> sampleRate)

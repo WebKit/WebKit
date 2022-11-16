@@ -1,0 +1,8 @@
+
+PASS sec-fetch-mode - no options
+PASS sec-fetch-mode - options: type=module
+PASS sec-fetch-dest - no options
+PASS sec-fetch-dest - options: type=module
+PASS sec-fetch-user - no options
+PASS sec-fetch-user - options: type=module
+
