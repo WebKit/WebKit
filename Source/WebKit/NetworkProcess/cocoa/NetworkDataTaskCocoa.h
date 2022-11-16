@@ -96,7 +96,7 @@ private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
-    void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, bool shouldContentEncodingSniff);
+    void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy);
 
 #if ENABLE(TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();

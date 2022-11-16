@@ -112,17 +112,17 @@ static float toNSURLSessionTaskPriority(WebCore::ResourceLoadPriority priority)
     return NSURLSessionTaskPriorityDefault;
 }
 
-void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>& nsRequest, bool shouldContentSniff, bool shouldContentEncodingSniff)
+void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>& nsRequest, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy)
 {
 #if !USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-    UNUSED_PARAM(shouldContentEncodingSniff);
+    UNUSED_PARAM(contentEncodingSniffingPolicy);
 #endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     auto& boundInterfaceIdentifier = cocoaSession.boundInterfaceIdentifier();
     if (shouldContentSniff
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-        && shouldContentEncodingSniff
+        && contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Default 
 #endif
         && boundInterfaceIdentifier.isNull())
         return;
@@ -130,7 +130,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     auto mutableRequest = adoptNS([nsRequest mutableCopy]);
 
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-    if (!shouldContentEncodingSniff)
+    if (contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Disable)
         [mutableRequest _setProperty:@YES forKey:(NSString *)kCFURLRequestContentDecoderSkipURLCheck];
 #endif
 
@@ -413,7 +413,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     m_session->appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
 #endif
 
-    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Sniff);
+    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy);
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
 
