@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.setShouldLogDownloadSize(true);
+  testRunner.waitUntilDownloadFinished();
+  testRunner.setShouldDownloadUndisplayableMIMETypes(true);
+}
+
+var activeWorker;
+var uuid = token();
+var url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?download=yes&token=" + uuid;
+var frame;
+const channel = new MessageChannel();
+
+function waitUntilActivating()
+{
+    return new Promise(resolve => {
+        channel.port2.onmessage = (event) => {
+            if (event.data === "activating")
+                resolve();
+        };
+    });
+}
+
+function triggerActivation()
+{
+    activeWorker.postMessage("activate");
+}
+
+async function doTest() {
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    const registration = await navigator.serviceWorker.register("/WebKit/service-workers/fetch-service-worker-preload-worker.js", { scope : url });
+    if (!registration.installing) {
+        registration.unregister();
+        registration = await navigator.serviceWorker.register("/WebKit/service-workers/fetch-service-worker-preload-worker.js", { scope : url });
+    }
+
+    activeWorker = registration.installing;
+    activeWorker.postMessage({ port: channel.port1 }, [channel.port1]);
+
+    await waitUntilActivating();
+    triggerActivation();
+    await registration.navigationPreload.enable();
+
+    // Download size should be size of "use-preload".
+    const promise = withIframe(url + "&promise=getResponseFromNavigationPreload");
+}
+doTest();
+</script>
+</body>
+</html>
