@@ -1770,4 +1770,4 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
 
-webkit.org/b/247982 [ Ventura ] fast/images/animated-heics-draw.html [ Timeout ]
+webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout ]
