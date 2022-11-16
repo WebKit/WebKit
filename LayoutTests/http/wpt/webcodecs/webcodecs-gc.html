@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+<script src="../resources/gc.js"></script>
+</header>
+<body>
+<script>
+
+function makeOffscreenCanvas(width, height) {
+  let canvas = new OffscreenCanvas(width, height);
+  let ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+  ctx.fillRect(0, 0, width, height);
+  return new VideoFrame(canvas, { timestamp: 1 });
+}
+
+let chunks = [];
+let config;
+
+async function createChunks(encoderConfig) {
+  chunks = [];
+  const encoderInit = {
+    output(chunk, metadata) {
+      if (metadata.decoderConfig) {
+        config = metadata.decoderConfig;
+      }
+      chunks.push(chunk);
+    },
+    error(e) {
+      reject(e.message);
+    }
+  };
+
+  const encoder = new VideoEncoder(encoderInit);
+  encoder.configure(encoderConfig);
+
+  const w = encoderConfig.width;
+  const h = encoderConfig.height;
+  const frame = makeOffscreenCanvas(w, h);
+  encoder.encode(frame, { keyFrame: true });
+
+  const timer = setInterval(() => gc(), 100); 
+  await encoder.flush();
+  clearInterval(timer);
+}
+
+async function doEncodeDecode(encoderConfig)
+{
+  await createChunks(encoderConfig);
+
+  let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  const decoder = new VideoDecoder({
+    output(frame) {
+      resolve(frame);
+    },
+    error(e) {
+      reject(e.message);
+    }
+  });
+
+  decoder.configure(config);
+
+  for (let chunk of chunks)
+    decoder.decode(chunk);
+
+  const timer = setInterval(() => gc(), 100); 
+  await decoder.flush();
+  clearInterval(timer);
+
+  return promise;
+}
+
+function doTest(codec, title)
+{
+  const config = { codec };
+  config.width = 320;
+  config.height = 200;
+  config.bitrate = 1000000;
+  config.framerate = 30;
+
+  promise_test(async t => {
+    const frame = await doEncodeDecode(config);
+    t.add_cleanup(() => frame.close());
+ 
+    assert_not_equals(frame.colorSpace.primaries, null, "primaries");
+  }, title);
+}
+
+doTest('vp8', "VP8 codec GC");
+doTest('vp09.00.10.08', "VP9 codec GC");
+doTest('avc1.42001E', "H.264 codec GC");
+</script>
+</body>
+</html>

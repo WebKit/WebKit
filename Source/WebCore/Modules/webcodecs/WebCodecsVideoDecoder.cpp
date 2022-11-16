@@ -204,12 +204,14 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise.copyRef());
+    m_isFlushing = true;
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalDecoder->flush([this, weakedThis = WeakPtr { *this }, clearFlushPromiseCount] {
-            if (!weakedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+        m_internalDecoder->flush([this, weakThis = WeakPtr { *this }, clearFlushPromiseCount] {
+            if (!weakThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
             m_pendingFlushPromises.takeFirst()->resolve();
+            m_isFlushing = !m_pendingFlushPromises.isEmpty();
         });
     });
     return { };
@@ -343,7 +345,7 @@ const char* WebCodecsVideoDecoder::activeDOMObjectName() const
 
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize);
+    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize || m_isFlushing);
 }
 
 } // namespace WebCore
