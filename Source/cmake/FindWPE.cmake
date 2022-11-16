@@ -85,8 +85,8 @@ if (WPE_INCLUDE_DIR AND NOT WPE_VERSION)
     endif ()
 endif ()
 
-# Version 1.12.0 is the last release where XKB support was always present
-if (WPE_VERSION VERSION_LESS_EQUAL 1.12.0)
+# Versions 1.12.x are the last stable releases where XKB support was always present
+if (WPE_VERSION VERSION_LESS 1.13.3)
     list(APPEND WPE_COMPILE_OPTIONS -DWPE_ENABLE_XKB=1)
 endif ()
 
