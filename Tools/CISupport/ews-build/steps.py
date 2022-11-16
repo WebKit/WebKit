@@ -4880,6 +4880,81 @@ class ValidateRemote(shell.ShellCommand):
         return not self.doStepIf(step)
 
 
+# There are cases where we have a branch alias tracking a more traditional static branch.
+# We want contributors to be able to land changes on the branch alias instead of the possibly
+# changing branch.
+class MapBranchAlias(shell.ShellCommand):
+    name = 'map-branch-alias'
+    haltOnFailure = False
+    flunkOnFailure = True
+    DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
+    PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
+
+    def __init__(self, **kwargs):
+        self.summary = ''
+        super(MapBranchAlias, self).__init__(logEnviron=False, timeout=60, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+
+        self.command = ['git', 'branch', '-a', '--contains', f'remotes/{remote}/{base_ref}']
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        return super(MapBranchAlias, self).start()
+
+    def getResultSummary(self):
+        if self.results in (FAILURE, SUCCESS):
+            return {'step': self.summary}
+        return super(MapBranchAlias, self).getResultSummary()
+
+    def evaluateCommand(self, cmd):
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        rc = super(MapBranchAlias, self).evaluateCommand(cmd)
+
+        if rc == FAILURE:
+            self.summary = f"Failed to query checkout for aliases of '{branch}'"
+            return FAILURE
+        elif rc != SUCCESS:
+            return rc
+
+        aliases = set()
+        log_text = self.log_observer.getStdout()
+        for line in log_text.splitlines():
+            line = line.lstrip().rstrip()
+            if not line.startswith(f'remotes/{remote}'):
+                continue
+            candidate = line.split('/', 2)[-1]
+            if self.DEV_BRANCHES.match(candidate):
+                continue
+            aliases.add(candidate)
+
+        if DEFAULT_BRANCH in aliases:
+            branch = DEFAULT_BRANCH
+        if branch != DEFAULT_BRANCH and self.DEV_BRANCHES.match(branch) and aliases:
+            branch = next(iter(aliases))
+        if branch != DEFAULT_BRANCH and not self.PROD_BRANCHES.match(branch):
+            for alias in aliases:
+                if self.PROD_BRANCHES.match(alias):
+                    branch = alias
+                    break
+
+        self.summary = f"'{branch}' is the prevailing alias"
+        self.setProperty('github.base.ref', branch)
+        return rc
+
+    def doStepIf(self, step):
+        if not self.getProperty('github.number'):
+            return False
+        return self.getProperty('github.base.ref', DEFAULT_BRANCH) != DEFAULT_BRANCH
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class ValidateSquashed(shell.ShellCommand):
     name = 'validate-squashed'
     haltOnFailure = False

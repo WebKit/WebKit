@@ -52,7 +52,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
-                   ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
+                   MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
@@ -5992,6 +5992,141 @@ class TestValidateRemote(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('comment_text'), "Cannot land on 'main', it is owned by 'WebKit/WebKit', blocking PR #1234.\nMake a pull request against 'WebKit/WebKit' to land this change.")
         self.assertEqual(self.getProperty('build_finish_summary'), "Cannot land on 'main', it is owned by 'WebKit/WebKit'")
         return rc
+
+
+class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_patch(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_main(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.number', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_prod_branch(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-000-branch'],
+            ) + 0
+            + ExpectShell.log('stdio', stdout='  safari-000-branch\n  remotes/origin/safari-000-branch\n  remotes/origin/safari-alias\n  remotes/origin/eng/pr-branch\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string="'safari-000-branch' is the prevailing alias")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('github.base.ref'), 'safari-000-branch')
+        return rc
+
+    def test_main_override(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-000-branch'],
+            ) + 0
+            + ExpectShell.log('stdio', stdout='  safari-000-branch\n  remotes/origin/safari-000-branch\n  remotes/origin/safari-alias\n  remotes/origin/eng/pr-branch\n  remotes/origin/main\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string="'main' is the prevailing alias")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('github.base.ref'), 'main')
+        return rc
+
+    def test_alias_branch(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'safari-alias')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-alias'],
+            ) + 0
+            + ExpectShell.log('stdio', stdout='  safari-alias\n  remotes/origin/safari-000-branch\n  remotes/origin/safari-alias\n  remotes/origin/eng/pr-branch\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string="'safari-000-branch' is the prevailing alias")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('github.base.ref'), 'safari-000-branch')
+        return rc
+
+    def test_prod_branch_alternate_remote(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'security')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--contains', 'remotes/security/safari-000-branch'],
+            ) + 0
+            + ExpectShell.log('stdio', stdout='  safari-000-branch\n  remotes/security/safari-000-branch\n  remotes/security/safari-alias\n  remotes/security/eng/pr-branch\n  remotes/origin/main\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string="'safari-000-branch' is the prevailing alias")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('github.base.ref'), 'safari-000-branch')
+        return rc
+
+    def test_alias_branch_alternate_remote(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'security')
+        self.setProperty('github.base.ref', 'safari-alias')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--contains', 'remotes/security/safari-alias'],
+            ) + 0
+            + ExpectShell.log('stdio', stdout='  safari-alias\n  remotes/security/safari-000-branch\n  remotes/security/safari-alias\n  remotes/security/eng/pr-branch\n  remotes/origin/main\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string="'safari-000-branch' is the prevailing alias")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('github.base.ref'), 'safari-000-branch')
+        return rc
+
+    def test_failure(self):
+        self.setupStep(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'safari-000-branch')
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=60,
+                command=['git', 'branch', '-a', '--contains', 'remotes/origin/safari-000-branch'],
+            ) + 129
+            + ExpectShell.log('stdio', stdout='error: malformed object name remotes/origin/safari-000-branch\n'),
+        )
+        self.expectOutcome(result=FAILURE, state_string="Failed to query checkout for aliases of 'safari-000-branch'")
+        return self.runStep()
 
 
 class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
