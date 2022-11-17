@@ -38,6 +38,7 @@ class PullRequest(Command):
     aliases = ['pr', 'pfr', 'upload']
     help = 'Push the current checkout state as a pull-request'
     BLOCKED_LABEL = 'merging-blocked'
+    SKIP_EWS_LABEL = 'skip-ews'
     MERGE_LABELS = ['merge-queue']
     UNSAFE_MERGE_LABELS = ['unsafe-merge-queue']
 
@@ -441,7 +442,7 @@ class PullRequest(Command):
             pr_issue = existing_pr._metadata['issue']
             labels = pr_issue.labels
             did_remove = False
-            for to_remove in cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else []):
+            for to_remove in cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else []) + [cls.SKIP_EWS_LABEL]:
                 if to_remove in labels:
                     log.info("Removing '{}' from PR #{}...".format(to_remove, existing_pr.number))
                     labels.remove(to_remove)

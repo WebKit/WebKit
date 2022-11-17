@@ -158,6 +158,7 @@ class GitHubMixin(object):
     addURLs = False
     pr_open_states = ['open']
     pr_closed_states = ['closed']
+    SKIP_EWS_LABEL = 'skip-ews'
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
@@ -263,6 +264,12 @@ class GitHubMixin(object):
     def _is_pr_blocked(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
             if label.get('name', '') == self.BLOCKED_LABEL:
+                return 1
+        return 0
+
+    def _does_pr_has_skip_label(self, pr_json):
+        for label in (pr_json or {}).get('labels', {}):
+            if label.get('name', '') == self.SKIP_EWS_LABEL:
                 return 1
         return 0
 
@@ -1530,6 +1537,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         verifycqplus=False,
         verifyMergeQueue=False,
         verifyNoDraftForMergeQueue=False,
+        enableSkipEWSLabel=True,
     ):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
@@ -1537,6 +1545,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         self.verifycqplus = verifycqplus
         self.verifyMergeQueue = verifyMergeQueue
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
+        self.enableSkipEWSLabel = enableSkipEWSLabel
         self.addURLs = addURLs
         buildstep.BuildStep.__init__(self)
 
@@ -1596,6 +1605,8 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self._addToLog('stdio', 'Change is not a draft.\n')
         if self.verifyMergeQueue and pr_number:
             self._addToLog('stdio', 'Change is in merge queue.\n')
+        if self.enableSkipEWSLabel and pr_number:
+            self._addToLog('stdio', f'PR does not have {self.SKIP_EWS_LABEL} label.\n')
         self.finished(SUCCESS)
         return None
 
@@ -1654,10 +1665,15 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
             return False
 
+        skip_ews = self._does_pr_has_skip_label(pr_json) if self.enableSkipEWSLabel else 0
+        if skip_ews == 1:
+            self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
+            return False
+
         if self.verifyMergeQueue:
             if not pr_json:
                 self.send_email_for_github_failure()
-                self.skip_build("Infrastructure issue: unable to check PR status")
+                self.skip_build('Infrastructure issue: unable to check PR status, please contact an admin')
                 return False
             merge_queue = self._is_pr_in_merge_queue(pr_json)
             if merge_queue == 0:
@@ -4661,7 +4677,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         ShowIdentifier(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False),
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         Canonicalize(),
                         PushPullRequestBranch(),
                         UpdatePullRequest(),
