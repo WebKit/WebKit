@@ -5,7 +5,6 @@ depends:
 - qt5.bst
 - test-infra.bst
 - filtered.bst
-- filtered-openh264.bst
 
 # replaced (patched) elements:
 - sdk/abseil-cpp.bst
@@ -15,7 +14,6 @@ depends:
 - sdk/capnp.bst
 - sdk/cargo-c.bst
 - sdk/ccls.bst
-- sdk/clangd.bst
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
