@@ -500,7 +500,6 @@ EOF
             foreach my $parameter (@specifiedParameters) {
                 $self->_includeHeaders(\%contentsIncludes, $parameter->type, $parameter);
                 $optionalArgumentCount++ if $parameter->extendedAttributes->{"Optional"};
-                $needsScriptContext = 1 if $parameter->type->name eq "function" && !$parameter->extendedAttributes->{"CallbackHandler"};
                 $needsPage = 1 if $parameter->extendedAttributes->{"CallbackHandler"} && $interface->extendedAttributes->{"NeedsPageWithCallbackHandler"};
                 $needsFrame = 1 if $parameter->extendedAttributes->{"CallbackHandler"} && $interface->extendedAttributes->{"NeedsFrameWithCallbackHandler"};
                 $callbackHandlerArgument = $parameter->name if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
@@ -964,7 +963,7 @@ EOF
 EOF
     }
 
-    if ($$self{codeGenerator}->IsPrimitiveType($signature->type) && !$signature->extendedAttributes->{"Optional"}) {
+    if ($$self{codeGenerator}->IsPrimitiveType($signature->type) && $signature->type->name ne "boolean" && !$signature->extendedAttributes->{"Optional"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -995,7 +994,7 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if ($variable && !JSValueIsObject(context, $variable)) {
+    if ($variable && !$variable.isObject) {
         NSString *mustBeAnObjectString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an object.";
         *exception = toJSError(context, mustBeAnObjectString);
         return ${result};
@@ -1165,8 +1164,7 @@ sub _platformType
     return "NSString" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
     return "NSDictionary" if $idlTypeName eq "any" && $signature && $signature->extendedAttributes->{"NSDictionary"};
     return "NSObject" if $idlTypeName eq "any" && $signature && $signature->extendedAttributes->{"NSObject"};
-    return "JSValueRef" if $idlTypeName eq "DOMWindow" || $idlTypeName eq "any";
-    return "JSObjectRef" if $idlTypeName eq "function";
+    return "JSValue" if $idlTypeName eq "DOMWindow" || $idlTypeName eq "function" || $idlTypeName eq "any";
     return "bool" if $idlTypeName eq "boolean";
 
     return unless ref($idlType) eq "IDLType";
@@ -1195,13 +1193,13 @@ sub _platformTypeConstructor
         return "toNSDictionary(context, $argumentName)" if $signature->extendedAttributes->{"NSDictionary"};
         return "dynamic_objc_cast<NSArray>(toNSObject(context, $argumentName))" if $signature->extendedAttributes->{"NSArray"};
         return "toNSObject(context, $argumentName)" if $signature->extendedAttributes->{"NSObject"};
-        return $argumentName;
+        return "toJSValue(context, $argumentName)";
     }
 
     return "toJSCallbackHandler(context, $argumentName, impl->runtime())" if $idlTypeName eq "function" && $signature->extendedAttributes->{"CallbackHandler"};
     return "dynamic_objc_cast<NSArray>(toNSObject(context, $argumentName, $arrayType.class))" if $idlTypeName eq "array" && $arrayType;
     return "JSValueToBoolean(context, $argumentName)" if $idlTypeName eq "boolean";
-    return "JSValueToObject(context, $argumentName, exception)" if $idlTypeName eq "function";
+    return "toJSValue(context, $argumentName)" if $idlTypeName eq "function";
 
     return unless ref($idlType) eq "IDLType";
 
@@ -1221,6 +1219,7 @@ sub _platformTypeVariableDeclaration
     my $constructor = $self->_platformTypeConstructor($signature, $argumentName) if $argumentName;
 
     my %objCTypes = (
+        "JSValue"       => 1,
         "NSArray"       => 1,
         "NSDictionary"  => 1,
         "NSURL"         => 1,
@@ -1229,6 +1228,7 @@ sub _platformTypeVariableDeclaration
     );
 
     my $nullValue = "nullptr";
+    $nullValue = "false" if $platformType eq "bool";
     $nullValue = "std::numeric_limits<double>::quiet_NaN()" if $platformType eq "double";
     $nullValue = "nil" if $objCTypes{$platformType};
     $nullValue = "JSValueMakeUndefined(context)" if $platformType eq "JSValueRef";
@@ -1282,8 +1282,8 @@ sub _returnExpression
     my $returnIDLTypeName = $returnIDLType->name;
 
     return "deserializeJSONString(context, $expression)" if $returnIDLTypeName eq "any" && $signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "JSON";
-    return "toJSNullIfNull(context, $expression)" if $returnIDLTypeName eq "any" || $returnIDLTypeName eq "DOMWindow";
-    return "toJSValue(context, ${expression}, $nullOrEmptyString)" if $$self{codeGenerator}->IsStringType($returnIDLType);
+    return "toJSValueRefOrJSNull(context, $expression)" if $returnIDLTypeName eq "any" || $returnIDLTypeName eq "DOMWindow";
+    return "toJSValueRef(context, ${expression}, $nullOrEmptyString)" if $$self{codeGenerator}->IsStringType($returnIDLType);
     return "JSValueMakeUndefined(context)" if $returnIDLTypeName eq "void";
     return "JSValueMakeBoolean(context, ${expression})" if $returnIDLTypeName eq "boolean";
     return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsPrimitiveType($returnIDLType);
