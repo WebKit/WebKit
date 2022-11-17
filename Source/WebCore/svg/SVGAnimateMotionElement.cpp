@@ -26,7 +26,7 @@
 #include "CommonAtomStrings.h"
 #include "ElementIterator.h"
 #include "PathTraversalState.h"
-#include "RenderElement.h"
+#include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
@@ -251,7 +251,16 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         return;
 
     auto updateTargetElement = [](SVGElement& element) {
-        if (auto renderer = element.renderer())
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (element.document().settings().layerBasedSVGEngineEnabled()) {
+            if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
+                layerRenderer->updateHasSVGTransformFlags();
+            // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
+            element.updateSVGRendererForElementChange();
+            return;
+        }
+#endif
+        if (auto* renderer = element.renderer())
             renderer->setNeedsTransformUpdate();
         element.updateSVGRendererForElementChange();
     };

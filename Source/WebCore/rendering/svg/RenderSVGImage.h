@@ -74,6 +74,8 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     bool bufferForeground(PaintInfo&, const LayoutPoint&);
 
+    bool needsHasSVGTransformFlags() const final;
+
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
 
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }

@@ -138,12 +138,6 @@ void RenderSVGForeignObject::updateFromStyle()
 {
     RenderSVGBlock::updateFromStyle();
 
-    // Enforce <fO> to carry a transform: <fO> should behave as absolutely positioned container
-    // for CSS content. Thus it needs to become a rootPaintingLayer during paint() such that
-    // fixed position content uses the <fO> as ancestor layer (when computing offsets from the container).
-    setHasTransformRelatedProperty();
-    setHasSVGTransform();
-
     if (SVGRenderSupport::isOverflowHidden(*this))
         setHasNonVisibleOverflow();
 }

@@ -81,6 +81,8 @@ public:
 
     FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
 
+    bool needsHasSVGTransformFlags() const final;
+
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
 
 protected:

@@ -527,6 +527,11 @@ void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& ne
     RenderSVGModelObject::styleWillChange(diff, newStyle);
 }
 
+bool RenderSVGShape::needsHasSVGTransformFlags() const
+{
+    return graphicsElement().hasTransformRelatedAttributes();
+}
+
 void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     applySVGTransform(transform, graphicsElement(), style, boundingBox, std::nullopt, std::nullopt, options);

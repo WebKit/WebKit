@@ -46,7 +46,7 @@ void RenderSVGBlock::updateFromStyle()
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        updateHasSVGTransformFlags(graphicsElement());
+        updateHasSVGTransformFlags();
         return;
     }
 #endif
@@ -65,6 +65,13 @@ void RenderSVGBlock::updateFromStyle()
     // manually by LegacyRenderSVGRoot - which owns the documents enclosing root layer and thus works fine.
     setHasNonVisibleOverflow(false);
 }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+bool RenderSVGBlock::needsHasSVGTransformFlags() const
+{
+    return graphicsElement().hasTransformRelatedAttributes();
+}
+#endif
 
 void RenderSVGBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {

@@ -37,8 +37,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
-RenderSVGViewportContainer::RenderSVGViewportContainer(Document& document, RenderStyle&& style)
-    : RenderSVGContainer(document, WTFMove(style))
+RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, RenderStyle&& style)
+    : RenderSVGContainer(parent.document(), WTFMove(style))
+    , m_owningSVGRoot(parent)
 {
 }
 
@@ -50,10 +51,9 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, R
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
     if (isOutermostSVGViewportContainer()) {
-        ASSERT(is<RenderSVGRoot>(parent()));
-        return downcast<RenderSVGRoot>(*parent()).svgSVGElement();
+        ASSERT(m_owningSVGRoot);
+        return m_owningSVGRoot->svgSVGElement();
     }
-
     return downcast<SVGSVGElement>(RenderSVGContainer::element());
 }
 
@@ -86,18 +86,7 @@ bool RenderSVGViewportContainer::updateLayoutSizeIfNeeded()
     return selfNeedsLayout() || previousViewportSize != viewportSize();
 }
 
-void RenderSVGViewportContainer::updateFromElement()
-{
-    RenderSVGContainer::updateFromElement();
-
-    if (!parent())
-        return;
-
-    updateFromStyle();
-    updateLayerTransform();
-}
-
-bool RenderSVGViewportContainer::needsHasSVGTransformFlag() const
+bool RenderSVGViewportContainer::needsHasSVGTransformFlags() const
 {
     auto& useSVGSVGElement = svgSVGElement();
     if (useSVGSVGElement.hasTransformRelatedAttributes())
@@ -115,12 +104,6 @@ void RenderSVGViewportContainer::updateFromStyle()
 
     if (SVGRenderSupport::isOverflowHidden(*this))
         setHasNonVisibleOverflow();
-
-    if (hasSVGTransform() || !parent() || !needsHasSVGTransformFlag())
-        return;
-
-    setHasTransformRelatedProperty();
-    setHasSVGTransform();
 }
 
 inline AffineTransform viewBoxToViewTransform(const SVGSVGElement& svgSVGElement, const FloatSize& viewportSize)

@@ -36,7 +36,11 @@ protected:
     void willBeDestroyed() override;
 
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;
+
     void updateFromStyle() override;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool needsHasSVGTransformFlags() const override;
+#endif
 
 private:
     void element() const = delete;

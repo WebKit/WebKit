@@ -65,9 +65,7 @@ RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& st
 void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
-
-    if (!isAnonymous() && is<SVGGraphicsElement>(element()))
-        updateHasSVGTransformFlags(downcast<SVGGraphicsElement>(element()));
+    updateHasSVGTransformFlags();
 }
 
 LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, RenderFragmentContainer*, OverlayScrollbarSizeRelevancy, PaintPhase) const

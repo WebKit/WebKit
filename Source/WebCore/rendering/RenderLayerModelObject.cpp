@@ -432,10 +432,12 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
     style.unapplyTransformOrigin(transform, originTranslate);
 }
 
-void RenderLayerModelObject::updateHasSVGTransformFlags(const SVGGraphicsElement& graphicsElement)
+void RenderLayerModelObject::updateHasSVGTransformFlags()
 {
-    bool hasSVGTransform = graphicsElement.hasTransformRelatedAttributes();
-    setHasTransformRelatedProperty(style().hasTransformRelatedProperty() || hasSVGTransform);
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+
+    bool hasSVGTransform = needsHasSVGTransformFlags();
+    setHasTransformRelatedProperty(hasSVGTransform || style().hasTransformRelatedProperty());
     setHasSVGTransform(hasSVGTransform);
 }
 #endif
