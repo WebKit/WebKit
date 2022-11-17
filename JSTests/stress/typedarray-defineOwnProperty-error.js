@@ -22,7 +22,7 @@ testException(TA => {
     let ta = new TA(4);
     transferArrayBuffer(ta.buffer);
     Object.defineProperty(ta, "0", {value: 1});
-}, "TypeError: Underlying ArrayBuffer has been detached from the view");
+}, "TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds");
 
 testException(TA => {
     let ta = new TA(4);

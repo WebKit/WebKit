@@ -201,7 +201,8 @@ enum class ArrayProfileFlag : uint32_t {
     MayBeLargeTypedArray = 1 << 2,
     MayInterceptIndexedAccesses = 1 << 3,
     UsesNonOriginalArrayStructures = 1 << 4,
-    DidPerformFirstRunPruning = 1 << 5,
+    MayBeResizableOrGrowableSharedTypedArray = 1 << 5,
+    DidPerformFirstRunPruning = 1 << 6,
 };
 
 class ArrayProfile {
@@ -213,6 +214,8 @@ public:
     static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
     void setMayBeLargeTypedArray() { m_arrayProfileFlags.add(ArrayProfileFlag::MayBeLargeTypedArray); }
     bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
+
+    bool mayBeResizableOrGrowableSharedTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
 
     StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
@@ -263,42 +266,15 @@ public:
         m_observedArrayModes = newModes;
         arrayProfile.m_observedArrayModes = newModes;
 
-        if (m_mayStoreToHole)
-            arrayProfile.m_arrayProfileFlags.add(ArrayProfileFlag::MayStoreHole);
-        else
-            m_mayStoreToHole = arrayProfile.m_arrayProfileFlags.contains(ArrayProfileFlag::MayStoreHole);
-
-        if (m_outOfBounds)
-            arrayProfile.m_arrayProfileFlags.add(ArrayProfileFlag::OutOfBounds);
-        else
-            m_outOfBounds = arrayProfile.m_arrayProfileFlags.contains(ArrayProfileFlag::OutOfBounds);
-
-        if (m_mayInterceptIndexedAccesses)
-            arrayProfile.m_arrayProfileFlags.add(ArrayProfileFlag::MayInterceptIndexedAccesses);
-        else
-            m_mayInterceptIndexedAccesses = arrayProfile.m_arrayProfileFlags.contains(ArrayProfileFlag::MayInterceptIndexedAccesses);
-
-        if (m_usesNonOriginalArrayStructures)
-            arrayProfile.m_arrayProfileFlags.add(ArrayProfileFlag::UsesNonOriginalArrayStructures);
-        else
-            m_usesNonOriginalArrayStructures = arrayProfile.m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures);
-
-        if (m_mayBeLargeTypedArray)
-            arrayProfile.m_arrayProfileFlags.add(ArrayProfileFlag::MayBeLargeTypedArray);
-        else
-            m_mayBeLargeTypedArray = arrayProfile.m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray);
+        arrayProfile.m_arrayProfileFlags.add(m_arrayProfileFlags);
+        auto unlinkedArrayProfileFlags = arrayProfile.m_arrayProfileFlags;
+        unlinkedArrayProfileFlags.remove(ArrayProfileFlag::DidPerformFirstRunPruning); // We do not propagate DidPerformFirstRunPruning.
+        m_arrayProfileFlags = unlinkedArrayProfileFlags;
     }
 
 private:
     ArrayModes m_observedArrayModes { 0 };
-    // We keep these as full byte-sized booleans just for speed, because the
-    // alignment of this struct will already make us 8 bytes large. But if we
-    // ever need to add more stuff, these fields can become bitfields.
-    bool m_mayStoreToHole { false };
-    bool m_outOfBounds { false };
-    bool m_mayInterceptIndexedAccesses { false };
-    bool m_usesNonOriginalArrayStructures : 1 { false };
-    bool m_mayBeLargeTypedArray : 1 { false };
+    OptionSet<ArrayProfileFlag> m_arrayProfileFlags { };
 };
 static_assert(sizeof(UnlinkedArrayProfile) <= 8);
 

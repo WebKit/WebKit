@@ -91,6 +91,8 @@ public:
 
     static constexpr size_t atomSize = 16; // This needs to be larger or equal to 16.
 
+    static constexpr bool isResizableOrGrowableSharedTypedArray = false;
+
     static JSCell* seenMultipleCalleeObjects() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };

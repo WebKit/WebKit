@@ -174,6 +174,17 @@ template<typename T> char (&ArrayLengthHelperFunction(T (&)[0]))[0];
 
 inline constexpr bool isPowerOfTwo(size_t size) { return !(size & (size - 1)); }
 
+template<typename T> constexpr T mask(T value, uintptr_t mask)
+{
+    static_assert(sizeof(T) == sizeof(uintptr_t), "sizeof(T) must be equal to sizeof(uintptr_t).");
+    return static_cast<T>(static_cast<uintptr_t>(value) & mask);
+}
+
+template<typename T> inline T* mask(T* value, uintptr_t mask)
+{
+    return reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(value) & mask);
+}
+
 template<typename T, typename U>
 ALWAYS_INLINE constexpr T roundUpToMultipleOfImpl(U divisor, T x)
 {
@@ -199,6 +210,26 @@ template<size_t divisor, typename T> inline constexpr T* roundUpToMultipleOf(T* 
 {
     static_assert(sizeof(T*) == sizeof(size_t));
     return reinterpret_cast<T*>(roundUpToMultipleOf<divisor>(reinterpret_cast<size_t>(x)));
+}
+
+template<typename T, typename U>
+inline constexpr T roundDownToMultipleOf(U divisor, T x)
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(divisor && isPowerOfTwo(divisor));
+    static_assert(sizeof(T) == sizeof(uintptr_t), "sizeof(T) must be equal to sizeof(uintptr_t).");
+    return static_cast<T>(mask(static_cast<uintptr_t>(x), ~(divisor - 1ul)));
+}
+
+template<typename T> inline constexpr T* roundDownToMultipleOf(size_t divisor, T* x)
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(isPowerOfTwo(divisor));
+    return reinterpret_cast<T*>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
+}
+
+template<size_t divisor, typename T> constexpr T roundDownToMultipleOf(T x)
+{
+    static_assert(isPowerOfTwo(divisor), "'divisor' must be a power of two.");
+    return roundDownToMultipleOf(divisor, x);
 }
 
 enum BinarySearchMode {
@@ -636,6 +667,7 @@ using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
+using WTF::roundDownToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
 using WTF::valueOrCompute;

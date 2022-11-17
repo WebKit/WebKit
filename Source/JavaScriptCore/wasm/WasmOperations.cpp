@@ -32,6 +32,7 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JITExceptions.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
 #include "JSWebAssemblyArray.h"

@@ -118,7 +118,7 @@ function assertViewClosed(testName, view)
                 testFailed(testName + ": set on a closed view succeeded");
                 return false;
             } catch (xn) {
-                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view") {
+                if (xn != "TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds") {
                     testFailed(testName + ": set on a closed view threw the wrong exception: " + xn);
                     return false;
                 }

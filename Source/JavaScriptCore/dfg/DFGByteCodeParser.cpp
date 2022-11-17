@@ -3821,26 +3821,28 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 
     switch (variant.intrinsic()) {
     case TypedArrayByteLengthIntrinsic: {
-        bool willNeedGetTypedArrayLengthAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+        bool mayBeLargeTypedArray = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
 #if !USE(LARGE_TYPED_ARRAYS)
-        if (willNeedGetTypedArrayLengthAsInt52)
+        if (mayBeLargeTypedArray)
             return false;
 #endif
         insertChecks();
 
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
+        bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
         size_t logSize = logElementSize(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
             TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             ASSERT(logSize == logElementSize(curType));
             arrayType = refineTypedArrayType(arrayType, curType);
+            mayBeResizableOrGrowableSharedTypedArray |= isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells());
             ASSERT(arrayType != Array::Generic);
         });
 
-        NodeType op = willNeedGetTypedArrayLengthAsInt52 ? GetTypedArrayLengthAsInt52 : GetArrayLength;
-        Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode);
+        NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
+        Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode);
         // Our ArrayMode shouldn't cause us to exit here so we should be ok to exit without effects.
         m_exitOK = true;
         addToGraph(ExitOK);
@@ -3858,48 +3860,51 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
     }
 
     case TypedArrayLengthIntrinsic: {
-        bool willNeedGetTypedArrayLengthAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+        bool mayBeLargeTypedArray = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
 #if !USE(LARGE_TYPED_ARRAYS)
-        if (willNeedGetTypedArrayLengthAsInt52)
+        if (mayBeLargeTypedArray)
             return false;
 #endif
         insertChecks();
 
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
+        bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
 
         variant.structureSet().forEach([&] (Structure* structure) {
             TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             arrayType = refineTypedArrayType(arrayType, curType);
+            mayBeResizableOrGrowableSharedTypedArray |= isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells());
             ASSERT(arrayType != Array::Generic);
         });
 
-        NodeType op = willNeedGetTypedArrayLengthAsInt52 ? GetTypedArrayLengthAsInt52 : GetArrayLength;
-        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
+        NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
+        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
 
         return true;
-
     }
 
     case TypedArrayByteOffsetIntrinsic: {
-        bool willNeedGetTypedArrayByteOffsetAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+        bool mayBeLargeTypedArray = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
 #if !USE(LARGE_TYPED_ARRAYS)
-        if (willNeedGetTypedArrayByteOffsetAsInt52)
+        if (mayBeLargeTypedArray)
             return false;
 #endif
         insertChecks();
 
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
+        bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
 
         variant.structureSet().forEach([&] (Structure* structure) {
             TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             arrayType = refineTypedArrayType(arrayType, curType);
+            mayBeResizableOrGrowableSharedTypedArray |= isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells());
             ASSERT(arrayType != Array::Generic);
         });
 
-        NodeType op = willNeedGetTypedArrayByteOffsetAsInt52 ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
-        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
+        NodeType op = mayBeLargeTypedArray ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
+        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
 
         return true;
     }
@@ -4074,9 +4079,18 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     
     if (argumentCountIncludingThis != 2)
         return false;
-    
-    if (!function->globalObject()->typedArrayStructureConcurrently(type))
-        return false;
+
+    // Check both structures are already initialized.
+    {
+        constexpr bool isResizableOrGrowableShared = false;
+        if (!function->globalObject()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared))
+            return false;
+    }
+    {
+        constexpr bool isResizableOrGrowableShared = true;
+        if (!function->globalObject()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared))
+            return false;
+    }
 
     insertChecks();
     set(result,

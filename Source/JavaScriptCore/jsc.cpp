@@ -1730,7 +1730,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
     if (!isBinary)
         return JSValue::encode(jsString(vm, String::fromUTF8WithLatin1Fallback(content->data(), content->length())));
 
-    Structure* structure = globalObject->typedArrayStructure(TypeUint8);
+    Structure* structure = globalObject->typedArrayStructure(TypeUint8, content->isResizableOrGrowableShared());
     JSObject* result = JSUint8Array::create(vm, structure, WTFMove(content));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

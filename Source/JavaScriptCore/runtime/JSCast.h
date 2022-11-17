@@ -69,6 +69,8 @@ struct JSTypeRange {
 
 template<typename>
 class JSGenericTypedArrayView;
+template<typename>
+class JSGenericResizableOrGrowableSharedTypedArrayView;
 struct Int8Adaptor;
 struct Int16Adaptor;
 struct Int32Adaptor;
@@ -92,6 +94,18 @@ using JSFloat32Array = JSGenericTypedArrayView<Float32Adaptor>;
 using JSFloat64Array = JSGenericTypedArrayView<Float64Adaptor>;
 using JSBigInt64Array = JSGenericTypedArrayView<BigInt64Adaptor>;
 using JSBigUint64Array = JSGenericTypedArrayView<BigUint64Adaptor>;
+
+using JSResizableOrGrowableSharedInt8Array = JSGenericResizableOrGrowableSharedTypedArrayView<Int8Adaptor>;
+using JSResizableOrGrowableSharedInt16Array = JSGenericResizableOrGrowableSharedTypedArrayView<Int16Adaptor>;
+using JSResizableOrGrowableSharedInt32Array = JSGenericResizableOrGrowableSharedTypedArrayView<Int32Adaptor>;
+using JSResizableOrGrowableSharedUint8Array = JSGenericResizableOrGrowableSharedTypedArrayView<Uint8Adaptor>;
+using JSResizableOrGrowableSharedUint8ClampedArray = JSGenericResizableOrGrowableSharedTypedArrayView<Uint8ClampedAdaptor>;
+using JSResizableOrGrowableSharedUint16Array = JSGenericResizableOrGrowableSharedTypedArrayView<Uint16Adaptor>;
+using JSResizableOrGrowableSharedUint32Array = JSGenericResizableOrGrowableSharedTypedArrayView<Uint32Adaptor>;
+using JSResizableOrGrowableSharedFloat32Array = JSGenericResizableOrGrowableSharedTypedArrayView<Float32Adaptor>;
+using JSResizableOrGrowableSharedFloat64Array = JSGenericResizableOrGrowableSharedTypedArrayView<Float64Adaptor>;
+using JSResizableOrGrowableSharedBigInt64Array = JSGenericResizableOrGrowableSharedTypedArrayView<BigInt64Adaptor>;
+using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSharedTypedArrayView<BigUint64Adaptor>;
 
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_NON_FORWARD_DECLARED(macro) \
     /* TypedArrays are typedef, thus, we cannot use `class` forward declaration */ \

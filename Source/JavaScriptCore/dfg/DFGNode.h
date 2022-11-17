@@ -2321,6 +2321,8 @@ public:
         case GetIndexedPropertyStorage:
         case GetArrayLength:
         case GetTypedArrayLengthAsInt52:
+        case GetTypedArrayByteOffset:
+        case GetTypedArrayByteOffsetAsInt52:
         case GetVectorLength:
         case InByVal:
         case PutByValDirect:

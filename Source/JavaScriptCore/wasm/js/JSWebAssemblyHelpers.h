@@ -31,6 +31,7 @@
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValue.h"
+#include "JSDataView.h"
 #include "JSSourceCode.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "WasmFormat.h"
@@ -79,10 +80,20 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalO
         return { nullptr, 0 };
     }
 
-    if (arrayBufferView ? arrayBufferView->isDetached() : arrayBuffer->impl()->isDetached()) {
-        throwException(globalObject, throwScope, createTypeError(globalObject,
-            "underlying TypedArray has been detatched from the ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(value)));
-        return { nullptr, 0 };
+    if (arrayBufferView) {
+        if (isTypedArrayType(arrayBufferView->type())) {
+            validateTypedArray(globalObject, arrayBufferView);
+            RETURN_IF_EXCEPTION(throwScope, { });
+        } else {
+            IdempotentArrayBufferByteLengthGetter<std::memory_order_relaxed> getter;
+            if (UNLIKELY(!jsCast<JSDataView*>(arrayBufferView)->viewByteLength(getter))) {
+                throwTypeError(globalObject, throwScope, typedArrayBufferHasBeenDetachedErrorMessage);
+                return { };
+            }
+        }
+    } else if (arrayBuffer->impl()->isDetached()) {
+        throwTypeError(globalObject, throwScope, typedArrayBufferHasBeenDetachedErrorMessage);
+        return { };
     }
 
     uint8_t* base = arrayBufferView ? static_cast<uint8_t*>(arrayBufferView->vector()) : static_cast<uint8_t*>(arrayBuffer->impl()->data());

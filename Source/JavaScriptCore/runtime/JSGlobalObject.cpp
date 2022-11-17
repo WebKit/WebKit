@@ -925,6 +925,12 @@ void JSGlobalObject::init(VM& vm)
             init.setPrototype(JS ## type ## ArrayPrototype::create(init.vm, init.global, JS ## type ## ArrayPrototype::createStructure(init.vm, init.global, init.global->m_typedArrayProto.get(init.global)))); \
             init.setStructure(JS ## type ## Array::createStructure(init.vm, init.global, init.prototype)); \
             init.setConstructor(JS ## type ## ArrayConstructor::create(init.vm, init.global, JS ## type ## ArrayConstructor::createStructure(init.vm, init.global, init.global->m_typedArraySuperConstructor.get(init.global)), init.prototype, #type "Array"_s)); \
+            init.global->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ true); /* Initialize resizable Structure too */ \
+        }); \
+    m_resizableOrGrowableSharedTypedArray ## type ## Structure.initLater( \
+        [] (const Initializer<Structure>& init) { \
+            init.set(JSResizableOrGrowableShared ## type ## Array::createStructure(init.vm, init.owner, init.owner->typedArrayPrototype(Type##type))); \
+            init.owner->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ false); /* Initialize non-resizable Structure too */ \
         }); \
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::type##Array)].initLater([](const Initializer<JSCell>& init) { \
             init.set(jsCast<JSGlobalObject*>(init.owner)->typedArrayConstructor(TypedArrayType::Type##type)); \
@@ -937,8 +943,14 @@ void JSGlobalObject::init(VM& vm)
             init.setPrototype(JSDataViewPrototype::create(init.vm, JSDataViewPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get())));
             init.setStructure(JSDataView::createStructure(init.vm, init.global, init.prototype));
             init.setConstructor(JSDataViewConstructor::create(init.vm, init.global, JSDataViewConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), init.prototype, "DataView"_s));
+            init.global->typedArrayStructure(TypeDataView, /* isResizableOrGrowableShared */ true); /* Initialize resizable Structure too */
         });
-    
+    m_resizableOrGrowableSharedTypedArrayDataViewStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(JSResizableOrGrowableSharedDataView::createStructure(init.vm, init.owner, init.owner->typedArrayPrototype(TypeDataView)));
+            init.owner->typedArrayStructure(TypeDataView, /* isResizableOrGrowableShared */ false); /* Initialize non-resizable Structure too */
+        });
+
     m_lexicalEnvironmentStructure.set(vm, this, JSLexicalEnvironment::createStructure(vm, this));
     m_moduleEnvironmentStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -2518,8 +2530,10 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 #undef VISIT_SIMPLE_TYPE
 #undef VISIT_LAZY_TYPE
 
-    for (unsigned i = NumberOfTypedArrayTypes; i--;)
+    for (unsigned i = NumberOfTypedArrayTypes; i--;) {
         thisObject->lazyTypedArrayStructure(indexToTypedArrayType(i)).visit(visitor);
+        thisObject->lazyResizableOrGrowableSharedTypedArrayStructure(indexToTypedArrayType(i)).visit(visitor);
+    }
     
     visitor.append(thisObject->m_speciesGetterSetter);
     thisObject->m_typedArrayProto.visit(visitor);

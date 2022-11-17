@@ -1218,8 +1218,8 @@ void AccessCase::generateWithGuard(
 
         GPRReg propertyGPR = stubInfo.propertyGPR();
 
-        jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
-        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
+        fallThrough.append(jit.branch8(CCallHelpers::NotEqual, CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
+        fallThrough.append(jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), CCallHelpers::TrustedImm32(isResizableOrGrowableSharedMode)));
 
         CCallHelpers::Address addressOfLength = CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength());
         jit.signExtend32ToPtr(propertyGPR, scratchGPR);
@@ -1237,9 +1237,9 @@ void AccessCase::generateWithGuard(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
+        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
 #else
-        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
+        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
 #endif
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
@@ -1625,8 +1625,8 @@ void AccessCase::generateWithGuard(
 
         GPRReg propertyGPR = stubInfo.propertyGPR();
 
-        jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
-        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
+        fallThrough.append(jit.branch8(CCallHelpers::NotEqual, CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
+        fallThrough.append(jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), CCallHelpers::TrustedImm32(isResizableOrGrowableSharedMode)));
 
         if (isInt(type))
             state.failAndRepatch.append(jit.branchIfNotInt32(valueRegs));
@@ -1663,9 +1663,9 @@ void AccessCase::generateWithGuard(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
+        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
 #else
-        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMaxByteLength()), scratchGPR);
+        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
 #endif
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);

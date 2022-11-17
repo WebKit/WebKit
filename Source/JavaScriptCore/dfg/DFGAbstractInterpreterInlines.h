@@ -3032,23 +3032,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecArray);
         break;
         
-    case NewTypedArray:
+    case NewTypedArray: {
         switch (node->child1().useKind()) {
         case Int32Use:
-        case Int52RepUse:
+        case Int52RepUse: {
+            bool isResizableOrGrowableShared = false;
+            setForNode(node, m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType(), isResizableOrGrowableShared));
             break;
-        case UntypedUse:
+        }
+        case UntypedUse: {
             clobberWorld();
+            RegisteredStructureSet structureSet;
+            structureSet.add(m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType(), true)));
+            structureSet.add(m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType(), false)));
+            setForNode(node, structureSet);
             break;
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        setForNode(node, 
-            m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(
-                node->typedArrayType()));
         break;
-        
+    }
+
     case NewRegexp:
         setForNode(node, m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
         break;
@@ -3592,7 +3598,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetArrayLength: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(
             forNode(node->child1()).m_value, node->arrayMode());
-        if (view && isInBounds<int32_t>(view->length())) {
+        if (view && !view->isResizableOrGrowableShared() && isInBounds<int32_t>(view->length())) {
             setConstant(node, jsNumber(view->length()));
             break;
         }
@@ -3603,7 +3609,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetTypedArrayLengthAsInt52: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(
             forNode(node->child1()).m_value, node->arrayMode());
-        if (view) {
+        if (view && !view->isResizableOrGrowableShared()) {
             setConstant(node, jsNumber(view->length()));
             break;
         }
@@ -3952,10 +3958,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetTypedArrayByteOffset: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
-        if (view) {
-            std::optional<size_t> byteOffset = view->byteOffsetConcurrently();
-            if (byteOffset && isInBounds<int32_t>(byteOffset)) {
-                setConstant(node, jsNumber(*byteOffset));
+        if (view && !view->isResizableOrGrowableShared()) {
+            size_t byteOffset = view->byteOffset();
+            if (isInBounds<int32_t>(byteOffset)) {
+                setConstant(node, jsNumber(byteOffset));
                 break;
             }
         }
@@ -3965,12 +3971,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case GetTypedArrayByteOffsetAsInt52: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
-        if (view) {
-            std::optional<size_t> byteOffset = view->byteOffsetConcurrently();
-            if (byteOffset) {
-                setConstant(node, jsNumber(*byteOffset));
-                break;
-            }
+        if (view && !view->isResizableOrGrowableShared()) {
+            size_t byteOffset = view->byteOffset();
+            setConstant(node, jsNumber(byteOffset));
+            break;
         }
         setNonCellTypeForNode(node, SpecInt52Any);
         break;

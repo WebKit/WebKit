@@ -66,7 +66,7 @@ function shouldThrow(func, errorMessage) {
 
     shouldThrow(() => {
         Uint32Array.from(a0);
-    }, `TypeError: Underlying ArrayBuffer has been detached from the view`);
+    }, `TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds`);
 }
 
 Uint8Array.prototype.__proto__[Symbol.iterator] = function *() {

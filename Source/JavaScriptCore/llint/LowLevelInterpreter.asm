@@ -1367,13 +1367,13 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     end
 
     loadp JSArrayBufferView::m_vector[base], t3
-    # maxByteLength and scratch are intentionally undefined on this branch because they are not used on other platforms.
+    # length and scratch are intentionally undefined on this branch because they are not used on other platforms.
     if ARM64E
-        const maxByteLength = t6
+        const length = t6
         const scratch = t7
-        loadq JSArrayBufferView::m_maxByteLength[base], maxByteLength
+        loadq JSArrayBufferView::m_length[base], length
     end
-    cagedPrimitive(t3, maxByteLength, base, scratch)
+    cagedPrimitive(t3, length, base, scratch)
 
     # Now bisect through the various types:
     #    Int8ArrayType,

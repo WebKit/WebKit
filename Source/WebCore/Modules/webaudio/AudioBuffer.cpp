@@ -161,7 +161,8 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 
     auto& channelData = m_channels[channelIndex];
     auto constructJSArray = [&] {
-        return JSC::JSFloat32Array::create(globalObject.vm(), globalObject.typedArrayStructure(JSC::TypeFloat32), channelData.copyRef());
+        constexpr bool isResizableOrGrowableShared = false;
+        return JSC::JSFloat32Array::create(globalObject.vm(), globalObject.typedArrayStructure(JSC::TypeFloat32, isResizableOrGrowableShared), channelData.copyRef());
     };
 
     if (globalObject.worldIsNormal()) {

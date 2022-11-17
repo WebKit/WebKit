@@ -26,6 +26,6 @@ shouldThrow(() => {
         ++count;
         $.detachArrayBuffer(array.buffer);
     }
-}, `TypeError: Underlying ArrayBuffer has been detached from the view`);
+}, `TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds`);
 
 shouldBe(count, 1);

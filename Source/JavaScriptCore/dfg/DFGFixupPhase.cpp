@@ -2231,11 +2231,27 @@ private:
         }
 
         case GetTypedArrayByteOffsetAsInt52: {
+            ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
+            if (arrayMode.type() == Array::Generic)
+                arrayMode = arrayMode.withType(Array::ForceExit);
+            DFG_ASSERT(m_graph, node, arrayMode.isSomeTypedArrayView() || arrayMode.type() == Array::ForceExit);
+            node->setArrayMode(arrayMode);
+            Edge unusedEdge;
+            blessArrayOperation(node->child1(), Edge(), unusedEdge, neverNeedsStorage);
+
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
 
         case GetTypedArrayByteOffset: {
+            ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
+            if (arrayMode.type() == Array::Generic)
+                arrayMode = arrayMode.withType(Array::ForceExit);
+            DFG_ASSERT(m_graph, node, arrayMode.isSomeTypedArrayView() || arrayMode.type() == Array::ForceExit);
+            node->setArrayMode(arrayMode);
+            Edge unusedEdge;
+            blessArrayOperation(node->child1(), Edge(), unusedEdge, neverNeedsStorage);
+
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
