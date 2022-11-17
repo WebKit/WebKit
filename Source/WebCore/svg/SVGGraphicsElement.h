@@ -48,7 +48,8 @@ public:
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const override { return SVGTransformable::localCoordinateSpaceTransform(mode); }
     AffineTransform animatedLocalTransform() const override;
-    AffineTransform* supplementalTransform() override;
+    AffineTransform* ensureSupplementalTransform() override;
+    AffineTransform* supplementalTransform() const override { return m_supplementalTransform.get(); }
 
     virtual bool hasTransformRelatedAttributes() const { return !transform().concatenate().isIdentity() || m_supplementalTransform; }
 

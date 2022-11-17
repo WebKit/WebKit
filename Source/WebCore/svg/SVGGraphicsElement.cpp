@@ -122,7 +122,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     return matrix;
 }
 
-AffineTransform* SVGGraphicsElement::supplementalTransform()
+AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
 {
     if (!m_supplementalTransform)
         m_supplementalTransform = makeUnique<AffineTransform>();
@@ -209,7 +209,7 @@ void SVGGraphicsElement::didAttachRenderers()
 
 Path SVGGraphicsElement::toClipPath()
 {
-    // FIXME: [LBSE] Stop mutating the path here.
+    // FIXME: [LBSE] Stop mutating the path here and stop calling animatedLocalTransform().
     Path path = pathFromGraphicsElement(this);
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());
