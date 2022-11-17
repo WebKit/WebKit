@@ -2124,7 +2124,6 @@ webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-consecutive-confirmat
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-rejection.html [ Pass Timeout ]
 webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Failure Timeout ]
 
-webkit.org/b/245691 fast/events/ios/rotation/orientationchange-event-listener-on.body.html [ Pass Timeout Failure ]
 webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]
 
 webkit.org/b/231623 [ Debug ] fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html [ Pass Timeout ]
