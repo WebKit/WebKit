@@ -80,6 +80,10 @@
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if PLATFORM(MAC)
+#import <WebCore/RuntimeApplicationChecks.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -516,8 +520,20 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     if (delegateHasWebpagePreferences) {
         if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)
             [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
-        else
-            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+        else {
+            id<NSSecureCoding> userInfo = nil;
+#if PLATFORM(MAC)
+            // This is only here for binary compatibility with old Safari builds.
+            // FIXME: Remove this after the next public Safari release after 11/16/22.
+            if (MacApplication::isSafari()) {
+                userInfo = @{
+                    @"CanHandleRequest":@(navigationAction->canHandleRequest()),
+                    @"isProcessingUserGesture":@(navigationAction->isProcessingUserGesture())
+                };
+            }
+#endif
+            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+        }
     } else {
         auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
             decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
