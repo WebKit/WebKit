@@ -7,7 +7,7 @@ use Getopt::Long;
 my $python;
 GetOptions("python=s" => \$python);
 
-my @command = qw(./planet/planet.py config.ini);
+my @command = qw(/bin/planet config.ini);
 unshift @command, $python if defined($python);
 
 chdir $FindBin::Bin;
