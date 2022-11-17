@@ -347,6 +347,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
         RELEASE_ASSERT(m_pageMap.isEmpty());
         RELEASE_ASSERT(!m_suspendedPageCount);
         RELEASE_ASSERT(m_provisionalPages.computesEmpty());
+        m_previouslyApprovedFilePaths.clear();
     }
 
     ASSERT(m_isInProcessCache != value);
@@ -1132,6 +1133,18 @@ void WebProcessProxy::didDestroyFrame(WebCore::FrameIdentifier frameID, WebPageP
 auto WebProcessProxy::visiblePageToken() const -> VisibleWebPageToken
 {
     return m_visiblePageCounter.count();
+}
+
+void WebProcessProxy::addPreviouslyApprovedFileURL(const URL& url)
+{
+    ASSERT(url.isLocalFile());
+    m_previouslyApprovedFilePaths.add(url.fileSystemPath());
+}
+
+bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
+{
+    ASSERT(url.isLocalFile());
+    return m_previouslyApprovedFilePaths.contains(url.fileSystemPath());
 }
 
 RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)

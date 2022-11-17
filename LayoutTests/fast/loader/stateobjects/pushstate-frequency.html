@@ -12,7 +12,7 @@ function log(msg) {
 window.onload = function() {
     try {
         for( var i = 0; i < 100000; ++i ) {
-            history.pushState(0, 0, i.toString());
+            history.pushState(0, 0, "#" + i);
             log("Successfully added item: " + i);
         }
     } catch (e) {
