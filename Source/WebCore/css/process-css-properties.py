@@ -33,6 +33,15 @@ import subprocess
 import sys
 import textwrap
 
+
+def quote_iterable(iterable, suffix=""):
+    return (f'"{x}"{suffix}' for x in iterable)
+
+
+def count_iterable(iterable):
+    return sum(1 for _ in iterable)
+
+
 class ParsingContext:
     def __init__(self, *, defines_string, parsing_for_codegen, verbose):
         if defines_string:
@@ -73,11 +82,12 @@ class Schema:
             setattr(instance, entry.key.replace("-", "_"), dictionary.get(entry.key, entry.default_value))
 
     def validate_keys(self, dictionary, *, label):
-        invalid_keys = list(filter(lambda key: key not in self.entries.keys(), dictionary.keys()))
-        if len(invalid_keys) == 1:
-            raise Exception(f"Invalid key for '{label}': {invalid_keys[0]}")
-        if len(invalid_keys) > 1:
-            raise Exception(f"Invalid keys for '{label}': {invalid_keys}")
+        invalid_keys = filter(lambda key: key not in self.entries.keys(), dictionary.keys())
+        invalid_keys_count = count_iterable(invalid_keys)
+        if invalid_keys_count == 1:
+            raise Exception(f"Invalid key for '{label}': {list(invalid_keys)[0]}")
+        if invalid_keys_count > 1:
+            raise Exception(f"Invalid keys for '{label}': {list(invalid_keys)}")
 
     def validate_types(self, dictionary, *, label):
         for key, value in dictionary.items():
@@ -645,12 +655,7 @@ class Properties:
         self.properties_by_name = {property.name: property for property in properties}
         self.logical_property_groups = {}
         self._all = None
-        self._all_with_settings_flag = None
         self._all_computed = None
-        self._all_except_internal = None
-        self._all_shorthands = None
-        self._all_non_shorthands = None
-        self._internal_only = None
         self._settings_flags = None
 
     def __str__(self):
@@ -683,71 +688,59 @@ class Properties:
 
         return properties
 
-    # Returns all of the properties. Default decreasing priority and name sorting.
+    # Returns the set of all properties. Default decreasing priority and name sorting.
     @property
     def all(self):
         if not self._all:
             self._all = sorted(self.properties, key=functools.cmp_to_key(Properties._sort_by_descending_priority_and_name))
         return self._all
 
-    # Returns the set of properties that are conditionally included depending on settings. Sorted lexically by name.
-    @property
-    def all_with_settings_flag(self):
-        # FIXME: Special sort order needed to make comparison to makeprop.pl easier, but has no use and can be dropped (remember to update comment above)
-        if not self._all_with_settings_flag:
-            self._all_with_settings_flag = sorted([property for property in self.all if property.codegen_properties.settings_flag], key=lambda property: property.name)
-        return self._all_with_settings_flag
-
-    # Returns the set of properties that are included in computed styles. Sorted lexically by name with prefixed properties last.
+    # Returns the set of all properties that are included in computed styles. Sorted lexically by name with prefixed properties last.
     @property
     def all_computed(self):
-        # FIXME: Special sort order needed to make comparison to makeprop.pl easier, but has no use and can be dropped (remember to update comment above)
         if not self._all_computed:
             self._all_computed = sorted([property for property in self.all if not property.is_skipped_from_computed_style], key=functools.cmp_to_key(Properties._sort_with_prefixed_properties_last))
         return self._all_computed
 
-    # Returns the set of properties that are NOT marked internal. Default decreasing priority and name sorting.
+    # Returns a generator for the set of properties that are conditionally included depending on settings. Default decreasing priority and name sorting.
     @property
-    def all_except_internal(self):
-        if not self._all_except_internal:
-            self._all_except_internal = [property for property in self.all if not property.codegen_properties.internal_only]
-        return self._all_except_internal
+    def all_with_settings_flag(self):
+        return (property for property in self.all if property.codegen_properties.settings_flag)
 
-    # Returns the set of properties that are direction-aware (aka flow-sensative). Sorted first by property group name and then by property name.
+    # Returns a generator for the set of properties that are marked internal-only. Default decreasing priority and name sorting.
+    @property
+    def all_internal_only(self):
+        return (property for property in self.all if property.codegen_properties.internal_only)
+
+    # Returns a generator for the set properties that are NOT marked internal. Default decreasing priority and name sorting.
+    @property
+    def all_non_internal_only(self):
+        return (property for property in self.all if not property.codegen_properties.internal_only)
+
+    # Returns a generator for the set of properties that have an associate longhand, the so-called shorthands. Default decreasing priority and name sorting.
+    @property
+    def all_shorthands(self):
+        return (property for property in self.all if property.codegen_properties.longhands)
+
+    # Returns a generator for the set of properties that do not have an associate longhand. Default decreasing priority and name sorting.
+    @property
+    def all_non_shorthands(self):
+        return (property for property in self.all if not property.codegen_properties.longhands)
+
+    # Returns a generator for the set of properties that are direction-aware (aka flow-sensative). Sorted first by property group name and then by property name.
     @property
     def all_direction_aware_properties(self):
         for group_name, property_group in sorted(self.logical_property_groups.items(), key=lambda x: x[0]):
             for resolver, property in sorted(property_group["logical"].items(), key=lambda x: x[1].name):
                 yield property
 
-    # Returns the set of properties that are in a logical property group, either logical or physical. Sorted first by property group name, then logical/physical, and then property name.
+    # Returns a generator for the set of properties that are in a logical property group, either logical or physical. Sorted first by property group name, then logical/physical, and then property name.
     @property
     def all_in_logical_property_group(self):
         for group_name, property_group in sorted(self.logical_property_groups.items(), key=lambda x: x[0]):
             for kind in ["logical", "physical"]:
                 for resolver, property in sorted(property_group[kind].items(), key=lambda x: x[1].name):
                     yield property
-
-    # Returns the set of properties that have an associate longhand, the so-called shorthands. Default decreasing priority and name sorting.
-    @property
-    def all_shorthands(self):
-        if not self._all_shorthands:
-            self._all_shorthands = [property for property in self.all if property.codegen_properties.longhands]
-        return self._all_shorthands
-
-    # Returns the set of properties that do not have an associate longhand. Default decreasing priority and name sorting.
-    @property
-    def all_non_shorthands(self):
-        if not self._all_non_shorthands:
-            self._all_non_shorthands = [property for property in self.all if not property.codegen_properties.longhands]
-        return self._all_non_shorthands
-
-    # Returns the set of properties that are marked internal-only. Sorted lexically.
-    @property
-    def internal_only(self):
-        if not self._internal_only:
-            self._internal_only = sorted([property for property in self.all if property.codegen_properties.internal_only], key=lambda property: property.name)
-        return self._internal_only
 
     # Returns the set of settings-flags used by any property. Uniqued and sorted lexically.
     @property
@@ -801,6 +794,7 @@ class Properties:
         return Properties._sort_with_prefixed_properties_last(a, b)
 
     def _sort_with_prefixed_properties_last(a, b):
+        # Sort prefixed names to the back.
         a_starts_with_prefix = a.name[0] == "-"
         b_starts_with_prefix = b.name[0] == "-"
         if a_starts_with_prefix and not b_starts_with_prefix:
@@ -808,6 +802,7 @@ class Properties:
         if not a_starts_with_prefix and b_starts_with_prefix:
             return -1
 
+        # Finally, sort by name.
         if a.name < b.name:
             return -1
         elif a.name > b.name:
@@ -816,10 +811,6 @@ class Properties:
 
 
 # GENERATION
-
-def quoted(iterable, suffix=""):
-    return [f'"{x}"{suffix}' for x in iterable]
-
 
 class GenerationContext:
     def __init__(self, properties, *, verbose, gperf_executable):
@@ -908,13 +899,13 @@ class GenerationContext:
 
             """))
 
-        all_computed_property_ids = [f"{property.id}," for property in self.properties.all_computed]
-        to.write(f"const std::array<CSSPropertyID, {len(self.properties.all_computed)}> computedPropertyIDs {{")
+        all_computed_property_ids = (f"{property.id}," for property in self.properties.all_computed)
+        to.write(f"const std::array<CSSPropertyID, {count_iterable(self.properties.all_computed)}> computedPropertyIDs {{")
         to.write("\n    ")
         to.write("\n    ".join(all_computed_property_ids))
         to.write("\n};\n\n")
 
-        all_property_name_strings = quoted(self.properties.all, "_s,")
+        all_property_name_strings = quote_iterable(self.properties.all, "_s,")
         to.write(f"constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {{")
         to.write("\n    ")
         to.write("\n    ".join(all_property_name_strings))
@@ -1046,7 +1037,7 @@ class GenerationContext:
         to.write(f'    false, // CSSPropertyID::CSSPropertyInvalid\n')
         to.write(f'    true , // CSSPropertyID::CSSPropertyCustom\n')
 
-        all_inherited_and_ids = [f'    {"true " if property.inherited else "false"}, // {property.id}' for property in self.properties.all]
+        all_inherited_and_ids = (f'    {"true " if property.inherited else "false"}, // {property.id}' for property in self.properties.all)
 
         to.write(f'\n'.join(all_inherited_and_ids))
         to.write(f'\n}};\n\n')
@@ -1089,7 +1080,7 @@ class GenerationContext:
         to.write(f"CSSPropertySettings::CSSPropertySettings(const Settings& settings)\n")
         to.write(f"    : ")
 
-        settings_initializer_list = [f"{flag} {{ settings.{flag}() }}" for flag in self.properties.settings_flags]
+        settings_initializer_list = (f"{flag} {{ settings.{flag}() }}" for flag in self.properties.settings_flags)
         to.write(f"\n    , ".join(settings_initializer_list))
 
         to.write(f"\n{{\n")
@@ -1100,7 +1091,7 @@ class GenerationContext:
         to.write(f"{{\n")
 
         to.write(f"    return ")
-        settings_operator_equal_list = [f"a.{flag} == b.{flag}" for flag in self.properties.settings_flags]
+        settings_operator_equal_list = (f"a.{flag} == b.{flag}" for flag in self.properties.settings_flags)
         to.write(f"\n        && ".join(settings_operator_equal_list))
 
         to.write(f";\n")
@@ -1111,7 +1102,7 @@ class GenerationContext:
         to.write(f"{{\n")
         to.write(f"    unsigned bits = ")
 
-        settings_hasher_list = [f"settings.{flag} << {i}" for (i, flag) in enumerate(self.properties.settings_flags)]
+        settings_hasher_list = (f"settings.{flag} << {i}" for (i, flag) in enumerate(self.properties.settings_flags))
         to.write(f"\n        | ".join(settings_hasher_list))
 
         to.write(f";\n")
@@ -1135,7 +1126,7 @@ class GenerationContext:
             self._generate_property_id_switch_function_bool(
                 to=output_file,
                 signature="bool isInternal(CSSPropertyID id)",
-                properties=self.properties.internal_only
+                properties=self.properties.all_internal_only
             )
 
             self._generate_property_id_switch_function(
@@ -1175,7 +1166,7 @@ class GenerationContext:
             self._generate_property_id_switch_function(
                 to=output_file,
                 signature="CSSPropertyID relatedProperty(CSSPropertyID id)",
-                properties=[p for p in self.properties.all if p.codegen_properties.related_property],
+                properties=(p for p in self.properties.all if p.codegen_properties.related_property),
                 mapping=lambda p: f"return {p.codegen_properties.related_property.id};",
                 default="return CSSPropertyID::CSSPropertyInvalid;"
             )
@@ -1183,22 +1174,21 @@ class GenerationContext:
             self._generate_property_id_switch_function(
                 to=output_file,
                 signature="Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)",
-                properties=[p for p in self.properties.all if p.codegen_properties.aliases],
-                mapping=lambda p: f"return {{ {', '.join(quoted(p.codegen_properties.aliases, '_s'))} }};",
+                properties=(p for p in self.properties.all if p.codegen_properties.aliases),
+                mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, '_s'))} }};",
                 default="return { };"
             )
 
             self._generate_property_id_switch_function_bool(
                 to=output_file,
                 signature="bool CSSProperty::isColorProperty(CSSPropertyID id)",
-                properties=[p for p in self.properties.all if p.codegen_properties.color_property]
+                properties=(p for p in self.properties.all if p.codegen_properties.color_property)
             )
 
             self._generate_property_id_switch_function(
                 to=output_file,
                 signature="UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
-                # FIXME: Special sort order needed to make comparison to makeprop.pl easier, but has no use and can be dropped.
-                properties=sorted([p for p in self.properties.all if p.codegen_properties.separator], key=lambda property: property.name),
+                properties=(p for p in self.properties.all if p.codegen_properties.separator),
                 mapping=lambda p: f"return '{ p.codegen_properties.separator[0] }';",
                 default="break;",
                 epilogue="return '\\0';"
@@ -1239,7 +1229,7 @@ class GenerationContext:
             self._generate_property_id_switch_function_bool(
                 to=output_file,
                 signature="bool CSSProperty::isDescriptorOnly(CSSPropertyID id)",
-                properties=[p for p in self.properties.all if p.codegen_properties.descriptor_only]
+                properties=(p for p in self.properties.all if p.codegen_properties.descriptor_only)
             )
 
             self._generate_css_property_settings_constructor(
@@ -1341,13 +1331,13 @@ class GenerationContext:
         to.write(f"constexpr auto lastShorthandProperty = {last_shorthand_property.id};\n")
         to.write(f"constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;\n\n")
 
-        to.write(f"extern const std::array<CSSPropertyID, {len(self.properties.all_computed)}> computedPropertyIDs;\n\n")
+        to.write(f"extern const std::array<CSSPropertyID, {count_iterable(self.properties.all_computed)}> computedPropertyIDs;\n\n")
 
     def _generate_css_property_names_h_property_settings(self, *, to):
         to.write(f"struct CSSPropertySettings {{\n")
         to.write(f"    WTF_MAKE_STRUCT_FAST_ALLOCATED;\n")
 
-        settings_variable_declarations = [f"    bool {flag} {{ false }};\n" for flag in self.properties.settings_flags]
+        settings_variable_declarations = (f"    bool {flag} {{ false }};\n" for flag in self.properties.settings_flags)
         to.write("".join(settings_variable_declarations))
 
         to.write(f"    CSSPropertySettings() = default;\n")
@@ -1507,7 +1497,7 @@ class GenerationContext:
         with open('CSSStyleDeclaration+PropertyNames.idl', 'w') as output_file:
 
             name_or_alias_to_property = {}
-            for property in self.properties.all_except_internal:
+            for property in self.properties.all_non_internal_only:
                 name_or_alias_to_property[property.name] = property
                 for alias in property.aliases:
                     name_or_alias_to_property[alias] = property
@@ -1620,25 +1610,21 @@ class GenerationContext:
         to.write(f"            builderState.style().setVisitedLink{property.name_for_methods}(RenderStyle::{property.codegen_properties.initial}());\n")
 
     def _generate_color_property_inherit_value_setter(self, to, property):
-        # FIXME: 'color' variable is only needed in order to make comparison to makeprop.pl easier. It can be inlined when that is no longer useful.
-        to.write(f"        auto color = builderState.parentStyle().{property.codegen_properties.getter}();\n")
         to.write(f"        if (builderState.applyPropertyToRegularStyle())\n")
-        to.write(f"            builderState.style().{property.codegen_properties.setter}(color);\n")
+        to.write(f"            builderState.style().{property.codegen_properties.setter}(builderState.parentStyle().{property.codegen_properties.getter}());\n")
         to.write(f"        if (builderState.applyPropertyToVisitedLinkStyle())\n")
-        to.write(f"            builderState.style().setVisitedLink{property.name_for_methods}(color);\n")
+        to.write(f"            builderState.style().setVisitedLink{property.name_for_methods}(builderState.parentStyle().{property.codegen_properties.getter}());\n")
 
     def _generate_color_property_value_setter(self, to, property, value):
-        # FIXME: 'primitiveValue' variable is only needed in order to make comparison to makeprop.pl easier. It can be inlined when that is no longer useful.
-        to.write(f"        auto& primitiveValue = {value};\n")
         to.write(f"        if (builderState.applyPropertyToRegularStyle())\n")
-        to.write(f"            builderState.style().{property.codegen_properties.setter}(builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::No));\n")
+        to.write(f"            builderState.style().{property.codegen_properties.setter}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::No));\n")
         to.write(f"        if (builderState.applyPropertyToVisitedLinkStyle())\n")
-        to.write(f"            builderState.style().setVisitedLink{property.name_for_methods}(builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::Yes));\n")
+        to.write(f"            builderState.style().setVisitedLink{property.name_for_methods}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::Yes));\n")
 
     # Animation property setters.
 
     def _generate_animation_property_initial_value_setter(self, to, property):
-        to.write(f"        AnimationList& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();\n")
+        to.write(f"        auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();\n")
         to.write(f"        if (list.isEmpty())\n")
         to.write(f"            list.append(Animation::create());\n")
         to.write(f"        list.animation(0).{property.codegen_properties.setter}(Animation::{property.codegen_properties.initial}());\n")
@@ -1659,10 +1645,10 @@ class GenerationContext:
         to.write(f"            list.animation(i).clear{property.name_for_methods}();\n")
 
     def _generate_animation_property_value_setter(self, to, property):
-        to.write(f"        AnimationList& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();\n")
+        to.write(f"        auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();\n")
         to.write(f"        size_t childIndex = 0;\n")
         to.write(f"        if (is<CSSValueList>(value)) {{\n")
-        to.write(f"            /* Walk each value and put it into an animation, creating new animations as needed. */\n")
+        to.write(f"            // Walk each value and put it into an animation, creating new animations as needed.\n")
         to.write(f"            for (auto& currentValue : downcast<CSSValueList>(value)) {{\n")
         to.write(f"                if (childIndex <= list.size())\n")
         to.write(f"                    list.append(Animation::create());\n")
@@ -1676,7 +1662,7 @@ class GenerationContext:
         to.write(f"            childIndex = 1;\n")
         to.write(f"        }}\n")
         to.write(f"        for ( ; childIndex < list.size(); ++childIndex) {{\n")
-        to.write(f"            /* Reset all remaining animations to not have the property set. */\n")
+        to.write(f"            // Reset all remaining animations to not have the property set.\n")
         to.write(f"            list.animation(childIndex).clear{property.name_for_methods}();\n")
         to.write(f"        }}\n")
 
