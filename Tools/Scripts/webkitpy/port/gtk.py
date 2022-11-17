@@ -192,7 +192,7 @@ class GtkPort(GLibPort):
 
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
-        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False)
+        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=self.setup_environ_for_minibrowser())
 
     @memoized
     def _is_gtk4_build(self):
