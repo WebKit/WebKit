@@ -1084,6 +1084,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     auto resetMessageBody = adoptWK(WKMutableDictionaryCreate());
 
+    setValue(resetMessageBody, "ResetStage", resetStage == ResetStage::AfterTest ? "AfterTest" : "BeforeTest");
+
     setValue(resetMessageBody, "ShouldGC", m_gcBetweenTests);
 
     auto allowedHostsValue = adoptWK(WKMutableArrayCreate());
@@ -1095,8 +1097,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     if (!jscOptions.empty())
         setValue(resetMessageBody, "JSCOptions", jscOptions.c_str());
 
-    if (resetStage == ResetStage::AfterTest)
-        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
 
     WKContextSetShouldUseFontSmoothingForTesting(TestController::singleton().context(), false);
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
