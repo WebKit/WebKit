@@ -515,12 +515,6 @@
                       "workernames": ["gtk-linux-bot-21"]
                     },
                     {
-                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
-                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-bubblewrap-sandbox"],
-                      "workernames": ["gtk-linux-bot-16"]
-                    },
-                    {
                       "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-bubblewrap-sandbox"],
@@ -630,12 +624,6 @@
                       "name": "WPE-Linux-64-bit-Debug-JS-Tests", "factory": "TestJSFactory",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "workernames": ["wpe-linux-bot-6"]
-                    },
-                    {
-                      "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
-                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
-                      "workernames": ["wpe-linux-bot-7"]
                     },
                     {
                       "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
@@ -886,8 +874,8 @@
                     },
                     { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                       "branch": "main", "hour": 22, "minute": 0,
-                      "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
-                                       "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004"]
+                      "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
+                                       "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004"]
                     }
                   ]
 }
