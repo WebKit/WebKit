@@ -3678,6 +3678,7 @@ http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
 
 # Crashing in a system framework rdar://102159271
 fast/forms/ios/file-upload-panel-capture.html [ Skip ]
+fast/forms/ios/file-upload-panel.html [ Skip ]
 
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
