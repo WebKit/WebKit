@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-play-while-not-in-dom</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        window.video = document.createElement('video');
+        let keys = await startEME({video: video, capabilities: [{
+            initDataTypes: ['sinf'],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]});
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        consoleWrite('Created mediaSource');
+        await waitFor(mediaSource, 'sourceopen');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Video Header');
+
+        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, 'video/mp4', 'content/elementary-stream-video-header-keyid-2.m4v');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Video Payload');
+
+        await fetchAndAppend(sourceBuffer, 'content/elementary-stream-video-payload.m4v');
+
+        run('video.play()');
+        await waitForEventWithTimeout(video, 'playing', 10000, 'Did not play in time');
+    }
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -785,6 +785,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 {
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     return isCopyDisplayedPixelBufferAvailable() && [&] {
+        if (m_mediaSourcePrivate && anyOf(m_mediaSourcePrivate->sourceBuffers(), [] (auto& sourceBuffer) {
+            return sourceBuffer->needsVideoLayer();
+        }))
+            return true;
         if (m_sampleBufferDisplayLayer)
             return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
         return !m_player->playerContentBoxRect().isEmpty();
@@ -1240,6 +1244,11 @@ const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTyp
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldCheckHardwareSupport() const
 {
     return m_player->shouldCheckHardwareSupport();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::needsVideoLayerChanged()
+{
+    updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
