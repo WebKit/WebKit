@@ -56,6 +56,7 @@ class Tracker(GenericTracker):
         'already_exists': 'Another resource has the same value as this field. This can happen in resources that must have some unique key (such as label names).',
         'unprocessable': 'The inputs provided were invalid.'
     }
+    NAME = 'GitHub Issue'
 
 
     class Encoder(GenericTracker.Encoder):

@@ -354,18 +354,26 @@ class PullRequest(Command):
         remote_repo = repository.remote(name=source_remote)
         if isinstance(remote_repo, remote.GitHub):
             if issue and issue.redacted and args.remote is None:
-                print("Your issue is redacted, diverting to a secure, non-origin remote you have access to.")
+                print('{} is considered the primary issue for your pull request'.format(issue.link))
+                print("{} {}".format(issue.link, issue.redacted))
+                print("Pull request needs to be sent to a secure remote for review")
                 original_remote = source_remote
                 if len(repository.source_remotes()) < 2:
-                    print("Error. You do not have access to a secure, non-origin remote")
+                    sys.stderr.write("Error. You do not have access to a secure remote to make a pull request for a redacted issue\n")
                     if args.defaults or Terminal.choose(
                         "Would you like to proceed anyways? \n",
                         default='No',
                     ) == 'No':
-                        sys.stderr.write("Failed to create pull request due to non-suitable remote\n")
+                        sys.stderr.write("Failed to create pull request due to unsuitable remote\n")
                         return 1
                 else:
                     source_remote = repository.source_remotes()[1]
+                    if args.defaults or Terminal.choose(
+                        "Would you like to make a pull request against '{}' instead of '{}'? \n".format(source_remote, original_remote),
+                        default='Yes',
+                    ) == 'No':
+                        sys.stderr.write("User declined to create a pull request against the secure remote '{}'\n".format(source_remote))
+                        return 1
                     remote_repo = repository.remote(name=source_remote)
                     print("Making PR against '{}' instead of '{}'".format(source_remote, original_remote))
             target = 'fork' if source_remote == repository.default_remote else '{}-fork'.format(source_remote)

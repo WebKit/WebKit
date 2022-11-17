@@ -813,15 +813,16 @@ No pre-PR checks to run""")
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/1'\n"
-            "Your issue is redacted, diverting to a secure, non-origin remote you have access to.\n"
-            "Error. You do not have access to a secure, non-origin remote\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 is considered the primary issue for your pull request\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 is a Bugzilla and is thus redacted\n"
+            "Pull request needs to be sent to a secure remote for review\n"
             "Would you like to proceed anyways? \n"
             " (Yes/[No]): \n"
             "Created 'PR 1 | Example issue 1'!\n"
             "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
-        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), 'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
