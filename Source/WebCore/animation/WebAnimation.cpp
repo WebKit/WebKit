@@ -739,7 +739,14 @@ void WebAnimation::cancel()
         //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
         //    scheduled event time is an unresolved time value.
         // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, m_timeline ? m_timeline->currentTime() : std::nullopt);
+        auto scheduledTime = [&]() -> std::optional<Seconds> {
+            if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+                if (auto currentTime = documentTimeline->currentTime())
+                    return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
+            }
+            return std::nullopt;
+        }();
+        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, scheduledTime);
     }
 
     // 2. Make animation's hold time unresolved.
@@ -762,9 +769,10 @@ void WebAnimation::willChangeRenderer()
         keyframeEffect->willChangeRenderer();
 }
 
-void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
+void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> scheduledTime)
 {
-    auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime, this);
+    auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
+    auto event = AnimationPlaybackEvent::create(type, this, timelineTime, scheduledTime, currentTime);
     event->setTarget(Ref { *this });
     enqueueAnimationEvent(WTFMove(event));
 }
@@ -993,8 +1001,14 @@ void WebAnimation::finishNotificationSteps()
     //    queue along with its target, animation. For the scheduled event time, use the result of converting animation's target
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
-    enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), m_timeline ? m_timeline->currentTime() : std::nullopt);
-
+    auto scheduledTime = [&]() -> std::optional<Seconds> {
+        if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+            if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
+                return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
+        }
+        return std::nullopt;
+    }();
+    enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), scheduledTime);
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get())) {
         if (RefPtr target = keyframeEffect->target()) {
             if (auto* page = target->document().page())
@@ -1625,6 +1639,22 @@ Seconds WebAnimation::timeToNextTick() const
 
     ASSERT(effect());
     return effect()->timeToNextTick(effect()->getBasicTiming()) / playbackRate;
+}
+
+std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds animationTime) const
+{
+    // https://drafts.csswg.org/web-animations-1/#animation-time-to-timeline-time
+    // To convert an animation time to timeline time a time value, time, that is relative to the start time
+    // of an animation, animation, perform the following steps:
+    //
+    // 1. If time is unresolved, return time.
+    // 2. If time is infinity, return an unresolved time value.
+    // 3. If animation's playback rate is zero, return an unresolved time value.
+    // 4. If animation's start time is unresolved, return an unresolved time value.
+    if (!m_playbackRate || !m_startTime || animationTime == Seconds::infinity())
+        return std::nullopt;
+    // 5. Return the result of calculating: time × (1 / playback rate) + start time (where playback rate and start time are the playback rate and start time of animation, respectively).
+    return animationTime * (1 / m_playbackRate) + *m_startTime;
 }
 
 } // namespace WebCore

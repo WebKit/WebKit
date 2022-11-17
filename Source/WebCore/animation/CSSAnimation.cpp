@@ -281,9 +281,9 @@ void CSSAnimation::updateKeyframesIfNeeded(const RenderStyle* oldStyle, const Re
         keyframeEffect.computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
 }
 
-Ref<AnimationEventBase> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime)
+Ref<AnimationEventBase> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
 {
-    return AnimationEvent::create(eventType, m_animationName, elapsedTime, pseudoId, timelineTime, this);
+    return AnimationEvent::create(eventType, this, elapsedTime, m_animationName, pseudoId);
 }
 
 } // namespace WebCore

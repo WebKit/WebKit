@@ -192,10 +192,7 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
 
     // 6. Perform a stable sort of the animation events in events to dispatch as follows.
     std::stable_sort(events.begin(), events.end(), [] (const Ref<AnimationEventBase>& lhs, const Ref<AnimationEventBase>& rhs) {
-        // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
-        // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
-        // 2. Within events with equal scheduled event times, sort by their composite order. FIXME: Need to do this.
-        return lhs->timelineTime() < rhs->timelineTime();
+        return compareAnimationEventsByCompositeOrder(lhs.get(), rhs.get());
     });
 
     // 7. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.

@@ -144,12 +144,14 @@ public:
     bool isSuspended() const { return m_isSuspended; }
     bool isReplaceable() const;
     void remove();
-    void enqueueAnimationPlaybackEvent(const AtomString&, std::optional<Seconds>, std::optional<Seconds>);
+    void enqueueAnimationPlaybackEvent(const AtomString&, std::optional<Seconds> currentTime, std::optional<Seconds> scheduledTime);
 
     uint64_t globalPosition() const { return m_globalPosition; }
     void setGlobalPosition(uint64_t globalPosition) { m_globalPosition = globalPosition; }
 
     virtual bool canHaveGlobalPosition() { return true; }
+
+    std::optional<Seconds> convertAnimationTimeToTimelineTime(Seconds) const;
 
     // ContextDestructionObserver.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
