@@ -3714,6 +3714,10 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
 
     // Traverse the ancestor chain to find the rootmost element that has invalid computed style.
     auto* rootmostInvalidElement = [&]() -> const Element* {
+        // In ResolveComputedStyleMode::RenderedOnly case we check for display:none ancestors.
+        if (mode == ResolveComputedStyleMode::Normal && !document().hasPendingStyleRecalc() && existingComputedStyle())
+            return nullptr;
+
         if (document().hasPendingFullStyleRebuild())
             return document().documentElement();
 
@@ -3765,6 +3769,16 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         auto style = document().styleForElementIgnoringPendingStylesheets(*element, computedStyle);
         computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
+        if (auto* existing = rareData.computedStyle()) {
+            auto change = Style::determineChange(*existing, *style);
+            if (change > Style::Change::NonInherited) {
+                for (auto& child : composedTreeChildren(*element)) {
+                    if (!is<Element>(child))
+                        continue;
+                    downcast<Element>(child).setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+                }
+            }
+        }
         rareData.setComputedStyle(WTFMove(style));
         element->clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
         if (hadDisplayContents && computedStyle->display() != DisplayType::Contents)
@@ -3825,6 +3839,7 @@ const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     if (PseudoElement* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementSpecifier))
         return pseudoElement->computedStyle();
 
+    // FIXME: This should call resolveComputedStyle() unconditionally so we check if the style is valid.
     auto* style = existingComputedStyle();
     if (!style)
         style = resolveComputedStyle();
@@ -3836,6 +3851,15 @@ const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     }
 
     return style;
+}
+
+// FIXME: The caller should be able to just use computedStyle().
+const RenderStyle* Element::computedStyleForEditability()
+{
+    if (!isConnected())
+        return nullptr;
+
+    return resolveComputedStyle();
 }
 
 bool Element::needsStyleInvalidation() const
