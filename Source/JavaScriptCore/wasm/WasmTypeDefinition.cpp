@@ -180,6 +180,35 @@ void Subtype::dump(PrintStream& out) const
     out.print(")");
 }
 
+void TypeDefinition::cleanup()
+{
+    // Only compound type definitions need to be cleaned up, not, e.g., function types.
+    if (is<Subtype>())
+        return as<Subtype>()->cleanup();
+    if (is<Projection>())
+        return as<Projection>()->cleanup();
+    if (is<RecursionGroup>())
+        return as<RecursionGroup>()->cleanup();
+}
+
+void Subtype::cleanup()
+{
+    TypeInformation::get(superType()).deref();
+    TypeInformation::get(underlyingType()).deref();
+}
+
+void Projection::cleanup()
+{
+    if (recursionGroup() != TypeDefinition::invalidIndex)
+        TypeInformation::get(recursionGroup()).deref();
+}
+
+void RecursionGroup::cleanup()
+{
+    for (RecursionGroupCount i = 0; i < typeCount(); i++)
+        TypeInformation::get(type(i)).deref();
+}
+
 static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes, size_t argumentCount, const Type* argumentTypes)
 {
     unsigned accumulator = 0xa1bcedd8u;
@@ -645,8 +674,10 @@ struct RecursionGroupParameterTypes {
         RELEASE_ASSERT(signature);
 
         RecursionGroup* recursionGroup = signature->as<RecursionGroup>();
-        for (unsigned i = 0; i < params.types.size(); ++i)
+        for (unsigned i = 0; i < params.types.size(); ++i) {
+            TypeInformation::get(params.types[i]).ref();
             recursionGroup->getType(i) = params.types[i];
+        }
 
         entry.key = WTFMove(signature);
     }
@@ -679,6 +710,10 @@ struct ProjectionParameterTypes {
         RELEASE_ASSERT(signature);
 
         Projection* projection = signature->as<Projection>();
+        // An invalid index may show up here for placeholder references, in which
+        // case we should avoid trying to resolve the type index.
+        if (params.recursionGroup != TypeDefinition::invalidIndex)
+            TypeInformation::get(params.recursionGroup).ref();
         projection->getRecursionGroup() = params.recursionGroup;
         projection->getIndex() = params.index;
 
@@ -714,6 +749,7 @@ struct SubtypeParameterTypes {
     {
         uint32_t displaySize;
         const TypeDefinition& parent = TypeInformation::get(params.superType);
+        parent.ref();
         if (parent.is<Subtype>())
             displaySize = parent.as<Subtype>()->displaySize() + 1;
         else
@@ -725,6 +761,8 @@ struct SubtypeParameterTypes {
         Subtype* subtype = signature->as<Subtype>();
         subtype->getSuperType() = params.superType;
         subtype->getUnderlyingType() = params.underlyingType;
+
+        TypeInformation::get(params.underlyingType).ref();
 
         const TypeDefinition* currentParent = &parent;
         for (uint32_t i = 0; i < displaySize; i++) {
@@ -826,7 +864,10 @@ void TypeInformation::tryCleanup()
 
     info.m_typeSet.removeIf([&] (auto& hash) {
         const auto& signature = hash.key;
-        return signature->refCount() == 1;
+        const bool shouldRemove = signature->refCount() == 1;
+        if (shouldRemove)
+            signature->cleanup();
+        return shouldRemove;
     });
 }
 
