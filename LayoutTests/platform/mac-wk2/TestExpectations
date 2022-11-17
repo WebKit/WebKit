@@ -1268,7 +1268,6 @@ fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple.
 fast/layoutformattingcontext/flow-integration-basic.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/inline-box-overlaps-multiple-lines.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/out-of-flow-html-and-body-stretches-to-viewport.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/quirk-margin-not-collapse-when-floating.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/run-expansion-extends-line-content-width.html [ ImageOnlyFailure ]
