@@ -148,7 +148,7 @@ void benchmark_stress_aligned(CommandLine&)
     
     srandom(1); // For consistency between runs.
 
-    size_t limit = 0x00001ffffffffffful;
+    uint64_t limit = 0x00001ffffffffffful;
     
     for (size_t size = 0; size < limit; size = std::max(size, sizeof(void*)) * 2) {
         for (size_t alignment = sizeof(void*); alignment < limit; alignment *= 2) {

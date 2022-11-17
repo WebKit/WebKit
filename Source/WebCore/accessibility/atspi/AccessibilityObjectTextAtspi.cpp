@@ -523,7 +523,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(UChar character
     if (utf8Text.isNull())
         return std::nullopt;
 
-    auto length = g_utf8_strlen(utf8Text.data(), -1);
+    auto length = static_cast<unsigned>(g_utf8_strlen(utf8Text.data(), -1));
     if (offset >= length)
         return std::nullopt;
 
@@ -744,7 +744,7 @@ void AccessibilityObjectAtspi::selectionChanged(const VisibleSelection& selectio
     if (bounds.y() < 0)
         return;
 
-    auto length = g_utf8_strlen(utf8Text.data(), -1);
+    auto length = static_cast<unsigned>(g_utf8_strlen(utf8Text.data(), -1));
     auto mapping = offsetMapping(utf16Text);
     auto caretOffset = UTF16OffsetToUTF8(mapping, bounds.y());
     if (caretOffset <= length)
