@@ -37,9 +37,9 @@ namespace WebCore {
 
 static ProtectionSpace::ServerType protectionSpaceServerTypeFromURL(const URL& url, bool isForProxy)
 {
-    if (url.protocolIs("https"_s))
+    if (url.protocolIs("https"_s) || url.protocolIs("wss"_s))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTPS : ProtectionSpace::ServerType::HTTPS;
-    if (url.protocolIs("http"_s))
+    if (url.protocolIs("http"_s) || url.protocolIs("ws"_s))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
     if (url.protocolIs("ftp"_s))
         return isForProxy ? ProtectionSpace::ServerType::ProxyFTP : ProtectionSpace::ServerType::FTP;
@@ -90,7 +90,7 @@ AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupA
 {
 }
 
-static ProtectionSpace protectionSpaceForClientCertificate(const URL& url)
+ProtectionSpace AuthenticationChallenge::protectionSpaceForClientCertificate(const URL& url)
 {
     auto port = url.port();
     if (!port)
@@ -108,7 +108,7 @@ AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsC
 {
 }
 
-static ProtectionSpace protectionSpaceForClientCertificatePassword(GTlsPassword* tlsPassword, const URL& url)
+ProtectionSpace AuthenticationChallenge::protectionSpaceForClientCertificatePassword(const URL& url, GTlsPassword* tlsPassword)
 {
     auto port = url.port();
     if (!port)
@@ -118,7 +118,7 @@ static ProtectionSpace protectionSpaceForClientCertificatePassword(GTlsPassword*
 }
 
 AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsPassword* tlsPassword)
-    : AuthenticationChallengeBase(protectionSpaceForClientCertificatePassword(tlsPassword, soupURIToURL(soup_message_get_uri(soupMessage)))
+    : AuthenticationChallengeBase(protectionSpaceForClientCertificatePassword(soupURIToURL(soup_message_get_uri(soupMessage)), tlsPassword)
         , Credential() // proposedCredentials
         , g_tls_password_get_flags(tlsPassword) & G_TLS_PASSWORD_RETRY ? 1 : 0 // previousFailureCount
         , soupMessage // failureResponse
